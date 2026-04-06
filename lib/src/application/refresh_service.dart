@@ -90,11 +90,12 @@ class RefreshService {
     // 3. Get previous alert state
     final previousState = await repository.getAlertState(upper);
 
-    // 4. Evaluate cross-up
+    // 4. Evaluate cross-up (defaults to SMA200)
     final evaluation = _crossUpDetector.evaluate(
       ticker: upper,
       candles: candles,
       previousState: previousState,
+      smaPeriod: SmaPeriod.sma200,
       trendStrictnessDays: settings.trendStrictnessDays,
     );
 
@@ -123,13 +124,13 @@ class RefreshService {
 
       _logger.i(
         '$upper: CROSS-UP ALERT! Close=${evaluation.currentClose}, '
-        'SMA200=${evaluation.currentSma200}',
+        'SMA=${evaluation.currentSma} (${evaluation.smaPeriod.label})',
       );
 
       await notificationService.showCrossUpAlert(
         ticker: upper,
         close: evaluation.currentClose,
-        sma200: evaluation.currentSma200,
+        sma200: evaluation.currentSma,
       );
       return true;
     }

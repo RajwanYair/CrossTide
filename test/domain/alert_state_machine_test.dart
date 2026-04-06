@@ -8,15 +8,16 @@ void main() {
     test('transitions from below to above on cross-up alert', () {
       const previous = TickerAlertState(
         ticker: 'AAPL',
-        lastStatus: SmaRelation.below,
+                lastStatus: SmaRelation.below,
       );
 
       final evaluation = CrossUpEvaluation(
         ticker: 'AAPL',
+          smaPeriod: SmaPeriod.sma200,
         currentClose: 150.0,
         previousClose: 148.0,
-        currentSma200: 149.0,
-        previousSma200: 149.5,
+        currentSma: 149.0,
+        previousSma: 149.5,
         currentRelation: SmaRelation.above,
         isCrossUp: true,
         isRising: true,
@@ -35,16 +36,17 @@ void main() {
     test('stays above without updating alert date when no new alert', () {
       final previous = TickerAlertState(
         ticker: 'AAPL',
-        lastStatus: SmaRelation.above,
+                lastStatus: SmaRelation.above,
         lastAlertedCrossUpAt: DateTime(2024, 6, 10),
       );
 
       final evaluation = CrossUpEvaluation(
         ticker: 'AAPL',
+          smaPeriod: SmaPeriod.sma200,
         currentClose: 155.0,
         previousClose: 152.0,
-        currentSma200: 149.0,
-        previousSma200: 148.5,
+        currentSma: 149.0,
+        previousSma: 148.5,
         currentRelation: SmaRelation.above,
         isCrossUp: false,
         isRising: true,
@@ -63,16 +65,17 @@ void main() {
     test('transitions from above to below on cross-down', () {
       final previous = TickerAlertState(
         ticker: 'AAPL',
-        lastStatus: SmaRelation.above,
+                lastStatus: SmaRelation.above,
         lastAlertedCrossUpAt: DateTime(2024, 6, 10),
       );
 
       final evaluation = CrossUpEvaluation(
         ticker: 'AAPL',
+          smaPeriod: SmaPeriod.sma200,
         currentClose: 145.0,
         previousClose: 148.0,
-        currentSma200: 149.0,
-        previousSma200: 149.0,
+        currentSma: 149.0,
+        previousSma: 149.0,
         currentRelation: SmaRelation.below,
         isCrossUp: false,
         isRising: false,
@@ -178,16 +181,17 @@ void main() {
         // 1. Start below
         var state = const TickerAlertState(
           ticker: 'TSLA',
-          lastStatus: SmaRelation.below,
+                  lastStatus: SmaRelation.below,
         );
 
         // 2. Cross-up occurs → should alert
         final crossUp1 = CrossUpEvaluation(
           ticker: 'TSLA',
+          smaPeriod: SmaPeriod.sma200,
           currentClose: 250.0,
           previousClose: 245.0,
-          currentSma200: 248.0,
-          previousSma200: 248.0,
+          currentSma: 248.0,
+          previousSma: 248.0,
           currentRelation: SmaRelation.above,
           isCrossUp: true,
           isRising: true,
@@ -201,10 +205,11 @@ void main() {
         // 3. Stays above → no alert
         final staysAbove = CrossUpEvaluation(
           ticker: 'TSLA',
+          smaPeriod: SmaPeriod.sma200,
           currentClose: 260.0,
           previousClose: 255.0,
-          currentSma200: 249.0,
-          previousSma200: 248.5,
+          currentSma: 249.0,
+          previousSma: 248.5,
           currentRelation: SmaRelation.above,
           isCrossUp: false,
           isRising: true,
@@ -218,10 +223,11 @@ void main() {
         // 4. Crosses back down
         final crossDown = CrossUpEvaluation(
           ticker: 'TSLA',
+          smaPeriod: SmaPeriod.sma200,
           currentClose: 240.0,
           previousClose: 249.0,
-          currentSma200: 250.0,
-          previousSma200: 249.5,
+          currentSma: 250.0,
+          previousSma: 249.5,
           currentRelation: SmaRelation.below,
           isCrossUp: false,
           isRising: false,
@@ -234,10 +240,11 @@ void main() {
         // 5. New cross-up → should alert AGAIN
         final crossUp2 = CrossUpEvaluation(
           ticker: 'TSLA',
+          smaPeriod: SmaPeriod.sma200,
           currentClose: 255.0,
           previousClose: 248.0,
-          currentSma200: 250.0,
-          previousSma200: 250.0,
+          currentSma: 250.0,
+          previousSma: 250.0,
           currentRelation: SmaRelation.above,
           isCrossUp: true,
           isRising: true,
@@ -251,3 +258,5 @@ void main() {
     );
   });
 }
+
+

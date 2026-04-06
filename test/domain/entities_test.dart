@@ -182,10 +182,11 @@ void main() {
 
     CrossUpEvaluation makeEval({
       String ticker = 'MSFT',
+      SmaPeriod smaPeriod = SmaPeriod.sma200,
       double currentClose = 300,
       double previousClose = 295,
-      double currentSma200 = 290,
-      double previousSma200 = 292,
+      double currentSma = 290,
+      double previousSma = 292,
       SmaRelation relation = SmaRelation.above,
       bool isCrossUp = true,
       bool isRising = true,
@@ -193,10 +194,11 @@ void main() {
       DateTime? evaluatedAt,
     }) => CrossUpEvaluation(
       ticker: ticker,
+      smaPeriod: smaPeriod,
       currentClose: currentClose,
       previousClose: previousClose,
-      currentSma200: currentSma200,
-      previousSma200: previousSma200,
+      currentSma: currentSma,
+      previousSma: previousSma,
       currentRelation: relation,
       isCrossUp: isCrossUp,
       isRising: isRising,
@@ -219,8 +221,8 @@ void main() {
       );
     });
 
-    test('props has 10 elements', () {
-      expect(makeEval().props.length, 10);
+    test('props has 11 elements (includes smaPeriod)', () {
+      expect(makeEval().props.length, 11);
     });
 
     test('cross-down scenario — isCrossUp false', () {
@@ -234,9 +236,27 @@ void main() {
       expect(e.shouldAlert, isFalse);
     });
 
-    test('previousSma200 preserved in props', () {
-      final e = makeEval(previousSma200: 300.0);
-      expect(e.previousSma200, 300.0);
+    test('previousSma preserved in props', () {
+      final e = makeEval(previousSma: 300.0);
+      expect(e.previousSma, 300.0);
+    });
+
+    test('smaPeriod carried through correctly', () {
+      expect(makeEval(smaPeriod: SmaPeriod.sma50).smaPeriod, SmaPeriod.sma50);
+      expect(
+        makeEval(smaPeriod: SmaPeriod.sma150).smaPeriod,
+        SmaPeriod.sma150,
+      );
+    });
+
+    test('currentSma200 getter works for sma200 period', () {
+      final e = makeEval(smaPeriod: SmaPeriod.sma200, currentSma: 290.0);
+      expect(e.currentSma200, 290.0);
+    });
+
+    test('currentSma200 getter throws for non-sma200 period', () {
+      final e = makeEval(smaPeriod: SmaPeriod.sma50);
+      expect(() => e.currentSma200, throwsStateError);
     });
   });
 
@@ -519,6 +539,64 @@ void main() {
           expect(profile.description, isNotEmpty);
         }
       });
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────
+  // SmaPeriod
+  // ───────────────────────────────────────────────────────────────
+  group('SmaPeriod', () {
+    test('has three values', () {
+      expect(SmaPeriod.values.length, 3);
+    });
+
+    test('period values are correct', () {
+      expect(SmaPeriod.sma50.period, 50);
+      expect(SmaPeriod.sma150.period, 150);
+      expect(SmaPeriod.sma200.period, 200);
+    });
+
+    test('requiredCandles is period plus one', () {
+      for (final p in SmaPeriod.values) {
+        expect(p.requiredCandles, p.period + 1);
+      }
+    });
+
+    test('label matches SMAxx convention', () {
+      expect(SmaPeriod.sma50.label, 'SMA50');
+      expect(SmaPeriod.sma150.label, 'SMA150');
+      expect(SmaPeriod.sma200.label, 'SMA200');
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────
+  // AlertType
+  // ───────────────────────────────────────────────────────────────
+  group('AlertType', () {
+    test('has five values', () {
+      expect(AlertType.values.length, 5);
+    });
+
+    test('each type has a non-empty displayName', () {
+      for (final t in AlertType.values) {
+        expect(t.displayName, isNotEmpty);
+      }
+    });
+
+    test('each type has a non-empty description', () {
+      for (final t in AlertType.values) {
+        expect(t.description, isNotEmpty);
+      }
+    });
+
+    test('goldenCross displayName contains 50 and 200', () {
+      expect(AlertType.goldenCross.displayName, contains('50'));
+      expect(AlertType.goldenCross.displayName, contains('200'));
+    });
+
+    test('deathCross displayName contains 50 and 200', () {
+      expect(AlertType.deathCross.displayName, contains('50'));
+      expect(AlertType.deathCross.displayName, contains('200'));
     });
   });
 }

@@ -5,6 +5,73 @@ library;
 
 import 'package:equatable/equatable.dart';
 
+// ---------------------------------------------------------------------------
+// SMA period enum — canonical set of supported moving-average periods
+// ---------------------------------------------------------------------------
+
+/// The SMA periods that CrossTide monitors.
+enum SmaPeriod {
+  sma50(50),
+  sma150(150),
+  sma200(200);
+
+  const SmaPeriod(this.period);
+
+  /// The numeric window size in trading days.
+  final int period;
+
+  /// How many candles are required (period + 1 for previous-bar comparison).
+  int get requiredCandles => period + 1;
+
+  String get label => 'SMA$period';
+}
+
+// ---------------------------------------------------------------------------
+// Alert type enum — which cross-up events the user wants to be notified about
+// ---------------------------------------------------------------------------
+
+/// Determines which technical events trigger alerts for a ticker.
+enum AlertType {
+  /// Price crosses above SMA200.
+  sma200CrossUp,
+
+  /// Price crosses above SMA150.
+  sma150CrossUp,
+
+  /// Price crosses above SMA50.
+  sma50CrossUp,
+
+  /// SMA50 crosses above SMA200 (Golden Cross).
+  goldenCross,
+
+  /// SMA50 crosses below SMA200 (Death Cross).
+  deathCross,
+}
+
+/// Extension helpers for [AlertType].
+extension AlertTypeX on AlertType {
+  String get displayName => switch (this) {
+    AlertType.sma200CrossUp => 'SMA200 Cross-Up',
+    AlertType.sma150CrossUp => 'SMA150 Cross-Up',
+    AlertType.sma50CrossUp => 'SMA50 Cross-Up',
+    AlertType.goldenCross => 'Golden Cross (50↑200)',
+    AlertType.deathCross => 'Death Cross (50↓200)',
+  };
+
+  String get description => switch (this) {
+    AlertType.sma200CrossUp =>
+      'Price closes above the 200-day moving average',
+    AlertType.sma150CrossUp =>
+      'Price closes above the 150-day moving average',
+    AlertType.sma50CrossUp =>
+      'Price closes above the 50-day moving average',
+    AlertType.goldenCross =>
+      'SMA50 crosses above SMA200 — bullish long-term signal',
+    AlertType.deathCross =>
+      'SMA50 crosses below SMA200 — bearish long-term signal',
+  };
+}
+
 /// A single daily price candle from the market data provider.
 class DailyCandle extends Equatable {
   const DailyCandle({
@@ -87,14 +154,15 @@ class TickerAlertState extends Equatable {
 /// Relationship of close price to SMA200.
 enum SmaRelation { above, below, unknown }
 
-/// Result of evaluating a ticker's cross-up status.
+/// Result of evaluating a ticker's cross-up status for a specific SMA period.
 class CrossUpEvaluation extends Equatable {
   const CrossUpEvaluation({
     required this.ticker,
+    required this.smaPeriod,
     required this.currentClose,
     required this.previousClose,
-    required this.currentSma200,
-    required this.previousSma200,
+    required this.currentSma,
+    required this.previousSma,
     required this.currentRelation,
     required this.isCrossUp,
     required this.isRising,
@@ -103,13 +171,22 @@ class CrossUpEvaluation extends Equatable {
   });
 
   final String ticker;
+
+  /// Which SMA period this evaluation covers (50, 150, or 200).
+  final SmaPeriod smaPeriod;
+
   final double currentClose;
   final double previousClose;
-  final double currentSma200;
-  final double previousSma200;
+
+  /// Current SMA value for [smaPeriod].
+  final double currentSma;
+
+  /// Previous bar's SMA value for [smaPeriod].
+  final double previousSma;
+
   final SmaRelation currentRelation;
 
-  /// True when close[t-1] <= sma200[t-1] AND close[t] > sma200[t].
+  /// True when close[t-1] <= sma[t-1] AND close[t] > sma[t].
   final bool isCrossUp;
 
   /// True when close[t] > close[t-1] (or stricter multi-day trend).
@@ -120,13 +197,19 @@ class CrossUpEvaluation extends Equatable {
 
   final DateTime evaluatedAt;
 
+  /// Convenience getter — SMA200 value (backwards-compat for code reading sma200).
+  double get currentSma200 => smaPeriod == SmaPeriod.sma200
+      ? currentSma
+      : throw StateError('smaPeriod is $smaPeriod, not sma200');
+
   @override
   List<Object?> get props => [
     ticker,
+    smaPeriod,
     currentClose,
     previousClose,
-    currentSma200,
-    previousSma200,
+    currentSma,
+    previousSma,
     currentRelation,
     isCrossUp,
     isRising,

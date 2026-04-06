@@ -1,9 +1,10 @@
 /// Cross-Up Detector — Pure domain logic.
 ///
-/// Determines whether a stock has crossed above its SMA200 while rising.
+/// Determines whether a stock has crossed above its SMA (any supported period)
+/// while rising.
 ///
 /// Cross-up definition (KEY RULE):
-///   close[t-1] <= sma200[t-1]  AND  close[t] > sma200[t]
+///   close[t-1] <= sma[t-1]  AND  close[t] > sma[t]
 ///
 /// Rising definition (configurable):
 ///   Strictness 1: close[t] > close[t-1]
@@ -19,23 +20,29 @@ class CrossUpDetector {
 
   final SmaCalculator smaCalculator;
 
-  /// Evaluate a ticker for cross-up. Requires at least 201 candles (to have
-  /// both sma200[t] and sma200[t-1]) and at least [trendStrictnessDays + 1]
-  /// candles for the rising check.
+  /// Evaluate a ticker for cross-up against [smaPeriod].
+  ///
+  /// Requires at least [smaPeriod.requiredCandles] candles for the SMA
+  /// comparison (period + 1 bars), plus [trendStrictnessDays] extra for
+  /// the rising check.
   ///
   /// [candles] must be sorted ascending by date.
   /// [previousState] is the last persisted alert state (for idempotency).
   /// [trendStrictnessDays] controls how many consecutive rising days are needed.
   ///
-  /// Returns a [CrossUpEvaluation] describing the full result.
+  /// Returns a [CrossUpEvaluation] describing the full result, or null if there
+  /// isn't enough data.
   CrossUpEvaluation? evaluate({
     required String ticker,
     required List<DailyCandle> candles,
     required TickerAlertState previousState,
+    SmaPeriod smaPeriod = SmaPeriod.sma200,
     int trendStrictnessDays = 1,
   }) {
-    // Need at least 201 candles to compute sma200[t] and sma200[t-1].
-    if (candles.length < 201) return null;
+    final period = smaPeriod.period;
+
+    // Need at least period+1 candles to compare sma[t] vs sma[t-1].
+    if (candles.length < period + 1) return null;
 
     final now = DateTime.now();
 
@@ -43,44 +50,68 @@ class CrossUpDetector {
     final candleT = candles[candles.length - 1];
     final candleTm1 = candles[candles.length - 2];
 
-    // SMA200 at t: uses candles[length-200 .. length-1] (inclusive)
-    final sma200T = smaCalculator.compute(candles, period: 200);
-    if (sma200T == null) return null;
+    // SMA at t: uses last [period] candles
+    final smaT = smaCalculator.compute(candles, period: period);
+    if (smaT == null) return null;
 
-    // SMA200 at t-1: uses candles[length-201 .. length-2] (inclusive)
+    // SMA at t-1: uses preceding [period] candles
     final candlesForTm1 = candles.sublist(0, candles.length - 1);
-    final sma200Tm1 = smaCalculator.compute(candlesForTm1, period: 200);
-    if (sma200Tm1 == null) return null;
+    final smaTm1 = smaCalculator.compute(candlesForTm1, period: period);
+    if (smaTm1 == null) return null;
 
-    // Cross-up check: close[t-1] <= sma200[t-1] AND close[t] > sma200[t]
-    final isCrossUp = candleTm1.close <= sma200Tm1 && candleT.close > sma200T;
+    // Cross-up check: close[t-1] <= sma[t-1] AND close[t] > sma[t]
+    final isCrossUp = candleTm1.close <= smaTm1 && candleT.close > smaT;
 
     // Rising check with configurable strictness
     final isRising = _checkRising(candles, trendStrictnessDays);
 
     // Current relation
-    final currentRelation = candleT.close > sma200T
+    final currentRelation = candleT.close > smaT
         ? SmaRelation.above
         : SmaRelation.below;
 
-    // Idempotent alert: only fire if cross-up AND rising AND not already alerted
-    // for this cross-up event. "Already alerted" means lastStatus was already
-    // 'above' (the price hasn't crossed back down since last alert).
+    // Idempotent alert: only fire if cross-up AND rising AND not already alerted.
     final alreadyAlerted = previousState.lastStatus == SmaRelation.above;
     final shouldAlert = isCrossUp && isRising && !alreadyAlerted;
 
     return CrossUpEvaluation(
       ticker: ticker,
+      smaPeriod: smaPeriod,
       currentClose: candleT.close,
       previousClose: candleTm1.close,
-      currentSma200: sma200T,
-      previousSma200: sma200Tm1,
+      currentSma: smaT,
+      previousSma: smaTm1,
       currentRelation: currentRelation,
       isCrossUp: isCrossUp,
       isRising: isRising,
       shouldAlert: shouldAlert,
       evaluatedAt: now,
     );
+  }
+
+  /// Evaluate a ticker for ALL enabled [smaPeriods] in a single pass.
+  ///
+  /// Returns a map keyed by [SmaPeriod]. Periods for which there is
+  /// insufficient data are omitted from the result.
+  Map<SmaPeriod, CrossUpEvaluation> evaluateAll({
+    required String ticker,
+    required List<DailyCandle> candles,
+    required TickerAlertState previousState,
+    List<SmaPeriod> smaPeriods = SmaPeriod.values,
+    int trendStrictnessDays = 1,
+  }) {
+    final results = <SmaPeriod, CrossUpEvaluation>{};
+    for (final period in smaPeriods) {
+      final eval = evaluate(
+        ticker: ticker,
+        candles: candles,
+        previousState: previousState,
+        smaPeriod: period,
+        trendStrictnessDays: trendStrictnessDays,
+      );
+      if (eval != null) results[period] = eval;
+    }
+    return results;
   }
 
   /// Check if the last [days] closes form a strictly rising sequence.

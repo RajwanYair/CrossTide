@@ -196,5 +196,75 @@ void main() {
       const custom = CrossUpDetector(smaCalculator: SmaCalculator());
       expect(custom, isA<CrossUpDetector>());
     });
+
+    test('evaluates SMA50 cross-up with fewer candles', () {
+      // 52 candles: first 50 at $100, t-1 at $98 (below SMA50), t at $103
+      final closes = [...List.filled(50, 100.0), 98.0, 103.0];
+      final candles = makeCandles(closes);
+      final result = detector.evaluate(
+        ticker: 'TEST',
+        candles: candles,
+        previousState: belowState(),
+        smaPeriod: SmaPeriod.sma50,
+      );
+      expect(result, isNotNull);
+      expect(result!.smaPeriod, SmaPeriod.sma50);
+      expect(result.isCrossUp, isTrue);
+      expect(result.shouldAlert, isTrue);
+    });
+
+    test('evaluates SMA150 cross-up correctly', () {
+      final closes = [...List.filled(150, 100.0), 98.0, 103.0];
+      final candles = makeCandles(closes);
+      final result = detector.evaluate(
+        ticker: 'TEST',
+        candles: candles,
+        previousState: belowState(),
+        smaPeriod: SmaPeriod.sma150,
+      );
+      expect(result, isNotNull);
+      expect(result!.smaPeriod, SmaPeriod.sma150);
+      expect(result.isCrossUp, isTrue);
+    });
+
+    test('returns null for SMA50 when fewer than 51 candles', () {
+      final candles = makeCandles(List.filled(50, 100.0));
+      final result = detector.evaluate(
+        ticker: 'TEST',
+        candles: candles,
+        previousState: belowState(),
+        smaPeriod: SmaPeriod.sma50,
+      );
+      expect(result, isNull);
+    });
+
+    test('evaluateAll returns entries for all periods with enough data', () {
+      // 202 candles so all periods (50, 150, 200) have enough data
+      final closes = [...List.filled(200, 100.0), 98.0, 103.0];
+      final candles = makeCandles(closes);
+      final results = detector.evaluateAll(
+        ticker: 'TEST',
+        candles: candles,
+        previousState: belowState(),
+      );
+      expect(results.length, 3);
+      expect(results.containsKey(SmaPeriod.sma50), isTrue);
+      expect(results.containsKey(SmaPeriod.sma150), isTrue);
+      expect(results.containsKey(SmaPeriod.sma200), isTrue);
+    });
+
+    test('evaluateAll omits periods without enough data', () {
+      // Only 52 candles — enough for SMA50 but not SMA150 or SMA200
+      final closes = [...List.filled(50, 100.0), 98.0, 103.0];
+      final candles = makeCandles(closes);
+      final results = detector.evaluateAll(
+        ticker: 'TEST',
+        candles: candles,
+        previousState: belowState(),
+      );
+      expect(results.containsKey(SmaPeriod.sma50), isTrue);
+      expect(results.containsKey(SmaPeriod.sma150), isFalse);
+      expect(results.containsKey(SmaPeriod.sma200), isFalse);
+    });
   });
 }
