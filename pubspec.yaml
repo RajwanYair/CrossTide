@@ -60,6 +60,11 @@ dependencies:
   equatable: ^2.0.7
   cupertino_icons: ^1.0.8
 
+  # Graphics & UI polish
+  flutter_svg: ^2.1.0          # SVG asset rendering
+  flutter_animate: ^4.5.2      # Micro-animations (fade/slide/scale)
+  google_fonts: ^6.2.1         # Typography: Inter for numbers, Outfit for headings
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -96,6 +101,7 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/svg/
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

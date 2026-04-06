@@ -2,10 +2,13 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../data/database/database.dart' show Ticker;
 import '../providers.dart';
 
 class TickerListScreen extends ConsumerStatefulWidget {
@@ -28,143 +31,80 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
   @override
   Widget build(BuildContext context) {
     final tickersAsync = ref.watch(tickerListProvider);
-    final dateFormat = DateFormat('MMM d, HH:mm');
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: cs.surface,
       appBar: AppBar(
-        title: const Text('CrossTide'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset('assets/svg/logo.svg', width: 32, height: 32),
+            const SizedBox(width: 10),
+            const Text('CrossTide'),
+          ],
+        ),
         actions: [
+          if (_isRefreshing)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.sync_rounded),
+              onPressed: _onRefreshAll,
+              tooltip: '🔄 Refresh all tickers',
+            ),
           IconButton(
-            icon: _isRefreshing
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.refresh),
-            onPressed: _isRefreshing ? null : _onRefreshAll,
-            tooltip: 'Refresh all tickers',
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.tune_rounded),
             onPressed: () => context.push('/settings'),
+            tooltip: '⚙️ Settings',
           ),
         ],
       ),
       body: tickersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => _ErrorState(message: '$e'),
         data: (tickers) {
-          if (tickers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.trending_up, size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No tickers added yet',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text('Tap + to add a stock ticker'),
-                ],
-              ),
-            );
-          }
+          if (tickers.isEmpty) return const _EmptyState();
 
           return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(12, 6, 12, 100),
             itemCount: tickers.length,
             itemBuilder: (context, index) {
-              final t = tickers[index];
-              final statusColor = t.sma200 != null && t.lastClose != null
-                  ? (t.lastClose! > t.sma200! ? Colors.green : Colors.red)
-                  : Colors.grey;
-              final statusLabel = t.sma200 != null && t.lastClose != null
-                  ? (t.lastClose! > t.sma200! ? 'Above SMA200' : 'Below SMA200')
-                  : 'No data';
-
-              return Dismissible(
-                key: ValueKey(t.symbol),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.only(right: 16),
-                  child: const Icon(Icons.delete, color: Colors.white),
-                ),
-                onDismissed: (_) => _removeTicker(t.symbol),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: statusColor.withAlpha(30),
-                    child: Icon(Icons.show_chart, color: statusColor),
-                  ),
-                  title: Text(
-                    t.symbol,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (t.lastClose != null)
-                        Text(
-                          'Close: \$${t.lastClose!.toStringAsFixed(2)}  '
-                          'SMA200: ${t.sma200 != null ? "\$${t.sma200!.toStringAsFixed(2)}" : "—"}',
-                        ),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: statusColor.withAlpha(20),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              statusLabel,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: statusColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          if (t.lastRefreshAt != null) ...[
-                            const SizedBox(width: 8),
-                            Text(
-                              dateFormat.format(t.lastRefreshAt!),
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ],
-                      ),
-                      if (t.error != null)
-                        Text(
-                          t.error!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 11,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                    ],
-                  ),
-                  isThreeLine: true,
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/ticker/${t.symbol}'),
-                ),
-              );
+              return _TickerCard(
+                    ticker: tickers[index],
+                    onRemove: () => _removeTicker(tickers[index].symbol),
+                    onTap: () =>
+                        context.push('/ticker/${tickers[index].symbol}'),
+                  )
+                  .animate(delay: Duration(milliseconds: 40 * index))
+                  .fadeIn(duration: 280.ms)
+                  .slideX(begin: 0.05, end: 0, duration: 280.ms);
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddDialog,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton:
+          FloatingActionButton.extended(
+            onPressed: _showAddDialog,
+            icon: const Icon(Icons.add_chart_rounded),
+            label: const Text('Add Ticker'),
+          ).animate().scale(
+            begin: const Offset(0.7, 0.7),
+            duration: 400.ms,
+            curve: Curves.elasticOut,
+          ),
     );
   }
 
@@ -173,25 +113,39 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add Ticker'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(
+              Icons.search_rounded,
+              color: Theme.of(ctx).colorScheme.primary,
+            ),
+            const SizedBox(width: 10),
+            const Text('📈 Add Ticker'),
+          ],
+        ),
         content: TextField(
           controller: _tickerController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Ticker Symbol',
-            hintText: 'e.g. AAPL, MSFT',
+            hintText: 'e.g. AAPL, MSFT, NVDA',
+            prefixIcon: const Icon(Icons.candlestick_chart_rounded),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           textCapitalization: TextCapitalization.characters,
           autofocus: true,
           onSubmitted: (_) => _addTicker(ctx),
         ),
         actions: [
-          TextButton(
+          TextButton.icon(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            icon: const Icon(Icons.close_rounded),
+            label: const Text('Cancel'),
           ),
-          FilledButton(
+          FilledButton.icon(
             onPressed: () => _addTicker(ctx),
-            child: const Text('Add'),
+            icon: const Icon(Icons.add_rounded),
+            label: const Text('Add'),
           ),
         ],
       ),
@@ -201,7 +155,6 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
   Future<void> _addTicker(BuildContext dialogContext) async {
     final symbol = _tickerController.text.trim().toUpperCase();
     if (symbol.isEmpty) return;
-
     Navigator.pop(dialogContext);
     final repo = await ref.read(repositoryProvider.future);
     await repo.addTicker(symbol);
@@ -220,5 +173,360 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
     } finally {
       if (mounted) setState(() => _isRefreshing = false);
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Ticker Card
+// ---------------------------------------------------------------------------
+
+class _TickerCard extends StatelessWidget {
+  const _TickerCard({
+    required this.ticker,
+    required this.onRemove,
+    required this.onTap,
+  });
+
+  final Ticker ticker;
+  final VoidCallback onRemove;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final dateFormat = DateFormat('MMM d, HH:mm');
+
+    final bool hasData = ticker.sma200 != null && ticker.lastClose != null;
+    final bool isAbove = hasData && ticker.lastClose! > ticker.sma200!;
+
+    final statusColor = hasData
+        ? (isAbove ? const Color(0xFF2E7D32) : const Color(0xFFC62828))
+        : Colors.grey.shade500;
+    final bgColor = hasData
+        ? (isAbove ? Colors.green.withAlpha(18) : Colors.red.withAlpha(18))
+        : Colors.grey.withAlpha(12);
+
+    final statusLabel = hasData
+        ? (isAbove ? '▲ Above SMA200' : '▼ Below SMA200')
+        : '— No data';
+
+    final statusIcon = hasData
+        ? (isAbove ? 'assets/svg/cross_up.svg' : 'assets/svg/below_sma.svg')
+        : null;
+
+    return Dismissible(
+      key: ValueKey(ticker.symbol),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (_) async {
+        return await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text('🗑️ Remove Ticker?'),
+            content: Text(
+              'Remove ${ticker.symbol} from your watchlist?',
+            ), // ignore: avoid_dynamic_calls
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton.tonal(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red.shade50,
+                  foregroundColor: Colors.red.shade800,
+                ),
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Remove'),
+              ),
+            ],
+          ),
+        );
+      },
+      onDismissed: (_) => onRemove(),
+      background: Container(
+        decoration: BoxDecoration(
+          color: Colors.red.shade700,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.delete_outline_rounded, color: Colors.white, size: 22),
+            SizedBox(height: 2),
+            Text('Remove', style: TextStyle(color: Colors.white, fontSize: 11)),
+          ],
+        ),
+      ),
+      child: Card(
+        color: bgColor,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                // Left: Status icon circle
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: statusColor.withAlpha(30),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: statusColor.withAlpha(80),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Center(
+                    child: statusIcon != null
+                        ? SvgPicture.asset(statusIcon, width: 26, height: 26)
+                        : Icon(
+                            Icons.hourglass_empty_rounded,
+                            size: 24,
+                            color: Colors.grey.shade400,
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+
+                // Middle: Symbol + price info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            ticker.symbol,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: cs.onSurface,
+                                ),
+                          ),
+                          const SizedBox(width: 8),
+                          _StatusChip(label: statusLabel, color: statusColor),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      if (ticker.lastClose != null)
+                        Row(
+                          children: [
+                            _PriceTag(
+                              label: 'Close',
+                              value:
+                                  '\$${ticker.lastClose!.toStringAsFixed(2)}',
+                              valueColor: cs.onSurface,
+                            ),
+                            const SizedBox(width: 16),
+                            _PriceTag(
+                              label: 'SMA200',
+                              value: ticker.sma200 != null
+                                  ? '\$${ticker.sma200!.toStringAsFixed(2)}'
+                                  : '—',
+                              valueColor: const Color(0xFFFF7043),
+                            ),
+                          ],
+                        ),
+                      if (ticker.lastRefreshAt != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.access_time_rounded,
+                                size: 11,
+                                color: Colors.grey.shade500,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                dateFormat.format(ticker.lastRefreshAt!),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (ticker.error != null)
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.warning_amber_rounded,
+                              size: 12,
+                              color: Colors.red,
+                            ),
+                            const SizedBox(width: 3),
+                            Expanded(
+                              child: Text(
+                                ticker.error!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 11,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+
+                // Right: Chevron
+                Icon(Icons.chevron_right_rounded, color: cs.onSurfaceVariant),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withAlpha(22),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withAlpha(80)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          color: color,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.2,
+        ),
+      ),
+    );
+  }
+}
+
+class _PriceTag extends StatelessWidget {
+  const _PriceTag({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+  });
+
+  final String label;
+  final String value;
+  final Color valueColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: valueColor,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty + Error states
+// ---------------------------------------------------------------------------
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset('assets/svg/logo.svg', width: 96, height: 96)
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scaleXY(
+                begin: 0.92,
+                end: 1.0,
+                duration: 2000.ms,
+                curve: Curves.easeInOut,
+              ),
+          const SizedBox(height: 24),
+          Text(
+            '🌊 No tickers yet',
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Tap ✚ Add Ticker to start watching\nyour first SMA crossover.',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 56,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              '⚠️ Could not load tickers',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

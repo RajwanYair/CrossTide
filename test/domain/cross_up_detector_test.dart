@@ -193,7 +193,7 @@ void main() {
     });
 
     test('can be constructed with a custom SmaCalculator', () {
-      final custom = CrossUpDetector(smaCalculator: SmaCalculator());
+      const custom = CrossUpDetector(smaCalculator: SmaCalculator());
       expect(custom, isA<CrossUpDetector>());
     });
   });

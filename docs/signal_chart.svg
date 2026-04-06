@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" font-family="'Segoe UI',Arial,sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D1B3E;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1B2A5A;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="640" height="200" rx="12" fill="url(#bgGrad)"/>
+
+  <!-- Grid lines -->
+  <line x1="40" y1="160" x2="600" y2="160" stroke="#1E3A5F" stroke-width="1"/>
+  <line x1="40" y1="130" x2="600" y2="130" stroke="#1E3A5F" stroke-width="1"/>
+  <line x1="40" y1="100" x2="600" y2="100" stroke="#1E3A5F" stroke-width="1"/>
+  <line x1="40" y1="70" x2="600" y2="70" stroke="#1E3A5F" stroke-width="1"/>
+
+  <!-- Price line -->
+  <polyline
+    points="60,145 100,140 140,148 180,135 220,125 260,132 300,118 340,108 380,98 420,85 460,78 500,68 540,60 580,50"
+    stroke="#29B6F6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+
+  <!-- SMA200 dashed (below, then pierced) -->
+  <polyline
+    points="60,152 100,150 140,148 180,146 220,144 260,141 300,138 340,135 380,131 420,126 460,121 500,116 540,112 580,108"
+    stroke="#FF7043" stroke-width="2" stroke-dasharray="6,4" fill="none" stroke-linecap="round"/>
+
+  <!-- Cross-up event marker -->
+  <line x1="420" y1="55" x2="420" y2="165" stroke="#69F0AE" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+  <circle cx="420" cy="85" r="6" fill="#69F0AE" opacity="0.9" filter="url(#glow)"/>
+  <text x="428" y="75" font-size="9" fill="#69F0AE">CROSS-UP</text>
+
+  <!-- Legend -->
+  <line x1="50" y1="185" x2="75" y2="185" stroke="#29B6F6" stroke-width="2.5"/>
+  <text x="80" y="189" font-size="9" fill="#90CAF9">Close Price</text>
+  <line x1="145" y1="185" x2="170" y2="185" stroke="#FF7043" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="175" y="189" font-size="9" fill="#FFAB91">SMA 200</text>
+  <circle cx="258" cy="185" r="4" fill="#69F0AE"/>
+  <text x="266" y="189" font-size="9" fill="#69F0AE">Alert Fired</text>
+
+  <!-- Title -->
+  <text x="320" y="22" font-size="13" font-weight="700" fill="white" text-anchor="middle">📈 SMA200 Cross-Up Signal</text>
+</svg>

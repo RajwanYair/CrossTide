@@ -1,41 +1,32 @@
-# CrossTide — Stock SMA Crossover Monitor
+# 🌊 CrossTide — Stock SMA Crossover Monitor
 
 > **Catch the cross. Ride the tide.**
 
+<p align="center">
+  <img src="docs/signal_chart.svg" alt="SMA200 Cross-Up Signal" width="640"/>
+</p>
+
 CrossTide is a cross-platform Flutter app that monitors stock tickers for **SMA crossover events** (SMA50 / SMA150 / SMA200, Golden Cross) and fires instant local notifications. Runs on **Android** and **Windows** from a single Dart codebase. Uses **Yahoo Finance** — no API key required.
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.11-blue?logo=dart)](https://dart.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![CI](https://github.com/RajwanYair/Stock200Alert/actions/workflows/ci.yml/badge.svg)](https://github.com/RajwanYair/Stock200Alert/actions/workflows/ci.yml)
+<p align="center">
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge" alt="Flutter"/></a>
+  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.11-blue?logo=dart&style=for-the-badge" alt="Dart"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"/></a>
+  <a href="https://github.com/RajwanYair/Stock200Alert/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/RajwanYair/Stock200Alert/ci.yml?label=CI&style=for-the-badge&logo=github-actions" alt="CI"/></a>
+  <a href="https://github.com/RajwanYair/Stock200Alert/releases/latest"><img src="https://img.shields.io/github/v/release/RajwanYair/Stock200Alert?style=for-the-badge&logo=github" alt="Latest Release"/></a>
+</p>
 
 > ⚠️ **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice. Always do your own research before making investment decisions.
 
-## Architecture
+## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                     Presentation                        │
-│  Screens │ Riverpod Providers │ GoRouter │ FL Chart      │
-├─────────────────────────────────────────────────────────┤
-│                     Application                         │
-│  RefreshService │ NotificationService │ BackgroundService│
-├─────────────────────────────────────────────────────────┤
-│                       Domain                            │
-│  SmaCalculator │ CrossUpDetector │ AlertStateMachine     │
-│  Entities (DailyCandle, TickerAlertState, AppSettings)  │
-├─────────────────────────────────────────────────────────┤
-│                        Data                             │
-│  IMarketDataProvider │ YahooFinanceProvider │ MockProvider│
-│  StockRepository │ Drift/SQLite Database                 │
-└─────────────────────────────────────────────────────────┘
+<p align="center">
+  <img src="docs/architecture.svg" alt="Clean Architecture Layers" width="720"/>
+</p>
 
-Background Execution:
-  Android → WorkManager (periodic, battery-aware, network-required)
-  Windows → Timer.periodic (in-app, while running / system tray mode)
-```
+Dependencies flow **inward only** — Presentation → Application → Domain ← Data.
 
-## Key Signal Logic
+## 📊 Key Signal Logic
 
 ```
 close[t]    = latest trading day close
@@ -43,10 +34,10 @@ sma200[t]   = SMA of last 200 trading closes (inclusive)
 sma150[t]   = SMA of last 150 trading closes
 sma50[t]    = SMA of last  50 trading closes
 
-SMA200 Cross-Up:  close[t-1] <= sma200[t-1]  AND  close[t] > sma200[t]
-Golden Cross:     sma50[t-1] <= sma200[t-1]  AND  sma50[t] > sma200[t]
-Rising filter:    close[t] > close[t-1]  (configurable 1–5 day strictness)
-Alert:            idempotent — fires once per cross event, resets on cross-down
+🟢 SMA200 Cross-Up:  close[t-1] ≤ sma200[t-1]  AND  close[t] > sma200[t]
+✨ Golden Cross:     sma50[t-1]  ≤ sma200[t-1]  AND  sma50[t] > sma200[t]
+📈 Rising filter:   close[t] > close[t-1]  (configurable 1–5 day strictness)
+🔔 Alert:           idempotent — fires once per cross event, resets on cross-down
 ```
 
 ## Prerequisites
@@ -136,12 +127,12 @@ test/
     └── alert_state_machine_test.dart
 ```
 
-## Background Execution
+## ⚙️ Background Execution
 
-| Platform | Mechanism | Limitations |
-|----------|-----------|-------------|
-| Android | `workmanager` periodic task | Min 15-min interval; OS may defer; requires network + battery not low |
-| Windows | `Timer.periodic` in-app | Only works while app is running (foreground or tray mode) |
+| 📱 Platform | ⚡ Mechanism | ⚠️ Limitations |
+|------------|------------|--------------|
+| 🤖 Android | `workmanager` periodic task | Min 15-min interval; OS may defer; requires network + battery not low |
+| 🖥️ Windows | `Timer.periodic` in-app | Only works while app is running (foreground or tray mode) |
 
 **Windows tray mode**: When enabled, the app minimizes to the system tray instead of closing, continuing periodic refresh via `Timer.periodic`.
 
@@ -154,31 +145,31 @@ Uses `flutter_local_notifications`:
 - **Windows**: Toast notifications; `cancel()` and `getActiveNotifications()` require MSIX package identity (handled gracefully)
 - **Deep-link**: Tapping a notification navigates to the ticker detail screen
 
-## Roadmap
+## 🗺️ Roadmap
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the full enhancement plan. Highlights:
 
-| Version | Feature |
-|---------|----------|
-| v1.1 | SMA50 / SMA150 overlay lines, S&P 500 benchmark, Golden Cross alert, candlestick mode |
-| v1.2 | Watchlist groups, heatmap dashboard, bulk add, ticker autocomplete |
-| v1.3 | RSI, MACD, Bollinger Bands, EMA indicators |
-| v1.4 | Price target & volume spike alerts, Telegram/Discord webhooks, alert history export |
-| v1.5 | Intraday data, delta-fetch, pre/after-hours prices |
-| v1.6 | Home screen widget (Android), MSIX packaging, iOS / macOS / Web targets |
-| v1.8 | AI pattern recognition, sentiment analysis, natural language ticker search |
+| 🏷️ Version | 🚀 Feature |
+|-----------|-----------|
+| v1.1 | 📉 SMA50 / SMA150 overlay lines, S&P 500 benchmark, Golden Cross alert, candlestick mode |
+| v1.2 | 📋 Watchlist groups, heatmap dashboard, bulk add, ticker autocomplete |
+| v1.3 | 🔢 RSI, MACD, Bollinger Bands, EMA indicators |
+| v1.4 | 🔔 Price target & volume spike alerts, Telegram/Discord webhooks, alert history export |
+| v1.5 | ⚡ Intraday data, delta-fetch, pre/after-hours prices |
+| v1.6 | 🏠 Home screen widget (Android), MSIX packaging, iOS / macOS / Web targets |
+| v1.8 | 🤖 AI pattern recognition, sentiment analysis, natural language ticker search |
 
 ---
 
-## Design Decisions
+## 🧩 Design Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
+| 🏷️ Decision | ✅ Choice | 💡 Rationale |
+|-----------|--------|-----------|
 | State management | Riverpod | Compile-safe, no BuildContext for providers, excellent testability, auto-dispose |
 | Persistence | Drift (SQLite) | Type-safe queries, migration support, in-memory databases for testing |
 | Notifications | flutter_local_notifications | Single plugin for Windows toasts + Android channels |
 | Background (Android) | workmanager | Mature plugin for periodic tasks with OS constraints |
 
-## License
+## 📄 License
 
 MIT — see [LICENSE](LICENSE).

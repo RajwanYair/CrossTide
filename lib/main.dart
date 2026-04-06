@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 
 import 'src/presentation/presentation.dart';
@@ -101,18 +102,89 @@ class StockAlertApp extends StatelessWidget {
           )
         : appRouter;
 
+    // Rich typography: Outfit for headlines, Inter for body/numbers
+    final baseTextTheme = GoogleFonts.outfitTextTheme();
+    final numbersTheme = GoogleFonts.interTextTheme();
+    final richTextTheme = baseTextTheme.copyWith(
+      bodyMedium: numbersTheme.bodyMedium,
+      bodySmall: numbersTheme.bodySmall,
+      titleLarge: baseTextTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      headlineMedium: baseTextTheme.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+      ),
+    );
+
     return MaterialApp.router(
       title: 'CrossTide',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: const Color(0xFF0D47A1),
         useMaterial3: true,
         brightness: Brightness.light,
+        textTheme: richTextTheme.apply(
+          bodyColor: const Color(0xFF1A237E),
+          displayColor: const Color(0xFF0D47A1),
+        ),
+        cardTheme: const CardThemeData(
+          elevation: 2,
+          margin: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          centerTitle: false,
+          titleTextStyle: GoogleFonts.outfit(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+          backgroundColor: const Color(0xFF0D47A1),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFF1565C0),
+          foregroundColor: Colors.white,
+          elevation: 4,
+        ),
+        chipTheme: const ChipThemeData(
+          shape: StadiumBorder(),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        ),
       ),
       darkTheme: ThemeData(
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: const Color(0xFF1E88E5),
         useMaterial3: true,
         brightness: Brightness.dark,
+        textTheme: richTextTheme,
+        cardTheme: CardThemeData(
+          elevation: 3,
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          color: Colors.grey.shade900,
+        ),
+        appBarTheme: AppBarTheme(
+          centerTitle: false,
+          titleTextStyle: GoogleFonts.outfit(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+          elevation: 0,
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFF1E88E5),
+          foregroundColor: Colors.white,
+        ),
+        chipTheme: const ChipThemeData(
+          shape: StadiumBorder(),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        ),
       ),
       routerConfig: router,
     );
