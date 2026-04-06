@@ -179,6 +179,19 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
         data: (tickers) {
           if (tickers.isEmpty) return const _EmptyState();
 
+          // Dashboard summary
+          final withData = tickers.where(
+            (t) => t.lastClose != null && t.sma200 != null,
+          ).toList();
+          final aboveCount = withData
+              .where((t) => t.lastClose! > t.sma200!)
+              .length;
+          final belowCount = withData.length - aboveCount;
+          final lastUpdated = tickers
+              .map((t) => t.lastUpdated)
+              .whereType<DateTime>()
+              .fold<DateTime?>(null, (best, dt) => best == null || dt.isAfter(best) ? dt : best);
+
           final groupsAsync = ref.watch(watchlistGroupsProvider);
           final groups = groupsAsync.valueOrNull ?? const <WatchlistGroup>[];
           final activeGroup = ref.watch(activeGroupFilterProvider);
@@ -192,6 +205,12 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
 
           return Column(
             children: [
+              _DashboardBanner(
+                total: tickers.length,
+                above: aboveCount,
+                below: belowCount,
+                lastUpdated: lastUpdated,
+              ),
               if (groups.isNotEmpty)
                 _GroupFilterRow(groups: groups, activeGroup: activeGroup),
               Expanded(
@@ -758,6 +777,121 @@ class _ErrorState extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard banner
+// ---------------------------------------------------------------------------
+
+class _DashboardBanner extends StatelessWidget {
+  const _DashboardBanner({
+    required this.total,
+    required this.above,
+    required this.below,
+    required this.lastUpdated,
+  });
+
+  final int total;
+  final int above;
+  final int below;
+  final DateTime? lastUpdated;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final lastStr = lastUpdated == null
+        ? 'never'
+        : DateFormat('MMM d HH:mm').format(lastUpdated!);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 2),
+      child: Material(
+        color: cs.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              _BannerStat(
+                label: 'Watching',
+                value: '$total',
+                color: cs.primary,
+              ),
+              const SizedBox(width: 24),
+              _BannerStat(
+                label: '▲ Above',
+                value: '$above',
+                color: const Color(0xFF2E7D32),
+              ),
+              const SizedBox(width: 24),
+              _BannerStat(
+                label: '▼ Below',
+                value: '$below',
+                color: const Color(0xFFC62828),
+              ),
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Updated',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: cs.onSurface.withAlpha(100),
+                    ),
+                  ),
+                  Text(
+                    lastStr,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurface.withAlpha(160),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BannerStat extends StatelessWidget {
+  const _BannerStat({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            color: color.withAlpha(200),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }
