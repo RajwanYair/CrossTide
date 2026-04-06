@@ -2,10 +2,12 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../application/alert_history_exporter.dart';
 import '../../domain/entities.dart';
 import '../providers.dart';
 
@@ -30,10 +32,48 @@ class AlertHistoryScreen extends ConsumerWidget {
           historyAsync.when(
             data: (entries) => entries.isEmpty
                 ? const SizedBox.shrink()
-                : IconButton(
-                    icon: const Icon(Icons.delete_sweep_rounded),
-                    tooltip: 'Clear all history',
-                    onPressed: () => _confirmClear(context, ref),
+                : PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert_rounded),
+                    itemBuilder: (_) => [
+                      const PopupMenuItem(
+                        value: 'csv',
+                        child: ListTile(
+                          leading: Icon(Icons.table_chart_rounded),
+                          title: Text('Export CSV'),
+                          dense: true,
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'json',
+                        child: ListTile(
+                          leading: Icon(Icons.data_object_rounded),
+                          title: Text('Export JSON'),
+                          dense: true,
+                        ),
+                      ),
+                      const PopupMenuDivider(),
+                      const PopupMenuItem(
+                        value: 'clear',
+                        child: ListTile(
+                          leading: Icon(Icons.delete_sweep_rounded),
+                          title: Text('Clear all'),
+                          dense: true,
+                        ),
+                      ),
+                    ],
+                    onSelected: (v) {
+                      if (v == 'clear') {
+                        _confirmClear(context, ref);
+                      } else {
+                        _export(
+                          context,
+                          ref,
+                          format: v == 'csv'
+                              ? ExportFormat.csv
+                              : ExportFormat.json,
+                        );
+                      }
+                    },
                   ),
             loading: () => const SizedBox.shrink(),
             error: (_, __) => const SizedBox.shrink(),
@@ -88,6 +128,36 @@ class AlertHistoryScreen extends ConsumerWidget {
         error: (err, _) => Center(child: Text('Error: $err')),
       ),
     );
+  }
+
+  Future<void> _export(
+    BuildContext context,
+    WidgetRef ref, {
+    required ExportFormat format,
+  }) async {
+    try {
+      final entries = await ref.read(alertHistoryProvider.future);
+      final path = await AlertHistoryExporter.export(entries, format: format);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Exported to: $path', overflow: TextOverflow.ellipsis),
+            duration: const Duration(seconds: 6),
+            action: SnackBarAction(
+              label: 'Copy path',
+              onPressed: () => Clipboard.setData(ClipboardData(text: path)),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Export failed: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _confirmClear(BuildContext context, WidgetRef ref) async {

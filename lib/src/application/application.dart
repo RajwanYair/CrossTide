@@ -1,6 +1,7 @@
 /// Application layer barrel export.
 library;
 
+export 'alert_history_exporter.dart';
 export 'background_service.dart';
 export 'crash_log_service.dart';
 export 'health_check_service.dart';
