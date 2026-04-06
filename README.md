@@ -12,8 +12,8 @@ CrossTide is a cross-platform Flutter app that monitors stock tickers for **SMA 
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge" alt="Flutter"/></a>
   <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.11-blue?logo=dart&style=for-the-badge" alt="Dart"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"/></a>
-  <a href="https://github.com/RajwanYair/Stock200Alert/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/RajwanYair/Stock200Alert/ci.yml?label=CI&style=for-the-badge&logo=github-actions" alt="CI"/></a>
-  <a href="https://github.com/RajwanYair/Stock200Alert/releases/latest"><img src="https://img.shields.io/github/v/release/RajwanYair/Stock200Alert?style=for-the-badge&logo=github" alt="Latest Release"/></a>
+  <a href="https://github.com/RajwanYair/CrossTide/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/RajwanYair/CrossTide/ci.yml?label=CI&style=for-the-badge&logo=github-actions" alt="CI"/></a>
+  <a href="https://github.com/RajwanYair/CrossTide/releases/latest"><img src="https://img.shields.io/github/v/release/RajwanYair/CrossTide?style=for-the-badge&logo=github" alt="Latest Release"/></a>
 </p>
 
 > ⚠️ **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice. Always do your own research before making investment decisions.
@@ -52,7 +52,7 @@ sma50[t]    = SMA of last  50 trading closes
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/RajwanYair/Stock200Alert.git && cd Stock200Alert
+git clone https://github.com/RajwanYair/CrossTide.git && cd CrossTide
 
 # 2. Copy environment file
 cp .env.example .env

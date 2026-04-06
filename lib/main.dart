@@ -145,7 +145,7 @@ Future<void> _appMain(Logger logger) async {
     trayService = SystemTrayService(
       logger: logger,
       onShow: () {
-        // Will be wired to window focus in StockAlertApp
+        // Will be wired to window focus in CrossTideApp
       },
       onRefreshNow: () async {
         try {
@@ -174,13 +174,13 @@ Future<void> _appMain(Logger logger) async {
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: StockAlertApp(showOnboarding: showOnboarding),
+      child: CrossTideApp(showOnboarding: showOnboarding),
     ),
   );
 }
 
-class StockAlertApp extends StatelessWidget {
-  const StockAlertApp({super.key, this.showOnboarding = false});
+class CrossTideApp extends StatelessWidget {
+  const CrossTideApp({super.key, this.showOnboarding = false});
 
   final bool showOnboarding;
 
