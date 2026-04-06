@@ -14,11 +14,12 @@ import 'package:logger/logger.dart';
 
 import '../../domain/entities.dart';
 import 'market_data_provider.dart';
+import 'proxy_detector.dart';
 
 class YahooFinanceProvider implements IMarketDataProvider {
   YahooFinanceProvider({Dio? dio, Logger? logger})
-    : _dio = dio ?? Dio(),
-      _logger = logger ?? Logger();
+    : _logger = logger ?? Logger(),
+      _dio = dio ?? buildDioWithProxy(logger: logger);
 
   final Dio _dio;
   final Logger _logger;
