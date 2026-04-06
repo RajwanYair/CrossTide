@@ -4,15 +4,17 @@
     "Dart-Code.flutter",
     "robert-brunhage.flutter-riverpod-snippets",
     "Nash.awesome-flutter-snippets",
-    "redhat.vscode-yaml",
-    "editorconfig.editorconfig",
+    "usernamehw.errorlens",
+    "ryanluker.vscode-coverage-gutters",
+    "pflannery.vscode-versionlens",
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github",
     "GitHub.copilot",
     "GitHub.copilot-chat",
-    "GitHub.vscode-pull-request-github",
-    "eamodio.gitlens",
-    "usernamehw.errorlens",
-    "pflannery.vscode-versionlens",
+    "redhat.vscode-yaml",
+    "editorconfig.editorconfig",
     "naumovs.color-highlight",
     "localizely.flutter-intl"
-  ]
+  ],
+  "unwantedRecommendations": []
 }

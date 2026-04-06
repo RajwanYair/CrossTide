@@ -14,36 +14,37 @@ dependencies:
     sdk: flutter
 
   # State management – Riverpod: compile-safe, testable, no BuildContext needed
-  flutter_riverpod: ^2.6.1
+  flutter_riverpod: ^3.3.1
 
   # Navigation
-  go_router: ^14.8.1
+  go_router: ^17.2.0
 
   # Networking
   dio: ^5.8.0+1
 
   # Serialization
-  freezed_annotation: ^2.4.4
+  freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
 
   # Persistence – Drift (SQLite): type-safe, migration-friendly, in-memory for tests
   drift: ^2.24.0
-  sqlite3_flutter_libs: ^0.5.32
+  sqlite3: ^3.3.0  # explicit; hook configured below to use system winsqlite3.dll
+  sqlite3_flutter_libs: ^0.6.0+eol
 
   # Secure storage for API keys
-  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage: ^10.0.0
 
   # Environment variables (local dev only; never commit .env)
-  flutter_dotenv: ^5.2.1
+  flutter_dotenv: ^6.0.0
 
   # Local notifications – supports Windows toasts + Android channels + deep-links
-  flutter_local_notifications: ^18.0.1
+  flutter_local_notifications: ^21.0.0
 
   # Background tasks (Android only; Windows NOT supported by workmanager)
-  workmanager: ^0.5.2
+  workmanager: ^0.9.0+3
 
   # Charts
-  fl_chart: ^0.70.2
+  fl_chart: ^1.2.0
 
   # Logging
   logger: ^2.5.0
@@ -64,11 +65,20 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   build_runner: ^2.4.15
-  freezed: ^2.5.8
+  freezed: ^3.2.5
   json_serializable: ^6.9.4
   drift_dev: ^2.24.0
   mockito: ^5.4.5
   mocktail: ^1.0.4
+
+# Configure sqlite3 hook to avoid downloading from GitHub at test/build time.
+# Uses Windows' built-in winsqlite3.dll (Windows 10+) so no network access needed.
+hooks:
+  user_defines:
+    sqlite3:
+      source: system
+      name_windows: winsqlite3
+      name: sqlite3
 
 flutter:
   uses-material-design: true

@@ -1,20 +1,27 @@
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "Dart-Code.dart-code",
-  "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": true,
-  "editor.minimap.enabled": false,
+  "dart.flutterSdkPath": "C:\\flutter",
   "dart.lineLength": 80,
   "dart.previewFlutterUiGuides": true,
   "dart.previewFlutterUiGuidesCustomTracking": true,
   "dart.openDevTools": "flutter",
   "dart.debugExternalPackageLibraries": false,
   "dart.debugSdkLibraries": false,
+  "dart.showTodos": true,
+  "dart.warnWhenEditingFilesInPub": true,
+  "dart.renameFilesWithClasses": "prompt",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.guides.indentation": true,
+  "editor.minimap.enabled": false,
+  "editor.rulers": [80],
+  "editor.stickyScroll.enabled": true,
+  "editor.inlayHints.enabled": "on",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
   },
-  "dart.flutterSdkPath": "C:\\flutter",
   "[dart]": {
     "editor.defaultFormatter": "Dart-Code.dart-code",
     "editor.formatOnSave": true,
@@ -32,6 +39,7 @@
     "**/*.g.dart": true,
     "**/*.freezed.dart": true,
     "**/*.drift.dart": true,
+    "**/*.mocks.dart": true,
     "**/build": true,
     "**/.dart_tool": true
   },
@@ -40,5 +48,11 @@
     "**/build/**": true
   },
   "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
-  "github.copilot.chat.codeGeneration.useInstructionFiles": true
+  "testing.coverageBarThresholds": { "red": 0, "yellow": 80, "green": 100 },
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.testGeneration.instructions": [
+    { "text": "Use flutter_test. Domain tests are pure Dart, no Flutter deps. Use group()/setUp(). Cover happy path, edge cases, boundaries." }
+  ],
+  "gitlens.codeLens.enabled": true,
+  "gitlens.hovers.currentLine.over": "line"
 }

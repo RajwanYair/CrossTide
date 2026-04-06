@@ -91,10 +91,7 @@ class BackgroundService {
       'Initializing Android WorkManager (interval: ${intervalMinutes}min)',
     );
 
-    await Workmanager().initialize(
-      workManagerCallbackDispatcher,
-      isInDebugMode: false,
-    );
+    await Workmanager().initialize(workManagerCallbackDispatcher);
 
     await Workmanager().registerPeriodicTask(
       _workManagerUniqueName,
@@ -104,7 +101,7 @@ class BackgroundService {
         networkType: NetworkType.connected,
         requiresBatteryNotLow: true,
       ),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
     );
 
     _logger.i('Android WorkManager registered');

@@ -175,9 +175,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 initialValue: _settings.providerName,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
                 items: const [
                   DropdownMenuItem(
                     value: 'yahoo_finance',
@@ -202,10 +200,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               // API Key (only shown for Alpha Vantage)
               if (_settings.providerName == 'alpha_vantage') ...[
-                Text(
-                  'API Key',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('API Key', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _apiKeyController,

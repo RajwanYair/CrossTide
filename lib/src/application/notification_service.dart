@@ -1,17 +1,8 @@
 // Notification Service — Abstract interface + flutter_local_notifications impl.
 //
-// Choice: flutter_local_notifications (Option A).
-// Justification: Supports Android channels + notification tap callbacks.
-// On Windows, the plugin shows basic notifications; advanced Windows toast
-// features (cancel, getActive) require MSIX package identity — handled
-// gracefully with try/catch and logs.
-//
-// Windows limitations (documented):
-//   - Repeating notifications may be unsupported.
-//   - cancel() and getActiveNotifications() require MSIX package identity.
-//   - Windows-specific initialization (WindowsInitializationSettings) is
-//     available in flutter_local_notifications_windows plugin ≥4.0; the base
-//     plugin v18 does not export these. We use platform-default behavior.
+// flutter_local_notifications v21+: initialize() and show() use named params.
+// Windows: uses WindowsInitializationSettings (flutter_local_notifications_windows).
+// Android: Notification channel with high importance.
 import 'dart:io' show Platform;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -49,19 +40,23 @@ class LocalNotificationService implements INotificationService {
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
-
-    // Linux settings (used as fallback on desktop platforms).
     const linuxSettings = LinuxInitializationSettings(
       defaultActionName: 'Open',
     );
+    const windowsSettings = WindowsInitializationSettings(
+      appName: 'CrossTide',
+      appUserModelId: 'com.crosstide.app',
+      guid: '7a5a2a1b-3e4f-4c5d-8a9b-2c3d4e5f6a7b',
+    );
 
-    const initSettings = InitializationSettings(
+    final initSettings = InitializationSettings(
       android: androidSettings,
-      linux: linuxSettings,
+      linux: Platform.isLinux ? linuxSettings : null,
+      windows: Platform.isWindows ? windowsSettings : null,
     );
 
     await _plugin.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: _handleNotificationTap,
     );
 
@@ -104,11 +99,12 @@ class LocalNotificationService implements INotificationService {
 
     try {
       await _plugin.show(
-        id,
-        '$ticker — SMA200 Cross-Up!',
-        'Close: \$${close.toStringAsFixed(2)} crossed above '
+        id: id,
+        title: '$ticker — SMA200 Cross-Up!',
+        body:
+            'Close: \$${close.toStringAsFixed(2)} crossed above '
             'SMA200: \$${sma200.toStringAsFixed(2)}',
-        details,
+        notificationDetails: details,
         payload: 'ticker:$ticker',
       );
       _logger.i('Notification shown for $ticker');

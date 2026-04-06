@@ -18,15 +18,11 @@ void main() {
       }).toList();
     }
 
-    TickerAlertState belowState() => const TickerAlertState(
-          ticker: 'TEST',
-          lastStatus: SmaRelation.below,
-        );
+    TickerAlertState belowState() =>
+        const TickerAlertState(ticker: 'TEST', lastStatus: SmaRelation.below);
 
-    TickerAlertState aboveState() => const TickerAlertState(
-          ticker: 'TEST',
-          lastStatus: SmaRelation.above,
-        );
+    TickerAlertState aboveState() =>
+        const TickerAlertState(ticker: 'TEST', lastStatus: SmaRelation.above);
 
     test('returns null with insufficient data (<201 candles)', () {
       final candles = makeCandles(List.filled(200, 100.0));
@@ -64,11 +60,7 @@ void main() {
     });
 
     test('does NOT alert when already above (idempotent)', () {
-      final closes = [
-        ...List.filled(199, 100.0),
-        99.0,
-        102.0,
-      ];
+      final closes = [...List.filled(199, 100.0), 99.0, 102.0];
       final candles = makeCandles(closes);
 
       // Previous state: already above -> should NOT alert again
@@ -80,8 +72,11 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.isCrossUp, isTrue);
-      expect(result.shouldAlert, isFalse,
-          reason: 'Alert should be idempotent -- already in above state');
+      expect(
+        result.shouldAlert,
+        isFalse,
+        reason: 'Alert should be idempotent -- already in above state',
+      );
     });
 
     test('no cross-up when price stays below SMA200', () {
@@ -122,8 +117,11 @@ void main() {
       );
 
       expect(result, isNotNull);
-      expect(result!.isCrossUp, isTrue,
-          reason: 'close[t-1] <= sma200[t-1] AND close[t] > sma200[t]');
+      expect(
+        result!.isCrossUp,
+        isTrue,
+        reason: 'close[t-1] <= sma200[t-1] AND close[t] > sma200[t]',
+      );
       expect(result.isRising, isFalse, reason: '2-day trend not satisfied');
       expect(result.shouldAlert, isFalse);
     });
@@ -166,8 +164,11 @@ void main() {
       );
 
       expect(result!.isCrossUp, isTrue);
-      expect(result.shouldAlert, isTrue,
-          reason: 'After cross-down, next cross-up should fire');
+      expect(
+        result.shouldAlert,
+        isTrue,
+        reason: 'After cross-down, next cross-up should fire',
+      );
     });
 
     test('multi-day trend strictness=3 requires 3 rising days', () {

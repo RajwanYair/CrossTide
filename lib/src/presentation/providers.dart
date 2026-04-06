@@ -60,7 +60,9 @@ final marketDataProviderProvider = FutureProvider<IMarketDataProvider>((
       final storage = ref.watch(secureStorageProvider);
       final apiKey = await storage.read(key: 'market_data_api_key') ?? '';
       if (apiKey.isEmpty) {
-        logger.w('Alpha Vantage selected but no API key — falling back to Yahoo Finance');
+        logger.w(
+          'Alpha Vantage selected but no API key — falling back to Yahoo Finance',
+        );
         return YahooFinanceProvider(logger: logger);
       }
       return AlphaVantageProvider(apiKey: apiKey, logger: logger);

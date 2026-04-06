@@ -2,31 +2,43 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter (Windows)",
+      "name": "CrossTide (Windows)",
       "type": "dart",
       "request": "launch",
       "program": "lib/main.dart",
       "args": ["-d", "windows"]
     },
     {
-      "name": "Flutter (Android Emulator)",
+      "name": "CrossTide (Android)",
       "type": "dart",
       "request": "launch",
       "program": "lib/main.dart",
-      "args": ["-d", "emulator"]
+      "args": [
+        "-d",
+        "android"
+      ]
     },
     {
-      "name": "Flutter (Debug)",
-      "type": "dart",
-      "request": "launch",
-      "program": "lib/main.dart"
-    },
-    {
-      "name": "Flutter (Profile)",
+      "name": "CrossTide (Profile)",
       "type": "dart",
       "request": "launch",
       "program": "lib/main.dart",
       "flutterMode": "profile"
+    },
+    {
+      "name": "Run Tests",
+      "type": "dart",
+      "request": "launch",
+      "program": "test"
+    },
+    {
+      "name": "Run Tests with Coverage",
+      "type": "dart",
+      "request": "launch",
+      "program": "test",
+      "args": [
+        "--coverage"
+      ]
     }
   ]
 }

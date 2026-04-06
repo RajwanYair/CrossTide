@@ -55,10 +55,31 @@
       "problemMatcher": []
     },
     {
+      "label": "flutter: test coverage",
+      "type": "shell",
+      "command": "flutter test --coverage",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "flutter: format",
+      "type": "shell",
+      "command": "dart format .",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "flutter: build android debug",
       "type": "shell",
       "command": "flutter build apk --debug",
       "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev: full health check",
+      "type": "shell",
+      "command": "flutter analyze && flutter test && dart format --set-exit-if-changed .",
+      "group": "test",
       "problemMatcher": []
     }
   ]

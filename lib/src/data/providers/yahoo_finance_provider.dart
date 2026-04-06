@@ -69,8 +69,7 @@ class YahooFinanceProvider implements IMarketDataProvider {
       final error = chart['error'] as Map<String, dynamic>?;
       if (error != null) {
         final code = error['code'] as String? ?? 'Unknown';
-        final description =
-            error['description'] as String? ?? 'Unknown error';
+        final description = error['description'] as String? ?? 'Unknown error';
         throw MarketDataException(
           '$code: $description',
           isRetryable: code == 'Too Many Requests',
@@ -86,11 +85,11 @@ class YahooFinanceProvider implements IMarketDataProvider {
       }
 
       final result = results[0] as Map<String, dynamic>;
-      final timestamps = (result['timestamp'] as List<dynamic>?)
-          ?.cast<int>();
+      final timestamps = (result['timestamp'] as List<dynamic>?)?.cast<int>();
       final indicators = result['indicators'] as Map<String, dynamic>?;
-      final quotes = (indicators?['quote'] as List<dynamic>?)
-          ?.firstOrNull as Map<String, dynamic>?;
+      final quotes =
+          (indicators?['quote'] as List<dynamic>?)?.firstOrNull
+              as Map<String, dynamic>?;
 
       if (timestamps == null || quotes == null) {
         throw const MarketDataException(
@@ -125,10 +124,7 @@ class YahooFinanceProvider implements IMarketDataProvider {
         final low = lows[i];
         final volume = volumes[i];
 
-        if (close == null ||
-            open == null ||
-            high == null ||
-            low == null) {
+        if (close == null || open == null || high == null || low == null) {
           continue; // Skip days with missing data
         }
 
