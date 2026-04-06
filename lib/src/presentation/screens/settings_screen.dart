@@ -360,7 +360,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 12),
 
               // Webhook notifications
-              _SettingsSection(
+              const _SettingsSection(
                 icon: Icons.webhook_rounded,
                 title: '🔔 Webhook Notifications',
                 subtitle:
@@ -432,6 +432,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ),
               ).animate(delay: 460.ms).fadeIn().slideY(begin: 0.1, end: 0),
+              const SizedBox(height: 8),
+
+              // Rollback settings from snapshot
+              OutlinedButton.icon(
+                onPressed: () => _rollbackSnapshot(context),
+                icon: const Icon(Icons.restore_rounded, size: 18),
+                label: const Text('Rollback Settings from Snapshot'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 44),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ).animate(delay: 470.ms).fadeIn().slideY(begin: 0.1, end: 0),
               const SizedBox(height: 8),
 
               // About row
@@ -581,6 +595,72 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('⚠️ Export failed: $e')),
       );
+    }
+  }
+
+  Future<void> _rollbackSnapshot(BuildContext context) async {
+    // Ask user to enter the snapshot file path.
+    final ctrl = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Rollback Settings'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Paste the path to a CrossTide snapshot JSON file.\n'
+              'Only settings will be restored — your watchlist is unchanged.',
+              style: TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Snapshot file path',
+                hintText: '/tmp/crosstide_snapshots/crosstide_snapshot_….json',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+              autocorrect: false,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Restore'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || ctrl.text.trim().isEmpty) return;
+    if (!context.mounted) return;
+
+    try {
+      final svc = await ref.read(snapshotServiceProvider.future);
+      final restored = await svc.rollbackSettings(ctrl.text.trim());
+      // Refresh screen with restored values.
+      setState(() => _settings = restored);
+      ref.invalidate(settingsProvider);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('✅ Settings restored from snapshot'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('⚠️ Rollback failed: $e')));
     }
   }
 

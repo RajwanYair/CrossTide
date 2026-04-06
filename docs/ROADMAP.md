@@ -176,7 +176,7 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - [x] Daily JSON snapshot of all `TickerAlertState` values — `SnapshotService` (S51)
 - [x] Diff view: alert profile changes previewed before apply — `previewDiff()` (S52)
 - [ ] Anomaly detection: flag if same ticker cross-ups repeatedly within hours (S55) ✅ `CrossUpAnomalyDetector` + `_AnomalyBanner`
-- [ ] **Rollback** — revert settings to a previous snapshot
+- [x] **Rollback** — revert settings to a previous snapshot (S56) — `SnapshotService.rollbackSettings()` + UI dialog
 
 ### Audit Log
 - [x] Every setting change recorded: `{timestamp, field, old_value, new_value}` — `AuditLogTable` (S50)

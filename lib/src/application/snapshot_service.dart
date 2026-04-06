@@ -118,4 +118,56 @@ class SnapshotService {
     'lastCloseUsed': s.lastCloseUsed,
     'lastSma200': s.lastSma200,
   };
+
+  // ---- rollback ------------------------------------------------------------
+
+  /// Restores [AppSettings] from a previously exported snapshot JSON file at
+  /// [filePath].
+  ///
+  /// Only settings fields are restored. Ticker list and alert states are left
+  /// unchanged so the caller can decide whether to also replay those.
+  ///
+  /// Returns the restored [AppSettings] after persisting it to the repository.
+  ///
+  /// Throws [FormatException] if the file cannot be parsed or is missing the
+  /// `settings` key.
+  Future<AppSettings> rollbackSettings(String filePath) async {
+    _logger.d('SnapshotService: rolling back settings from $filePath');
+    final file = File(filePath);
+    final contents = await file.readAsString();
+    final dynamic root = jsonDecode(contents);
+    if (root is! Map<String, dynamic>) {
+      throw const FormatException('Snapshot root must be a JSON object');
+    }
+    final rawSettings = root['settings'];
+    if (rawSettings is! Map<String, dynamic>) {
+      throw const FormatException('Snapshot missing "settings" key');
+    }
+    final settings = _settingsFromMap(rawSettings);
+    await repository.saveSettings(settings);
+    _logger.i('SnapshotService: settings rolled back from $filePath');
+    return settings;
+  }
+
+  AppSettings _settingsFromMap(Map<String, dynamic> m) {
+    List<String> parseIndicators(dynamic raw) {
+      if (raw is List) return raw.whereType<String>().toList();
+      return const [];
+    }
+
+    return AppSettings(
+      refreshIntervalMinutes:
+          (m['refreshIntervalMinutes'] as num?)?.toInt() ?? 60,
+      quietHoursStart: (m['quietHoursStart'] as num?)?.toInt(),
+      quietHoursEnd: (m['quietHoursEnd'] as num?)?.toInt(),
+      trendStrictnessDays: (m['trendStrictnessDays'] as num?)?.toInt() ?? 1,
+      providerName: (m['providerName'] as String?) ?? 'yahoo_finance',
+      cacheTtlMinutes: (m['cacheTtlMinutes'] as num?)?.toInt() ?? 30,
+      advancedMode: (m['advancedMode'] as bool?) ?? false,
+      defaultIndicators: parseIndicators(m['defaultIndicators']),
+      volumeSpikeMultiplier:
+          (m['volumeSpikeMultiplier'] as num?)?.toDouble() ?? 2.0,
+      accentColorValue: (m['accentColorValue'] as num?)?.toInt() ?? 0xFF0D47A1,
+    );
+  }
 }

@@ -61,7 +61,7 @@ class CrossUpAnomalyDetector {
   /// volume spikes are intentionally excluded because they can legitimately
   /// fire multiple times.
   List<CrossUpAnomaly> detect(List<AlertHistoryEntry> history) {
-    final _smaAlertTypes = {
+    final smaAlertTypes = {
       'sma200CrossUp',
       'sma150CrossUp',
       'sma50CrossUp',
@@ -72,7 +72,7 @@ class CrossUpAnomalyDetector {
     // Group by symbol + alertType
     final Map<String, List<DateTime>> buckets = {};
     for (final entry in history) {
-      if (!_smaAlertTypes.contains(entry.alertType)) continue;
+      if (!smaAlertTypes.contains(entry.alertType)) continue;
       final key = '${entry.symbol}::${entry.alertType}';
       buckets.putIfAbsent(key, () => []).add(entry.firedAt);
     }

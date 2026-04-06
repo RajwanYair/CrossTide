@@ -5,9 +5,17 @@
 library;
 
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:cross_tide/src/application/snapshot_service.dart';
+import 'package:cross_tide/src/data/database/database.dart';
+import 'package:cross_tide/src/data/providers/market_data_provider.dart';
+import 'package:cross_tide/src/data/repository.dart';
+import 'package:cross_tide/src/domain/entities.dart' as domain;
 import 'package:cross_tide/src/domain/entities.dart';
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 
 // Expose the private helpers by testing the JSON shape directly through
 // a minimal stub that mimics what exportJson() produces.
@@ -138,4 +146,117 @@ void main() {
       expect(json1, json2);
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // Rollback — _settingsFromMap is exercised via SnapshotService.rollbackSettings
+  // ---------------------------------------------------------------------------
+
+  group('SnapshotService.rollbackSettings', () {
+    late AppDatabase testDb;
+    late StockRepository repo;
+    late Directory tempDir;
+
+    setUp(() async {
+      testDb = AppDatabase.forTesting(NativeDatabase.memory());
+      repo = StockRepository(db: testDb, provider: _NoOpProvider());
+      tempDir = await Directory.systemTemp.createTemp('ct_rollback_test_');
+    });
+
+    tearDown(() async {
+      await testDb.close();
+      if (tempDir.existsSync()) await tempDir.delete(recursive: true);
+    });
+
+    Future<String> writeSnapshot(Map<String, dynamic> payload) async {
+      final file = File(p.join(tempDir.path, 'snap.json'));
+      await file.writeAsString(jsonEncode(payload));
+      return file.path;
+    }
+
+    test('restores settings field values from snapshot', () async {
+      const original = AppSettings(
+        refreshIntervalMinutes: 30,
+        trendStrictnessDays: 3,
+        advancedMode: true,
+        cacheTtlMinutes: 15,
+        volumeSpikeMultiplier: 4.0,
+        accentColorValue: 0xFFFF0000,
+        providerName: 'alpha_vantage',
+      );
+
+      final payload = _buildSnapshotPayload(settings: original, tickers: []);
+      final path = await writeSnapshot(payload);
+
+      final svc = SnapshotService(repository: repo);
+      final restored = await svc.rollbackSettings(path);
+
+      expect(restored.refreshIntervalMinutes, 30);
+      expect(restored.trendStrictnessDays, 3);
+      expect(restored.advancedMode, isTrue);
+      expect(restored.cacheTtlMinutes, 15);
+      expect(restored.volumeSpikeMultiplier, 4.0);
+      expect(restored.accentColorValue, 0xFFFF0000);
+      expect(restored.providerName, 'alpha_vantage');
+    });
+
+    test('persisted settings match returned value', () async {
+      const settings = AppSettings(refreshIntervalMinutes: 45);
+      final payload = _buildSnapshotPayload(settings: settings, tickers: []);
+      final path = await writeSnapshot(payload);
+
+      final svc = SnapshotService(repository: repo);
+      await svc.rollbackSettings(path);
+
+      final persisted = await repo.getSettings();
+      expect(persisted.refreshIntervalMinutes, 45);
+    });
+
+    test('throws FormatException for non-object JSON', () async {
+      final file = File(p.join(tempDir.path, 'bad.json'));
+      await file.writeAsString('["not", "an", "object"]');
+
+      final svc = SnapshotService(repository: repo);
+      await expectLater(
+        svc.rollbackSettings(file.path),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
+    test('throws FormatException when settings key is missing', () async {
+      final path = await writeSnapshot({
+        'exportedAt': '2025-01-01',
+        'tickers': [],
+      });
+
+      final svc = SnapshotService(repository: repo);
+      await expectLater(
+        svc.rollbackSettings(path),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
+    test('uses defaults for missing numeric fields', () async {
+      final path = await writeSnapshot({
+        'settings': <String, dynamic>{},
+        'tickers': [],
+      });
+
+      final svc = SnapshotService(repository: repo);
+      final restored = await svc.rollbackSettings(path);
+
+      expect(restored.refreshIntervalMinutes, 60);
+      expect(restored.trendStrictnessDays, 1);
+      expect(restored.advancedMode, isFalse);
+    });
+  });
+}
+
+// Minimal no-op market data provider for repository construction.
+class _NoOpProvider implements IMarketDataProvider {
+  @override
+  String get id => 'noop';
+  @override
+  String get name => 'NoOp';
+  @override
+  Future<List<domain.DailyCandle>> fetchDailyHistory(String ticker) async => [];
 }
