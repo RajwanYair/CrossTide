@@ -1,7 +1,15 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "Dart-Code.dart-code",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.minimap.enabled": false,
   "dart.lineLength": 80,
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "dart.openDevTools": "flutter",
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
@@ -23,6 +31,14 @@
   "search.exclude": {
     "**/*.g.dart": true,
     "**/*.freezed.dart": true,
-    "**/*.drift.dart": true
-  }
+    "**/*.drift.dart": true,
+    "**/build": true,
+    "**/.dart_tool": true
+  },
+  "files.watcherExclude": {
+    "**/.dart_tool/**": true,
+    "**/build/**": true
+  },
+  "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true
 }

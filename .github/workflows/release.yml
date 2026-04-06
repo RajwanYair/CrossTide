@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Release
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            build-cmd: flutter build windows --release
+            artifact-path: build/windows/x64/runner/Release/
+            artifact-name: Stock200Alert-Windows
+          - os: ubuntu-latest
+            platform: android
+            build-cmd: flutter build apk --release
+            artifact-path: build/app/outputs/flutter-apk/app-release.apk
+            artifact-name: Stock200Alert-Android
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        if: matrix.platform == 'android'
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Enable Windows desktop
+        if: matrix.platform == 'windows'
+        run: flutter config --enable-windows-desktop
+
+      - run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build
+        run: ${{ matrix.build-cmd }}
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: ${{ matrix.artifact-path }}
+
+      - name: Create GitHub Release
+        if: matrix.platform == 'windows'
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          draft: true

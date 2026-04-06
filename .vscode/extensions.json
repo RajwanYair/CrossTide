@@ -8,6 +8,11 @@
     "editorconfig.editorconfig",
     "GitHub.copilot",
     "GitHub.copilot-chat",
-    "pflannery.vscode-versionlens"
+    "GitHub.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "pflannery.vscode-versionlens",
+    "naumovs.color-highlight",
+    "localizely.flutter-intl"
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "inputs": {
+    "alpha_vantage_api_key": {
+      "type": "promptString",
+      "description": "AlphaVantage API key for market data (https://www.alphavantage.co/support/#api-key)",
+      "password": true
+    }
+  },
+  "servers": {
+    "github": {
+      "type": "copilot"
+    }
+  }
+}

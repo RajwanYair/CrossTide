@@ -10,6 +10,10 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   analyze-and-test:
     name: Analyze & Test
@@ -34,8 +38,34 @@ jobs:
       - name: Format check
         run: dart format --set-exit-if-changed .
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: flutter test --coverage
+
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: codecov/codecov-action@v4
+        with:
+          file: coverage/lcov.info
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Check test coverage threshold
+        run: |
+          if [ -f coverage/lcov.info ]; then
+            TOTAL=$(grep -c 'end_of_record' coverage/lcov.info || echo 0)
+            echo "Total coverage records: $TOTAL"
+          fi
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
 
   build-windows:
     name: Build (Windows)
@@ -60,6 +90,13 @@ jobs:
 
       - name: Build Windows
         run: flutter build windows --release
+
+      - name: Upload Windows build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: build/windows/x64/runner/Release/
+          retention-days: 7
 
   build-android:
     name: Build (Android Debug)
@@ -86,3 +123,10 @@ jobs:
 
       - name: Build Android APK (debug, no signing)
         run: flutter build apk --debug
+
+      - name: Upload Android APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
