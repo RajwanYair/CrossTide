@@ -108,6 +108,12 @@ final backgroundServiceProvider = Provider<BackgroundService>((ref) {
   return BackgroundService(logger: ref.read(loggerProvider));
 });
 
+final windowsTaskSchedulerProvider = Provider<WindowsTaskSchedulerService>((
+  ref,
+) {
+  return WindowsTaskSchedulerService(logger: ref.read(loggerProvider));
+});
+
 // ---------------------------------------------------------------------------
 // Ticker list state
 // ---------------------------------------------------------------------------

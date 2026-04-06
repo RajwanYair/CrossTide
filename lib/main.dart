@@ -7,7 +7,7 @@
 //   /presentation — UI (screens, router, Riverpod providers)
 //
 // Targets: Android (WorkManager background) + Windows (timer + tray mode).
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, exit;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,12 +16,24 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 
+import 'src/application/application.dart';
 import 'src/presentation/presentation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final logger = Logger();
+
+  // ---- Headless mode (Windows Task Scheduler) ---------------------------
+  // When schtasks.exe launches the app with --background-refresh, run a
+  // single refresh cycle and exit — no UI, no tray, no event loop.
+  if (Platform.isWindows &&
+      const bool.fromEnvironment('dart.vm.product', defaultValue: false) ==
+          false &&
+      _isHeadlessRefresh()) {
+    await _runHeadlessRefresh(logger);
+    return;
+  }
 
   // Load .env (non-fatal if missing; keys come from secure storage at runtime)
   try {
@@ -62,6 +74,12 @@ Future<void> main() async {
         refreshService: refreshService,
         intervalMinutes: settings.refreshIntervalMinutes,
       );
+
+      // Register Windows Task Scheduler for true background refresh
+      final taskScheduler = container.read(windowsTaskSchedulerProvider);
+      await taskScheduler.register(
+        intervalMinutes: settings.refreshIntervalMinutes,
+      );
     }
   } catch (e, st) {
     logger.e(
@@ -69,6 +87,30 @@ Future<void> main() async {
       error: e,
       stackTrace: st,
     );
+  }
+
+  // ---- Windows system tray -------------------------------------------
+  SystemTrayService? trayService;
+  if (Platform.isWindows) {
+    trayService = SystemTrayService(
+      logger: logger,
+      onShow: () {
+        // Will be wired to window focus in StockAlertApp
+      },
+      onRefreshNow: () async {
+        try {
+          final svc = await container.read(refreshServiceProvider.future);
+          await svc.refreshAll();
+        } catch (e) {
+          logger.e('Tray refresh failed: $e');
+        }
+      },
+      onQuit: () async {
+        await trayService?.dispose();
+        exit(0);
+      },
+    );
+    await trayService.initialize();
   }
 
   // Check onboarding status
@@ -189,4 +231,47 @@ class StockAlertApp extends StatelessWidget {
       routerConfig: router,
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Headless background-refresh mode (Windows Task Scheduler)
+// ---------------------------------------------------------------------------
+
+/// Check if the app was launched with `--background-refresh` by the Windows
+/// Task Scheduler. Inspects platform-dispatched command-line arguments.
+bool _isHeadlessRefresh() {
+  // Command-line args are passed via DartProject::set_dart_entrypoint_arguments
+  // in the Windows runner (main.cpp). In release mode they arrive as
+  // Platform.executableArguments; in debug mode via environment.
+  final args = <String>[
+    ...Platform.executableArguments,
+    // The runner passes them as dart entrypoint args
+  ];
+  return args.contains('--background-refresh');
+}
+
+/// Run a single refresh cycle without showing any UI and then exit.
+Future<void> _runHeadlessRefresh(Logger logger) async {
+  logger.i('Headless background-refresh started');
+  try {
+    await dotenv.load().catchError((_) {});
+
+    final container = ProviderContainer();
+    final repo = await container.read(repositoryProvider.future);
+    final notificationService = container.read(notificationServiceProvider);
+    await notificationService.initialize();
+
+    final refreshService = RefreshService(
+      repository: repo,
+      notificationService: notificationService,
+      logger: logger,
+    );
+
+    final results = await refreshService.refreshAll();
+    logger.i('Headless refresh complete: $results');
+    container.dispose();
+  } catch (e, st) {
+    logger.e('Headless refresh failed', error: e, stackTrace: st);
+  }
+  exit(0);
 }
