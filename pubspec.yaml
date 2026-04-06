@@ -70,6 +70,18 @@ dev_dependencies:
   drift_dev: ^2.24.0
   mockito: ^5.4.5
   mocktail: ^1.0.4
+  # Windows MSIX installer packaging
+  msix: ^3.16.7
+
+msix_config:
+  display_name: CrossTide
+  publisher_display_name: CrossTide
+  identity_name: com.crosstide.app
+  publisher: CN=CrossTide
+  msix_version: 1.0.0.0       # overridden at build time by release CI via --version flag
+  logo_path: windows\runner\resources\app_icon.ico
+  capabilities: internetClient
+  sign_msix: false             # unsigned; users enable sideloading or install with Developer Mode
 
 # Configure sqlite3 hook to avoid downloading from GitHub at test/build time.
 # Uses Windows' built-in winsqlite3.dll (Windows 10+) so no network access needed.

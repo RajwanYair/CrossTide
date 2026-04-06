@@ -1,65 +1,193 @@
 name: Release
 
+# ---------------------------------------------------------------------------
+# Triggered automatically whenever a vX.Y.Z tag is pushed — either by the
+# "Bump Version & Tag" workflow or by pushing a tag manually:
+#   git tag v1.2.3 && git push origin v1.2.3
+#
+# Produces the following downloadable assets on the GitHub Release:
+#   • CrossTide-v1.2.3-windows.zip    — portable Windows build (xcopy deploy)
+#   • CrossTide-v1.2.3-installer.msix — Windows installer (requires sideload)
+#   • CrossTide-v1.2.3-android.apk    — Android APK (direct install / sideload)
+# ---------------------------------------------------------------------------
+
 on:
   push:
     tags:
-      - 'v*'
+      - 'v[0-9]*.[0-9]*.[0-9]*'
 
 permissions:
-  contents: write
+  contents: write   # required to create the GitHub Release
+
+env:
+  FLUTTER_VERSION: '3.x'
 
 jobs:
-  build-and-release:
-    name: Build & Release
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            platform: windows
-            build-cmd: flutter build windows --release
-            artifact-path: build/windows/x64/runner/Release/
-            artifact-name: CrossTide-Windows
-          - os: ubuntu-latest
-            platform: android
-            build-cmd: flutter build apk --release
-            artifact-path: build/app/outputs/flutter-apk/app-release.apk
-            artifact-name: CrossTide-Android
-    runs-on: ${{ matrix.os }}
+  # ── 0. Gate: make sure tests still pass on this exact commit ──────────────
+  test:
+    name: Test & Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter analyze --fatal-infos
+      - run: flutter test
+
+  # ── 1. Windows build → ZIP + MSIX ─────────────────────────────────────────
+  build-windows:
+    name: Build Windows (ZIP + MSIX)
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse version from tag
+        id: ver
+        shell: bash
+        run: |
+          TAG="${{ github.ref_name }}"          # v1.2.3
+          SEM="${TAG#v}"                         # 1.2.3
+          MSIX="${SEM}.0"                        # 1.2.3.0  (MSIX requires 4 parts)
+          echo "sem=$SEM"   >> "$GITHUB_OUTPUT"
+          echo "msix=$MSIX" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - run: flutter pub get
+
+      - name: Generate code (Drift / Freezed)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Windows release
+        run: |
+          flutter build windows --release `
+            --build-name=${{ steps.ver.outputs.sem }} `
+            --build-number=${{ github.run_number }}
+
+      - name: Create portable ZIP
+        run: |
+          Compress-Archive `
+            -Path "build\windows\x64\runner\Release\*" `
+            -DestinationPath "CrossTide-${{ github.ref_name }}-windows.zip"
+
+      - name: Build MSIX installer
+        run: |
+          dart run msix:create `
+            --version ${{ steps.ver.outputs.msix }} `
+            --build-windows false
+
+      - name: Stage MSIX file
+        shell: bash
+        run: |
+          MSIX=$(find build/windows -name "*.msix" | head -n1)
+          echo "Found MSIX: $MSIX"
+          cp "$MSIX" "CrossTide-${{ github.ref_name }}-installer.msix"
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          retention-days: 1
+          path: |
+            CrossTide-${{ github.ref_name }}-windows.zip
+            CrossTide-${{ github.ref_name }}-installer.msix
+
+  # ── 2. Android APK ──────────────────────────────────────────────────────
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: test
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v4
-        if: matrix.platform == 'android'
         with:
           distribution: temurin
           java-version: 17
 
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
-      - name: Enable Windows desktop
-        if: matrix.platform == 'windows'
-        run: flutter config --enable-windows-desktop
+      - name: Parse version from tag
+        id: ver
+        run: |
+          TAG="${{ github.ref_name }}"
+          echo "sem=${TAG#v}" >> "$GITHUB_OUTPUT"
 
       - run: flutter pub get
 
-      - name: Generate code
+      - name: Generate code (Drift / Freezed)
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build
-        run: ${{ matrix.build-cmd }}
+      - name: Build release APK
+        # android/app/build.gradle.kts uses the debug keystore for release builds.
+        # The resulting APK can be sideloaded on any Android 6.0+ device.
+        run: |
+          flutter build apk --release \
+            --build-name=${{ steps.ver.outputs.sem }} \
+            --build-number=${{ github.run_number }}
 
-      - name: Upload release artifact
+      - name: Rename APK
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk \
+             "CrossTide-${{ github.ref_name }}-android.apk"
+
+      - name: Upload Android artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact-name }}
-          path: ${{ matrix.artifact-path }}
+          name: android-release
+          retention-days: 1
+          path: CrossTide-${{ github.ref_name }}-android.apk
+
+  # ── 3. Publish GitHub Release with all artifacts ──────────────────────────
+  publish-release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-windows, build-android]
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true   # flatten all artifacts into working dir
+
+      - name: Verify downloaded files
+        run: ls -lh CrossTide-*
 
       - name: Create GitHub Release
-        if: matrix.platform == 'windows'
         uses: softprops/action-gh-release@v2
         with:
+          name: CrossTide ${{ github.ref_name }}
           generate_release_notes: true
-          draft: true
+          body: |
+            ## Install
+
+            | File | Platform | How to use |
+            |------|----------|-----------|
+            | `CrossTide-${{ github.ref_name }}-windows.zip` | Windows 10/11 | Extract anywhere and run `cross_tide.exe` — no installation required |
+            | `CrossTide-${{ github.ref_name }}-installer.msix` | Windows 10/11 | Double-click to install. Enable **Developer Mode** once in *Settings → Privacy & Security → For Developers* |
+            | `CrossTide-${{ github.ref_name }}-android.apk` | Android 6.0+ | Enable *Install unknown apps* for your browser/file manager, then tap the file |
+
+            > **Note:** Both the MSIX and APK are signed with a debug key. They are safe to use but your OS will show a first-install warning.
+          files: |
+            CrossTide-${{ github.ref_name }}-windows.zip
+            CrossTide-${{ github.ref_name }}-installer.msix
+            CrossTide-${{ github.ref_name }}-android.apk
+
