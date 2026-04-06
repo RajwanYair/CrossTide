@@ -179,4 +179,47 @@ class YahooFinanceProvider implements IMarketDataProvider {
       );
     }
   }
+
+  /// Fetches the next expected earnings date from Yahoo Finance quoteSummary.
+  ///
+  /// Returns null if unavailable or on network error (non-critical).
+  Future<DateTime?> fetchNextEarnings(String ticker) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        'https://query1.finance.yahoo.com/v11/finance/quoteSummary/${ticker.toUpperCase()}',
+        queryParameters: {'modules': 'calendarEvents'},
+        options: Options(
+          headers: {
+            'User-Agent': 'CrossTide/1.0',
+            'Accept': 'application/json',
+          },
+          receiveTimeout: const Duration(seconds: 10),
+          sendTimeout: const Duration(seconds: 8),
+        ),
+      );
+      final data = response.data;
+      if (data == null) return null;
+      final summary =
+          (data['quoteSummary'] as Map<String, dynamic>?);
+      final result = (summary?['result'] as List<dynamic>?)?.firstOrNull
+          as Map<String, dynamic>?;
+      final cal = result?['calendarEvents'] as Map<String, dynamic>?;
+      final earnings = cal?['earnings'] as Map<String, dynamic>?;
+      final dates = earnings?['earningsDate'] as List<dynamic>?;
+      if (dates == null || dates.isEmpty) return null;
+      // earningsDate is a list of {raw: unixTimestamp, fmt: "YYYY-MM-DD"}
+      final first = dates.first as Map<String, dynamic>?;
+      final raw = first?['raw'] as num?;
+      if (raw == null) return null;
+      final dt = DateTime.fromMillisecondsSinceEpoch(
+        raw.toInt() * 1000,
+        isUtc: true,
+      ).toLocal();
+      _logger.d('$ticker: next earnings = $dt');
+      return dt;
+    } catch (e) {
+      _logger.d('$ticker: earnings fetch failed (non-critical): $e');
+      return null;
+    }
+  }
 }

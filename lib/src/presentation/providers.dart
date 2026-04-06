@@ -153,6 +153,14 @@ final tickerAlertStateProvider =
       return repo.getAlertState(ticker);
     });
 
+/// Full domain TickerEntry for a specific symbol (includes nextEarningsAt).
+final tickerEntryProvider =
+    FutureProvider.family<domain.TickerEntry?, String>((ref, symbol) async {
+      final repo = await ref.watch(repositoryProvider.future);
+      final all = await repo.getAllTickers();
+      return all.where((t) => t.symbol == symbol.toUpperCase()).firstOrNull;
+    });
+
 /// S&P 500 benchmark candles (fetched on-demand when the overlay is toggled).
 /// Uses the SPY ETF as a proxy — always available via Yahoo Finance.
 final sp500CandlesProvider = FutureProvider<List<domain.DailyCandle>>((

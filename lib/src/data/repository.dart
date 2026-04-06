@@ -53,6 +53,7 @@ class StockRepository {
           enabledAlertTypes: _parseAlertTypes(r.enabledAlertTypes),
           sortOrder: r.sortOrder,
           groupId: r.groupId,
+          nextEarningsAt: r.nextEarningsAt,
         ),
       );
     }
@@ -304,6 +305,10 @@ class StockRepository {
       ),
     );
   }
+
+  /// Persist the next earnings date for [symbol].
+  Future<void> updateNextEarnings(String symbol, DateTime? date) =>
+      db.updateNextEarnings(symbol.toUpperCase().trim(), date);
 
   // ---- Price Targets ----
 

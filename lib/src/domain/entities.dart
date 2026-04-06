@@ -249,6 +249,7 @@ class TickerEntry extends Equatable {
     this.enabledAlertTypes = const {AlertType.sma200CrossUp},
     this.sortOrder = 0,
     this.groupId,
+    this.nextEarningsAt,
   });
 
   final String symbol;
@@ -268,6 +269,17 @@ class TickerEntry extends Equatable {
   /// Optional watchlist group ID (null = ungrouped).
   final String? groupId;
 
+  /// Next expected earnings date (from Yahoo Finance quoteSummary, nullable).
+  final DateTime? nextEarningsAt;
+
+  /// True if the next earnings event is within [days] calendar days from [now].
+  bool isEarningsSoon({int days = 7, DateTime? now}) {
+    if (nextEarningsAt == null) return false;
+    final today = (now ?? DateTime.now()).toLocal();
+    final diff = nextEarningsAt!.toLocal().difference(today).inDays;
+    return diff >= 0 && diff <= days;
+  }
+
   TickerEntry copyWith({
     DateTime? lastRefreshAt,
     double? lastClose,
@@ -277,6 +289,7 @@ class TickerEntry extends Equatable {
     Set<AlertType>? enabledAlertTypes,
     int? sortOrder,
     String? groupId,
+    DateTime? nextEarningsAt,
   }) {
     return TickerEntry(
       symbol: symbol,
@@ -289,6 +302,7 @@ class TickerEntry extends Equatable {
       enabledAlertTypes: enabledAlertTypes ?? this.enabledAlertTypes,
       sortOrder: sortOrder ?? this.sortOrder,
       groupId: groupId ?? this.groupId,
+      nextEarningsAt: nextEarningsAt ?? this.nextEarningsAt,
     );
   }
 
@@ -304,6 +318,7 @@ class TickerEntry extends Equatable {
     enabledAlertTypes,
     sortOrder,
     groupId,
+    nextEarningsAt,
   ];
 }
 

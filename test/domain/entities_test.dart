@@ -317,7 +317,7 @@ void main() {
     test('props has 10 elements', () {
       // symbol, addedAt, lastRefreshAt, lastClose, sma200, alertState, error,
       // enabledAlertTypes, sortOrder, groupId
-      expect(makeEntry().props.length, 10);
+      expect(makeEntry().props.length, 11);
     });
 
     test('minimal constructor — all optionals null', () {

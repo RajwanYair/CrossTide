@@ -38,6 +38,9 @@ class Tickers extends Table {
   /// Optional group assignment (FK to watchlist_groups.id). Null = ungrouped.
   TextColumn get groupId => text().nullable()();
 
+  /// Next expected earnings date (fetched from quoteSummary). Nullable.
+  DateTimeColumn get nextEarningsAt => dateTime().nullable()();
+
   @override
   Set<Column> get primaryKey => {symbol};
 }
@@ -174,7 +177,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -210,6 +213,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 9) {
         await migrator.createTable(alertHistoryTable);
+      }
+      if (from < 10) {
+        await migrator.addColumn(tickers, tickers.nextEarningsAt);
       }
     },
   );
@@ -361,6 +367,14 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> clearAlertHistory() => delete(alertHistoryTable).go();
+
+  // ---- Earnings ----
+
+  Future<void> updateNextEarnings(String symbol, DateTime? date) async {
+    await (update(tickers)..where((t) => t.symbol.equals(symbol))).write(
+      TickersCompanion(nextEarningsAt: Value(date)),
+    );
+  }
 }
 
 LazyDatabase _openConnection() {

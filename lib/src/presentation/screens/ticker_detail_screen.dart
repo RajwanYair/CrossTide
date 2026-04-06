@@ -53,6 +53,7 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
   Widget build(BuildContext context) {
     final candlesAsync = ref.watch(tickerCandlesProvider(widget.symbol));
     final alertStateAsync = ref.watch(tickerAlertStateProvider(widget.symbol));
+    final entryAsync = ref.watch(tickerEntryProvider(widget.symbol));
     final cs = Theme.of(context).colorScheme;
     final sectorMap = switch (ref.watch(sectorMapProvider)) {
       AsyncData(:final value) => value,
@@ -90,6 +91,16 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
                 ),
               ),
             ],
+            // Earnings indicator
+            if (switch (entryAsync) {
+              AsyncData(:final value) => value,
+              _ => null,
+            }
+                case final entry?)
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: _EarningsBadge(entry: entry),
+              ),
           ],
         ),
         actions: [
@@ -2029,6 +2040,53 @@ class _DetailError extends StatelessWidget {
               style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Earnings date badge
+// ---------------------------------------------------------------------------
+
+class _EarningsBadge extends StatelessWidget {
+  const _EarningsBadge({required this.entry});
+
+  final TickerEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final dt = entry.nextEarningsAt;
+    if (dt == null) return const SizedBox.shrink();
+
+    final now = DateTime.now().toLocal();
+    final daysUntil = dt.toLocal().difference(now).inDays;
+
+    // Don't show stale dates
+    if (daysUntil < -3) return const SizedBox.shrink();
+
+    final (bg, fg, label) = switch (daysUntil) {
+      <= 3 => (Colors.red.shade600, Colors.white, 'Earnings soon'),
+      <= 7 => (Colors.orange.shade600, Colors.white, 'Earnings ~${daysUntil}d'),
+      _ => (Colors.green.shade700, Colors.white, 'Earnings ${daysUntil}d'),
+    };
+
+    return Tooltip(
+      message: 'Next earnings: ${DateFormat('MMM d').format(dt.toLocal())}',
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            color: fg,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );

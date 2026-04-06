@@ -6,6 +6,7 @@ library;
 
 import 'package:logger/logger.dart';
 
+import '../data/providers/yahoo_finance_provider.dart';
 import '../data/repository.dart';
 import '../domain/domain.dart';
 import 'notification_service.dart';
@@ -118,6 +119,19 @@ class RefreshService {
     // 2. Compute current SMA200 for display (always kept up-to-date)
     final currentSma = _smaCalculator.compute(candles, period: 200);
     await repository.updateTickerSma(upper, currentSma);
+
+    // 2b. Fetch next earnings date (non-critical; Yahoo Finance only).
+    // Only refresh once per day to limit API calls.
+    final existingEntry = (await repository.getAllTickers())
+        .where((t) => t.symbol == upper)
+        .firstOrNull;
+    final earningsStale = existingEntry?.nextEarningsAt == null ||
+        existingEntry!.nextEarningsAt!.isBefore(DateTime.now());
+    if (earningsStale && repository.provider is YahooFinanceProvider) {
+      final nextEarnings = await (repository.provider as YahooFinanceProvider)
+          .fetchNextEarnings(upper);
+      await repository.updateNextEarnings(upper, nextEarnings);
+    }
 
     // 3. Quiet-hour check (shared across all alert types)
     final now = DateTime.now();
