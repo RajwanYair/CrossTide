@@ -92,7 +92,7 @@ jobs:
         run: flutter build windows --release
 
       - name: Upload Windows build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-release
           path: build/windows/x64/runner/Release/
@@ -125,7 +125,7 @@ jobs:
         run: flutter build apk --debug
 
       - name: Upload Android APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
