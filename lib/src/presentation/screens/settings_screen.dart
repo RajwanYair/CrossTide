@@ -349,12 +349,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 // Alert Profile Selector
 // ---------------------------------------------------------------------------
 
-class _ProfileSelector extends StatelessWidget {
+class _ProfileSelector extends StatefulWidget {
   const _ProfileSelector({required this.current, required this.onSelected});
 
   final AppSettings current;
   final ValueChanged<AppSettings> onSelected;
 
+  @override
+  State<_ProfileSelector> createState() => _ProfileSelectorState();
+}
+
+class _ProfileSelectorState extends State<_ProfileSelector> {
   static const _profiles = [
     (
       profile: AlertProfile.aggressive,
@@ -378,64 +383,203 @@ class _ProfileSelector extends StatelessWidget {
     ),
   ];
 
+  AlertProfile? _active;
+
+  AlertProfile _activeProfile(AppSettings s) {
+    for (final p in _profiles) {
+      if (p.profile == AlertProfile.custom) continue;
+      final d = p.profile.defaults;
+      if (s.refreshIntervalMinutes == d.refreshIntervalMinutes &&
+          s.trendStrictnessDays == d.trendStrictnessDays) {
+        return p.profile;
+      }
+    }
+    return AlertProfile.custom;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: _profiles.map((p) {
-        final defaults = p.profile.defaults;
-        final isSelected =
-            current.refreshIntervalMinutes == defaults.refreshIntervalMinutes &&
-                current.trendStrictnessDays == defaults.trendStrictnessDays ||
-            p.profile == AlertProfile.custom;
+    final active = _active ?? _activeProfile(widget.current);
+    final cs = Theme.of(context).colorScheme;
 
-        return InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: () {
-            if (p.profile != AlertProfile.custom) {
-              onSelected(p.profile.defaults);
-            }
-          },
-          child: Container(
-            width: 140,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isSelected && p.profile != AlertProfile.custom
-                  ? p.color.withAlpha(22)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isSelected && p.profile != AlertProfile.custom
-                    ? p.color.withAlpha(140)
-                    : Colors.grey.withAlpha(60),
-                width: 1.5,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(p.icon, color: p.color, size: 22),
-                const SizedBox(height: 6),
-                Text(
-                  p.profile.displayName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: p.color,
-                    fontSize: 13,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Horizontal chip row
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: _profiles.map((p) {
+              final isSelected = active == p.profile;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() => _active = p.profile);
+                    if (p.profile != AlertProfile.custom) {
+                      widget.onSelected(p.profile.defaults);
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? p.color.withAlpha(25)
+                          : cs.surfaceContainerHighest.withAlpha(80),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isSelected
+                            ? p.color
+                            : Colors.grey.withAlpha(60),
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(p.icon, color: p.color, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          p.profile.displayName,
+                          style: TextStyle(
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? p.color
+                                : cs.onSurface,
+                            fontSize: 13,
+                          ),
+                        ),
+                        if (isSelected) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.check_circle_rounded,
+                            size: 14,
+                            color: p.color,
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  p.profile.description,
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                  maxLines: 2,
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Description card for active profile
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: _ProfileDescCard(
+            key: ValueKey(active),
+            profile: active,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileDescCard extends StatelessWidget {
+  const _ProfileDescCard({required this.profile, super.key});
+
+  final AlertProfile profile;
+
+  static const _entries = {
+    AlertProfile.aggressive: (
+      icon: Icons.flash_on_rounded,
+      color: Color(0xFFE53935),
+    ),
+    AlertProfile.balanced: (
+      icon: Icons.balance_rounded,
+      color: Color(0xFF1565C0),
+    ),
+    AlertProfile.conservative: (
+      icon: Icons.shield_rounded,
+      color: Color(0xFF2E7D32),
+    ),
+    AlertProfile.custom: (
+      icon: Icons.settings_rounded,
+      color: Color(0xFF6A1B9A),
+    ),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final entry = _entries[profile]!;
+    final defaults = profile != AlertProfile.custom ? profile.defaults : null;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: entry.color.withAlpha(12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: entry.color.withAlpha(50)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(entry.icon, color: entry.color, size: 16),
+              const SizedBox(width: 6),
+              Text(
+                profile.displayName,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: entry.color,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            profile.description,
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+          ),
+          if (defaults != null) ...[
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              children: [
+                _MiniPill(
+                  '🔄 ${defaults.refreshIntervalMinutes} min',
+                ),
+                _MiniPill(
+                  '📈 ${defaults.trendStrictnessDays} trend day(s)',
+                ),
+                _MiniPill(
+                  '💾 ${defaults.cacheTtlMinutes} min cache',
                 ),
               ],
             ),
-          ),
-        );
-      }).toList(),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _MiniPill extends StatelessWidget {
+  const _MiniPill(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(text, style: const TextStyle(fontSize: 10)),
     );
   }
 }
