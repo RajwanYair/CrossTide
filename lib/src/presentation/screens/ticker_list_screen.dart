@@ -23,6 +23,7 @@ class TickerListScreen extends ConsumerStatefulWidget {
 class _TickerListScreenState extends ConsumerState<TickerListScreen> {
   final _tickerController = TextEditingController();
   bool _isRefreshing = false;
+  bool _heatmapMode = false;
   final Set<String> _selectedSymbols = {};
   bool get _isSelecting => _selectedSymbols.isNotEmpty;
 
@@ -171,6 +172,15 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                   onPressed: () => context.push('/settings'),
                   tooltip: '⚙️ Settings',
                 ),
+                IconButton(
+                  icon: Icon(
+                    _heatmapMode
+                        ? Icons.view_list_rounded
+                        : Icons.grid_view_rounded,
+                  ),
+                  onPressed: () => setState(() => _heatmapMode = !_heatmapMode),
+                  tooltip: _heatmapMode ? 'List view' : 'Heatmap view',
+                ),
               ],
             ),
       body: tickersAsync.when(
@@ -216,7 +226,9 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
               Expanded(
                 child: filtered.isEmpty
                     ? const Center(child: Text('No tickers in this group.'))
-                    : ReorderableListView.builder(
+                    : _heatmapMode
+                        ? _HeatmapGrid(tickers: filtered)
+                        : ReorderableListView.builder(
                         padding: const EdgeInsets.fromLTRB(12, 6, 12, 100),
                         itemCount: filtered.length,
                         buildDefaultDragHandles: !_isSelecting,
@@ -777,6 +789,91 @@ class _ErrorState extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Heatmap grid
+// ---------------------------------------------------------------------------
+
+class _HeatmapGrid extends StatelessWidget {
+  const _HeatmapGrid({required this.tickers});
+
+  final List<Ticker> tickers;
+
+  Color _tileColor(Ticker t) {
+    if (t.lastClose == null || t.sma200 == null) return Colors.grey.shade700;
+    final pct = (t.lastClose! - t.sma200!) / t.sma200! * 100;
+    if (pct >= 10) return const Color(0xFF1B5E20);
+    if (pct >= 5) return const Color(0xFF2E7D32);
+    if (pct >= 2) return const Color(0xFF388E3C);
+    if (pct >= 0) return const Color(0xFF66BB6A);
+    if (pct >= -2) return const Color(0xFFEF9A9A);
+    if (pct >= -5) return const Color(0xFFE53935);
+    if (pct >= -10) return const Color(0xFFC62828);
+    return const Color(0xFFB71C1C);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 120,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        childAspectRatio: 1.2,
+      ),
+      itemCount: tickers.length,
+      itemBuilder: (context, i) {
+        final t = tickers[i];
+        final color = _tileColor(t);
+        final pct = (t.lastClose != null && t.sma200 != null)
+            ? (t.lastClose! - t.sma200!) / t.sma200! * 100
+            : null;
+        return GestureDetector(
+          onTap: () => context.push('/ticker/${t.symbol}'),
+          child: Container(
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    t.symbol,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  if (pct != null)
+                    Text(
+                      '${pct >= 0 ? '+' : ''}${pct.toStringAsFixed(1)}%',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  else
+                    const Text(
+                      '—',
+                      style: TextStyle(color: Colors.white54, fontSize: 11),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
