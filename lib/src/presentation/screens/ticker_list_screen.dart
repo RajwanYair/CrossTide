@@ -121,20 +121,23 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
               color: Theme.of(ctx).colorScheme.primary,
             ),
             const SizedBox(width: 10),
-            const Text('📈 Add Ticker'),
+            const Text('📈 Add Tickers'),
           ],
         ),
         content: TextField(
           controller: _tickerController,
           decoration: InputDecoration(
-            labelText: 'Ticker Symbol',
+            labelText: 'Ticker Symbol(s)',
             hintText: 'e.g. AAPL, MSFT, NVDA',
+            helperText: 'Separate multiple symbols with commas or spaces',
             prefixIcon: const Icon(Icons.candlestick_chart_rounded),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           textCapitalization: TextCapitalization.characters,
           autofocus: true,
-          onSubmitted: (_) => _addTicker(ctx),
+          maxLines: 3,
+          minLines: 1,
+          onSubmitted: (_) => _addTickers(ctx),
         ),
         actions: [
           TextButton.icon(
@@ -143,7 +146,7 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
             label: const Text('Cancel'),
           ),
           FilledButton.icon(
-            onPressed: () => _addTicker(ctx),
+            onPressed: () => _addTickers(ctx),
             icon: const Icon(Icons.add_rounded),
             label: const Text('Add'),
           ),
@@ -152,20 +155,44 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
     );
   }
 
-  Future<void> _addTicker(BuildContext dialogContext) async {
-    final symbol = _tickerController.text.trim().toUpperCase();
-    if (symbol.isEmpty) return;
+  Future<void> _addTickers(BuildContext dialogContext) async {
+    final raw = _tickerController.text.trim().toUpperCase();
+    if (raw.isEmpty) return;
     Navigator.pop(dialogContext);
-    try {
-      final repo = await ref.read(repositoryProvider.future);
-      if (!mounted) return;
-      await repo.addTicker(symbol);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('⚠️ Failed to add $symbol: $e')));
+
+    // Parse: split on comma, space(s), or newline
+    final symbols = raw
+        .split(RegExp(r'[,\s]+'))
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toSet() // deduplicate
+        .toList();
+
+    final repo = await ref.read(repositoryProvider.future);
+    if (!mounted) return;
+
+    final added = <String>[];
+    final failed = <String>[];
+
+    for (final symbol in symbols) {
+      try {
+        await repo.addTicker(symbol);
+        added.add(symbol);
+      } catch (_) {
+        failed.add(symbol);
+      }
     }
+
+    if (!mounted) return;
+    final parts = <String>[];
+    if (added.isNotEmpty) parts.add('✅ Added: ${added.join(', ')}');
+    if (failed.isNotEmpty) parts.add('⚠️ Failed: ${failed.join(', ')}');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(parts.join(' | ')),
+        duration: const Duration(seconds: 4),
+      ),
+    );
   }
 
   Future<void> _removeTicker(String symbol) async {
