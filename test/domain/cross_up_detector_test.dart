@@ -191,5 +191,10 @@ void main() {
       expect(result, isNotNull);
       expect(result!.isRising, isTrue, reason: '3 consecutive rising days');
     });
+
+    test('can be constructed with a custom SmaCalculator', () {
+      final custom = CrossUpDetector(smaCalculator: SmaCalculator());
+      expect(custom, isA<CrossUpDetector>());
+    });
   });
 }

@@ -170,3 +170,24 @@ final onboardingCompleteProvider = FutureProvider<bool>((ref) async {
 
 final isWindowsProvider = Provider<bool>((ref) => Platform.isWindows);
 final isAndroidProvider = Provider<bool>((ref) => Platform.isAndroid);
+
+// ---------------------------------------------------------------------------
+// Health check
+// ---------------------------------------------------------------------------
+
+/// Provides the [HealthCheckService]. Constructed lazily once the repository
+/// is available; used in main.dart and the diagnostics screen.
+final healthCheckServiceProvider = FutureProvider<HealthCheckService>((
+  ref,
+) async {
+  final repo = await ref.watch(repositoryProvider.future);
+  return HealthCheckService(repository: repo, logger: ref.read(loggerProvider));
+});
+
+/// One-shot [HealthReport] produced at app startup.
+/// UI layers can watch this to surface warnings / errors in a non-blocking
+/// status banner without blocking the main screen from loading.
+final healthReportProvider = FutureProvider<HealthReport>((ref) async {
+  final service = await ref.watch(healthCheckServiceProvider.future);
+  return service.runAll();
+});

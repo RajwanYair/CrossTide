@@ -442,4 +442,83 @@ void main() {
       });
     });
   });
+
+  // ───────────────────────────────────────────────────────────────
+  // AlertProfile
+  // ───────────────────────────────────────────────────────────────
+  group('AlertProfile', () {
+    test('has four values', () {
+      expect(AlertProfile.values.length, 4);
+    });
+
+    test('contains all expected variants', () {
+      expect(
+        AlertProfile.values,
+        containsAll([
+          AlertProfile.aggressive,
+          AlertProfile.balanced,
+          AlertProfile.conservative,
+          AlertProfile.custom,
+        ]),
+      );
+    });
+
+    group('AlertProfileDefaults.defaults', () {
+      test('aggressive returns 15-min refresh', () {
+        expect(AlertProfile.aggressive.defaults.refreshIntervalMinutes, 15);
+      });
+
+      test('aggressive uses single-day trend', () {
+        expect(AlertProfile.aggressive.defaults.trendStrictnessDays, 1);
+      });
+
+      test('balanced returns 60-min refresh', () {
+        expect(AlertProfile.balanced.defaults.refreshIntervalMinutes, 60);
+      });
+
+      test('conservative returns 120-min refresh', () {
+        expect(AlertProfile.conservative.defaults.refreshIntervalMinutes, 120);
+      });
+
+      test('conservative uses 3-day trend', () {
+        expect(AlertProfile.conservative.defaults.trendStrictnessDays, 3);
+      });
+
+      test('custom returns default AppSettings', () {
+        expect(AlertProfile.custom.defaults, equals(const AppSettings()));
+      });
+
+      test('each profile returns a valid AppSettings instance', () {
+        for (final profile in AlertProfile.values) {
+          expect(profile.defaults, isA<AppSettings>());
+        }
+      });
+    });
+
+    group('AlertProfileDefaults.displayName', () {
+      test('aggressive display name', () {
+        expect(AlertProfile.aggressive.displayName, 'Aggressive');
+      });
+
+      test('balanced display name', () {
+        expect(AlertProfile.balanced.displayName, 'Balanced');
+      });
+
+      test('conservative display name', () {
+        expect(AlertProfile.conservative.displayName, 'Conservative');
+      });
+
+      test('custom display name', () {
+        expect(AlertProfile.custom.displayName, 'Custom');
+      });
+    });
+
+    group('AlertProfileDefaults.description', () {
+      test('each profile has a non-empty description', () {
+        for (final profile in AlertProfile.values) {
+          expect(profile.description, isNotEmpty);
+        }
+      });
+    });
+  });
 }

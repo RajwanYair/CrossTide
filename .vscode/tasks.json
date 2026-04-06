@@ -81,6 +81,37 @@
       "command": "flutter analyze && flutter test && dart format --set-exit-if-changed .",
       "group": "test",
       "problemMatcher": []
+    },
+    {
+      "label": "dev: pre-commit run all",
+      "type": "shell",
+      "command": "pre-commit run --all-files",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "release: bump patch",
+      "type": "shell",
+      "command": "gh workflow run bump-version.yml -f bump=patch",
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "Requires GitHub CLI (gh) to be installed and authenticated"
+    },
+    {
+      "label": "release: bump minor",
+      "type": "shell",
+      "command": "gh workflow run bump-version.yml -f bump=minor",
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "Requires GitHub CLI (gh) to be installed and authenticated"
+    },
+    {
+      "label": "release: bump major",
+      "type": "shell",
+      "command": "gh workflow run bump-version.yml -f bump=major",
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "Requires GitHub CLI (gh) to be installed and authenticated"
     }
   ]
 }

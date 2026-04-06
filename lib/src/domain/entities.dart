@@ -244,3 +244,68 @@ class AppSettings extends Equatable {
     cacheTtlMinutes,
   ];
 }
+
+/// Preset alert-sensitivity profiles inspired by enterprise configuration
+/// management patterns. Each profile pre-fills [AppSettings] with sensible
+/// defaults. [custom] means the user has manually overridden individual fields.
+enum AlertProfile { aggressive, balanced, conservative, custom }
+
+/// Maps each [AlertProfile] to a ready-to-use [AppSettings] snapshot.
+/// The UI can apply a profile in one tap; the user may then fine-tune
+/// individual fields (which implicitly switches the profile to [custom]).
+extension AlertProfileDefaults on AlertProfile {
+  AppSettings get defaults {
+    switch (this) {
+      case AlertProfile.aggressive:
+        // Frequent refresh, single-day trend confirmation — highest sensitivity.
+        return const AppSettings(
+          refreshIntervalMinutes: 15,
+          trendStrictnessDays: 1,
+          cacheTtlMinutes: 10,
+        );
+      case AlertProfile.balanced:
+        // Default behaviour — hourly refresh, single-day confirmation.
+        return const AppSettings(
+          refreshIntervalMinutes: 60,
+          trendStrictnessDays: 1,
+          cacheTtlMinutes: 30,
+        );
+      case AlertProfile.conservative:
+        // Fewer interruptions — 2-hour refresh, 3-day trend required.
+        return const AppSettings(
+          refreshIntervalMinutes: 120,
+          trendStrictnessDays: 3,
+          cacheTtlMinutes: 60,
+        );
+      case AlertProfile.custom:
+        // Pass-through; caller supplies explicit AppSettings.
+        return const AppSettings();
+    }
+  }
+
+  String get displayName {
+    switch (this) {
+      case AlertProfile.aggressive:
+        return 'Aggressive';
+      case AlertProfile.balanced:
+        return 'Balanced';
+      case AlertProfile.conservative:
+        return 'Conservative';
+      case AlertProfile.custom:
+        return 'Custom';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case AlertProfile.aggressive:
+        return 'Refresh every 15 min, alert on every cross-up';
+      case AlertProfile.balanced:
+        return 'Hourly refresh, single-day confirmation (default)';
+      case AlertProfile.conservative:
+        return '2-hour refresh, 3 consecutive rising days required';
+      case AlertProfile.custom:
+        return 'Manually configured';
+    }
+  }
+}
