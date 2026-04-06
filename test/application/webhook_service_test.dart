@@ -1,6 +1,4 @@
 // ignore_for_file: invalid_use_of_protected_member
-import 'dart:async';
-
 import 'package:cross_tide/src/application/webhook_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,7 +22,10 @@ void main() {
 
   test('configure sets configs', () {
     service.configure([
-      const WebhookConfig(type: WebhookType.discord, url: 'https://example.com'),
+      const WebhookConfig(
+        type: WebhookType.discord,
+        url: 'https://example.com',
+      ),
     ]);
     expect(service.configs, hasLength(1));
   });
@@ -47,10 +48,12 @@ void main() {
           data: any(named: 'data'),
           options: any(named: 'options'),
         ),
-      ).thenAnswer((_) async => Response<void>(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-          ));
+      ).thenAnswer(
+        (_) async => Response<void>(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+        ),
+      );
 
       service.configure([
         const WebhookConfig(
@@ -79,10 +82,12 @@ void main() {
           data: any(named: 'data'),
           options: any(named: 'options'),
         ),
-      ).thenAnswer((_) async => Response<void>(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-          ));
+      ).thenAnswer(
+        (_) async => Response<void>(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+        ),
+      );
 
       service.configure([
         const WebhookConfig(
@@ -148,10 +153,12 @@ void main() {
           data: any(named: 'data'),
           options: any(named: 'options'),
         ),
-      ).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        message: 'network error',
-      ));
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          message: 'network error',
+        ),
+      );
 
       service.configure([
         const WebhookConfig(
@@ -171,10 +178,12 @@ void main() {
           data: any(named: 'data'),
           options: any(named: 'options'),
         ),
-      ).thenAnswer((_) async => Response<void>(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-          ));
+      ).thenAnswer(
+        (_) async => Response<void>(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+        ),
+      );
 
       service.configure([
         const WebhookConfig(
@@ -205,10 +214,12 @@ void main() {
           data: any(named: 'data'),
           options: any(named: 'options'),
         ),
-      ).thenAnswer((_) async => Response<void>(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-          ));
+      ).thenAnswer(
+        (_) async => Response<void>(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+        ),
+      );
 
       service.configure([
         const WebhookConfig(

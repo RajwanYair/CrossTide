@@ -22,9 +22,9 @@ class WebhookConfig {
   final WebhookType type;
 
   /// Full HTTPS URL.
-  /// Telegram: https://api.telegram.org/bot<TOKEN>/sendMessage
-  /// Discord:  https://discord.com/api/webhooks/<id>/<token>
-  /// Custom:   any HTTP POST endpoint
+  /// - Telegram: `https://api.telegram.org/bot.../sendMessage`
+  /// - Discord:  `https://discord.com/api/webhooks/.../...`
+  /// - Custom:   any HTTP POST endpoint
   final String url;
 
   /// Required for [WebhookType.telegram] — the destination chat_id.

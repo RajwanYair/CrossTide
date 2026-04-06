@@ -122,13 +122,10 @@ class AlertHistoryScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   itemCount: entries.length,
                   itemBuilder: (ctx, i) =>
-                      _HistoryTile(entry: entries[i], index: i).animate(
-                        delay: Duration(milliseconds: i * 30),
-                      ).fadeIn(duration: 250.ms).slideX(
-                        begin: 0.05,
-                        end: 0,
-                        duration: 250.ms,
-                      ),
+                      _HistoryTile(entry: entries[i], index: i)
+                          .animate(delay: Duration(milliseconds: i * 30))
+                          .fadeIn(duration: 250.ms)
+                          .slideX(begin: 0.05, end: 0, duration: 250.ms),
                 ),
               ),
             ],
@@ -152,7 +149,10 @@ class AlertHistoryScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Exported to: $path', overflow: TextOverflow.ellipsis),
+            content: Text(
+              'Exported to: $path',
+              overflow: TextOverflow.ellipsis,
+            ),
             duration: const Duration(seconds: 6),
             action: SnackBarAction(
               label: 'Copy path',
@@ -163,9 +163,9 @@ class AlertHistoryScreen extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Export failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Export failed: $e')));
       }
     }
   }

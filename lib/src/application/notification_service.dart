@@ -173,7 +173,8 @@ class LocalNotificationService implements INotificationService {
   }) async {
     final pct = ((close - prevClose) / prevClose) * 100;
     final sign = pct >= 0 ? '▲' : '▼';
-    final id = (ticker.hashCode.abs() + thresholdPct.hashCode.abs() + 1) % 100000;
+    final id =
+        (ticker.hashCode.abs() + thresholdPct.hashCode.abs() + 1) % 100000;
     const androidDetails = AndroidNotificationDetails(
       _androidChannelId,
       _androidChannelName,
@@ -227,7 +228,9 @@ class LocalNotificationService implements INotificationService {
         notificationDetails: details,
         payload: 'ticker:$ticker',
       );
-      _logger.i('Volume spike notification shown for $ticker (${ratio.toStringAsFixed(1)}×)');
+      _logger.i(
+        'Volume spike notification shown for $ticker (${ratio.toStringAsFixed(1)}×)',
+      );
     } catch (e) {
       _logger.e('Failed to show volume spike notification: $e');
     }

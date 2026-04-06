@@ -85,22 +85,27 @@ class StockRepository {
     Set<domain.AlertType> alertTypes,
   ) async {
     final upper = symbol.toUpperCase().trim();
-    await (db.update(db.tickers)..where((t) => t.symbol.equals(upper)))
-        .write(TickersCompanion(enabledAlertTypes: Value(_serializeAlertTypes(alertTypes))));
+    await (db.update(db.tickers)..where((t) => t.symbol.equals(upper))).write(
+      TickersCompanion(
+        enabledAlertTypes: Value(_serializeAlertTypes(alertTypes)),
+      ),
+    );
   }
 
   /// Persist the [sortOrder] for [symbol].
   Future<void> updateTickerSortOrder(String symbol, int sortOrder) async {
     final upper = symbol.toUpperCase().trim();
-    await (db.update(db.tickers)..where((t) => t.symbol.equals(upper)))
-        .write(TickersCompanion(sortOrder: Value(sortOrder)));
+    await (db.update(db.tickers)..where((t) => t.symbol.equals(upper))).write(
+      TickersCompanion(sortOrder: Value(sortOrder)),
+    );
   }
 
   /// Assign [symbol] to a watchlist group (null = ungrouped).
   Future<void> updateTickerGroup(String symbol, String? groupId) async {
     final upper = symbol.toUpperCase().trim();
-    await (db.update(db.tickers)..where((t) => t.symbol.equals(upper)))
-        .write(TickersCompanion(groupId: Value(groupId)));
+    await (db.update(db.tickers)..where((t) => t.symbol.equals(upper))).write(
+      TickersCompanion(groupId: Value(groupId)),
+    );
   }
 
   Future<void> reorderTickers(List<String> orderedSymbols) async {
@@ -128,8 +133,9 @@ class StockRepository {
 
   Future<void> deleteGroup(String id) async {
     // Un-assign tickers belonging to this group
-    await (db.update(db.tickers)..where((t) => t.groupId.equals(id)))
-        .write(const TickersCompanion(groupId: Value(null)));
+    await (db.update(db.tickers)..where((t) => t.groupId.equals(id))).write(
+      const TickersCompanion(groupId: Value(null)),
+    );
     await db.deleteGroup(id);
   }
 
@@ -384,10 +390,9 @@ class StockRepository {
 
   // ---- Price Targets ----
 
-  Stream<List<domain.PriceTarget>> watchPriceTargets(String symbol) =>
-      db.watchPriceTargets(symbol.toUpperCase().trim()).map(
-        (rows) => rows.map(_priceTargetFromRow).toList(),
-      );
+  Stream<List<domain.PriceTarget>> watchPriceTargets(String symbol) => db
+      .watchPriceTargets(symbol.toUpperCase().trim())
+      .map((rows) => rows.map(_priceTargetFromRow).toList());
 
   Future<List<domain.PriceTarget>> getPriceTargets(String symbol) async {
     final rows = await db.getPriceTargets(symbol.toUpperCase().trim());
@@ -425,18 +430,15 @@ class StockRepository {
 
   // ---- Pct-Move Thresholds ----
 
-  Stream<List<domain.PctMoveThreshold>> watchPctMoveThresholds(
-    String symbol,
-  ) =>
-      db.watchPctMoveThresholds(symbol.toUpperCase().trim()).map(
-        (rows) => rows.map(_pctMoveFromRow).toList(),
-      );
+  Stream<List<domain.PctMoveThreshold>> watchPctMoveThresholds(String symbol) =>
+      db
+          .watchPctMoveThresholds(symbol.toUpperCase().trim())
+          .map((rows) => rows.map(_pctMoveFromRow).toList());
 
   Future<List<domain.PctMoveThreshold>> getPctMoveThresholds(
     String symbol,
   ) async {
-    final rows =
-        await db.getPctMoveThresholds(symbol.toUpperCase().trim());
+    final rows = await db.getPctMoveThresholds(symbol.toUpperCase().trim());
     return rows.map(_pctMoveFromRow).toList();
   }
 
@@ -455,8 +457,7 @@ class StockRepository {
     );
   }
 
-  Future<void> deletePctMoveThreshold(int id) =>
-      db.deletePctMoveThreshold(id);
+  Future<void> deletePctMoveThreshold(int id) => db.deletePctMoveThreshold(id);
 
   domain.PctMoveThreshold _pctMoveFromRow(PctMoveThresholdsTableData row) =>
       domain.PctMoveThreshold(
@@ -474,20 +475,17 @@ class StockRepository {
     required String alertType,
     required String message,
     DateTime? firedAt,
-  }) =>
-      db.insertAlertHistory(
-        AlertHistoryTableCompanion(
-          symbol: Value(symbol),
-          alertType: Value(alertType),
-          message: Value(message),
-          firedAt: firedAt != null ? Value(firedAt) : const Value.absent(),
-        ),
-      );
+  }) => db.insertAlertHistory(
+    AlertHistoryTableCompanion(
+      symbol: Value(symbol),
+      alertType: Value(alertType),
+      message: Value(message),
+      firedAt: firedAt != null ? Value(firedAt) : const Value.absent(),
+    ),
+  );
 
   Stream<List<domain.AlertHistoryEntry>> watchAlertHistory() =>
-      db.watchAlertHistory().map(
-        (rows) => rows.map(_historyFromRow).toList(),
-      );
+      db.watchAlertHistory().map((rows) => rows.map(_historyFromRow).toList());
 
   Future<List<domain.AlertHistoryEntry>> getAlertHistory() async {
     final rows = await db.getAlertHistory();
@@ -522,4 +520,3 @@ class StockRepository {
         acknowledged: row.acknowledged,
       );
 }
-

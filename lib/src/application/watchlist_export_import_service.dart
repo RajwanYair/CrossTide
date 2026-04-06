@@ -127,7 +127,9 @@ class WatchlistExportImportService {
           await repository.updateTickerGroup(symbol, ticker.groupId);
         }
         await repository.updateTickerAlertTypes(
-          symbol, ticker.enabledAlertTypes);
+          symbol,
+          ticker.enabledAlertTypes,
+        );
         inserted.add(symbol);
         existingSymbols.add(symbol);
         _logger.d('WatchlistImport: added $symbol');
@@ -157,13 +159,13 @@ class WatchlistExportImportService {
     'symbol': t.symbol,
     'sortOrder': t.sortOrder,
     'groupId': t.groupId,
-    'enabledAlertTypes':
-        t.enabledAlertTypes.map((a) => a.name).toList(),
+    'enabledAlertTypes': t.enabledAlertTypes.map((a) => a.name).toList(),
     'nextEarningsAt': t.nextEarningsAt?.toIso8601String(),
   };
 
   TickerEntry _tickerFromMap(Map<String, dynamic> m) {
-    final rawTypes = (m['enabledAlertTypes'] as List<dynamic>?)
+    final rawTypes =
+        (m['enabledAlertTypes'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??
         [];

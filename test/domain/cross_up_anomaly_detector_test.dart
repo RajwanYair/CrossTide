@@ -174,5 +174,3 @@ void main() {
     });
   });
 }
-
-final _fixedDate = DateTime.utc(2025, 1, 15, 12);

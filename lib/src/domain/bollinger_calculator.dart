@@ -43,34 +43,42 @@ class BollingerCalculator {
     final result = <BollingerResult>[];
     for (int i = 0; i < candles.length; i++) {
       if (i < period - 1) {
-        result.add(BollingerResult(
-          date: candles[i].date,
-          middle: null,
-          upper: null,
-          lower: null,
-          bandwidth: null,
-          percentB: null,
-        ));
+        result.add(
+          BollingerResult(
+            date: candles[i].date,
+            middle: null,
+            upper: null,
+            lower: null,
+            bandwidth: null,
+            percentB: null,
+          ),
+        );
         continue;
       }
       final slice = candles.sublist(i - period + 1, i + 1);
       final mean = slice.fold<double>(0.0, (a, c) => a + c.close) / period;
       final variance =
-          slice.fold<double>(0.0, (a, c) => a + (c.close - mean) * (c.close - mean)) / period;
+          slice.fold<double>(
+            0.0,
+            (a, c) => a + (c.close - mean) * (c.close - mean),
+          ) /
+          period;
       final sd = sqrt(variance);
       final upper = mean + multiplier * sd;
       final lower = mean - multiplier * sd;
       final close = candles[i].close;
       final bw = mean > 0 ? (upper - lower) / mean : null;
       final pb = (upper - lower) > 0 ? (close - lower) / (upper - lower) : null;
-      result.add(BollingerResult(
-        date: candles[i].date,
-        middle: mean,
-        upper: upper,
-        lower: lower,
-        bandwidth: bw,
-        percentB: pb,
-      ));
+      result.add(
+        BollingerResult(
+          date: candles[i].date,
+          middle: mean,
+          upper: upper,
+          lower: lower,
+          bandwidth: bw,
+          percentB: pb,
+        ),
+      );
     }
     return result;
   }

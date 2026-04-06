@@ -246,24 +246,20 @@ class YahooFinanceProvider implements IMarketDataProvider {
       final meta = result['meta'] as Map<String, dynamic>?;
       if (meta == null) return null;
 
-      final price =
-          (meta['regularMarketPrice'] as num?)?.toDouble();
+      final price = (meta['regularMarketPrice'] as num?)?.toDouble();
       final prevClose =
           (meta['chartPreviousClose'] as num?)?.toDouble() ??
           (meta['previousClose'] as num?)?.toDouble();
       final marketState = meta['marketState'] as String? ?? 'CLOSED';
-      final preMarket =
-          (meta['preMarketPrice'] as num?)?.toDouble();
-      final postMarket =
-          (meta['postMarketPrice'] as num?)?.toDouble();
+      final preMarket = (meta['preMarketPrice'] as num?)?.toDouble();
+      final postMarket = (meta['postMarketPrice'] as num?)?.toDouble();
 
       if (price == null) return null;
 
       final change = prevClose != null ? price - prevClose : null;
-      final changePct =
-          (change != null && prevClose != null && prevClose != 0)
-              ? (change / prevClose) * 100
-              : null;
+      final changePct = (change != null && prevClose != null && prevClose != 0)
+          ? (change / prevClose) * 100
+          : null;
 
       return IntradayQuote(
         symbol: ticker.toUpperCase(),
@@ -300,10 +296,10 @@ class YahooFinanceProvider implements IMarketDataProvider {
       );
       final data = response.data;
       if (data == null) return null;
-      final summary =
-          (data['quoteSummary'] as Map<String, dynamic>?);
-      final result = (summary?['result'] as List<dynamic>?)?.firstOrNull
-          as Map<String, dynamic>?;
+      final summary = (data['quoteSummary'] as Map<String, dynamic>?);
+      final result =
+          (summary?['result'] as List<dynamic>?)?.firstOrNull
+              as Map<String, dynamic>?;
       final cal = result?['calendarEvents'] as Map<String, dynamic>?;
       final earnings = cal?['earnings'] as Map<String, dynamic>?;
       final dates = earnings?['earningsDate'] as List<dynamic>?;

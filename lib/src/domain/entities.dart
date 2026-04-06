@@ -71,20 +71,15 @@ extension AlertTypeX on AlertType {
   };
 
   String get description => switch (this) {
-    AlertType.sma200CrossUp =>
-      'Price closes above the 200-day moving average',
-    AlertType.sma150CrossUp =>
-      'Price closes above the 150-day moving average',
-    AlertType.sma50CrossUp =>
-      'Price closes above the 50-day moving average',
+    AlertType.sma200CrossUp => 'Price closes above the 200-day moving average',
+    AlertType.sma150CrossUp => 'Price closes above the 150-day moving average',
+    AlertType.sma50CrossUp => 'Price closes above the 50-day moving average',
     AlertType.goldenCross =>
       'SMA50 crosses above SMA200 — bullish long-term signal',
     AlertType.deathCross =>
       'SMA50 crosses below SMA200 — bearish long-term signal',
-    AlertType.priceTarget =>
-      'Price reaches or exceeds your target price',
-    AlertType.pctMove =>
-      'Price moves ≥ N% from the previous session close',
+    AlertType.priceTarget => 'Price reaches or exceeds your target price',
+    AlertType.pctMove => 'Price moves ≥ N% from the previous session close',
     AlertType.volumeSpike =>
       'Today\'s volume is ≥ N× the 20-day average volume',
   };
@@ -430,6 +425,7 @@ class PctMoveThreshold extends Equatable {
 
   final int? id;
   final String symbol;
+
   /// Minimum absolute percentage move to trigger (e.g. 5.0 = 5%).
   final double thresholdPct;
   final String? note;
@@ -456,13 +452,21 @@ class PriceTarget extends Equatable {
   final double targetPrice;
   final String? note;
   final DateTime? createdAt;
+
   /// Set when the alert has fired (price crossed target). Null = still pending.
   final DateTime? firedAt;
 
   bool get hasFired => firedAt != null;
 
   @override
-  List<Object?> get props => [id, symbol, targetPrice, note, createdAt, firedAt];
+  List<Object?> get props => [
+    id,
+    symbol,
+    targetPrice,
+    note,
+    createdAt,
+    firedAt,
+  ];
 }
 
 /// A single entry in the alert history (append-only fired-alert log).
@@ -548,10 +552,7 @@ class AlertSensitivityStats extends Equatable {
       final gaps = <double>[];
       for (var i = 1; i < sorted.length; i++) {
         gaps.add(
-          sorted[i].firedAt
-              .difference(sorted[i - 1].firedAt)
-              .inHours /
-              24.0,
+          sorted[i].firedAt.difference(sorted[i - 1].firedAt).inHours / 24.0,
         );
       }
       avg = gaps.reduce((a, b) => a + b) / gaps.length;
@@ -769,4 +770,3 @@ class IntradayQuote extends Equatable {
     fetchedAt,
   ];
 }
-

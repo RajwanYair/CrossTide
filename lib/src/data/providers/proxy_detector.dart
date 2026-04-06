@@ -51,15 +51,14 @@ Dio buildDioWithProxy({Logger? logger}) {
   log.i('ProxyDetector: using proxy $proxyUrl (from env)');
   final dio = Dio();
   // ignore: deprecated_member_use
-  (dio.httpClientAdapter as dynamic)?.onHttpClientCreate =
-      (HttpClient client) {
-        client.findProxy = (uri) => 'PROXY $proxyUrl';
-        client.badCertificateCallback = (_, _, _) {
-          // Corporate proxies often use self-signed certs — trust them.
-          return true;
-        };
-        return client;
-      };
+  (dio.httpClientAdapter as dynamic)?.onHttpClientCreate = (HttpClient client) {
+    client.findProxy = (uri) => 'PROXY $proxyUrl';
+    client.badCertificateCallback = (_, _, _) {
+      // Corporate proxies often use self-signed certs — trust them.
+      return true;
+    };
+    return client;
+  };
   return dio;
 }
 
@@ -67,7 +66,8 @@ Dio buildDioWithProxy({Logger? logger}) {
 ///
 /// Returns true when [host] should bypass the proxy.
 bool shouldBypassProxy(String host) {
-  final noProxy = Platform.environment['NO_PROXY'] ??
+  final noProxy =
+      Platform.environment['NO_PROXY'] ??
       Platform.environment['no_proxy'] ??
       '';
   if (noProxy.isEmpty) return false;

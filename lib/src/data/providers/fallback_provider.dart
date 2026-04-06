@@ -13,11 +13,9 @@ import '../../domain/entities.dart';
 import 'market_data_provider.dart';
 
 class FallbackMarketDataProvider implements IMarketDataProvider {
-  FallbackMarketDataProvider({
-    required this.providers,
-    Logger? logger,
-  })  : assert(providers.isNotEmpty, 'At least one provider required'),
-        _logger = logger ?? Logger();
+  FallbackMarketDataProvider({required this.providers, Logger? logger})
+    : assert(providers.isNotEmpty, 'At least one provider required'),
+      _logger = logger ?? Logger();
 
   final List<IMarketDataProvider> providers;
   final Logger _logger;

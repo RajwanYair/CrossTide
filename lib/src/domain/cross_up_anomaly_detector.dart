@@ -88,8 +88,7 @@ class CrossUpAnomalyDetector {
       int i = 0;
       while (i < times.length) {
         int j = i + 1;
-        while (j < times.length &&
-            times[j].difference(times[i]) <= window) {
+        while (j < times.length && times[j].difference(times[i]) <= window) {
           j++;
         }
         final count = j - i;

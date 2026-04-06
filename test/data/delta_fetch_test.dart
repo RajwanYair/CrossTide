@@ -26,14 +26,15 @@ class _TrackingProvider implements IMarketDataProvider {
   }
 }
 
-domain.DailyCandle _candle(DateTime date, {double close = 100.0}) => domain.DailyCandle(
-  date: date,
-  open: close,
-  high: close + 1,
-  low: close - 1,
-  close: close,
-  volume: 1000,
-);
+domain.DailyCandle _candle(DateTime date, {double close = 100.0}) =>
+    domain.DailyCandle(
+      date: date,
+      open: close,
+      high: close + 1,
+      low: close - 1,
+      close: close,
+      volume: 1000,
+    );
 
 void main() {
   late AppDatabase db;

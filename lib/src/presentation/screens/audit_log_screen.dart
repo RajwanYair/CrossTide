@@ -78,11 +78,7 @@ class AuditLogScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.history_edu_rounded,
-                    size: 64,
-                    color: cs.outline,
-                  ),
+                  Icon(Icons.history_edu_rounded, size: 64, color: cs.outline),
                   const SizedBox(height: 16),
                   Text(
                     'No changes recorded yet',
@@ -104,9 +100,9 @@ class AuditLogScreen extends ConsumerWidget {
             separatorBuilder: (_, _) => const Divider(height: 1),
             itemBuilder: (context, i) {
               final e = entries[i];
-              final timeLabel = DateFormat('MMM d, HH:mm:ss').format(
-                e.timestamp.toLocal(),
-              );
+              final timeLabel = DateFormat(
+                'MMM d, HH:mm:ss',
+              ).format(e.timestamp.toLocal());
               return ListTile(
                 dense: true,
                 leading: CircleAvatar(
@@ -164,10 +160,7 @@ class AuditLogScreen extends ConsumerWidget {
                 ),
                 trailing: Text(
                   timeLabel,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: cs.outline,
-                  ),
+                  style: TextStyle(fontSize: 10, color: cs.outline),
                 ),
               );
             },

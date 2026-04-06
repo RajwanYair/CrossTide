@@ -7,7 +7,8 @@
 library;
 
 import 'dart:async' show StreamController, Timer;
-import 'dart:io' show InternetAddress, InternetAddressType, Platform, SocketException;
+import 'dart:io'
+    show InternetAddress, InternetAddressType, Platform, SocketException;
 
 import 'package:flutter/material.dart' show Color, ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +18,8 @@ import 'package:logger/logger.dart';
 import '../application/application.dart';
 import '../data/data.dart';
 import '../data/database/database.dart' as db show WatchlistGroup;
-import '../domain/cross_up_anomaly_detector.dart' as domain
+import '../domain/cross_up_anomaly_detector.dart'
+    as domain
     show CrossUpAnomaly, CrossUpAnomalyDetector;
 import '../domain/entities.dart' as domain;
 
@@ -192,12 +194,14 @@ final tickerAlertStateProvider =
     });
 
 /// Full domain TickerEntry for a specific symbol (includes nextEarningsAt).
-final tickerEntryProvider =
-    FutureProvider.family<domain.TickerEntry?, String>((ref, symbol) async {
-      final repo = await ref.watch(repositoryProvider.future);
-      final all = await repo.getAllTickers();
-      return all.where((t) => t.symbol == symbol.toUpperCase()).firstOrNull;
-    });
+final tickerEntryProvider = FutureProvider.family<domain.TickerEntry?, String>((
+  ref,
+  symbol,
+) async {
+  final repo = await ref.watch(repositoryProvider.future);
+  final all = await repo.getAllTickers();
+  return all.where((t) => t.symbol == symbol.toUpperCase()).firstOrNull;
+});
 
 /// Real-time intraday quote for a symbol.
 ///
@@ -248,11 +252,14 @@ final sp500CandlesProvider = FutureProvider<List<domain.DailyCandle>>((
 ///
 /// Computes [AlertSensitivityStats] from all [AlertHistoryEntry] records for
 /// [symbol] stored in the local database.
-final alertSensitivityProvider = FutureProvider.family<
-    domain.AlertSensitivityStats, String>((ref, symbol) async {
-  final repo = await ref.watch(repositoryProvider.future);
-  return repo.getAlertSensitivityStats(symbol);
-});
+final alertSensitivityProvider =
+    FutureProvider.family<domain.AlertSensitivityStats, String>((
+      ref,
+      symbol,
+    ) async {
+      final repo = await ref.watch(repositoryProvider.future);
+      return repo.getAlertSensitivityStats(symbol);
+    });
 
 /// [AuditLogService] singleton — records user settings changes.
 final auditLogServiceProvider = Provider<AuditLogService>((ref) {
@@ -273,10 +280,9 @@ final auditLogProvider = FutureProvider<List<domain.AuditLogEntry>>((
 ///
 /// Stored in secure storage under key `'theme_mode'`.
 /// Values: `'light'` | `'dark'` | `'system'` (default).
-final themeModeProvider =
-    AsyncNotifierProvider<ThemeModeNotifier, ThemeMode>(
-      ThemeModeNotifier.new,
-    );
+final themeModeProvider = AsyncNotifierProvider<ThemeModeNotifier, ThemeMode>(
+  ThemeModeNotifier.new,
+);
 
 class ThemeModeNotifier extends AsyncNotifier<ThemeMode> {
   static const _storageKey = 'theme_mode';
@@ -311,10 +317,7 @@ class ThemeModeNotifier extends AsyncNotifier<ThemeMode> {
 /// Kept separate from [tickerCandlesProvider] so the selector can invalidate
 /// it independently.
 final tickerEnabledAlertTypesProvider =
-    FutureProvider.family<Set<domain.AlertType>, String>((
-      ref,
-      ticker,
-    ) async {
+    FutureProvider.family<Set<domain.AlertType>, String>((ref, ticker) async {
       final repo = await ref.watch(repositoryProvider.future);
       final tickers = await repo.getAllTickers();
       final entry = tickers.firstWhere(
@@ -337,22 +340,24 @@ final watchlistGroupsProvider = StreamProvider<List<db.WatchlistGroup>>((
 });
 
 /// Price targets for a specific symbol (live stream).
-final priceTargetsProvider = StreamProvider.family<
-  List<domain.PriceTarget>,
-  String
->((ref, symbol) async* {
-  final repo = await ref.watch(repositoryProvider.future);
-  yield* repo.watchPriceTargets(symbol);
-});
+final priceTargetsProvider =
+    StreamProvider.family<List<domain.PriceTarget>, String>((
+      ref,
+      symbol,
+    ) async* {
+      final repo = await ref.watch(repositoryProvider.future);
+      yield* repo.watchPriceTargets(symbol);
+    });
 
 /// Percentage-move thresholds for a specific symbol (live stream).
-final pctMoveThresholdsProvider = StreamProvider.family<
-  List<domain.PctMoveThreshold>,
-  String
->((ref, symbol) async* {
-  final repo = await ref.watch(repositoryProvider.future);
-  yield* repo.watchPctMoveThresholds(symbol);
-});
+final pctMoveThresholdsProvider =
+    StreamProvider.family<List<domain.PctMoveThreshold>, String>((
+      ref,
+      symbol,
+    ) async* {
+      final repo = await ref.watch(repositoryProvider.future);
+      yield* repo.watchPctMoveThresholds(symbol);
+    });
 
 /// Active group filter. Null = show all tickers.
 final activeGroupFilterProvider = NotifierProvider<ActiveGroupFilter, String?>(
@@ -380,13 +385,14 @@ final connectivityProvider = StreamProvider<bool>((ref) {
 
   Future<bool> checkConnectivity() async {
     try {
-      final result = await InternetAddress.lookup(
-        'query1.finance.yahoo.com',
-        type: InternetAddressType.any,
-      ).timeout(
-        const Duration(seconds: 5),
-        onTimeout: () => <InternetAddress>[],
-      );
+      final result =
+          await InternetAddress.lookup(
+            'query1.finance.yahoo.com',
+            type: InternetAddressType.any,
+          ).timeout(
+            const Duration(seconds: 5),
+            onTimeout: () => <InternetAddress>[],
+          );
       return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
     } on SocketException {
       return false;
@@ -410,20 +416,19 @@ final connectivityProvider = StreamProvider<bool>((ref) {
 });
 
 /// Alert history (all fired alerts, newest first).
-final alertHistoryProvider = StreamProvider<List<domain.AlertHistoryEntry>>(
-  (ref) async* {
-    final repo = await ref.watch(repositoryProvider.future);
-    yield* repo.watchAlertHistory();
-  },
-);
+final alertHistoryProvider = StreamProvider<List<domain.AlertHistoryEntry>>((
+  ref,
+) async* {
+  final repo = await ref.watch(repositoryProvider.future);
+  yield* repo.watchAlertHistory();
+});
 
 /// Cross-up anomalies derived from the alert history.
 ///
 /// Runs the [CrossUpAnomalyDetector] over [alertHistoryProvider] every time
 /// the history changes. A banner or badge in the alert history screen surfaces
 /// the result.
-final crossUpAnomaliesProvider =
-    Provider<List<domain.CrossUpAnomaly>>((ref) {
+final crossUpAnomaliesProvider = Provider<List<domain.CrossUpAnomaly>>((ref) {
   final historyAsync = ref.watch(alertHistoryProvider);
   return historyAsync.maybeWhen(
     data: (entries) {
@@ -495,10 +500,10 @@ final snapshotServiceProvider = FutureProvider<SnapshotService>((ref) async {
 /// [WatchlistExportImportService] — exports/imports watchlist to/from JSON.
 final watchlistExportImportServiceProvider =
     FutureProvider<WatchlistExportImportService>((ref) async {
-  final repo = await ref.watch(repositoryProvider.future);
-  final logger = ref.watch(loggerProvider);
-  return WatchlistExportImportService(repository: repo, logger: logger);
-});
+      final repo = await ref.watch(repositoryProvider.future);
+      final logger = ref.watch(loggerProvider);
+      return WatchlistExportImportService(repository: repo, logger: logger);
+    });
 
 // ---------------------------------------------------------------------------
 // Webhook service  (credentials stored in FlutterSecureStorage)

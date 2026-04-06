@@ -153,10 +153,10 @@ void main() {
         candles: goldenCrossCandles(),
       );
       expect(events.length, 2);
-      expect(events.map((e) => e.type), containsAll([
-        AlertType.goldenCross,
-        AlertType.deathCross,
-      ]));
+      expect(
+        events.map((e) => e.type),
+        containsAll([AlertType.goldenCross, AlertType.deathCross]),
+      );
     });
 
     test('evaluateBoth returns empty list with insufficient data', () {

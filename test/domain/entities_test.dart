@@ -243,10 +243,7 @@ void main() {
 
     test('smaPeriod carried through correctly', () {
       expect(makeEval(smaPeriod: SmaPeriod.sma50).smaPeriod, SmaPeriod.sma50);
-      expect(
-        makeEval(smaPeriod: SmaPeriod.sma150).smaPeriod,
-        SmaPeriod.sma150,
-      );
+      expect(makeEval(smaPeriod: SmaPeriod.sma150).smaPeriod, SmaPeriod.sma150);
     });
 
     test('currentSma200 getter works for sma200 period', () {

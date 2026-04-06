@@ -134,7 +134,8 @@ class RefreshService {
     final existingEntry = (await repository.getAllTickers())
         .where((t) => t.symbol == upper)
         .firstOrNull;
-    final earningsStale = existingEntry?.nextEarningsAt == null ||
+    final earningsStale =
+        existingEntry?.nextEarningsAt == null ||
         existingEntry!.nextEarningsAt!.isBefore(DateTime.now());
     if (earningsStale && repository.provider is YahooFinanceProvider) {
       final nextEarnings = await (repository.provider as YahooFinanceProvider)
@@ -155,10 +156,8 @@ class RefreshService {
     // 4. SMA cross-up evaluations (SMA50 / SMA150 / SMA200)
     final crossUpPeriods = <SmaPeriod>[
       if (enabledAlertTypes.contains(AlertType.sma50CrossUp)) SmaPeriod.sma50,
-      if (enabledAlertTypes.contains(AlertType.sma150CrossUp))
-        SmaPeriod.sma150,
-      if (enabledAlertTypes.contains(AlertType.sma200CrossUp))
-        SmaPeriod.sma200,
+      if (enabledAlertTypes.contains(AlertType.sma150CrossUp)) SmaPeriod.sma150,
+      if (enabledAlertTypes.contains(AlertType.sma200CrossUp)) SmaPeriod.sma200,
     ];
 
     if (crossUpPeriods.isNotEmpty) {
@@ -223,8 +222,7 @@ class RefreshService {
     }
 
     // 7. Percentage-move check
-    if (enabledAlertTypes.contains(AlertType.pctMove) &&
-        candles.length >= 2) {
+    if (enabledAlertTypes.contains(AlertType.pctMove) && candles.length >= 2) {
       await checkPctMove(
         upper,
         candles.last.close,
@@ -236,7 +234,8 @@ class RefreshService {
     // 8. Volume spike check
     if (enabledAlertTypes.contains(AlertType.volumeSpike)) {
       await checkVolumeSpike(upper, candles, settings: settings);
-    }    if (wantGolden || wantDeath) {
+    }
+    if (wantGolden || wantDeath) {
       final crossEvents = _goldenCrossDetector.evaluateBoth(
         ticker: upper,
         candles: candles,

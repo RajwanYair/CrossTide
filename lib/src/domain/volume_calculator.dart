@@ -14,7 +14,10 @@ class VolumeCalculator {
 
   /// Returns the [period]-day rolling average volume at the latest candle.
   /// Returns null if fewer than [period] candles are available.
-  double? averageVolume(List<DailyCandle> candles, {int period = defaultPeriod}) {
+  double? averageVolume(
+    List<DailyCandle> candles, {
+    int period = defaultPeriod,
+  }) {
     if (candles.length < period) return null;
     final slice = candles.sublist(candles.length - period, candles.length - 1);
     if (slice.isEmpty) return null;

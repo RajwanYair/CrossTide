@@ -73,35 +73,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               // Theme Mode
               const _SettingsSection(
-                    icon: Icons.palette_outlined,
-                    title: '🌗 Theme',
-                    subtitle: 'Light, Dark, or follow the system setting',
-                    child: _ThemeModePicker(),
-                  )
-                  .animate()
-                  .fadeIn(duration: 300.ms)
-                  .slideY(begin: 0.04, end: 0),
+                icon: Icons.palette_outlined,
+                title: '🌗 Theme',
+                subtitle: 'Light, Dark, or follow the system setting',
+                child: _ThemeModePicker(),
+              ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.04, end: 0),
               const SizedBox(height: 12),
 
               // Accent Color
               _SettingsSection(
-                    icon: Icons.color_lens_outlined,
-                    title: '🎨 Accent Color',
-                    subtitle: 'Customize the app\'s primary theme color',
-                    child: _AccentColorPicker(
-                      current: _settings.accentColorValue,
-                      onChanged:
-                          (v) => setState(
-                            () =>
-                                _settings = _settings.copyWith(
-                                  accentColorValue: v,
-                                ),
-                          ),
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 300.ms)
-                  .slideY(begin: 0.04, end: 0),
+                icon: Icons.color_lens_outlined,
+                title: '🎨 Accent Color',
+                subtitle: 'Customize the app\'s primary theme color',
+                child: _AccentColorPicker(
+                  current: _settings.accentColorValue,
+                  onChanged: (v) => setState(
+                    () => _settings = _settings.copyWith(accentColorValue: v),
+                  ),
+                ),
+              ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.04, end: 0),
               const SizedBox(height: 12),
 
               // Alert Profile Selector
@@ -282,94 +272,112 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               // Novice / Advanced mode toggle
               _SettingsSection(
-                icon: Icons.school_rounded,
-                title: '🎓 UI Complexity',
-                subtitle: 'Choose how much technical detail to display',
-                child: SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  value: _settings.advancedMode,
-                  onChanged: (v) =>
-                      setState(() => _settings = _settings.copyWith(advancedMode: v)),
-                  title: Text(
-                    _settings.advancedMode ? 'Advanced mode' : 'Novice mode',
-                  ),
-                  subtitle: Text(
-                    _settings.advancedMode
-                        ? 'Shows SMA values, sector tags, and indicators'
-                        : 'Simplified view with price & alert status only',
-                  ),
-                ),
-              ).animate(delay: 385.ms).fadeIn(duration: 300.ms).slideY(
-                begin: 0.04,
-                end: 0,
-              ),
+                    icon: Icons.school_rounded,
+                    title: '🎓 UI Complexity',
+                    subtitle: 'Choose how much technical detail to display',
+                    child: SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: _settings.advancedMode,
+                      onChanged: (v) => setState(
+                        () => _settings = _settings.copyWith(advancedMode: v),
+                      ),
+                      title: Text(
+                        _settings.advancedMode
+                            ? 'Advanced mode'
+                            : 'Novice mode',
+                      ),
+                      subtitle: Text(
+                        _settings.advancedMode
+                            ? 'Shows SMA values, sector tags, and indicators'
+                            : 'Simplified view with price & alert status only',
+                      ),
+                    ),
+                  )
+                  .animate(delay: 385.ms)
+                  .fadeIn(duration: 300.ms)
+                  .slideY(begin: 0.04, end: 0),
               // Default indicators selector
               _SettingsSection(
-                icon: Icons.show_chart_rounded,
-                title: '📐 Default Indicators',
-                subtitle: 'Indicators pre-enabled when opening a chart',
-                child: _DefaultIndicatorsEditor(
-                  value: _settings.defaultIndicators,
-                  onChanged: (v) =>
-                      setState(() => _settings = _settings.copyWith(defaultIndicators: v)),
-                ),
-              ).animate(delay: 390.ms).fadeIn(duration: 300.ms).slideY(begin: 0.04, end: 0),
-              // Volume spike multiplier
-              _SettingsSection(
-                icon: Icons.bar_chart_rounded,
-                title: '📊 Volume Spike Multiplier',
-                subtitle: 'Alert when volume is ≥ N× the 20-day average',
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Slider(
-                        value: _settings.volumeSpikeMultiplier.clamp(1.5, 5.0),
-                        min: 1.5,
-                        max: 5.0,
-                        divisions: 7,
-                        label: '${_settings.volumeSpikeMultiplier.toStringAsFixed(1)}×',
-                        onChanged: (v) => setState(
-                          () => _settings = _settings.copyWith(
-                            volumeSpikeMultiplier: double.parse(v.toStringAsFixed(1)),
-                          ),
+                    icon: Icons.show_chart_rounded,
+                    title: '📐 Default Indicators',
+                    subtitle: 'Indicators pre-enabled when opening a chart',
+                    child: _DefaultIndicatorsEditor(
+                      value: _settings.defaultIndicators,
+                      onChanged: (v) => setState(
+                        () => _settings = _settings.copyWith(
+                          defaultIndicators: v,
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 44,
-                      child: Text(
-                        '${_settings.volumeSpikeMultiplier.toStringAsFixed(1)}×',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                  )
+                  .animate(delay: 390.ms)
+                  .fadeIn(duration: 300.ms)
+                  .slideY(begin: 0.04, end: 0),
+              // Volume spike multiplier
+              _SettingsSection(
+                    icon: Icons.bar_chart_rounded,
+                    title: '📊 Volume Spike Multiplier',
+                    subtitle: 'Alert when volume is ≥ N× the 20-day average',
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Slider(
+                            value: _settings.volumeSpikeMultiplier.clamp(
+                              1.5,
+                              5.0,
+                            ),
+                            min: 1.5,
+                            max: 5.0,
+                            divisions: 7,
+                            label:
+                                '${_settings.volumeSpikeMultiplier.toStringAsFixed(1)}×',
+                            onChanged: (v) => setState(
+                              () => _settings = _settings.copyWith(
+                                volumeSpikeMultiplier: double.parse(
+                                  v.toStringAsFixed(1),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 44,
+                          child: Text(
+                            '${_settings.volumeSpikeMultiplier.toStringAsFixed(1)}×',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ).animate(delay: 392.ms).fadeIn(duration: 300.ms).slideY(begin: 0.04, end: 0),
+                  )
+                  .animate(delay: 392.ms)
+                  .fadeIn(duration: 300.ms)
+                  .slideY(begin: 0.04, end: 0),
               const SizedBox(height: 24),
 
               // Watchlist Groups management
               _SettingsSection(
-                icon: Icons.folder_special_rounded,
-                title: '📁 Watchlist Groups',
-                subtitle: 'Organize tickers into named groups',
-                child: _WatchlistGroupsManager(),
-              ).animate(delay: 380.ms).fadeIn(duration: 300.ms).slideY(
-                begin: 0.04,
-                end: 0,
-              ),
+                    icon: Icons.folder_special_rounded,
+                    title: '📁 Watchlist Groups',
+                    subtitle: 'Organize tickers into named groups',
+                    child: _WatchlistGroupsManager(),
+                  )
+                  .animate(delay: 380.ms)
+                  .fadeIn(duration: 300.ms)
+                  .slideY(begin: 0.04, end: 0),
               const SizedBox(height: 12),
 
               // Webhook notifications
               const _SettingsSection(
-                icon: Icons.webhook_rounded,
-                title: '🔔 Webhook Notifications',
-                subtitle:
-                    'Push alerts to Telegram or Discord when a cross fires',
-                child: _WebhookSettingsCard(),
-              ).animate(delay: 390.ms).fadeIn(duration: 300.ms).slideY(
-                begin: 0.04,
-                end: 0,
-              ),
+                    icon: Icons.webhook_rounded,
+                    title: '🔔 Webhook Notifications',
+                    subtitle:
+                        'Push alerts to Telegram or Discord when a cross fires',
+                    child: _WebhookSettingsCard(),
+                  )
+                  .animate(delay: 390.ms)
+                  .fadeIn(duration: 300.ms)
+                  .slideY(begin: 0.04, end: 0),
               const SizedBox(height: 24),
 
               // Save Button
@@ -524,10 +532,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     Expanded(
                       flex: 3,
-                      child: Text(
-                        e.key,
-                        style: const TextStyle(fontSize: 12),
-                      ),
+                      child: Text(e.key, style: const TextStyle(fontSize: 12)),
                     ),
                     Expanded(
                       flex: 4,
@@ -592,9 +597,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       );
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('⚠️ Export failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('⚠️ Export failed: $e')));
     }
   }
 
@@ -689,11 +694,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         oldSettings.quietHoursStart,
         _settings.quietHoursStart,
       );
-      diff(
-        'quietHoursEnd',
-        oldSettings.quietHoursEnd,
-        _settings.quietHoursEnd,
-      );
+      diff('quietHoursEnd', oldSettings.quietHoursEnd, _settings.quietHoursEnd);
       diff(
         'trendStrictnessDays',
         oldSettings.trendStrictnessDays,
@@ -856,9 +857,7 @@ class _ProfileSelectorState extends State<_ProfileSelector> {
                           : cs.surfaceContainerHighest.withAlpha(80),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: isSelected
-                            ? p.color
-                            : Colors.grey.withAlpha(60),
+                        color: isSelected ? p.color : Colors.grey.withAlpha(60),
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -873,9 +872,7 @@ class _ProfileSelectorState extends State<_ProfileSelector> {
                             fontWeight: isSelected
                                 ? FontWeight.w700
                                 : FontWeight.normal,
-                            color: isSelected
-                                ? p.color
-                                : cs.onSurface,
+                            color: isSelected ? p.color : cs.onSurface,
                             fontSize: 13,
                           ),
                         ),
@@ -899,10 +896,7 @@ class _ProfileSelectorState extends State<_ProfileSelector> {
         // Description card for active profile
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
-          child: _ProfileDescCard(
-            key: ValueKey(active),
-            profile: active,
-          ),
+          child: _ProfileDescCard(key: ValueKey(active), profile: active),
         ),
       ],
     );
@@ -973,15 +967,9 @@ class _ProfileDescCard extends StatelessWidget {
             Wrap(
               spacing: 8,
               children: [
-                _MiniPill(
-                  '🔄 ${defaults.refreshIntervalMinutes} min',
-                ),
-                _MiniPill(
-                  '📈 ${defaults.trendStrictnessDays} trend day(s)',
-                ),
-                _MiniPill(
-                  '💾 ${defaults.cacheTtlMinutes} min cache',
-                ),
+                _MiniPill('🔄 ${defaults.refreshIntervalMinutes} min'),
+                _MiniPill('📈 ${defaults.trendStrictnessDays} trend day(s)'),
+                _MiniPill('💾 ${defaults.cacheTtlMinutes} min cache'),
               ],
             ),
           ],
@@ -1487,10 +1475,7 @@ class _ThemeModePicker extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 
 class _AccentColorPicker extends StatelessWidget {
-  const _AccentColorPicker({
-    required this.current,
-    required this.onChanged,
-  });
+  const _AccentColorPicker({required this.current, required this.onChanged});
 
   final int current;
   final ValueChanged<int> onChanged;
@@ -1513,47 +1498,44 @@ class _AccentColorPicker extends StatelessWidget {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
-      children:
-          _palette.map((swatch) {
-            final selected = swatch.value == current;
-            return Tooltip(
-              message: swatch.label,
-              child: GestureDetector(
-                onTap: () => onChanged(swatch.value),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: Color(swatch.value),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color:
-                          selected
-                              ? Theme.of(context).colorScheme.onSurface
-                              : Colors.transparent,
-                      width: selected ? 3 : 0,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(swatch.value).withValues(alpha: 0.45),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child:
-                      selected
-                          ? const Icon(
-                            Icons.check_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          )
-                          : null,
+      children: _palette.map((swatch) {
+        final selected = swatch.value == current;
+        return Tooltip(
+          message: swatch.label,
+          child: GestureDetector(
+            onTap: () => onChanged(swatch.value),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: Color(swatch.value),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selected
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Colors.transparent,
+                  width: selected ? 3 : 0,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(swatch.value).withValues(alpha: 0.45),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-            );
-          }).toList(),
+              child: selected
+                  ? const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    )
+                  : null,
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
@@ -1674,8 +1656,7 @@ class _WebhookSettingsCardState extends ConsumerState<_WebhookSettingsCard> {
 
   Future<void> _loadCredentials() async {
     final storage = ref.read(secureStorageProvider);
-    _tgUrlCtrl.text =
-        await storage.read(key: WebhookKeys.telegramBotUrl) ?? '';
+    _tgUrlCtrl.text = await storage.read(key: WebhookKeys.telegramBotUrl) ?? '';
     _tgChatCtrl.text =
         await storage.read(key: WebhookKeys.telegramChatId) ?? '';
     _dcUrlCtrl.text = await storage.read(key: WebhookKeys.discordUrl) ?? '';

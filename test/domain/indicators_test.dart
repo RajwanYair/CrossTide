@@ -122,7 +122,11 @@ void main() {
   // MACD
   // -------------------------------------------------------------------------
   group('MacdCalculator', () {
-    const calc = MacdCalculator(fastPeriod: 12, slowPeriod: 26, signalPeriod: 9);
+    const calc = MacdCalculator(
+      fastPeriod: 12,
+      slowPeriod: 26,
+      signalPeriod: 9,
+    );
 
     test('returns null for insufficient candles', () {
       final candles = makeCandles(List.filled(30, 50.0));
@@ -130,16 +134,18 @@ void main() {
     });
 
     test('computeSeries length equals candles length', () {
-      final candles =
-          makeCandles(List.generate(100, (i) => 100.0 + i.toDouble()));
+      final candles = makeCandles(
+        List.generate(100, (i) => 100.0 + i.toDouble()),
+      );
       final series = calc.computeSeries(candles);
       expect(series.length, 100);
     });
 
     test('MACD > 0 in an uptrend', () {
       // 100 candles all rising by 1 each day
-      final candles =
-          makeCandles(List.generate(100, (i) => 50.0 + i.toDouble()));
+      final candles = makeCandles(
+        List.generate(100, (i) => 50.0 + i.toDouble()),
+      );
       final result = calc.compute(candles);
       expect(result, isNotNull);
       // In a consistent uptrend fast EMA > slow EMA → MACD > 0
@@ -147,22 +153,19 @@ void main() {
     });
 
     test('MACD < 0 in a downtrend', () {
-      final candles =
-          makeCandles(List.generate(100, (i) => 150.0 - i.toDouble()));
+      final candles = makeCandles(
+        List.generate(100, (i) => 150.0 - i.toDouble()),
+      );
       final result = calc.compute(candles);
       expect(result, isNotNull);
       expect(result!.macd, lessThan(0));
     });
 
     test('histogram = macd - signal', () {
-      final candles =
-          makeCandles(List.generate(100, (i) => 100.0 + i * 0.5));
+      final candles = makeCandles(List.generate(100, (i) => 100.0 + i * 0.5));
       final result = calc.compute(candles);
       expect(result, isNotNull);
-      expect(
-        result!.histogram,
-        closeTo(result.macd! - result.signal!, 0.0001),
-      );
+      expect(result!.histogram, closeTo(result.macd! - result.signal!, 0.0001));
     });
   });
 

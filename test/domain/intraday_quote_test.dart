@@ -58,13 +58,21 @@ void main() {
 
     test('two equal quotes have equal props', () {
       final a = IntradayQuote(
-        symbol: 'AAPL', price: 195.0, fetchedAt: now,
-        prevClose: 192.0, change: 3.0, changePct: 1.56,
+        symbol: 'AAPL',
+        price: 195.0,
+        fetchedAt: now,
+        prevClose: 192.0,
+        change: 3.0,
+        changePct: 1.56,
         marketState: 'REGULAR',
       );
       final b = IntradayQuote(
-        symbol: 'AAPL', price: 195.0, fetchedAt: now,
-        prevClose: 192.0, change: 3.0, changePct: 1.56,
+        symbol: 'AAPL',
+        price: 195.0,
+        fetchedAt: now,
+        prevClose: 192.0,
+        change: 3.0,
+        changePct: 1.56,
         marketState: 'REGULAR',
       );
       expect(a, equals(b));

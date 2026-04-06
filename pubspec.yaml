@@ -66,6 +66,9 @@ dependencies:
   google_fonts: ^8.0.2         # Typography: Inter for numbers, Outfit for headings
   tray_manager: ^0.5.2
 
+  # In-app updater — open release URLs on Android; launch Explorer on Windows
+  url_launcher: ^6.3.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

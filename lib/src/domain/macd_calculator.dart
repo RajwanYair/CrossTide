@@ -30,7 +30,11 @@ class MacdResult {
 }
 
 class MacdCalculator {
-  const MacdCalculator({this.fastPeriod = 12, this.slowPeriod = 26, this.signalPeriod = 9});
+  const MacdCalculator({
+    this.fastPeriod = 12,
+    this.slowPeriod = 26,
+    this.signalPeriod = 9,
+  });
 
   final int fastPeriod;
   final int slowPeriod;
@@ -48,7 +52,10 @@ class MacdCalculator {
     for (int i = 0; i < candles.length; i++) {
       final f = fastSeries[i].$2;
       final s = slowSeries[i].$2;
-      macdValues.add((candles[i].date, (f != null && s != null) ? f - s : null));
+      macdValues.add((
+        candles[i].date,
+        (f != null && s != null) ? f - s : null,
+      ));
     }
 
     // Extract non-null MACD values to compute Signal EMA via virtual candles
@@ -56,7 +63,14 @@ class MacdCalculator {
     final macdNullCount = macdValues.indexWhere((v) => v.$2 != null);
     if (macdNullCount < 0) {
       return candles
-          .map((c) => MacdResult(date: c.date, macd: null, signal: null, histogram: null))
+          .map(
+            (c) => MacdResult(
+              date: c.date,
+              macd: null,
+              signal: null,
+              histogram: null,
+            ),
+          )
           .toList();
     }
     for (int i = macdNullCount; i < macdValues.length; i++) {
@@ -79,16 +93,25 @@ class MacdCalculator {
     for (int i = 0; i < candles.length; i++) {
       final macdVal = macdValues[i].$2;
       if (macdVal == null || i < macdNullCount) {
-        result.add(MacdResult(date: candles[i].date, macd: null, signal: null, histogram: null));
+        result.add(
+          MacdResult(
+            date: candles[i].date,
+            macd: null,
+            signal: null,
+            histogram: null,
+          ),
+        );
         continue;
       }
       final sig = signalSeries[signalIdx].$2;
-      result.add(MacdResult(
-        date: candles[i].date,
-        macd: macdVal,
-        signal: sig,
-        histogram: (sig != null) ? macdVal - sig : null,
-      ));
+      result.add(
+        MacdResult(
+          date: candles[i].date,
+          macd: macdVal,
+          signal: sig,
+          histogram: (sig != null) ? macdVal - sig : null,
+        ),
+      );
       signalIdx++;
     }
     return result;

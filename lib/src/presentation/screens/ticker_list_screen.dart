@@ -69,9 +69,9 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('⚠️ Batch delete failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('⚠️ Batch delete failed: $e')));
     }
   }
 
@@ -99,9 +99,9 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('⚠️ Batch move failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('⚠️ Batch move failed: $e')));
     }
   }
 
@@ -150,7 +150,12 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                     ...(switch (ref.watch(watchlistGroupsProvider)) {
                       AsyncData(:final value) => value,
                       _ => const <WatchlistGroup>[],
-                    }).map((g) => PopupMenuItem<String>(value: g.id, child: Text(g.name))),
+                    }).map(
+                      (g) => PopupMenuItem<String>(
+                        value: g.id,
+                        child: Text(g.name),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -159,7 +164,11 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SvgPicture.asset('assets/svg/logo.svg', width: 32, height: 32),
+                  SvgPicture.asset(
+                    'assets/svg/logo.svg',
+                    width: 32,
+                    height: 32,
+                  ),
                   const SizedBox(width: 10),
                   const Text('CrossTide'),
                 ],
@@ -238,9 +247,9 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
           if (tickers.isEmpty) return const _EmptyState();
 
           // Dashboard summary
-          final withData = tickers.where(
-            (t) => t.lastClose != null && t.sma200 != null,
-          ).toList();
+          final withData = tickers
+              .where((t) => t.lastClose != null && t.sma200 != null)
+              .toList();
           final aboveCount = withData
               .where((t) => t.lastClose! > t.sma200!)
               .length;
@@ -248,7 +257,10 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
           final lastUpdated = tickers
               .map((t) => t.lastRefreshAt)
               .whereType<DateTime>()
-              .fold<DateTime?>(null, (best, dt) => best == null || dt.isAfter(best) ? dt : best);
+              .fold<DateTime?>(
+                null,
+                (best, dt) => best == null || dt.isAfter(best) ? dt : best,
+              );
 
           final groupsAsync = ref.watch(watchlistGroupsProvider);
           final groups = switch (groupsAsync) {
@@ -266,7 +278,8 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
           if (_showAboveOnly) {
             filtered = filtered
                 .where(
-                  (t) => t.lastClose != null &&
+                  (t) =>
+                      t.lastClose != null &&
                       t.sma200 != null &&
                       t.lastClose! > t.sma200!,
                 )
@@ -282,14 +295,13 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
               sortable.sort((a, b) => a.symbol.compareTo(b.symbol));
             case _SortMode.price:
               sortable.sort(
-                (a, b) =>
-                    (b.lastClose ?? 0).compareTo(a.lastClose ?? 0),
+                (a, b) => (b.lastClose ?? 0).compareTo(a.lastClose ?? 0),
               );
             case _SortMode.pctFromSma:
               double pct(Ticker t) =>
                   (t.lastClose != null && t.sma200 != null && t.sma200 != 0)
-                      ? (t.lastClose! - t.sma200!) / t.sma200!
-                      : double.negativeInfinity;
+                  ? (t.lastClose! - t.sma200!) / t.sma200!
+                  : double.negativeInfinity;
               sortable.sort((a, b) => pct(b).compareTo(pct(a)));
           }
           final displayList = sortable;
@@ -316,13 +328,18 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                 child: displayList.isEmpty
                     ? const Center(child: Text('No tickers match filter.'))
                     : _heatmapMode
-                        ? _HeatmapGrid(tickers: displayList)
-                        : ReorderableListView.builder(
+                    ? _HeatmapGrid(tickers: displayList)
+                    : ReorderableListView.builder(
                         padding: const EdgeInsets.fromLTRB(12, 6, 12, 100),
                         itemCount: displayList.length,
-                        buildDefaultDragHandles: !_isSelecting && _sortMode == _SortMode.manual,
-                        onReorder: (oldIndex, newIndex) =>
-                            _onReorder(tickers, displayList, oldIndex, newIndex),
+                        buildDefaultDragHandles:
+                            !_isSelecting && _sortMode == _SortMode.manual,
+                        onReorder: (oldIndex, newIndex) => _onReorder(
+                          tickers,
+                          displayList,
+                          oldIndex,
+                          newIndex,
+                        ),
                         itemBuilder: (context, index) {
                           final sym = displayList[index].symbol;
                           return _TickerCard(
@@ -491,9 +508,9 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
           );
         } catch (e) {
           if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('⚠️ Export failed: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('⚠️ Export failed: $e')));
         }
 
       case _ListAction.importWatchlist:
@@ -558,9 +575,9 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
           ref.invalidate(tickerListProvider);
         } catch (e) {
           if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('⚠️ Import failed: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('⚠️ Import failed: $e')));
         }
     }
   }
@@ -593,7 +610,6 @@ class _TickerCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
-    final dateFormat = DateFormat('MMM d, HH:mm');
     final sectorMap = switch (ref.watch(sectorMapProvider)) {
       AsyncData(:final value) => value,
       _ => const <String, String>{},
@@ -669,9 +685,7 @@ class _TickerCard extends ConsumerWidget {
         ),
       ),
       child: Card(
-        color: isSelected
-            ? cs.primaryContainer.withAlpha(200)
-            : bgColor,
+        color: isSelected ? cs.primaryContainer.withAlpha(200) : bgColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: isSelected
@@ -694,27 +708,27 @@ class _TickerCard extends ConsumerWidget {
                     activeColor: cs.primary,
                   )
                 else
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: statusColor.withAlpha(30),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: statusColor.withAlpha(80),
-                      width: 1.5,
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: statusColor.withAlpha(30),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: statusColor.withAlpha(80),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Center(
+                      child: statusIcon != null
+                          ? SvgPicture.asset(statusIcon, width: 26, height: 26)
+                          : Icon(
+                              Icons.hourglass_empty_rounded,
+                              size: 24,
+                              color: Colors.grey.shade400,
+                            ),
                     ),
                   ),
-                  child: Center(
-                    child: statusIcon != null
-                        ? SvgPicture.asset(statusIcon, width: 26, height: 26)
-                        : Icon(
-                            Icons.hourglass_empty_rounded,
-                            size: 24,
-                            color: Colors.grey.shade400,
-                          ),
-                  ),
-                ),
                 const SizedBox(width: 14),
 
                 // Middle: Symbol + price info
@@ -768,22 +782,8 @@ class _TickerCard extends ConsumerWidget {
                       if (ticker.lastRefreshAt != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 3),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.access_time_rounded,
-                                size: 11,
-                                color: Colors.grey.shade500,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                dateFormat.format(ticker.lastRefreshAt!),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-                            ],
+                          child: _FreshnessBadge(
+                            lastRefreshAt: ticker.lastRefreshAt!,
                           ),
                         ),
                       if (ticker.error != null)
@@ -953,6 +953,29 @@ class _InlineMarketState extends ConsumerWidget {
           fontWeight: FontWeight.w800,
         ),
       ),
+    );
+  }
+}
+
+class _FreshnessBadge extends StatelessWidget {
+  const _FreshnessBadge({required this.lastRefreshAt});
+  final DateTime lastRefreshAt;
+
+  @override
+  Widget build(BuildContext context) {
+    final age = DateTime.now().difference(lastRefreshAt);
+    final (label, color) = switch (age.inMinutes) {
+      < 60 => ('${age.inMinutes}m ago', Colors.green.shade600),
+      < 240 => ('${age.inHours}h ago', Colors.amber.shade700),
+      _ => ('${age.inHours}h ago', Colors.red.shade600),
+    };
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.access_time_rounded, size: 11, color: color),
+        const SizedBox(width: 3),
+        Text(label, style: TextStyle(fontSize: 11, color: color)),
+      ],
     );
   }
 }
@@ -1362,10 +1385,7 @@ class _GroupFilterRow extends ConsumerWidget {
             return Padding(
               padding: const EdgeInsets.only(right: 6),
               child: FilterChip(
-                avatar: CircleAvatar(
-                  radius: 6,
-                  backgroundColor: color,
-                ),
+                avatar: CircleAvatar(radius: 6, backgroundColor: color),
                 label: Text(g.name),
                 selected: isSelected,
                 onSelected: (_) => ref
@@ -1404,10 +1424,9 @@ class _AddTickersDialogState extends State<_AddTickersDialog> {
   List<String> _suggestions(TextEditingValue textEditingValue) {
     final text = textEditingValue.text.toUpperCase();
     // Find the last token being typed
-    final lastToken = text.split(RegExp(r'[,\s]+')).lastWhere(
-      (t) => t.isNotEmpty,
-      orElse: () => '',
-    );
+    final lastToken = text
+        .split(RegExp(r'[,\s]+'))
+        .lastWhere((t) => t.isNotEmpty, orElse: () => '');
     if (lastToken.isEmpty) return const [];
     return widget.sp500Tickers
         .where((t) => t.startsWith(lastToken) && t != lastToken)
@@ -1488,8 +1507,7 @@ class _AddTickersDialogState extends State<_AddTickersDialog> {
                     hintText: 'e.g. AAPL, MSFT, NVDA',
                     helperText:
                         'Separate multiple symbols with commas or spaces',
-                    prefixIcon:
-                        const Icon(Icons.candlestick_chart_rounded),
+                    prefixIcon: const Icon(Icons.candlestick_chart_rounded),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

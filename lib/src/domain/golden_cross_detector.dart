@@ -55,7 +55,11 @@ class GoldenCrossDetector {
     required String ticker,
     required List<DailyCandle> candles,
   }) {
-    return _evaluate(ticker: ticker, candles: candles, type: AlertType.goldenCross);
+    return _evaluate(
+      ticker: ticker,
+      candles: candles,
+      type: AlertType.goldenCross,
+    );
   }
 
   /// Evaluate for Death Cross (SMA50 crossed below SMA200).
@@ -65,7 +69,11 @@ class GoldenCrossDetector {
     required String ticker,
     required List<DailyCandle> candles,
   }) {
-    return _evaluate(ticker: ticker, candles: candles, type: AlertType.deathCross);
+    return _evaluate(
+      ticker: ticker,
+      candles: candles,
+      type: AlertType.deathCross,
+    );
   }
 
   /// Evaluate both Golden and Death Cross in one pass.
@@ -78,10 +86,7 @@ class GoldenCrossDetector {
   }) {
     final golden = evaluateGoldenCross(ticker: ticker, candles: candles);
     final death = evaluateDeathCross(ticker: ticker, candles: candles);
-    return [
-      ?golden,
-      ?death,
-    ];
+    return [?golden, ?death];
   }
 
   CrossEvent? _evaluate({
@@ -109,10 +114,8 @@ class GoldenCrossDetector {
     if (sma50Tm1 == null) return null;
 
     final isCross = switch (type) {
-      AlertType.goldenCross =>
-        sma50Tm1 <= sma200Tm1 && sma50T > sma200T,
-      AlertType.deathCross =>
-        sma50Tm1 >= sma200Tm1 && sma50T < sma200T,
+      AlertType.goldenCross => sma50Tm1 <= sma200Tm1 && sma50T > sma200T,
+      AlertType.deathCross => sma50Tm1 >= sma200Tm1 && sma50T < sma200T,
       _ => false,
     };
 

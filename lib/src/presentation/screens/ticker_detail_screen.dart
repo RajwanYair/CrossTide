@@ -93,9 +93,9 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
             ],
             // Earnings indicator
             if (switch (entryAsync) {
-              AsyncData(:final value) => value,
-              _ => null,
-            }
+                  AsyncData(:final value) => value,
+                  _ => null,
+                }
                 case final entry?)
               Padding(
                 padding: const EdgeInsets.only(left: 8),
@@ -518,8 +518,10 @@ class _ChartSection extends StatefulWidget {
   final List<(DateTime, double?)> chartSma200;
   final _ChartRange selectedRange;
   final ValueChanged<_ChartRange> onRangeChanged;
+
   /// SPY candles for the benchmark overlay (empty list = not loaded yet).
   final List<DailyCandle> spyCandles;
+
   /// Indicator keys pre-enabled from user preferences.
   final List<String> defaultIndicators;
 
@@ -609,7 +611,10 @@ class _ChartSectionState extends State<_ChartSection> {
     // EMA 20 spots
     final ema20Spots = <FlSpot>[];
     if (_showEma20) {
-      final emaSeries = const EmaCalculator().computeSeries(candles, period: 20);
+      final emaSeries = const EmaCalculator().computeSeries(
+        candles,
+        period: 20,
+      );
       for (var i = 0; i < emaSeries.length; i++) {
         if (emaSeries[i].$2 != null) {
           ema20Spots.add(FlSpot(i.toDouble(), emaSeries[i].$2!));
@@ -655,10 +660,7 @@ class _ChartSectionState extends State<_ChartSection> {
         belowBarData: BarAreaData(
           show: true,
           gradient: LinearGradient(
-            colors: [
-              Colors.blue.withAlpha(50),
-              Colors.blue.withAlpha(5),
-            ],
+            colors: [Colors.blue.withAlpha(50), Colors.blue.withAlpha(5)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -749,7 +751,10 @@ class _ChartSectionState extends State<_ChartSection> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 4),
                     child: ChoiceChip(
-                      label: Text(r.label, style: const TextStyle(fontSize: 11)),
+                      label: Text(
+                        r.label,
+                        style: const TextStyle(fontSize: 11),
+                      ),
                       selected: selected,
                       onSelected: (_) => widget.onRangeChanged(r),
                       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -823,16 +828,14 @@ class _ChartSectionState extends State<_ChartSection> {
             SizedBox(
               height: 260,
               child: _candlestickMode
-                  ? _CandlestickChart(
-                      candles: widget.chartCandles,
-                      cs: cs,
-                    )
+                  ? _CandlestickChart(candles: widget.chartCandles, cs: cs)
                   : LineChart(
                       LineChartData(
                         minY: minY,
                         maxY: maxY,
-                        backgroundColor:
-                            cs.surfaceContainerHighest.withAlpha(40),
+                        backgroundColor: cs.surfaceContainerHighest.withAlpha(
+                          40,
+                        ),
                         gridData: FlGridData(
                           show: true,
                           drawVerticalLine: false,
@@ -883,9 +886,9 @@ class _ChartSectionState extends State<_ChartSection> {
                                   return const SizedBox();
                                 }
                                 return Text(
-                                  DateFormat('M/d').format(
-                                    widget.chartCandles[idx].date,
-                                  ),
+                                  DateFormat(
+                                    'M/d',
+                                  ).format(widget.chartCandles[idx].date),
                                   style: const TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey,
@@ -918,10 +921,12 @@ class _ChartSectionState extends State<_ChartSection> {
                                 if (_showSma200) 'SMA200',
                               ];
                               final idx = spot.barIndex;
-                              final color =
-                                  idx < colors.length ? colors[idx] : Colors.grey;
-                              final label =
-                                  idx < labels.length ? labels[idx] : 'SMA';
+                              final color = idx < colors.length
+                                  ? colors[idx]
+                                  : Colors.grey;
+                              final label = idx < labels.length
+                                  ? labels[idx]
+                                  : 'SMA';
                               return LineTooltipItem(
                                 '$label: \$${spot.y.toStringAsFixed(2)}',
                                 TextStyle(
@@ -938,16 +943,11 @@ class _ChartSectionState extends State<_ChartSection> {
             ),
             const SizedBox(height: 8),
             // Volume bar chart
-            _VolumeChart(
-              chartCandles: widget.chartCandles,
-              cs: widget.cs,
-            ),
+            _VolumeChart(chartCandles: widget.chartCandles, cs: widget.cs),
             // RSI sub-panel
-            if (_showRsi)
-              _RsiPanel(candles: widget.chartCandles, cs: cs),
+            if (_showRsi) _RsiPanel(candles: widget.chartCandles, cs: cs),
             // MACD sub-panel
-            if (_showMacd)
-              _MacdPanel(candles: widget.chartCandles, cs: cs),
+            if (_showMacd) _MacdPanel(candles: widget.chartCandles, cs: cs),
           ],
         ),
       ),
@@ -979,14 +979,11 @@ class _CandlestickChartState extends State<_CandlestickChart> {
       builder: (context, constraints) {
         return GestureDetector(
           onTapDown: (d) {
-            final candleWidth =
-                constraints.maxWidth / widget.candles.length;
+            final candleWidth = constraints.maxWidth / widget.candles.length;
             setState(
-              () => _hoverIndex =
-                  (d.localPosition.dx / candleWidth).floor().clamp(
-                    0,
-                    widget.candles.length - 1,
-                  ),
+              () => _hoverIndex = (d.localPosition.dx / candleWidth)
+                  .floor()
+                  .clamp(0, widget.candles.length - 1),
             );
           },
           onTapUp: (_) => setState(() => _hoverIndex = null),
@@ -1062,7 +1059,9 @@ class _PriceTargetsCardState extends ConsumerState<_PriceTargetsCard> {
                 style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
               ),
               AsyncData(:final value) => Column(
-                children: value.map((t) => _TargetTile(target: t, symbol: widget.symbol)).toList(),
+                children: value
+                    .map((t) => _TargetTile(target: t, symbol: widget.symbol))
+                    .toList(),
               ),
               AsyncLoading() => const LinearProgressIndicator(),
               _ => const SizedBox.shrink(),
@@ -1086,7 +1085,9 @@ class _PriceTargetsCardState extends ConsumerState<_PriceTargetsCard> {
           children: [
             TextField(
               controller: _priceController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
                 labelText: 'Target price (\$)',
                 prefixText: '\$',
@@ -1237,10 +1238,7 @@ class _PctMoveCardState extends ConsumerState<_PctMoveCard> {
               AsyncData(:final value) => Column(
                 children: value
                     .map(
-                      (t) => _PctMoveTile(
-                        threshold: t,
-                        symbol: widget.symbol,
-                      ),
+                      (t) => _PctMoveTile(threshold: t, symbol: widget.symbol),
                     )
                     .toList(),
               ),
@@ -1266,7 +1264,9 @@ class _PctMoveCardState extends ConsumerState<_PctMoveCard> {
           children: [
             TextField(
               controller: _pctController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
                 labelText: 'Threshold (%)',
                 suffixText: '%',
@@ -1377,7 +1377,8 @@ class _CandlestickPainter extends CustomPainter {
     if (priceRange == 0) return;
 
     double toY(double price) =>
-        size.height - (price - minP) / priceRange * size.height * 0.9 -
+        size.height -
+        (price - minP) / priceRange * size.height * 0.9 -
         size.height * 0.05;
 
     final candleWidth = size.width / candles.length;
@@ -1390,8 +1391,7 @@ class _CandlestickPainter extends CustomPainter {
       final isUp = c.close >= c.open;
       final color = isUp ? upColor : downColor;
       wickPaint.color = color.withAlpha(200);
-      bodyPaint.color =
-          i == hoverIndex ? Colors.amber.shade400 : color;
+      bodyPaint.color = i == hoverIndex ? Colors.amber.shade400 : color;
 
       final cx = (i + 0.5) * candleWidth;
       // Wick
@@ -1403,7 +1403,10 @@ class _CandlestickPainter extends CustomPainter {
       // Body
       final bodyTop = toY(isUp ? c.close : c.open);
       final bodyBottom = toY(isUp ? c.open : c.close);
-      final bodyHeight = (bodyBottom - bodyTop).abs().clamp(1.0, double.infinity);
+      final bodyHeight = (bodyBottom - bodyTop).abs().clamp(
+        1.0,
+        double.infinity,
+      );
       canvas.drawRect(
         Rect.fromLTWH(cx - bodyWidth / 2, bodyTop, bodyWidth, bodyHeight),
         bodyPaint,
@@ -1436,10 +1439,7 @@ class _CandlestickPainter extends CustomPainter {
         RRect.fromRectAndRadius(bgRect, const Radius.circular(6)),
         Paint()..color = Colors.black.withAlpha(180),
       );
-      tp.paint(
-        canvas,
-        Offset(bgRect.left + 4, bgRect.top + 3),
-      );
+      tp.paint(canvas, Offset(bgRect.left + 4, bgRect.top + 3));
     }
   }
 
@@ -1512,8 +1512,18 @@ class _RsiPanel extends StatelessWidget {
                   maxY: 100,
                   extraLinesData: ExtraLinesData(
                     horizontalLines: [
-                      HorizontalLine(y: 70, color: Colors.red.withAlpha(120), strokeWidth: 1, dashArray: [4, 3]),
-                      HorizontalLine(y: 30, color: Colors.green.withAlpha(120), strokeWidth: 1, dashArray: [4, 3]),
+                      HorizontalLine(
+                        y: 70,
+                        color: Colors.red.withAlpha(120),
+                        strokeWidth: 1,
+                        dashArray: [4, 3],
+                      ),
+                      HorizontalLine(
+                        y: 30,
+                        color: Colors.green.withAlpha(120),
+                        strokeWidth: 1,
+                        dashArray: [4, 3],
+                      ),
                     ],
                   ),
                   lineBarsData: [
@@ -1563,16 +1573,20 @@ class _MacdPanel extends StatelessWidget {
         signalSpots.add(FlSpot(i.toDouble(), r.signal!));
       }
       if (r.histogram != null) {
-        histBars.add(BarChartGroupData(
-          x: i,
-          barRods: [
-            BarChartRodData(
-              toY: r.histogram!,
-              color: r.histogram! >= 0 ? Colors.green.shade400 : Colors.red.shade400,
-              width: 2,
-            ),
-          ],
-        ));
+        histBars.add(
+          BarChartGroupData(
+            x: i,
+            barRods: [
+              BarChartRodData(
+                toY: r.histogram!,
+                color: r.histogram! >= 0
+                    ? Colors.green.shade400
+                    : Colors.red.shade400,
+                width: 2,
+              ),
+            ],
+          ),
+        );
       }
     }
     if (macdSpots.isEmpty) return const SizedBox();
@@ -1714,8 +1728,8 @@ class _VolumeChart extends StatelessWidget {
                     final display = vol >= 1e9
                         ? '${(vol / 1e9).toStringAsFixed(1)}B'
                         : vol >= 1e6
-                            ? '${(vol / 1e6).toStringAsFixed(1)}M'
-                            : vol.toStringAsFixed(0);
+                        ? '${(vol / 1e6).toStringAsFixed(1)}M'
+                        : vol.toStringAsFixed(0);
                     return BarTooltipItem(
                       display,
                       const TextStyle(fontSize: 11, color: Colors.white),
@@ -1730,7 +1744,6 @@ class _VolumeChart extends StatelessWidget {
     );
   }
 }
-
 
 // ---------------------------------------------------------------------------
 // Alert State Card
@@ -1954,9 +1967,7 @@ class _AlertTypeSelectorCard extends ConsumerWidget {
                       type.displayName,
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: isOn
-                            ? FontWeight.w700
-                            : FontWeight.normal,
+                        fontWeight: isOn ? FontWeight.w700 : FontWeight.normal,
                       ),
                     ),
                     tooltip: type.description,
@@ -2003,7 +2014,9 @@ class _AlertTypeSelectorCard extends ConsumerWidget {
       // Always keep at least one alert type enabled
       if (next.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('At least one alert type must stay enabled.')),
+          const SnackBar(
+            content: Text('At least one alert type must stay enabled.'),
+          ),
         );
         return;
       }
@@ -2141,10 +2154,7 @@ class _QuoteBar extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             if (value.change != null && value.changePct != null)
-              _ChangeChip(
-                change: value.change!,
-                changePct: value.changePct!,
-              ),
+              _ChangeChip(change: value.change!, changePct: value.changePct!),
             const Spacer(),
             _MarketStateBadge(state: value.marketState),
             if (value.isPreMarket && value.preMarketPrice != null) ...[
@@ -2263,11 +2273,7 @@ class _SensitivityStatsCard extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.insights_rounded,
-                      size: 18,
-                      color: cs.primary,
-                    ),
+                    Icon(Icons.insights_rounded, size: 18, color: cs.primary),
                     const SizedBox(width: 8),
                     Text(
                       'Alert Sensitivity',
@@ -2278,7 +2284,10 @@ class _SensitivityStatsCard extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                _StatRow(label: 'Total alerts fired', value: '${stats.totalAlerts}'),
+                _StatRow(
+                  label: 'Total alerts fired',
+                  value: '${stats.totalAlerts}',
+                ),
                 if (stats.firstFiredAt != null)
                   _StatRow(
                     label: 'First alert',

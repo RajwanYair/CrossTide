@@ -3,13 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('AlertSensitivityStats.fromHistory', () {
-    AlertHistoryEntry entry(DateTime firedAt, {String type = 'sma200CrossUp'}) =>
-        AlertHistoryEntry(
-          symbol: 'AAPL',
-          alertType: type,
-          message: 'test',
-          firedAt: firedAt,
-        );
+    AlertHistoryEntry entry(
+      DateTime firedAt, {
+      String type = 'sma200CrossUp',
+    }) => AlertHistoryEntry(
+      symbol: 'AAPL',
+      alertType: type,
+      message: 'test',
+      firedAt: firedAt,
+    );
 
     test('empty history returns zero stats', () {
       final s = AlertSensitivityStats.fromHistory('AAPL', []);

@@ -8,12 +8,12 @@ void main() {
     test('transitions from below to above on cross-up alert', () {
       const previous = TickerAlertState(
         ticker: 'AAPL',
-                lastStatus: SmaRelation.below,
+        lastStatus: SmaRelation.below,
       );
 
       final evaluation = CrossUpEvaluation(
         ticker: 'AAPL',
-          smaPeriod: SmaPeriod.sma200,
+        smaPeriod: SmaPeriod.sma200,
         currentClose: 150.0,
         previousClose: 148.0,
         currentSma: 149.0,
@@ -36,13 +36,13 @@ void main() {
     test('stays above without updating alert date when no new alert', () {
       final previous = TickerAlertState(
         ticker: 'AAPL',
-                lastStatus: SmaRelation.above,
+        lastStatus: SmaRelation.above,
         lastAlertedCrossUpAt: DateTime(2024, 6, 10),
       );
 
       final evaluation = CrossUpEvaluation(
         ticker: 'AAPL',
-          smaPeriod: SmaPeriod.sma200,
+        smaPeriod: SmaPeriod.sma200,
         currentClose: 155.0,
         previousClose: 152.0,
         currentSma: 149.0,
@@ -65,13 +65,13 @@ void main() {
     test('transitions from above to below on cross-down', () {
       final previous = TickerAlertState(
         ticker: 'AAPL',
-                lastStatus: SmaRelation.above,
+        lastStatus: SmaRelation.above,
         lastAlertedCrossUpAt: DateTime(2024, 6, 10),
       );
 
       final evaluation = CrossUpEvaluation(
         ticker: 'AAPL',
-          smaPeriod: SmaPeriod.sma200,
+        smaPeriod: SmaPeriod.sma200,
         currentClose: 145.0,
         previousClose: 148.0,
         currentSma: 149.0,
@@ -181,7 +181,7 @@ void main() {
         // 1. Start below
         var state = const TickerAlertState(
           ticker: 'TSLA',
-                  lastStatus: SmaRelation.below,
+          lastStatus: SmaRelation.below,
         );
 
         // 2. Cross-up occurs → should alert
@@ -258,5 +258,3 @@ void main() {
     );
   });
 }
-
-

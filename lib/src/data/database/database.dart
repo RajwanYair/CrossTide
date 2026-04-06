@@ -68,6 +68,7 @@ class PriceTargetsTable extends Table {
   RealColumn get targetPrice => real()();
   TextColumn get note => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
   /// Null = alert pending; non-null = alert fired at this timestamp.
   DateTimeColumn get firedAt => dateTime().nullable()();
 }
@@ -78,6 +79,7 @@ class PctMoveThresholdsTable extends Table {
 
   IntColumn get id => integer().autoIncrement()();
   TextColumn get symbol => text().withLength(min: 1, max: 10)();
+
   /// Minimum absolute percentage move to trigger (e.g. 5.0 = 5%).
   RealColumn get thresholdPct => real()();
   TextColumn get note => text().nullable()();
@@ -101,8 +103,7 @@ class AlertHistoryTable extends Table {
   DateTimeColumn get firedAt => dateTime().withDefault(currentDateAndTime)();
 
   /// Whether the user has dismissed/acknowledged this entry.
-  BoolColumn get acknowledged =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get acknowledged => boolean().withDefault(const Constant(false))();
 }
 
 class DailyCandles extends Table {
@@ -219,7 +220,10 @@ class AppDatabase extends _$AppDatabase {
         await migrator.addColumn(tickers, tickers.groupId);
       }
       if (from < 4) {
-        await migrator.addColumn(appSettingsTable, appSettingsTable.advancedMode);
+        await migrator.addColumn(
+          appSettingsTable,
+          appSettingsTable.advancedMode,
+        );
       }
       if (from < 5) {
         await migrator.addColumn(
@@ -261,9 +265,9 @@ class AppDatabase extends _$AppDatabase {
   Future<List<Ticker>> getAllTickers() =>
       (select(tickers)..orderBy([(t) => OrderingTerm.asc(t.sortOrder)])).get();
 
-  Stream<List<Ticker>> watchAllTickers() =>
-      (select(tickers)..orderBy([(t) => OrderingTerm.asc(t.sortOrder)]))
-          .watch();
+  Stream<List<Ticker>> watchAllTickers() => (select(
+    tickers,
+  )..orderBy([(t) => OrderingTerm.asc(t.sortOrder)])).watch();
 
   Future<void> upsertTicker(TickersCompanion entry) =>
       into(tickers).insertOnConflictUpdate(entry);
@@ -308,15 +312,13 @@ class AppDatabase extends _$AppDatabase {
 
   // ---- Watchlist Groups ----
 
-  Future<List<WatchlistGroup>> getAllGroups() =>
-      (select(watchlistGroups)
-            ..orderBy([(g) => OrderingTerm.asc(g.sortOrder)]))
-          .get();
+  Future<List<WatchlistGroup>> getAllGroups() => (select(
+    watchlistGroups,
+  )..orderBy([(g) => OrderingTerm.asc(g.sortOrder)])).get();
 
-  Stream<List<WatchlistGroup>> watchAllGroups() =>
-      (select(watchlistGroups)
-            ..orderBy([(g) => OrderingTerm.asc(g.sortOrder)]))
-          .watch();
+  Stream<List<WatchlistGroup>> watchAllGroups() => (select(
+    watchlistGroups,
+  )..orderBy([(g) => OrderingTerm.asc(g.sortOrder)])).watch();
 
   Future<void> upsertGroup(WatchlistGroupsCompanion entry) =>
       into(watchlistGroups).insertOnConflictUpdate(entry);
@@ -339,9 +341,7 @@ class AppDatabase extends _$AppDatabase {
           .watch();
 
   Future<List<PriceTargetsTableData>> getAllPendingPriceTargets() =>
-      (select(priceTargetsTable)
-            ..where((t) => t.firedAt.isNull()))
-          .get();
+      (select(priceTargetsTable)..where((t) => t.firedAt.isNull())).get();
 
   Future<int> upsertPriceTarget(PriceTargetsTableCompanion entry) =>
       into(priceTargetsTable).insertOnConflictUpdate(entry);
@@ -361,17 +361,15 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<PctMoveThresholdsTableData>> getPctMoveThresholds(
     String symbol,
-  ) =>
-      (select(pctMoveThresholdsTable)
-            ..where((t) => t.symbol.equals(symbol)))
-          .get();
+  ) => (select(
+    pctMoveThresholdsTable,
+  )..where((t) => t.symbol.equals(symbol))).get();
 
   Stream<List<PctMoveThresholdsTableData>> watchPctMoveThresholds(
     String symbol,
-  ) =>
-      (select(pctMoveThresholdsTable)
-            ..where((t) => t.symbol.equals(symbol)))
-          .watch();
+  ) => (select(
+    pctMoveThresholdsTable,
+  )..where((t) => t.symbol.equals(symbol))).watch();
 
   Future<List<PctMoveThresholdsTableData>> getAllPctMoveThresholds() =>
       select(pctMoveThresholdsTable).get();
@@ -387,15 +385,13 @@ class AppDatabase extends _$AppDatabase {
   Future<int> insertAlertHistory(AlertHistoryTableCompanion entry) =>
       into(alertHistoryTable).insert(entry);
 
-  Stream<List<AlertHistoryTableData>> watchAlertHistory() =>
-      (select(alertHistoryTable)
-            ..orderBy([(t) => OrderingTerm.desc(t.firedAt)]))
-          .watch();
+  Stream<List<AlertHistoryTableData>> watchAlertHistory() => (select(
+    alertHistoryTable,
+  )..orderBy([(t) => OrderingTerm.desc(t.firedAt)])).watch();
 
-  Future<List<AlertHistoryTableData>> getAlertHistory() =>
-      (select(alertHistoryTable)
-            ..orderBy([(t) => OrderingTerm.desc(t.firedAt)]))
-          .get();
+  Future<List<AlertHistoryTableData>> getAlertHistory() => (select(
+    alertHistoryTable,
+  )..orderBy([(t) => OrderingTerm.desc(t.firedAt)])).get();
 
   Future<void> acknowledgeAlertHistory(int id) async {
     await (update(alertHistoryTable)..where((t) => t.id.equals(id))).write(

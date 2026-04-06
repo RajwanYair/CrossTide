@@ -76,9 +76,9 @@ class _CrashLogScreenState extends State<CrashLogScreen> {
     final text = _content;
     if (text == null || text.isEmpty) return;
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Log copied to clipboard')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Log copied to clipboard')));
   }
 
   @override
@@ -101,23 +101,22 @@ class _CrashLogScreenState extends State<CrashLogScreen> {
               onPressed: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
-                  builder:
-                      (ctx) => AlertDialog(
-                        title: const Text('Clear crash log?'),
-                        content: const Text(
-                          'This permanently deletes all crash reports.',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('Cancel'),
-                          ),
-                          FilledButton(
-                            onPressed: () => Navigator.pop(ctx, true),
-                            child: const Text('Clear'),
-                          ),
-                        ],
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Clear crash log?'),
+                    content: const Text(
+                      'This permanently deletes all crash reports.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
                       ),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('Clear'),
+                      ),
+                    ],
+                  ),
                 );
                 if (confirm == true && context.mounted) {
                   await _clear(context);
@@ -127,23 +126,22 @@ class _CrashLogScreenState extends State<CrashLogScreen> {
           ],
         ],
       ),
-      body:
-          _loading
-              ? const Center(child: CircularProgressIndicator())
-              : (_content == null || _content!.isEmpty)
-              ? _EmptyState(hasPath: _content != null)
-              : SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
-                child: SelectableText(
-                  _content!,
-                  style: TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 11.5,
-                    height: 1.55,
-                    color: cs.onSurface,
-                  ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : (_content == null || _content!.isEmpty)
+          ? _EmptyState(hasPath: _content != null)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(12),
+              child: SelectableText(
+                _content!,
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 11.5,
+                  height: 1.55,
+                  color: cs.onSurface,
                 ),
               ),
+            ),
     );
   }
 }
@@ -167,11 +165,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.bug_report_outlined,
-              size: 72,
-              color: cs.outlineVariant,
-            ),
+            Icon(Icons.bug_report_outlined, size: 72, color: cs.outlineVariant),
             const SizedBox(height: 16),
             Text(
               hasPath ? 'No crash reports yet' : 'Log file not initialized',

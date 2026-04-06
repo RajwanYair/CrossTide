@@ -26,8 +26,9 @@ TickerEntry _tickerFromMap(Map<String, dynamic> m) {
     symbol: (m['symbol'] as String).trim().toUpperCase(),
     sortOrder: (m['sortOrder'] as int?) ?? 0,
     groupId: m['groupId'] as String?,
-    enabledAlertTypes:
-        alertTypes.isEmpty ? const {AlertType.sma200CrossUp} : alertTypes,
+    enabledAlertTypes: alertTypes.isEmpty
+        ? const {AlertType.sma200CrossUp}
+        : alertTypes,
     nextEarningsAt: m['nextEarningsAt'] != null
         ? DateTime.tryParse(m['nextEarningsAt'] as String)
         : null,
@@ -65,23 +66,23 @@ void main() {
     });
 
     test('symbol is normalised to upper-case on import', () {
-      final map = _tickerToMap(
-        const TickerEntry(symbol: 'aapl', sortOrder: 0),
-      );
+      final map = _tickerToMap(const TickerEntry(symbol: 'aapl', sortOrder: 0));
       map['symbol'] = 'aapl'; // simulate lower-case in JSON
       final ticker = _tickerFromMap(map);
       expect(ticker.symbol, 'AAPL');
     });
 
-    test('unknown alertTypes are silently dropped; falls back to sma200CrossUp',
-        () {
-      final ticker = _tickerFromMap({
-        'symbol': 'TSLA',
-        'sortOrder': 0,
-        'enabledAlertTypes': ['nonExistentType'],
-      });
-      expect(ticker.enabledAlertTypes, {AlertType.sma200CrossUp});
-    });
+    test(
+      'unknown alertTypes are silently dropped; falls back to sma200CrossUp',
+      () {
+        final ticker = _tickerFromMap({
+          'symbol': 'TSLA',
+          'sortOrder': 0,
+          'enabledAlertTypes': ['nonExistentType'],
+        });
+        expect(ticker.enabledAlertTypes, {AlertType.sma200CrossUp});
+      },
+    );
 
     test('export JSON has required top-level keys', () {
       final payload = {
@@ -96,7 +97,10 @@ void main() {
       final json = jsonEncode(payload);
       final decoded = jsonDecode(json) as Map<String, dynamic>;
 
-      expect(decoded.keys, containsAll(['exportedAt', 'version', 'groups', 'tickers']));
+      expect(
+        decoded.keys,
+        containsAll(['exportedAt', 'version', 'groups', 'tickers']),
+      );
       final tickers = decoded['tickers'] as List<dynamic>;
       expect(tickers.length, 1);
       expect((tickers.first as Map<String, dynamic>)['symbol'], 'NVDA');
@@ -104,17 +108,14 @@ void main() {
 
     test('import validates missing tickers key', () {
       const badJson = '{"something": []}';
-      expect(
-        () {
-          final p = jsonDecode(badJson) as Map<String, dynamic>;
-          if (!p.containsKey('tickers')) {
-            throw const FormatException(
-              'Missing "tickers" key — not a CrossTide watchlist export',
-            );
-          }
-        },
-        throwsA(isA<FormatException>()),
-      );
+      expect(() {
+        final p = jsonDecode(badJson) as Map<String, dynamic>;
+        if (!p.containsKey('tickers')) {
+          throw const FormatException(
+            'Missing "tickers" key — not a CrossTide watchlist export',
+          );
+        }
+      }, throwsA(isA<FormatException>()));
     });
   });
 }

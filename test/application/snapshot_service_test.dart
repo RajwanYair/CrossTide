@@ -44,8 +44,7 @@ Map<String, dynamic> _buildSnapshotPayload({
     'lastClose': t.lastClose,
     'sma200': t.sma200,
     'error': t.error,
-    'enabledAlertTypes':
-        t.enabledAlertTypes.map((a) => a.name).toList(),
+    'enabledAlertTypes': t.enabledAlertTypes.map((a) => a.name).toList(),
     'sortOrder': t.sortOrder,
     'groupId': t.groupId,
     'nextEarningsAt': t.nextEarningsAt?.toIso8601String(),
@@ -80,7 +79,10 @@ void main() {
       final json = const JsonEncoder.withIndent('  ').convert(payload);
       final decoded = jsonDecode(json) as Map<String, dynamic>;
 
-      expect(decoded.keys, containsAll(['exportedAt', 'settings', 'tickers', 'alertStates']));
+      expect(
+        decoded.keys,
+        containsAll(['exportedAt', 'settings', 'tickers', 'alertStates']),
+      );
       expect(decoded['tickers'], isEmpty);
       expect(decoded['alertStates'], isEmpty);
     });
@@ -225,7 +227,7 @@ void main() {
     test('throws FormatException when settings key is missing', () async {
       final path = await writeSnapshot({
         'exportedAt': '2025-01-01',
-        'tickers': [],
+        'tickers': <dynamic>[],
       });
 
       final svc = SnapshotService(repository: repo);
@@ -238,7 +240,7 @@ void main() {
     test('uses defaults for missing numeric fields', () async {
       final path = await writeSnapshot({
         'settings': <String, dynamic>{},
-        'tickers': [],
+        'tickers': <dynamic>[],
       });
 
       final svc = SnapshotService(repository: repo);
