@@ -15,6 +15,7 @@ import 'package:logger/logger.dart';
 
 import '../application/application.dart';
 import '../data/data.dart';
+import '../data/database/database.dart' as db show WatchlistGroup;
 import '../domain/entities.dart' as domain;
 
 // ---------------------------------------------------------------------------
@@ -215,6 +216,21 @@ final tickerEnabledAlertTypesProvider =
       );
       return entry.enabledAlertTypes;
     });
+
+// ---------------------------------------------------------------------------
+// Watchlist groups
+// ---------------------------------------------------------------------------
+
+/// Stream of all [WatchlistGroup]s ordered by sortOrder.
+final watchlistGroupsProvider = StreamProvider<List<db.WatchlistGroup>>((
+  ref,
+) async* {
+  final repo = await ref.watch(repositoryProvider.future);
+  yield* repo.watchGroups();
+});
+
+/// Active group filter. Null = show all tickers.
+final activeGroupFilterProvider = StateProvider<String?>((ref) => null);
 
 // ---------------------------------------------------------------------------
 // Refresh action

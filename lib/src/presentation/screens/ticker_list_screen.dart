@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../data/database/database.dart' show Ticker;
+import '../../data/database/database.dart' show Ticker, WatchlistGroup;
 import '../providers.dart';
 import '../sp500_tickers_provider.dart';
 
@@ -81,20 +81,45 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
         data: (tickers) {
           if (tickers.isEmpty) return const _EmptyState();
 
-          return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(12, 6, 12, 100),
-            itemCount: tickers.length,
-            itemBuilder: (context, index) {
-              return _TickerCard(
-                    ticker: tickers[index],
-                    onRemove: () => _removeTicker(tickers[index].symbol),
-                    onTap: () =>
-                        context.push('/ticker/${tickers[index].symbol}'),
-                  )
-                  .animate(delay: Duration(milliseconds: 40 * index))
-                  .fadeIn(duration: 280.ms)
-                  .slideX(begin: 0.05, end: 0, duration: 280.ms);
-            },
+          final groupsAsync = ref.watch(watchlistGroupsProvider);
+          final groups = groupsAsync.valueOrNull ?? const <WatchlistGroup>[];
+          final activeGroup = ref.watch(activeGroupFilterProvider);
+
+          // Filter by group if one is selected
+          final filtered = activeGroup == null
+              ? tickers
+              : tickers
+                    .where((t) => t.groupId == activeGroup)
+                    .toList();
+
+          return Column(
+            children: [
+              if (groups.isNotEmpty)
+                _GroupFilterRow(groups: groups, activeGroup: activeGroup),
+              Expanded(
+                child: filtered.isEmpty
+                    ? const Center(child: Text('No tickers in this group.'))
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(12, 6, 12, 100),
+                        itemCount: filtered.length,
+                        itemBuilder: (context, index) {
+                          return _TickerCard(
+                                ticker: filtered[index],
+                                onRemove: () =>
+                                    _removeTicker(filtered[index].symbol),
+                                onTap: () => context.push(
+                                  '/ticker/${filtered[index].symbol}',
+                                ),
+                              )
+                              .animate(
+                                delay: Duration(milliseconds: 40 * index),
+                              )
+                              .fadeIn(duration: 280.ms)
+                              .slideX(begin: 0.05, end: 0, duration: 280.ms);
+                        },
+                      ),
+              ),
+            ],
           );
         },
       ),
@@ -545,6 +570,57 @@ class _ErrorState extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Group filter row
+// ---------------------------------------------------------------------------
+
+class _GroupFilterRow extends ConsumerWidget {
+  const _GroupFilterRow({required this.groups, required this.activeGroup});
+
+  final List<WatchlistGroup> groups;
+  final String? activeGroup;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: Row(
+        children: [
+          // "All" chip
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: FilterChip(
+              label: const Text('All'),
+              selected: activeGroup == null,
+              onSelected: (_) =>
+                  ref.read(activeGroupFilterProvider.notifier).state = null,
+            ),
+          ),
+          ...groups.map((g) {
+            final color = Color(g.colorValue);
+            final isSelected = activeGroup == g.id;
+            return Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: FilterChip(
+                avatar: CircleAvatar(
+                  radius: 6,
+                  backgroundColor: color,
+                ),
+                label: Text(g.name),
+                selected: isSelected,
+                onSelected: (_) => ref
+                    .read(activeGroupFilterProvider.notifier)
+                    .state = isSelected ? null : g.id,
+              ),
+            );
+          }),
+        ],
       ),
     );
   }

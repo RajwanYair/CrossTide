@@ -52,6 +52,7 @@ class StockRepository {
           error: r.error,
           enabledAlertTypes: _parseAlertTypes(r.enabledAlertTypes),
           sortOrder: r.sortOrder,
+          groupId: r.groupId,
         ),
       );
     }
@@ -91,6 +92,35 @@ class StockRepository {
     final upper = symbol.toUpperCase().trim();
     await (db.update(db.tickers)..where((t) => t.symbol.equals(upper)))
         .write(TickersCompanion(sortOrder: Value(sortOrder)));
+  }
+
+  /// Assign [symbol] to a watchlist group (null = ungrouped).
+  Future<void> updateTickerGroup(String symbol, String? groupId) async {
+    final upper = symbol.toUpperCase().trim();
+    await (db.update(db.tickers)..where((t) => t.symbol.equals(upper)))
+        .write(TickersCompanion(groupId: Value(groupId)));
+  }
+
+  // ---- Watchlist Groups ----
+
+  Future<List<WatchlistGroup>> getAllGroups() => db.getAllGroups();
+
+  Stream<List<WatchlistGroup>> watchGroups() => db.watchAllGroups();
+
+  Future<void> upsertGroup(WatchlistGroup group) => db.upsertGroup(
+    WatchlistGroupsCompanion(
+      id: Value(group.id),
+      name: Value(group.name),
+      colorValue: Value(group.colorValue),
+      sortOrder: Value(group.sortOrder),
+    ),
+  );
+
+  Future<void> deleteGroup(String id) async {
+    // Un-assign tickers belonging to this group
+    await (db.update(db.tickers)..where((t) => t.groupId.equals(id)))
+        .write(const TickersCompanion(groupId: Value(null)));
+    await db.deleteGroup(id);
   }
 
   // ---- Price Data ----

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../data/database/database.dart' show WatchlistGroup;
 import '../../domain/entities.dart';
 import '../providers.dart';
 
@@ -255,6 +256,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     .fadeIn(duration: 300.ms)
                     .slideY(begin: 0.04, end: 0),
               ],
+              const SizedBox(height: 24),
+
+              // Watchlist Groups management
+              _SettingsSection(
+                icon: Icons.folder_special_rounded,
+                title: '📁 Watchlist Groups',
+                subtitle: 'Organize tickers into named groups',
+                child: _WatchlistGroupsManager(),
+              ).animate(delay: 380.ms).fadeIn(duration: 300.ms).slideY(
+                begin: 0.04,
+                end: 0,
+              ),
               const SizedBox(height: 24),
 
               // Save Button
@@ -580,6 +593,163 @@ class _MiniPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(text, style: const TextStyle(fontSize: 10)),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Watchlist Groups Manager
+// ---------------------------------------------------------------------------
+
+class _WatchlistGroupsManager extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_WatchlistGroupsManager> createState() =>
+      _WatchlistGroupsManagerState();
+}
+
+class _WatchlistGroupsManagerState
+    extends ConsumerState<_WatchlistGroupsManager> {
+  static const _palette = [
+    Color(0xFF1565C0), // blue
+    Color(0xFF2E7D32), // green
+    Color(0xFFE53935), // red
+    Color(0xFF6A1B9A), // purple
+    Color(0xFFE65100), // orange
+    Color(0xFF00838F), // teal
+    Color(0xFF4E342E), // brown
+    Color(0xFF37474F), // grey
+  ];
+
+  Future<void> _createGroup(BuildContext ctx) async {
+    final nameCtl = TextEditingController();
+    var pickedColor = _palette.first;
+    final confirmed = await showDialog<bool>(
+      context: ctx,
+      builder: (dlgCtx) => StatefulBuilder(
+        builder: (_, setS) => AlertDialog(
+          title: const Text('New Group'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtl,
+                decoration: const InputDecoration(labelText: 'Group name'),
+                autofocus: true,
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                children: _palette.map((c) {
+                  return GestureDetector(
+                    onTap: () => setS(() => pickedColor = c),
+                    child: CircleAvatar(
+                      radius: 14,
+                      backgroundColor: c,
+                      child: pickedColor == c
+                          ? const Icon(
+                              Icons.check,
+                              size: 16,
+                              color: Colors.white,
+                            )
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dlgCtx, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dlgCtx, true),
+              child: const Text('Create'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (confirmed != true) return;
+    final name = nameCtl.text.trim();
+    if (name.isEmpty) return;
+    final repo = await ref.read(repositoryProvider.future);
+    if (!mounted) return;
+    await repo.upsertGroup(
+      WatchlistGroup(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: name,
+        colorValue: pickedColor.value,
+        sortOrder: 0,
+      ),
+    );
+  }
+
+  Future<void> _deleteGroup(String id, String name) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Group?'),
+        content: Text('Delete "$name"? Tickers will become ungrouped.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    final repo = await ref.read(repositoryProvider.future);
+    if (!mounted) return;
+    await repo.deleteGroup(id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final groupsAsync = ref.watch(watchlistGroupsProvider);
+    final groups = switch (groupsAsync) {
+      AsyncData(:final value) => value,
+      _ => const <WatchlistGroup>[],
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (groups.isEmpty)
+          const Text(
+            'No groups yet. Create one to organize your tickers.',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          )
+        else
+          ...groups.map(
+            (WatchlistGroup g) => ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: CircleAvatar(
+                radius: 10,
+                backgroundColor: Color(g.colorValue),
+              ),
+              title: Text(g.name, style: const TextStyle(fontSize: 14)),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                tooltip: 'Delete group',
+                onPressed: () => _deleteGroup(g.id, g.name),
+              ),
+            ),
+          ),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          onPressed: () => _createGroup(context),
+          icon: const Icon(Icons.add_rounded, size: 16),
+          label: const Text('New Group'),
+        ),
+      ],
     );
   }
 }

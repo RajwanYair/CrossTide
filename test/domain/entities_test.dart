@@ -314,10 +314,10 @@ void main() {
       );
     });
 
-    test('props has 9 elements', () {
+    test('props has 10 elements', () {
       // symbol, addedAt, lastRefreshAt, lastClose, sma200, alertState, error,
-      // enabledAlertTypes, sortOrder
-      expect(makeEntry().props.length, 9);
+      // enabledAlertTypes, sortOrder, groupId
+      expect(makeEntry().props.length, 10);
     });
 
     test('minimal constructor — all optionals null', () {
