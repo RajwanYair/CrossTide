@@ -151,6 +151,15 @@ final tickerAlertStateProvider =
       return repo.getAlertState(ticker);
     });
 
+/// S&P 500 benchmark candles (fetched on-demand when the overlay is toggled).
+/// Uses the SPY ETF as a proxy — always available via Yahoo Finance.
+final sp500CandlesProvider = FutureProvider<List<domain.DailyCandle>>((
+  ref,
+) async {
+  final repo = await ref.watch(repositoryProvider.future);
+  return repo.fetchAndCacheCandles('SPY');
+});
+
 /// Returns the set of enabled [AlertType]s for [ticker].
 /// Kept separate from [tickerCandlesProvider] so the selector can invalidate
 /// it independently.

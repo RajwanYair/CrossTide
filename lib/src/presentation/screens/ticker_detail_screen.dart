@@ -1,4 +1,4 @@
-/// Ticker Detail Screen — Price chart + SMA200 overlay + alert history.
+/// Ticker Detail Screen — Price chart + SMA overlays + alert state.
 library;
 
 import 'package:fl_chart/fl_chart.dart';
@@ -135,6 +135,13 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
               .computeSeries(candles, period: 150)
               .sublist(rangeStartIdx);
 
+          // SPY benchmark candles (lazy — loaded when overlay toggled)
+          final spyAsync = ref.watch(sp500CandlesProvider);
+          final spyCandles = switch (spyAsync) {
+            AsyncData(:final value) => value,
+            _ => const <DailyCandle>[],
+          };
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -158,6 +165,7 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
                   chartSma200: chartSma200,
                   selectedRange: _chartRange,
                   onRangeChanged: (r) => setState(() => _chartRange = r),
+                  spyCandles: spyCandles,
                 ).animate(delay: 80.ms).fadeIn(duration: 300.ms),
                 const SizedBox(height: 16),
                 _AlertStateCard(
@@ -437,6 +445,7 @@ class _ChartSection extends StatefulWidget {
     required this.chartSma200,
     required this.selectedRange,
     required this.onRangeChanged,
+    this.spyCandles = const [],
   });
 
   final ColorScheme cs;
@@ -446,6 +455,8 @@ class _ChartSection extends StatefulWidget {
   final List<(DateTime, double?)> chartSma200;
   final _ChartRange selectedRange;
   final ValueChanged<_ChartRange> onRangeChanged;
+  /// SPY candles for the benchmark overlay (empty list = not loaded yet).
+  final List<DailyCandle> spyCandles;
 
   @override
   State<_ChartSection> createState() => _ChartSectionState();
@@ -455,6 +466,39 @@ class _ChartSectionState extends State<_ChartSection> {
   bool _showSma50 = false;
   bool _showSma150 = false;
   bool _showSma200 = true;
+  bool _showSpy = false;
+
+  /// Build SPY normalized spots: SPY close indexed to the first price value.
+  List<FlSpot> _buildSpySpots(List<FlSpot> priceSpots) {
+    final spy = widget.spyCandles;
+    final candles = widget.chartCandles;
+    if (spy.isEmpty || candles.isEmpty || priceSpots.isEmpty) return [];
+
+    // Align SPY to chart range by date
+    final rangeStart = candles.first.date;
+    final spyFiltered = spy.where((c) => !c.date.isBefore(rangeStart)).toList();
+    if (spyFiltered.isEmpty) return [];
+
+    final basePrice = priceSpots.first.y;
+    final baseSpy = spyFiltered.first.close;
+
+    // Match each chart candle index to the closest SPY date
+    final spots = <FlSpot>[];
+    var spyIdx = 0;
+    for (var i = 0; i < candles.length; i++) {
+      final target = candles[i].date;
+      // Advance spyIdx to closest date
+      while (spyIdx + 1 < spyFiltered.length &&
+              spyFiltered[spyIdx + 1].date.isBefore(target) ||
+          spyIdx + 1 < spyFiltered.length &&
+              spyFiltered[spyIdx + 1].date == target) {
+        spyIdx++;
+      }
+      final normalized = (spyFiltered[spyIdx].close / baseSpy) * basePrice;
+      spots.add(FlSpot(i.toDouble(), normalized));
+    }
+    return spots;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -536,6 +580,20 @@ class _ChartSectionState extends State<_ChartSection> {
           dashArray: [6, 4],
           dotData: const FlDotData(show: false),
         ),
+      if (_showSpy)
+        () {
+              final spySpots = _buildSpySpots(priceSpots);
+              if (spySpots.isEmpty) return null;
+              return LineChartBarData(
+                spots: spySpots,
+                isCurved: true,
+                color: Colors.teal.shade400,
+                barWidth: 1.5,
+                dashArray: [3, 3],
+                dotData: const FlDotData(show: false),
+              );
+            }() ??
+            LineChartBarData(spots: const [], color: Colors.transparent),
     ];
 
     return Card(
@@ -563,7 +621,7 @@ class _ChartSectionState extends State<_ChartSection> {
               ),
             ),
             const SizedBox(height: 8),
-            // SMA toggle chips
+            // SMA toggle chips + SPY benchmark
             Wrap(
               spacing: 6,
               children: [
@@ -584,6 +642,12 @@ class _ChartSectionState extends State<_ChartSection> {
                   color: Colors.deepOrange.shade400,
                   selected: _showSma200,
                   onChanged: (v) => setState(() => _showSma200 = v),
+                ),
+                _SmaToggleChip(
+                  label: '📈 SPY',
+                  color: Colors.teal.shade400,
+                  selected: _showSpy,
+                  onChanged: (v) => setState(() => _showSpy = v),
                 ),
               ],
             ),
