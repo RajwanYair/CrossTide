@@ -6,7 +6,8 @@
 /// architecture.
 library;
 
-import 'dart:io' show Platform;
+import 'dart:async' show StreamController, Timer;
+import 'dart:io' show InternetAddress, InternetAddressType, Platform, SocketException;
 
 import 'package:flutter/material.dart' show Color, ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -336,6 +337,45 @@ class ActiveGroupFilter extends Notifier<String?> {
   // ignore: use_setters_to_change_properties
   void set(String? value) => state = value;
 }
+
+// ---------------------------------------------------------------------------
+// Connectivity
+// ---------------------------------------------------------------------------
+
+/// Whether the device has an active Internet connection.
+///
+/// Works on both Android and Windows without any extra package by doing a DNS
+/// lookup every 15 seconds.  Starts optimistically as `true`.
+final connectivityProvider = StreamProvider<bool>((ref) {
+  final controller = StreamController<bool>();
+
+  Future<bool> checkConnectivity() async {
+    try {
+      final result = await InternetAddress.lookup(
+        'query1.finance.yahoo.com',
+        type: InternetAddressType.any,
+      );
+      return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
+    } on SocketException {
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // Emit immediately, then re-check every 15 seconds.
+  checkConnectivity().then(controller.add);
+  final timer = Timer.periodic(const Duration(seconds: 15), (_) {
+    checkConnectivity().then(controller.add);
+  });
+
+  ref.onDispose(() {
+    timer.cancel();
+    controller.close();
+  });
+
+  return controller.stream;
+});
 
 /// Alert history (all fired alerts, newest first).
 final alertHistoryProvider = StreamProvider<List<domain.AlertHistoryEntry>>(

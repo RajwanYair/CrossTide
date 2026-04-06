@@ -290,6 +290,7 @@ class CrossTideApp extends ConsumerWidget {
         ),
       ),
       routerConfig: router,
+      builder: (context, child) => _OfflineBannerScope(child: child!),
     );
   }
 }
@@ -297,6 +298,67 @@ class CrossTideApp extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 // Headless background-refresh mode (Windows Task Scheduler)
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Offline banner
+// ---------------------------------------------------------------------------
+
+/// Wraps the entire app widget tree and shows a persistent offline banner.
+///
+/// The banner slides up from the bottom (Android-style snack bar) so it
+/// doesn't interfere with the AppBar. It shows immediately once connectivity
+/// is lost and dismisses automatically when it returns.
+class _OfflineBannerScope extends ConsumerWidget {
+  const _OfflineBannerScope({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isOnline = switch (ref.watch(connectivityProvider)) {
+      AsyncData(:final value) => value,
+      _ => true, // optimistic until first check
+    };
+    return Column(
+      children: [
+        Expanded(child: child),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: isOnline
+              ? const SizedBox.shrink()
+              : Container(
+                  width: double.infinity,
+                  color: Colors.red.shade700,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.wifi_off_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Offline — showing cached data',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+}
 
 /// Check if the app was launched with `--background-refresh` by the Windows
 /// Task Scheduler. Inspects platform-dispatched command-line arguments.
