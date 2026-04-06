@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 import '../../data/database/database.dart' show Ticker;
 import '../providers.dart';
+import '../sp500_tickers_provider.dart';
 
 class TickerListScreen extends ConsumerStatefulWidget {
   const TickerListScreen({super.key});
@@ -31,6 +32,8 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
   @override
   Widget build(BuildContext context) {
     final tickersAsync = ref.watch(tickerListProvider);
+    // Pre-warm the S&P 500 list so it's ready before the dialog opens
+    ref.watch(sp500TickersProvider);
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -110,47 +113,13 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
 
   void _showAddDialog() {
     _tickerController.clear();
+    final sp500 = ref.read(sp500TickersProvider).valueOrNull ?? const <String>[];
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Icon(
-              Icons.search_rounded,
-              color: Theme.of(ctx).colorScheme.primary,
-            ),
-            const SizedBox(width: 10),
-            const Text('📈 Add Tickers'),
-          ],
-        ),
-        content: TextField(
-          controller: _tickerController,
-          decoration: InputDecoration(
-            labelText: 'Ticker Symbol(s)',
-            hintText: 'e.g. AAPL, MSFT, NVDA',
-            helperText: 'Separate multiple symbols with commas or spaces',
-            prefixIcon: const Icon(Icons.candlestick_chart_rounded),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          textCapitalization: TextCapitalization.characters,
-          autofocus: true,
-          maxLines: 3,
-          minLines: 1,
-          onSubmitted: (_) => _addTickers(ctx),
-        ),
-        actions: [
-          TextButton.icon(
-            onPressed: () => Navigator.pop(ctx),
-            icon: const Icon(Icons.close_rounded),
-            label: const Text('Cancel'),
-          ),
-          FilledButton.icon(
-            onPressed: () => _addTickers(ctx),
-            icon: const Icon(Icons.add_rounded),
-            label: const Text('Add'),
-          ),
-        ],
+      builder: (ctx) => _AddTickersDialog(
+        controller: _tickerController,
+        sp500Tickers: sp500,
+        onAdd: () => _addTickers(ctx),
       ),
     );
   }
@@ -577,6 +546,147 @@ class _ErrorState extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Add Tickers Dialog with S&P 500 autocomplete suggestions
+// ---------------------------------------------------------------------------
+
+class _AddTickersDialog extends StatefulWidget {
+  const _AddTickersDialog({
+    required this.controller,
+    required this.sp500Tickers,
+    required this.onAdd,
+  });
+
+  final TextEditingController controller;
+  final List<String> sp500Tickers;
+  final VoidCallback onAdd;
+
+  @override
+  State<_AddTickersDialog> createState() => _AddTickersDialogState();
+}
+
+class _AddTickersDialogState extends State<_AddTickersDialog> {
+  /// Returns suggestions for the last token being typed (after the last comma/space).
+  List<String> _suggestions(TextEditingValue textEditingValue) {
+    final text = textEditingValue.text.toUpperCase();
+    // Find the last token being typed
+    final lastToken = text.split(RegExp(r'[,\s]+')).lastWhere(
+      (t) => t.isNotEmpty,
+      orElse: () => '',
+    );
+    if (lastToken.isEmpty) return const [];
+    return widget.sp500Tickers
+        .where((t) => t.startsWith(lastToken) && t != lastToken)
+        .take(8)
+        .toList();
+  }
+
+  void _appendSuggestion(String symbol) {
+    final current = widget.controller.text.trimRight();
+    // Replace the last partial token with the chosen symbol + comma
+    final tokens = current.split(RegExp(r'[,\s]+'));
+    if (tokens.isNotEmpty) tokens.removeLast();
+    tokens.add(symbol);
+    final updated = '${tokens.join(', ')}, ';
+    widget.controller.value = TextEditingValue(
+      text: updated,
+      selection: TextSelection.collapsed(offset: updated.length),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: [
+          Icon(Icons.search_rounded, color: cs.primary),
+          const SizedBox(width: 10),
+          const Text('📈 Add Tickers'),
+        ],
+      ),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RawAutocomplete<String>(
+              textEditingController: widget.controller,
+              focusNode: FocusNode(),
+              optionsBuilder: _suggestions,
+              optionsViewBuilder: (ctx, onSelected, options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(10),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        itemBuilder: (_, i) {
+                          final opt = options.elementAt(i);
+                          return ListTile(
+                            dense: true,
+                            title: Text(
+                              opt,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            onTap: () => onSelected(opt),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+              onSelected: _appendSuggestion,
+              fieldViewBuilder: (ctx, controller, focusNode, onSubmitted) {
+                return TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    labelText: 'Ticker Symbol(s)',
+                    hintText: 'e.g. AAPL, MSFT, NVDA',
+                    helperText:
+                        'Separate multiple symbols with commas or spaces',
+                    prefixIcon:
+                        const Icon(Icons.candlestick_chart_rounded),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  textCapitalization: TextCapitalization.characters,
+                  autofocus: true,
+                  maxLines: 3,
+                  minLines: 1,
+                  onSubmitted: (_) => widget.onAdd(),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton.icon(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.close_rounded),
+          label: const Text('Cancel'),
+        ),
+        FilledButton.icon(
+          onPressed: widget.onAdd,
+          icon: const Icon(Icons.add_rounded),
+          label: const Text('Add'),
+        ),
+      ],
     );
   }
 }

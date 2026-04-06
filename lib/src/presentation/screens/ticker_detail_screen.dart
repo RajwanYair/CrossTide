@@ -919,7 +919,7 @@ class _CandlestickPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout(maxWidth: 160);
       final rx = cx + 8;
-      final ry = 8.0;
+      const ry = 8.0;
       final bgRect = Rect.fromLTWH(
         rx.clamp(0, size.width - tp.width - 10),
         ry,

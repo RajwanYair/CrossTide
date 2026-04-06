@@ -103,6 +103,7 @@ flutter:
   assets:
     - .env
     - assets/svg/
+    - assets/sp500_tickers.json
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

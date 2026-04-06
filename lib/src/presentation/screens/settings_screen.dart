@@ -70,7 +70,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               // Theme Mode
-              _SettingsSection(
+              const _SettingsSection(
                     icon: Icons.palette_outlined,
                     title: '🌗 Theme',
                     subtitle: 'Light, Dark, or follow the system setting',
