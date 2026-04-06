@@ -302,4 +302,45 @@ class StockRepository {
       ),
     );
   }
+
+  // ---- Price Targets ----
+
+  Stream<List<domain.PriceTarget>> watchPriceTargets(String symbol) =>
+      db.watchPriceTargets(symbol.toUpperCase().trim()).map(
+        (rows) => rows.map(_priceTargetFromRow).toList(),
+      );
+
+  Future<List<domain.PriceTarget>> getPriceTargets(String symbol) async {
+    final rows = await db.getPriceTargets(symbol.toUpperCase().trim());
+    return rows.map(_priceTargetFromRow).toList();
+  }
+
+  Future<List<domain.PriceTarget>> getAllPendingPriceTargets() async {
+    final rows = await db.getAllPendingPriceTargets();
+    return rows.map(_priceTargetFromRow).toList();
+  }
+
+  Future<void> addPriceTarget(domain.PriceTarget target) async {
+    await db.insertPriceTarget(
+      PriceTargetsTableCompanion.insert(
+        symbol: target.symbol.toUpperCase().trim(),
+        targetPrice: target.targetPrice,
+        note: Value(target.note),
+      ),
+    );
+  }
+
+  Future<void> markPriceTargetFired(int id) => db.markPriceTargetFired(id);
+
+  Future<void> deletePriceTarget(int id) => db.deletePriceTarget(id);
+
+  domain.PriceTarget _priceTargetFromRow(PriceTargetsTableData row) =>
+      domain.PriceTarget(
+        id: row.id,
+        symbol: row.symbol,
+        targetPrice: row.targetPrice,
+        note: row.note,
+        createdAt: row.createdAt,
+        firedAt: row.firedAt,
+      );
 }

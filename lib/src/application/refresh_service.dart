@@ -166,7 +166,10 @@ class RefreshService {
     final wantGolden = enabledAlertTypes.contains(AlertType.goldenCross);
     final wantDeath = enabledAlertTypes.contains(AlertType.deathCross);
 
-    if (wantGolden || wantDeath) {
+    // 6. Price target check (independent of other alert types)
+    if (enabledAlertTypes.contains(AlertType.priceTarget)) {
+      await checkPriceTargets(upper, candles.last.close, settings: settings);
+    }    if (wantGolden || wantDeath) {
       final crossEvents = _goldenCrossDetector.evaluateBoth(
         ticker: upper,
         candles: candles,
@@ -202,5 +205,41 @@ class RefreshService {
       _logger.d('$upper: no alerts fired this cycle');
     }
     return firedAny;
+  }
+
+  /// Check pending price targets for [symbol] against [latestClose].
+  /// Fires a notification for each target that has been reached.
+  Future<void> checkPriceTargets(
+    String symbol,
+    double latestClose, {
+    AppSettings? settings,
+  }) async {
+    settings ??= await repository.getSettings();
+    final pending = await repository.getPriceTargets(symbol);
+    final inQuiet = _alertStateMachine.isInQuietHours(
+      now: DateTime.now(),
+      quietStart: settings.quietHoursStart,
+      quietEnd: settings.quietHoursEnd,
+    );
+
+    for (final target in pending) {
+      if (target.hasFired) continue;
+      if (latestClose >= target.targetPrice) {
+        _logger.i(
+          '$symbol: price target \$${target.targetPrice} hit '
+          '(close=\$$latestClose)',
+        );
+        if (target.id != null) {
+          await repository.markPriceTargetFired(target.id!);
+        }
+        if (!inQuiet) {
+          await notificationService.showPriceTargetAlert(
+            ticker: symbol,
+            close: latestClose,
+            target: target.targetPrice,
+          );
+        }
+      }
+    }
   }
 }

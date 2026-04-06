@@ -16,6 +16,11 @@ abstract class INotificationService {
     required double close,
     required double sma200,
   });
+  Future<void> showPriceTargetAlert({
+    required String ticker,
+    required double close,
+    required double target,
+  });
   Future<void> cancelAll();
 }
 
@@ -110,6 +115,37 @@ class LocalNotificationService implements INotificationService {
       _logger.i('Notification shown for $ticker');
     } catch (e) {
       _logger.e('Failed to show notification for $ticker: $e');
+    }
+  }
+
+  @override
+  Future<void> showPriceTargetAlert({
+    required String ticker,
+    required double close,
+    required double target,
+  }) async {
+    final id = (ticker.hashCode.abs() + target.hashCode.abs()) % 100000;
+    const androidDetails = AndroidNotificationDetails(
+      _androidChannelId,
+      _androidChannelName,
+      channelDescription: _androidChannelDesc,
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+    const details = NotificationDetails(android: androidDetails);
+    try {
+      await _plugin.show(
+        id: id,
+        title: '$ticker — Price Target Hit! 🎯',
+        body:
+            'Close: \$${close.toStringAsFixed(2)} reached target '
+            '\$${target.toStringAsFixed(2)}',
+        notificationDetails: details,
+        payload: 'ticker:$ticker',
+      );
+      _logger.i('Price target notification shown for $ticker @ \$$target');
+    } catch (e) {
+      _logger.e('Failed to show price target notification: $e');
     }
   }
 

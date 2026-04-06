@@ -46,6 +46,9 @@ enum AlertType {
 
   /// SMA50 crosses below SMA200 (Death Cross).
   deathCross,
+
+  /// Price reaches or exceeds a user-defined target.
+  priceTarget,
 }
 
 /// Extension helpers for [AlertType].
@@ -56,6 +59,7 @@ extension AlertTypeX on AlertType {
     AlertType.sma50CrossUp => 'SMA50 Cross-Up',
     AlertType.goldenCross => 'Golden Cross (50↑200)',
     AlertType.deathCross => 'Death Cross (50↓200)',
+    AlertType.priceTarget => 'Price Target',
   };
 
   String get description => switch (this) {
@@ -69,6 +73,8 @@ extension AlertTypeX on AlertType {
       'SMA50 crosses above SMA200 — bullish long-term signal',
     AlertType.deathCross =>
       'SMA50 crosses below SMA200 — bearish long-term signal',
+    AlertType.priceTarget =>
+      'Price reaches or exceeds your target price',
   };
 }
 
@@ -368,6 +374,32 @@ class AppSettings extends Equatable {
 /// management patterns. Each profile pre-fills [AppSettings] with sensible
 /// defaults. [custom] means the user has manually overridden individual fields.
 enum AlertProfile { aggressive, balanced, conservative, custom }
+
+/// A user-defined price target for a ticker.
+class PriceTarget extends Equatable {
+  const PriceTarget({
+    this.id,
+    required this.symbol,
+    required this.targetPrice,
+    this.note,
+    this.createdAt,
+    this.firedAt,
+  });
+
+  /// Database row ID; null when not yet persisted.
+  final int? id;
+  final String symbol;
+  final double targetPrice;
+  final String? note;
+  final DateTime? createdAt;
+  /// Set when the alert has fired (price crossed target). Null = still pending.
+  final DateTime? firedAt;
+
+  bool get hasFired => firedAt != null;
+
+  @override
+  List<Object?> get props => [id, symbol, targetPrice, note, createdAt, firedAt];
+}
 
 /// Maps each [AlertProfile] to a ready-to-use [AppSettings] snapshot.
 /// The UI can apply a profile in one tap; the user may then fine-tune

@@ -206,6 +206,10 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
                 _AlertTypeSelectorCard(
                   symbol: widget.symbol,
                 ).animate(delay: 240.ms).fadeIn(duration: 300.ms),
+                const SizedBox(height: 16),
+                _PriceTargetsCard(
+                  symbol: widget.symbol,
+                ).animate(delay: 300.ms).fadeIn(duration: 300.ms),
               ],
             ),
           );
@@ -975,6 +979,174 @@ class _CandlestickChartState extends State<_CandlestickChart> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Price Targets card
+// ---------------------------------------------------------------------------
+
+class _PriceTargetsCard extends ConsumerStatefulWidget {
+  const _PriceTargetsCard({required this.symbol});
+  final String symbol;
+
+  @override
+  ConsumerState<_PriceTargetsCard> createState() => _PriceTargetsCardState();
+}
+
+class _PriceTargetsCardState extends ConsumerState<_PriceTargetsCard> {
+  final _priceController = TextEditingController();
+  final _noteController = TextEditingController();
+
+  @override
+  void dispose() {
+    _priceController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final targetsAsync = ref.watch(priceTargetsProvider(widget.symbol));
+    final cs = Theme.of(context).colorScheme;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.gps_fixed_rounded, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  'Price Targets',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const Spacer(),
+                FilledButton.tonal(
+                  onPressed: () => _showAddDialog(context),
+                  child: const Text('+ Add'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            switch (targetsAsync) {
+              AsyncData(:final value) when value.isEmpty => Text(
+                'No price targets set.',
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+              ),
+              AsyncData(:final value) => Column(
+                children: value.map((t) => _TargetTile(target: t, symbol: widget.symbol)).toList(),
+              ),
+              AsyncLoading() => const LinearProgressIndicator(),
+              _ => const SizedBox.shrink(),
+            },
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showAddDialog(BuildContext context) async {
+    _priceController.clear();
+    _noteController.clear();
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Add Price Target'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _priceController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(
+                labelText: 'Target price (\$)',
+                prefixText: '\$',
+                border: OutlineInputBorder(),
+              ),
+              autofocus: true,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _noteController,
+              decoration: const InputDecoration(
+                labelText: 'Note (optional)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final price = double.tryParse(_priceController.text.trim());
+              if (price == null || price <= 0) return;
+              Navigator.of(ctx).pop();
+              final repo = await ref.read(repositoryProvider.future);
+              await repo.addPriceTarget(
+                PriceTarget(
+                  symbol: widget.symbol,
+                  targetPrice: price,
+                  note: _noteController.text.trim().isEmpty
+                      ? null
+                      : _noteController.text.trim(),
+                ),
+              );
+              ref.invalidate(priceTargetsProvider(widget.symbol));
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TargetTile extends ConsumerWidget {
+  const _TargetTile({required this.target, required this.symbol});
+  final PriceTarget target;
+  final String symbol;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cs = Theme.of(context).colorScheme;
+    final fired = target.hasFired;
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(
+        fired ? Icons.check_circle_rounded : Icons.gps_not_fixed_rounded,
+        color: fired ? Colors.green : cs.primary,
+        size: 20,
+      ),
+      title: Text(
+        '\$${target.targetPrice.toStringAsFixed(2)}',
+        style: TextStyle(
+          decoration: fired ? TextDecoration.lineThrough : null,
+          color: fired ? cs.onSurfaceVariant : null,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: target.note != null
+          ? Text(target.note!, maxLines: 1, overflow: TextOverflow.ellipsis)
+          : null,
+      trailing: IconButton(
+        icon: const Icon(Icons.delete_outline_rounded, size: 18),
+        onPressed: () async {
+          if (target.id == null) return;
+          final repo = await ref.read(repositoryProvider.future);
+          await repo.deletePriceTarget(target.id!);
+          ref.invalidate(priceTargetsProvider(symbol));
+        },
+      ),
+    );
+  }
+}
+
 class _CandlestickPainter extends CustomPainter {
   _CandlestickPainter({
     required this.candles,
@@ -1613,6 +1785,7 @@ class _AlertTypeSelectorCard extends ConsumerWidget {
     AlertType.sma200CrossUp => Colors.orange.shade700,
     AlertType.goldenCross => Colors.amber.shade800,
     AlertType.deathCross => Colors.red.shade700,
+    AlertType.priceTarget => Colors.teal.shade700,
   };
 
   Future<void> _toggle(

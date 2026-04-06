@@ -56,6 +56,19 @@ class WatchlistGroups extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class PriceTargetsTable extends Table {
+  @override
+  String get tableName => 'price_targets';
+
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get symbol => text().withLength(min: 1, max: 10)();
+  RealColumn get targetPrice => real()();
+  TextColumn get note => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  /// Null = alert pending; non-null = alert fired at this timestamp.
+  DateTimeColumn get firedAt => dateTime().nullable()();
+}
+
 class DailyCandles extends Table {
   TextColumn get ticker => text().withLength(min: 1, max: 10)();
   DateTimeColumn get date => dateTime()();
@@ -113,6 +126,7 @@ class AppSettingsTable extends Table {
     AlertStates,
     AppSettingsTable,
     WatchlistGroups,
+    PriceTargetsTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -122,7 +136,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -143,6 +157,9 @@ class AppDatabase extends _$AppDatabase {
           appSettingsTable,
           appSettingsTable.defaultIndicators,
         );
+      }
+      if (from < 6) {
+        await migrator.createTable(priceTargetsTable);
       }
     },
   );
@@ -213,6 +230,39 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> deleteGroup(String id) =>
       (delete(watchlistGroups)..where((g) => g.id.equals(id))).go();
+
+  // ---- Price Targets ----
+
+  Future<List<PriceTargetsTableData>> getPriceTargets(String symbol) =>
+      (select(priceTargetsTable)
+            ..where((t) => t.symbol.equals(symbol))
+            ..orderBy([(t) => OrderingTerm.asc(t.targetPrice)]))
+          .get();
+
+  Stream<List<PriceTargetsTableData>> watchPriceTargets(String symbol) =>
+      (select(priceTargetsTable)
+            ..where((t) => t.symbol.equals(symbol))
+            ..orderBy([(t) => OrderingTerm.asc(t.targetPrice)]))
+          .watch();
+
+  Future<List<PriceTargetsTableData>> getAllPendingPriceTargets() =>
+      (select(priceTargetsTable)
+            ..where((t) => t.firedAt.isNull()))
+          .get();
+
+  Future<int> upsertPriceTarget(PriceTargetsTableCompanion entry) =>
+      into(priceTargetsTable).insertOnConflictUpdate(entry);
+
+  Future<int> insertPriceTarget(PriceTargetsTableCompanion entry) =>
+      into(priceTargetsTable).insert(entry);
+
+  Future<void> markPriceTargetFired(int id) =>
+      (update(priceTargetsTable)..where((t) => t.id.equals(id))).write(
+        PriceTargetsTableCompanion(firedAt: Value(DateTime.now())),
+      );
+
+  Future<int> deletePriceTarget(int id) =>
+      (delete(priceTargetsTable)..where((t) => t.id.equals(id))).go();
 }
 
 LazyDatabase _openConnection() {

@@ -229,6 +229,15 @@ final watchlistGroupsProvider = StreamProvider<List<db.WatchlistGroup>>((
   yield* repo.watchGroups();
 });
 
+/// Price targets for a specific symbol (live stream).
+final priceTargetsProvider = StreamProvider.family<
+  List<domain.PriceTarget>,
+  String
+>((ref, symbol) async* {
+  final repo = await ref.watch(repositoryProvider.future);
+  yield* repo.watchPriceTargets(symbol);
+});
+
 /// Active group filter. Null = show all tickers.
 final activeGroupFilterProvider = NotifierProvider<ActiveGroupFilter, String?>(
   ActiveGroupFilter.new,
