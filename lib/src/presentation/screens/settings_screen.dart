@@ -111,7 +111,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 subtitle: 'Pick a preset that suits your trading style',
                 child: _ProfileSelector(
                   current: _settings,
-                  onSelected: (s) => setState(() => _settings = s),
+                  onSelected: _applyProfileWithPreview,
                 ),
               ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.04, end: 0),
               const SizedBox(height: 12),
@@ -448,6 +448,104 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         },
       ),
     );
+  }
+
+  /// Shows a diff preview dialog before applying a profile, then applies it.
+  Future<void> _applyProfileWithPreview(AppSettings incoming) async {
+    // Detect which profile is being applied by comparing to known defaults.
+    AlertProfile? profile;
+    for (final p in AlertProfile.values) {
+      if (p == AlertProfile.custom) continue;
+      final target = p.defaults;
+      if (incoming.refreshIntervalMinutes == target.refreshIntervalMinutes &&
+          incoming.trendStrictnessDays == target.trendStrictnessDays &&
+          incoming.cacheTtlMinutes == target.cacheTtlMinutes) {
+        profile = p;
+        break;
+      }
+    }
+
+    final diff = profile != null
+        ? profile.previewDiff(_settings)
+        : <String, (String, String)>{};
+
+    // If nothing changes, apply silently.
+    if (diff.isEmpty) {
+      setState(() => _settings = incoming);
+      return;
+    }
+
+    // Show preview dialog.
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Apply ${profile?.displayName ?? 'Profile'}?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${diff.length} setting${diff.length == 1 ? '' : 's'} will change:',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            ...diff.entries.map(
+              (e) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        e.key,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: RichText(
+                        text: TextSpan(
+                          style: const TextStyle(fontSize: 12),
+                          children: [
+                            TextSpan(
+                              text: e.value.$1,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                            const TextSpan(text: ' → '),
+                            TextSpan(
+                              text: e.value.$2,
+                              style: const TextStyle(color: Colors.green),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Apply'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      setState(() => _settings = incoming);
+    }
   }
 
   Future<void> _exportSnapshot(BuildContext context) async {

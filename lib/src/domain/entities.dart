@@ -675,6 +675,43 @@ extension AlertProfileDefaults on AlertProfile {
         return 'Manually configured';
     }
   }
+
+  /// Returns a map of field → (currentValue, profileValue) for every setting
+  /// that would change if the user applied this profile to [current].
+  ///
+  /// An empty map means the current settings already match this profile.
+  /// Only fields that differ are included.
+  Map<String, (String current, String incoming)> previewDiff(
+    AppSettings current,
+  ) {
+    final target = defaults;
+    final result = <String, (String, String)>{};
+
+    void check(String field, Object? c, Object? t) {
+      if (c?.toString() != t?.toString()) {
+        result[field] = (c?.toString() ?? '', t?.toString() ?? '');
+      }
+    }
+
+    check(
+      'refreshIntervalMinutes',
+      current.refreshIntervalMinutes,
+      target.refreshIntervalMinutes,
+    );
+    check(
+      'trendStrictnessDays',
+      current.trendStrictnessDays,
+      target.trendStrictnessDays,
+    );
+    check('cacheTtlMinutes', current.cacheTtlMinutes, target.cacheTtlMinutes);
+    check('advancedMode', current.advancedMode, target.advancedMode);
+    check(
+      'volumeSpikeMultiplier',
+      current.volumeSpikeMultiplier,
+      target.volumeSpikeMultiplier,
+    );
+    return result;
+  }
 }
 
 // ---------------------------------------------------------------------------
