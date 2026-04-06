@@ -379,6 +379,9 @@ final connectivityProvider = StreamProvider<bool>((ref) {
       final result = await InternetAddress.lookup(
         'query1.finance.yahoo.com',
         type: InternetAddressType.any,
+      ).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => <InternetAddress>[],
       );
       return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
     } on SocketException {
@@ -463,4 +466,12 @@ final snapshotServiceProvider = FutureProvider<SnapshotService>((ref) async {
   final repo = await ref.watch(repositoryProvider.future);
   final logger = ref.watch(loggerProvider);
   return SnapshotService(repository: repo, logger: logger);
+});
+
+/// [WatchlistExportImportService] — exports/imports watchlist to/from JSON.
+final watchlistExportImportServiceProvider =
+    FutureProvider<WatchlistExportImportService>((ref) async {
+  final repo = await ref.watch(repositoryProvider.future);
+  final logger = ref.watch(loggerProvider);
+  return WatchlistExportImportService(repository: repo, logger: logger);
 });

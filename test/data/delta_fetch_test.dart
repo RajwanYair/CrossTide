@@ -42,6 +42,8 @@ void main() {
 
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
+    // Register teardown here so db.close() runs even if a test throws.
+    addTearDown(() => db.close());
     provider = _TrackingProvider();
     repo = StockRepository(
       db: db,
@@ -49,8 +51,6 @@ void main() {
       logger: Logger(level: Level.off),
     );
   });
-
-  tearDown(() => db.close());
 
   group('fetchAndCacheCandles — non-Yahoo provider', () {
     test('fetches full history on cache miss', () async {

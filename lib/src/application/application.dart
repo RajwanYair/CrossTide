@@ -10,4 +10,5 @@ export 'notification_service.dart';
 export 'refresh_service.dart';
 export 'snapshot_service.dart';
 export 'system_tray_service.dart';
+export 'watchlist_export_import_service.dart';
 export 'windows_task_scheduler_service.dart';

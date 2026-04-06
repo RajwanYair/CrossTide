@@ -21,6 +21,7 @@ jobs:
   analyze-and-test:
     name: Analyze & Test
     runs-on: ubuntu-latest
+    timeout-minutes: 17   # hard kill at 1020 s — well above expected 60 s run
     steps:
       - uses: actions/checkout@v4
 
@@ -43,7 +44,7 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Run tests with coverage
-        run: flutter test --coverage
+        run: flutter test --coverage --timeout 30s
 
       - name: Enforce 100% domain coverage
         run: |

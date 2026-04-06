@@ -204,6 +204,31 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                   onPressed: () => setState(() => _heatmapMode = !_heatmapMode),
                   tooltip: _heatmapMode ? 'List view' : 'Heatmap view',
                 ),
+                PopupMenuButton<_ListAction>(
+                  onSelected: _onListAction,
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(
+                      value: _ListAction.exportWatchlist,
+                      child: Row(
+                        children: [
+                          Icon(Icons.upload_outlined, size: 18),
+                          SizedBox(width: 8),
+                          Text('Export watchlist'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: _ListAction.importWatchlist,
+                      child: Row(
+                        children: [
+                          Icon(Icons.download_outlined, size: 18),
+                          SizedBox(width: 8),
+                          Text('Import watchlist'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
       body: tickersAsync.when(
@@ -442,6 +467,101 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
       ).showSnackBar(SnackBar(content: Text('⚠️ Refresh failed: $e')));
     } finally {
       if (mounted) setState(() => _isRefreshing = false);
+    }
+  }
+
+  Future<void> _onListAction(_ListAction action) async {
+    final svc = await ref.read(watchlistExportImportServiceProvider.future);
+    if (!mounted) return;
+
+    switch (action) {
+      case _ListAction.exportWatchlist:
+        try {
+          final path = await svc.export();
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Watchlist exported to:\n$path'),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        } catch (e) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('⚠️ Export failed: $e')),
+          );
+        }
+
+      case _ListAction.importWatchlist:
+        // Prompt for JSON input via a dialog (no file_picker dependency).
+        final controller = TextEditingController();
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Import Watchlist'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Paste the contents of a CrossTide watchlist JSON export:',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: controller,
+                  maxLines: 8,
+                  decoration: const InputDecoration(
+                    hintText: '{ "tickers": [...] }',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.all(8),
+                  ),
+                  style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Import'),
+              ),
+            ],
+          ),
+        );
+
+        if (confirmed != true || !mounted) return;
+
+        try {
+          final result = await svc.importFromJson(controller.text);
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Import complete: ${result.inserted.length} added, '
+                '${result.skipped.length} skipped, '
+                '${result.errors.length} errors.',
+              ),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+          ref.invalidate(tickerListProvider);
+        } catch (e) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('⚠️ Import failed: $e')),
+          );
+        }
     }
   }
 }
@@ -946,6 +1066,8 @@ class _StaleBanner extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 enum _SortMode { manual, symbol, price, pctFromSma }
+
+enum _ListAction { exportWatchlist, importWatchlist }
 
 class _SortFilterBar extends StatelessWidget {
   const _SortFilterBar({

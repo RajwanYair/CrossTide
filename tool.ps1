@@ -5,12 +5,39 @@
 param(
     [Parameter(Position=0)]
     [ValidateSet('setup', 'generate', 'analyze', 'test', 'format', 'build', 'run', 'clean', 'health')]
-    [string]$Command = 'health'
+    [string]$Command = 'health',
+
+    # Hard time limit in seconds for the 'test' and 'health' commands.
+    # The test process is killed if it exceeds this threshold.
+    [int]$TestTimeoutSeconds = 1000
 )
 
 $ErrorActionPreference = 'Stop'
 
 function Write-Step($msg) { Write-Host "`n==> $msg" -ForegroundColor Cyan }
+
+# Run flutter test with a hard wall-clock kill after $TestTimeoutSeconds.
+# Returns the exit code of the flutter process.
+function Invoke-TestWithTimeout([int]$LimitSeconds, [string[]]$ExtraArgs = @()) {
+    $args = @('test', '--timeout', '30s') + $ExtraArgs
+    Write-Host "Running: flutter $($args -join ' ')  [wall-clock limit: ${LimitSeconds}s]" -ForegroundColor DarkGray
+
+    # Start in a child process so we can kill it cleanly.
+    $psi = [System.Diagnostics.ProcessStartInfo]::new('flutter', $args)
+    $psi.UseShellExecute = $false
+    $proc = [System.Diagnostics.Process]::Start($psi)
+
+    $killed = $false
+    if (-not $proc.WaitForExit($LimitSeconds * 1000)) {
+        $killed = $true
+        try { $proc.Kill($true) } catch {}
+        Write-Host "`n[ERROR] Test run exceeded ${LimitSeconds}s limit — process killed." -ForegroundColor Red
+    }
+
+    $exitCode = $proc.ExitCode
+    if ($killed) { exit 1 }
+    return $exitCode
+}
 
 switch ($Command) {
     'setup' {
@@ -29,8 +56,9 @@ switch ($Command) {
         flutter analyze
     }
     'test' {
-        Write-Step 'Running tests with coverage'
-        flutter test --coverage
+        Write-Step "Running tests with coverage (wall-clock limit: ${TestTimeoutSeconds}s)"
+        $code = Invoke-TestWithTimeout $TestTimeoutSeconds @('--coverage')
+        if ($code -ne 0) { exit $code }
     }
     'format' {
         Write-Step 'Formatting code'
@@ -61,8 +89,9 @@ switch ($Command) {
         flutter analyze
         Write-Step '4/5 Format check'
         dart format --set-exit-if-changed .
-        Write-Step '5/5 Tests'
-        flutter test --coverage
+        Write-Step "5/5 Tests (wall-clock limit: ${TestTimeoutSeconds}s)"
+        $code = Invoke-TestWithTimeout $TestTimeoutSeconds @('--coverage')
+        if ($code -ne 0) { exit $code }
         Write-Host "`nAll health checks passed!" -ForegroundColor Green
     }
 }
