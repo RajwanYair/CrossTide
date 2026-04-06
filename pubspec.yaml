@@ -1,6 +1,6 @@
 name: cross_tide
 description: >
-  CrossTide — Cross-platform stock SMA crossover monitor.
+  CrossTide - Cross-platform stock SMA crossover monitor.
   Detects SMA50/SMA150/SMA200 cross-up events, benchmarks vs S&P 500, and
   fires local notifications. Free Yahoo Finance data. Android + Windows.
 publish_to: 'none'
@@ -87,7 +87,7 @@ msix_config:
   publisher_display_name: CrossTide
   identity_name: com.crosstide.app
   publisher: CN=CrossTide
-  description: CrossTide — Cross-platform stock SMA crossover monitor
+  description: CrossTide - Cross-platform stock SMA crossover monitor
   msix_version: 1.0.0.0       # overridden at build time by release CI via --version flag
   logo_path: windows\runner\resources\app_icon.ico
   capabilities: internetClient
