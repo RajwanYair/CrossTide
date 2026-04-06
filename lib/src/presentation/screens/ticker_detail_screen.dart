@@ -467,6 +467,7 @@ class _ChartSectionState extends State<_ChartSection> {
   bool _showSma150 = false;
   bool _showSma200 = true;
   bool _showSpy = false;
+  bool _candlestickMode = false;
 
   /// Build SPY normalized spots: SPY close indexed to the first price value.
   List<FlSpot> _buildSpySpots(List<FlSpot> priceSpots) {
@@ -649,118 +650,130 @@ class _ChartSectionState extends State<_ChartSection> {
                   selected: _showSpy,
                   onChanged: (v) => setState(() => _showSpy = v),
                 ),
+                _SmaToggleChip(
+                  label: '🕯 Candles',
+                  color: Colors.amber.shade700,
+                  selected: _candlestickMode,
+                  onChanged: (v) => setState(() => _candlestickMode = v),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             SizedBox(
               height: 260,
-              child: LineChart(
-                LineChartData(
-                  minY: minY,
-                  maxY: maxY,
-                  backgroundColor: cs.surfaceContainerHighest.withAlpha(40),
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    getDrawingHorizontalLine: (v) => FlLine(
-                      color: Colors.grey.withAlpha(40),
-                      strokeWidth: 1,
-                    ),
-                  ),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.grey.withAlpha(60),
-                        width: 1,
-                      ),
-                      left: BorderSide(
-                        color: Colors.grey.withAlpha(60),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 60,
-                        getTitlesWidget: (value, meta) => Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Text(
-                            '\$${value.toStringAsFixed(0)}',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey,
+              child: _candlestickMode
+                  ? _CandlestickChart(
+                      candles: widget.chartCandles,
+                      cs: cs,
+                    )
+                  : LineChart(
+                      LineChartData(
+                        minY: minY,
+                        maxY: maxY,
+                        backgroundColor:
+                            cs.surfaceContainerHighest.withAlpha(40),
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: false,
+                          getDrawingHorizontalLine: (v) => FlLine(
+                            color: Colors.grey.withAlpha(40),
+                            strokeWidth: 1,
+                          ),
+                        ),
+                        borderData: FlBorderData(
+                          show: true,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.withAlpha(60),
+                              width: 1,
                             ),
+                            left: BorderSide(
+                              color: Colors.grey.withAlpha(60),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 60,
+                              getTitlesWidget: (value, meta) => Padding(
+                                padding: const EdgeInsets.only(right: 4),
+                                child: Text(
+                                  '\$${value.toStringAsFixed(0)}',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              interval: (widget.chartCandles.length / 5)
+                                  .ceilToDouble(),
+                              getTitlesWidget: (value, meta) {
+                                final idx = value.toInt();
+                                if (idx < 0 ||
+                                    idx >= widget.chartCandles.length) {
+                                  return const SizedBox();
+                                }
+                                return Text(
+                                  DateFormat('M/d').format(
+                                    widget.chartCandles[idx].date,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                        ),
+                        lineBarsData: bars,
+                        lineTouchData: LineTouchData(
+                          touchTooltipData: LineTouchTooltipData(
+                            getTooltipItems: (spots) => spots.map((spot) {
+                              final colors = [
+                                Colors.blue.shade600,
+                                Colors.green.shade600,
+                                Colors.purple.shade500,
+                                Colors.deepOrange.shade400,
+                              ];
+                              final labels = [
+                                'Price',
+                                if (_showSma50) 'SMA50',
+                                if (_showSma150) 'SMA150',
+                                if (_showSma200) 'SMA200',
+                              ];
+                              final idx = spot.barIndex;
+                              final color =
+                                  idx < colors.length ? colors[idx] : Colors.grey;
+                              final label =
+                                  idx < labels.length ? labels[idx] : 'SMA';
+                              return LineTooltipItem(
+                                '$label: \$${spot.y.toStringAsFixed(2)}',
+                                TextStyle(
+                                  color: color,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              );
+                            }).toList(),
                           ),
                         ),
                       ),
                     ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        interval:
-                            (widget.chartCandles.length / 5).ceilToDouble(),
-                        getTitlesWidget: (value, meta) {
-                          final idx = value.toInt();
-                          if (idx < 0 ||
-                              idx >= widget.chartCandles.length) {
-                            return const SizedBox();
-                          }
-                          return Text(
-                            DateFormat('M/d').format(
-                              widget.chartCandles[idx].date,
-                            ),
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
-                  lineBarsData: bars,
-                  lineTouchData: LineTouchData(
-                    touchTooltipData: LineTouchTooltipData(
-                      getTooltipItems: (spots) => spots.map((spot) {
-                        final colors = [
-                          Colors.blue.shade600,
-                          Colors.green.shade600,
-                          Colors.purple.shade500,
-                          Colors.deepOrange.shade400,
-                        ];
-                        final labels = [
-                          'Price',
-                          if (_showSma50) 'SMA50',
-                          if (_showSma150) 'SMA150',
-                          if (_showSma200) 'SMA200',
-                        ];
-                        final idx = spot.barIndex;
-                        final color =
-                            idx < colors.length ? colors[idx] : Colors.grey;
-                        final label =
-                            idx < labels.length ? labels[idx] : 'SMA';
-                        return LineTooltipItem(
-                          '$label: \$${spot.y.toStringAsFixed(2)}',
-                          TextStyle(
-                            color: color,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ),
             ),
             const SizedBox(height: 8),
             // Volume bar chart
@@ -773,6 +786,160 @@ class _ChartSectionState extends State<_ChartSection> {
       ),
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Candlestick chart (custom painter)
+// ---------------------------------------------------------------------------
+
+class _CandlestickChart extends StatefulWidget {
+  const _CandlestickChart({required this.candles, required this.cs});
+
+  final List<DailyCandle> candles;
+  final ColorScheme cs;
+
+  @override
+  State<_CandlestickChart> createState() => _CandlestickChartState();
+}
+
+class _CandlestickChartState extends State<_CandlestickChart> {
+  int? _hoverIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.candles.isEmpty) return const SizedBox();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return GestureDetector(
+          onTapDown: (d) {
+            final candleWidth =
+                constraints.maxWidth / widget.candles.length;
+            setState(
+              () => _hoverIndex =
+                  (d.localPosition.dx / candleWidth).floor().clamp(
+                    0,
+                    widget.candles.length - 1,
+                  ),
+            );
+          },
+          onTapUp: (_) => setState(() => _hoverIndex = null),
+          child: CustomPaint(
+            size: Size(constraints.maxWidth, constraints.maxHeight),
+            painter: _CandlestickPainter(
+              candles: widget.candles,
+              hoverIndex: _hoverIndex,
+              upColor: Colors.green.shade500,
+              downColor: Colors.red.shade500,
+              bgColor: widget.cs.surfaceContainerHighest.withAlpha(40),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CandlestickPainter extends CustomPainter {
+  _CandlestickPainter({
+    required this.candles,
+    required this.hoverIndex,
+    required this.upColor,
+    required this.downColor,
+    required this.bgColor,
+  });
+
+  final List<DailyCandle> candles;
+  final int? hoverIndex;
+  final Color upColor;
+  final Color downColor;
+  final Color bgColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (candles.isEmpty) return;
+
+    // Background
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Paint()..color = bgColor,
+    );
+
+    final prices = candles.expand((c) => [c.high, c.low]).toList();
+    final minP = prices.reduce((a, b) => a < b ? a : b);
+    final maxP = prices.reduce((a, b) => a > b ? a : b);
+    final priceRange = (maxP - minP).abs();
+    if (priceRange == 0) return;
+
+    double toY(double price) =>
+        size.height - (price - minP) / priceRange * size.height * 0.9 -
+        size.height * 0.05;
+
+    final candleWidth = size.width / candles.length;
+    final bodyWidth = (candleWidth * 0.6).clamp(1.5, 12.0);
+    final wickPaint = Paint()..strokeWidth = 1;
+    final bodyPaint = Paint();
+
+    for (var i = 0; i < candles.length; i++) {
+      final c = candles[i];
+      final isUp = c.close >= c.open;
+      final color = isUp ? upColor : downColor;
+      wickPaint.color = color.withAlpha(200);
+      bodyPaint.color =
+          i == hoverIndex ? Colors.amber.shade400 : color;
+
+      final cx = (i + 0.5) * candleWidth;
+      // Wick
+      canvas.drawLine(
+        Offset(cx, toY(c.high)),
+        Offset(cx, toY(c.low)),
+        wickPaint,
+      );
+      // Body
+      final bodyTop = toY(isUp ? c.close : c.open);
+      final bodyBottom = toY(isUp ? c.open : c.close);
+      final bodyHeight = (bodyBottom - bodyTop).abs().clamp(1.0, double.infinity);
+      canvas.drawRect(
+        Rect.fromLTWH(cx - bodyWidth / 2, bodyTop, bodyWidth, bodyHeight),
+        bodyPaint,
+      );
+    }
+
+    // Hover tooltip
+    if (hoverIndex != null && hoverIndex! < candles.length) {
+      final c = candles[hoverIndex!];
+      final cx = (hoverIndex! + 0.5) * candleWidth;
+      final tooltipText =
+          'O:\$${c.open.toStringAsFixed(2)}  H:\$${c.high.toStringAsFixed(2)}\n'
+          'L:\$${c.low.toStringAsFixed(2)}   C:\$${c.close.toStringAsFixed(2)}';
+      final tp = TextPainter(
+        text: TextSpan(
+          text: tooltipText,
+          style: const TextStyle(fontSize: 10, color: Colors.white),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: 160);
+      final rx = cx + 8;
+      final ry = 8.0;
+      final bgRect = Rect.fromLTWH(
+        rx.clamp(0, size.width - tp.width - 10),
+        ry,
+        tp.width + 8,
+        tp.height + 6,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(bgRect, const Radius.circular(6)),
+        Paint()..color = Colors.black.withAlpha(180),
+      );
+      tp.paint(
+        canvas,
+        Offset(bgRect.left + 4, bgRect.top + 3),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CandlestickPainter old) =>
+      old.candles != candles || old.hoverIndex != hoverIndex;
 }
 
 class _SmaToggleChip extends StatelessWidget {
