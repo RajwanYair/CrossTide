@@ -30,6 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create .env stub (gitignored asset)
+        run: touch .env
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -48,6 +51,10 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create .env stub (gitignored asset)
+        shell: bash
+        run: touch .env
 
       - name: Parse version from tag
         id: ver
@@ -114,6 +121,9 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create .env stub (gitignored asset)
+        run: touch .env
 
       - uses: actions/setup-java@v4
         with:
