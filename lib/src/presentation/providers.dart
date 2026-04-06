@@ -57,12 +57,14 @@ final marketDataProviderProvider = FutureProvider<IMarketDataProvider>((
 
   switch (providerName) {
     case 'yahoo_finance':
-      return FallbackMarketDataProvider(
-        providers: [
-          YahooFinanceProvider(logger: logger),
-          MockMarketDataProvider(delayMs: 0),
-        ],
-        logger: logger,
+      return ThrottledMarketDataProvider(
+        inner: FallbackMarketDataProvider(
+          providers: [
+            YahooFinanceProvider(logger: logger),
+            MockMarketDataProvider(delayMs: 0),
+          ],
+          logger: logger,
+        ),
       );
     case 'alpha_vantage':
       final storage = ref.watch(secureStorageProvider);
@@ -71,31 +73,37 @@ final marketDataProviderProvider = FutureProvider<IMarketDataProvider>((
         logger.w(
           'Alpha Vantage selected but no API key — falling back to Yahoo Finance',
         );
-        return FallbackMarketDataProvider(
+        return ThrottledMarketDataProvider(
+          inner: FallbackMarketDataProvider(
+            providers: [
+              YahooFinanceProvider(logger: logger),
+              MockMarketDataProvider(delayMs: 0),
+            ],
+            logger: logger,
+          ),
+        );
+      }
+      return ThrottledMarketDataProvider(
+        inner: FallbackMarketDataProvider(
+          providers: [
+            AlphaVantageProvider(apiKey: apiKey, logger: logger),
+            YahooFinanceProvider(logger: logger),
+            MockMarketDataProvider(delayMs: 0),
+          ],
+          logger: logger,
+        ),
+      );
+    case 'mock':
+      return MockMarketDataProvider();
+    default:
+      return ThrottledMarketDataProvider(
+        inner: FallbackMarketDataProvider(
           providers: [
             YahooFinanceProvider(logger: logger),
             MockMarketDataProvider(delayMs: 0),
           ],
           logger: logger,
-        );
-      }
-      return FallbackMarketDataProvider(
-        providers: [
-          AlphaVantageProvider(apiKey: apiKey, logger: logger),
-          YahooFinanceProvider(logger: logger),
-          MockMarketDataProvider(delayMs: 0),
-        ],
-        logger: logger,
-      );
-    case 'mock':
-      return MockMarketDataProvider();
-    default:
-      return FallbackMarketDataProvider(
-        providers: [
-          YahooFinanceProvider(logger: logger),
-          MockMarketDataProvider(delayMs: 0),
-        ],
-        logger: logger,
+        ),
       );
   }
 });
