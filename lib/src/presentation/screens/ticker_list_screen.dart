@@ -47,6 +47,13 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
     setState(() => _selectedSymbols.clear());
   }
 
+  bool _isStale(List<Ticker> tickers) {
+    final cutoff = DateTime.now().subtract(const Duration(hours: 24));
+    return tickers.any(
+      (t) => t.lastUpdated == null || t.lastUpdated!.isBefore(cutoff),
+    );
+  }
+
   Future<void> _batchDelete() async {
     final toDelete = Set<String>.from(_selectedSymbols);
     _clearSelection();
@@ -253,6 +260,7 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                 below: belowCount,
                 lastUpdated: lastUpdated,
               ),
+              if (_isStale(tickers)) const _StaleBanner(),
               if (groups.isNotEmpty)
                 _GroupFilterRow(groups: groups, activeGroup: activeGroup),
               _SortFilterBar(
@@ -824,6 +832,36 @@ class _ErrorState extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Stale data banner
+// ---------------------------------------------------------------------------
+
+class _StaleBanner extends StatelessWidget {
+  const _StaleBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFFF9A825),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        child: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, size: 16, color: Colors.black87),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text(
+                'Some tickers have stale data (>24 h). Tap ↻ to refresh.',
+                style: TextStyle(fontSize: 12, color: Colors.black87),
+              ),
             ),
           ],
         ),
