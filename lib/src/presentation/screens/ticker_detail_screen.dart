@@ -1,6 +1,8 @@
 /// Ticker Detail Screen — Price chart + SMA overlays + alert state.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -10,6 +12,7 @@ import 'package:intl/intl.dart';
 
 import '../../domain/domain.dart';
 import '../providers.dart';
+import '../sector_map_provider.dart';
 
 class TickerDetailScreen extends ConsumerStatefulWidget {
   const TickerDetailScreen({super.key, required this.symbol});
@@ -51,6 +54,11 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
     final candlesAsync = ref.watch(tickerCandlesProvider(widget.symbol));
     final alertStateAsync = ref.watch(tickerAlertStateProvider(widget.symbol));
     final cs = Theme.of(context).colorScheme;
+    final sectorMap = switch (ref.watch(sectorMapProvider)) {
+      AsyncData(:final value) => value,
+      _ => const <String, String>{},
+    };
+    final sector = sectorMap[widget.symbol];
 
     return Scaffold(
       appBar: AppBar(
@@ -60,6 +68,24 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
             const Icon(Icons.candlestick_chart_rounded, size: 22),
             const SizedBox(width: 8),
             Text(widget.symbol),
+            if (sector != null) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: sectorColor(sector).withAlpha(35),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  sector,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: sectorColor(sector),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
         actions: [
@@ -916,7 +942,7 @@ class _CandlestickPainter extends CustomPainter {
           text: tooltipText,
           style: const TextStyle(fontSize: 10, color: Colors.white),
         ),
-        textDirection: TextDirection.ltr,
+        textDirection: ui.TextDirection.ltr,
       )..layout(maxWidth: 160);
       final rx = cx + 8;
       const ry = 8.0;

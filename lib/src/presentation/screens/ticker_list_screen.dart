@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 import '../../data/database/database.dart' show Ticker, WatchlistGroup;
 import '../providers.dart';
+import '../sector_map_provider.dart';
 import '../sp500_tickers_provider.dart';
 
 class TickerListScreen extends ConsumerStatefulWidget {
@@ -34,6 +35,8 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
     final tickersAsync = ref.watch(tickerListProvider);
     // Pre-warm the S&P 500 list so it's ready before the dialog opens
     ref.watch(sp500TickersProvider);
+    // Pre-warm sector map
+    ref.watch(sectorMapProvider);
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -224,7 +227,7 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
 // Ticker Card
 // ---------------------------------------------------------------------------
 
-class _TickerCard extends StatelessWidget {
+class _TickerCard extends ConsumerWidget {
   const _TickerCard({
     required this.ticker,
     required this.onRemove,
@@ -236,9 +239,14 @@ class _TickerCard extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final dateFormat = DateFormat('MMM d, HH:mm');
+    final sectorMap = switch (ref.watch(sectorMapProvider)) {
+      AsyncData(:final value) => value,
+      _ => const <String, String>{},
+    };
+    final sector = sectorMap[ticker.symbol];
 
     final bool hasData = ticker.sma200 != null && ticker.lastClose != null;
     final bool isAbove = hasData && ticker.lastClose! > ticker.sma200!;
@@ -358,6 +366,11 @@ class _TickerCard extends StatelessWidget {
                           _StatusChip(label: statusLabel, color: statusColor),
                         ],
                       ),
+                      if (sector != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: _SectorTag(sector: sector),
+                        ),
                       const SizedBox(height: 4),
                       if (ticker.lastClose != null)
                         Row(
@@ -458,6 +471,31 @@ class _StatusChip extends StatelessWidget {
           color: color,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.2,
+        ),
+      ),
+    );
+  }
+}
+
+class _SectorTag extends StatelessWidget {
+  const _SectorTag({required this.sector});
+  final String sector;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = sectorColor(sector);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withAlpha(18),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        sector,
+        style: TextStyle(
+          fontSize: 9,
+          color: color,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
