@@ -92,6 +92,8 @@ class AppSettingsTable extends Table {
   TextColumn get providerName =>
       text().withDefault(const Constant('yahoo_finance'))();
   IntColumn get cacheTtlMinutes => integer().withDefault(const Constant(30))();
+  // v4: UI complexity mode (0 = novice, 1 = advanced)
+  IntColumn get advancedMode => integer().withDefault(const Constant(0))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -117,20 +119,22 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (migrator, from, to) async {
       if (from < 2) {
-        // v2: add enabledAlertTypes and sortOrder to tickers
         await migrator.addColumn(tickers, tickers.enabledAlertTypes);
         await migrator.addColumn(tickers, tickers.sortOrder);
       }
       if (from < 3) {
-        // v3: add watchlist_groups table + groupId on tickers
         await migrator.createTable(watchlistGroups);
         await migrator.addColumn(tickers, tickers.groupId);
+      }
+      if (from < 4) {
+        // v4: advanced UI mode flag on settings
+        await migrator.addColumn(appSettingsTable, appSettingsTable.advancedMode);
       }
     },
   );

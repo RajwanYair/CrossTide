@@ -115,6 +115,10 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
     ref.watch(sp500TickersProvider);
     // Pre-warm sector map
     ref.watch(sectorMapProvider);
+    final advancedMode = switch (ref.watch(settingsProvider)) {
+      AsyncData(:final value) => value.advancedMode,
+      _ => false,
+    };
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -288,6 +292,7 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                             ticker: displayList[index],
                             isSelected: _selectedSymbols.contains(sym),
                             isSelecting: _isSelecting,
+                            advancedMode: advancedMode,
                             onLongPress: () => _enterSelection(sym),
                             onTap: _isSelecting
                                 ? () => _toggleSelection(sym)
@@ -438,6 +443,7 @@ class _TickerCard extends ConsumerWidget {
     required this.onLongPress,
     this.isSelected = false,
     this.isSelecting = false,
+    this.advancedMode = true,
   });
 
   final Ticker ticker;
@@ -446,6 +452,7 @@ class _TickerCard extends ConsumerWidget {
   final VoidCallback onLongPress;
   final bool isSelected;
   final bool isSelecting;
+  final bool advancedMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -593,7 +600,7 @@ class _TickerCard extends ConsumerWidget {
                           _StatusChip(label: statusLabel, color: statusColor),
                         ],
                       ),
-                      if (sector != null)
+                      if (sector != null && advancedMode)
                         Padding(
                           padding: const EdgeInsets.only(top: 3),
                           child: _SectorTag(sector: sector),
@@ -608,14 +615,16 @@ class _TickerCard extends ConsumerWidget {
                                   '\$${ticker.lastClose!.toStringAsFixed(2)}',
                               valueColor: cs.onSurface,
                             ),
-                            const SizedBox(width: 16),
-                            _PriceTag(
-                              label: 'SMA200',
-                              value: ticker.sma200 != null
-                                  ? '\$${ticker.sma200!.toStringAsFixed(2)}'
-                                  : '—',
-                              valueColor: const Color(0xFFFF7043),
-                            ),
+                            if (advancedMode) ...[
+                              const SizedBox(width: 16),
+                              _PriceTag(
+                                label: 'SMA200',
+                                value: ticker.sma200 != null
+                                    ? '\$${ticker.sma200!.toStringAsFixed(2)}'
+                                    : '—',
+                                valueColor: const Color(0xFFFF7043),
+                              ),
+                            ],
                           ],
                         ),
                       if (ticker.lastRefreshAt != null)

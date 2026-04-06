@@ -270,6 +270,7 @@ class StockRepository {
       trendStrictnessDays: row.trendStrictnessDays,
       providerName: row.providerName,
       cacheTtlMinutes: row.cacheTtlMinutes,
+      advancedMode: row.advancedMode != 0,
     );
   }
 
@@ -283,6 +284,7 @@ class StockRepository {
         trendStrictnessDays: Value(settings.trendStrictnessDays),
         providerName: Value(settings.providerName),
         cacheTtlMinutes: Value(settings.cacheTtlMinutes),
+        advancedMode: Value(settings.advancedMode ? 1 : 0),
       ),
     );
   }

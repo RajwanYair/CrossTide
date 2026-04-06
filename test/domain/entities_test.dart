@@ -401,7 +401,7 @@ void main() {
     });
 
     test('props has 6 elements', () {
-      expect(const AppSettings().props.length, 6);
+      expect(const AppSettings().props.length, 7);
     });
 
     test('not equal when providerName differs', () {

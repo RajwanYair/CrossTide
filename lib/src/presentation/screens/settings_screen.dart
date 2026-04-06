@@ -258,6 +258,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ],
               const SizedBox(height: 24),
 
+              // Novice / Advanced mode toggle
+              _SettingsSection(
+                icon: Icons.school_rounded,
+                title: '🎓 UI Complexity',
+                subtitle: 'Choose how much technical detail to display',
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: _settings.advancedMode,
+                  onChanged: (v) =>
+                      setState(() => _settings = _settings.copyWith(advancedMode: v)),
+                  title: Text(
+                    _settings.advancedMode ? 'Advanced mode' : 'Novice mode',
+                  ),
+                  subtitle: Text(
+                    _settings.advancedMode
+                        ? 'Shows SMA values, sector tags, and indicators'
+                        : 'Simplified view with price & alert status only',
+                  ),
+                ),
+              ).animate(delay: 385.ms).fadeIn(duration: 300.ms).slideY(
+                begin: 0.04,
+                end: 0,
+              ),
+              const SizedBox(height: 24),
+
               // Watchlist Groups management
               _SettingsSection(
                 icon: Icons.folder_special_rounded,

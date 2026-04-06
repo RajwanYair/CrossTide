@@ -298,6 +298,7 @@ class AppSettings extends Equatable {
     this.trendStrictnessDays = 1,
     this.providerName = 'yahoo_finance',
     this.cacheTtlMinutes = 30,
+    this.advancedMode = false,
   });
 
   /// How often to check for new data (Android: constrained by WorkManager min ~15 min).
@@ -319,6 +320,10 @@ class AppSettings extends Equatable {
   /// Don't refetch if last fetch was within this TTL.
   final int cacheTtlMinutes;
 
+  /// When true, show SMA values, sector tags, and technical indicators.
+  /// When false, show a simplified view for novice users.
+  final bool advancedMode;
+
   AppSettings copyWith({
     int? refreshIntervalMinutes,
     int? quietHoursStart,
@@ -326,6 +331,7 @@ class AppSettings extends Equatable {
     int? trendStrictnessDays,
     String? providerName,
     int? cacheTtlMinutes,
+    bool? advancedMode,
   }) {
     return AppSettings(
       refreshIntervalMinutes:
@@ -335,6 +341,7 @@ class AppSettings extends Equatable {
       trendStrictnessDays: trendStrictnessDays ?? this.trendStrictnessDays,
       providerName: providerName ?? this.providerName,
       cacheTtlMinutes: cacheTtlMinutes ?? this.cacheTtlMinutes,
+      advancedMode: advancedMode ?? this.advancedMode,
     );
   }
 
@@ -346,6 +353,7 @@ class AppSettings extends Equatable {
     trendStrictnessDays,
     providerName,
     cacheTtlMinutes,
+    advancedMode,
   ];
 }
 
