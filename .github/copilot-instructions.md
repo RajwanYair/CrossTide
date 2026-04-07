@@ -29,6 +29,11 @@ Clean Architecture with strict layer boundaries. Dependencies flow inward only.
 - **RSI Method**: BUY when RSI exits oversold (<30→≥30); SELL when exits overbought (>70→≤70).
 - **MACD Crossover**: BUY when MACD crosses above signal; SELL when below.
 - **Bollinger Bands**: BUY when price crosses above lower band; SELL when below upper band.
+- **Stochastic Method**: BUY when %K crosses above %D from oversold; SELL from overbought.
+- **OBV Method**: BUY on positive OBV divergence; SELL on negative divergence.
+- **ADX Method**: BUY on strong trend with +DI > −DI; SELL with −DI > +DI.
+- **CCI Method**: BUY when CCI exits oversold (crosses above −100); SELL when exits overbought.
+- **SAR Method**: BUY/SELL on Parabolic SAR flip direction.
 - **Consensus Engine**: GREEN (consensus BUY) = Micho BUY + ≥1 other BUY; RED (consensus SELL) = Micho SELL + ≥1 other SELL. Micho is always the primary method.
 - All methods produce `MethodSignal` objects (extensible pattern in `micho_method_detector.dart`).
 - New methods: implement a detector class → return `MethodSignal` → wire into `RefreshService` → add to `ConsensusEngine`.
@@ -63,7 +68,7 @@ Clean Architecture with strict layer boundaries. Dependencies flow inward only.
 - **Overall coverage target: ≥ 90%** — do not merge below this
 - Use `AppDatabase.forTesting()` for in-memory DB tests
 - `MockMarketDataProvider` provides deterministic synthetic data
-- Run: `flutter test --coverage --timeout 30s`
+- Run: `flutter test --coverage --timeout 30s`\n\nCurrently: **808 passing tests**, 0 analyze issues.
 
 ## Build & Run
 ```bash
@@ -77,14 +82,20 @@ dart format lib test            # Formatting (scope to lib/test only)
 
 ## Important Files
 - `lib/main.dart` — Entry point, service wiring
-- `lib/src/domain/entities.dart` — Core types: DailyCandle, TickerAlertState, AlertType (18 values), AppSettings
+- `lib/src/domain/entities.dart` — Core types: DailyCandle, TickerAlertState, AlertType (28 values), AppSettings
 - `lib/src/domain/micho_method_detector.dart` — Micho Method + MethodSignal base class
-- `lib/src/domain/consensus_engine.dart` — Multi-method consensus BUY/SELL engine
+- `lib/src/domain/consensus_engine.dart` — Multi-method consensus BUY/SELL engine (9 methods)
 - `lib/src/domain/rsi_method_detector.dart` — RSI oversold/overbought exit signals
 - `lib/src/domain/macd_method_detector.dart` — MACD/Signal crossover signals
 - `lib/src/domain/bollinger_method_detector.dart` — Bollinger Band breakout signals
+- `lib/src/domain/stochastic_method_detector.dart` — Stochastic %K/%D crossover signals
+- `lib/src/domain/obv_method_detector.dart` — OBV divergence signals
+- `lib/src/domain/adx_method_detector.dart` — ADX trend strength + DI crossover signals
+- `lib/src/domain/cci_method_detector.dart` — CCI oversold/overbought exit signals
+- `lib/src/domain/sar_method_detector.dart` — Parabolic SAR flip signals
+- `lib/src/domain/domain.dart` — Barrel export (70+ domain classes)
 - `lib/src/data/database/database.dart` — Drift schema v15 (regenerate after changes)
-- `lib/src/application/refresh_service.dart` — Orchestrates all method evaluations + consensus
+- `lib/src/application/refresh_service.dart` — Orchestrates all 9 method evaluations + consensus
 - `lib/src/presentation/providers.dart` — All Riverpod providers
 - `docs/COPILOT_GUIDE.md` — Detailed coding guide and architecture decisions
 

@@ -14,6 +14,34 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - `dev: domain coverage check` VS Code task (verifies 100% domain coverage locally)
 - `github-pull-request` MCP server in `.vscode/mcp.json`
 - Console Ninja extension recommendation for runtime debugging
+- **15 Technical Calculators** (S58–S72): Stochastic, Williams%R, OBV, ROC, CCI, MFI, CMF, Donchian, Keltner, Parabolic SAR, ADX, Ichimoku, Pivot Points, Heikin-Ashi, SuperTrend
+- **5 Method Detectors** (S73–S77): Stochastic, OBV, ADX, CCI, SAR — all wired into ConsensusEngine and RefreshService
+- **ConsensusEngine** expanded: now supports 9 trading methods (was 4)
+- **6 Domain Entities** (S80–S85): CustomIndicatorEvaluator, DataFreshness, DailyMetrics, BacktestResult, MarketSession, TechnicalLevel
+- **AlertEvent** domain entity for alert lifecycle tracking (S86)
+- **MeanTimeToAlertCalculator** — measures data age at alert fire time (S88)
+- **FibonacciCalculator** — 7-level retracement from swing high/low (S90)
+- **VolumeProfileCalculator** — price-volume distribution with POC detection (S91)
+- **PerformanceBenchmark** — ticker vs. benchmark % return comparison (S92)
+- **DrawdownCalculator** — max peak-to-trough decline with dates (S93)
+- **CorrelationCalculator** — Pearson correlation on prices and returns (S94)
+- **SharpeRatioCalculator** — annualized risk-adjusted return (S95)
+- **SortinoRatioCalculator** — downside-only risk-adjusted return (S96)
+- **RiskRewardCalculator** — long/short trade risk:reward ratio (S97)
+- **TrendStrengthScorer** — composite 0–100 trend score (S98)
+- **SignalReplaySimulator** — backtest signals through historical candles (S99)
+- **PositionSizeCalculator** — fixed-fractional & fixed-dollar sizing (S100)
+- **WinLossStreakCalculator** — max win/loss streaks (S101)
+- **PriceDistanceCalculator** — % distance from any SMA period (S102)
+- **GapDetector** — detects price gaps with min-% filter (S103)
+- **MovingAverageRibbonCalculator** — multi-period EMA ribbon (S104)
+- **SignalAggregator** — multi-method bias summary per ticker (S105)
+- **CandlestickPatternDetector** — 7 candlestick patterns (S106)
+- **SupportResistanceCalculator** — pivot-based S/R levels (S107)
+- **DailyMetricsAggregator** (application) — orchestrates daily metric snapshots (S86)
+- **DataFreshnessTracker** (application) — tracks per-ticker data age (S87)
+- 10 new `AlertType` enum values for 5 new method buy/sell pairs
+- Test count: 808 passing (was 413 at v1.4.0)
 
 ### Changed
 - `dart format` scope narrowed to `lib test` everywhere (CI, pre-commit, tasks) — avoids `PathNotFoundException` on stale `build/` paths

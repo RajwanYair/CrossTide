@@ -48,6 +48,10 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - **Alert profile dry-run preview** — diff dialog before applying a profile
 - **Watchlist export/import** — `WatchlistExportImportService` with JSON serialization (S53)
 - **Telegram/Discord webhook alerts** — `WebhookService` fires on every alert; credentials in secure storage (S54)
+- **15 Technical Calculators** — Stochastic, Williams%R, OBV, ROC, CCI, MFI, CMF, Donchian, Keltner, Parabolic SAR, ADX, Ichimoku, Pivot Points, Heikin-Ashi, SuperTrend (S58–S72)
+- **5 Method Detectors** — Stochastic, OBV, ADX, CCI, SAR method detectors wired into ConsensusEngine + RefreshService (S73–S79)
+- **20+ Domain Analytics** — Fibonacci, Volume Profile, Benchmark, Drawdown, Correlation, Sharpe/Sortino, Risk/Reward, Trend Strength, Signal Replay, Position Sizing, Win/Loss Streaks, Price Distance, Gap Detector, MA Ribbon, Signal Aggregator, Candlestick Patterns, Support/Resistance (S80–S107)
+- 808 passing unit tests, 0 analyze issues
 
 ---
 
@@ -105,10 +109,67 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - [x] **RSI (Relative Strength Index)** — 14-day with overbought/oversold zones
 - [x] **MACD** — histogram + signal line
 - [x] **Bollinger Bands** — 20-day SMA ± 2σ
-- [ ] **ATR (Average True Range)** — 14-day volatility overlay (S64 target)
-- [ ] **VWAP** — intraday volume-weighted average price (S65 target)
-- [ ] Custom indicator period builder — pick any SMA/EMA period (S79 target)
+- [x] **ATR (Average True Range)** — 14-day volatility overlay (S64)
+- [x] **VWAP** — intraday volume-weighted average price (S65)
+- [x] Custom indicator period builder — pick any SMA/EMA period (S79)
 - [x] Indicator panel below the main chart (split-pane layout)
+
+### Extended Technical Calculators (S58–S72)
+- [x] **Stochastic Oscillator** — %K/%D with overbought/oversold zones
+- [x] **Williams %R** — momentum oscillator (-100 to 0)
+- [x] **OBV (On-Balance Volume)** — cumulative volume flow
+- [x] **ROC (Rate of Change)** — N-period % price change
+- [x] **CCI (Commodity Channel Index)** — deviation from statistical mean
+- [x] **MFI (Money Flow Index)** — volume-weighted RSI
+- [x] **CMF (Chaikin Money Flow)** — accumulation/distribution
+- [x] **Donchian Channels** — N-period high/low breakout bands
+- [x] **Keltner Channels** — ATR-based volatility bands
+- [x] **Parabolic SAR** — trend-following stop-and-reverse
+- [x] **ADX (Average Directional Index)** — trend strength (+DI/−DI)
+- [x] **Ichimoku Cloud** — Tenkan/Kijun/Senkou/Chikou
+- [x] **Pivot Points** — Standard, Fibonacci, Woodie, Camarilla, DeMark
+- [x] **Heikin-Ashi** — smoothed OHLC candle transformation
+- [x] **SuperTrend** — ATR-based trend indicator
+
+### Method Detectors (S73–S79)
+- [x] **Stochastic Method** — BUY/SELL on %K/%D crossover from extremes
+- [x] **OBV Method** — BUY/SELL on OBV divergence from price
+- [x] **ADX Method** — BUY/SELL on strong trend with +DI/−DI cross
+- [x] **CCI Method** — BUY/SELL on CCI exit from oversold/overbought
+- [x] **SAR Method** — BUY/SELL on Parabolic SAR flip
+- [x] All 5 detectors wired into ConsensusEngine and RefreshService
+
+### Domain Analytics & Risk Tools (S80–S107)
+- [x] **CustomIndicatorEvaluator** — user-defined SMA/EMA indicators
+- [x] **DataFreshness** — track data staleness per ticker
+- [x] **DailyMetrics** — daily aggregated analytics snapshot
+- [x] **BacktestResult** — backtest trade results with P&L
+- [x] **MarketSession** — market open/close/pre-market/after-hours logic
+- [x] **TechnicalLevel** — named price levels (support/resistance/pivot)
+- [x] **AlertEvent** — domain event for alert lifecycle tracking
+- [x] **MeanTimeToAlertCalculator** — data age at alert-fire time
+- [x] **FibonacciCalculator** — 7-level retracement from swing high/low
+- [x] **VolumeProfileCalculator** — price-volume distribution with POC
+- [x] **PerformanceBenchmark** — ticker vs. benchmark % return comparison
+- [x] **DrawdownCalculator** — max peak-to-trough decline with dates
+- [x] **CorrelationCalculator** — Pearson correlation (price & returns)
+- [x] **SharpeRatioCalculator** — annualized risk-adjusted return
+- [x] **SortinoRatioCalculator** — downside-only risk-adjusted return
+- [x] **RiskRewardCalculator** — long/short trade risk:reward ratio
+- [x] **TrendStrengthScorer** — composite 0–100 trend score (ADX+slope+alignment)
+- [x] **SignalReplaySimulator** — backtest signal series through candles
+- [x] **PositionSizeCalculator** — fixed-fractional & fixed-dollar sizing
+- [x] **WinLossStreakCalculator** — max win/loss streaks from P&L list
+- [x] **PriceDistanceCalculator** — % distance from any SMA period
+- [x] **GapDetector** — detects price gaps with min-% filter
+- [x] **MovingAverageRibbonCalculator** — multi-period EMA ribbon
+- [x] **SignalAggregator** — multi-method bias summary per ticker
+- [x] **CandlestickPatternDetector** — 7 candlestick patterns (Doji, Hammer, Engulfing, etc.)
+- [x] **SupportResistanceCalculator** — pivot-based S/R levels with merging
+
+### Application Services (S86–S90)
+- [x] **DailyMetricsAggregator** — orchestrates daily metric snapshots
+- [x] **DataFreshnessTracker** — tracks & reports per-ticker data age
 
 ---
 
@@ -134,7 +195,7 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - [x] Pre-market / after-hours price display — `_InlineMarketState` chip
 - [x] **Offline mode** — full SQLite cache, last-known data when offline + connectivity banner
 - [x] Background sync optimization — delta fetch (only new candles since last cached date)
-- [ ] **Data freshness indicator** ("Updated 3 min ago") per ticker (S80 target)
+- [x] **Data freshness indicator** ("Updated 3 min ago") per ticker (S80)
 - [x] Rate-limit-aware request scheduler — `ThrottledMarketDataProvider`
 - [x] **Corporate / Intel proxy auto-detection** on Windows — `proxy_detector.dart`
 
@@ -168,14 +229,14 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 ### Alert Metrics Dashboard
 - [x] Per-ticker sensitivity stats: signal count, unique alert types, first/last fired (S49 `AlertSensitivityStats`)
-- [ ] "Mean time to alert" (data age at alert-fire time) (S62 target)
-- [ ] Export daily metrics summary as JSON (S85 target)
-- [ ] Optional Prometheus endpoint (`/metrics`) for power users with Grafana (S102 target)
+- [x] "Mean time to alert" (data age at alert-fire time) (S88 `MeanTimeToAlertCalculator`)
+- [x] Export daily metrics summary as JSON (S86 `DailyMetricsAggregator`)
+- [ ] Optional Prometheus endpoint (`/metrics`) for power users with Grafana
 
 ### Snapshot & Drift Detection
 - [x] Daily JSON snapshot of all `TickerAlertState` values — `SnapshotService` (S51)
 - [x] Diff view: alert profile changes previewed before apply — `previewDiff()` (S52)
-- [ ] Anomaly detection: flag if same ticker cross-ups repeatedly within hours (S55) ✅ `CrossUpAnomalyDetector` + `_AnomalyBanner`
+- [x] Anomaly detection: flag if same ticker cross-ups repeatedly within hours (S55) — `CrossUpAnomalyDetector` + `_AnomalyBanner`
 - [x] **Rollback** — revert settings to a previous snapshot (S56) — `SnapshotService.rollbackSettings()` + UI dialog
 
 ### Audit Log
