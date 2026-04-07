@@ -3,6 +3,7 @@ library;
 
 export 'alert_metrics_calculator.dart';
 export 'alert_state_machine.dart';
+export 'atr_calculator.dart';
 export 'bollinger_calculator.dart';
 export 'cross_up_anomaly_detector.dart';
 export 'cross_up_detector.dart';
