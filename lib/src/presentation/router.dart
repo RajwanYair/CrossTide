@@ -11,6 +11,7 @@ import 'screens/onboarding_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/ticker_detail_screen.dart';
 import 'screens/ticker_list_screen.dart';
+import 'screens/webhooks_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -68,6 +69,11 @@ final appRouter = GoRouter(
       path: '/audit-log',
       name: 'auditLog',
       builder: (context, state) => const AuditLogScreen(),
+    ),
+    GoRoute(
+      path: '/webhooks',
+      name: 'webhooks',
+      builder: (context, state) => const WebhooksScreen(),
     ),
   ],
 );

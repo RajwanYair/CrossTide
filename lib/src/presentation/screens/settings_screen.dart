@@ -368,12 +368,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 12),
 
               // Webhook notifications
-              const _SettingsSection(
+              _SettingsSection(
                     icon: Icons.webhook_rounded,
                     title: '🔔 Webhook Notifications',
                     subtitle:
                         'Push alerts to Telegram or Discord when a cross fires',
-                    child: _WebhookSettingsCard(),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.open_in_new_rounded, size: 18),
+                      title: const Text('Manage Webhooks'),
+                      subtitle: const Text(
+                        'Configure Telegram & Discord destinations, send test',
+                      ),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () => context.push('/webhooks'),
+                    ),
                   )
                   .animate(delay: 390.ms)
                   .fadeIn(duration: 300.ms)
