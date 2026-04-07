@@ -86,6 +86,36 @@ enum AlertType {
 
   /// Consensus SELL: Micho + at least one other method agree on SELL.
   consensusSell,
+
+  /// Stochastic Method BUY: %K crosses above %D from oversold territory.
+  stochasticMethodBuy,
+
+  /// Stochastic Method SELL: %K crosses below %D from overbought territory.
+  stochasticMethodSell,
+
+  /// OBV Method BUY: OBV diverges positively (rising OBV + falling price).
+  obvMethodBuy,
+
+  /// OBV Method SELL: OBV diverges negatively (falling OBV + rising price).
+  obvMethodSell,
+
+  /// ADX Method BUY: strong trend detected with +DI > −DI.
+  adxMethodBuy,
+
+  /// ADX Method SELL: strong trend detected with −DI > +DI.
+  adxMethodSell,
+
+  /// CCI Method BUY: CCI exits oversold (crosses above −100).
+  cciMethodBuy,
+
+  /// CCI Method SELL: CCI exits overbought (crosses below +100).
+  cciMethodSell,
+
+  /// Parabolic SAR Method BUY: SAR flips from above to below price.
+  sarMethodBuy,
+
+  /// Parabolic SAR Method SELL: SAR flips from below to above price.
+  sarMethodSell,
 }
 
 /// Extension helpers for [AlertType].
@@ -109,6 +139,16 @@ extension AlertTypeX on AlertType {
     AlertType.bollingerMethodSell => 'Bollinger Bands — SELL',
     AlertType.consensusBuy => '✅ Consensus BUY',
     AlertType.consensusSell => '🔴 Consensus SELL',
+    AlertType.stochasticMethodBuy => 'Stochastic — BUY',
+    AlertType.stochasticMethodSell => 'Stochastic — SELL',
+    AlertType.obvMethodBuy => 'OBV Divergence — BUY',
+    AlertType.obvMethodSell => 'OBV Divergence — SELL',
+    AlertType.adxMethodBuy => 'ADX Trend — BUY',
+    AlertType.adxMethodSell => 'ADX Trend — SELL',
+    AlertType.cciMethodBuy => 'CCI — BUY',
+    AlertType.cciMethodSell => 'CCI — SELL',
+    AlertType.sarMethodBuy => 'Parabolic SAR — BUY',
+    AlertType.sarMethodSell => 'Parabolic SAR — SELL',
   };
 
   String get description => switch (this) {
@@ -143,6 +183,26 @@ extension AlertTypeX on AlertType {
       'Micho Method + at least one other method agree: BUY',
     AlertType.consensusSell =>
       'Micho Method + at least one other method agree: SELL',
+    AlertType.stochasticMethodBuy =>
+      '%K crosses above %D from oversold territory',
+    AlertType.stochasticMethodSell =>
+      '%K crosses below %D from overbought territory',
+    AlertType.obvMethodBuy =>
+      'OBV diverges positively — rising OBV with falling price',
+    AlertType.obvMethodSell =>
+      'OBV diverges negatively — falling OBV with rising price',
+    AlertType.adxMethodBuy =>
+      'Strong trend detected with +DI above −DI (ADX > 25)',
+    AlertType.adxMethodSell =>
+      'Strong trend detected with −DI above +DI (ADX > 25)',
+    AlertType.cciMethodBuy =>
+      'CCI exits oversold territory (crosses above −100)',
+    AlertType.cciMethodSell =>
+      'CCI exits overbought territory (crosses below +100)',
+    AlertType.sarMethodBuy =>
+      'Parabolic SAR flips from above to below price — bullish reversal',
+    AlertType.sarMethodSell =>
+      'Parabolic SAR flips from below to above price — bearish reversal',
   };
 }
 

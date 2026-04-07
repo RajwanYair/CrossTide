@@ -611,8 +611,8 @@ void main() {
   // AlertType
   // ───────────────────────────────────────────────────────────────
   group('AlertType', () {
-    test('has eighteen values', () {
-      expect(AlertType.values.length, 18);
+    test('has twenty-eight values', () {
+      expect(AlertType.values.length, 28);
     });
 
     test('each type has a non-empty displayName', () {
