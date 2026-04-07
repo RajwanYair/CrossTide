@@ -22,10 +22,12 @@ class TickerListScreen extends ConsumerStatefulWidget {
 
 class _TickerListScreenState extends ConsumerState<TickerListScreen> {
   final _tickerController = TextEditingController();
+  final _searchController = TextEditingController();
   bool _isRefreshing = false;
   bool _heatmapMode = false;
   _SortMode _sortMode = _SortMode.manual;
   bool _showAboveOnly = false;
+  String _searchQuery = '';
   final Set<String> _selectedSymbols = {};
   bool get _isSelecting => _selectedSymbols.isNotEmpty;
 
@@ -108,6 +110,7 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
   @override
   void dispose() {
     _tickerController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -309,7 +312,15 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                   : double.negativeInfinity;
               sortable.sort((a, b) => pct(b).compareTo(pct(a)));
           }
-          final displayList = sortable;
+          final displayList = _searchQuery.isEmpty
+              ? sortable
+              : sortable
+                    .where(
+                      (t) => t.symbol.toLowerCase().contains(
+                        _searchQuery.toLowerCase(),
+                      ),
+                    )
+                    .toList();
 
           return Column(
             children: [
@@ -328,6 +339,10 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                 onSortChange: (mode) => setState(() => _sortMode = mode),
                 onToggleAbove: () =>
                     setState(() => _showAboveOnly = !_showAboveOnly),
+              ),
+              _TickerSearchBar(
+                controller: _searchController,
+                onChanged: (q) => setState(() => _searchQuery = q),
               ),
               Expanded(
                 child: displayList.isEmpty
@@ -1094,6 +1109,49 @@ class _StaleBanner extends StatelessWidget {
 enum _SortMode { manual, symbol, price, pctFromSma }
 
 enum _ListAction { exportWatchlist, importWatchlist }
+
+class _TickerSearchBar extends StatelessWidget {
+  const _TickerSearchBar({required this.controller, required this.onChanged});
+
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        textCapitalization: TextCapitalization.characters,
+        decoration: InputDecoration(
+          hintText: 'Search symbols…',
+          hintStyle: const TextStyle(fontSize: 13),
+          prefixIcon: const Icon(Icons.search_rounded, size: 18),
+          suffixIcon: controller.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear_rounded, size: 18),
+                  onPressed: () {
+                    controller.clear();
+                    onChanged('');
+                  },
+                )
+              : null,
+          isDense: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _SortFilterBar extends StatelessWidget {
   const _SortFilterBar({
