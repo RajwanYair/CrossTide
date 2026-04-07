@@ -556,6 +556,7 @@ class _ChartSectionState extends State<_ChartSection> {
   late bool _showBollinger;
   late bool _showRsi;
   late bool _showMacd;
+  late bool _showVwap;
 
   @override
   void initState() {
@@ -569,6 +570,7 @@ class _ChartSectionState extends State<_ChartSection> {
     _showBollinger = d.contains('BB');
     _showRsi = d.contains('RSI:14');
     _showMacd = d.contains('MACD');
+    _showVwap = d.contains('VWAP');
   }
 
   /// Build SPY normalized spots: SPY close indexed to the first price value.
@@ -652,6 +654,15 @@ class _ChartSectionState extends State<_ChartSection> {
       }
     }
 
+    // VWAP spots
+    final vwapSpots = <FlSpot>[];
+    if (_showVwap) {
+      final vwapSeries = const VwapCalculator().computeSeries(candles);
+      for (var i = 0; i < vwapSeries.length; i++) {
+        vwapSpots.add(FlSpot(i.toDouble(), vwapSeries[i].vwap));
+      }
+    }
+
     final allValues = [
       ...priceSpots.map((s) => s.y),
       if (_showSma50) ...sma50Spots.map((s) => s.y),
@@ -660,6 +671,7 @@ class _ChartSectionState extends State<_ChartSection> {
       if (_showEma20) ...ema20Spots.map((s) => s.y),
       if (_showBollinger) ...bbUpperSpots.map((s) => s.y),
       if (_showBollinger) ...bbLowerSpots.map((s) => s.y),
+      if (_showVwap) ...vwapSpots.map((s) => s.y),
     ];
     if (allValues.isEmpty) return const SizedBox();
     final minY = allValues.reduce((a, b) => a < b ? a : b) * 0.98;
@@ -751,6 +763,15 @@ class _ChartSectionState extends State<_ChartSection> {
           dotData: const FlDotData(show: false),
         ),
       ],
+      if (_showVwap && vwapSpots.isNotEmpty)
+        LineChartBarData(
+          spots: vwapSpots,
+          isCurved: true,
+          color: Colors.deepPurple.shade300,
+          barWidth: 2,
+          dashArray: [6, 3],
+          dotData: const FlDotData(show: false),
+        ),
     ];
 
     return Card(
@@ -838,6 +859,12 @@ class _ChartSectionState extends State<_ChartSection> {
                   color: Colors.blueGrey.shade400,
                   selected: _showMacd,
                   onChanged: (v) => setState(() => _showMacd = v),
+                ),
+                _SmaToggleChip(
+                  label: 'VWAP',
+                  color: Colors.deepPurple.shade300,
+                  selected: _showVwap,
+                  onChanged: (v) => setState(() => _showVwap = v),
                 ),
               ],
             ),
