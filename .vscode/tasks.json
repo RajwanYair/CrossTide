@@ -26,7 +26,7 @@
     {
       "label": "flutter: analyze",
       "type": "shell",
-      "command": "flutter analyze",
+      "command": "flutter analyze --fatal-infos",
       "group": "test",
       "problemMatcher": []
     },
@@ -43,7 +43,7 @@
     {
       "label": "flutter: format check",
       "type": "shell",
-      "command": "dart format --set-exit-if-changed .",
+      "command": "dart format --set-exit-if-changed lib test",
       "group": "test",
       "problemMatcher": []
     },
@@ -57,14 +57,14 @@
     {
       "label": "flutter: test coverage",
       "type": "shell",
-      "command": "flutter test --coverage",
+      "command": "flutter test --coverage --timeout 30s",
       "group": "test",
       "problemMatcher": []
     },
     {
       "label": "flutter: format",
       "type": "shell",
-      "command": "dart format .",
+      "command": "dart format lib test",
       "group": "build",
       "problemMatcher": []
     },
@@ -78,8 +78,16 @@
     {
       "label": "dev: full health check",
       "type": "shell",
-      "command": "flutter analyze && flutter test && dart format --set-exit-if-changed .",
+      "command": "flutter analyze --fatal-infos && dart format --set-exit-if-changed lib test && flutter test --coverage --timeout 30s",
       "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev: domain coverage check",
+      "type": "shell",
+      "command": "flutter test --coverage --timeout 30s && powershell -NoProfile -Command \"$c=Get-Content coverage/lcov.info;$in=$false;$u=0;foreach($l in $c){if($l -match '^SF:lib\\\\src\\\\domain\\\\'){$in=$true}elseif($l -eq 'end_of_record'){$in=$false}elseif($in -and $l -match '^DA:\\d+,0$'){$u++}};if($u -gt 0){Write-Error \"Domain coverage gap: $u uncovered lines\";exit 1}else{Write-Host 'Domain: 100% covered'}\"",
+      "group": "test",
+      "detail": "Runs tests with coverage then verifies domain layer is 100% covered",
       "problemMatcher": []
     },
     {

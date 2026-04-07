@@ -23,7 +23,12 @@ What you expected to happen.
 
 **Environment**
 - Flutter version:
+- Dart version:
 - Device/OS version:
+- CrossTide version (from pubspec.yaml):
 
 **Logs**
-If applicable, paste relevant logs.
+If applicable, paste relevant logs or stack traces.
+
+**Screenshots**
+If applicable, add screenshots to help explain the problem.

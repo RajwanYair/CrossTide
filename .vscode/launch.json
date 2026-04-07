@@ -6,7 +6,22 @@
       "type": "dart",
       "request": "launch",
       "program": "lib/main.dart",
-      "args": ["-d", "windows"]
+      "args": [
+        "-d",
+        "windows"
+      ],
+      "flutterMode": "debug"
+    },
+    {
+      "name": "CrossTide (Windows — Profile)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "windows"
+      ],
+      "flutterMode": "profile"
     },
     {
       "name": "CrossTide (Android)",
@@ -16,13 +31,18 @@
       "args": [
         "-d",
         "android"
-      ]
+      ],
+      "flutterMode": "debug"
     },
     {
-      "name": "CrossTide (Profile)",
+      "name": "CrossTide (Android — Profile)",
       "type": "dart",
       "request": "launch",
       "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "android"
+      ],
       "flutterMode": "profile"
     },
     {
@@ -37,7 +57,9 @@
       "request": "launch",
       "program": "test",
       "args": [
-        "--coverage"
+        "--coverage",
+        "--timeout",
+        "30s"
       ]
     }
   ]

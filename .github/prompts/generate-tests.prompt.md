@@ -1,6 +1,6 @@
 ---
 description: "Generate unit tests for a domain class following project conventions"
-agent: "agent"
+agent: "domain-feature"
 tools: [read, search, edit, execute]
 argument-hint: "Class name or file path to generate tests for"
 ---
@@ -14,4 +14,7 @@ Generate comprehensive unit tests for the specified domain class:
    - Business rule enforcement (cross-up rule, idempotency, quiet hours)
 4. Use `const` for immutable fixtures, camelCase helpers (no leading underscores)
 5. Name tests: `'<behavior> when <condition>'`
-6. Run `flutter test` to validate
+6. No `// ignore:` pragmas — fix any lint with real code
+7. Explicit loop variable types: `for (final MyType x in list)`
+8. Run `flutter test --coverage --timeout 30s` to validate
+9. Confirm domain coverage remains 100% after additions

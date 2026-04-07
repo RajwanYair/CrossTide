@@ -6,7 +6,7 @@
   "dart.openDevTools": "flutter",
   "dart.debugExternalPackageLibraries": false,
   "dart.debugSdkLibraries": false,
-  "dart.showTodos": true,
+  "dart.showTodos": false,
   "dart.warnWhenEditingFilesInPub": true,
   "dart.renameFilesWithClasses": "prompt",
   "editor.formatOnSave": true,
@@ -48,10 +48,28 @@
     "**/build/**": true
   },
   "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
-  "testing.coverageBarThresholds": { "red": 0, "yellow": 80, "green": 100 },
+  "testing.coverageBarThresholds": {
+    "red": 0,
+    "yellow": 90,
+    "green": 100
+  },
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.reviewSelection.useInstructionFiles": true,
+  "github.copilot.chat.fixTestFailure.useInstructionFiles": true,
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "This is a Flutter/Dart project following Clean Architecture. Domain layer is pure Dart. Use Riverpod for state. Drift for DB. Dio with IOHttpClientAdapter for HTTP. Java 21. No // ignore: pragmas. No TODO/FIXME in lib/. Explicit loop variable types required. Notifier methods use descriptive verbs (not 'set')."
+    }
+  ],
   "github.copilot.chat.testGeneration.instructions": [
-    { "text": "Use flutter_test. Domain tests are pure Dart, no Flutter deps. Use group()/setUp(). Cover happy path, edge cases, boundaries." }
+    {
+      "text": "Use flutter_test. Domain tests are pure Dart — no Flutter deps. Use group()/test(). Cover happy path, edge cases, and boundaries. Domain coverage must be 100%. No // ignore: pragmas. Fixture helpers use camelCase, no leading underscores. Test names follow: '<behavior> when <condition>'."
+    }
+  ],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Use Conventional Commits format: type(scope): description. Types: feat, fix, refactor, test, ci, chore, docs. Keep subject under 72 chars. No period at end. Add [skip ci] suffix only for version-bump commits."
+    }
   ],
   "gitlens.codeLens.enabled": true,
   "gitlens.hovers.currentLine.over": "line"

@@ -217,8 +217,7 @@ final intradayQuoteProvider =
       } else if (provider is ThrottledMarketDataProvider &&
           provider.inner is FallbackMarketDataProvider) {
         final fallback = provider.inner as FallbackMarketDataProvider;
-        // ignore: prefer_type_over_var
-        for (final p in fallback.providers) {
+        for (final IMarketDataProvider p in fallback.providers) {
           if (p is YahooFinanceProvider) {
             yahoo = p;
             break;
@@ -368,8 +367,7 @@ class ActiveGroupFilter extends Notifier<String?> {
   @override
   String? build() => null;
 
-  // ignore: use_setters_to_change_properties
-  void set(String? value) => state = value;
+  void applyFilter(String? value) => state = value;
 }
 
 // ---------------------------------------------------------------------------

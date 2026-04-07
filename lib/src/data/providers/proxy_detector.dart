@@ -12,6 +12,7 @@ library;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:logger/logger.dart';
 
 /// Resolves a proxy URL from the current environment.
@@ -50,8 +51,8 @@ Dio buildDioWithProxy({Logger? logger}) {
 
   log.i('ProxyDetector: using proxy $proxyUrl (from env)');
   final dio = Dio();
-  // ignore: deprecated_member_use
-  (dio.httpClientAdapter as dynamic)?.onHttpClientCreate = (HttpClient client) {
+  (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+    final client = HttpClient();
     client.findProxy = (uri) => 'PROXY $proxyUrl';
     client.badCertificateCallback = (_, _, _) {
       // Corporate proxies often use self-signed certs — trust them.

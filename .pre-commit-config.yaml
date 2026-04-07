@@ -21,7 +21,7 @@ repos:
       - id: dart-format
         name: dart format
         language: system
-        entry: dart format --set-exit-if-changed .
+        entry: dart format --set-exit-if-changed lib test
         types: [file]
         pass_filenames: false
         always_run: true

@@ -3,8 +3,16 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -40,11 +48,19 @@ jobs:
       - name: Generate code (Drift, Freezed, etc.)
         run: dart run build_runner build --delete-conflicting-outputs
 
+      - name: Upload generated code
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-code
+          path: lib/**/*.g.dart
+          retention-days: 1
+          if-no-files-found: error
+
       - name: Analyze
         run: flutter analyze --fatal-infos
 
       - name: Format check
-        run: dart format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed lib test
 
       - name: Run tests with coverage
         run: flutter test --coverage --timeout 30s
@@ -85,6 +101,7 @@ jobs:
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
@@ -119,18 +136,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Restore generated code
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code
 
       - name: Build Windows
         run: flutter build windows --release
-
-      - name: Upload Windows build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-release
-          path: build/windows/x64/runner/Release/
-          retention-days: 1
 
   build-android:
     name: Build (Android Debug)
@@ -148,7 +160,8 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
+          cache: 'gradle'
 
       - uses: subosito/flutter-action@v2
         with:
@@ -159,15 +172,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Restore generated code
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code
 
       - name: Build Android APK (debug, no signing)
         run: flutter build apk --debug
-
-      - name: Upload Android APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
-          retention-days: 1

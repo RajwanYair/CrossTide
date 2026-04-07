@@ -45,6 +45,14 @@ jobs:
       # No --coverage here; full coverage is enforced in ci.yml on every PR.
       - run: flutter test
 
+      - name: Upload generated code
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-code
+          path: lib/**/*.g.dart
+          retention-days: 1
+          if-no-files-found: error
+
   # ── 1. Windows build → ZIP only ───────────────────────────────────────────
   # MSIX requires Windows Developer Mode to install (sideload) and has proven
   # brittle (manifest XML restrictions). The portable ZIP works for all users.
@@ -79,8 +87,10 @@ jobs:
 
       - run: flutter pub get
 
-      - name: Generate code (Drift / Freezed)
-        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Restore generated code
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code
 
       - name: Build Windows release
         run: |
@@ -116,7 +126,8 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
+          cache: 'gradle'
 
       - uses: subosito/flutter-action@v2
         with:
@@ -132,8 +143,10 @@ jobs:
 
       - run: flutter pub get
 
-      - name: Generate code (Drift / Freezed)
-        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Restore generated code
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code
 
       - name: Build release APK
         # android/app/build.gradle.kts uses the debug keystore for release builds.
@@ -159,12 +172,18 @@ jobs:
   publish-release:
     name: Publish GitHub Release
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [build-windows, build-android]
     steps:
-      - name: Download all build artifacts
+      - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
-          merge-multiple: true   # flatten all artifacts into working dir
+          name: windows-release
+
+      - name: Download Android artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-release
 
       - name: Verify downloaded files
         run: ls -lh CrossTide-*

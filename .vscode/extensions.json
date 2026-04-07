@@ -27,7 +27,9 @@
     "timonwong.shellcheck",
 
     // ── UI helpers ────────────────────────────────────────────────────────
-    "naumovs.color-highlight"
+    "naumovs.color-highlight",
+    // ── Debugging & logging ───────────────────────────────────────────────
+    "wallabyjs.console-ninja"
   ],
   "unwantedRecommendations": []
 }

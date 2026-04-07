@@ -647,9 +647,7 @@ class _TickerCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             title: const Text('🗑️ Remove Ticker?'),
-            content: Text(
-              'Remove ${ticker.symbol} from your watchlist?',
-            ), // ignore: avoid_dynamic_calls
+            content: Text('Remove ${ticker.symbol} from your watchlist?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
@@ -1375,8 +1373,9 @@ class _GroupFilterRow extends ConsumerWidget {
             child: FilterChip(
               label: const Text('All'),
               selected: activeGroup == null,
-              onSelected: (_) =>
-                  ref.read(activeGroupFilterProvider.notifier).set(null),
+              onSelected: (_) => ref
+                  .read(activeGroupFilterProvider.notifier)
+                  .applyFilter(null),
             ),
           ),
           ...groups.map((g) {
@@ -1390,7 +1389,7 @@ class _GroupFilterRow extends ConsumerWidget {
                 selected: isSelected,
                 onSelected: (_) => ref
                     .read(activeGroupFilterProvider.notifier)
-                    .set(isSelected ? null : g.id),
+                    .applyFilter(isSelected ? null : g.id),
               ),
             );
           }),

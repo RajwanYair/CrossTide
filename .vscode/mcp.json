@@ -9,6 +9,9 @@
   "servers": {
     "github": {
       "type": "copilot"
+    },
+    "github-pull-request": {
+      "type": "copilot"
     }
   }
 }

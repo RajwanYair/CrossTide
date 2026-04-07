@@ -13,6 +13,10 @@ name: Auto Release (every 10 commits)
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
 
 permissions:
   contents: write   # push version-bump commit + tag
