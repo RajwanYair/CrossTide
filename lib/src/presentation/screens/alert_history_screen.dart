@@ -1,6 +1,9 @@
 /// Alert History Screen — timeline of all fired alerts.
 library;
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../application/alert_history_exporter.dart';
+import '../../domain/alert_metrics_calculator.dart';
 import '../../domain/cross_up_anomaly_detector.dart';
 import '../../domain/entities.dart';
 import '../providers.dart';
@@ -54,6 +58,15 @@ class AlertHistoryScreen extends ConsumerWidget {
                       ),
                       const PopupMenuDivider(),
                       const PopupMenuItem(
+                        value: 'metrics',
+                        child: ListTile(
+                          leading: Icon(Icons.analytics_rounded),
+                          title: Text('Export Metrics JSON'),
+                          dense: true,
+                        ),
+                      ),
+                      const PopupMenuDivider(),
+                      const PopupMenuItem(
                         value: 'clear',
                         child: ListTile(
                           leading: Icon(Icons.delete_sweep_rounded),
@@ -65,6 +78,8 @@ class AlertHistoryScreen extends ConsumerWidget {
                     onSelected: (v) {
                       if (v == 'clear') {
                         _confirmClear(context, ref);
+                      } else if (v == 'metrics') {
+                        _exportMetrics(context, ref);
                       } else {
                         _export(
                           context,
@@ -113,10 +128,12 @@ class AlertHistoryScreen extends ConsumerWidget {
           }
 
           final anomalies = ref.watch(crossUpAnomaliesProvider);
+          final metrics = ref.watch(alertMetricsProvider);
 
           return Column(
             children: [
               if (anomalies.isNotEmpty) _AnomalyBanner(anomalies: anomalies),
+              if (metrics.isNotEmpty) _MetricsSummaryCard(metrics: metrics),
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -135,6 +152,50 @@ class AlertHistoryScreen extends ConsumerWidget {
         error: (err, _) => Center(child: Text('Error: $err')),
       ),
     );
+  }
+
+  Future<void> _exportMetrics(BuildContext context, WidgetRef ref) async {
+    try {
+      final metrics = ref.read(alertMetricsProvider);
+      final payload = metrics
+          .map(
+            (m) => {
+              'symbol': m.symbol,
+              'alertCount': m.alertCount,
+              'firstAlertAt': m.firstAlertAt?.toIso8601String(),
+              'lastAlertAt': m.lastAlertAt?.toIso8601String(),
+              'meanDaysBetweenAlerts': m.meanDaysBetweenAlerts,
+            },
+          )
+          .toList();
+      final json = const JsonEncoder.withIndent('  ').convert(payload);
+      final tempDir = Platform.environment['TEMP'] ?? Directory.systemTemp.path;
+      final ts = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final file = File('$tempDir/crosstide_metrics_$ts.json');
+      await file.writeAsString(json, flush: true);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Metrics exported: ${file.path}',
+              overflow: TextOverflow.ellipsis,
+            ),
+            duration: const Duration(seconds: 6),
+            action: SnackBarAction(
+              label: 'Copy',
+              onPressed: () =>
+                  Clipboard.setData(ClipboardData(text: file.path)),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Metrics export failed: $e')));
+      }
+    }
   }
 
   Future<void> _export(
@@ -346,6 +407,119 @@ class _AlertIcon extends StatelessWidget {
       radius: 20,
       backgroundColor: color.withValues(alpha: 0.15),
       child: Icon(icon, size: 20, color: color),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Metrics summary
+// ---------------------------------------------------------------------------
+
+/// Compact card showing per-ticker alert counts and mean days between alerts.
+class _MetricsSummaryCard extends StatelessWidget {
+  const _MetricsSummaryCard({required this.metrics});
+
+  final List<AlertMetrics> metrics;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      child: ExpansionTile(
+        leading: Icon(Icons.analytics_rounded, color: cs.primary),
+        title: Text(
+          'Metrics Summary',
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          '${metrics.length} ticker${metrics.length == 1 ? '' : 's'} with alert history',
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: cs.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+        children: [
+          for (final AlertMetrics m in metrics) _MetricsRow(metrics: m),
+          const SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetricsRow extends StatelessWidget {
+  const _MetricsRow({required this.metrics});
+
+  final AlertMetrics metrics;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final double? meanDays = metrics.meanDaysBetweenAlerts;
+    final String meanLabel = meanDays == null
+        ? '—'
+        : '${meanDays.toStringAsFixed(1)} d';
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              metrics.symbol,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          _Chip(
+            label:
+                '${metrics.alertCount} alert${metrics.alertCount == 1 ? '' : 's'}',
+            color: cs.primaryContainer,
+            textColor: cs.onPrimaryContainer,
+          ),
+          const SizedBox(width: 8),
+          _Chip(
+            label: 'Avg $meanLabel',
+            color: cs.secondaryContainer,
+            textColor: cs.onSecondaryContainer,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({
+    required this.label,
+    required this.color,
+    required this.textColor,
+  });
+
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+      ),
     );
   }
 }

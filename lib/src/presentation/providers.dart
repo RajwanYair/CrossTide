@@ -18,6 +18,9 @@ import 'package:logger/logger.dart';
 import '../application/application.dart';
 import '../data/data.dart';
 import '../data/database/database.dart' as db show WatchlistGroup;
+import '../domain/alert_metrics_calculator.dart'
+    as domain
+    show AlertMetrics, AlertMetricsCalculator;
 import '../domain/cross_up_anomaly_detector.dart'
     as domain
     show CrossUpAnomaly, CrossUpAnomalyDetector;
@@ -481,6 +484,17 @@ final crossUpAnomaliesProvider = Provider<List<domain.CrossUpAnomaly>>((ref) {
 // ---------------------------------------------------------------------------
 // Refresh action
 // ---------------------------------------------------------------------------
+
+/// Per-ticker alert-frequency metrics derived from [alertHistoryProvider].
+final alertMetricsProvider = Provider<List<domain.AlertMetrics>>((ref) {
+  return ref
+      .watch(alertHistoryProvider)
+      .maybeWhen(
+        data: (entries) =>
+            const domain.AlertMetricsCalculator().compute(entries),
+        orElse: () => [],
+      );
+});
 
 final refreshAllProvider = FutureProvider<Map<String, bool>>((ref) async {
   final service = await ref.watch(refreshServiceProvider.future);

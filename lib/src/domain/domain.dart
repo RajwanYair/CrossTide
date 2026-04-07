@@ -1,6 +1,7 @@
 /// Domain layer barrel export.
 library;
 
+export 'alert_metrics_calculator.dart';
 export 'alert_state_machine.dart';
 export 'bollinger_calculator.dart';
 export 'cross_up_anomaly_detector.dart';
