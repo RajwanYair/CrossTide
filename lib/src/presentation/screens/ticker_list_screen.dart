@@ -205,6 +205,11 @@ class _TickerListScreenState extends ConsumerState<TickerListScreen> {
                   tooltip: '📋 Alert History',
                 ),
                 IconButton(
+                  icon: const Icon(Icons.event_rounded),
+                  onPressed: () => context.push('/earnings'),
+                  tooltip: '📅 Earnings Calendar',
+                ),
+                IconButton(
                   icon: Icon(
                     _heatmapMode
                         ? Icons.view_list_rounded

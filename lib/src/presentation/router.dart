@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'screens/alert_history_screen.dart';
 import 'screens/audit_log_screen.dart';
 import 'screens/crash_log_screen.dart';
+import 'screens/earnings_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/ticker_detail_screen.dart';
@@ -69,6 +70,11 @@ final appRouter = GoRouter(
       path: '/audit-log',
       name: 'auditLog',
       builder: (context, state) => const AuditLogScreen(),
+    ),
+    GoRoute(
+      path: '/earnings',
+      name: 'earnings',
+      builder: (context, state) => const EarningsScreen(),
     ),
     GoRoute(
       path: '/webhooks',
