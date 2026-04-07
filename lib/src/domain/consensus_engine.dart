@@ -125,13 +125,23 @@ class ConsensusEngine {
     return type == AlertType.michoMethodBuy ||
         type == AlertType.rsiMethodBuy ||
         type == AlertType.macdMethodBuy ||
-        type == AlertType.bollingerMethodBuy;
+        type == AlertType.bollingerMethodBuy ||
+        type == AlertType.stochasticMethodBuy ||
+        type == AlertType.obvMethodBuy ||
+        type == AlertType.adxMethodBuy ||
+        type == AlertType.cciMethodBuy ||
+        type == AlertType.sarMethodBuy;
   }
 
   static bool _isSellType(AlertType type) {
     return type == AlertType.michoMethodSell ||
         type == AlertType.rsiMethodSell ||
         type == AlertType.macdMethodSell ||
-        type == AlertType.bollingerMethodSell;
+        type == AlertType.bollingerMethodSell ||
+        type == AlertType.stochasticMethodSell ||
+        type == AlertType.obvMethodSell ||
+        type == AlertType.adxMethodSell ||
+        type == AlertType.cciMethodSell ||
+        type == AlertType.sarMethodSell;
   }
 }

@@ -35,6 +35,11 @@ class RefreshService {
   final _rsiMethodDetector = const RsiMethodDetector();
   final _macdMethodDetector = const MacdMethodDetector();
   final _bollingerMethodDetector = const BollingerMethodDetector();
+  final _stochasticMethodDetector = const StochasticMethodDetector();
+  final _obvMethodDetector = const ObvMethodDetector();
+  final _adxMethodDetector = const AdxMethodDetector();
+  final _cciMethodDetector = const CciMethodDetector();
+  final _sarMethodDetector = const SarMethodDetector();
   final _consensusEngine = const ConsensusEngine();
   final _alertStateMachine = const AlertStateMachine();
   final _volumeCalculator = const VolumeCalculator();
@@ -423,6 +428,172 @@ class RefreshService {
         }
         if (signal.alertType == AlertType.bollingerMethodSell &&
             !wantBollSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // Stochastic Method
+    final wantStochBuy = enabledAlertTypes.contains(
+      AlertType.stochasticMethodBuy,
+    );
+    final wantStochSell = enabledAlertTypes.contains(
+      AlertType.stochasticMethodSell,
+    );
+    if (wantStochBuy || wantStochSell) {
+      final stochSignals = _stochasticMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(stochSignals);
+      for (final MethodSignal signal in stochSignals) {
+        if (signal.alertType == AlertType.stochasticMethodBuy &&
+            !wantStochBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.stochasticMethodSell &&
+            !wantStochSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // OBV Divergence Method
+    final wantObvBuy = enabledAlertTypes.contains(AlertType.obvMethodBuy);
+    final wantObvSell = enabledAlertTypes.contains(AlertType.obvMethodSell);
+    if (wantObvBuy || wantObvSell) {
+      final obvSignals = _obvMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(obvSignals);
+      for (final MethodSignal signal in obvSignals) {
+        if (signal.alertType == AlertType.obvMethodBuy && !wantObvBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.obvMethodSell && !wantObvSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // ADX Trend Method
+    final wantAdxBuy = enabledAlertTypes.contains(AlertType.adxMethodBuy);
+    final wantAdxSell = enabledAlertTypes.contains(AlertType.adxMethodSell);
+    if (wantAdxBuy || wantAdxSell) {
+      final adxSignals = _adxMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(adxSignals);
+      for (final MethodSignal signal in adxSignals) {
+        if (signal.alertType == AlertType.adxMethodBuy && !wantAdxBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.adxMethodSell && !wantAdxSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // CCI Method
+    final wantCciBuy = enabledAlertTypes.contains(AlertType.cciMethodBuy);
+    final wantCciSell = enabledAlertTypes.contains(AlertType.cciMethodSell);
+    if (wantCciBuy || wantCciSell) {
+      final cciSignals = _cciMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(cciSignals);
+      for (final MethodSignal signal in cciSignals) {
+        if (signal.alertType == AlertType.cciMethodBuy && !wantCciBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.cciMethodSell && !wantCciSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // Parabolic SAR Method
+    final wantSarBuy = enabledAlertTypes.contains(AlertType.sarMethodBuy);
+    final wantSarSell = enabledAlertTypes.contains(AlertType.sarMethodSell);
+    if (wantSarBuy || wantSarSell) {
+      final sarSignals = _sarMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(sarSignals);
+      for (final MethodSignal signal in sarSignals) {
+        if (signal.alertType == AlertType.sarMethodBuy && !wantSarBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.sarMethodSell && !wantSarSell) {
           continue;
         }
         if (inQuiet) {

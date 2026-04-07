@@ -198,5 +198,142 @@ void main() {
       final result = engine.evaluate(ticker: 'TSLA', signals: []);
       expect(result.ticker, 'TSLA');
     });
+
+    test('Micho BUY + Stochastic BUY → consensus BUY', () {
+      final result = engine.evaluate(
+        ticker: 'AAPL',
+        signals: [
+          makeSignal(
+            alertType: AlertType.michoMethodBuy,
+            methodName: 'Micho Method',
+          ),
+          makeSignal(
+            alertType: AlertType.stochasticMethodBuy,
+            methodName: 'Stochastic Method',
+          ),
+        ],
+      );
+      expect(result.hasConsensus, isTrue);
+      expect(result.buySignal, isNotNull);
+    });
+
+    test('Micho SELL + OBV SELL → consensus SELL', () {
+      final result = engine.evaluate(
+        ticker: 'AAPL',
+        signals: [
+          makeSignal(
+            alertType: AlertType.michoMethodSell,
+            methodName: 'Micho Method',
+          ),
+          makeSignal(
+            alertType: AlertType.obvMethodSell,
+            methodName: 'OBV Divergence',
+          ),
+        ],
+      );
+      expect(result.hasConsensus, isTrue);
+      expect(result.sellSignal, isNotNull);
+    });
+
+    test('Micho BUY + ADX BUY → consensus BUY', () {
+      final result = engine.evaluate(
+        ticker: 'AAPL',
+        signals: [
+          makeSignal(
+            alertType: AlertType.michoMethodBuy,
+            methodName: 'Micho Method',
+          ),
+          makeSignal(
+            alertType: AlertType.adxMethodBuy,
+            methodName: 'ADX Trend',
+          ),
+        ],
+      );
+      expect(result.hasConsensus, isTrue);
+      expect(result.buySignal, isNotNull);
+    });
+
+    test('Micho BUY + CCI BUY → consensus BUY', () {
+      final result = engine.evaluate(
+        ticker: 'AAPL',
+        signals: [
+          makeSignal(
+            alertType: AlertType.michoMethodBuy,
+            methodName: 'Micho Method',
+          ),
+          makeSignal(
+            alertType: AlertType.cciMethodBuy,
+            methodName: 'CCI Method',
+          ),
+        ],
+      );
+      expect(result.hasConsensus, isTrue);
+      expect(result.buySignal, isNotNull);
+    });
+
+    test('Micho SELL + SAR SELL → consensus SELL', () {
+      final result = engine.evaluate(
+        ticker: 'AAPL',
+        signals: [
+          makeSignal(
+            alertType: AlertType.michoMethodSell,
+            methodName: 'Micho Method',
+          ),
+          makeSignal(
+            alertType: AlertType.sarMethodSell,
+            methodName: 'Parabolic SAR',
+          ),
+        ],
+      );
+      expect(result.hasConsensus, isTrue);
+      expect(result.sellSignal, isNotNull);
+    });
+
+    test('all 9 methods BUY → consensus BUY with 8 others', () {
+      final result = engine.evaluate(
+        ticker: 'AAPL',
+        signals: [
+          makeSignal(
+            alertType: AlertType.michoMethodBuy,
+            methodName: 'Micho Method',
+          ),
+          makeSignal(
+            alertType: AlertType.rsiMethodBuy,
+            methodName: 'RSI Method',
+          ),
+          makeSignal(
+            alertType: AlertType.macdMethodBuy,
+            methodName: 'MACD Crossover',
+          ),
+          makeSignal(
+            alertType: AlertType.bollingerMethodBuy,
+            methodName: 'Bollinger Bands',
+          ),
+          makeSignal(
+            alertType: AlertType.stochasticMethodBuy,
+            methodName: 'Stochastic',
+          ),
+          makeSignal(
+            alertType: AlertType.obvMethodBuy,
+            methodName: 'OBV Divergence',
+          ),
+          makeSignal(
+            alertType: AlertType.adxMethodBuy,
+            methodName: 'ADX Trend',
+          ),
+          makeSignal(
+            alertType: AlertType.cciMethodBuy,
+            methodName: 'CCI Method',
+          ),
+          makeSignal(
+            alertType: AlertType.sarMethodBuy,
+            methodName: 'Parabolic SAR',
+          ),
+        ],
+      );
+      expect(result.buySignal, isNotNull);
+      expect(result.buySignal!.description, contains('8 other'));
+      expect(result.buyMethods.length, 9);
+    });
   });
 }
