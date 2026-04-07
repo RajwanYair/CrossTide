@@ -167,6 +167,20 @@ void main() {
       expect(result, isNotNull);
       expect(result!.histogram, closeTo(result.macd! - result.signal!, 0.0001));
     });
+
+    test('computeSeries returns all-null when candles < fastPeriod', () {
+      // With fewer candles than the fast period (12), both fast and slow EMAs
+      // are null for every entry, so the MACD line is entirely null,
+      // triggering the all-null early-return branch.
+      final candles = makeCandles(List.filled(5, 50.0));
+      final series = calc.computeSeries(candles);
+      expect(series.length, 5);
+      for (final r in series) {
+        expect(r.macd, isNull);
+        expect(r.signal, isNull);
+        expect(r.histogram, isNull);
+      }
+    });
   });
 
   // -------------------------------------------------------------------------

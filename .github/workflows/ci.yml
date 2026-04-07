@@ -51,11 +51,24 @@ jobs:
 
       - name: Enforce 100% domain coverage
         run: |
-          # Extract number of uncovered lines in lib/src/domain/
-          UNCOVERED=$(grep -A1 "^SF:lib/src/domain" coverage/lcov.info | \
-            grep "^DA:.*,0$" | wc -l || echo 0)
+          # Count all uncovered lines (DA:line,0) inside domain source files.
+          UNCOVERED=$(awk '
+            /^SF:lib\/src\/domain\// { in_domain=1; next }
+            /^end_of_record/         { in_domain=0; next }
+            in_domain && /^DA:[0-9]+,0$/ { count++ }
+            END { print count+0 }
+          ' coverage/lcov.info)
           echo "Uncovered domain lines: $UNCOVERED"
           if [ "$UNCOVERED" -gt 0 ]; then
+            # List the offending files and lines for easy debugging
+            awk '
+              /^SF:lib\/src\/domain\// { file=$0; sub(/^SF:/,"",file); next }
+              /^end_of_record/         { file=""; next }
+              file && /^DA:[0-9]+,0$/ {
+                line=$0; sub(/^DA:/,"",line); sub(/,0$/,"",line)
+                print "  " file ":" line
+              }
+            ' coverage/lcov.info
             echo "::error::Domain coverage is not 100% — $UNCOVERED lines uncovered."
             exit 1
           fi

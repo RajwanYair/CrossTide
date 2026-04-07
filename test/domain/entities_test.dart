@@ -598,4 +598,207 @@ void main() {
       expect(AlertType.deathCross.displayName, contains('200'));
     });
   });
+
+  // ───────────────────────────────────────────────────────────────
+  // TickerEntry.isEarningsSoon
+  // ───────────────────────────────────────────────────────────────
+  group('TickerEntry.isEarningsSoon', () {
+    TickerEntry entry({DateTime? nextEarningsAt}) => TickerEntry(
+      symbol: 'AAPL',
+      addedAt: DateTime(2024, 1, 1),
+      nextEarningsAt: nextEarningsAt,
+    );
+
+    test('returns false when nextEarningsAt is null', () {
+      expect(entry().isEarningsSoon(), isFalse);
+    });
+
+    test('returns true when earnings within default 7 days', () {
+      final now = DateTime(2024, 6, 10);
+      final e = entry(nextEarningsAt: DateTime(2024, 6, 15));
+      expect(e.isEarningsSoon(now: now), isTrue);
+    });
+
+    test('returns true when earnings exactly on boundary day', () {
+      final now = DateTime(2024, 6, 10);
+      final e = entry(nextEarningsAt: DateTime(2024, 6, 17));
+      expect(e.isEarningsSoon(now: now), isTrue);
+    });
+
+    test('returns false when earnings more than 7 days away', () {
+      final now = DateTime(2024, 6, 10);
+      final e = entry(nextEarningsAt: DateTime(2024, 6, 25));
+      expect(e.isEarningsSoon(now: now), isFalse);
+    });
+
+    test('returns false when earnings already passed', () {
+      final now = DateTime(2024, 6, 10);
+      final e = entry(nextEarningsAt: DateTime(2024, 6, 1));
+      expect(e.isEarningsSoon(now: now), isFalse);
+    });
+
+    test('respects custom days parameter', () {
+      final now = DateTime(2024, 6, 10);
+      final e = entry(nextEarningsAt: DateTime(2024, 6, 12));
+      expect(e.isEarningsSoon(days: 3, now: now), isTrue);
+      expect(e.isEarningsSoon(days: 1, now: now), isFalse);
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────
+  // PctMoveThreshold
+  // ───────────────────────────────────────────────────────────────
+  group('PctMoveThreshold', () {
+    test('stores all fields', () {
+      final t = PctMoveThreshold(
+        id: 1,
+        symbol: 'AAPL',
+        thresholdPct: 5.0,
+        note: 'big move',
+        createdAt: DateTime(2024, 3, 15),
+      );
+      expect(t.id, 1);
+      expect(t.symbol, 'AAPL');
+      expect(t.thresholdPct, 5.0);
+      expect(t.note, 'big move');
+      expect(t.createdAt, DateTime(2024, 3, 15));
+    });
+
+    test('equality via Equatable', () {
+      final a = PctMoveThreshold(
+        id: 1,
+        symbol: 'AAPL',
+        thresholdPct: 5.0,
+        createdAt: DateTime(2024, 1, 1),
+      );
+      final b = PctMoveThreshold(
+        id: 1,
+        symbol: 'AAPL',
+        thresholdPct: 5.0,
+        createdAt: DateTime(2024, 1, 1),
+      );
+      expect(a, equals(b));
+    });
+
+    test('props has 5 elements', () {
+      const t = PctMoveThreshold(symbol: 'MSFT', thresholdPct: 3.0);
+      expect(t.props.length, 5);
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────
+  // PriceTarget
+  // ───────────────────────────────────────────────────────────────
+  group('PriceTarget', () {
+    test('stores all fields', () {
+      final t = PriceTarget(
+        id: 42,
+        symbol: 'GOOG',
+        targetPrice: 150.0,
+        note: 'earnings play',
+        createdAt: DateTime(2024, 1, 1),
+        firedAt: DateTime(2024, 6, 1),
+      );
+      expect(t.id, 42);
+      expect(t.symbol, 'GOOG');
+      expect(t.targetPrice, 150.0);
+      expect(t.note, 'earnings play');
+      expect(t.firedAt, DateTime(2024, 6, 1));
+    });
+
+    test('hasFired returns true when firedAt is set', () {
+      final t = PriceTarget(
+        symbol: 'AAPL',
+        targetPrice: 200.0,
+        firedAt: DateTime(2024, 6, 1),
+      );
+      expect(t.hasFired, isTrue);
+    });
+
+    test('hasFired returns false when firedAt is null', () {
+      const t = PriceTarget(symbol: 'AAPL', targetPrice: 200.0);
+      expect(t.hasFired, isFalse);
+    });
+
+    test('equality via Equatable', () {
+      final a = PriceTarget(
+        id: 1,
+        symbol: 'AAPL',
+        targetPrice: 200.0,
+        createdAt: DateTime(2024, 1, 1),
+      );
+      final b = PriceTarget(
+        id: 1,
+        symbol: 'AAPL',
+        targetPrice: 200.0,
+        createdAt: DateTime(2024, 1, 1),
+      );
+      expect(a, equals(b));
+    });
+
+    test('props has 6 elements', () {
+      const t = PriceTarget(symbol: 'MSFT', targetPrice: 100.0);
+      expect(t.props.length, 6);
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────
+  // AlertHistoryEntry
+  // ───────────────────────────────────────────────────────────────
+  group('AlertHistoryEntry', () {
+    test('stores all fields', () {
+      final e = AlertHistoryEntry(
+        id: 7,
+        symbol: 'TSLA',
+        alertType: 'sma200CrossUp',
+        message: 'Cross-up detected',
+        firedAt: DateTime(2024, 5, 20),
+        acknowledged: true,
+      );
+      expect(e.id, 7);
+      expect(e.symbol, 'TSLA');
+      expect(e.alertType, 'sma200CrossUp');
+      expect(e.message, 'Cross-up detected');
+      expect(e.firedAt, DateTime(2024, 5, 20));
+      expect(e.acknowledged, isTrue);
+    });
+
+    test('acknowledged defaults to false', () {
+      final e = AlertHistoryEntry(
+        symbol: 'AAPL',
+        alertType: 'goldenCross',
+        message: 'test',
+        firedAt: DateTime(2024, 1, 1),
+      );
+      expect(e.acknowledged, isFalse);
+    });
+
+    test('equality via Equatable', () {
+      final a = AlertHistoryEntry(
+        id: 1,
+        symbol: 'AAPL',
+        alertType: 'sma200CrossUp',
+        message: 'test',
+        firedAt: DateTime(2024, 1, 1),
+      );
+      final b = AlertHistoryEntry(
+        id: 1,
+        symbol: 'AAPL',
+        alertType: 'sma200CrossUp',
+        message: 'test',
+        firedAt: DateTime(2024, 1, 1),
+      );
+      expect(a, equals(b));
+    });
+
+    test('props has 6 elements', () {
+      final e = AlertHistoryEntry(
+        symbol: 'X',
+        alertType: 'pctMove',
+        message: 'm',
+        firedAt: DateTime(2024, 1, 1),
+      );
+      expect(e.props.length, 6);
+    });
+  });
 }
