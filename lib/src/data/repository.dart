@@ -49,6 +49,7 @@ class StockRepository {
           lastRefreshAt: r.lastRefreshAt,
           lastClose: r.lastClose,
           sma200: r.sma200,
+          sma150: r.sma150,
           alertState: alertState,
           error: r.error,
           enabledAlertTypes: _parseAlertTypes(r.enabledAlertTypes),
@@ -310,6 +311,10 @@ class StockRepository {
         lastEvaluatedAt: Value(state.lastEvaluatedAt),
         lastCloseUsed: Value(state.lastCloseUsed),
         lastSma200: Value(state.lastSma200),
+        lastMichoBuyAt: Value(state.lastMichoBuyAt),
+        lastMichoSellAt: Value(state.lastMichoSellAt),
+        lastConsensusBuyAt: Value(state.lastConsensusBuyAt),
+        lastConsensusSellAt: Value(state.lastConsensusSellAt),
       ),
     );
   }
@@ -332,6 +337,10 @@ class StockRepository {
       lastEvaluatedAt: row.lastEvaluatedAt,
       lastCloseUsed: row.lastCloseUsed,
       lastSma200: row.lastSma200,
+      lastMichoBuyAt: row.lastMichoBuyAt,
+      lastMichoSellAt: row.lastMichoSellAt,
+      lastConsensusBuyAt: row.lastConsensusBuyAt,
+      lastConsensusSellAt: row.lastConsensusSellAt,
     );
   }
 
@@ -380,6 +389,16 @@ class StockRepository {
       TickersCompanion(
         symbol: Value(symbol.toUpperCase().trim()),
         sma200: Value(sma200),
+      ),
+    );
+  }
+
+  /// Update SMA150 on the ticker row for Micho Method status display.
+  Future<void> updateTickerSma150(String symbol, double? sma150) async {
+    await db.upsertTicker(
+      TickersCompanion(
+        symbol: Value(symbol.toUpperCase().trim()),
+        sma150: Value(sma150),
       ),
     );
   }

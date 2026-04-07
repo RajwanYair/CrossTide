@@ -62,6 +62,30 @@ enum AlertType {
 
   /// Micho Method SELL: price crosses below MA150 from above.
   michoMethodSell,
+
+  /// RSI Method BUY: RSI exits oversold territory (crosses up through 30).
+  rsiMethodBuy,
+
+  /// RSI Method SELL: RSI exits overbought territory (crosses down through 70).
+  rsiMethodSell,
+
+  /// MACD Method BUY: MACD line crosses above signal line.
+  macdMethodBuy,
+
+  /// MACD Method SELL: MACD line crosses below signal line.
+  macdMethodSell,
+
+  /// Bollinger Method BUY: price crosses above the lower band from below.
+  bollingerMethodBuy,
+
+  /// Bollinger Method SELL: price crosses below the upper band from above.
+  bollingerMethodSell,
+
+  /// Consensus BUY: Micho + at least one other method agree on BUY.
+  consensusBuy,
+
+  /// Consensus SELL: Micho + at least one other method agree on SELL.
+  consensusSell,
 }
 
 /// Extension helpers for [AlertType].
@@ -77,6 +101,14 @@ extension AlertTypeX on AlertType {
     AlertType.volumeSpike => 'Volume Spike',
     AlertType.michoMethodBuy => 'Micho Method — BUY',
     AlertType.michoMethodSell => 'Micho Method — SELL',
+    AlertType.rsiMethodBuy => 'RSI Method — BUY',
+    AlertType.rsiMethodSell => 'RSI Method — SELL',
+    AlertType.macdMethodBuy => 'MACD Crossover — BUY',
+    AlertType.macdMethodSell => 'MACD Crossover — SELL',
+    AlertType.bollingerMethodBuy => 'Bollinger Bands — BUY',
+    AlertType.bollingerMethodSell => 'Bollinger Bands — SELL',
+    AlertType.consensusBuy => '✅ Consensus BUY',
+    AlertType.consensusSell => '🔴 Consensus SELL',
   };
 
   String get description => switch (this) {
@@ -95,6 +127,22 @@ extension AlertTypeX on AlertType {
       'Price crosses above MA150 while MA150 is flat/rising (Micho Method)',
     AlertType.michoMethodSell =>
       'Price crosses below MA150 from above — exit signal (Micho Method)',
+    AlertType.rsiMethodBuy =>
+      'RSI exits oversold territory (crosses up through 30)',
+    AlertType.rsiMethodSell =>
+      'RSI exits overbought territory (crosses down through 70)',
+    AlertType.macdMethodBuy =>
+      'MACD line crosses above signal line — bullish momentum',
+    AlertType.macdMethodSell =>
+      'MACD line crosses below signal line — bearish momentum',
+    AlertType.bollingerMethodBuy =>
+      'Price crosses above the lower Bollinger Band from below',
+    AlertType.bollingerMethodSell =>
+      'Price crosses below the upper Bollinger Band from above',
+    AlertType.consensusBuy =>
+      'Micho Method + at least one other method agree: BUY',
+    AlertType.consensusSell =>
+      'Micho Method + at least one other method agree: SELL',
   };
 }
 
@@ -130,6 +178,10 @@ class TickerAlertState extends Equatable {
     this.lastEvaluatedAt,
     this.lastCloseUsed,
     this.lastSma200,
+    this.lastMichoBuyAt,
+    this.lastMichoSellAt,
+    this.lastConsensusBuyAt,
+    this.lastConsensusSellAt,
   });
 
   final String ticker;
@@ -149,12 +201,29 @@ class TickerAlertState extends Equatable {
   /// The SMA200 value used in the last evaluation.
   final double? lastSma200;
 
+  /// Date of the candle that last triggered a Micho Method BUY alert.
+  /// Used to suppress repeat alerts for the same candle.
+  final DateTime? lastMichoBuyAt;
+
+  /// Date of the candle that last triggered a Micho Method SELL alert.
+  final DateTime? lastMichoSellAt;
+
+  /// Date of the candle that last triggered a Consensus BUY alert.
+  final DateTime? lastConsensusBuyAt;
+
+  /// Date of the candle that last triggered a Consensus SELL alert.
+  final DateTime? lastConsensusSellAt;
+
   TickerAlertState copyWith({
     SmaRelation? lastStatus,
     DateTime? lastAlertedCrossUpAt,
     DateTime? lastEvaluatedAt,
     double? lastCloseUsed,
     double? lastSma200,
+    DateTime? lastMichoBuyAt,
+    DateTime? lastMichoSellAt,
+    DateTime? lastConsensusBuyAt,
+    DateTime? lastConsensusSellAt,
   }) {
     return TickerAlertState(
       ticker: ticker,
@@ -163,6 +232,10 @@ class TickerAlertState extends Equatable {
       lastEvaluatedAt: lastEvaluatedAt ?? this.lastEvaluatedAt,
       lastCloseUsed: lastCloseUsed ?? this.lastCloseUsed,
       lastSma200: lastSma200 ?? this.lastSma200,
+      lastMichoBuyAt: lastMichoBuyAt ?? this.lastMichoBuyAt,
+      lastMichoSellAt: lastMichoSellAt ?? this.lastMichoSellAt,
+      lastConsensusBuyAt: lastConsensusBuyAt ?? this.lastConsensusBuyAt,
+      lastConsensusSellAt: lastConsensusSellAt ?? this.lastConsensusSellAt,
     );
   }
 
@@ -174,6 +247,10 @@ class TickerAlertState extends Equatable {
     lastEvaluatedAt,
     lastCloseUsed,
     lastSma200,
+    lastMichoBuyAt,
+    lastMichoSellAt,
+    lastConsensusBuyAt,
+    lastConsensusSellAt,
   ];
 }
 
@@ -252,12 +329,21 @@ class TickerEntry extends Equatable {
     this.lastRefreshAt,
     this.lastClose,
     this.sma200,
+    this.sma150,
     this.alertState,
     this.error,
     this.enabledAlertTypes = const {
       AlertType.sma200CrossUp,
       AlertType.michoMethodBuy,
       AlertType.michoMethodSell,
+      AlertType.rsiMethodBuy,
+      AlertType.rsiMethodSell,
+      AlertType.macdMethodBuy,
+      AlertType.macdMethodSell,
+      AlertType.bollingerMethodBuy,
+      AlertType.bollingerMethodSell,
+      AlertType.consensusBuy,
+      AlertType.consensusSell,
     },
     this.sortOrder = 0,
     this.groupId,
@@ -269,6 +355,10 @@ class TickerEntry extends Equatable {
   final DateTime? lastRefreshAt;
   final double? lastClose;
   final double? sma200;
+
+  /// Latest 150-day SMA value (kept up-to-date by RefreshService).
+  /// Used by the UI to show Micho Method position relative to MA150.
+  final double? sma150;
   final TickerAlertState? alertState;
   final String? error;
 
@@ -296,6 +386,7 @@ class TickerEntry extends Equatable {
     DateTime? lastRefreshAt,
     double? lastClose,
     double? sma200,
+    double? sma150,
     TickerAlertState? alertState,
     String? error,
     Set<AlertType>? enabledAlertTypes,
@@ -309,6 +400,7 @@ class TickerEntry extends Equatable {
       lastRefreshAt: lastRefreshAt ?? this.lastRefreshAt,
       lastClose: lastClose ?? this.lastClose,
       sma200: sma200 ?? this.sma200,
+      sma150: sma150 ?? this.sma150,
       alertState: alertState ?? this.alertState,
       error: error,
       enabledAlertTypes: enabledAlertTypes ?? this.enabledAlertTypes,
@@ -325,6 +417,7 @@ class TickerEntry extends Equatable {
     lastRefreshAt,
     lastClose,
     sma200,
+    sma150,
     alertState,
     error,
     enabledAlertTypes,

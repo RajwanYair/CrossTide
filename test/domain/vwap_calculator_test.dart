@@ -20,6 +20,13 @@ DailyCandle _candle(
 void main() {
   const calc = VwapCalculator();
 
+  group('VwapCalculator', () {
+    test('can be constructed at runtime', () {
+      const VwapCalculator Function() create = VwapCalculator.new;
+      expect(create().computeSeries([]), isEmpty);
+    });
+  });
+
   group('VwapCalculator.computeSeries', () {
     test('returns empty list for empty input', () {
       expect(calc.computeSeries([]), isEmpty);

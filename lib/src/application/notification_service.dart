@@ -50,6 +50,20 @@ abstract class INotificationService {
     required double sma150,
   });
 
+  /// Fires a Consensus BUY notification (Micho + other methods agree).
+  Future<void> showConsensusBuyAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  });
+
+  /// Fires a Consensus SELL notification (Micho + other methods agree).
+  Future<void> showConsensusSellAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  });
+
   Future<void> cancelAll();
 }
 
@@ -309,6 +323,64 @@ class LocalNotificationService implements INotificationService {
       _logger.i('Micho SELL notification shown for $ticker');
     } catch (e) {
       _logger.e('Failed to show Micho SELL notification: $e');
+    }
+  }
+
+  @override
+  Future<void> showConsensusBuyAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) async {
+    final id = (ticker.hashCode.abs() + 200) % 100000;
+    const androidDetails = AndroidNotificationDetails(
+      _androidChannelId,
+      _androidChannelName,
+      channelDescription: _androidChannelDesc,
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+    const details = NotificationDetails(android: androidDetails);
+    try {
+      await _plugin.show(
+        id: id,
+        title: '$ticker — ✅ Consensus BUY',
+        body: 'Close: \$${close.toStringAsFixed(2)} — $description',
+        notificationDetails: details,
+        payload: 'ticker:$ticker',
+      );
+      _logger.i('Consensus BUY notification shown for $ticker');
+    } catch (e) {
+      _logger.e('Failed to show Consensus BUY notification: $e');
+    }
+  }
+
+  @override
+  Future<void> showConsensusSellAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) async {
+    final id = (ticker.hashCode.abs() + 201) % 100000;
+    const androidDetails = AndroidNotificationDetails(
+      _androidChannelId,
+      _androidChannelName,
+      channelDescription: _androidChannelDesc,
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+    const details = NotificationDetails(android: androidDetails);
+    try {
+      await _plugin.show(
+        id: id,
+        title: '$ticker — 🔴 Consensus SELL',
+        body: 'Close: \$${close.toStringAsFixed(2)} — $description',
+        notificationDetails: details,
+        payload: 'ticker:$ticker',
+      );
+      _logger.i('Consensus SELL notification shown for $ticker');
+    } catch (e) {
+      _logger.e('Failed to show Consensus SELL notification: $e');
     }
   }
 

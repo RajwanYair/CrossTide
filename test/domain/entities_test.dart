@@ -111,9 +111,9 @@ void main() {
       expect(a, equals(b));
     });
 
-    test('props has 6 elements', () {
+    test('props has 10 elements', () {
       final s = makeState(alertedAt: alerted, evaluatedAt: evaluated);
-      expect(s.props.length, 6);
+      expect(s.props.length, 10);
     });
 
     test('not equal when status differs', () {
@@ -166,6 +166,35 @@ void main() {
 
       test('copies lastSma200', () {
         expect(base.copyWith(lastSma200: 155).lastSma200, 155.0);
+      });
+
+      test('copies lastMichoBuyAt', () {
+        final buyDate = DateTime(2024, 9, 1);
+        expect(base.copyWith(lastMichoBuyAt: buyDate).lastMichoBuyAt, buyDate);
+      });
+
+      test('copies lastMichoSellAt', () {
+        final sellDate = DateTime(2024, 10, 1);
+        expect(
+          base.copyWith(lastMichoSellAt: sellDate).lastMichoSellAt,
+          sellDate,
+        );
+      });
+
+      test('copies lastConsensusBuyAt', () {
+        final conDate = DateTime(2024, 11, 1);
+        expect(
+          base.copyWith(lastConsensusBuyAt: conDate).lastConsensusBuyAt,
+          conDate,
+        );
+      });
+
+      test('copies lastConsensusSellAt', () {
+        final conDate = DateTime(2024, 12, 1);
+        expect(
+          base.copyWith(lastConsensusSellAt: conDate).lastConsensusSellAt,
+          conDate,
+        );
       });
 
       test('unmodified ticker is preserved', () {
@@ -311,10 +340,11 @@ void main() {
       );
     });
 
-    test('props has 10 elements', () {
-      // symbol, addedAt, lastRefreshAt, lastClose, sma200, alertState, error,
-      // enabledAlertTypes, sortOrder, groupId
-      expect(makeEntry().props.length, 11);
+    test('props has 12 elements', () {
+      // symbol, addedAt, lastRefreshAt, lastClose, sma200, sma150,
+      // alertState, error, enabledAlertTypes, sortOrder, groupId,
+      // nextEarningsAt
+      expect(makeEntry().props.length, 12);
     });
 
     test('minimal constructor — all optionals null', () {
@@ -350,6 +380,15 @@ void main() {
 
       test('copies sma200', () {
         expect(base.copyWith(sma200: 175.0).sma200, 175.0);
+      });
+
+      test('copies sma150', () {
+        expect(base.copyWith(sma150: 160.0).sma150, 160.0);
+      });
+
+      test('sma150 defaults to null when not set', () {
+        const entry = TickerEntry(symbol: 'NVDA');
+        expect(entry.sma150, isNull);
       });
 
       test('copies alertState', () {
@@ -572,8 +611,8 @@ void main() {
   // AlertType
   // ───────────────────────────────────────────────────────────────
   group('AlertType', () {
-    test('has ten values', () {
-      expect(AlertType.values.length, 10);
+    test('has eighteen values', () {
+      expect(AlertType.values.length, 18);
     });
 
     test('each type has a non-empty displayName', () {

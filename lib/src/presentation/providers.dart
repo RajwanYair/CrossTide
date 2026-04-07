@@ -26,6 +26,10 @@ import '../domain/cross_up_anomaly_detector.dart'
     as domain
     show CrossUpAnomaly, CrossUpAnomalyDetector;
 import '../domain/entities.dart' as domain;
+import '../domain/rsi_alert_detector.dart'
+    as domain
+    show RsiAlert, RsiAlertDetector;
+import '../domain/rsi_calculator.dart' as domain show RsiCalculator;
 import '../domain/signal_confidence_calculator.dart'
     as domain
     show SignalConfidenceCalculator;
@@ -299,6 +303,26 @@ final vwapProvider = FutureProvider.family<domain.VwapResult?, String>((
   final repo = await ref.watch(repositoryProvider.future);
   final candles = await repo.fetchAndCacheCandles(symbol);
   return const domain.VwapCalculator().compute(candles);
+});
+
+/// Current RSI (14-period) value for a specific ticker.
+final currentRsiProvider = FutureProvider.family<double?, String>((
+  ref,
+  symbol,
+) async {
+  final repo = await ref.watch(repositoryProvider.future);
+  final candles = await repo.fetchAndCacheCandles(symbol);
+  return const domain.RsiCalculator().compute(candles);
+});
+
+/// Most recent RSI threshold crossing (oversold/overbought exit) for a ticker.
+final rsiAlertProvider = FutureProvider.family<domain.RsiAlert?, String>((
+  ref,
+  symbol,
+) async {
+  final repo = await ref.watch(repositoryProvider.future);
+  final candles = await repo.fetchAndCacheCandles(symbol);
+  return const domain.RsiAlertDetector().detect(symbol, candles);
 });
 
 /// [AuditLogService] singleton — records user settings changes.

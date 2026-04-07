@@ -32,6 +32,10 @@ class RefreshService {
   final _crossUpDetector = const CrossUpDetector();
   final _goldenCrossDetector = const GoldenCrossDetector();
   final _michoDetector = const MichoMethodDetector();
+  final _rsiMethodDetector = const RsiMethodDetector();
+  final _macdMethodDetector = const MacdMethodDetector();
+  final _bollingerMethodDetector = const BollingerMethodDetector();
+  final _consensusEngine = const ConsensusEngine();
   final _alertStateMachine = const AlertStateMachine();
   final _volumeCalculator = const VolumeCalculator();
 
@@ -126,9 +130,11 @@ class RefreshService {
       return false;
     }
 
-    // 2. Compute current SMA200 for display (always kept up-to-date)
+    // 2. Compute current SMA200 and SMA150 for display (always kept up-to-date)
     final currentSma = _smaCalculator.compute(candles, period: 200);
     await repository.updateTickerSma(upper, currentSma);
+    final currentSma150 = _smaCalculator.compute(candles, period: 150);
+    await repository.updateTickerSma150(upper, currentSma150);
 
     // 2b. Fetch next earnings date (non-critical; Yahoo Finance only).
     // Only refresh once per day to limit API calls.
@@ -241,10 +247,24 @@ class RefreshService {
     final wantMichoBuy = enabledAlertTypes.contains(AlertType.michoMethodBuy);
     final wantMichoSell = enabledAlertTypes.contains(AlertType.michoMethodSell);
     if (wantMichoBuy || wantMichoSell) {
+      // Load state once for idempotency checks
+      final michoState = await repository.getAlertState(upper);
+      var updatedMichoState = michoState;
+
       final signals = _michoDetector.evaluateBoth(
         ticker: upper,
         candles: candles,
       );
+
+      // The candle date for the most recent bar (used as idempotency key)
+      final candleDate = candles.isNotEmpty
+          ? DateTime(
+              candles.last.date.year,
+              candles.last.date.month,
+              candles.last.date.day,
+            )
+          : null;
+
       for (final signal in signals) {
         if (signal.alertType == AlertType.michoMethodBuy && !wantMichoBuy) {
           continue;
@@ -252,6 +272,28 @@ class RefreshService {
         if (signal.alertType == AlertType.michoMethodSell && !wantMichoSell) {
           continue;
         }
+
+        // Idempotency: skip if we already fired this alert for the same candle.
+        if (candleDate != null) {
+          final lastFired = signal.alertType == AlertType.michoMethodBuy
+              ? updatedMichoState.lastMichoBuyAt
+              : updatedMichoState.lastMichoSellAt;
+          if (lastFired != null) {
+            final lastFiredDay = DateTime(
+              lastFired.year,
+              lastFired.month,
+              lastFired.day,
+            );
+            if (!lastFiredDay.isBefore(candleDate)) {
+              _logger.d(
+                '$upper: ${signal.alertType.displayName} already fired '
+                'for candle $candleDate — suppressed',
+              );
+              continue;
+            }
+          }
+        }
+
         if (inQuiet) {
           _logger.i(
             '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
@@ -265,19 +307,223 @@ class RefreshService {
             close: signal.currentClose!,
             sma150: signal.currentSma!,
           );
+          updatedMichoState = updatedMichoState.copyWith(
+            lastMichoBuyAt: candleDate ?? DateTime.now(),
+          );
         } else {
           await notificationService.showMichoSellAlert(
             ticker: upper,
             close: signal.currentClose!,
             sma150: signal.currentSma!,
           );
+          updatedMichoState = updatedMichoState.copyWith(
+            lastMichoSellAt: candleDate ?? DateTime.now(),
+          );
         }
+        await repository.saveAlertState(updatedMichoState);
         await _appendHistory(
           symbol: upper,
           alertType: signal.alertType.name,
           message: signal.description!,
         );
         firedAny = true;
+      }
+    }
+
+    // 10. RSI / MACD / Bollinger method evaluations + Consensus Engine
+    final allMethodSignals = <MethodSignal>[];
+
+    // Collect Micho signals (already evaluated above) for consensus
+    if (wantMichoBuy || wantMichoSell) {
+      allMethodSignals.addAll(
+        _michoDetector.evaluateBoth(ticker: upper, candles: candles),
+      );
+    }
+
+    // RSI Method
+    final wantRsiBuy = enabledAlertTypes.contains(AlertType.rsiMethodBuy);
+    final wantRsiSell = enabledAlertTypes.contains(AlertType.rsiMethodSell);
+    if (wantRsiBuy || wantRsiSell) {
+      final rsiSignals = _rsiMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(rsiSignals);
+      for (final MethodSignal signal in rsiSignals) {
+        if (signal.alertType == AlertType.rsiMethodBuy && !wantRsiBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.rsiMethodSell && !wantRsiSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // MACD Method
+    final wantMacdBuy = enabledAlertTypes.contains(AlertType.macdMethodBuy);
+    final wantMacdSell = enabledAlertTypes.contains(AlertType.macdMethodSell);
+    if (wantMacdBuy || wantMacdSell) {
+      final macdSignals = _macdMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(macdSignals);
+      for (final MethodSignal signal in macdSignals) {
+        if (signal.alertType == AlertType.macdMethodBuy && !wantMacdBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.macdMethodSell && !wantMacdSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // Bollinger Method
+    final wantBollBuy = enabledAlertTypes.contains(
+      AlertType.bollingerMethodBuy,
+    );
+    final wantBollSell = enabledAlertTypes.contains(
+      AlertType.bollingerMethodSell,
+    );
+    if (wantBollBuy || wantBollSell) {
+      final bollSignals = _bollingerMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(bollSignals);
+      for (final MethodSignal signal in bollSignals) {
+        if (signal.alertType == AlertType.bollingerMethodBuy && !wantBollBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.bollingerMethodSell &&
+            !wantBollSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // Consensus Engine: combine all method signals
+    final wantConsensusBuy = enabledAlertTypes.contains(AlertType.consensusBuy);
+    final wantConsensusSell = enabledAlertTypes.contains(
+      AlertType.consensusSell,
+    );
+    if (wantConsensusBuy || wantConsensusSell) {
+      final consensus = _consensusEngine.evaluate(
+        ticker: upper,
+        signals: allMethodSignals,
+      );
+
+      // Load state for consensus idempotency
+      final consensusState = await repository.getAlertState(upper);
+      var updatedConsensusState = consensusState;
+      final consensusCandleDate = candles.isNotEmpty
+          ? DateTime(
+              candles.last.date.year,
+              candles.last.date.month,
+              candles.last.date.day,
+            )
+          : null;
+
+      if (consensus.buySignal != null && wantConsensusBuy && !inQuiet) {
+        // Idempotency check for consensus BUY
+        final lastFired = updatedConsensusState.lastConsensusBuyAt;
+        final alreadyFired =
+            lastFired != null &&
+            consensusCandleDate != null &&
+            !DateTime(
+              lastFired.year,
+              lastFired.month,
+              lastFired.day,
+            ).isBefore(consensusCandleDate);
+
+        if (!alreadyFired) {
+          _logger.i('$upper: ${consensus.buySignal!.description}');
+          await notificationService.showConsensusBuyAlert(
+            ticker: upper,
+            close: consensus.buySignal!.currentClose!,
+            description: consensus.buySignal!.description!,
+          );
+          updatedConsensusState = updatedConsensusState.copyWith(
+            lastConsensusBuyAt: consensusCandleDate ?? DateTime.now(),
+          );
+          await repository.saveAlertState(updatedConsensusState);
+          await _appendHistory(
+            symbol: upper,
+            alertType: AlertType.consensusBuy.name,
+            message: consensus.buySignal!.description!,
+          );
+          firedAny = true;
+        }
+      }
+      if (consensus.sellSignal != null && wantConsensusSell && !inQuiet) {
+        // Idempotency check for consensus SELL
+        final lastFired = updatedConsensusState.lastConsensusSellAt;
+        final alreadyFired =
+            lastFired != null &&
+            consensusCandleDate != null &&
+            !DateTime(
+              lastFired.year,
+              lastFired.month,
+              lastFired.day,
+            ).isBefore(consensusCandleDate);
+
+        if (!alreadyFired) {
+          _logger.i('$upper: ${consensus.sellSignal!.description}');
+          await notificationService.showConsensusSellAlert(
+            ticker: upper,
+            close: consensus.sellSignal!.currentClose!,
+            description: consensus.sellSignal!.description!,
+          );
+          updatedConsensusState = updatedConsensusState.copyWith(
+            lastConsensusSellAt: consensusCandleDate ?? DateTime.now(),
+          );
+          await repository.saveAlertState(updatedConsensusState);
+          await _appendHistory(
+            symbol: upper,
+            alertType: AlertType.consensusSell.name,
+            message: consensus.sellSignal!.description!,
+          );
+          firedAny = true;
+        }
       }
     }
 

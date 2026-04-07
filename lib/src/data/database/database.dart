@@ -25,6 +25,10 @@ class Tickers extends Table {
   DateTimeColumn get lastRefreshAt => dateTime().nullable()();
   RealColumn get lastClose => real().nullable()();
   RealColumn get sma200 => real().nullable()();
+
+  /// Latest computed 150-day SMA (kept up-to-date by RefreshService).
+  RealColumn get sma150 => real().nullable()();
+
   TextColumn get error => text().nullable()();
 
   /// Comma-separated list of [AlertType] names the user has enabled.
@@ -127,6 +131,19 @@ class AlertStates extends Table {
   RealColumn get lastCloseUsed => real().nullable()();
   RealColumn get lastSma200 => real().nullable()();
 
+  /// Date of the candle that triggered the last Micho Method BUY alert.
+  /// Used for idempotency: do not re-fire if the candle date hasn't changed.
+  DateTimeColumn get lastMichoBuyAt => dateTime().nullable()();
+
+  /// Date of the candle that triggered the last Micho Method SELL alert.
+  DateTimeColumn get lastMichoSellAt => dateTime().nullable()();
+
+  /// Date of the candle that triggered the last Consensus BUY alert.
+  DateTimeColumn get lastConsensusBuyAt => dateTime().nullable()();
+
+  /// Date of the candle that triggered the last Consensus SELL alert.
+  DateTimeColumn get lastConsensusSellAt => dateTime().nullable()();
+
   @override
   Set<Column> get primaryKey => {ticker};
 }
@@ -218,7 +235,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -272,6 +289,15 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 13) {
         await migrator.createTable(tickerNotesTable);
+      }
+      if (from < 14) {
+        await migrator.addColumn(tickers, tickers.sma150);
+        await migrator.addColumn(alertStates, alertStates.lastMichoBuyAt);
+        await migrator.addColumn(alertStates, alertStates.lastMichoSellAt);
+      }
+      if (from < 15) {
+        await migrator.addColumn(alertStates, alertStates.lastConsensusBuyAt);
+        await migrator.addColumn(alertStates, alertStates.lastConsensusSellAt);
       }
     },
   );

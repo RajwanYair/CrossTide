@@ -17,6 +17,12 @@ void main() {
   const calc = AlertMetricsCalculator();
 
   group('AlertMetricsCalculator', () {
+    test('can be constructed at runtime', () {
+      const AlertMetricsCalculator Function() create =
+          AlertMetricsCalculator.new;
+      expect(create().compute([]), isEmpty);
+    });
+
     test('returns empty list for empty history', () {
       expect(calc.compute([]), isEmpty);
     });

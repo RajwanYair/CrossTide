@@ -36,6 +36,13 @@ List<DailyCandle> _uniform(
 void main() {
   const calc = AtrCalculator();
 
+  group('AtrCalculator', () {
+    test('can be constructed at runtime', () {
+      const AtrCalculator Function() create = AtrCalculator.new;
+      expect(create().computeSeries([]), isEmpty);
+    });
+  });
+
   group('AtrCalculator.computeSeries', () {
     test('returns empty list when candles.length <= period', () {
       expect(calc.computeSeries(_uniform(14), period: 14), isEmpty);

@@ -72,5 +72,6 @@
     }
   ],
   "gitlens.codeLens.enabled": true,
-  "gitlens.hovers.currentLine.over": "line"
+  "gitlens.hovers.currentLine.over": "line",
+  "cmake.sourceDirectory": "C:/Users/ryair/OneDrive - Intel Corporation/Documents/MyScripts/CrossTide/windows"
 }

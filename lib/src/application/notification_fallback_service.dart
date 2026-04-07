@@ -149,5 +149,33 @@ class NotificationFallbackService implements INotificationService {
   );
 
   @override
+  Future<void> showConsensusBuyAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) => _tryChain(
+    (svc) => svc.showConsensusBuyAlert(
+      ticker: ticker,
+      close: close,
+      description: description,
+    ),
+    'showConsensusBuyAlert($ticker)',
+  );
+
+  @override
+  Future<void> showConsensusSellAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) => _tryChain(
+    (svc) => svc.showConsensusSellAlert(
+      ticker: ticker,
+      close: close,
+      description: description,
+    ),
+    'showConsensusSellAlert($ticker)',
+  );
+
+  @override
   Future<void> cancelAll() => _tryChain((svc) => svc.cancelAll(), 'cancelAll');
 }

@@ -775,6 +775,15 @@ class _TickerCard extends ConsumerWidget {
                           padding: const EdgeInsets.only(top: 3),
                           child: _SectorTag(sector: sector),
                         ),
+                      // Micho Method status — always visible (primary method)
+                      if (ticker.sma150 != null && ticker.lastClose != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: _MichoMethodBadge(
+                            close: ticker.lastClose!,
+                            sma150: ticker.sma150!,
+                          ),
+                        ),
                       const SizedBox(height: 4),
                       if (ticker.lastClose != null)
                         Row(
@@ -786,6 +795,14 @@ class _TickerCard extends ConsumerWidget {
                               valueColor: cs.onSurface,
                             ),
                             if (advancedMode) ...[
+                              const SizedBox(width: 16),
+                              _PriceTag(
+                                label: 'MA150',
+                                value: ticker.sma150 != null
+                                    ? '\$${ticker.sma150!.toStringAsFixed(2)}'
+                                    : '—',
+                                valueColor: const Color(0xFF2E7D32),
+                              ),
                               const SizedBox(width: 16),
                               _PriceTag(
                                 label: 'SMA200',
@@ -840,6 +857,63 @@ class _TickerCard extends ConsumerWidget {
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Composite Method Status Badge (Micho primary + consensus color coding)
+// ---------------------------------------------------------------------------
+
+class _MichoMethodBadge extends StatelessWidget {
+  const _MichoMethodBadge({required this.close, required this.sma150});
+
+  final double close;
+  final double sma150;
+
+  @override
+  Widget build(BuildContext context) {
+    final isAbove = close > sma150;
+    final pct = ((close - sma150) / sma150 * 100).abs();
+
+    // GREEN when above MA150 (bullish), RED when below (bearish)
+    final color = isAbove ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C);
+    final bgColor = isAbove
+        ? const Color(0xFF1B5E20).withAlpha(18)
+        : const Color(0xFFB71C1C).withAlpha(18);
+    final borderColor = isAbove
+        ? const Color(0xFF1B5E20).withAlpha(80)
+        : const Color(0xFFB71C1C).withAlpha(80);
+    final icon = isAbove ? '✅' : '🔴';
+    final direction = isAbove ? '▲' : '▼';
+    final sign = isAbove ? '+' : '−';
+    final label = 'Micho: $direction $sign${pct.toStringAsFixed(1)}%';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 10)),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: color,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 class _StatusChip extends StatelessWidget {
   const _StatusChip({required this.label, required this.color});

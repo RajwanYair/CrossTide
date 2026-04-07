@@ -2043,6 +2043,14 @@ class _AlertTypeSelectorCard extends ConsumerWidget {
     AlertType.volumeSpike => Colors.purple.shade700,
     AlertType.michoMethodBuy => Colors.green.shade900,
     AlertType.michoMethodSell => Colors.red.shade900,
+    AlertType.rsiMethodBuy => Colors.green.shade600,
+    AlertType.rsiMethodSell => Colors.red.shade600,
+    AlertType.macdMethodBuy => Colors.green.shade700,
+    AlertType.macdMethodSell => Colors.red.shade700,
+    AlertType.bollingerMethodBuy => Colors.green.shade800,
+    AlertType.bollingerMethodSell => Colors.red.shade800,
+    AlertType.consensusBuy => const Color(0xFF1B5E20),
+    AlertType.consensusSell => const Color(0xFFB71C1C),
   };
 
   Future<void> _toggle(

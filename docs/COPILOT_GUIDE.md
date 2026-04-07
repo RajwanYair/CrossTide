@@ -13,6 +13,26 @@ Coding conventions, prompt patterns, and guardrails for using GitHub Copilot eff
 - **Tests**: Domain logic must have tests. Test-first for new indicators/rules.
 - **Java SDK**: 21 (Temurin LTS) — set in `android/app/build.gradle.kts` and in CI `actions/setup-java@v4`
 
+## Trading Methods & Consensus Engine
+
+CrossTide evaluates multiple trading methods and combines them through a consensus engine:
+
+| Method | BUY Condition | SELL Condition |
+|--------|--------------|----------------|
+| **Micho** (primary) | Price crosses above MA150 + MA150 flat/rising + within 5% | Price crosses below MA150 |
+| **RSI** | RSI exits oversold (<30→≥30) | RSI exits overbought (>70→≤70) |
+| **MACD** | MACD crosses above signal line | MACD crosses below signal line |
+| **Bollinger** | Price crosses above lower band | Price crosses below upper band |
+
+**Consensus**: GREEN BUY = Micho BUY + ≥1 other BUY. RED SELL = Micho SELL + ≥1 other SELL.
+
+All methods use the **MethodSignal pattern**:
+- Detector classes are `const`-constructible with injectable calculators
+- Each provides `evaluateBuy()`, `evaluateSell()`, `evaluateBoth()`
+- Signals are grouped by `ConsensusEngine.evaluate()` for composite decisions
+
+To add a new method, use the `/add-trading-method` prompt or the `add-trading-method` skill.
+
 ## Quality Gates — Zero Tolerance
 
 All of the following must pass before merging:
@@ -79,6 +99,13 @@ Handle rate limits and errors with MarketDataException.
 Document the API's rate limits and required key.
 ```
 
+### Add a new trading method
+
+```
+Use /add-trading-method to add a [Stochastic / Williams %R / ADX] method.
+The skill walks through: AlertType → Detector → ConsensusEngine → RefreshService → Tests.
+```
+
 ### Add a new technical indicator
 
 ```
@@ -123,3 +150,33 @@ Use const for immutable fixtures, camelCase helpers (no leading underscores).
 | Data | Domain, drift, dio | Application, presentation |
 | Application | Domain, data | Presentation |
 | Presentation | All layers | — |
+
+## Copilot Agents, Prompts & Skills
+
+### Agents
+| Agent | Purpose | Mode |
+|-------|---------|------|
+| `data-integration` | Add/modify market data providers | Read + Edit + Execute |
+| `domain-feature` | Add/modify domain entities, methods, consensus | Read + Edit + Execute |
+| `reviewer` | Architecture + quality audit | Read-only |
+
+### Prompts
+| Prompt | Purpose |
+|--------|---------|
+| `/add-data-provider` | Step-by-step guide for new market data providers |
+| `/add-domain-feature` | Step-by-step guide for domain rules and entities |
+| `/add-trading-method` | Full workflow for new MethodSignal-based methods |
+| `/generate-tests` | Generate domain unit tests |
+| `/health-check` | Full quality gate run (analyze + format + test) |
+| `/consensus-check` | Verify consensus engine covers all methods |
+
+### Skills
+| Skill | Purpose |
+|-------|---------|
+| `add-trading-method` | Guided workflow for creating a new method detector |
+
+### Hooks
+| Hook | Event | Purpose |
+|------|-------|---------|
+| `format-on-save` | PostToolUse | Auto-formats Dart files after edits |
+| `terminal-safety` | PreToolUse | Blocks destructive terminal commands |

@@ -15,6 +15,13 @@ void main() {
   const calc = SignalConfidenceCalculator();
 
   group('SignalConfidenceCalculator', () {
+    test('can be constructed at runtime', () {
+      const SignalConfidenceCalculator Function() create =
+          SignalConfidenceCalculator.new;
+      final SignalConfidenceScore s = create().compute('T', []);
+      expect(s.score, 0);
+    });
+
     test('returns score=0 with fewer than 201 candles', () {
       final candles = List.generate(200, (i) => _candle(i, close: 100.0));
       final score = calc.compute('TEST', candles);

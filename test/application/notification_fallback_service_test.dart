@@ -1,7 +1,7 @@
 import 'package:cross_tide/src/application/notification_fallback_service.dart';
 import 'package:cross_tide/src/application/notification_service.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:logger/logger.dart';
-import 'package:test/test.dart';
 
 // ---------------------------------------------------------------------------
 // Test doubles
@@ -16,6 +16,8 @@ class _SucceedingService implements INotificationService {
   int volumeSpikeCalls = 0;
   int michoBuyCalls = 0;
   int michoSellCalls = 0;
+  int consensusBuyCalls = 0;
+  int consensusSellCalls = 0;
   int cancelAllCalls = 0;
 
   @override
@@ -77,6 +79,24 @@ class _SucceedingService implements INotificationService {
     required double sma150,
   }) async {
     michoSellCalls++;
+  }
+
+  @override
+  Future<void> showConsensusBuyAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) async {
+    consensusBuyCalls++;
+  }
+
+  @override
+  Future<void> showConsensusSellAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) async {
+    consensusSellCalls++;
   }
 
   @override
@@ -157,6 +177,26 @@ class _FailingService implements INotificationService {
   }) async {
     showCalls++;
     throw Exception('showMichoSellAlert failed');
+  }
+
+  @override
+  Future<void> showConsensusBuyAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) async {
+    showCalls++;
+    throw Exception('showConsensusBuyAlert failed');
+  }
+
+  @override
+  Future<void> showConsensusSellAlert({
+    required String ticker,
+    required double close,
+    required String description,
+  }) async {
+    showCalls++;
+    throw Exception('showConsensusSellAlert failed');
   }
 
   @override

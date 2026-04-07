@@ -11,12 +11,16 @@ Add the requested domain feature:
 4. Implement business rule following cross-up pattern:
    - `close[t-1] <= SMAn[t-1] AND close[t] > SMAn[t]`
    - Alerts are idempotent — same event fires only once
-5. Update `AlertStateMachine` if adding new alert states
-6. Write unit tests in `test/domain/` with 100% coverage of the new code
-7. Test naming: `'<behavior> when <condition>'`
-8. No `// ignore:` pragmas — fix lint with real code
-9. No `TODO/FIXME/HACK` — track work in GitHub Issues
-10. Verify:
+5. If adding a **trading method**, follow the `MethodSignal` pattern:
+   - Use `/add-trading-method` prompt or load `.github/skills/add-trading-method/SKILL.md`
+   - Detector must be `const`-constructible, produce `MethodSignal` objects
+   - Wire into `ConsensusEngine._isBuyType`/`_isSellType`
+6. Update `AlertStateMachine` if adding new alert states
+7. Write unit tests in `test/domain/` with 100% coverage of the new code
+8. Test naming: `'<behavior> when <condition>'`
+9. No `// ignore:` pragmas — fix lint with real code
+10. No `TODO/FIXME/HACK` — track work in GitHub Issues
+11. Verify:
     ```bash
     flutter analyze --fatal-infos                  # zero issues
     dart format --set-exit-if-changed lib test      # exit 0
