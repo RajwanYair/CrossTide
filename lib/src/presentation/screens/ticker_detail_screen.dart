@@ -220,6 +220,10 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
                         stateAsync: alertStateAsync,
                       ).animate(delay: 160.ms).fadeIn(duration: 300.ms),
                       const SizedBox(height: 16),
+                      _SignalScoreCard(
+                        symbol: widget.symbol,
+                      ).animate(delay: 200.ms).fadeIn(duration: 300.ms),
+                      const SizedBox(height: 16),
                       _AlertTypeSelectorCard(
                         symbol: widget.symbol,
                       ).animate(delay: 240.ms).fadeIn(duration: 300.ms),
@@ -2575,6 +2579,146 @@ class _NoteTile extends StatelessWidget {
             splashRadius: 16,
             tooltip: 'Delete',
             onPressed: onDelete,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Signal Confidence Score Card
+// ---------------------------------------------------------------------------
+
+class _SignalScoreCard extends ConsumerWidget {
+  const _SignalScoreCard({required this.symbol});
+
+  final String symbol;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scoreAsync = ref.watch(signalConfidenceProvider(symbol));
+    final cs = Theme.of(context).colorScheme;
+
+    return scoreAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (score) {
+        final (color, label) = switch (score.strength) {
+          SignalStrength.strong => (Colors.green.shade600, 'Strong'),
+          SignalStrength.moderate => (Colors.orange.shade600, 'Moderate'),
+          SignalStrength.weak => (Colors.deepOrange.shade400, 'Weak'),
+          SignalStrength.none => (Colors.grey.shade500, 'None'),
+        };
+
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.analytics_rounded, size: 18, color: cs.primary),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Signal Confidence',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: color.withAlpha(22),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: color.withAlpha(80)),
+                      ),
+                      child: Text(
+                        '$label  ${score.score}/100',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: color,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                LinearProgressIndicator(
+                  value: score.score / 100,
+                  color: color,
+                  backgroundColor: color.withAlpha(30),
+                  minHeight: 8,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    _FactorChip(label: 'Above SMA200', met: score.aboveSma200),
+                    _FactorChip(
+                      label: 'Golden Cross',
+                      met: score.goldenCrossForm,
+                    ),
+                    _FactorChip(
+                      label: 'Trend Momentum',
+                      met: score.trendMomentum,
+                    ),
+                    _FactorChip(label: 'RSI 40–70', met: score.rsiHealthy),
+                    _FactorChip(
+                      label: 'Volume Spike',
+                      met: score.volumeConfirm,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _FactorChip extends StatelessWidget {
+  const _FactorChip({required this.label, required this.met});
+
+  final String label;
+  final bool met;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = met ? Colors.green.shade600 : Colors.grey.shade400;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withAlpha(18),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withAlpha(80)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            met ? Icons.check_circle_rounded : Icons.cancel_rounded,
+            size: 12,
+            color: color,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
           ),
         ],
       ),

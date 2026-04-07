@@ -22,6 +22,9 @@ import '../domain/cross_up_anomaly_detector.dart'
     as domain
     show CrossUpAnomaly, CrossUpAnomalyDetector;
 import '../domain/entities.dart' as domain;
+import '../domain/signal_confidence_calculator.dart'
+    as domain
+    show SignalConfidenceCalculator;
 
 // ---------------------------------------------------------------------------
 // Core singletons
@@ -258,6 +261,17 @@ final alertSensitivityProvider =
     ) async {
       final repo = await ref.watch(repositoryProvider.future);
       return repo.getAlertSensitivityStats(symbol);
+    });
+
+/// Multi-factor signal confidence score for a specific ticker.
+final signalConfidenceProvider =
+    FutureProvider.family<domain.SignalConfidenceScore, String>((
+      ref,
+      symbol,
+    ) async {
+      final repo = await ref.watch(repositoryProvider.future);
+      final candles = await repo.fetchAndCacheCandles(symbol);
+      return const domain.SignalConfidenceCalculator().compute(symbol, candles);
     });
 
 /// [AuditLogService] singleton — records user settings changes.

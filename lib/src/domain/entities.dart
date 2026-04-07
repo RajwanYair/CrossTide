@@ -682,6 +682,63 @@ class TickerNote extends Equatable {
   List<Object?> get props => [id, symbol, content, createdAt, updatedAt];
 }
 
+// ---------------------------------------------------------------------------
+// Signal Confidence Score
+// ---------------------------------------------------------------------------
+
+/// Rating bands for [SignalConfidenceScore.score].
+enum SignalStrength { none, weak, moderate, strong }
+
+/// Multi-factor score (0–100) that quantifies how convincingly a ticker is
+/// positioned for a sustained cross-up event.
+///
+/// Breakdown (20 pts each):
+/// - [aboveSma200]     : close > SMA200
+/// - [goldenCrossForm] : SMA50 > SMA200
+/// - [trendMomentum]   : SMA50 > SMA150
+/// - [rsiHealthy]      : RSI(14) in 40–70 range (momentum without exhaustion)
+/// - [volumeConfirm]   : last volume > 1.5× 30-day average volume
+class SignalConfidenceScore extends Equatable {
+  const SignalConfidenceScore({
+    required this.symbol,
+    required this.score,
+    required this.aboveSma200,
+    required this.goldenCrossForm,
+    required this.trendMomentum,
+    required this.rsiHealthy,
+    required this.volumeConfirm,
+  });
+
+  final String symbol;
+
+  /// Composite score in [0, 100].
+  final int score;
+
+  final bool aboveSma200;
+  final bool goldenCrossForm;
+  final bool trendMomentum;
+  final bool rsiHealthy;
+  final bool volumeConfirm;
+
+  SignalStrength get strength => switch (score) {
+    >= 80 => SignalStrength.strong,
+    >= 60 => SignalStrength.moderate,
+    >= 40 => SignalStrength.weak,
+    _ => SignalStrength.none,
+  };
+
+  @override
+  List<Object?> get props => [
+    symbol,
+    score,
+    aboveSma200,
+    goldenCrossForm,
+    trendMomentum,
+    rsiHealthy,
+    volumeConfirm,
+  ];
+}
+
 /// Maps each [AlertProfile] to a ready-to-use [AppSettings] snapshot.
 /// The UI can apply a profile in one tap; the user may then fine-tune
 /// individual fields (which implicitly switches the profile to [custom]).
