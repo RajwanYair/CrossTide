@@ -4,6 +4,8 @@
 /// Each public method tries delegates left-to-right and stops on first
 /// success.  If all delegates throw, the error is logged and swallowed so
 /// callers are never interrupted by notification failures.
+library;
+
 import 'package:logger/logger.dart';
 
 import 'notification_service.dart';

@@ -12,6 +12,7 @@ export 'entities.dart';
 export 'golden_cross_detector.dart';
 export 'macd_calculator.dart';
 export 'micho_method_detector.dart';
+export 'rsi_alert_detector.dart';
 export 'rsi_calculator.dart';
 export 'signal_confidence_calculator.dart';
 export 'sma_calculator.dart';
