@@ -2065,6 +2065,12 @@ class _AlertTypeSelectorCard extends ConsumerWidget {
     AlertType.cciMethodSell => Colors.red.shade500,
     AlertType.sarMethodBuy => Colors.green.shade900,
     AlertType.sarMethodSell => Colors.red.shade900,
+    AlertType.williamsRMethodBuy => Colors.green.shade600,
+    AlertType.williamsRMethodSell => Colors.red.shade600,
+    AlertType.mfiMethodBuy => Colors.green.shade700,
+    AlertType.mfiMethodSell => Colors.red.shade700,
+    AlertType.supertrendMethodBuy => Colors.green.shade800,
+    AlertType.supertrendMethodSell => Colors.red.shade800,
   };
 
   Future<void> _toggle(

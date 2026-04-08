@@ -130,7 +130,10 @@ class ConsensusEngine {
         type == AlertType.obvMethodBuy ||
         type == AlertType.adxMethodBuy ||
         type == AlertType.cciMethodBuy ||
-        type == AlertType.sarMethodBuy;
+        type == AlertType.sarMethodBuy ||
+        type == AlertType.williamsRMethodBuy ||
+        type == AlertType.mfiMethodBuy ||
+        type == AlertType.supertrendMethodBuy;
   }
 
   static bool _isSellType(AlertType type) {
@@ -142,6 +145,9 @@ class ConsensusEngine {
         type == AlertType.obvMethodSell ||
         type == AlertType.adxMethodSell ||
         type == AlertType.cciMethodSell ||
-        type == AlertType.sarMethodSell;
+        type == AlertType.sarMethodSell ||
+        type == AlertType.williamsRMethodSell ||
+        type == AlertType.mfiMethodSell ||
+        type == AlertType.supertrendMethodSell;
   }
 }

@@ -116,6 +116,24 @@ enum AlertType {
 
   /// Parabolic SAR Method SELL: SAR flips from below to above price.
   sarMethodSell,
+
+  /// Williams %R Method BUY: %R exits oversold territory (crosses above −80).
+  williamsRMethodBuy,
+
+  /// Williams %R Method SELL: %R exits overbought territory (crosses below −20).
+  williamsRMethodSell,
+
+  /// MFI Method BUY: Money Flow Index exits oversold (crosses above 20).
+  mfiMethodBuy,
+
+  /// MFI Method SELL: Money Flow Index exits overbought (crosses below 80).
+  mfiMethodSell,
+
+  /// SuperTrend Method BUY: SuperTrend flips to uptrend (price moves above band).
+  supertrendMethodBuy,
+
+  /// SuperTrend Method SELL: SuperTrend flips to downtrend (price moves below band).
+  supertrendMethodSell,
 }
 
 /// Extension helpers for [AlertType].
@@ -149,6 +167,12 @@ extension AlertTypeX on AlertType {
     AlertType.cciMethodSell => 'CCI — SELL',
     AlertType.sarMethodBuy => 'Parabolic SAR — BUY',
     AlertType.sarMethodSell => 'Parabolic SAR — SELL',
+    AlertType.williamsRMethodBuy => 'Williams %R — BUY',
+    AlertType.williamsRMethodSell => 'Williams %R — SELL',
+    AlertType.mfiMethodBuy => 'MFI — BUY',
+    AlertType.mfiMethodSell => 'MFI — SELL',
+    AlertType.supertrendMethodBuy => 'SuperTrend — BUY',
+    AlertType.supertrendMethodSell => 'SuperTrend — SELL',
   };
 
   String get description => switch (this) {
@@ -203,6 +227,18 @@ extension AlertTypeX on AlertType {
       'Parabolic SAR flips from above to below price — bullish reversal',
     AlertType.sarMethodSell =>
       'Parabolic SAR flips from below to above price — bearish reversal',
+    AlertType.williamsRMethodBuy =>
+      'Williams %R exits oversold territory (crosses above −80)',
+    AlertType.williamsRMethodSell =>
+      'Williams %R exits overbought territory (crosses below −20)',
+    AlertType.mfiMethodBuy =>
+      'Money Flow Index exits oversold territory (crosses above 20)',
+    AlertType.mfiMethodSell =>
+      'Money Flow Index exits overbought territory (crosses below 80)',
+    AlertType.supertrendMethodBuy =>
+      'SuperTrend flips to uptrend — price moves above the SuperTrend band',
+    AlertType.supertrendMethodSell =>
+      'SuperTrend flips to downtrend — price moves below the SuperTrend band',
   };
 }
 

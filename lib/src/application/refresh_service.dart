@@ -40,6 +40,9 @@ class RefreshService {
   final _adxMethodDetector = const AdxMethodDetector();
   final _cciMethodDetector = const CciMethodDetector();
   final _sarMethodDetector = const SarMethodDetector();
+  final _williamsRMethodDetector = const WilliamsRMethodDetector();
+  final _mfiMethodDetector = const MfiMethodDetector();
+  final _supertrendMethodDetector = const SupertrendMethodDetector();
   final _consensusEngine = const ConsensusEngine();
   final _alertStateMachine = const AlertStateMachine();
   final _volumeCalculator = const VolumeCalculator();
@@ -594,6 +597,106 @@ class RefreshService {
           continue;
         }
         if (signal.alertType == AlertType.sarMethodSell && !wantSarSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // Williams %R Method
+    final wantWrBuy = enabledAlertTypes.contains(AlertType.williamsRMethodBuy);
+    final wantWrSell = enabledAlertTypes.contains(
+      AlertType.williamsRMethodSell,
+    );
+    if (wantWrBuy || wantWrSell) {
+      final wrSignals = _williamsRMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(wrSignals);
+      for (final MethodSignal signal in wrSignals) {
+        if (signal.alertType == AlertType.williamsRMethodBuy && !wantWrBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.williamsRMethodSell && !wantWrSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // MFI Method
+    final wantMfiBuy = enabledAlertTypes.contains(AlertType.mfiMethodBuy);
+    final wantMfiSell = enabledAlertTypes.contains(AlertType.mfiMethodSell);
+    if (wantMfiBuy || wantMfiSell) {
+      final mfiSignals = _mfiMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(mfiSignals);
+      for (final MethodSignal signal in mfiSignals) {
+        if (signal.alertType == AlertType.mfiMethodBuy && !wantMfiBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.mfiMethodSell && !wantMfiSell) {
+          continue;
+        }
+        if (inQuiet) {
+          _logger.i(
+            '$upper: ${signal.alertType.displayName} suppressed (quiet hours)',
+          );
+          continue;
+        }
+        _logger.i('$upper: ${signal.description}');
+        await _appendHistory(
+          symbol: upper,
+          alertType: signal.alertType.name,
+          message: signal.description!,
+        );
+        firedAny = true;
+      }
+    }
+
+    // SuperTrend Method
+    final wantStBuy = enabledAlertTypes.contains(AlertType.supertrendMethodBuy);
+    final wantStSell = enabledAlertTypes.contains(
+      AlertType.supertrendMethodSell,
+    );
+    if (wantStBuy || wantStSell) {
+      final stSignals = _supertrendMethodDetector.evaluateBoth(
+        ticker: upper,
+        candles: candles,
+      );
+      allMethodSignals.addAll(stSignals);
+      for (final MethodSignal signal in stSignals) {
+        if (signal.alertType == AlertType.supertrendMethodBuy && !wantStBuy) {
+          continue;
+        }
+        if (signal.alertType == AlertType.supertrendMethodSell && !wantStSell) {
           continue;
         }
         if (inQuiet) {
