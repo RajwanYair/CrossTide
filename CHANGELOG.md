@@ -8,6 +8,31 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.6.0] — 2026-04-09
+
+### Added (S231–S245)
+- **NotificationSoundProfile** — per-ticker alert sound customization: `AlertSoundType`, `AlertSoundPriority`, `NotificationSoundProfile.silent()` factory (S231)
+- **AndroidWidgetConfig** — home-screen widget config: `WidgetLayoutStyle`, `WidgetSignalBadge`, `AndroidWidgetConfig` (S232)
+- **PrometheusMetric** — Prometheus exposition format: `PrometheusMetricType`, `PrometheusMetric`, `PrometheusMetricsSnapshot.toExpositionFormat()` (S233)
+- **EmailDigestConfig** — newsletter digest config: `DigestFrequency`, `DigestSection`, `EmailDigestConfig.toggleEnabled()` (S234)
+- **TraderBehaviorProfile** — behavioral profiling: `TraderStyle`, `RiskAppetite`, `TraderBehaviorClassifier` classifies scalper/momentum/position/reversal from observation history (S235)
+- **SentimentScore** — news/social sentiment aggregation: `SentimentDirection`, `SentimentSource`, `SentimentDataPoint`, `SentimentScore`, `SentimentAggregator` with configurable time window (S236)
+- **CommunityWatchlist** — community curated lists: `CommunityWatchlistTag`, `CommunityWatchlistVote`, `CommunityWatchlist` with `netScore` and `approvalRate` (S237)
+- **LeaderboardEntry** — public opt-in leaderboard: `LeaderboardPeriod`, `LeaderboardMetric`, `LeaderboardEntry`, `LeaderboardRanker` with tie-aware ranking (S238)
+- **StreamingQuoteSession** — WebSocket/SSE quote streaming model: `StreamingProtocol`, `StreamingSessionState`, `StreamingQuoteConfig`, `StreamingQuoteSession.isActive` (S239)
+- **DeviceSyncManifest** — multi-device sync state: `SyncCategory`, `SyncStatus`, `DeviceSyncEntry`, `DeviceSyncManifest.pendingCategories` (S240)
+- **CryptoAsset** — crypto-asset domain entity: `CryptoExchange`, `CryptoAsset`, `CryptoPrice.isPositiveDay` (S241)
+- **ThemePreset** — 11 built-in themes via `ThemeRegistry.byId()`: midnight, dracula, nord, catppuccin, solarized_dark, terminal, ocean, light, solarized_light, high_contrast, rose_pine (S242)
+- **TaxLotCalculator** — lot-matching: `TaxLotMethod` (FIFO/LIFO/avgCost/specificId), `TaxLot`, `TaxLotSaleResult.isLongTerm`, `TaxLotCalculator.compute()` (S243)
+- **PortfolioOptimizer** — Monte Carlo portfolio optimization: `OptimizationObjective`, `AssetWeight`, `OptimizationResult`, `PortfolioOptimizer` (maxSharpe/minVol/riskParity/equalWeight) (S244)
+- **CandleAnnotation** — chart overlay markers: `AnnotationShape`, `AnnotationKind`, `CandleAnnotation`, `CandleAnnotationBuilder.build()` with sorted output (S245)
+- **release.yml** now builds ZIP + MSIX + APK — three artifacts per version tag
+- Updated `architecture.svg` and `signal_chart.svg` to reflect 12-method consensus, 130+ domain classes, 1473 tests
+
+### Tests
+- 56 new tests in `test/domain/s231_s245_domain_batch_test.dart`
+- Total: **1473 passing tests**, 0 analyze issues
+
 ### Added
 - `domain-feature` Copilot agent for pure-domain work
 - `add-domain-feature` prompt for guided domain feature workflow

@@ -36,9 +36,18 @@ applyTo: ".github/workflows/**"
 
 ## Job structure — `release.yml`
 - `test` gate (ubuntu, timeout 15 min): codegen → analyze → test → upload artifact.
-- `build-windows` (windows-latest, timeout 25 min): restore artifact → build release → zip → upload `windows-release`.
+- `build-windows` (windows-latest, timeout 30 min): restore artifact → build release → ZIP → MSIX → upload `windows-release` and `windows-msix-release`.
 - `build-android` (ubuntu, timeout 20 min): restore artifact → `flutter build apk --release` → rename → upload `android-release`.
-- `publish-release` (ubuntu, timeout 5 min): download **by name** (not `merge-multiple`) → create GitHub Release.
+- `publish-release` (ubuntu, timeout 5 min): download **by name** (not `merge-multiple`) → create GitHub Release with all three files.
+
+## Release artifacts — every version tag must produce all three files
+Every `vX.Y.Z` tag triggers `release.yml` which must publish **three** downloadable assets:
+1. `CrossTide-vX.Y.Z-windows.zip` — portable xcopy-deploy (EXE + all DLLs + assets)
+2. `CrossTide-vX.Y.Z-windows.msix` — MSIX sideload package (`sign_msix: false`, Developer Mode required)
+3. `CrossTide-vX.Y.Z-android.apk` — release APK (debug-signed, sideload-ready)
+
+The MSIX is built with `dart run msix:create --version W.X.Y.0 --build-windows false` after the Windows release build.
+`msix_config` lives in `pubspec.yaml`; override `--version` in CI to match the tag semver.
 
 ## All jobs must have `timeout-minutes`
 Every job in every workflow must declare `timeout-minutes`. Defaults: 5 for lightweight jobs (bump, dependency-review, publish), 15–20 for test/Android, 20–25 for Windows builds.

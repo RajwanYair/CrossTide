@@ -6,7 +6,9 @@
   <img src="docs/signal_chart.svg" alt="SMA200 Cross-Up Signal" width="640"/>
 </p>
 
-CrossTide is a cross-platform Flutter app that monitors stock tickers for **SMA crossover events** (SMA50 / SMA150 / SMA200, Golden Cross) and fires instant local notifications. Runs on **Android** and **Windows** from a single Dart codebase. Uses **Yahoo Finance** — no API key required.
+CrossTide is a cross-platform Flutter app that monitors stock tickers for **SMA crossover events** and fires multi-method consensus alerts from **12 independent trading signal methods**. Runs on **Android** and **Windows** from a single Dart codebase. Uses **Yahoo Finance** — no API key required.
+
+> 🟢 **Consensus BUY** fires when Micho Method + ≥1 other method (RSI, MACD, Bollinger, Stochastic, OBV, ADX, CCI, SAR, Williams%R, MFI, SuperTrend) all agree.
 
 <p align="center">
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge" alt="Flutter"/></a>
@@ -14,6 +16,8 @@ CrossTide is a cross-platform Flutter app that monitors stock tickers for **SMA 
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"/></a>
   <a href="https://github.com/RajwanYair/CrossTide/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/RajwanYair/CrossTide/ci.yml?label=CI&style=for-the-badge&logo=github-actions" alt="CI"/></a>
   <a href="https://github.com/RajwanYair/CrossTide/releases/latest"><img src="https://img.shields.io/github/v/release/RajwanYair/CrossTide?style=for-the-badge&logo=github" alt="Latest Release"/></a>
+  <a href="https://github.com/RajwanYair/CrossTide/releases/latest"><img src="https://img.shields.io/badge/Tests-1417%20passing-brightgreen?style=for-the-badge" alt="Tests"/></a>
+  <a href="https://github.com/RajwanYair/CrossTide/releases/latest"><img src="https://img.shields.io/badge/Methods-12%20signals-purple?style=for-the-badge" alt="Trading Methods"/></a>
 </p>
 
 > ⚠️ **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice. Always do your own research before making investment decisions.
@@ -149,15 +153,18 @@ Uses `flutter_local_notifications`:
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the full enhancement plan. Highlights:
 
-| 🏷️ Version | 🚀 Feature |
-|-----------|-----------|
-| v1.1 | 📉 SMA50 / SMA150 overlay lines, S&P 500 benchmark, Golden Cross alert, candlestick mode |
-| v1.2 | 📋 Watchlist groups, heatmap dashboard, bulk add, ticker autocomplete |
-| v1.3 | 🔢 RSI, MACD, Bollinger Bands, EMA indicators |
-| v1.4 | 🔔 Price target & volume spike alerts, Telegram/Discord webhooks, alert history export |
-| v1.5 | ⚡ Intraday data, delta-fetch, pre/after-hours prices |
-| v1.6 | 🏠 Home screen widget (Android), MSIX packaging, iOS / macOS / Web targets |
-| v1.8 | 🤖 AI pattern recognition, sentiment analysis, natural language ticker search |
+| 🏷️ Version | 🚀 Feature | Status |
+|-----------|-----------|--------|
+| v1.1 | 📉 Multi-SMA overlay, Golden/Death Cross, S&P 500 benchmark | ✅ Done |
+| v1.2 | 📋 Watchlist groups, heatmap dashboard, bulk add, autocomplete | ✅ Done |
+| v1.3 | 🔢 RSI, MACD, Bollinger Bands, EMA, 15 technical indicators | ✅ Done |
+| v1.4 | 🔔 Price/volume/% alerts, Telegram/Discord webhooks, alert history | ✅ Done |
+| v1.5 | ⚡ 9 providers, intraday, delta-fetch, backtesting, 12 methods | ✅ Done |
+| v1.6 | 🏠 Android widget, MSIX package, iOS/macOS/Web targets | 🚧 In Progress |
+| v1.7 | 📊 Prometheus metrics, snapshot/rollback, YAML config | 🚧 In Progress |
+| v1.8 | 🤝 Watchlist share, community lists, in-app news feed | 🚧 In Progress |
+| v1.9 | 🤖 Signal confidence, behavioral profiling, sentiment analysis | Planned |
+| v2.0 | 🔌 Plugin system, real-time streaming, multi-device sync | Planned |
 
 ---
 

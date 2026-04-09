@@ -34,6 +34,9 @@ Clean Architecture with strict layer boundaries. Dependencies flow inward only.
 - **ADX Method**: BUY on strong trend with +DI > −DI; SELL with −DI > +DI.
 - **CCI Method**: BUY when CCI exits oversold (crosses above −100); SELL when exits overbought.
 - **SAR Method**: BUY/SELL on Parabolic SAR flip direction.
+- **Williams %R Method**: BUY when %R exits oversold (crosses above −80); SELL when exits overbought.
+- **MFI Method**: BUY when MFI exits oversold (<20→≥20); SELL when exits overbought (>80→≤80).
+- **SuperTrend Method**: BUY/SELL on SuperTrend direction flip.
 - **Consensus Engine**: GREEN (consensus BUY) = Micho BUY + ≥1 other BUY; RED (consensus SELL) = Micho SELL + ≥1 other SELL. Micho is always the primary method.
 - All methods produce `MethodSignal` objects (extensible pattern in `micho_method_detector.dart`).
 - New methods: implement a detector class → return `MethodSignal` → wire into `RefreshService` → add to `ConsensusEngine`.
@@ -68,7 +71,7 @@ Clean Architecture with strict layer boundaries. Dependencies flow inward only.
 - **Overall coverage target: ≥ 90%** — do not merge below this
 - Use `AppDatabase.forTesting()` for in-memory DB tests
 - `MockMarketDataProvider` provides deterministic synthetic data
-- Run: `flutter test --coverage --timeout 30s`\n\nCurrently: **1172 passing tests**, 0 analyze issues.
+- Run: `flutter test --coverage --timeout 30s`\n\nCurrently: **1473 passing tests**, 0 analyze issues.
 
 ## Build & Run
 ```bash

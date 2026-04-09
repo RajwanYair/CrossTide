@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" font-family="'Segoe UI',Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 240" font-family="'Segoe UI',Arial,sans-serif">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#0D1B3E;stop-opacity:1"/>
@@ -10,37 +10,80 @@
     </filter>
   </defs>
 
-  <rect width="640" height="200" rx="12" fill="url(#bgGrad)"/>
+  <rect width="700" height="240" rx="12" fill="url(#bgGrad)"/>
 
   <!-- Grid lines -->
-  <line x1="40" y1="160" x2="600" y2="160" stroke="#1E3A5F" stroke-width="1"/>
-  <line x1="40" y1="130" x2="600" y2="130" stroke="#1E3A5F" stroke-width="1"/>
-  <line x1="40" y1="100" x2="600" y2="100" stroke="#1E3A5F" stroke-width="1"/>
-  <line x1="40" y1="70" x2="600" y2="70" stroke="#1E3A5F" stroke-width="1"/>
+  <line x1="40" y1="170" x2="620" y2="170" stroke="#1E3A5F" stroke-width="1"/>
+  <line x1="40" y1="140" x2="620" y2="140" stroke="#1E3A5F" stroke-width="1"/>
+  <line x1="40" y1="110" x2="620" y2="110" stroke="#1E3A5F" stroke-width="1"/>
+  <line x1="40" y1="80" x2="620" y2="80" stroke="#1E3A5F" stroke-width="1"/>
 
-  <!-- Price line -->
+  <!-- MA150 (purple) -->
   <polyline
-    points="60,145 100,140 140,148 180,135 220,125 260,132 300,118 340,108 380,98 420,85 460,78 500,68 540,60 580,50"
-    stroke="#29B6F6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    points="55,165 105,162 155,159 205,156 255,152 305,148 355,143 405,138 455,132 505,127 555,123 605,119"
+    stroke="#AB47BC" stroke-width="1.5" stroke-dasharray="5,3" fill="none" stroke-linecap="round"/>
 
-  <!-- SMA200 dashed (below, then pierced) -->
+  <!-- SMA200 (orange dashed) -->
   <polyline
-    points="60,152 100,150 140,148 180,146 220,144 260,141 300,138 340,135 380,131 420,126 460,121 500,116 540,112 580,108"
+    points="55,170 105,168 155,166 205,163 255,160 305,156 355,152 405,147 455,142 505,136 555,131 605,126"
     stroke="#FF7043" stroke-width="2" stroke-dasharray="6,4" fill="none" stroke-linecap="round"/>
 
-  <!-- Cross-up event marker -->
-  <line x1="420" y1="55" x2="420" y2="165" stroke="#69F0AE" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
-  <circle cx="420" cy="85" r="6" fill="#69F0AE" opacity="0.9" filter="url(#glow)"/>
-  <text x="428" y="75" font-size="9" fill="#69F0AE">CROSS-UP</text>
+  <!-- Price line (light blue) -->
+  <polyline
+    points="55,162 105,155 155,165 205,148 255,138 305,145 355,130 405,118 455,108 505,95 555,85 605,72"
+    stroke="#29B6F6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+
+  <!-- Micho cross-up (price crosses MA150) event at x=405 -->
+  <line x1="455" y1="55" x2="455" y2="178" stroke="#69F0AE" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+  <circle cx="455" cy="108" r="5" fill="#69F0AE" opacity="0.9" filter="url(#glow)"/>
+  <text x="463" y="100" font-size="8.5" fill="#69F0AE">MICHO BUY</text>
+
+  <!-- Consensus BUY marker (all methods agree) -->
+  <rect x="480" y="58" width="92" height="30" rx="5" fill="#1B5E20" opacity="0.85"/>
+  <text x="526" y="71" font-size="9" font-weight="700" fill="#69F0AE" text-anchor="middle">🟢 CONSENSUS BUY</text>
+  <text x="526" y="82" font-size="8" fill="#A5D6A7" text-anchor="middle">RSI+MACD+BB agree</text>
+
+  <!-- Method signal bar at bottom -->
+  <rect x="40" y="185" width="580" height="18" rx="3" fill="#0D2137" opacity="0.8"/>
+  <rect x="44" y="188" width="55" height="12" rx="2" fill="#69F0AE" opacity="0.85"/>
+  <text x="71" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">MICHO ▲</text>
+  <rect x="103" y="188" width="40" height="12" rx="2" fill="#69F0AE" opacity="0.8"/>
+  <text x="123" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">RSI ▲</text>
+  <rect x="147" y="188" width="44" height="12" rx="2" fill="#69F0AE" opacity="0.8"/>
+  <text x="169" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">MACD ▲</text>
+  <rect x="195" y="188" width="34" height="12" rx="2" fill="#69F0AE" opacity="0.75"/>
+  <text x="212" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">BB ▲</text>
+  <rect x="233" y="188" width="46" height="12" rx="2" fill="#546E7A" opacity="0.7"/>
+  <text x="256" y="198" font-size="7.5" fill="#B0BEC5" font-weight="700" text-anchor="middle">STOCH —</text>
+  <rect x="283" y="188" width="36" height="12" rx="2" fill="#546E7A" opacity="0.7"/>
+  <text x="301" y="198" font-size="7.5" fill="#B0BEC5" font-weight="700" text-anchor="middle">ADX —</text>
+  <rect x="323" y="188" width="36" height="12" rx="2" fill="#69F0AE" opacity="0.75"/>
+  <text x="341" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">CCI ▲</text>
+  <rect x="363" y="188" width="36" height="12" rx="2" fill="#69F0AE" opacity="0.75"/>
+  <text x="381" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">SAR ▲</text>
+  <rect x="403" y="188" width="36" height="12" rx="2" fill="#69F0AE" opacity="0.75"/>
+  <text x="421" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">%R ▲</text>
+  <rect x="443" y="188" width="36" height="12" rx="2" fill="#546E7A" opacity="0.7"/>
+  <text x="461" y="198" font-size="7.5" fill="#B0BEC5" font-weight="700" text-anchor="middle">MFI —</text>
+  <rect x="483" y="188" width="36" height="12" rx="2" fill="#69F0AE" opacity="0.75"/>
+  <text x="501" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">OBV ▲</text>
+  <rect x="523" y="188" width="48" height="12" rx="2" fill="#69F0AE" opacity="0.8"/>
+  <text x="547" y="198" font-size="7.5" fill="#1B5E20" font-weight="700" text-anchor="middle">SUPER ▲</text>
 
   <!-- Legend -->
-  <line x1="50" y1="185" x2="75" y2="185" stroke="#29B6F6" stroke-width="2.5"/>
-  <text x="80" y="189" font-size="9" fill="#90CAF9">Close Price</text>
-  <line x1="145" y1="185" x2="170" y2="185" stroke="#FF7043" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="175" y="189" font-size="9" fill="#FFAB91">SMA 200</text>
-  <circle cx="258" cy="185" r="4" fill="#69F0AE"/>
-  <text x="266" y="189" font-size="9" fill="#69F0AE">Alert Fired</text>
+  <line x1="50" y1="218" x2="75" y2="218" stroke="#29B6F6" stroke-width="2.5"/>
+  <text x="80" y="222" font-size="9" fill="#90CAF9">Close Price</text>
+  <line x1="145" y1="218" x2="170" y2="218" stroke="#FF7043" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="175" y="222" font-size="9" fill="#FFAB91">SMA 200</text>
+  <line x1="240" y1="218" x2="265" y2="218" stroke="#AB47BC" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="270" y="222" font-size="9" fill="#CE93D8">MA 150 (Micho)</text>
+  <circle cx="375" cy="218" r="4" fill="#69F0AE"/>
+  <text x="383" y="222" font-size="9" fill="#69F0AE">Signal Fired</text>
+  <rect x="450" y="213" width="12" height="9" rx="2" fill="#69F0AE" opacity="0.8"/>
+  <text x="466" y="222" font-size="9" fill="#A5D6A7">Consensus BUY</text>
+  <rect x="545" y="213" width="12" height="9" rx="2" fill="#546E7A" opacity="0.7"/>
+  <text x="561" y="222" font-size="9" fill="#B0BEC5">Neutral</text>
 
   <!-- Title -->
-  <text x="320" y="22" font-size="13" font-weight="700" fill="white" text-anchor="middle">📈 SMA200 Cross-Up Signal</text>
+  <text x="350" y="22" font-size="13" font-weight="700" fill="white" text-anchor="middle">📈 CrossTide — 12-Method Consensus Signal Engine</text>
 </svg>

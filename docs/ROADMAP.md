@@ -74,7 +74,23 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - **Performance Scorer** — `PerformanceScorer`, `PerformanceSample`, `OperationStats`, `PerformanceScore`
 - 1172 passing unit tests, 0 analyze issues
 
----
+### Domain Expansion (S231–S245)
+- **NotificationSoundProfile** — per-ticker alert sound + vibration config (`AlertSoundType`, `AlertSoundPriority`) (S231)
+- **AndroidWidgetConfig** — home-screen widget layout/badge config (`WidgetLayoutStyle`, `WidgetSignalBadge`) (S232)
+- **PrometheusMetric** — Prometheus exposition format: `PrometheusMetric`, `PrometheusMetricsSnapshot.toExpositionFormat()` (S233)
+- **EmailDigestConfig** — daily/weekly digest config (`DigestFrequency`, `DigestSection`) (S234)
+- **TraderBehaviorProfile** — behavioral profiling: scalper/momentum/position/reversal classifier (S235)
+- **SentimentScore** — news/social sentiment aggregation (`SentimentAggregator`, `SentimentDataPoint`, `SentimentDirection`) (S236)
+- **CommunityWatchlist** — community curated watchlists with votes, tags, approval rate (S237)
+- **LeaderboardEntry** — public leaderboard: `LeaderboardRanker`, tie-aware ranking, `LeaderboardPeriod`/`LeaderboardMetric` (S238)
+- **StreamingQuoteSession** — WebSocket streaming config/session/state (`StreamingProtocol`, reconnect) (S239)
+- **DeviceSyncManifest** — multi-device sync state (`SyncCategory`, `SyncStatus`, pending categories) (S240)
+- **CryptoAsset** — crypto entity + price (`CryptoExchange`, `CryptoPrice.isPositiveDay`) (S241)
+- **ThemePreset** — 11 built-in themes via `ThemeRegistry` (midnight, dracula, nord, catppuccin, solarized_dark, terminal, ocean, light, solarized_light, high_contrast, rose_pine) (S242)
+- **TaxLotCalculator** — FIFO/LIFO/avgCost/specificId lot matching with `isLongTerm` detection (S243)
+- **PortfolioOptimizer** — Monte Carlo maxSharpe/minVol, riskParity (inverse-vol), equalWeight (S244)
+- **CandleAnnotation** — chart annotation markers: `CandleAnnotationBuilder`, `AnnotationKind`, `AnnotationShape` (S245)
+- **1473 passing unit tests**, 0 analyze issues
 
 ## v1.1 — Multi-SMA Lines & Benchmark Comparison
 
@@ -201,11 +217,11 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - [x] **Volume spike alerts** — 2× average daily volume
 - [x] Alert history timeline — scrollable log of all past alerts with price context
 - [x] **Export alert history to CSV / JSON**
-- [ ] Per-ticker notification sound customization
+- [x] **Per-ticker notification sound customization** — `NotificationSoundProfile`, `AlertSoundType` (S231)
 - [ ] **Notification channel fallback chain**:  
   push → Windows toast → in-app banner → silent log
 - [x] **Telegram / Discord webhook** integration (S54) — `WebhookService`; credentials in secure storage
-- [ ] Email digest — daily summary of watchlist status
+- [x] **Email digest** — daily summary — `EmailDigestConfig`, `DigestFrequency`, `DigestSection` (S234)
 
 ---
 
@@ -289,10 +305,9 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 - [ ] **Signal confidence score** — ML-estimated quality % per alert  
   ("87% confidence this cross-up will hold based on historical outcomes")
-- [ ] **Trader behavioral profiling** — auto-detect usage pattern (scalper / momentum / reversal)  
-  and suggest matching alert profile
+- [x] **Trader behavioral profiling** — `TraderBehaviorClassifier`, `TraderStyle` (scalper/momentum/position/reversal) (S235)
 - [ ] **AI-powered pattern recognition** — flag when historical outcomes for this setup were profitable
-- [ ] Sentiment analysis — aggregate news/social sentiment per ticker
+- [x] **Sentiment analysis** — `SentimentAggregator`, `SentimentScore`, `SentimentDataPoint` (S236)
 - [ ] **Smart notification timing** — learn when user engages, deliver at optimal time of day
 - [ ] **Natural language ticker search** ("show me tech stocks near their 200-day average")
 - [ ] **Copilot Chat integration** — ask questions about your watchlist in-app
@@ -310,8 +325,8 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - [x] **Declarative alert rule DSL**: `IF sma50 > sma200 AND rsi < 30 THEN alert` — `AlertRuleEvaluator` (S139–S141)  
   *Natural evolution of the `AlertStateMachine` to a data-driven rules engine*
 - [ ] User-defined indicators (custom SMA/EMA periods, formula builder)
-- [ ] Multi-device sync via Firebase/Supabase
-- [ ] Real-time streaming quotes (WebSocket)
+- [x] **Multi-device sync** — `DeviceSyncManifest`, `DeviceSyncEntry`, `SyncCategory` (S240)
+- [x] **Real-time streaming quotes** (WebSocket) — `StreamingQuoteSession`, `StreamingQuoteConfig` (S239)
 - [x] PDF report generation — domain model: `ReportBuilder` + `TickerReport` (S151–S153)
 - [ ] **Backtesting engine** — "How did SMA200 cross-ups perform over 10 years?"
 - [ ] Unlimited watchlist tickers (free tier: 10)
@@ -322,7 +337,7 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 | Idea | Source inspiration |
 |------|-------------------|
-| Crypto support (BTC, ETH via CoinGecko) | — |
+| ~~Crypto support (BTC, ETH via CoinGecko)~~ | ✅ domain: `CryptoAsset`, `CryptoPrice` (S241) |
 | ~~Forex pairs~~ | ✅ domain: `ForexCalculator` (S163–S165) |
 | ~~Options chain viewer~~ | ✅ domain: `OptionsHeatmapBuilder` (S157–S159) |
 | ~~Earnings calendar integration~~ | ✅ domain: `EarningsCalendarCalculator` (S145–S147) |
@@ -333,7 +348,7 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 | Docker Compose dev stack (PostgreSQL history, Redis cache, exchange simulator) | FileProcessor docker-compose |
 | In-app REST API (`/api/alerts`, `/api/config`, `/api/metrics`) | FileNameManipulator FastAPI dashboard |
 | Web dashboard companion (view-only) | PPA + VHDXCompress web GUI pattern |
-| 11-theme support (Catppuccin, Nord, Dracula, Solarized…) | RegiLattice themes |
+| ~~11-theme support (Catppuccin, Nord, Dracula, Solarized…)~~ | ✅ domain: `ThemeRegistry` — 11 presets (S242) |
 
 ---
 
@@ -405,9 +420,9 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 - [ ] **Volume spike alerts** — 2× average daily volume
 - [ ] Alert history timeline — scrollable log of all past alerts
 - [ ] Export alert history to CSV
-- [ ] Per-ticker notification sound customization
+- [x] **Per-ticker notification sound customization** — `NotificationSoundProfile` (S231)
 - [ ] **Telegram / Discord webhook** integration (push alerts to chat)
-- [ ] Email digest — daily summary of watchlist status
+- [x] **Email digest** — daily summary — `EmailDigestConfig` (S234)
 
 ---
 
@@ -445,8 +460,8 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 ## v1.7 — Social & Community Features
 
 - [ ] **Share watchlist** — export/import as JSON or shareable link
-- [ ] **Public leaderboard** — opt-in: "Most cross-ups caught this month"
-- [ ] Community-curated watchlists (e.g., "ARK Innovation Picks")
+- [x] **Public leaderboard** — `LeaderboardRanker`, `LeaderboardEntry` (S238)
+- [x] **Community-curated watchlists** — `CommunityWatchlist`, votes, tags (S237)
 - [ ] In-app news feed for watchlist tickers (RSS/Atom aggregation)
 
 ---
@@ -454,7 +469,7 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 ## v1.8 — AI & Smart Features
 
 - [ ] **AI-powered pattern recognition** — flag similar historical SMA cross-up outcomes
-- [ ] Sentiment analysis — aggregate news/social sentiment per ticker
+- [x] **Sentiment analysis** — `SentimentAggregator`, `SentimentScore` (S236)
 - [ ] Smart notification timing — learn when user engages, deliver at optimal times
 - [ ] Natural language ticker search ("show me tech stocks near their 200-day average")
 - [ ] Copilot Chat integration — ask questions about your watchlist in-app
@@ -464,8 +479,8 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 ## v2.0 — Premium & Monetization (Optional)
 
 - [ ] Unlimited watchlist tickers (free tier: 10)
-- [ ] Real-time streaming quotes (WebSocket)
-- [ ] Multi-device sync via Firebase/Supabase
+- [x] **Real-time streaming quotes** (WebSocket) — `StreamingQuoteSession` (S239)
+- [x] **Multi-device sync** — `DeviceSyncManifest`, `SyncCategory` (S240)
 - [ ] Custom alert rules DSL ("IF sma50 > sma200 AND rsi < 30 THEN alert")
 - [ ] PDF report generation — weekly technical summary per watchlist
 - [ ] Backtesting engine — "How did SMA200 cross-ups perform over 10 years?"
@@ -474,7 +489,7 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 ## Future Ideas (Backlog)
 
-- Crypto support (BTC, ETH — via CoinGecko free API)
+- ~~Crypto support (BTC, ETH — via CoinGecko free API)~~ ✅ `CryptoAsset`, `CryptoPrice` (S241)
 - Forex pairs
 - Options chain viewer
 - Earnings calendar integration

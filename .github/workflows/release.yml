@@ -45,14 +45,15 @@ jobs:
       # No --coverage here; full coverage is enforced in ci.yml on every PR.
       - run: flutter test
 
-  # ── 1. Windows build → ZIP only ───────────────────────────────────────────
-  # MSIX requires Windows Developer Mode to install (sideload) and has proven
-  # brittle (manifest XML restrictions). The portable ZIP works for all users.
+  # ── 1. Windows build → ZIP + MSIX ────────────────────────────────────────
+  # Produces two Windows artifacts:
+  #   • CrossTide-vX.Y.Z-windows.zip   — portable xcopy-deploy (no install)
+  #   • CrossTide-vX.Y.Z-windows.msix  — MSIX sideload package (sign_msix: false)
   build-windows:
-    name: Build Windows (ZIP)
+    name: Build Windows (ZIP + MSIX)
     runs-on: windows-latest
     needs: test
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -67,6 +68,8 @@ jobs:
           TAG="${{ github.ref_name }}"
           SEM="${TAG#v}"
           echo "sem=$SEM" >> "$GITHUB_OUTPUT"
+          # MSIX version must be W.X.Y.Z (4 parts)
+          echo "msix=${SEM}.0" >> "$GITHUB_OUTPUT"
 
       - uses: subosito/flutter-action@v2
         with:
@@ -92,12 +95,30 @@ jobs:
             -Path "build\windows\x64\runner\Release\*" `
             -DestinationPath "CrossTide-${{ github.ref_name }}-windows.zip"
 
-      - name: Upload Windows artifact
+      - name: Create MSIX package
+        run: |
+          dart run msix:create `
+            --version ${{ steps.ver.outputs.msix }} `
+            --build-windows false
+
+      - name: Rename MSIX for release
+        run: |
+          $src = Get-ChildItem "build\windows\x64\runner\Release\*.msix" | Select-Object -First 1
+          Copy-Item $src.FullName "CrossTide-${{ github.ref_name }}-windows.msix"
+
+      - name: Upload Windows ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-release
           retention-days: 1
           path: CrossTide-${{ github.ref_name }}-windows.zip
+
+      - name: Upload Windows MSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-msix-release
+          retention-days: 1
+          path: CrossTide-${{ github.ref_name }}-windows.msix
 
   # ── 2. Android APK ────────────────────────────────────────────────────────
   build-android:
@@ -159,10 +180,15 @@ jobs:
     timeout-minutes: 5
     needs: [build-windows, build-android]
     steps:
-      - name: Download Windows artifact
+      - name: Download Windows ZIP artifact
         uses: actions/download-artifact@v4
         with:
           name: windows-release
+
+      - name: Download Windows MSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-msix-release
 
       - name: Download Android artifact
         uses: actions/download-artifact@v4
@@ -182,11 +208,15 @@ jobs:
 
             | File | Platform | How to use |
             |------|----------|------------|
-            | `CrossTide-${{ github.ref_name }}-windows.zip` | Windows 10/11 | Extract anywhere and run `cross_tide.exe` — no installation required |
-            | `CrossTide-${{ github.ref_name }}-android.apk` | Android 6.0+ | Enable *Install unknown apps* for your browser/file manager, then tap the file |
+            | `CrossTide-${{ github.ref_name }}-windows.zip` | Windows 10/11 | Extract anywhere, run `cross_tide.exe` — zero install required |
+            | `CrossTide-${{ github.ref_name }}-windows.msix` | Windows 10/11 | Right-click → Install (requires *Developer Mode* or sideloading enabled) |
+            | `CrossTide-${{ github.ref_name }}-android.apk` | Android 6.0+ | Enable *Install unknown apps* for your file manager, then tap the file |
 
-            > **Note:** The APK is signed with a debug key. It is safe to use but your OS will show a first-install warning.
+            > **Windows ZIP** is the recommended install method — no signing or Developer Mode needed.  
+            > **MSIX** provides Add/Remove Programs integration and automatic updates via Windows Package Manager.  
+            > **APK** is signed with a debug key — safe to use; OS will show a first-install warning.
           files: |
             CrossTide-${{ github.ref_name }}-windows.zip
+            CrossTide-${{ github.ref_name }}-windows.msix
             CrossTide-${{ github.ref_name }}-android.apk
 
