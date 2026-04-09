@@ -87,7 +87,7 @@ dart format lib test            # Formatting (scope to lib/test only)
 - `lib/main.dart` — Entry point, service wiring
 - `lib/src/domain/entities.dart` — Core types: DailyCandle, TickerAlertState, AlertType (28 values), AppSettings
 - `lib/src/domain/micho_method_detector.dart` — Micho Method + MethodSignal base class
-- `lib/src/domain/consensus_engine.dart` — Multi-method consensus BUY/SELL engine (9 methods)
+- `lib/src/domain/consensus_engine.dart` — Multi-method consensus BUY/SELL engine (12 methods)
 - `lib/src/domain/rsi_method_detector.dart` — RSI oversold/overbought exit signals
 - `lib/src/domain/macd_method_detector.dart` — MACD/Signal crossover signals
 - `lib/src/domain/bollinger_method_detector.dart` — Bollinger Band breakout signals
@@ -96,7 +96,10 @@ dart format lib test            # Formatting (scope to lib/test only)
 - `lib/src/domain/adx_method_detector.dart` — ADX trend strength + DI crossover signals
 - `lib/src/domain/cci_method_detector.dart` — CCI oversold/overbought exit signals
 - `lib/src/domain/sar_method_detector.dart` — Parabolic SAR flip signals
-- `lib/src/domain/domain.dart` — Barrel export (110+ domain classes)
+- `lib/src/domain/williams_r_method_detector.dart` — Williams %R exit signals (S226)
+- `lib/src/domain/mfi_method_detector.dart` — MFI oversold/overbought exit signals (S228)
+- `lib/src/domain/supertrend_method_detector.dart` — SuperTrend direction flip signals (S229)
+- `lib/src/domain/domain.dart` — Barrel export (190+ domain classes)
 - `lib/src/domain/alert_rule_evaluator.dart` — Declarative alert rule DSL (S139–S141)
 - `lib/src/domain/dividend_calculator.dart` — Dividend tracking + income projection (S142–S144)
 - `lib/src/domain/earnings_calendar_calculator.dart` — Earnings proximity detection (S145–S147)
@@ -104,8 +107,23 @@ dart format lib test            # Formatting (scope to lib/test only)
 - `lib/src/domain/forex_calculator.dart` — Forex pip/spread/range analysis (S163–S165)
 - `lib/src/domain/watchlist_share_codec.dart` — Deep-link share URL encode/decode (S169–S171)
 - `lib/src/domain/locale_resolver.dart` — i18n locale resolution (S172–S174)
+- `lib/src/domain/market_holiday_calendar.dart` — Exchange trading-holiday DB (S276)
+- `lib/src/domain/price_trigger_rule.dart` — Declarative price-level triggers (S277)
+- `lib/src/domain/onboarding_state.dart` — First-run checklist state (S278)
+- `lib/src/domain/app_diagnostic_report.dart` — Runtime app health snapshot (S279)
+- `lib/src/domain/ticker_correlation_cluster.dart` — Pairwise ticker clustering (S280)
+- `lib/src/domain/smart_alert_schedule.dart` — Engagement-driven delivery windows (S281)
+- `lib/src/domain/portfolio_backtest_result.dart` — Multi-ticker backtest equity curve (S282)
+- `lib/src/domain/screener_preset.dart` — Named screener presets (S283)
+- `lib/src/domain/digest_content_block.dart` — Typed digest content layout (S284)
+- `lib/src/domain/report_schedule.dart` — Scheduled report delivery (S285)
+- `lib/src/domain/watchlist_snapshot.dart` — Point-in-time watchlist capture (S286)
+- `lib/src/domain/sync_conflict_resolver.dart` — Device-sync conflict resolution (S287)
+- `lib/src/domain/indicator_alert_config.dart` — Per-indicator alert thresholds (S288)
+- `lib/src/domain/user_annotation.dart` — Entity annotations with color + tags (S289)
+- `lib/src/domain/feedback_submission.dart` — In-app user feedback (S290)
 - `lib/src/data/database/database.dart` — Drift schema v15 (regenerate after changes)
-- `lib/src/application/refresh_service.dart` — Orchestrates all 9 method evaluations + consensus
+- `lib/src/application/refresh_service.dart` — Orchestrates all 12 method evaluations + consensus
 - `lib/src/presentation/providers.dart` — All Riverpod providers
 - `docs/COPILOT_GUIDE.md` — Detailed coding guide and architecture decisions
 

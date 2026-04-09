@@ -292,9 +292,9 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 - [x] **Share watchlist** — export/import as JSON — `WatchlistExportImportService` (S53)
 - [x] Shareable link — `WatchlistShareCodec` deep-link encode/decode (S169–S171)
-- [ ] **Public leaderboard** — opt-in: "Most cross-ups caught this month"
-- [ ] Community-curated watchlists (e.g., "ARK Innovation Picks")
-- [ ] In-app news feed for watchlist tickers (RSS/Atom aggregation)
+- [x] **Public leaderboard** — opt-in consent: `LeaderboardOptIn`, `LeaderboardEntry` (S238/S264)
+- [x] Community-curated watchlists — `CommunityWatchlistSubscription` (S265)
+- [x] In-app news feed for watchlist tickers — `NewsFeedAggregator`, `NewsRelevanceScorer` (S263)
 
 ---
 
@@ -303,13 +303,12 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 > **Inspired by:** DupDetector's ML confidence scoring, behavioral profiling, intent
 > classification; GitHub Copilot Chat integration; RegiLattice's dependency resolver
 
-- [ ] **Signal confidence score** — ML-estimated quality % per alert  
-  ("87% confidence this cross-up will hold based on historical outcomes")
+- [x] **Signal confidence score** — `SignalConfidenceCalculator`, `SignalConfidenceScore` (S248)
 - [x] **Trader behavioral profiling** — `TraderBehaviorClassifier`, `TraderStyle` (scalper/momentum/position/reversal) (S235)
-- [ ] **AI-powered pattern recognition** — flag when historical outcomes for this setup were profitable
+- [x] **AI-powered pattern recognition** — `PatternSignalLibrary`, `SignalExplanation` (S266–S267)
 - [x] **Sentiment analysis** — `SentimentAggregator`, `SentimentScore`, `SentimentDataPoint` (S236)
-- [ ] **Smart notification timing** — learn when user engages, deliver at optimal time of day
-- [ ] **Natural language ticker search** ("show me tech stocks near their 200-day average")
+- [x] **Smart notification timing** — `EngagementTimeWindow`, `SmartAlertSchedule.bestWindowForHour()` (S281)
+- [x] **Natural language ticker search** — `NaturalLanguageQuery` domain model (S249)
 - [ ] **Copilot Chat integration** — ask questions about your watchlist in-app
 
 ---
@@ -321,14 +320,14 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 - [ ] **Alert handler plugin interface** — users add custom notification sinks  
   (Slack, Discord, Webhook, email, SMS, custom REST endpoint) without app update
-- [ ] Plugin discovery: drop a Dart file into a plugins/ folder; app hot-loads it
+- [x] Plugin registry — `PluginRegistry`, `PluginDescriptor`, `PluginLifecycleState` (S268)
 - [x] **Declarative alert rule DSL**: `IF sma50 > sma200 AND rsi < 30 THEN alert` — `AlertRuleEvaluator` (S139–S141)  
   *Natural evolution of the `AlertStateMachine` to a data-driven rules engine*
-- [ ] User-defined indicators (custom SMA/EMA periods, formula builder)
-- [x] **Multi-device sync** — `DeviceSyncManifest`, `DeviceSyncEntry`, `SyncCategory` (S240)
+- [x] User-defined indicators — `UserDefinedIndicator`, `IndicatorFormula`, `IndicatorAlertConfig` (S270/S288)
+- [x] **Multi-device sync** — `DeviceSyncManifest`, `DeviceSyncEntry`, `SyncCategory`, `SyncConflictResolver` (S240/S287)
 - [x] **Real-time streaming quotes** (WebSocket) — `StreamingQuoteSession`, `StreamingQuoteConfig` (S239)
 - [x] PDF report generation — domain model: `ReportBuilder` + `TickerReport` (S151–S153)
-- [ ] **Backtesting engine** — "How did SMA200 cross-ups perform over 10 years?"
+- [x] **Backtesting engine** — `PortfolioBacktestResult`, `PortfolioBacktestTrade`, equity curve + maxDrawdown (S282)
 - [ ] Unlimited watchlist tickers (free tier: 10)
 
 ---
@@ -468,10 +467,10 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 ## v1.8 — AI & Smart Features
 
-- [ ] **AI-powered pattern recognition** — flag similar historical SMA cross-up outcomes
+- [x] **AI-powered pattern recognition** — `PatternSignalLibrary`, `PatternRecognitionResult` (S266)
 - [x] **Sentiment analysis** — `SentimentAggregator`, `SentimentScore` (S236)
-- [ ] Smart notification timing — learn when user engages, deliver at optimal times
-- [ ] Natural language ticker search ("show me tech stocks near their 200-day average")
+- [x] Smart notification timing — `SmartAlertSchedule`, `EngagementTimeWindow` (S281)
+- [x] Natural language ticker search — `NaturalLanguageQuery` (S249)
 - [ ] Copilot Chat integration — ask questions about your watchlist in-app
 
 ---
@@ -480,20 +479,20 @@ CrossTide is a cross-platform stock monitoring toolkit that detects **moving-ave
 
 - [ ] Unlimited watchlist tickers (free tier: 10)
 - [x] **Real-time streaming quotes** (WebSocket) — `StreamingQuoteSession` (S239)
-- [x] **Multi-device sync** — `DeviceSyncManifest`, `SyncCategory` (S240)
-- [ ] Custom alert rules DSL ("IF sma50 > sma200 AND rsi < 30 THEN alert")
-- [ ] PDF report generation — weekly technical summary per watchlist
-- [ ] Backtesting engine — "How did SMA200 cross-ups perform over 10 years?"
+- [x] **Multi-device sync** — `DeviceSyncManifest`, `SyncCategory`, `SyncConflictResolver` (S240/S287)
+- [x] Custom alert rules DSL — `AlertRuleEvaluator`, `AlertRuleTemplate` (S139–S141/S269)
+- [x] PDF report generation — `ReportBuilder`, `ReportSchedule` (S151–S153/S285)
+- [x] Backtesting engine — `PortfolioBacktestResult`, equity curve, maxDrawdown (S282)
 
 ---
 
 ## Future Ideas (Backlog)
 
 - ~~Crypto support (BTC, ETH — via CoinGecko free API)~~ ✅ `CryptoAsset`, `CryptoPrice` (S241)
-- Forex pairs
-- Options chain viewer
-- Earnings calendar integration
-- Dividend tracker
-- Multi-language localization (i18n)
-- Accessibility audit (screen readers, high contrast)
+- ~~Forex pairs~~ ✅ `ForexCalculator`, pip/spread/range analysis (S163–S165)
+- ~~Options chain viewer~~ ✅ `OptionsHeatmapBuilder` (S157–S159)
+- ~~Earnings calendar integration~~ ✅ `EarningsCalendarCalculator` (S145–S147)
+- ~~Dividend tracker~~ ✅ `DividendCalculator` (S142–S144)
+- ~~Multi-language localization (i18n)~~ ✅ `LocaleResolver` (S172–S174)
+- ~~Accessibility audit~~ ✅ `AccessibilityChecker` (S175–S177)
 - Plugin/extension system for community indicators

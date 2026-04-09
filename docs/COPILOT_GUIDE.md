@@ -23,6 +23,14 @@ CrossTide evaluates multiple trading methods and combines them through a consens
 | **RSI** | RSI exits oversold (<30→≥30) | RSI exits overbought (>70→≤70) |
 | **MACD** | MACD crosses above signal line | MACD crosses below signal line |
 | **Bollinger** | Price crosses above lower band | Price crosses below upper band |
+| **Stochastic** | %K crosses above %D from oversold | %K crosses below %D from overbought |
+| **OBV** | Positive OBV divergence | Negative OBV divergence |
+| **ADX** | Strong trend + DI+ > DI− | Strong trend + DI− > DI+ |
+| **CCI** | CCI exits oversold (crosses above −100) | CCI exits overbought (crosses below +100) |
+| **SAR** | Parabolic SAR flips to BUY direction | Parabolic SAR flips to SELL direction |
+| **Williams %R** | %R exits oversold (crosses above −80) | %R exits overbought (crosses below −20) |
+| **MFI** | MFI exits oversold (<20→≥20) | MFI exits overbought (>80→≤80) |
+| **SuperTrend** | SuperTrend direction flip to bullish | SuperTrend direction flip to bearish |
 
 **Consensus**: GREEN BUY = Micho BUY + ≥1 other BUY. RED SELL = Micho SELL + ≥1 other SELL.
 
@@ -59,6 +67,71 @@ for (final IMarketDataProvider p in fallback.providers) { ... }
 
 // WRONG — triggers prefer_type_over_var
 for (final p in fallback.providers) { ... }
+```
+
+## DateTime is Never const
+
+`DateTime(...)` constructors are NOT const in Dart. Any class holding a `DateTime` field
+cannot be `const`-constructed. Use `final` instead:
+
+```dart
+// CORRECT
+final holiday = MarketHoliday(exchange: TradingExchange.nyse, date: DateTime(2026, 1, 1), name: 'NYD');
+final calendar = MarketHolidayCalendar(holidays: [holiday]);
+
+// WRONG — compile error: const_initialized_with_non_constant_value
+const holiday = MarketHoliday(date: DateTime(2026, 1, 1), ...);
+```
+
+This applies in tests too: any group-level fixture that contains a `DateTime` must be declared `final`.
+
+## Barrel File Alphabetical Ordering
+
+`lib/src/domain/domain.dart` is a barrel of `export` directives. The linter enforces
+`directives_ordering` — all exports must be strictly alphabetical within the file:
+
+```
+// triggerred by: info - Sort directive sections alphabetically
+export 'ticker_correlation_cluster.dart'; // ← must come BEFORE ticker_screener
+export 'ticker_screener.dart';
+```
+
+When inserting a new export, verify the surrounding entries before and after. Pay attention
+to prefixes that sort differently than expected (e.g., `smart_` < `sma_`).
+
+## prefer_const_literals / prefer_const_declarations
+
+Two common lints when building `@immutable` objects in tests:
+
+```dart
+// prefer_const_literals_to_create_immutables: list args need const prefix
+final report = AppDiagnosticReport(
+  entries: const [okEntry, critEntry],  // ← const needed
+  generatedAt: DateTime(2026),
+  appVersion: '1.9.0',
+);
+
+// prefer_const_declarations: final = const Foo() → const Foo()
+// WRONG
+final snap = const WatchlistTickerSnapshot(ticker: 'AAPL', closePrice: 200, sma200: 180);
+// CORRECT
+const snap = WatchlistTickerSnapshot(ticker: 'AAPL', closePrice: 200, sma200: 180);
+```
+
+## Domain Layer: No Side Effects in Constructors/Methods
+
+Domain methods that compute a result must accept all time-varying inputs as parameters —
+never call `DateTime.now()` from within a domain method or constructor:
+
+```dart
+// CORRECT — caller passes resolvedAt
+ConflictResolution resolve(SyncConflict conflict, {required DateTime resolvedAt}) { ... }
+
+// WRONG — hidden side effect
+ConflictResolution resolve(SyncConflict conflict) {
+  final now = DateTime.now();  // ← forbidden in domain layer
+  ...
+}
 ```
 
 ## Notifier Method Naming
