@@ -4,7 +4,7 @@ description: >
   Detects SMA50/SMA150/SMA200 cross-up events, benchmarks vs SP500, and
   fires local notifications. Free Yahoo Finance data. Android + Windows.
 publish_to: 'none'
-version: 1.6.0+10
+version: 1.7.0+11
 
 environment:
   sdk: ^3.11.4

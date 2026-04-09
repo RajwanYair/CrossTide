@@ -71,7 +71,7 @@ Clean Architecture with strict layer boundaries. Dependencies flow inward only.
 - **Overall coverage target: ≥ 90%** — do not merge below this
 - Use `AppDatabase.forTesting()` for in-memory DB tests
 - `MockMarketDataProvider` provides deterministic synthetic data
-- Run: `flutter test --coverage --timeout 30s`\n\nCurrently: **1473 passing tests**, 0 analyze issues.
+- Run: `flutter test --coverage --timeout 30s`\n\nCurrently: **1543 passing tests**, 0 analyze issues.
 
 ## Build & Run
 ```bash
