@@ -10,6 +10,32 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.6.0] — 2026-04-10
+
+### Added — Domain Entities (S371–S385)
+- **FeatureAccessPolicy** — per-feature access scope gating (free/subscriber/premium/admin/flagGated) with `isFree`, `isFlagGated` (S371)
+- **BacktestComparisonSet** + **BacktestComparisonEntry** — side-by-side strategy comparison: `bestReturn`, `bestSharpe` (S372)
+- **IndicatorPresetConfig** — named indicator parameter presets with `parameter()` accessor and `isDefault` flag (S373)
+- **CrowdSentimentSurvey** + **SentimentResponseEntry** — crowd poll aggregation: `bullCount`, `bullPct`, `isBullishMajority` (S374)
+- **AlertBudgetTracker** — daily/weekly alert-count budget with `isExhausted`, `remainingToday` (S375)
+- **MultiLegOrderConfig** + **OrderLeg** — multi-leg options/equity order: `riskReward`, `legCount` (S376)
+- **TickerAlertHistogram** + **AlertHistogramBucket** — hourly alert frequency histogram with `peakHour`, `countAt()` (S377)
+- **PortfolioStressTestResult** — stress test scenario result: `isLossScenario`, `isSevere` (> 20% drawdown) (S378)
+- **ExchangeConnectivityStatus** — exchange/feed connection status: `isConnected`, `isOperational`, `isLowLatency` (S379)
+- **ChartAnnotationSet** + **ChartAnnotationEntry** — per-ticker chart annotations with `ofType()` filter (S380)
+- **TradingEventEntry** — economic/corporate event with `isHighImpact`, `affectsMarketWide` (S381)
+- **MarketRegimeSignal** — bull/bear/range/volatility regime with `hasRegimeChanged`, `isTrending` (S382)
+- **AlertSnoozeConfig** — symbol-level snooze with `isActiveAt()`, `isGlobal` (S383)
+- **OptionGreeksSnapshot** — delta/gamma/theta/vega/rho + IV with `isDeepInTheMoney` (S384)
+- **TickerPeerGroup** + **PeerGroupMember** — correlation-ranked peer group with `topPeers()`, `closestPeer` (S385)
+
+### Quality
+- 104 new unit tests; 0 failures
+- `flutter analyze --fatal-infos`: 0 issues
+- `dart format`: clean
+
+---
+
 ## [2.5.0] — 2026-04-10
 
 ### Added — Domain Entities (S356–S370)
