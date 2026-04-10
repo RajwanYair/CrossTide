@@ -8,6 +8,31 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+---
+
+## [2.4.0] — 2026-04-10
+
+### Added — Domain Entities (S341–S355)
+- **WatchlistDiffReport** + **WatchlistChangeEntry** — diff between two watchlist snapshots: added/removed tickers, price changes (S341)
+- **AlertDeliveryWindow** — scheduled delivery/quiet time windows with midnight-wrap support; `businessHours` + `overnightQuiet` presets (S342)
+- **TickerPriceRange** — 52-week high/low + all-time-high tracking with range position helper (S343)
+- **CompositeSignalScore** + **SignalScoreComponent** — 0–100 weighted composite signal index with `SignalScoreGrade` (S344)
+- **ProviderSyncState** — per-provider sync health tracking; `recordSuccess()`/`recordFailure()` state transitions (S345)
+- **AlertFrequencyStats** — per-ticker alert frequency histogram with buy/sell ratios (S346)
+- **RegressionTrendline** — linear regression trendline with R², direction, and `priceAt()` prediction (S347)
+- **PortfolioWeightSnapshot** + **PortfolioWeightEntry** — point-in-time portfolio weight allocation with dominant position detection (S348)
+- **CurrencyRateEntry** — FX rate with mid/bid/ask, `convert()`, bid-ask spread (S349)
+- **NotificationAttemptLog** + **NotificationAttemptEntry** — per-notification delivery tracking with retry audit (S350)
+- **ScreenerFilterChain** + **ScreenerFilterStep** — AND/OR chain of screener filter conditions (S351)
+- **UserBackupProfile** — serialisable settings snapshot for cloud backup/restore (S352)
+- **NewsDigestEntry** + **NewsDigestSummary** — curated market news digest with categories and urgency (S353)
+- **OptionChainSummary** — simplified option chain snapshot: OI, IV, put/call ratio (S354)
+
+### Quality
+- 89 new unit tests; all passing
+- `flutter analyze --fatal-infos`: 0 issues
+- `dart format`: clean
+
 ## [2.3.0] — 2026-04-10
 
 ### Added (S336–S340)
