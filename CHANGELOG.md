@@ -8,7 +8,16 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-## [2.2.0] — 2026-04-10
+## [2.3.0] — 2026-04-10
+
+### Added (S336–S340)
+- **TickerTagEntry** + **TickerTagRegistry** + **TickerTagAssignment** — user-defined color+emoji ticker labels; `displayLabel`, `tagFor()`, `tagsWithColor()`, `hasTag()` (S336)
+- **EconomicIndicatorRelease** — scheduled macro releases (CPI, GDP, NFP); `EconomicIndicatorCategory` (8) + `EconomicImpactLevel`; `surprise`, `isBeat`, `isHighImpact` (S337)
+- **MarketDepthSnapshot** + **MarketDepthLevel** — Level-2 order book snapshot; `bestBid`, `bestAsk`, `spread`, `totalBidNotional`, `totalAskNotional` (S338)
+- **TradingHaltEvent** — circuit-breaker & regulatory halts; `TradingHaltReason` (8) + `TradingHaltStatus`; `haltDuration`, `isMarketWide`, `isActive` (S339)
+- **IndexCompositeSnapshot** + **IndexConstituentEntry** — ETF/index holdings; `topN()`, `dominantHoldings` (weight ≥ 5%), `totalWeightPct` (S340)
+
+
 
 ### Added (S321–S335)
 - **CorporateActionEvent** — stock splits, reverse splits, dividends, delistings, mergers; `CorporateActionType` (8 values); `isSplit`, `isReverseSplit`, `isDelisting`, `hasNotes` helpers (S321)
