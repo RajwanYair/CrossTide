@@ -253,3 +253,84 @@ Use const for immutable fixtures, camelCase helpers (no leading underscores).
 |------|-------|---------|
 | `format-on-save` | PostToolUse | Auto-formats Dart files after edits |
 | `terminal-safety` | PreToolUse | Blocks destructive terminal commands |
+
+---
+
+## Accumulated Learnings (S291–S340)
+
+These pitfalls were encountered and fixed during the v2.0.0–v2.3.0 domain expansion sprints.
+Each has a corresponding closed GitHub issue with the fix commit hash.
+
+### Naming Conflict Pre-Flight Check (GH #14)
+
+Before defining any new `enum` or `class` in `lib/src/domain/`, **always `grep` the entire
+`lib/src/domain/` directory for the proposed name**. Two files exporting the same name through
+`domain.dart` causes a fatal `ambiguous_export` analyzer error that breaks all builds.
+
+**Known conflicts resolved (do not redefine these):**
+
+| Name to avoid | Defined in | Renamed to |
+|---------------|-----------|-----------|
+| `NotificationChannel` | `entities.dart` | Use `AlertDeliveryChannel` |
+| `TickerSearchResult` | `ticker_search_index.dart` | Use `TickerQueryResult` |
+| `AuditLogEntry` | `entities.dart` | Use `SystemAuditEntry` in `audit_log_entry.dart` |
+| `EconomicImpactLevel` | `economic_calendar_event.dart` | Do not redefine — add `import 'economic_calendar_event.dart'` |
+
+```dart
+// WRONG — ambiguous_export if TickerSearchResult already exists
+class TickerSearchResult extends Equatable { ... }
+
+// CORRECT — unique name after conflict check
+class TickerQueryResult extends Equatable { ... }
+```
+
+### prefer_null_aware_operators (GH #17)
+
+When a nullable field is used to compute a value, use `?.` rather than the explicit null-check
+pattern. The linter enforces this.
+
+```dart
+// WRONG — triggers prefer_null_aware_operators
+final duration = completedAt == null ? null : completedAt!.difference(startedAt);
+
+// CORRECT
+final duration = completedAt?.difference(startedAt);
+```
+
+### Boundary Value Tests — Strict vs Inclusive Comparators (GH #18)
+
+Before writing boundary-value assertions, check whether the implementation uses **strict** (`>`)
+or **inclusive** (`>=`) comparison. Using a value exactly equal to the threshold with a strict
+comparator will silently fail.
+
+```dart
+// Implementation (strict >):
+bool get isCurrentlyElevated => latest.historicalVolatility > averageHv * 1.5;
+
+// WRONG test — 40.0 > 40.0 is false, so test fails even with "correct" value
+expect(surface.isCurrentlyElevated, isTrue);  // levels = [20, 20, 40], avg=26.7, threshold=40.0
+
+// CORRECT test — use a value clearly above the threshold
+expect(surface.isCurrentlyElevated, isTrue);  // levels = [20, 20, 50], threshold=45.0 → 50 > 45 ✓
+```
+
+### Barrel Alphabetical Ordering (GH #20)
+
+`domain.dart` enforces `directives_ordering` — all exports must be **strictly alphabetical**.
+Inserting an export in the wrong position causes a fatal analyzer info.
+
+Tricky sort order examples:
+- `smart_alert_schedule` comes **before** `sma_calculator` (because `smart_` < `sma_`)
+- `ticker_correlation_cluster` comes **before** `ticker_screener`
+- `alert_batch_summary` comes **before** `alert_cooldown_config`
+
+Always use `grep_search` to verify the surrounding barrel entries before inserting.
+
+### Dart const vs final — Quick Reference
+
+| Situation | Use |
+|-----------|-----|
+| Entity with no `DateTime` fields | `const` constructor + `const` in tests |
+| Entity with any `DateTime` field | `final` in tests — `DateTime(...)` is never const |
+| `final x = const Foo()` pattern | Rewrite as `const x = Foo()` (prefer_const_declarations) |
+| List arg to @immutable class | Use `const [...]` prefix (prefer_const_literals) |

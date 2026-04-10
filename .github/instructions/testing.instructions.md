@@ -15,6 +15,35 @@ applyTo: "test/**"
 - For database tests: `AppDatabase.forTesting(NativeDatabase.memory())`.
 - For provider tests: use `ProviderContainer` with overrides.
 
+## Boundary Value Testing
+
+Before writing value-boundary assertions, **check whether the implementation uses strict (`>`)
+or inclusive (`>=`) comparison** (GH #18). Using a value exactly equal to the threshold with a
+strict comparator silently fails.
+
+```dart
+// If implementation is: bool get isElevated => value > threshold * 1.5;
+// WRONG: 40.0 > 40.0 == false — test fails
+expect(surface.isCurrentlyElevated, isTrue); // latest=40.0, threshold=40.0
+
+// CORRECT: pick a value clearly above the threshold
+expect(surface.isCurrentlyElevated, isTrue); // latest=50.0, threshold=45.0 ✓
+```
+
+## const vs final in Test Fixtures
+
+Use `const` for entire fixture when no `DateTime` fields; `final` when any `DateTime` is present (GH #19).
+
+```dart
+// WRONG — prefer_const_declarations lint
+final snap = const WatchlistTickerSnapshot(ticker: 'AAPL', closePrice: 200.0, sma200: 180.0);
+// CORRECT
+const snap = WatchlistTickerSnapshot(ticker: 'AAPL', closePrice: 200.0, sma200: 180.0);
+
+// CORRECT when DateTime present (DateTime is never const)
+final entry = MarketHoliday(exchange: TradingExchange.nyse, date: DateTime(2026, 1, 1), name: 'NYD');
+```
+
 ## Coverage targets
 - **Domain layer: 100%** — strictly enforced in CI. A PR that drops domain coverage below 100% fails.
 - **Overall project: ≥ 90%** — enforced as a quality expectation; avoid merging code that drops total coverage below this threshold.

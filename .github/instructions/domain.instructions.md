@@ -40,6 +40,36 @@ applyTo: "lib/src/domain/**"
 - `VwapCalculator` — volume-weighted average price
 - All calculators are `const`, pure Dart, and return nullable when data is insufficient.
 
+## Naming Conflict Pre-Flight Check
+
+Before defining any new `enum` or `class`, run `grep_search` across `lib/src/domain/` for the
+proposed name. Two domain files exporting the same name through `domain.dart` causes a fatal
+`ambiguous_export` error (GH #14).
+
+**Known conflicts — do not redefine:**
+| Name | Defined in | Use instead |
+|------|-----------|-------------|
+| `NotificationChannel` | `entities.dart` | `AlertDeliveryChannel` |
+| `TickerSearchResult` | `ticker_search_index.dart` | `TickerQueryResult` |
+| `AuditLogEntry` | `entities.dart` | `SystemAuditEntry` (`audit_log_entry.dart`) |
+| `EconomicImpactLevel` | `economic_calendar_event.dart` | Add `import 'economic_calendar_event.dart'` |
+
+## Barrel Ordering
+
+`domain.dart` enforces `directives_ordering` — exports must be **strictly alphabetical**.
+Verify surrounding barrel entries via `grep_search` before inserting.
+Tricky cases: `smart_` sorts before `sma_`; `ticker_correlation` before `ticker_screener`.
+
+## Null Safety Patterns
+
+Prefer null-aware operators over explicit null-check + bang:
+```dart
+// WRONG — prefer_null_aware_operators lint
+final d = completedAt == null ? null : completedAt!.difference(start);
+// CORRECT
+final d = completedAt?.difference(start);
+```
+
 ## Code quality — zero tolerance
 - `flutter analyze --fatal-infos` must report **zero issues** in domain files.
 - **No `// ignore:` or `// ignore_for_file:` pragmas.** Fix the root cause.
