@@ -8,6 +8,27 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0] — 2026-04-10
+
+### Added (S291–S305)
+- **ApiRateLimitPolicy** — per-provider rate-limit rules: `RateLimitStrategy` (queue/drop/fallback), `effectiveCapacityPerMinute`, `isWithinMinuteLimit()`, `isWithinHourLimit()`, `withStrategy()` (S291)
+- **AlertCooldownConfig** — per-ticker alert cooldown + dedup windows: `CooldownScope`, built-in `balanced`/`aggressive`/`conservative` presets, `isWindowExhausted()`, `isInCooldown()` (S292)
+- **TradingSignalFilter** — pre/post-filter chain for signal streams: `SignalFilterRule`, `SignalFilterDirection`, `buyRules`, `sellRules`, `hasConsensusRequirement`, `withRule()` (S293)
+- **TickerNoteEntry** — per-ticker rich notes with tags + pin: `pin()`, `unpin()`, `withUpdatedBody()`, `hasBeenEdited`, `hasTags` (S294)
+- **MarketCapCategory / MarketCapSnapshot** — market-cap tiers (nano→mega) with `classify()` factory, `minUsd`/`maxUsd` thresholds, `isMegaCap`, `isSmallOrSmaller` (S295)
+- **AlertSuppressRule** — time-window alert suppression: `SuppressReason`, overnight + intraday window support, `appliesAt()`, `coversWeekend`, `activate()`/`deactivate()` (S296)
+- **PriceAlertLevel** — structured price-level alert: `PriceAlertDirection` (above/below/crossUp/crossDown), `wouldTrigger()`, `isExpiredAt()`, `trigger()`/`dismiss()` (S297)
+- **DataProviderMetrics** — per-provider health metrics: `DataProviderStatus`, `successRate`, `hasCriticalFailures`, `recordSuccess()`/`recordFailure()` auto-degrading status (S298)
+- **TechnicalScanResult / ScanConditionMatch** — screener scan result: `matchCount` (satisfied only), `matchScore`, `isFullMatch`, `hasPartialMatch`, `failedConditions` (S299)
+- **EconomicCalendarEvent** — macro events (CPI/FOMC/NFP/GDP): `EconomicEventCategory`, `EconomicImpactLevel`, `isReleased`, `surprise`, `isPositiveSurprise`, `isDue` (S300)
+- **PortfolioIncomeProjection / IncomeProjectionEntry** — projected portfolio income calendar: `totalProjectedIncome`, `dividendIncome`, `optionPremiumIncome`, unique `symbols` list (S301)
+- **TradePlanEntry** — structured trade plan: `TradePlanStatus`, `riskPerShare`, `rewardPerShare`, `riskRewardRatio`, `activate()`/`execute()` state transitions (S302)
+- **AlertBatchSummary / AlertBatchEntry** — aggregated alert batch report: `totalAlerts`, `uniqueSymbols`, `uniqueAlertTypes`, `top(n)` ranking, `reportingPeriod` (S303)
+- **SignalConflictAnalyzer / SignalConflict** — cross-method signal conflict detection: `SignalConflictType`, `analyze()` pairwise comparison, `isBuyVsSell` (S304)
+- **ChartDisplayConfig / SmaOverlayConfig** — per-ticker chart preferences: `ChartLayoutStyle`, overlay visibility toggles, `withLayout()`/`withSmaOverlay()` immutable copies (S305)
+- Updated domain barrel (domain.dart): 15 new alphabetical exports
+- **1803 passing tests** (domain + application + data), 0 analyze issues
+
 ## [1.9.0] — 2026-04-12
 
 ### Added (S276–S290)
