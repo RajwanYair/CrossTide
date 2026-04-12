@@ -8,6 +8,24 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.18.0] - 2026-04-12
+### Added — S516–S530 Risk, Compliance & ESG Domain Entities
+- S516 `ComplianceRuleViolation` — detected rule breach with severity 1–10 + resolution state
+- S517 `WashSaleDetection` — IRS wash-sale 30-day window + disallowed loss
+- S518 `PositionLimitBreach` — position size limit overage with excess % calc
+- S519 `StressTestScenario` — parameterised stress scenario (equity/rate/vol shocks)
+- S520 `RiskFactorExposure` — factor beta + contribution % to portfolio risk
+- S521 `RegulatoryReportConfig` — SEC/FINRA/ESMA filing config with deadline
+- S522 `AmlFlagRecord` — AML screening flag with severity + cleared state
+- S523 `ConcentrationRiskAlert` — holding weight threshold breach with excess %
+- S524 `CounterpartyRiskScore` — credit grade (AAA–defaulted) + PD + exposure
+- S525 `LeverageUtilization` — gross leverage ratio + margin utilization %
+- S526 `DrawdownRecoveryPlan` — recovery trajectory with required return estimate
+- S527 `AuditTrailHash` — cryptographic audit chain hash with tamper detection
+- S528 `PreTradeCheckResult` — pre-trade risk gate (passed/softWarning/hardBlocked)
+- S529 `EsgScoreSnapshot` — E/S/G composite scores with provider attribution
+- S530 `CarbonExposureEstimate` — Scope 1/2/3 CO2e + weighted carbon intensity
+
 ## [2.17.0] - 2026-04-12
 ### Added — S501–S515 Market Microstructure & Trading Operations Domain Entities
 - S501 `OrderRoutingPreference` — smart/direct/DMA/algo order routing config with slip tolerance
