@@ -775,6 +775,27 @@ class _TickerCard extends ConsumerWidget {
                           padding: const EdgeInsets.only(top: 3),
                           child: _SectorTag(sector: sector),
                         ),
+                      if (ticker.companyName != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            ticker.companyName!,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: cs.onSurface.withValues(alpha: 0.6),
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      if (ticker.indexMembership != null &&
+                          ticker.indexMembership!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: _IndexBadgeRow(
+                            membership: ticker.indexMembership!,
+                          ),
+                        ),
                       // Micho Method status — always visible (primary method)
                       if (ticker.sma150 != null && ticker.lastClose != null)
                         Padding(
@@ -944,6 +965,39 @@ class _StatusChip extends StatelessWidget {
           letterSpacing: 0.2,
         ),
       ),
+    );
+  }
+}
+
+/// Compact index badge row (e.g. "S&P 500  NASDAQ-100  Dow Jones").
+class _IndexBadgeRow extends StatelessWidget {
+  const _IndexBadgeRow({required this.membership});
+  final String membership;
+
+  @override
+  Widget build(BuildContext context) {
+    final badges = membership.split(',').map((s) => s.trim()).toList();
+    return Wrap(
+      spacing: 4,
+      runSpacing: 2,
+      children: [
+        for (final badge in badges)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1565C0).withAlpha(20),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              badge,
+              style: const TextStyle(
+                fontSize: 8,
+                color: Color(0xFF1565C0),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

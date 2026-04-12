@@ -45,6 +45,18 @@ class Tickers extends Table {
   /// Next expected earnings date (fetched from quoteSummary). Nullable.
   DateTimeColumn get nextEarningsAt => dateTime().nullable()();
 
+  /// Full company name (e.g. 'Intel Corporation'). Fetched from Yahoo Finance.
+  TextColumn get companyName => text().nullable()();
+
+  /// Short business description (first ~200 chars of longBusinessSummary).
+  TextColumn get description => text().nullable()();
+
+  /// Primary sector + industry string (e.g. 'Technology • Semiconductors').
+  TextColumn get industry => text().nullable()();
+
+  /// Comma-separated index membership (e.g. 'S&P 500,NASDAQ-100,Dow Jones').
+  TextColumn get indexMembership => text().nullable()();
+
   @override
   Set<Column> get primaryKey => {symbol};
 }
@@ -235,7 +247,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -298,6 +310,12 @@ class AppDatabase extends _$AppDatabase {
       if (from < 15) {
         await migrator.addColumn(alertStates, alertStates.lastConsensusBuyAt);
         await migrator.addColumn(alertStates, alertStates.lastConsensusSellAt);
+      }
+      if (from < 16) {
+        await migrator.addColumn(tickers, tickers.companyName);
+        await migrator.addColumn(tickers, tickers.description);
+        await migrator.addColumn(tickers, tickers.industry);
+        await migrator.addColumn(tickers, tickers.indexMembership);
       }
     },
   );
@@ -448,6 +466,25 @@ class AppDatabase extends _$AppDatabase {
   Future<void> updateNextEarnings(String symbol, DateTime? date) async {
     await (update(tickers)..where((t) => t.symbol.equals(symbol))).write(
       TickersCompanion(nextEarningsAt: Value(date)),
+    );
+  }
+
+  // ---- Company Profile ----
+
+  Future<void> updateTickerProfile(
+    String symbol, {
+    required String? companyName,
+    required String? description,
+    required String? industry,
+    required String? indexMembership,
+  }) async {
+    await (update(tickers)..where((t) => t.symbol.equals(symbol))).write(
+      TickersCompanion(
+        companyName: Value(companyName),
+        description: Value(description),
+        industry: Value(industry),
+        indexMembership: Value(indexMembership),
+      ),
     );
   }
 

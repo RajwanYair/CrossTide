@@ -203,6 +203,20 @@ class _TickerDetailScreenState extends ConsumerState<TickerDetailScreen> {
                           .animate()
                           .fadeIn(duration: 300.ms)
                           .slideY(begin: 0.04, end: 0),
+                      if (switch (entryAsync) {
+                            AsyncData(:final value) => value,
+                            _ => null,
+                          }
+                          case final profileEntry?
+                          when profileEntry.companyName != null ||
+                              profileEntry.description != null ||
+                              profileEntry.indexMembership != null) ...[
+                        const SizedBox(height: 16),
+                        _CompanyProfileCard(entry: profileEntry)
+                            .animate(delay: 40.ms)
+                            .fadeIn(duration: 300.ms)
+                            .slideY(begin: 0.04, end: 0),
+                      ],
                       const SizedBox(height: 16),
                       _ChartSection(
                         cs: cs,
@@ -3277,6 +3291,101 @@ class _VwapCard extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Card that shows company name, description, industry, and index membership.
+class _CompanyProfileCard extends StatelessWidget {
+  const _CompanyProfileCard({required this.entry});
+  final TickerEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.4)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.business_rounded, size: 18, color: cs.primary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    entry.companyName ?? entry.symbol,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (entry.industry != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                entry.industry!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: cs.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+            if (entry.indexMembership != null &&
+                entry.indexMembership!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: [
+                  for (final String badge
+                      in entry.indexMembership!
+                          .split(',')
+                          .map((String s) => s.trim()))
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1565C0).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(0xFF1565C0).withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Text(
+                        badge,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Color(0xFF1565C0),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+            if (entry.description != null) ...[
+              const SizedBox(height: 10),
+              Text(
+                entry.description!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: cs.onSurface.withValues(alpha: 0.75),
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

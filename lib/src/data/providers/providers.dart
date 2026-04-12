@@ -14,5 +14,6 @@ export 'provider_health_monitor.dart';
 export 'proxy_detector.dart';
 export 'stooq_provider.dart';
 export 'throttled_provider.dart';
+export 'ticker_company_profile.dart';
 export 'tiingo_provider.dart';
 export 'yahoo_finance_provider.dart';

@@ -56,6 +56,10 @@ class StockRepository {
           sortOrder: r.sortOrder,
           groupId: r.groupId,
           nextEarningsAt: r.nextEarningsAt,
+          companyName: r.companyName,
+          description: r.description,
+          industry: r.industry,
+          indexMembership: r.indexMembership,
         ),
       );
     }
@@ -406,6 +410,21 @@ class StockRepository {
   /// Persist the next earnings date for [symbol].
   Future<void> updateNextEarnings(String symbol, DateTime? date) =>
       db.updateNextEarnings(symbol.toUpperCase().trim(), date);
+
+  /// Persist company profile data for [symbol].
+  Future<void> updateTickerProfile(
+    String symbol, {
+    required String? companyName,
+    required String? description,
+    required String? industry,
+    required String? indexMembership,
+  }) => db.updateTickerProfile(
+    symbol.toUpperCase().trim(),
+    companyName: companyName,
+    description: description,
+    industry: industry,
+    indexMembership: indexMembership,
+  );
 
   // ---- Price Targets ----
 

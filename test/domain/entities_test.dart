@@ -340,11 +340,11 @@ void main() {
       );
     });
 
-    test('props has 12 elements', () {
+    test('props has 16 elements', () {
       // symbol, addedAt, lastRefreshAt, lastClose, sma200, sma150,
       // alertState, error, enabledAlertTypes, sortOrder, groupId,
-      // nextEarningsAt
-      expect(makeEntry().props.length, 12);
+      // nextEarningsAt, companyName, description, industry, indexMembership
+      expect(makeEntry().props.length, 16);
     });
 
     test('minimal constructor — all optionals null', () {

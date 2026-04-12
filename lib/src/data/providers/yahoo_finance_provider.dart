@@ -15,6 +15,7 @@ import 'package:logger/logger.dart';
 import '../../domain/entities.dart';
 import 'market_data_provider.dart';
 import 'proxy_detector.dart';
+import 'ticker_company_profile.dart';
 
 class YahooFinanceProvider implements IMarketDataProvider {
   YahooFinanceProvider({Dio? dio, Logger? logger})
@@ -316,6 +317,73 @@ class YahooFinanceProvider implements IMarketDataProvider {
       return dt;
     } catch (e) {
       _logger.d('$ticker: earnings fetch failed (non-critical): $e');
+      return null;
+    }
+  }
+
+  /// Fetches company profile data for [ticker] from Yahoo Finance quoteSummary.
+  ///
+  /// Uses modules=assetProfile,summaryDetail (no API key required).
+  /// Returns a [TickerCompanyProfile] or null on any failure (non-critical).
+  Future<TickerCompanyProfile?> fetchCompanyProfile(String ticker) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        'https://query1.finance.yahoo.com/v11/finance/quoteSummary/${ticker.toUpperCase()}',
+        queryParameters: {'modules': 'assetProfile,quoteType'},
+        options: Options(
+          headers: {
+            'User-Agent': 'CrossTide/1.0',
+            'Accept': 'application/json',
+          },
+          receiveTimeout: const Duration(seconds: 10),
+          sendTimeout: const Duration(seconds: 8),
+        ),
+      );
+      final data = response.data;
+      if (data == null) return null;
+      final summary = data['quoteSummary'] as Map<String, dynamic>?;
+      final result =
+          (summary?['result'] as List<dynamic>?)?.firstOrNull
+              as Map<String, dynamic>?;
+      if (result == null) return null;
+
+      final assetProfile = result['assetProfile'] as Map<String, dynamic>?;
+      final quoteType = result['quoteType'] as Map<String, dynamic>?;
+
+      final longName =
+          (quoteType?['longName'] as String?)?.trim() ??
+          (quoteType?['shortName'] as String?)?.trim();
+      final sector = assetProfile?['sector'] as String?;
+      final industry = assetProfile?['industry'] as String?;
+      final rawSummary = assetProfile?['longBusinessSummary'] as String?;
+
+      // Truncate description to 300 chars for display, ending at a sentence.
+      String? description;
+      if (rawSummary != null && rawSummary.isNotEmpty) {
+        if (rawSummary.length <= 300) {
+          description = rawSummary;
+        } else {
+          final cut = rawSummary.substring(0, 300);
+          final lastDot = cut.lastIndexOf('.');
+          description = lastDot > 100
+              ? rawSummary.substring(0, lastDot + 1)
+              : '$cut…';
+        }
+      }
+
+      final industryStr = [
+        if (sector != null && sector.isNotEmpty) sector,
+        if (industry != null && industry.isNotEmpty) industry,
+      ].join(' • ');
+
+      return TickerCompanyProfile(
+        symbol: ticker.toUpperCase(),
+        longName: longName,
+        description: description,
+        industry: industryStr.isEmpty ? null : industryStr,
+      );
+    } catch (e) {
+      _logger.d('$ticker: company profile fetch failed (non-critical): $e');
       return null;
     }
   }

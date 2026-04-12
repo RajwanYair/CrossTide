@@ -444,6 +444,10 @@ class TickerEntry extends Equatable {
     this.sortOrder = 0,
     this.groupId,
     this.nextEarningsAt,
+    this.companyName,
+    this.description,
+    this.industry,
+    this.indexMembership,
   });
 
   final String symbol;
@@ -470,6 +474,18 @@ class TickerEntry extends Equatable {
   /// Next expected earnings date (from Yahoo Finance quoteSummary, nullable).
   final DateTime? nextEarningsAt;
 
+  /// Full company name (e.g. 'Intel Corporation').
+  final String? companyName;
+
+  /// Short business description (first ~200 chars of longBusinessSummary).
+  final String? description;
+
+  /// Primary industry string (e.g. 'Technology • Semiconductors').
+  final String? industry;
+
+  /// Comma-separated index membership (e.g. 'S&P 500, NASDAQ-100').
+  final String? indexMembership;
+
   /// True if the next earnings event is within [days] calendar days from [now].
   bool isEarningsSoon({int days = 7, DateTime? now}) {
     if (nextEarningsAt == null) return false;
@@ -489,6 +505,10 @@ class TickerEntry extends Equatable {
     int? sortOrder,
     String? groupId,
     DateTime? nextEarningsAt,
+    String? companyName,
+    String? description,
+    String? industry,
+    String? indexMembership,
   }) {
     return TickerEntry(
       symbol: symbol,
@@ -503,6 +523,10 @@ class TickerEntry extends Equatable {
       sortOrder: sortOrder ?? this.sortOrder,
       groupId: groupId ?? this.groupId,
       nextEarningsAt: nextEarningsAt ?? this.nextEarningsAt,
+      companyName: companyName ?? this.companyName,
+      description: description ?? this.description,
+      industry: industry ?? this.industry,
+      indexMembership: indexMembership ?? this.indexMembership,
     );
   }
 
@@ -520,6 +544,10 @@ class TickerEntry extends Equatable {
     sortOrder,
     groupId,
     nextEarningsAt,
+    companyName,
+    description,
+    industry,
+    indexMembership,
   ];
 }
 
