@@ -334,3 +334,118 @@ Always use `grep_search` to verify the surrounding barrel entries before inserti
 | Entity with any `DateTime` field | `final` in tests — `DateTime(...)` is never const |
 | `final x = const Foo()` pattern | Rewrite as `const x = Foo()` (prefer_const_declarations) |
 | List arg to @immutable class | Use `const [...]` prefix (prefer_const_literals) |
+
+---
+
+## Accumulated Learnings (S501–S550)
+
+These pitfalls were encountered and fixed during the v2.17.0–v2.20.0 domain expansion sprints.
+Each has a corresponding closed GitHub issue with the fix commit hash.
+
+### Dollar Sign in Test Names (GH #21)
+
+A `$` character inside a `test()` or `group()` string literal is interpreted as Dart string
+interpolation syntax, causing a compile error even when there is no following variable name.
+
+**Fix**: use a raw string literal (prefix `r'...'`) for any test name that contains `$`.
+
+```dart
+// WRONG — Dart tries to interpolate $1M, compile error
+test('isLargeNotional for >= $1M', () { ... });
+
+// CORRECT — raw string, $ is literal
+test(r'isLargeNotional for >= $1M', () { ... });
+```
+
+**Commit**: 65aa724 — detected in S504 `DarkPoolIndicator` test, fixed before push.
+
+---
+
+### IEEE 754 Floating-Point Boundary in Tests (GH #22)
+
+Binary floating-point cannot represent some decimal fractions exactly. When a test constructs
+data whose subtraction or multiplication result lands exactly _on_ a comparison threshold,
+IEEE 754 rounding causes the computed value to be slightly above or below the boundary,
+making the assertion fail silently.
+
+**Classic example** (`YieldCurveSnapshot.isFlat`, S533):
+
+```dart
+// Implementation:
+bool get isFlat => twosToTensSpreadBps.abs() <= 20;
+
+// WRONG test — (4.7 - 4.5) * 100 == 20.000000000000018 in IEEE 754
+const snap = YieldCurveSnapshot(rate2y: 4.5, rate10y: 4.7, ...);
+expect(snap.isFlat, isTrue); // FAILS: 20.000000000000018 > 20
+
+// CORRECT — use a value clearly inside the threshold
+const snap = YieldCurveSnapshot(rate2y: 4.5, rate10y: 4.6, ...); // spread = 10 bps
+expect(snap.isFlat, isTrue); // PASSES: 10 <= 20 ✓
+```
+
+**Rule**: Never use test data whose arithmetic result sits exactly on a floating-point boundary.
+Choose a value clearly inside or outside the threshold (e.g., 10 bps instead of 20 bps).
+
+**Commit**: 8ab88dc — detected in S533 test, fixed by changing `rate10y` from 4.7 → 4.6.
+
+---
+
+### Barrel Deep-Prefix Misplacement (GH #23)
+
+When multiple exports share a long common prefix (e.g., `market_`), it is easy to mis-order
+entries by stopping comparison at the prefix rather than continuing character-by-character.
+
+**Example**: `market_microstructure_snapshot` was placed after `market_breadth_alert`
+(wrong) instead of after `market_impact_estimate` (correct):
+
+```
+// WRONG
+export 'market_breadth_alert.dart';
+export 'market_microstructure_snapshot.dart'; // 'mi' > 'br'... wait, 'm' > 'b' ✓
+                                               // but 'market_i' (impact) < 'market_m' (micro)!
+export 'market_impact_estimate.dart';          // 'i' < 'm' — this must come FIRST
+
+// CORRECT order
+export 'market_breadth_alert.dart';   // market_b
+export 'market_depth_snapshot.dart';  // market_d
+export 'market_impact_estimate.dart'; // market_i  ← micro goes AFTER this
+export 'market_microstructure_snapshot.dart'; // market_m
+```
+
+**Rule**: After the shared prefix, compare character-by-character. For `market_*`:
+`market_b` < `market_d` < `market_h` < `market_i` < `market_m` < `market_r` < `market_s`.
+
+**Commit**: Fixed in 65aa724, lesson documented in a3849d0.
+
+---
+
+### New Naming Conflicts Found S501–S550 (GH #24)
+
+Two additional class name collisions were identified during S451–S500 expansion work:
+
+| Name to avoid | Existing definition | Renamed to |
+|---------------|-----------|-----------|
+| `MarketRegimeType` | `market_regime_signal.dart` | `RegimeClassificationType` |
+| `ProviderHealthStatus` | `provider_sync_state.dart` | `DataProviderHealthStatus` |
+
+**Rule**: Always run `grep_search` over `lib/src/domain/` for the proposed name before creating
+any new class or enum. See `domain.instructions.md` for the full conflict table.
+
+**Documented in**: a3849d0 + domain.instructions.md.
+
+---
+
+### New Barrel Ordering Rules (S501–S550)
+
+These were tricky cases discovered during the S501–S550 sprint batch:
+
+| File | Position | Key comparison |
+|------|----------|---------------|
+| `ab_test_assignment` | Before `accessibility_checker` | `ab` < `ac` (b < c) |
+| `app_update_manifest` | After `app_runtime_context` | `app_r` < `app_u` (r < u) |
+| `carry_trade_signal` | After `carbon_exposure_estimate` | `carb` < `carr` (b < r at 4th char) |
+| `crash_report_summary` | Before `credit_spread_snapshot` | `cras` < `cred` (a < e at 4th char) |
+| `enterprise_value_estimate` | Before `entities` | `ent_e` < `enti` (underscore sorts before letters) |
+| `remote_config_snapshot` | After `relative_volume_calculator` | `rel` < `rem` (l < m), before `report_*` |
+| `size_factor_signal` | Before `slippage_estimate` | `si_` < `sl` (underscore at pos 3 vs letter) |
+| `user_cohort_definition` | After `user_backup_profile` | `user_b` < `user_c` < `user_d` |

@@ -71,7 +71,9 @@ Clean Architecture with strict layer boundaries. Dependencies flow inward only.
 - **Overall coverage target: ≥ 90%** — do not merge below this
 - Use `AppDatabase.forTesting()` for in-memory DB tests
 - `MockMarketDataProvider` provides deterministic synthetic data
-- Run: `flutter test --coverage --timeout 30s`\n\nCurrently: **~1856 passing tests**, 0 analyze issues.
+- Run: `flutter test --coverage --timeout 30s`
+
+Currently: **~1900+ passing tests**, 0 analyze issues.
 
 ## Build & Run
 ```bash
@@ -99,7 +101,7 @@ dart format lib test            # Formatting (scope to lib/test only)
 - `lib/src/domain/williams_r_method_detector.dart` — Williams %R exit signals (S226)
 - `lib/src/domain/mfi_method_detector.dart` — MFI oversold/overbought exit signals (S228)
 - `lib/src/domain/supertrend_method_detector.dart` — SuperTrend direction flip signals (S229)
-- `lib/src/domain/domain.dart` — Barrel export (240+ domain classes)
+- `lib/src/domain/domain.dart` — Barrel export (470+ domain classes)
 - `lib/src/domain/alert_rule_evaluator.dart` — Declarative alert rule DSL (S139–S141)
 - `lib/src/domain/dividend_calculator.dart` — Dividend tracking + income projection (S142–S144)
 - `lib/src/domain/earnings_calendar_calculator.dart` — Earnings proximity detection (S145–S147)
@@ -157,10 +159,30 @@ dart format lib test            # Formatting (scope to lib/test only)
 - `lib/src/domain/market_depth_snapshot.dart` — Level-2 order book snapshot (S338)
 - `lib/src/domain/trading_halt_event.dart` — Circuit-breaker & regulatory halts (S339)
 - `lib/src/domain/index_composite_snapshot.dart` — ETF/index constituent holdings (S340)
+- `lib/src/domain/order_routing_preference.dart` — Smart/DMA/TWAP/VWAP routing + slippage (S501-S502)
+- `lib/src/domain/execution_venue_config.dart` — Exchange/ECN/dark-pool venue config (S503)
+- `lib/src/domain/market_microstructure_snapshot.dart` — Spread/depth/mid-price snapshot (S515)
+- `lib/src/domain/compliance_rule_violation.dart` — Severity-scored compliance breach (S516)
+- `lib/src/domain/esg_score_snapshot.dart` — E/S/G composite scores (S529)
+- `lib/src/domain/yield_curve_snapshot.dart` — 2Y/5Y/10Y/30Y rates with inversion/flat flags (S533)
+- `lib/src/domain/macro_regime_indicator.dart` — Goldilocks/Stagflation/Deflation/Recession phases (S535)
+- `lib/src/domain/intrinsic_value_estimate.dart` — DCF/Graham blend with margin of safety (S545)
+- `lib/src/domain/app_update_manifest.dart` — OTA update metadata (S546)
+- `lib/src/domain/remote_config_snapshot.dart` — Runtime remote feature config (S547)
+- `lib/src/domain/crash_report_summary.dart` — Aggregated crash analytics (S548)
+- `lib/src/domain/ab_test_assignment.dart` — A/B experiment variant assignment (S549)
+- `lib/src/domain/user_cohort_definition.dart` — User segmentation cohort (S550)
 - `lib/src/data/database/database.dart` — Drift schema v15 (regenerate after changes)
 - `lib/src/application/refresh_service.dart` — Orchestrates all 12 method evaluations + consensus
 - `lib/src/presentation/providers.dart` — All Riverpod providers
 - `docs/COPILOT_GUIDE.md` — Detailed coding guide and architecture decisions
+
+## Known Anti-Patterns (from S501–S550)
+
+- **`$` in test names**: use raw string `r'price >= $1M'` — not `'price >= $1M'` (GH #21, fixed 65aa724)
+- **IEEE 754 boundary**: avoid test data that arithmetically hits a threshold exactly, e.g., `(4.7-4.5)*100 == 20.000...018`, not `20.0` (GH #22, fixed 8ab88dc)
+- **Barrel deep-prefix pitfall**: `market_microstructure` (market_m) must go AFTER `market_impact` (market_i) — compare char-by-char past the shared prefix (GH #23, fixed 65aa724)
+- **Naming conflicts new**: `MarketRegimeType` → `RegimeClassificationType`; `ProviderHealthStatus` → `DataProviderHealthStatus` (GH #24, docs a3849d0)
 
 ## Agents, Prompts & Skills
 - **`data-integration`** agent — add/modify market data providers
