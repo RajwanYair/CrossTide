@@ -8,6 +8,69 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.24.0] - 2026-04-13
+### Added — Platform Config & UX (S596–S600)
+- `OnboardingChecklistItem` (S596): First-run checklist item with `OnboardingItemStatus` (pending/inProgress/completed/skipped).
+- `QuickActionConfig` (S597): Home-screen quick action with `QuickActionPlatform` (android/windows/all).
+- `WidgetRefreshPolicy` (S598): Home-screen widget refresh with `WidgetRefreshTrigger` enum.
+- `PlatformPerformanceBudget` (S599): Frame-time and jank detection thresholds per platform.
+- `AppLocaleOverride` (S600): Per-user locale override with number-format locale.
+- Domain barrel updated to **520 exports** (was 470). `~3175+ passing tests`, 0 analyze issues.
+
+## [2.23.0] - 2026-04-13
+### Added — Platform Services, Trade Ideas & Market Cap (S581–S595)
+- `BacktestParameterGrid` (S581): Multi-dimensional parameter grid search with `GridAxis` + `GridCell`.
+- `PortfolioTurnoverMetric` (S582): Annualised portfolio turnover and average holding days.
+- `MarketLiquidityRating` (S583): Composite liquidity score with `LiquidityRatingGrade` enum.
+- `VolatilityRegimeAlert` (S584): HV regime transition detection with `VolatilityRegimeTransition`.
+- `NewsEventEntry` (S585): Structured news event with `NewsEventSentiment` enum.
+- `TradeIdeaRecord` (S586): Trade thesis record with `TradeIdeaConviction` + `TradeIdeaDirection`.
+- `UserAlertPreference` (S587): Per-user alert delivery preferences (quiet hours, push, in-app).
+- `WatchlistHealthCheck` (S588): Watchlist data freshness + validity with `WatchlistHealthStatus`.
+- `PlatformBuildInfo` (S589): OS/Flutter/Dart version snapshot for diagnostics.
+- `QuoteQualityMetric` (S590): Quote freshness, delay seconds, and spread quality.
+- `RealTimeSessionConfig` (S591): WebSocket/SSE session config with `RealTimeTransport` enum.
+- `TickerLifecycleEvent` (S592): Listing/delisting/split/rename with `TickerLifecycleEventType`.
+- `MarketCapTierClassifier` (S593): Market cap tier with `CapSizeTier` enum (renamed to avoid ambiguous export).
+- `HeatMapColorScale` (S594): Heat-map color gradient with `ColorStop` value/hex pairs.
+- `FeatureFlagOverride` (S595): Runtime flag override with auditor + timestamp.
+
+## [2.22.0] - 2026-04-13
+### Added — Market Events, Fundamental Data & Cross-Asset Correlation (S566–S580)
+- `ShortInterestSnapshot` (S566): Short % float + days-to-cover snapshot.
+- `DividendCutAlert` (S567): Dividend change alerts with `DividendChangeType` enum.
+- `StockSplitEvent` (S568): Stock split details with `StockSplitType` (forward/reverse).
+- `OptionsExpiryDate` (S569): Options expiry schedule with `OptionsExpiryStyle` enum.
+- `ImpliedMoveEstimate` (S570): Options-implied earnings move estimate (± range).
+- `InstitutionalOwnershipEntry` (S571): 13F ownership change with `OwnershipChangeDirection`.
+- `SecFilingEntry` (S572): SEC EDGAR filing metadata with `SecFilingType` enum.
+- `RegimeSwitchAlert` (S573): Macro regime transition alert with from/to indicators.
+- `CrossAssetCorrelation` (S574): Equity/bond/commodity correlations with `CorrelationAssetClass`.
+- `MarketImpactModel` (S575): Almgren-Chriss/square-root/Kyle impact with `MarketImpactModelType`.
+- `DataIngestionEvent` (S576): Single data ingestion event with source + record counts.
+- `AlertChannelMetrics` (S577): Delivery channel aggregate metrics (sent/delivered/failed).
+- `SectorRotationSignal` (S578): Cross-sector capital rotation with `SectorRotationDirection`.
+- `ContextAwareSignal` (S579): Method signal enriched with `SignalContextSource`.
+- `DataFreshnessPolicy` (S580): Data freshness enforcement with `StaleDataPolicy` enum.
+
+## [2.21.0] - 2026-04-13
+### Added — Signal Analytics, App Health & Market Intelligence (S551–S565)
+- `SignalFunnelSummary` (S551): Signal detection funnel stages (detected/evaluated/triggered/sent).
+- `SignalGeneratorConfig` (S552): Composite signal generator with `MethodWeightEntry` per-method weighting.
+- `SignalDivergenceAlert` (S553): Price/indicator divergence detection with `DivergenceDirection` enum.
+- `AppHealthMonitor` (S554): Runtime health events with `HealthEvent` + `HealthEventSeverity`.
+- `DataLineageRecord` (S555): Data provenance tracking with `DataQualityTier` enum.
+- `NetworkQualitySnapshot` (S556): Latency/jitter measurement with `NetworkQualityRating`.
+- `BacktestSensitivityResult` (S557): Parameter sensitivity grid with `SensitivityAxis` + `SensitivityCell`.
+- `CacheWarmupConfig` (S558): Cache pre-warming config with `WarmupStrategy` enum.
+- `PriceGapAnalysis` (S559): Gap classification with `PriceGapType` (common/breakaway/runaway/exhaustion).
+- `PortfolioHealthScore` (S560): 0–100 composite score with `PortfolioHealthComponent`.
+- `RebalanceExecution` (S561): Rebalance trade plan with `RebalanceLeg` + `RebalanceLegStatus`.
+- `TechnicalAlertSummary` (S562): Roll-up of active technical alerts per ticker.
+- `EarningsSurpriseRecord` (S563): EPS actual vs consensus with `EarningsSurpriseDirection` enum.
+- `AnalystRatingChange` (S564): Broker upgrade/downgrade with `RatingChangeDirection` + `AnalystRatingTier`.
+- `IndexRebalanceEvent` (S565): Index reconstitution events with `IndexRebalanceType` enum.
+
 ## [2.20.0] - 2026-01-20
 ### Added — Platform & Infrastructure (S546–S550)
 - `AppUpdateManifest` (S546): OTA update metadata with `isUpdateAvailable`, `isMandatory`, and platform download URLs.

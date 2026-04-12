@@ -73,7 +73,7 @@ Clean Architecture with strict layer boundaries. Dependencies flow inward only.
 - `MockMarketDataProvider` provides deterministic synthetic data
 - Run: `flutter test --coverage --timeout 30s`
 
-Currently: **~1900+ passing tests**, 0 analyze issues.
+Currently: **~3175+ passing tests**, 0 analyze issues.
 
 ## Build & Run
 ```bash
@@ -101,7 +101,7 @@ dart format lib test            # Formatting (scope to lib/test only)
 - `lib/src/domain/williams_r_method_detector.dart` — Williams %R exit signals (S226)
 - `lib/src/domain/mfi_method_detector.dart` — MFI oversold/overbought exit signals (S228)
 - `lib/src/domain/supertrend_method_detector.dart` — SuperTrend direction flip signals (S229)
-- `lib/src/domain/domain.dart` — Barrel export (470+ domain classes)
+- `lib/src/domain/domain.dart` — Barrel export (520 domain classes)
 - `lib/src/domain/alert_rule_evaluator.dart` — Declarative alert rule DSL (S139–S141)
 - `lib/src/domain/dividend_calculator.dart` — Dividend tracking + income projection (S142–S144)
 - `lib/src/domain/earnings_calendar_calculator.dart` — Earnings proximity detection (S145–S147)
@@ -172,17 +172,69 @@ dart format lib test            # Formatting (scope to lib/test only)
 - `lib/src/domain/crash_report_summary.dart` — Aggregated crash analytics (S548)
 - `lib/src/domain/ab_test_assignment.dart` — A/B experiment variant assignment (S549)
 - `lib/src/domain/user_cohort_definition.dart` — User segmentation cohort (S550)
+- `lib/src/domain/signal_funnel_summary.dart` — Signal detection funnel stages (S551)
+- `lib/src/domain/signal_generator_config.dart` — Composite signal generator with MethodWeightEntry (S552)
+- `lib/src/domain/signal_divergence_alert.dart` — Price/indicator divergence with DivergenceDirection (S553)
+- `lib/src/domain/app_health_monitor.dart` — Runtime health events with HealthEvent + HealthEventSeverity (S554)
+- `lib/src/domain/data_lineage_record.dart` — Data provenance tracking with DataQualityTier enum (S555)
+- `lib/src/domain/network_quality_snapshot.dart` — Latency/jitter measurement with NetworkQualityRating (S556)
+- `lib/src/domain/backtest_sensitivity_result.dart` — Parameter sensitivity grid with SensitivityCell (S557)
+- `lib/src/domain/cache_warmup_config.dart` — Cache pre-warming config with WarmupStrategy enum (S558)
+- `lib/src/domain/price_gap_analysis.dart` — Gap classification with PriceGapType enum (S559)
+- `lib/src/domain/portfolio_health_score.dart` — 0–100 composite score with PortfolioHealthComponent (S560)
+- `lib/src/domain/rebalance_execution.dart` — Rebalance trade plan with RebalanceLeg + RebalanceLegStatus (S561)
+- `lib/src/domain/technical_alert_summary.dart` — Roll-up of active technical alerts per ticker (S562)
+- `lib/src/domain/earnings_surprise_record.dart` — EPS actual vs consensus with EarningsSurpriseDirection (S563)
+- `lib/src/domain/analyst_rating_change.dart` — Broker upgrade/downgrade with RatingChangeDirection + AnalystRatingTier (S564)
+- `lib/src/domain/index_rebalance_event.dart` — Index reconstitution events with IndexRebalanceType (S565)
+- `lib/src/domain/short_interest_snapshot.dart` — Short % float + days-to-cover snapshot (S566)
+- `lib/src/domain/dividend_cut_alert.dart` — Dividend change alerts with DividendChangeType enum (S567)
+- `lib/src/domain/stock_split_event.dart` — Stock split details with StockSplitType (forward/reverse) (S568)
+- `lib/src/domain/options_expiry_date.dart` — Options expiry schedule with OptionsExpiryStyle enum (S569)
+- `lib/src/domain/implied_move_estimate.dart` — Options-implied earnings move estimate (S570)
+- `lib/src/domain/institutional_ownership_entry.dart` — 13F ownership change with OwnershipChangeDirection (S571)
+- `lib/src/domain/sec_filing_entry.dart` — SEC EDGAR filing metadata with SecFilingType enum (S572)
+- `lib/src/domain/regime_switch_alert.dart` — Macro regime transition alert (S573)
+- `lib/src/domain/cross_asset_correlation.dart` — Equity/bond/commodity correlations with CorrelationAssetClass (S574)
+- `lib/src/domain/market_impact_model.dart` — Almgren-Chriss/square-root/Kyle impact with MarketImpactModelType (S575)
+- `lib/src/domain/data_ingestion_event.dart` — Single data ingestion event log (S576)
+- `lib/src/domain/alert_channel_metrics.dart` — Delivery channel aggregate metrics (S577)
+- `lib/src/domain/sector_rotation_signal.dart` — Cross-sector capital rotation with SectorRotationDirection (S578)
+- `lib/src/domain/context_aware_signal.dart` — Enriched signal with SignalContextSource (S579)
+- `lib/src/domain/data_freshness_policy.dart` — Data freshness enforcement with StaleDataPolicy (S580)
+- `lib/src/domain/backtest_parameter_grid.dart` — Multi-dimensional grid search with GridAxis + GridCell (S581)
+- `lib/src/domain/portfolio_turnover_metric.dart` — Annualised portfolio turnover metric (S582)
+- `lib/src/domain/market_liquidity_rating.dart` — Composite liquidity score with LiquidityRatingGrade (S583)
+- `lib/src/domain/volatility_regime_alert.dart` — HV regime transition with VolatilityRegimeTransition (S584)
+- `lib/src/domain/news_event_entry.dart` — Structured news event with NewsEventSentiment (S585)
+- `lib/src/domain/trade_idea_record.dart` — Trade thesis with TradeIdeaConviction + TradeIdeaDirection (S586)
+- `lib/src/domain/user_alert_preference.dart` — Per-user alert delivery preferences (S587)
+- `lib/src/domain/watchlist_health_check.dart` — Watchlist data freshness with WatchlistHealthStatus (S588)
+- `lib/src/domain/platform_build_info.dart` — OS/Flutter/Dart version snapshot (S589)
+- `lib/src/domain/quote_quality_metric.dart` — Quote freshness and spread quality (S590)
+- `lib/src/domain/real_time_session_config.dart` — WebSocket/SSE session config with RealTimeTransport (S591)
+- `lib/src/domain/ticker_lifecycle_event.dart` — Ticker lifecycle events with TickerLifecycleEventType (S592)
+- `lib/src/domain/market_cap_tier_classifier.dart` — Market cap tier with CapSizeTier enum (S593)
+- `lib/src/domain/heat_map_color_scale.dart` — Heat-map gradient with ColorStop value/hex pairs (S594)
+- `lib/src/domain/feature_flag_override.dart` — Runtime flag override with auditor + timestamp (S595)
+- `lib/src/domain/onboarding_checklist_item.dart` — First-run checklist with OnboardingItemStatus (S596)
+- `lib/src/domain/quick_action_config.dart` — Home-screen quick action with QuickActionPlatform (S597)
+- `lib/src/domain/widget_refresh_policy.dart` — Home-screen widget refresh with WidgetRefreshTrigger (S598)
+- `lib/src/domain/platform_performance_budget.dart` — Frame-time and jank detection thresholds (S599)
+- `lib/src/domain/app_locale_override.dart` — Per-user locale override (S600)
 - `lib/src/data/database/database.dart` — Drift schema v15 (regenerate after changes)
 - `lib/src/application/refresh_service.dart` — Orchestrates all 12 method evaluations + consensus
 - `lib/src/presentation/providers.dart` — All Riverpod providers
 - `docs/COPILOT_GUIDE.md` — Detailed coding guide and architecture decisions
 
-## Known Anti-Patterns (from S501–S550)
+## Known Anti-Patterns (from S501–S600)
 
 - **`$` in test names**: use raw string `r'price >= $1M'` — not `'price >= $1M'` (GH #21, fixed 65aa724)
 - **IEEE 754 boundary**: avoid test data that arithmetically hits a threshold exactly, e.g., `(4.7-4.5)*100 == 20.000...018`, not `20.0` (GH #22, fixed 8ab88dc)
 - **Barrel deep-prefix pitfall**: `market_microstructure` (market_m) must go AFTER `market_impact` (market_i) — compare char-by-char past the shared prefix (GH #23, fixed 65aa724)
 - **Naming conflicts new**: `MarketRegimeType` → `RegimeClassificationType`; `ProviderHealthStatus` → `DataProviderHealthStatus` (GH #24, docs a3849d0)
+- **PowerShell `$` interpolation in double-quoted here-strings**: `@"..."@` interpolates `$1`, `$2` as empty strings — use `@'...'@` (single-quoted) for any Node.js/regex scripts containing `$` back-references (GH #25, fixed S551-S600 session)
+- **`fix_const` regex pattern**: never pipe a `String.replace()` result via a PowerShell double-quoted here-string if the replacement contains `$1`/`$2` — the variables are silently expanded to empty, corrupting all replaced files
 
 ## Agents, Prompts & Skills
 - **`data-integration`** agent — add/modify market data providers
