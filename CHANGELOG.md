@@ -10,6 +10,17 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.16.0] — 2026-04-12
+
+### Added — Domain Entities (S496–S500)
+- **ReportDeliveryReceipt** — scheduled report delivery acknowledgement: `ReportDeliveryMethod` (4 methods); `hasFailed`, `hasFailureReason`, `isFastDelivery` (≤2s) (S496)
+- **PdfExportConfig** — PDF export layout and content config: `PdfPageOrientation`; `isLandscape`, `hasWatermark`, `isMultiPage` (S497)
+- **ScheduledReportResult** — report job execution outcome: `failedDeliveries`, `deliveryRatePercent`, `isFullSuccess`, `hasErrors` (S498)
+- **ExportFormatPreference** — user export file format preference: `ExportFileFormat` (5 formats); `isCsvOrXlsx`, `isPdf` (S499)
+- **WidgetDataFeed** — home-screen widget data feed config: `WidgetRefreshMode` (4 modes); `isRealtime`, `isHighPriority`, `isFrequentRefresh` (S500)
+
+---
+
 ## [2.15.0] — 2026-04-12
 
 ### Added — Domain Entities (S481–S495)
