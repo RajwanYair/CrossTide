@@ -10,6 +10,36 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.9.0] — 2026-04-12
+
+### Added — Domain Entities (S401–S415)
+- **AlertChannelStatus** — delivery channel health tracking: `AlertChannelType` (push/inApp/email/sms/webhook); `isHealthy`, `isDegraded` (>3 consecutive failures) (S401)
+- **AlertResponseLog** — user interaction with an alert action prompt: `isDismissed`, `isEngaged`, optional `durationMs` tracking (S402)
+- **AsyncDataState\<T\>** — generic remote data-loading state: `hasData`, `hasError`, `isEmpty`, `isLoading`; fully const-constructible (S403)
+- **BatchScanJob** — bulk market-scan job tracker: `BatchScanStatus` (5 states); `progressPct`, `isComplete`, `isRunning`, `errorMessage` (S404)
+- **CandleGapEvent** — session price-gap event: `gapPct`, `isGapUp`, `isBigGap` (≥2%) (S405)
+- **ChartLayoutConfig** — chart panel layout preset: `mainPanelIndicators`, `subPanels`, `totalPanels`, `isDefault` (S406)
+- **MarketMoverEntry** — top-gainers/losers entry: `isGainer`, `isBigMover` (≥5%), optional `sectorName` (S407)
+- **NewsAlertConfig** — news-triggered alert configuration: keyword list, allowlist/blocklist sources, `isSourcePermitted()`, `isActive` (S408)
+- **OrderBookLevel** — single Level-2 order book price level: `isBid`/`isAsk`, `notional` (S409)
+- **PortfolioExposureMap** — asset-class + sector exposure snapshot: `isConcentrated` (>60% in any class), `isSectorConcentrated` (>30%) (S410)
+- **PriceLevelBreachLog** — audit log for price-level trigger crossings: `overshoot`, `overshootPct`, `isUpside` (S411)
+- **RatioComparisonResult** — peer comparison for any financial ratio: `difference`, `differencePct`, `aIsHigher`, `isSignificant` (>20% diff) (S412)
+- **SectorMomentumScore** — sector momentum direction + score: `SectorMomentumDirection` (5 values); `isPositive`, `isOutperforming` (S413)
+- **TechnicalSummaryCard** — compact multi-indicator ticker snapshot: `isAboveBothMas`, `isGoldenCross`, `isMacdBullish`, `isOversold`, `isOverbought` (S414)
+- **TickerOwnershipRecord** — institutional/insider ownership record: `isSignificantHolder` (≥5%), `isAccumulating` (S415)
+
+### Fixed
+- Wired all 15 entities into `domain.dart` barrel (alphabetical order)
+- Fixed modified domain files: `api_rate_limit_policy.dart`, `chart_display_config.dart`, `data_provider_metrics.dart`, `economic_calendar_event.dart`, `portfolio_income_projection.dart`, `signal_conflict_analyzer.dart`, `trade_plan_entry.dart`
+
+### Quality
+- 85 new unit tests in `test/domain/s401_s415_domain_batch_test.dart`; 0 failures
+- `flutter analyze --fatal-infos`: 0 issues
+- `dart format`: clean
+
+---
+
 ## [2.8.0] — 2026-04-10
 
 ### Added — Domain Entities (S391–S400)
