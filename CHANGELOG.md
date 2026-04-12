@@ -10,7 +10,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [2.11.0] — 2026-04-13
+## [2.12.0] — 2026-04-13
+
+### Added — Domain Entities (S441–S450)
+- **UserInsightCard** — personalised dashboard card: `InsightCardType` (5 types); `isWarning`, `isHighPriority` (≥0.7), `isActionable` (visible + high-prio) (S441)
+- **UserPreferenceProfile** — UI preference profile: `ColorSchemePreference` (system/light/dark/highContrast); `hasExplicitTheme`, `prefersDark` (S442)
+- **ChartAnnotationPreset** — saved chart annotation: `AnnotationPresetType` (5 types); `isLine`, `isThickLine` (≥2px) (S443)
+- **SearchHistoryEntry** — ticker search history record: `hasSelection`, `hasResults` (S444)
+- **WatchlistQuickFilter** — named watchlist filter preset: RSI thresholds, signal requirements, sector constraint; `hasSignalFilter`, `hasSectorFilter`, `rsiRange` (S445)
+- **UserSessionMetric** — per-session engagement metrics: `isLongSession` (>300s), `hasAlertEngagement`, `avgSecondsPerScreen` (S446)
+- **FeatureUsageRecord** — feature adoption tracking: `isWidelyAdopted` (≥100 users), `hasUsage`, `activationsPerUser` (S447)
+- **AppRuntimeContext** — runtime environment snapshot: `isAndroid`, `isWindows`, `isReleaseBuild` (S448)
+- **SpreadSnapshot** — bid-ask spread snapshot: `spread`, `spreadBps`, `midPrice`, `isTight` (≤5 bps) (S449)
+- **DrawdownBudget** — drawdown tolerance config: `DrawdownBudgetLevel` (4 levels); `isBreached`, `remainingBudget`, `isCritical` (S450)
+
+### Tests
+- Added `test/domain/s441_s450_domain_batch_test.dart` — 36 tests covering all 10 new domain entities.
+
+---
+
 
 ### Added — Domain Entities (S431–S440)
 - **DataProviderConfig** — market data provider integration config: `DataProviderTier` (free/basic/professional/enterprise); `isPaidTier`, `isHighThroughput` (≥100 req/min) (S431)
