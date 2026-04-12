@@ -75,6 +75,19 @@ Additional ordering lessons (S451-S500):
 - `scheduled_` (sc) < `screener_` (scr): h < r.
 - `strategy_comparison` < `strategy_performance` < `strategy_rule_set`: c < p < r.
 
+Additional ordering lessons (S501-S550):
+- `ab_test_assignment` (ab) < `accessibility_checker` (ac): b < c — `ab_*` files sort before all `ac*`.
+- `app_update_manifest` (app_u) comes after `app_runtime_context` (app_r): r < u.
+- `crash_report_summary` (cr-a) < `credit_spread_snapshot` (cr-e): a < e at 3rd char.
+- `enterprise_value_estimate` (ent-e) < `entities` (ent-i): e < i — insert before `entities.dart`.
+- `execution_venue_config` (ex-e) > `exchange_connectivity_status` (ex-c): e > c at 3rd char after `ex`.
+- `carry_trade_signal` (car-r) > `carbon_exposure_estimate` (car-b): b < r at 4th char after `car`.
+- `factor_loading_snapshot` (fa-c) fits between `export_format_preference` and `feature_access_policy`.
+- `free_cash_flow_yield` (fre) fits after `forex_calculator` (fo): o < r < u (free < fundamental).
+- `remote_config_snapshot` (rem) fits after `relative_volume_calculator` (rel): l < m, before `report_*` (rep).
+- `size_factor_signal` (si-z) < `slippage_estimate` (sl): i < l at 2nd char after `s`.
+- `user_cohort_definition` (user_c) fits after `user_backup_profile` (user_b): b < c, before `user_defined_indicator` (user_d).
+
 ## Null Safety Patterns
 
 Prefer null-aware operators over explicit null-check + bang:
