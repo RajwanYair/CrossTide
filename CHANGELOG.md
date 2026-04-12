@@ -10,7 +10,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [2.10.0] — 2026-04-13
+## [2.11.0] — 2026-04-13
+
+### Added — Domain Entities (S431–S440)
+- **DataProviderConfig** — market data provider integration config: `DataProviderTier` (free/basic/professional/enterprise); `isPaidTier`, `isHighThroughput` (≥100 req/min) (S431)
+- **TickerNewsSummary** — aggregated ticker news: `TickerNewsSentiment` enum (bullish/bearish/neutral); `isBullish`, `isBearish`, `hasNews` (S432)
+- **EarningsEstimate** — analyst EPS consensus: `hasConsensus` (≥3 analysts), `epsRange`, `isHighAgreement` (range ≤0.10) (S433)
+- **PriceTargetConsensus** — analyst price-target consensus: `upsidePotential`, `isBuyMajority`, `isAboveCurrentPrice` (S434)
+- **MacroEconomicSnapshot** — GDP, CPI, unemployment, rate, yield curve: `isYieldCurveInverted`, `isRecessionarySignal`, `isHighInflation` (S435)
+- **SectorPerformanceSnapshot** — sector return map: `leadingSector`, `laggingSector`, `sectorCount` (S436)
+- **MarketCalendarEntry** — market calendar events: `MarketCalendarCategory` (holiday/expiration/centralBank/economicRelease/earnings/indexRebalance); `isMarketClosed`, `isHighImpact` (S437)
+- **AltDataSignal** — alternative data signals: `AltDataSource` (5 sources); `isBullish` (>0.2), `isBearish` (<−0.2), `isStrong` (abs>0.6) (S438)
+- **FundamentalRatioSnapshot** — P/E, P/B, P/S, EV/EBITDA, D/E: `isValueStock`, `isHighLeverage`, `isPremiumValuation` (S439)
+- **LiquidityScore** — composite liquidity: `LiquidityTier` (4 levels); `isLiquid`, `isTightSpread` (≤5 bps) (S440)
+
+### Tests
+- Added `test/domain/s431_s440_domain_batch_test.dart` — 41 tests covering all 10 new domain entities.
+
+---
+
 
 ### Added — Domain Entities (S416–S430)
 - **PositionRiskEntry** — per-position risk assessment: `PositionRiskCategory` (low/moderate/high/extreme); `isHighRisk`, `isExtreme`, `adjustedExposure` (positionValue × betaAdjustedRisk) (S416)
