@@ -28,7 +28,7 @@ dependencies:
 
   # Persistence – Drift (SQLite): type-safe, migration-friendly, in-memory for tests
   drift: ^2.24.0
-  sqlite3: ^3.3.0  # explicit; hook configured below to use system winsqlite3.dll
+  sqlite3: ^3.3.1  # explicit; hook configured below to use system winsqlite3.dll
   sqlite3_flutter_libs: ^0.6.0+eol
 
   # Secure storage for API keys
