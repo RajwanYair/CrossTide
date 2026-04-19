@@ -20,14 +20,15 @@ applyTo: "lib/src/domain/**"
 - Required public API: `evaluateBuy()` → `MethodSignal?`, `evaluateSell()` → `MethodSignal?`, `evaluateBoth()` → `List<MethodSignal>`.
 - `evaluateBuy/evaluateSell` return `null` when there is insufficient data (not zero-triggered).
 - `evaluateBoth` returns only signals where `isTriggered == true`.
-- Current detectors: `MichoMethodDetector` (primary), `RsiMethodDetector`, `MacdMethodDetector`, `BollingerMethodDetector`.
+- Current detectors: `MichoMethodDetector`, `RsiMethodDetector`, `MacdMethodDetector`, `BollingerMethodDetector`, `StochasticMethodDetector`, `ObvMethodDetector`, `AdxMethodDetector`, `CciMethodDetector`, `SarMethodDetector`, `WilliamsRMethodDetector`, `MfiMethodDetector`, `SupertrendMethodDetector`.
 - File naming: `<method>_method_detector.dart` (e.g. `rsi_method_detector.dart`).
 
-## Consensus Engine
+## Consensus Engines
 - `ConsensusEngine.evaluate()` takes a flat `List<MethodSignal>` and returns a `ConsensusResult`.
 - **BUY consensus**: Micho BUY triggered + ≥1 other method BUY triggered.
 - **SELL consensus**: Micho SELL triggered + ≥1 other method SELL triggered.
-- New method AlertTypes must be added to `_isBuyType()` and `_isSellType()`.
+- `WeightedConsensusEngine` must stay aligned with method alert typing and classification.
+- New method AlertTypes must be added to `_isBuyType()` / `_isSellType()` in both engines where applicable.
 
 ## Calculators
 - `SmaCalculator` — simple moving average (periods: 50, 150, 200)
@@ -103,9 +104,10 @@ final d = completedAt?.difference(start);
 - **No `// ignore:` or `// ignore_for_file:` pragmas.** Fix the root cause.
 - **No `TODO` / `FIXME` / `HACK` comments.** Open a GitHub Issue instead.
 - Use explicit types on loop variables (`for (final MyType x in list)`) — do not rely on `var` inference.
+- Prefer shared test helpers instead of duplicating candle and signal fixture factories when suitable.
 
 ## Tests
 - Every public method must have unit tests in `test/domain/`.
 - Domain coverage must be **100%** — enforced in CI by the coverage awk script.
 - Method detector tests follow pattern in `test/domain/rsi_method_detector_test.dart`.
-- Consensus engine tests must cover all methods' signals.
+- Consensus and weighted-consensus tests must cover all supported method signals.

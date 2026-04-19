@@ -1,22 +1,10 @@
 import 'package:cross_tide/src/domain/domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/signal_factory.dart';
+
 void main() {
   const engine = ConsensusEngine();
-  final now = DateTime(2024, 6, 15);
-
-  MethodSignal makeSignal({
-    required AlertType alertType,
-    required String methodName,
-    bool isTriggered = true,
-  }) => MethodSignal(
-    ticker: 'AAPL',
-    methodName: methodName,
-    alertType: alertType,
-    isTriggered: isTriggered,
-    evaluatedAt: now,
-    currentClose: 150.0,
-  );
 
   group('ConsensusEngine', () {
     test('can be constructed at runtime', () {

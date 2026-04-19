@@ -1,20 +1,15 @@
 import 'package:cross_tide/src/domain/domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/candle_factory.dart';
+
 DailyCandle _ohlc(
   int day, {
   required double open,
   required double high,
   required double low,
   required double close,
-}) => DailyCandle(
-  date: DateTime(2024, 1, 1).add(Duration(days: day)),
-  open: open,
-  high: high,
-  low: low,
-  close: close,
-  volume: 1_000_000,
-);
+}) => makeOhlc(day, open: open, high: high, low: low, close: close);
 
 /// Generates a gradually rising trend to seed an uptrend SuperTrend.
 List<DailyCandle> _uptrend(int count, {double base = 100, double step = 1}) =>

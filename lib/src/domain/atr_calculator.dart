@@ -8,6 +8,7 @@ library;
 import 'package:equatable/equatable.dart';
 
 import 'entities.dart';
+import 'technical_defaults.dart';
 
 /// One data point in the ATR series.
 class AtrResult extends Equatable {
@@ -38,7 +39,10 @@ class AtrCalculator {
   /// Compute the most recent ATR value.
   ///
   /// Returns null when [candles] has fewer than [period + 1] elements.
-  AtrResult? compute(List<DailyCandle> candles, {int period = 14}) {
+  AtrResult? compute(
+    List<DailyCandle> candles, {
+    int period = TechnicalDefaults.defaultPeriod,
+  }) {
     final series = computeSeries(candles, period: period);
     return series.isEmpty ? null : series.last;
   }
@@ -47,7 +51,10 @@ class AtrCalculator {
   ///
   /// The first [period] entries are excluded (insufficient warmup data).
   /// Returns an empty list when [candles.length] <= [period].
-  List<AtrResult> computeSeries(List<DailyCandle> candles, {int period = 14}) {
+  List<AtrResult> computeSeries(
+    List<DailyCandle> candles, {
+    int period = TechnicalDefaults.defaultPeriod,
+  }) {
     if (candles.length <= period) return [];
 
     // Seed: average TR of first [period] bars.

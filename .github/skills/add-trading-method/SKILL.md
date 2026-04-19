@@ -1,126 +1,123 @@
 # Add Trading Method — Skill
 
-A guided workflow for adding a new MethodSignal-based trading method to CrossTide. Follow every step in order. Each step must pass before proceeding.
+Use this workflow whenever you add a new `MethodSignal`-based detector or extend the signal ecosystem.
 
-## Prerequisites
-- Read the existing method detectors to understand the pattern:
-  - `lib/src/domain/micho_method_detector.dart` — defines `MethodSignal` base class + Micho detector
-  - `lib/src/domain/rsi_method_detector.dart` — good example of a secondary detector
-  - `lib/src/domain/consensus_engine.dart` — groups signals and checks consensus rules
-  - `lib/src/domain/entities.dart` — `AlertType` enum (currently 18 values)
+Follow the steps in order. Do not skip validation.
 
-## Step 1 — Add AlertType entries
+## Read These Files First
+- `lib/src/domain/micho_method_detector.dart`
+- `lib/src/domain/rsi_method_detector.dart`
+- `lib/src/domain/consensus_engine.dart`
+- `lib/src/domain/weighted_consensus_engine.dart`
+- `lib/src/domain/entities.dart`
+- `lib/src/application/refresh_service.dart`
+- `lib/src/application/notification_service.dart`
+
+## Existing Method Set
+The current method roster is:
+- Micho Method
+- RSI Method
+- MACD Crossover
+- Bollinger Bands
+- Stochastic Method
+- OBV Divergence
+- ADX Trend
+- CCI Method
+- Parabolic SAR
+- Williams %R
+- MFI Method
+- SuperTrend
+
+New methods must fit this ecosystem cleanly.
+
+## Step 1 — Define Alert Types
 In `lib/src/domain/entities.dart`:
-1. Add `xyzMethodBuy` and `xyzMethodSell` to the `AlertType` enum (before `consensusBuy`).
-2. Add corresponding `displayName` and `description` entries in the `AlertTypeX` extension.
+1. Add `<xyz>MethodBuy` and `<xyz>MethodSell` to `AlertType` near the other method-specific entries.
+2. Add matching `displayName` and `description` mappings.
+3. If there is a method list or helper that classifies method alerts, update it as well.
 
-## Step 2 — Create the detector class
-Create `lib/src/domain/xyz_method_detector.dart`:
-```dart
-/// XYZ Method Detector — Pure domain logic.
-///
-/// <description of the method and its BUY/SELL rules>
-library;
+## Step 2 — Implement the Detector
+Create `lib/src/domain/<xyz>_method_detector.dart`.
 
-import 'entities.dart';
-import 'micho_method_detector.dart'; // for MethodSignal
+Requirements:
+- pure Dart only
+- `const` constructor
+- injectable calculator dependencies if needed
+- `static const String methodName`
+- `requiredCandles` or equivalent guard
+- `evaluateBuy()` returns `MethodSignal?`
+- `evaluateSell()` returns `MethodSignal?`
+- `evaluateBoth()` returns only triggered signals
 
-class XyzMethodDetector {
-  const XyzMethodDetector({/* injectable calculator dependencies */});
+Detector contract:
+- return `null` when data is insufficient
+- keep logic deterministic and side-effect free
+- no Flutter, Drift, Dio, or Riverpod imports
+- use explicit loop variable types
 
-  static const String methodName = 'XYZ Method';
-
-  int get requiredCandles => /* period + warmup */;
-
-  MethodSignal? evaluateBuy({
-    required String ticker,
-    required List<DailyCandle> candles,
-  }) {
-    // 1. Guard: candles.length < requiredCandles → return null
-    // 2. Compute indicator values for t and t-1
-    // 3. Apply BUY condition
-    // 4. Return MethodSignal with alertType: AlertType.xyzMethodBuy
-  }
-
-  MethodSignal? evaluateSell({
-    required String ticker,
-    required List<DailyCandle> candles,
-  }) {
-    // Mirror of evaluateBuy with SELL condition
-  }
-
-  List<MethodSignal> evaluateBoth({
-    required String ticker,
-    required List<DailyCandle> candles,
-  }) {
-    final buy = evaluateBuy(ticker: ticker, candles: candles);
-    final sell = evaluateSell(ticker: ticker, candles: candles);
-    return [
-      if (buy != null && buy.isTriggered) buy,
-      if (sell != null && sell.isTriggered) sell,
-    ];
-  }
-}
-```
-
-Key rules:
-- The class must be `const`-constructible.
-- `evaluateBuy` and `evaluateSell` return `MethodSignal?` (null = insufficient data).
-- `evaluateBoth` returns only triggered signals.
-- No Flutter imports — this is pure Dart domain code.
-- Use explicit loop variable types everywhere.
-- No `// ignore:` pragmas.
-
-## Step 3 — Wire into ConsensusEngine
+## Step 3 — Update Consensus Engines
 In `lib/src/domain/consensus_engine.dart`:
-1. Add `AlertType.xyzMethodBuy` to `_isBuyType()`.
-2. Add `AlertType.xyzMethodSell` to `_isSellType()`.
+- add the new BUY type to `_isBuyType()`
+- add the new SELL type to `_isSellType()`
 
-No other changes needed — the engine is signal-agnostic after this.
+In `lib/src/domain/weighted_consensus_engine.dart`:
+- add the new BUY type to the weighted buy classifier
+- add the new SELL type to the weighted sell classifier
+- ensure default weighting behavior remains coherent
+
+Do not update one engine without the other.
 
 ## Step 4 — Wire into RefreshService
 In `lib/src/application/refresh_service.dart`:
-1. Add a `final _xyzDetector = const XyzMethodDetector();` field.
-2. In the evaluation pipeline, call `_xyzDetector.evaluateBoth(ticker: ticker, candles: candles)`.
-3. Spread the results into the `allMethodSignals` list.
-4. (Optional) Add method-specific notification calls if needed.
-5. (Optional) Add idempotency columns to the DB schema if the method's alerts need candle-date dedup.
+1. Add a detector field, usually `final _xyzDetector = const XyzMethodDetector();`
+2. Call `evaluateBoth()` during method evaluation
+3. Spread results into `allMethodSignals`
+4. Keep ordering consistent with the existing method evaluation pipeline
+5. If the method needs dedicated local notifications or candle-date dedup, update orchestration and storage accordingly
 
-## Step 5 — Add notification support
-In `lib/src/application/i_notification_service.dart`:
-1. Add `showXyzMethodBuy(...)` and `showXyzMethodSell(...)` methods to the interface.
-2. Implement them in all concrete implementations (Local, Fallback).
-3. Update test doubles in `test/`.
+## Step 5 — Update Notifications Only If Needed
+If the method gets its own notification channel or explicit delivery surface:
+1. Extend `INotificationService` in `lib/src/application/notification_service.dart`
+2. Implement the methods in all concrete services, including fallback chains
+3. Update application tests and test doubles
 
-## Step 6 — Write tests
-Create `test/domain/xyz_method_detector_test.dart`:
-- Test BUY signal triggers correctly.
-- Test SELL signal triggers correctly.
-- Test no-trigger when conditions aren't met.
-- Test null return when insufficient data.
-- Test edge cases (exactly at threshold, boundary values).
-- Follow the pattern in `test/domain/rsi_method_detector_test.dart`.
-- Use `const` for immutable fixtures.
-- Test names: `'<behavior> when <condition>'`.
+If the method only contributes to consensus and does not need standalone delivery, do not add notification methods unnecessarily.
 
-Update `test/domain/consensus_engine_test.dart`:
-- Add a test that includes the new method's signals in consensus evaluation.
+## Step 6 — Write Tests
+Create `test/domain/<xyz>_method_detector_test.dart` covering:
+- BUY trigger
+- SELL trigger
+- non-trigger path
+- insufficient data
+- boundary values
+- exact-threshold behavior when comparisons are strict vs inclusive
 
-## Step 7 — Validate
-Run these commands and fix any issues:
+Also update:
+- `test/domain/consensus_engine_test.dart`
+- `test/domain/weighted_consensus_engine_test.dart` when the weighted engine should classify the new method
+
+Prefer shared helpers in:
+- `test/helpers/candle_factory.dart`
+- `test/helpers/signal_factory.dart`
+
+## Step 7 — Validate Quality Gates
+Run and fix every issue before stopping:
+
 ```bash
-flutter analyze --fatal-infos     # Must be zero issues
-dart format lib test              # Must exit 0
-flutter test --coverage --timeout 30s  # All tests pass
+flutter analyze --fatal-infos
+dart format --set-exit-if-changed lib test
+flutter test --coverage --timeout 30s
 ```
 
 Domain coverage must remain 100%.
 
-## Checklist
-- [ ] AlertType entries added (Buy + Sell)
-- [ ] Detector class created with evaluateBuy/evaluateSell/evaluateBoth
-- [ ] ConsensusEngine _isBuyType/_isSellType updated
-- [ ] RefreshService wired
-- [ ] INotificationService extended (if needed)
-- [ ] Unit tests written (detector + consensus integration)
-- [ ] All quality gates pass
+## Completion Checklist
+- [ ] AlertType BUY/SELL entries added
+- [ ] Detector created and const-constructible
+- [ ] `ConsensusEngine` updated
+- [ ] `WeightedConsensusEngine` updated
+- [ ] `RefreshService` wired
+- [ ] Notification surface updated only if required
+- [ ] Detector tests added
+- [ ] Consensus tests updated
+- [ ] Quality gates pass with zero suppressions

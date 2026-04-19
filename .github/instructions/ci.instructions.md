@@ -8,6 +8,7 @@ applyTo: ".github/workflows/**"
 - Flutter: `channel: stable` / `flutter-version: '3.x'` via `subosito/flutter-action@v2` with `cache: true`.
 - Java: **21** (Temurin LTS) — set in `actions/setup-java@v4` with `cache: 'gradle'`. All Android `build.gradle.kts` files must also target `JavaVersion.VERSION_21`.
 - Dart SDK is bundled with Flutter; do not install separately.
+- Core GitHub Actions majors currently used in this repo should stay on current stable majors (`checkout@v4`, `upload-artifact@v4`, `download-artifact@v4`, `configure-pages@v5`, `deploy-pages@v4`, `codecov-action@v5`).
 
 ## Quality gates — zero tolerance
 - `flutter analyze --fatal-infos` **must report zero issues** — no errors, no warnings, no infos.
@@ -22,6 +23,7 @@ applyTo: ".github/workflows/**"
 - Runs **once** in the test/analyze job: `dart run build_runner build --delete-conflicting-outputs`.
 - Generated `.g.dart` files are uploaded as artifact `generated-code` (retention-days: 1, if-no-files-found: error).
 - Build jobs **restore** via `actions/download-artifact@v4` — they must **not** re-run `build_runner`.
+- Release workflows follow the same artifact reuse pattern as CI where practical.
 
 ## Trigger optimisation
 - Every workflow `push`/`pull_request` trigger includes `paths-ignore` for `**.md`, `docs/**`, `.github/ISSUE_TEMPLATE/**`.
@@ -35,7 +37,7 @@ applyTo: ".github/workflows/**"
 - `build-android` (ubuntu, PR only, timeout 15 min): restore artifact → `flutter build apk --debug` — **no artifact upload** (compile-check only).
 
 ## Job structure — `release.yml`
-- `test` gate (ubuntu, timeout 15 min): codegen → analyze → test → upload artifact.
+- `test` gate (ubuntu, timeout 15 min): codegen → upload generated-code → analyze → test.
 - `build-windows` (windows-latest, timeout 30 min): restore artifact → build release → ZIP → MSIX → upload `windows-release` and `windows-msix-release`.
 - `build-android` (ubuntu, timeout 20 min): restore artifact → `flutter build apk --release` → rename → upload `android-release`.
 - `publish-release` (ubuntu, timeout 5 min): download **by name** (not `merge-multiple`) → create GitHub Release with all three files.
@@ -56,4 +58,9 @@ Every job in every workflow must declare `timeout-minutes`. Defaults: 5 for ligh
 - Release artifacts (`windows-release`, `android-release`) use `retention-days: 1`.
 - `generated-code` artifact is `retention-days: 1`.
 - `ci.yml` build jobs produce **no** artifacts — they are throwaway compile checks.
-- In `release.yml`, `publish-release` downloads only `windows-release` and `android-release` — never `merge-multiple: true`.
+- In `release.yml`, `publish-release` downloads named artifacts directly and must not rely on `merge-multiple: true`.
+
+## Release and version workflows
+- `bump-version.yml` is the manual release entry point and should remain idempotent and serialized with workflow concurrency.
+- `auto-release.yml` must avoid self-trigger loops and should not race with manual bump workflows.
+- All workflows must use least-privilege permissions unless a write scope is genuinely required.

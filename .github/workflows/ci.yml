@@ -20,7 +20,6 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write
 
 env:
   FLUTTER_VERSION: '3.x'
@@ -47,6 +46,18 @@ jobs:
 
       - name: Generate code (Drift, Freezed, etc.)
         run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Upload generated code artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-code
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            lib/**/*.g.dart
+            lib/**/*.drift.dart
+            lib/**/*.freezed.dart
+            test/**/*.mocks.dart
 
       - name: Analyze
         run: flutter analyze --fatal-infos

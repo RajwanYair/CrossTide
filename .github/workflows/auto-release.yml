@@ -18,6 +18,10 @@ on:
       - 'docs/**'
       - '.github/ISSUE_TEMPLATE/**'
 
+concurrency:
+  group: auto-release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write   # push version-bump commit + tag
 
@@ -26,6 +30,7 @@ jobs:
     name: Count commits → auto-release at 10
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    if: github.actor != 'github-actions[bot]'
     steps:
       - uses: actions/checkout@v4
         with:

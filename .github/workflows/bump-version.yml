@@ -25,6 +25,10 @@ on:
 permissions:
   contents: write   # needed to push the commit + tag
 
+concurrency:
+  group: bump-version
+  cancel-in-progress: false
+
 jobs:
   bump:
     name: Bump version → tag → trigger release

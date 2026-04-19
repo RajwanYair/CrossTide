@@ -15,14 +15,15 @@ library;
 
 import 'entities.dart';
 import 'micho_method_detector.dart';
+import 'technical_defaults.dart';
 import 'williams_percent_r_calculator.dart';
 
 class WilliamsRMethodDetector {
   const WilliamsRMethodDetector({
     this.calculator = const WilliamsPercentRCalculator(),
-    this.oversoldThreshold = -80.0,
-    this.overboughtThreshold = -20.0,
-    this.period = 14,
+    this.oversoldThreshold = TechnicalDefaults.williamsROversold,
+    this.overboughtThreshold = TechnicalDefaults.williamsROverbought,
+    this.period = TechnicalDefaults.defaultPeriod,
   });
 
   final WilliamsPercentRCalculator calculator;

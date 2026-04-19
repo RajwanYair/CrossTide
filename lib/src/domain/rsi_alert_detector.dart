@@ -9,6 +9,7 @@ import 'package:equatable/equatable.dart';
 
 import 'entities.dart';
 import 'rsi_calculator.dart';
+import 'technical_defaults.dart';
 
 /// Type of RSI threshold crossing.
 enum RsiAlertType {
@@ -43,8 +44,8 @@ class RsiAlert extends Equatable {
 class RsiAlertDetector {
   const RsiAlertDetector({
     this.rsiCalculator = const RsiCalculator(),
-    this.oversoldThreshold = 30.0,
-    this.overboughtThreshold = 70.0,
+    this.oversoldThreshold = TechnicalDefaults.rsiOversold,
+    this.overboughtThreshold = TechnicalDefaults.rsiOverbought,
   });
 
   final RsiCalculator rsiCalculator;
@@ -59,7 +60,7 @@ class RsiAlertDetector {
   RsiAlert? detect(
     String symbol,
     List<DailyCandle> candles, {
-    int period = 14,
+    int period = TechnicalDefaults.defaultPeriod,
   }) {
     final all = detectAll(symbol, candles, period: period);
     return all.isEmpty ? null : all.last;
@@ -69,7 +70,7 @@ class RsiAlertDetector {
   List<RsiAlert> detectAll(
     String symbol,
     List<DailyCandle> candles, {
-    int period = 14,
+    int period = TechnicalDefaults.defaultPeriod,
   }) {
     final series = rsiCalculator.computeSeries(candles, period: period);
     final alerts = <RsiAlert>[];

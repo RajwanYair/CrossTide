@@ -1,16 +1,10 @@
-import 'package:cross_tide/src/domain/entities.dart';
 import 'package:cross_tide/src/domain/obv_calculator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/candle_factory.dart';
+
 DailyCandle _candle(int day, {required double close, int volume = 1000}) =>
-    DailyCandle(
-      date: DateTime(2024, 1, 1).add(Duration(days: day)),
-      open: close,
-      high: close + 1,
-      low: close - 1,
-      close: close,
-      volume: volume,
-    );
+    makeOhlc(day, close: close, volume: volume);
 
 void main() {
   const calc = ObvCalculator();

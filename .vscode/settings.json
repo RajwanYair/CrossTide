@@ -9,19 +9,8 @@
   "dart.showTodos": false,
   "dart.warnWhenEditingFilesInPub": true,
   "dart.renameFilesWithClasses": "prompt",
-  "editor.formatOnSave": true,
   "editor.defaultFormatter": "Dart-Code.dart-code",
-  "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": true,
-  "editor.guides.indentation": true,
-  "editor.minimap.enabled": false,
-  "editor.rulers": [80],
-  "editor.stickyScroll.enabled": true,
   "editor.inlayHints.enabled": "on",
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    "source.organizeImports": "explicit"
-  },
   "[dart]": {
     "editor.defaultFormatter": "Dart-Code.dart-code",
     "editor.formatOnSave": true,
@@ -71,8 +60,6 @@
       "text": "Use Conventional Commits format: type(scope): description. Types: feat, fix, refactor, test, ci, chore, docs. Keep subject under 72 chars. No period at end. Add [skip ci] suffix only for version-bump commits."
     }
   ],
-  "gitlens.codeLens.enabled": true,
-  "gitlens.hovers.currentLine.over": "line",
   "cmake.sourceDirectory": "C:/Users/ryair/OneDrive - Intel Corporation/Documents/MyScripts/CrossTide/windows",
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"

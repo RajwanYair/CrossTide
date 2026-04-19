@@ -10,6 +10,7 @@ library;
 import 'package:equatable/equatable.dart';
 
 import 'entities.dart';
+import 'technical_defaults.dart';
 
 /// A single data point in the Stochastic series.
 class StochasticResult extends Equatable {
@@ -40,7 +41,7 @@ class StochasticCalculator {
   /// Returns null when insufficient data.
   StochasticResult? compute(
     List<DailyCandle> candles, {
-    int period = 14,
+    int period = TechnicalDefaults.defaultPeriod,
     int smoothK = 3,
     int smoothD = 3,
   }) {
@@ -58,7 +59,7 @@ class StochasticCalculator {
   /// Returns an empty list when data is insufficient.
   List<StochasticResult> computeSeries(
     List<DailyCandle> candles, {
-    int period = 14,
+    int period = TechnicalDefaults.defaultPeriod,
     int smoothK = 3,
     int smoothD = 3,
   }) {

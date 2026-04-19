@@ -21,6 +21,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../../domain/entities.dart';
+import 'http_constants.dart';
 import 'market_data_provider.dart';
 import 'proxy_detector.dart';
 
@@ -52,7 +53,10 @@ class StooqProvider implements IMarketDataProvider {
         queryParameters: {'s': '$upper.US', 'i': 'd'},
         options: Options(
           responseType: ResponseType.plain,
-          headers: {'User-Agent': 'CrossTide/1.0', 'Accept': 'text/csv'},
+          headers: {
+            'User-Agent': HttpConstants.userAgent,
+            'Accept': 'text/csv',
+          },
           receiveTimeout: const Duration(seconds: 15),
           sendTimeout: const Duration(seconds: 10),
         ),

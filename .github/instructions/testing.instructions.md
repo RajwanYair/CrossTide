@@ -14,6 +14,8 @@ applyTo: "test/**"
 - Use `const` for immutable test fixtures.
 - For database tests: `AppDatabase.forTesting(NativeDatabase.memory())`.
 - For provider tests: use `ProviderContainer` with overrides.
+- Prefer existing helpers in `test/helpers/candle_factory.dart` and `test/helpers/signal_factory.dart` before introducing new local factories.
+- Prefer table-driven tests when case structure repeats.
 
 ## Boundary Value Testing
 
@@ -57,6 +59,7 @@ and any other entity with a `DateTime` field — `const` is impossible for these
 - Tests must pass with **zero errors and zero warnings** from `flutter analyze --fatal-infos`.
 - **No `// ignore:` pragmas in test files** — fix the lint correctly.
 - **No skipped or commented-out tests** unless the corresponding issue is open and linked.
+- Keep large batch tests focused on meaningful coverage, not repeated boilerplate that could be expressed with shared helpers.
 
 ## Commands
 - All tests: `flutter test`

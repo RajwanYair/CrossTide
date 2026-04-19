@@ -15,13 +15,14 @@ library;
 import 'entities.dart';
 import 'micho_method_detector.dart';
 import 'rsi_calculator.dart';
+import 'technical_defaults.dart';
 
 class RsiMethodDetector {
   const RsiMethodDetector({
     this.rsiCalculator = const RsiCalculator(),
-    this.oversoldThreshold = 30.0,
-    this.overboughtThreshold = 70.0,
-    this.period = 14,
+    this.oversoldThreshold = TechnicalDefaults.rsiOversold,
+    this.overboughtThreshold = TechnicalDefaults.rsiOverbought,
+    this.period = TechnicalDefaults.defaultPeriod,
   });
 
   final RsiCalculator rsiCalculator;

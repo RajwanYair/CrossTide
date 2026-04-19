@@ -17,13 +17,14 @@ library;
 import 'entities.dart';
 import 'mfi_calculator.dart';
 import 'micho_method_detector.dart';
+import 'technical_defaults.dart';
 
 class MfiMethodDetector {
   const MfiMethodDetector({
     this.mfiCalculator = const MfiCalculator(),
-    this.oversoldThreshold = 20.0,
-    this.overboughtThreshold = 80.0,
-    this.period = 14,
+    this.oversoldThreshold = TechnicalDefaults.mfiOversold,
+    this.overboughtThreshold = TechnicalDefaults.mfiOverbought,
+    this.period = TechnicalDefaults.defaultPeriod,
   });
 
   final MfiCalculator mfiCalculator;

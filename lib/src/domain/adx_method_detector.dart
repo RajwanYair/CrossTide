@@ -8,12 +8,13 @@ library;
 import 'adx_calculator.dart';
 import 'entities.dart';
 import 'micho_method_detector.dart';
+import 'technical_defaults.dart';
 
 class AdxMethodDetector {
   const AdxMethodDetector({
     this.adxCalculator = const AdxCalculator(),
     this.threshold = 25.0,
-    this.period = 14,
+    this.period = TechnicalDefaults.defaultPeriod,
   });
 
   final AdxCalculator adxCalculator;

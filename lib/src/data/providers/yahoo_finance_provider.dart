@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../../domain/entities.dart';
+import 'http_constants.dart';
 import 'market_data_provider.dart';
 import 'proxy_detector.dart';
 import 'ticker_company_profile.dart';
@@ -82,7 +83,7 @@ class YahooFinanceProvider implements IMarketDataProvider {
         queryParameters: queryParams,
         options: Options(
           headers: {
-            'User-Agent': 'CrossTide/1.0',
+            'User-Agent': HttpConstants.userAgent,
             'Accept': 'application/json',
           },
           receiveTimeout: const Duration(seconds: 15),
@@ -231,7 +232,7 @@ class YahooFinanceProvider implements IMarketDataProvider {
         },
         options: Options(
           headers: {
-            'User-Agent': 'CrossTide/1.0',
+            'User-Agent': HttpConstants.userAgent,
             'Accept': 'application/json',
           },
           receiveTimeout: const Duration(seconds: 10),
@@ -288,7 +289,7 @@ class YahooFinanceProvider implements IMarketDataProvider {
         queryParameters: {'modules': 'calendarEvents'},
         options: Options(
           headers: {
-            'User-Agent': 'CrossTide/1.0',
+            'User-Agent': HttpConstants.userAgent,
             'Accept': 'application/json',
           },
           receiveTimeout: const Duration(seconds: 10),
@@ -332,7 +333,7 @@ class YahooFinanceProvider implements IMarketDataProvider {
         queryParameters: {'modules': 'assetProfile,quoteType'},
         options: Options(
           headers: {
-            'User-Agent': 'CrossTide/1.0',
+            'User-Agent': HttpConstants.userAgent,
             'Accept': 'application/json',
           },
           receiveTimeout: const Duration(seconds: 10),

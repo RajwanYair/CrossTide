@@ -7,6 +7,7 @@
 library;
 
 import 'entities.dart';
+import 'technical_defaults.dart';
 
 /// Computes the Money Flow Index series for [DailyCandle] data.
 class MfiCalculator {
@@ -15,7 +16,10 @@ class MfiCalculator {
   /// Compute the most recent MFI value.
   ///
   /// Returns null when fewer than [period + 1] candles are available.
-  double? compute(List<DailyCandle> candles, {int period = 14}) {
+  double? compute(
+    List<DailyCandle> candles, {
+    int period = TechnicalDefaults.defaultPeriod,
+  }) {
     final series = computeSeries(candles, period: period);
     for (int i = series.length - 1; i >= 0; i--) {
       if (series[i].$2 != null) return series[i].$2;
@@ -28,7 +32,7 @@ class MfiCalculator {
   /// The first [period] entries have null values.
   List<(DateTime, double?)> computeSeries(
     List<DailyCandle> candles, {
-    int period = 14,
+    int period = TechnicalDefaults.defaultPeriod,
   }) {
     if (candles.length <= period) {
       return candles.map((DailyCandle c) => (c.date, null as double?)).toList();

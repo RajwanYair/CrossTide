@@ -8,6 +8,7 @@ library;
 import 'package:equatable/equatable.dart';
 
 import 'entities.dart';
+import 'technical_defaults.dart';
 
 /// A single ADX data point.
 class AdxResult extends Equatable {
@@ -38,7 +39,10 @@ class AdxCalculator {
   const AdxCalculator();
 
   /// Compute the most recent ADX value.
-  AdxResult? compute(List<DailyCandle> candles, {int period = 14}) {
+  AdxResult? compute(
+    List<DailyCandle> candles, {
+    int period = TechnicalDefaults.defaultPeriod,
+  }) {
     final series = computeSeries(candles, period: period);
     return series.isEmpty ? null : series.last;
   }
@@ -46,7 +50,10 @@ class AdxCalculator {
   /// Compute a full ADX series.
   ///
   /// Requires at least [2 × period] candles for meaningful ADX output.
-  List<AdxResult> computeSeries(List<DailyCandle> candles, {int period = 14}) {
+  List<AdxResult> computeSeries(
+    List<DailyCandle> candles, {
+    int period = TechnicalDefaults.defaultPeriod,
+  }) {
     // ADX needs period bars for DI smoothing + period bars for ADX smoothing
     if (candles.length < 2 * period) return [];
 

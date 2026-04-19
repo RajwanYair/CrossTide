@@ -1,19 +1,14 @@
 import 'package:cross_tide/src/domain/domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/candle_factory.dart';
+
 DailyCandle _ohlc(
   int day, {
   required double high,
   required double low,
   required double close,
-}) => DailyCandle(
-  date: DateTime(2024, 1, 1).add(Duration(days: day)),
-  open: close,
-  high: high,
-  low: low,
-  close: close,
-  volume: 1000000,
-);
+}) => makeOhlc(day, open: close, high: high, low: low, close: close);
 
 List<DailyCandle> _flat(int count, {double price = 100}) => List.generate(
   count,

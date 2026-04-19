@@ -11,6 +11,7 @@ applyTo: "lib/src/presentation/**"
 - Notification deep-links use payload format `ticker:SYMBOL`.
 - Screens follow the pattern: `ConsumerWidget` or `ConsumerStatefulWidget`.
 - Use `domain.` prefix for domain entities to avoid Drift naming conflicts.
+- Keep business rules, indicator calculations, and cache logic out of widgets.
 
 ## Riverpod Notifier methods
 - Do **not** name `Notifier` mutation methods `set` — the `use_setters_to_change_properties` linter requires use of Dart setters for single-assignment patterns, or a descriptive verb (`applyFilter`, `update`, etc.).
@@ -22,3 +23,4 @@ applyTo: "lib/src/presentation/**"
 - **No `TODO` / `FIXME` / `HACK` comments.** Open a GitHub Issue instead.
 - Explicit loop variable types required: `for (final IMarketDataProvider p in list)`.
 - `avoid_dynamic_calls` linter is enabled — all call sites must be statically typed; do not suppress with `as dynamic`.
+- Workspace-level editor defaults are shared from the parent MyScripts folder; keep local presentation settings truly project-specific.

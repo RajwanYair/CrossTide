@@ -1,9 +1,9 @@
 ---
-description: "Run full project health check: analyze, test, format, and build"
+description: "Run the full CrossTide quality gate and report actionable failures"
 agent: "agent"
 tools: [execute, read, search]
 ---
-Run the complete project health check in this exact order:
+Run the complete CrossTide health check in this exact order and report the result of every stage.
 
 ```bash
 flutter pub get
@@ -13,14 +13,18 @@ dart format --set-exit-if-changed lib test
 flutter test --coverage --timeout 30s
 ```
 
-**Pass criteria (all must be true before the check is considered clean):**
+Also audit these policy checks:
+- no `// ignore:` or `// ignore_for_file:` in `lib/` or `test/`
+- no `TODO`, `FIXME`, or `HACK` in `lib/`
+- no workflow drift between `.github/workflows/` and `.github/instructions/ci.instructions.md`
+
+Pass criteria:
 1. `flutter analyze --fatal-infos` — **zero issues** (zero errors, zero warnings, zero infos)
 2. `dart format --set-exit-if-changed lib test` — **exit 0** (no files reformatted)
 3. All tests pass with **zero failures**
 4. Domain coverage = **100%** — verify with PowerShell domain coverage check
 5. Overall coverage **≥ 90%**
-6. **No `// ignore:` pragmas** in `lib/` or `test/` — grep and report any found
-7. **No `TODO` / `FIXME` / `HACK`** in `lib/` — grep and report any found
+6. Generated-code workflow expectations remain coherent if any CI files changed
 
 PowerShell domain coverage check:
 ```powershell
@@ -34,4 +38,4 @@ foreach ($l in $c) {
 Write-Host "Uncovered domain lines: $u"  # must be 0
 ```
 
-Report results for each step. If any step fails, diagnose the root cause and suggest a real code fix — never a suppress pragma or waiver.
+If anything fails, diagnose the root cause and recommend a real fix. Never suggest a suppress pragma, skipped test, or waived quality gate.

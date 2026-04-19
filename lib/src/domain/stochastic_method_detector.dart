@@ -7,13 +7,14 @@ library;
 import 'entities.dart';
 import 'micho_method_detector.dart';
 import 'stochastic_calculator.dart';
+import 'technical_defaults.dart';
 
 class StochasticMethodDetector {
   const StochasticMethodDetector({
     this.stochasticCalculator = const StochasticCalculator(),
     this.oversoldThreshold = 20.0,
     this.overboughtThreshold = 80.0,
-    this.period = 14,
+    this.period = TechnicalDefaults.defaultPeriod,
     this.smoothK = 3,
     this.smoothD = 3,
   });

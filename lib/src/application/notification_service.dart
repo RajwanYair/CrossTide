@@ -127,14 +127,14 @@ class LocalNotificationService implements INotificationService {
     _onTap?.call(response.payload);
   }
 
-  @override
-  Future<void> showCrossUpAlert({
+  /// Common helper — all public show* methods delegate here.
+  Future<void> _showAlert({
+    required int id,
+    required String title,
+    required String body,
     required String ticker,
-    required double close,
-    required double sma200,
+    String? logLabel,
   }) async {
-    final id = ticker.hashCode.abs() % 100000;
-
     const androidDetails = AndroidNotificationDetails(
       _androidChannelId,
       _androidChannelName,
@@ -142,55 +142,49 @@ class LocalNotificationService implements INotificationService {
       importance: Importance.high,
       priority: Priority.high,
     );
-
     const details = NotificationDetails(android: androidDetails);
-
     try {
       await _plugin.show(
         id: id,
-        title: '$ticker — SMA200 Cross-Up!',
-        body:
-            'Close: \$${close.toStringAsFixed(2)} crossed above '
-            'SMA200: \$${sma200.toStringAsFixed(2)}',
+        title: title,
+        body: body,
         notificationDetails: details,
         payload: 'ticker:$ticker',
       );
-      _logger.i('Notification shown for $ticker');
+      _logger.i(logLabel ?? 'Notification shown for $ticker');
     } catch (e) {
       _logger.e('Failed to show notification for $ticker: $e');
     }
   }
 
   @override
+  Future<void> showCrossUpAlert({
+    required String ticker,
+    required double close,
+    required double sma200,
+  }) => _showAlert(
+    id: ticker.hashCode.abs() % 100000,
+    title: '$ticker — SMA200 Cross-Up!',
+    body:
+        'Close: \$${close.toStringAsFixed(2)} crossed above '
+        'SMA200: \$${sma200.toStringAsFixed(2)}',
+    ticker: ticker,
+  );
+
+  @override
   Future<void> showPriceTargetAlert({
     required String ticker,
     required double close,
     required double target,
-  }) async {
-    final id = (ticker.hashCode.abs() + target.hashCode.abs()) % 100000;
-    const androidDetails = AndroidNotificationDetails(
-      _androidChannelId,
-      _androidChannelName,
-      channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const details = NotificationDetails(android: androidDetails);
-    try {
-      await _plugin.show(
-        id: id,
-        title: '$ticker — Price Target Hit! 🎯',
-        body:
-            'Close: \$${close.toStringAsFixed(2)} reached target '
-            '\$${target.toStringAsFixed(2)}',
-        notificationDetails: details,
-        payload: 'ticker:$ticker',
-      );
-      _logger.i('Price target notification shown for $ticker @ \$$target');
-    } catch (e) {
-      _logger.e('Failed to show price target notification: $e');
-    }
-  }
+  }) => _showAlert(
+    id: (ticker.hashCode.abs() + target.hashCode.abs()) % 100000,
+    title: '$ticker — Price Target Hit! 🎯',
+    body:
+        'Close: \$${close.toStringAsFixed(2)} reached target '
+        '\$${target.toStringAsFixed(2)}',
+    ticker: ticker,
+    logLabel: 'Price target notification shown for $ticker @ \$$target',
+  );
 
   @override
   Future<void> showPctMoveAlert({
@@ -201,29 +195,14 @@ class LocalNotificationService implements INotificationService {
   }) async {
     final pct = ((close - prevClose) / prevClose) * 100;
     final sign = pct >= 0 ? '▲' : '▼';
-    final id =
-        (ticker.hashCode.abs() + thresholdPct.hashCode.abs() + 1) % 100000;
-    const androidDetails = AndroidNotificationDetails(
-      _androidChannelId,
-      _androidChannelName,
-      channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
+    await _showAlert(
+      id: (ticker.hashCode.abs() + thresholdPct.hashCode.abs() + 1) % 100000,
+      title: '$ticker — $sign${pct.abs().toStringAsFixed(1)}% Move!',
+      body:
+          'Close: \$${close.toStringAsFixed(2)} '
+          '($sign${pct.abs().toStringAsFixed(1)}% from \$${prevClose.toStringAsFixed(2)})',
+      ticker: ticker,
     );
-    const details = NotificationDetails(android: androidDetails);
-    try {
-      await _plugin.show(
-        id: id,
-        title: '$ticker — $sign${pct.abs().toStringAsFixed(1)}% Move!',
-        body:
-            'Close: \$${close.toStringAsFixed(2)} '
-            '($sign${pct.abs().toStringAsFixed(1)}% from \$${prevClose.toStringAsFixed(2)})',
-        notificationDetails: details,
-        payload: 'ticker:$ticker',
-      );
-    } catch (e) {
-      _logger.e('Failed to show pct-move notification: $e');
-    }
   }
 
   @override
@@ -233,35 +212,20 @@ class LocalNotificationService implements INotificationService {
     required int avgVolume,
     required double ratio,
   }) async {
-    final id = (ticker.hashCode.abs() + 777) % 100000;
-    const androidDetails = AndroidNotificationDetails(
-      _androidChannelId,
-      _androidChannelName,
-      channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
+    final volStr = volume >= 1e6
+        ? '${(volume / 1e6).toStringAsFixed(1)}M'
+        : '${(volume / 1e3).toStringAsFixed(0)}K';
+    final avgStr = avgVolume >= 1e6
+        ? '${(avgVolume / 1e6).toStringAsFixed(1)}M'
+        : '${(avgVolume / 1e3).toStringAsFixed(0)}K';
+    await _showAlert(
+      id: (ticker.hashCode.abs() + 777) % 100000,
+      title: '$ticker — 📊 Volume Spike ${ratio.toStringAsFixed(1)}×!',
+      body: 'Volume: $volStr vs 20-day avg: $avgStr',
+      ticker: ticker,
+      logLabel:
+          'Volume spike notification shown for $ticker (${ratio.toStringAsFixed(1)}×)',
     );
-    const details = NotificationDetails(android: androidDetails);
-    try {
-      final volStr = volume >= 1e6
-          ? '${(volume / 1e6).toStringAsFixed(1)}M'
-          : '${(volume / 1e3).toStringAsFixed(0)}K';
-      final avgStr = avgVolume >= 1e6
-          ? '${(avgVolume / 1e6).toStringAsFixed(1)}M'
-          : '${(avgVolume / 1e3).toStringAsFixed(0)}K';
-      await _plugin.show(
-        id: id,
-        title: '$ticker — 📊 Volume Spike ${ratio.toStringAsFixed(1)}×!',
-        body: 'Volume: $volStr vs 20-day avg: $avgStr',
-        notificationDetails: details,
-        payload: 'ticker:$ticker',
-      );
-      _logger.i(
-        'Volume spike notification shown for $ticker (${ratio.toStringAsFixed(1)}×)',
-      );
-    } catch (e) {
-      _logger.e('Failed to show volume spike notification: $e');
-    }
   }
 
   @override
@@ -269,120 +233,56 @@ class LocalNotificationService implements INotificationService {
     required String ticker,
     required double close,
     required double sma150,
-  }) async {
-    final id = (ticker.hashCode.abs() + 150) % 100000;
-    const androidDetails = AndroidNotificationDetails(
-      _androidChannelId,
-      _androidChannelName,
-      channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const details = NotificationDetails(android: androidDetails);
-    try {
-      await _plugin.show(
-        id: id,
-        title: '$ticker — Micho Method BUY 📈',
-        body:
-            'Close: \$${close.toStringAsFixed(2)} crossed above '
-            'MA150: \$${sma150.toStringAsFixed(2)}',
-        notificationDetails: details,
-        payload: 'ticker:$ticker',
-      );
-      _logger.i('Micho BUY notification shown for $ticker');
-    } catch (e) {
-      _logger.e('Failed to show Micho BUY notification: $e');
-    }
-  }
+  }) => _showAlert(
+    id: (ticker.hashCode.abs() + 150) % 100000,
+    title: '$ticker — Micho Method BUY 📈',
+    body:
+        'Close: \$${close.toStringAsFixed(2)} crossed above '
+        'MA150: \$${sma150.toStringAsFixed(2)}',
+    ticker: ticker,
+    logLabel: 'Micho BUY notification shown for $ticker',
+  );
 
   @override
   Future<void> showMichoSellAlert({
     required String ticker,
     required double close,
     required double sma150,
-  }) async {
-    final id = (ticker.hashCode.abs() + 151) % 100000;
-    const androidDetails = AndroidNotificationDetails(
-      _androidChannelId,
-      _androidChannelName,
-      channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const details = NotificationDetails(android: androidDetails);
-    try {
-      await _plugin.show(
-        id: id,
-        title: '$ticker — Micho Method SELL 📉',
-        body:
-            'Close: \$${close.toStringAsFixed(2)} crossed below '
-            'MA150: \$${sma150.toStringAsFixed(2)}',
-        notificationDetails: details,
-        payload: 'ticker:$ticker',
-      );
-      _logger.i('Micho SELL notification shown for $ticker');
-    } catch (e) {
-      _logger.e('Failed to show Micho SELL notification: $e');
-    }
-  }
+  }) => _showAlert(
+    id: (ticker.hashCode.abs() + 151) % 100000,
+    title: '$ticker — Micho Method SELL 📉',
+    body:
+        'Close: \$${close.toStringAsFixed(2)} crossed below '
+        'MA150: \$${sma150.toStringAsFixed(2)}',
+    ticker: ticker,
+    logLabel: 'Micho SELL notification shown for $ticker',
+  );
 
   @override
   Future<void> showConsensusBuyAlert({
     required String ticker,
     required double close,
     required String description,
-  }) async {
-    final id = (ticker.hashCode.abs() + 200) % 100000;
-    const androidDetails = AndroidNotificationDetails(
-      _androidChannelId,
-      _androidChannelName,
-      channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const details = NotificationDetails(android: androidDetails);
-    try {
-      await _plugin.show(
-        id: id,
-        title: '$ticker — ✅ Consensus BUY',
-        body: 'Close: \$${close.toStringAsFixed(2)} — $description',
-        notificationDetails: details,
-        payload: 'ticker:$ticker',
-      );
-      _logger.i('Consensus BUY notification shown for $ticker');
-    } catch (e) {
-      _logger.e('Failed to show Consensus BUY notification: $e');
-    }
-  }
+  }) => _showAlert(
+    id: (ticker.hashCode.abs() + 200) % 100000,
+    title: '$ticker — ✅ Consensus BUY',
+    body: 'Close: \$${close.toStringAsFixed(2)} — $description',
+    ticker: ticker,
+    logLabel: 'Consensus BUY notification shown for $ticker',
+  );
 
   @override
   Future<void> showConsensusSellAlert({
     required String ticker,
     required double close,
     required String description,
-  }) async {
-    final id = (ticker.hashCode.abs() + 201) % 100000;
-    const androidDetails = AndroidNotificationDetails(
-      _androidChannelId,
-      _androidChannelName,
-      channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const details = NotificationDetails(android: androidDetails);
-    try {
-      await _plugin.show(
-        id: id,
-        title: '$ticker — 🔴 Consensus SELL',
-        body: 'Close: \$${close.toStringAsFixed(2)} — $description',
-        notificationDetails: details,
-        payload: 'ticker:$ticker',
-      );
-      _logger.i('Consensus SELL notification shown for $ticker');
-    } catch (e) {
-      _logger.e('Failed to show Consensus SELL notification: $e');
-    }
-  }
+  }) => _showAlert(
+    id: (ticker.hashCode.abs() + 201) % 100000,
+    title: '$ticker — 🔴 Consensus SELL',
+    body: 'Close: \$${close.toStringAsFixed(2)} — $description',
+    ticker: ticker,
+    logLabel: 'Consensus SELL notification shown for $ticker',
+  );
 
   @override
   Future<void> cancelAll() async {

@@ -1,21 +1,16 @@
-import 'package:cross_tide/src/domain/entities.dart';
 import 'package:cross_tide/src/domain/roc_calculator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-DailyCandle _candle(int day, {required double close}) => DailyCandle(
-  date: DateTime(2024, 1, 1).add(Duration(days: day)),
-  open: close,
-  high: close + 1,
-  low: close - 1,
-  close: close,
-  volume: 1000000,
-);
+import '../helpers/candle_factory.dart';
+
+DailyCandle _candle(int day, {required double close}) =>
+    makeOhlc(day, close: close);
 
 List<DailyCandle> _flat(int count, {double price = 100}) =>
-    List.generate(count, (i) => _candle(i, close: price));
+    makeFlat(count, price: price);
 
 List<DailyCandle> _trending(int count, {double base = 100, double step = 1}) =>
-    List.generate(count, (i) => _candle(i, close: base + i * step));
+    makeTrending(count, base: base, step: step);
 
 void main() {
   const calc = RocCalculator();

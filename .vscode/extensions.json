@@ -7,19 +7,10 @@
     "Nash.awesome-flutter-snippets",
     "localizely.flutter-intl",
     // ── Code quality ──────────────────────────────────────────────────────
-    "usernamehw.errorlens",
     "ryanluker.vscode-coverage-gutters",
     "pflannery.vscode-versionlens",
-    // ── Git / GitHub ─────────────────────────────────────────────────────
-    "eamodio.gitlens",
-    "GitHub.vscode-pull-request-github",
-    "GitHub.copilot-chat",
-    // ── Config / YAML ─────────────────────────────────────────────────────
-    "redhat.vscode-yaml",
-    "editorconfig.editorconfig",
     // ── Pre-commit hooks integration ──────────────────────────────────────
     "mkhl.shfmt",
-    "timonwong.shellcheck",
     // ── UI helpers ────────────────────────────────────────────────────────
     "naumovs.color-highlight",
     // ── Debugging & logging ───────────────────────────────────────────────

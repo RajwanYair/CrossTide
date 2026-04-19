@@ -1,6 +1,7 @@
-import 'package:cross_tide/src/domain/entities.dart';
 import 'package:cross_tide/src/domain/vwap_calculator.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/candle_factory.dart';
 
 DailyCandle _candle(
   int day, {
@@ -8,8 +9,8 @@ DailyCandle _candle(
   required double low,
   required double close,
   int volume = 1000000,
-}) => DailyCandle(
-  date: DateTime(2024, 1, 1).add(Duration(days: day)),
+}) => makeOhlc(
+  day,
   open: close,
   high: high,
   low: low,

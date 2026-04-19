@@ -1,20 +1,10 @@
 import 'package:cross_tide/src/domain/domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/signal_factory.dart';
+
 void main() {
   const aggregator = SignalAggregator();
-
-  MethodSignal makeSignal({
-    required bool triggered,
-    required AlertType type,
-    required String method,
-  }) => MethodSignal(
-    isTriggered: triggered,
-    alertType: type,
-    ticker: 'TEST',
-    methodName: method,
-    evaluatedAt: DateTime(2024, 1, 1),
-  );
 
   group('SignalAggregator', () {
     test('const constructor', () {
@@ -33,24 +23,24 @@ void main() {
     test('counts buys and sells correctly', () {
       final signals = [
         makeSignal(
-          triggered: true,
-          type: AlertType.michoMethodBuy,
-          method: 'Micho',
+          isTriggered: true,
+          alertType: AlertType.michoMethodBuy,
+          methodName: 'Micho',
         ),
         makeSignal(
-          triggered: true,
-          type: AlertType.rsiMethodBuy,
-          method: 'RSI',
+          isTriggered: true,
+          alertType: AlertType.rsiMethodBuy,
+          methodName: 'RSI',
         ),
         makeSignal(
-          triggered: true,
-          type: AlertType.macdMethodSell,
-          method: 'MACD',
+          isTriggered: true,
+          alertType: AlertType.macdMethodSell,
+          methodName: 'MACD',
         ),
         makeSignal(
-          triggered: false,
-          type: AlertType.bollingerMethodBuy,
-          method: 'Bollinger',
+          isTriggered: false,
+          alertType: AlertType.bollingerMethodBuy,
+          methodName: 'Bollinger',
         ),
       ];
       final result = aggregator.aggregate(ticker: 'AAPL', signals: signals);
@@ -65,14 +55,14 @@ void main() {
     test('neutral when equal buys and sells', () {
       final signals = [
         makeSignal(
-          triggered: true,
-          type: AlertType.michoMethodBuy,
-          method: 'Micho',
+          isTriggered: true,
+          alertType: AlertType.michoMethodBuy,
+          methodName: 'Micho',
         ),
         makeSignal(
-          triggered: true,
-          type: AlertType.rsiMethodSell,
-          method: 'RSI',
+          isTriggered: true,
+          alertType: AlertType.rsiMethodSell,
+          methodName: 'RSI',
         ),
       ];
       final result = aggregator.aggregate(ticker: 'AAPL', signals: signals);
@@ -82,24 +72,24 @@ void main() {
     test('strength calculation', () {
       final signals = [
         makeSignal(
-          triggered: true,
-          type: AlertType.michoMethodBuy,
-          method: 'Micho',
+          isTriggered: true,
+          alertType: AlertType.michoMethodBuy,
+          methodName: 'Micho',
         ),
         makeSignal(
-          triggered: true,
-          type: AlertType.rsiMethodBuy,
-          method: 'RSI',
+          isTriggered: true,
+          alertType: AlertType.rsiMethodBuy,
+          methodName: 'RSI',
         ),
         makeSignal(
-          triggered: true,
-          type: AlertType.macdMethodBuy,
-          method: 'MACD',
+          isTriggered: true,
+          alertType: AlertType.macdMethodBuy,
+          methodName: 'MACD',
         ),
         makeSignal(
-          triggered: false,
-          type: AlertType.bollingerMethodBuy,
-          method: 'Bollinger',
+          isTriggered: false,
+          alertType: AlertType.bollingerMethodBuy,
+          methodName: 'Bollinger',
         ),
       ];
       final result = aggregator.aggregate(ticker: 'AAPL', signals: signals);
@@ -110,9 +100,9 @@ void main() {
     test('equatable', () {
       final signals = [
         makeSignal(
-          triggered: true,
-          type: AlertType.michoMethodBuy,
-          method: 'Micho',
+          isTriggered: true,
+          alertType: AlertType.michoMethodBuy,
+          methodName: 'Micho',
         ),
       ];
       final r1 = aggregator.aggregate(ticker: 'AAPL', signals: signals);

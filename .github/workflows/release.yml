@@ -15,6 +15,10 @@ on:
     tags:
       - 'v[0-9]*.[0-9]*.[0-9]*'
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write   # required to create the GitHub Release
 
@@ -41,6 +45,19 @@ jobs:
 
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Upload generated code artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-code
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            lib/**/*.g.dart
+            lib/**/*.drift.dart
+            lib/**/*.freezed.dart
+            test/**/*.mocks.dart
+
       - run: flutter analyze --fatal-infos
       # No --coverage here; full coverage is enforced in ci.yml on every PR.
       - run: flutter test
@@ -81,7 +98,11 @@ jobs:
         run: flutter config --enable-windows-desktop
 
       - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Restore generated code
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code
 
       - name: Build Windows release
         run: |
@@ -151,7 +172,11 @@ jobs:
           echo "sem=${TAG#v}" >> "$GITHUB_OUTPUT"
 
       - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Restore generated code
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code
 
       - name: Build release APK
         # android/app/build.gradle.kts uses the debug keystore for release builds.

@@ -24,6 +24,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../../domain/entities.dart';
+import 'http_constants.dart';
 import 'market_data_provider.dart';
 import 'proxy_detector.dart';
 
@@ -71,7 +72,7 @@ class TiingoProvider implements IMarketDataProvider {
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'User-Agent': 'CrossTide/1.0',
+            'User-Agent': HttpConstants.userAgent,
           },
           receiveTimeout: const Duration(seconds: 15),
           sendTimeout: const Duration(seconds: 10),

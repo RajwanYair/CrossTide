@@ -24,6 +24,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../../domain/entities.dart';
+import 'http_constants.dart';
 import 'market_data_provider.dart';
 import 'proxy_detector.dart';
 
@@ -59,7 +60,7 @@ class CoinGeckoProvider implements IMarketDataProvider {
         queryParameters: {'vs_currency': 'usd', 'days': '730'},
         options: Options(
           headers: {
-            'User-Agent': 'CrossTide/1.0',
+            'User-Agent': HttpConstants.userAgent,
             'Accept': 'application/json',
           },
           receiveTimeout: const Duration(seconds: 15),

@@ -15,23 +15,25 @@ applyTo: "lib/src/application/**"
 2. Compute SMA200 + SMA150 (always up-to-date for display).
 3. SMA cross-up evaluations (SMA50 / SMA150 / SMA200).
 4. Micho Method BUY / SELL (idempotent via candle-date dedup on `lastMichoBuyAt`/`lastMichoSellAt`).
-5. RSI / MACD / Bollinger method evaluations — collect signals for consensus.
+5. Secondary method evaluations — RSI, MACD, Bollinger, Stochastic, OBV, ADX, CCI, SAR, Williams %R, MFI, SuperTrend.
 6. **Consensus Engine** — combine all `MethodSignal` results; fire consensus BUY (GREEN) or SELL (RED) when Micho + ≥1 other agree (idempotent via `lastConsensusBuyAt`/`lastConsensusSellAt`).
-7. Golden Cross / Death Cross.
-8. Price targets, pct-move, volume spike checks.
+7. Weighted consensus or calibration-related logic must stay consistent with domain signal typing when touched.
+8. Golden Cross / Death Cross.
+9. Price targets, pct-move, volume spike checks.
 
 ## Adding a new method
 - Create the detector in `lib/src/domain/` returning `MethodSignal` objects.
 - Add a `final _detector = const XyzMethodDetector();` field to `RefreshService`.
 - Invoke `evaluateBoth()` → add results to `allMethodSignals` list.
-- The consensus engine picks them up automatically.
-- Add `AlertType` entries in `entities.dart` and extend `INotificationService` if method-specific notifications are needed.
+- Update both consensus engines if the method contributes to signal classification.
+- Add `AlertType` entries in `entities.dart` and extend `INotificationService` only if method-specific notifications are needed.
 - Add idempotency columns to the DB if the method's alerts should be candle-date deduped.
 
 ## Notification interface
 - `INotificationService` is the abstract interface — all show methods return `Future<void>`.
 - Every concrete implementation (Local, Fallback) must implement all methods.
 - Test doubles in `test/` must also be updated when new methods are added.
+- Prefer keeping method-specific delivery optional unless product behavior explicitly requires it.
 
 ## Code quality — zero tolerance
 - `flutter analyze --fatal-infos` must report **zero issues** in application files.
@@ -39,3 +41,4 @@ applyTo: "lib/src/application/**"
 - **No `TODO` / `FIXME` / `HACK` comments.** Open a GitHub Issue instead.
 - Explicit loop variable types: `for (final MethodSignal signal in signals)`.
 - Use `unawaited()` for fire-and-forget async calls (webhooks).
+- Keep orchestration code declarative and ordered; avoid embedding indicator math in application files.
