@@ -78,7 +78,7 @@ dev_dependencies:
   json_serializable: ^6.9.4
   drift_dev: ^2.24.0
   mockito: ^5.4.5
-  mocktail: ^1.0.4
+  mocktail: ^1.0.5
   # Windows MSIX installer packaging
   msix: ^3.16.7
 
