@@ -1,0 +1,106 @@
+/**
+ * Responsive Layout — mobile-first breakpoints and utility classes.
+ * @layer layout-responsive
+ *
+ * Breakpoints:
+ *   sm: 480px, md: 768px, lg: 1024px, xl: 1280px
+ */
+@layer layout-responsive {
+  /* ── Mobile-first base ── */
+  .container {
+    width: 100%;
+    padding-inline: var(--space-3, 0.75rem);
+    margin-inline: auto;
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-4, 1rem);
+    grid-template-columns: 1fr;
+  }
+
+  .hide-mobile {
+    display: none;
+  }
+
+  .show-mobile {
+    display: block;
+  }
+
+  /* ── Navigation responsive ── */
+  .nav-links {
+    flex-wrap: wrap;
+    gap: var(--space-2, 0.5rem);
+  }
+
+  /* ── Table responsive ── */
+  .watchlist-table {
+    font-size: 0.85rem;
+  }
+
+  /* ── sm (480px) ── */
+  @media (min-width: 480px) {
+    .container {
+      padding-inline: var(--space-4, 1rem);
+    }
+
+    .grid-sm-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ── md (768px) ── */
+  @media (min-width: 768px) {
+    .container {
+      max-width: 720px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hide-mobile {
+      display: revert;
+    }
+
+    .show-mobile {
+      display: none;
+    }
+
+    .watchlist-table {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* ── lg (1024px) ── */
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 960px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-lg-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* ── xl (1280px) ── */
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1200px;
+    }
+  }
+
+  /* ── Touch targets ── */
+  @media (pointer: coarse) {
+    button,
+    .nav-link,
+    .btn {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+}
