@@ -4,5 +4,4 @@ node_modules
 build
 windows
 *.md
-CHANGELOG.md
 LICENSE

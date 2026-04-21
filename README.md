@@ -43,7 +43,7 @@ npm run dev        # http://localhost:5173
 
 ## Architecture
 
-```
+```text
 src/
   domain/   Pure calculators (SMA, EMA, RSI, MACD, consensus)
   core/     State, cache, config, fetch utilities
@@ -80,7 +80,7 @@ npm run preview    # Serve dist/ at http://localhost:4173
 
 ## Signal Logic
 
-```
+```text
 close[t]    = latest close
 sma200[t]   = 200-day simple moving average
 

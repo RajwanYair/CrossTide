@@ -4,7 +4,7 @@ CrossTide Web is a browser-based stock monitoring dashboard built with vanilla T
 
 ## Layers
 
-```
+```text
 ┌──────────────────────────┐
 │     UI  (src/ui/)        │  Views, router, theme toggle
 ├──────────────────────────┤
@@ -20,7 +20,7 @@ CrossTide Web is a browser-based stock monitoring dashboard built with vanilla T
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── domain/           # Pure functions: SMA, EMA, RSI, MACD, consensus engine
 │   ├── sma-calculator.ts

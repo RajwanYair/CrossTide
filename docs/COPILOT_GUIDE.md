@@ -15,7 +15,7 @@ Coding conventions, prompt patterns, and guardrails for using GitHub Copilot in 
 
 ## Architecture
 
-```
+```text
 src/
   domain/   Pure calculators (SMA, EMA, RSI, MACD, consensus) -- zero side effects
   core/     State, cache, config, fetch -- may have side effects
@@ -133,7 +133,7 @@ describe("computeSma", () => {
 
 ### Add a new technical indicator
 
-```
+```text
 Create a pure function in src/domain/ that computes [indicator name].
 Follow computeSma pattern: accept DailyCandle[] + config params, return series or null.
 Add unit tests in tests/unit/domain/ covering: exact values, insufficient data, edge cases.
@@ -142,7 +142,7 @@ Import makeCandles from tests/helpers/candle-factory.ts.
 
 ### Add a new view
 
-```
+```text
 Create a view renderer in src/ui/.
 Add route in router.ts.
 Add section in index.html with id="view-[name]".
@@ -151,7 +151,7 @@ Follow the watchlist.ts pattern for DOM rendering.
 
 ### Write tests for domain logic
 
-```
+```text
 Write unit tests for [function name] in tests/unit/domain/.
 Import makeCandles from tests/helpers/candle-factory.ts.
 Cover: normal operation, edge cases (empty input, insufficient data),

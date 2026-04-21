@@ -28,6 +28,13 @@ export default tseslint.config(
     },
   },
   {
+    files: ["tests/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+    },
+  },
+  {
     ignores: [
       "dist/**",
       "coverage/**",
