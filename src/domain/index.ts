@@ -44,3 +44,4 @@ export { evaluate as evaluateSar } from "./sar-method";
 export { evaluate as evaluateWilliamsR } from "./williams-r-method";
 export { evaluate as evaluateMfi } from "./mfi-method";
 export { evaluate as evaluateSuperTrend } from "./supertrend-method";
+export { aggregateSignals, aggregateConsensus } from "./signal-aggregator";
