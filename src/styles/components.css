@@ -197,4 +197,58 @@
   tr[data-ticker] {
     cursor: pointer;
   }
+
+  /* 52W Range bar */
+  .range-bar {
+    width: 80px;
+    height: 6px;
+    background: var(--bg-app);
+    border-radius: 3px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .range-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+  }
+
+  /* Volume bar */
+  .vol-bar {
+    width: 48px;
+    height: 4px;
+    background: var(--bg-app);
+    border-radius: 2px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: var(--sp-xs);
+  }
+
+  .vol-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .vol-high .vol-fill {
+    background: var(--signal-buy);
+  }
+
+  .vol-normal .vol-fill {
+    background: var(--accent);
+  }
+
+  .vol-low .vol-fill {
+    background: var(--text-muted);
+  }
+
+  .cell-sparkline {
+    padding: 2px;
+  }
+
+  .cell-sparkline svg {
+    vertical-align: middle;
+  }
 }

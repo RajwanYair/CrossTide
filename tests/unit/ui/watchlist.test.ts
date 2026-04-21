@@ -19,6 +19,10 @@ function makeQuote(
     change: number;
     changePercent: number;
     volume: number;
+    avgVolume: number;
+    high52w: number;
+    low52w: number;
+    closes30d: readonly number[];
     consensus: ConsensusResult | null;
   }> = {},
 ) {
@@ -28,6 +32,10 @@ function makeQuote(
     change: overrides.change ?? 1.5,
     changePercent: overrides.changePercent ?? 1.5,
     volume: overrides.volume ?? 1_000_000,
+    avgVolume: overrides.avgVolume ?? 800_000,
+    high52w: overrides.high52w ?? 200,
+    low52w: overrides.low52w ?? 50,
+    closes30d: overrides.closes30d ?? [95, 97, 100],
     consensus: overrides.consensus ?? null,
   };
 }
@@ -118,5 +126,36 @@ describe("renderWatchlist", () => {
 
     const html = document.getElementById("watchlist-body")!.innerHTML;
     expect(html).toContain("change-negative");
+  });
+
+  it("renders sparkline SVG for 30d closes", () => {
+    const quotes = new Map([
+      ["AAPL", makeQuote("AAPL", { closes30d: [100, 102, 105, 103, 108] })],
+    ]);
+    renderWatchlist(makeConfig(["AAPL"]), quotes);
+
+    const html = document.getElementById("watchlist-body")!.innerHTML;
+    expect(html).toContain("<svg");
+  });
+
+  it("renders 52W range bar", () => {
+    const quotes = new Map([
+      ["AAPL", makeQuote("AAPL", { price: 150, low52w: 100, high52w: 200 })],
+    ]);
+    renderWatchlist(makeConfig(["AAPL"]), quotes);
+
+    const html = document.getElementById("watchlist-body")!.innerHTML;
+    expect(html).toContain("range-bar");
+    expect(html).toContain("range-fill");
+  });
+
+  it("renders volume bar relative to average", () => {
+    const quotes = new Map([
+      ["AAPL", makeQuote("AAPL", { volume: 1_500_000, avgVolume: 1_000_000 })],
+    ]);
+    renderWatchlist(makeConfig(["AAPL"]), quotes);
+
+    const html = document.getElementById("watchlist-body")!.innerHTML;
+    expect(html).toContain("vol-bar");
   });
 });
