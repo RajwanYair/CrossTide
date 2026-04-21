@@ -32,3 +32,15 @@ export { computeSuperTrend, computeSuperTrendSeries } from "./supertrend-calcula
 export type { SuperTrendPoint } from "./supertrend-calculator";
 export { computeVwap, computeVwapSeries } from "./vwap-calculator";
 export type { VwapPoint } from "./vwap-calculator";
+export { evaluate as evaluateMicho } from "./micho-method";
+export { evaluate as evaluateRsi } from "./rsi-method";
+export { evaluate as evaluateMacd } from "./macd-method";
+export { evaluate as evaluateBollinger } from "./bollinger-method";
+export { evaluate as evaluateStochastic } from "./stochastic-method";
+export { evaluate as evaluateObv } from "./obv-method";
+export { evaluate as evaluateAdx } from "./adx-method";
+export { evaluate as evaluateCci } from "./cci-method";
+export { evaluate as evaluateSar } from "./sar-method";
+export { evaluate as evaluateWilliamsR } from "./williams-r-method";
+export { evaluate as evaluateMfi } from "./mfi-method";
+export { evaluate as evaluateSuperTrend } from "./supertrend-method";
