@@ -1,20 +1,10 @@
 {
   "recommendations": [
-    // ── Dart & Flutter core ──────────────────────────────────────────────
-    "Dart-Code.dart-code",
-    "Dart-Code.flutter",
-    "robert-brunhage.flutter-riverpod-snippets",
-    "Nash.awesome-flutter-snippets",
-    "localizely.flutter-intl",
-    // ── Code quality ──────────────────────────────────────────────────────
-    "ryanluker.vscode-coverage-gutters",
-    "pflannery.vscode-versionlens",
-    // ── Pre-commit hooks integration ──────────────────────────────────────
-    "mkhl.shfmt",
-    // ── UI helpers ────────────────────────────────────────────────────────
-    "naumovs.color-highlight",
-    // ── Debugging & logging ───────────────────────────────────────────────
-    "wallabyjs.console-ninja"
-  ],
-  "unwantedRecommendations": []
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "stylelint.vscode-stylelint",
+    "bradlc.vscode-tailwindcss",
+    "vitest.explorer",
+    "ms-vscode.js-debug"
+  ]
 }

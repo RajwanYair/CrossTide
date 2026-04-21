@@ -1,25 +1,24 @@
 version: 2
 updates:
-  - package-ecosystem: "pub"
-    directory: "/"
+  - package-ecosystem: npm
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
     labels:
-      - "dependencies"
-      - "dart"
-    commit-message:
-      prefix: "deps"
+      - dependencies
+    groups:
+      dev-dependencies:
+        dependency-type: development
+      production-dependencies:
+        dependency-type: production
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: weekly
+      day: monday
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "ci"
-    commit-message:
-      prefix: "ci"
+      - ci

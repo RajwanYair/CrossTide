@@ -1,0 +1,200 @@
+@layer components {
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sp-md) var(--sp-lg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-actions {
+    display: flex;
+    gap: var(--sp-sm);
+  }
+
+  input[type="text"] {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-xs) var(--sp-md);
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast);
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--border-focus);
+  }
+
+  select {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-xs) var(--sp-md);
+    color: var(--text-primary);
+  }
+
+  button {
+    background: var(--bg-card-hover);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-xs) var(--sp-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+
+  button:hover {
+    background: var(--border);
+  }
+
+  .btn-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  .btn-danger:hover {
+    background: var(--danger);
+    color: var(--text-primary);
+  }
+
+  .empty-state {
+    padding: var(--sp-xl);
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .signal-buy {
+    color: var(--signal-buy);
+    font-weight: 600;
+  }
+
+  .signal-sell {
+    color: var(--signal-sell);
+    font-weight: 600;
+  }
+
+  .signal-neutral {
+    color: var(--signal-neutral);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px var(--sp-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+  }
+
+  .badge-buy {
+    background: color-mix(in srgb, var(--signal-buy) 20%, transparent);
+    color: var(--signal-buy);
+  }
+
+  .badge-sell {
+    background: color-mix(in srgb, var(--signal-sell) 20%, transparent);
+    color: var(--signal-sell);
+  }
+
+  .badge-neutral {
+    background: color-mix(in srgb, var(--signal-neutral) 20%, transparent);
+    color: var(--signal-neutral);
+  }
+
+  .change-positive {
+    color: var(--signal-buy);
+  }
+
+  .change-negative {
+    color: var(--signal-sell);
+  }
+
+  .setting-group {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-md);
+    padding: var(--sp-md) var(--sp-lg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .setting-group label {
+    min-width: 100px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .consensus-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--sp-md);
+    padding: var(--sp-md);
+  }
+
+  .method-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-md);
+    padding: var(--sp-md);
+    background: var(--bg-app);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  .method-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .method-indicator.buy {
+    background: var(--signal-buy);
+  }
+
+  .method-indicator.sell {
+    background: var(--signal-sell);
+  }
+
+  .method-indicator.neutral {
+    background: var(--signal-neutral);
+  }
+
+  .method-name {
+    font-weight: 500;
+  }
+
+  .method-detail {
+    margin-left: auto;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  .ticker-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--sp-xs);
+    font-size: var(--font-size-base);
+  }
+
+  .ticker-remove:hover {
+    color: var(--danger);
+  }
+
+  tr:hover td {
+    background: var(--bg-card-hover);
+  }
+
+  tr[data-ticker] {
+    cursor: pointer;
+  }
+}

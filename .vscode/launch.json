@@ -2,65 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "CrossTide (Windows)",
-      "type": "dart",
+      "type": "chrome",
       "request": "launch",
-      "program": "lib/main.dart",
-      "args": [
-        "-d",
-        "windows"
-      ],
-      "flutterMode": "debug"
-    },
-    {
-      "name": "CrossTide (Windows — Profile)",
-      "type": "dart",
-      "request": "launch",
-      "program": "lib/main.dart",
-      "args": [
-        "-d",
-        "windows"
-      ],
-      "flutterMode": "profile"
-    },
-    {
-      "name": "CrossTide (Android)",
-      "type": "dart",
-      "request": "launch",
-      "program": "lib/main.dart",
-      "args": [
-        "-d",
-        "android"
-      ],
-      "flutterMode": "debug"
-    },
-    {
-      "name": "CrossTide (Android — Profile)",
-      "type": "dart",
-      "request": "launch",
-      "program": "lib/main.dart",
-      "args": [
-        "-d",
-        "android"
-      ],
-      "flutterMode": "profile"
-    },
-    {
-      "name": "Run Tests",
-      "type": "dart",
-      "request": "launch",
-      "program": "test"
-    },
-    {
-      "name": "Run Tests with Coverage",
-      "type": "dart",
-      "request": "launch",
-      "program": "test",
-      "args": [
-        "--coverage",
-        "--timeout",
-        "30s"
-      ]
+      "name": "Launch CrossTide (Chrome)",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src",
+      "preLaunchTask": "dev server"
     }
   ]
 }

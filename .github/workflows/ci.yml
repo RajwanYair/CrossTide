@@ -4,15 +4,15 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/ISSUE_TEMPLATE/**'
+      - "**.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
   pull_request:
     branches: [main]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/ISSUE_TEMPLATE/**'
+      - "**.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -21,85 +21,60 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  FLUTTER_VERSION: '3.x'
-
 jobs:
-  analyze-and-test:
-    name: Analyze & Test
+  lint-test-build:
+    name: Lint, Test & Build
     runs-on: ubuntu-latest
-    timeout-minutes: 17   # hard kill at 1020 s — well above expected 60 s run
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create .env stub (gitignored asset)
-        run: touch .env
-
-      - uses: subosito/flutter-action@v2
+      - uses: actions/setup-node@v4
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
-        run: flutter pub get
+        run: npm ci
 
-      - name: Generate code (Drift, Freezed, etc.)
-        run: dart run build_runner build --delete-conflicting-outputs
+      - name: TypeScript check
+        run: npx tsc --noEmit
 
-      - name: Upload generated code artifact
+      - name: ESLint
+        run: npx eslint . --max-warnings 0
+
+      - name: Stylelint
+        run: npx stylelint "src/**/*.css" --max-warnings 0
+
+      - name: HTMLHint
+        run: npx htmlhint index.html
+
+      - name: Prettier check
+        run: npx prettier --check .
+
+      - name: Unit tests
+        run: npx vitest run --coverage
+
+      - name: Build
+        run: npx vite build
+
+      - name: Bundle size check
+        run: node scripts/check-bundle-size.mjs
+
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: generated-code
-          retention-days: 1
-          if-no-files-found: error
-          path: |
-            lib/**/*.g.dart
-            lib/**/*.drift.dart
-            lib/**/*.freezed.dart
-            test/**/*.mocks.dart
+          name: dist
+          path: dist/
+          retention-days: 7
 
-      - name: Analyze
-        run: flutter analyze --fatal-infos
-
-      - name: Format check
-        run: dart format --set-exit-if-changed lib test
-
-      - name: Run tests with coverage
-        run: flutter test --coverage --timeout 30s
-
-      - name: Enforce 100% domain coverage
-        run: |
-          # Count all uncovered lines (DA:line,0) inside domain source files.
-          UNCOVERED=$(awk '
-            /^SF:lib\/src\/domain\// { in_domain=1; next }
-            /^end_of_record/         { in_domain=0; next }
-            in_domain && /^DA:[0-9]+,0$/ { count++ }
-            END { print count+0 }
-          ' coverage/lcov.info)
-          echo "Uncovered domain lines: $UNCOVERED"
-          if [ "$UNCOVERED" -gt 0 ]; then
-            # List the offending files and lines for easy debugging
-            awk '
-              /^SF:lib\/src\/domain\// { file=$0; sub(/^SF:/,"",file); next }
-              /^end_of_record/         { file=""; next }
-              file && /^DA:[0-9]+,0$/ {
-                line=$0; sub(/^DA:/,"",line); sub(/,0$/,"",line)
-                print "  " file ":" line
-              }
-            ' coverage/lcov.info
-            echo "::error::Domain coverage is not 100% — $UNCOVERED lines uncovered."
-            exit 1
-          fi
-
-      - name: Upload coverage to Codecov
+      - name: Upload coverage
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: codecov/codecov-action@v5
+        uses: actions/upload-artifact@v4
         with:
-          file: coverage/lcov.info
-          fail_ci_if_error: false
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          name: coverage
+          path: coverage/
+          retention-days: 7
 
   dependency-review:
     name: Dependency Review
@@ -111,74 +86,3 @@ jobs:
       - uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: high
-
-  build-windows:
-    name: Build (Windows)
-    runs-on: windows-latest
-    needs: analyze-and-test
-    # Only build on PRs — push-to-main is covered by release.yml on tag push.
-    # Running a full Windows build on every commit is unnecessary and expensive.
-    if: github.event_name == 'pull_request'
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create .env stub (gitignored asset)
-        shell: bash
-        run: touch .env
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Enable Windows desktop
-        run: flutter config --enable-windows-desktop
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Restore generated code
-        uses: actions/download-artifact@v4
-        with:
-          name: generated-code
-
-      - name: Build Windows
-        run: flutter build windows --release
-
-  build-android:
-    name: Build (Android Debug)
-    runs-on: ubuntu-latest
-    needs: analyze-and-test
-    # Only build on PRs — same rationale as build-windows above.
-    if: github.event_name == 'pull_request'
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create .env stub (gitignored asset)
-        run: touch .env
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: 'gradle'
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Restore generated code
-        uses: actions/download-artifact@v4
-        with:
-          name: generated-code
-
-      - name: Build Android APK (debug, no signing)
-        run: flutter build apk --debug

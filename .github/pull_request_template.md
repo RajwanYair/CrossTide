@@ -12,13 +12,12 @@ Brief description of what this PR does.
 
 ## Quality Gate Checklist
 
-- [ ] `flutter analyze --fatal-infos` — **zero issues** (errors, warnings, infos)
-- [ ] `dart format --set-exit-if-changed lib test` — **exit 0** (no reformatted files)
-- [ ] All tests pass: `flutter test --coverage --timeout 30s`
-- [ ] Domain coverage = **100%**
-- [ ] Overall coverage **≥ 90%**
-- [ ] No `// ignore:` or `// ignore_for_file:` pragmas in `lib/` or `test/`
-- [ ] No `TODO` / `FIXME` / `HACK` comments in `lib/`
+- [ ] `tsc --noEmit` — **zero type errors**
+- [ ] `eslint . --max-warnings 0` — **zero lint issues**
+- [ ] `stylelint "src/**/*.css" --max-warnings 0` — **zero CSS issues**
+- [ ] `prettier --check .` — **exit 0**
+- [ ] All tests pass: `vitest run --coverage`
+- [ ] Coverage **≥ 90%** statements
+- [ ] Bundle size within budget (`node scripts/check-bundle-size.mjs`)
 - [ ] No API keys or secrets committed
 - [ ] README/docs updated if public behavior changed
-- [ ] Explicit types on for-loop variables (no `for (final x in list)`)

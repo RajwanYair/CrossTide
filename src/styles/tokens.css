@@ -1,0 +1,65 @@
+@layer tokens, themes, base, layout, components;
+
+@layer tokens {
+  :root {
+    /* Colors — semantic */
+    --bg-app: #0d1117;
+    --bg-card: #161b22;
+    --bg-card-hover: #1c2128;
+    --bg-input: #0d1117;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #484f58;
+    --accent: #58a6ff;
+    --accent-hover: #79c0ff;
+    --border: #30363d;
+    --border-focus: #58a6ff;
+    --signal-buy: #3fb950;
+    --signal-sell: #f85149;
+    --signal-neutral: #8b949e;
+    --danger: #f85149;
+    --danger-hover: #da3633;
+
+    /* Spacing */
+    --sp-xs: 4px;
+    --sp-sm: 8px;
+    --sp-md: 16px;
+    --sp-lg: 24px;
+    --sp-xl: 32px;
+
+    /* Typography */
+    --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+    --font-size-sm: 0.8125rem;
+    --font-size-base: 0.875rem;
+    --font-size-lg: 1rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --line-height: 1.5;
+
+    /* Borders */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+  }
+}
+
+@layer themes {
+  [data-theme="light"] {
+    --bg-app: #f6f8fa;
+    --bg-card: #fff;
+    --bg-card-hover: #f3f4f6;
+    --bg-input: #f6f8fa;
+    --text-primary: #1f2328;
+    --text-secondary: #656d76;
+    --text-muted: #8b949e;
+    --border: #d0d7de;
+    --border-focus: #0969da;
+    --accent: #0969da;
+    --accent-hover: #0550ae;
+  }
+}

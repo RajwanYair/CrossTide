@@ -2,306 +2,64 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "flutter: pub get",
+      "label": "dev server",
       "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "pub-get"
-      ],
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "flutter: build_runner",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "build-runner"
-      ],
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "flutter: build_runner watch",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "build-runner-watch"
-      ],
-      "group": "build",
+      "command": "npx vite",
       "isBackground": true,
-      "problemMatcher": []
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE",
+          "endsPattern": "ready in"
+        }
+      },
+      "group": "build"
     },
     {
-      "label": "flutter: analyze",
+      "label": "build",
       "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "analyze"
-      ],
-      "group": "test",
-      "problemMatcher": []
+      "command": "npx vite build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
-      "label": "flutter: test",
+      "label": "test",
       "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "test"
-      ],
+      "command": "npx vitest run",
       "group": {
         "kind": "test",
         "isDefault": true
-      },
-      "problemMatcher": []
+      }
     },
     {
-      "label": "flutter: format check",
+      "label": "test watch",
       "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "format-check"
-      ],
-      "group": "test",
-      "problemMatcher": []
+      "command": "npx vitest",
+      "isBackground": true,
+      "group": "test"
     },
     {
-      "label": "flutter: build windows",
+      "label": "lint",
       "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "build-windows"
-      ],
-      "group": "build",
-      "problemMatcher": []
+      "command": "npx eslint . --max-warnings 0",
+      "group": "test"
     },
     {
-      "label": "flutter: test coverage",
+      "label": "typecheck",
       "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "test-coverage"
-      ],
-      "group": "test",
-      "problemMatcher": []
+      "command": "npx tsc --noEmit",
+      "group": "test"
     },
     {
-      "label": "flutter: format",
+      "label": "ci",
       "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "format"
-      ],
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "flutter: build android debug",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "build-android-debug"
-      ],
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "dev: full health check",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "full-health-check"
-      ],
-      "group": "test",
-      "problemMatcher": []
-    },
-    {
-      "label": "dev: domain coverage check",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "domain-coverage-check"
-      ],
-      "group": "test",
-      "detail": "Runs tests with coverage then verifies domain layer is 100% covered",
-      "problemMatcher": []
-    },
-    {
-      "label": "dev: pre-commit run all",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "pre-commit-run-all"
-      ],
-      "group": "test",
-      "problemMatcher": []
-    },
-    {
-      "label": "release: bump patch",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "release-bump",
-        "-BumpType",
-        "patch"
-      ],
-      "group": "build",
-      "problemMatcher": [],
-      "detail": "Requires GitHub CLI (gh) to be installed and authenticated"
-    },
-    {
-      "label": "release: bump minor",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "release-bump",
-        "-BumpType",
-        "minor"
-      ],
-      "group": "build",
-      "problemMatcher": [],
-      "detail": "Requires GitHub CLI (gh) to be installed and authenticated"
-    },
-    {
-      "label": "release: bump major",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/../.vscode/scripts/invoke-flutter-workspace-tool.ps1",
-        "-WorkspaceRoot",
-        "${workspaceFolder}",
-        "-Action",
-        "release-bump",
-        "-BumpType",
-        "major"
-      ],
-      "group": "build",
-      "problemMatcher": [],
-      "detail": "Requires GitHub CLI (gh) to be installed and authenticated"
+      "command": "npm run ci",
+      "group": "test"
     }
   ]
 }

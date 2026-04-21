@@ -1,67 +1,37 @@
 {
-  "dart.flutterSdkPath": "C:\\flutter",
-  "dart.lineLength": 80,
-  "dart.previewFlutterUiGuides": true,
-  "dart.previewFlutterUiGuidesCustomTracking": true,
-  "dart.openDevTools": "flutter",
-  "dart.debugExternalPackageLibraries": false,
-  "dart.debugSdkLibraries": false,
-  "dart.showTodos": false,
-  "dart.warnWhenEditingFilesInPub": true,
-  "dart.renameFilesWithClasses": "prompt",
-  "editor.defaultFormatter": "Dart-Code.dart-code",
-  "editor.inlayHints.enabled": "on",
-  "[dart]": {
-    "editor.defaultFormatter": "Dart-Code.dart-code",
-    "editor.formatOnSave": true,
-    "editor.selectionHighlight": false,
-    "editor.suggestSelection": "first",
-    "editor.tabCompletion": "onlySnippets",
-    "editor.wordBasedSuggestions": "off"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
   },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "eslint.useFlatConfig": true,
   "files.exclude": {
-    "**/.dart_tool": true,
-    "**/.idea": true,
-    "**/build": true
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/build": true,
+    "**/windows": true
   },
   "search.exclude": {
-    "**/*.g.dart": true,
-    "**/*.freezed.dart": true,
-    "**/*.drift.dart": true,
-    "**/*.mocks.dart": true,
-    "**/build": true,
-    "**/.dart_tool": true
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true
   },
-  "files.watcherExclude": {
-    "**/.dart_tool/**": true,
-    "**/build/**": true
-  },
-  "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
-  "testing.coverageBarThresholds": {
-    "red": 0,
-    "yellow": 90,
-    "green": 100
-  },
-  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-  "github.copilot.chat.reviewSelection.useInstructionFiles": true,
-  "github.copilot.chat.fixTestFailure.useInstructionFiles": true,
-  "github.copilot.chat.codeGeneration.instructions": [
-    {
-      "text": "This is a Flutter/Dart project following Clean Architecture. Domain layer is pure Dart. Use Riverpod for state. Drift for DB. Dio with IOHttpClientAdapter for HTTP. Java 21. No // ignore: pragmas. No TODO/FIXME in lib/. Explicit loop variable types required. Notifier methods use descriptive verbs (not 'set')."
-    }
-  ],
-  "github.copilot.chat.testGeneration.instructions": [
-    {
-      "text": "Use flutter_test. Domain tests are pure Dart — no Flutter deps. Use group()/test(). Cover happy path, edge cases, and boundaries. Domain coverage must be 100%. No // ignore: pragmas. Fixture helpers use camelCase, no leading underscores. Test names follow: '<behavior> when <condition>'."
-    }
-  ],
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "text": "Use Conventional Commits format: type(scope): description. Types: feat, fix, refactor, test, ci, chore, docs. Keep subject under 72 chars. No period at end. Add [skip ci] suffix only for version-bump commits."
-    }
-  ],
-  "cmake.sourceDirectory": "C:/Users/ryair/OneDrive - Intel Corporation/Documents/MyScripts/CrossTide/windows",
-  "[markdown]": {
-    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
-  }
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
 }
