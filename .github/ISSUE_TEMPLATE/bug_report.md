@@ -17,18 +17,14 @@ Steps to reproduce:
 **Expected behavior**
 What you expected to happen.
 
-**Platform**
-- [ ] Android
-- [ ] Windows
-
 **Environment**
-- Flutter version:
-- Dart version:
-- Device/OS version:
-- CrossTide version (from pubspec.yaml):
+- Browser and version:
+- OS:
+- CrossTide version (shown in footer):
+- Screen size / viewport:
 
-**Logs**
-If applicable, paste relevant logs or stack traces.
+**Console errors**
+If applicable, paste any errors from the browser developer console (F12 → Console).
 
 **Screenshots**
 If applicable, add screenshots to help explain the problem.

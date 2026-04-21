@@ -12,10 +12,10 @@ A clear description of the problem or use case.
 Describe your proposed solution.
 
 **Affected layers**
-- [ ] Domain (pure Dart — entities, SMA calc, alert state)
-- [ ] Data (providers, repository, Drift DB)
-- [ ] Application (services, background tasks)
-- [ ] Presentation (UI, Riverpod providers, GoRouter)
+- [ ] Domain (pure calculators — SMA, EMA, RSI, MACD, consensus)
+- [ ] Core (state, cache, config, fetch)
+- [ ] UI (router, theme, views, CSS)
+- [ ] Types (shared interfaces)
 
 **Alternatives considered**
 Any alternative approaches you've considered.
