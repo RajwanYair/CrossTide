@@ -6,6 +6,35 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [5.0.0] - 2025-07-16
+
+### Added — Production Hardening
+
+- Unit tests for core/fetch (timeout, retry, abort), ui/router, ui/theme, ui/watchlist
+- Test count: 79 → 103 across 14 test files, 98.64% coverage
+- Shared `makeCandles()` test helper (eliminates duplication across 6 domain tests)
+- markdownlint-cli2 with project `.markdownlint.json` config
+- `.gitattributes` for LF line-ending enforcement
+- ESLint test overrides (relaxed non-null-assertion, explicit-return-type in tests)
+- CODEOWNERS, pull request template, issue templates (bug report, feature request)
+- Dependabot config (npm weekly, GitHub Actions weekly)
+
+### Changed
+
+- CONTRIBUTING.md, SECURITY.md, COPILOT_GUIDE.md rewritten for TypeScript/Vite stack
+- VS Code extensions.json cleaned (removed unused Tailwind CSS)
+- `.editorconfig` cleaned (removed dead Dart section)
+- Coverage excludes barrel `index.ts` re-exports and type-only files
+- `technical-defaults.test.ts` converted to parameterized `it.each` (8 → 17 tests)
+- `.prettierignore` cleaned
+
+### Fixed
+
+- MD040 (fenced code block language) in ARCHITECTURE.md, README.md, COPILOT_GUIDE.md
+- MD047 (trailing newline) in CHANGELOG.md, COPILOT_GUIDE.md
+
+---
+
 ## [4.0.0] - 2025-06-04
 
 ### Changed — Complete Web Rewrite
