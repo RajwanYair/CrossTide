@@ -11,15 +11,19 @@ If you discover a security vulnerability, please report it responsibly:
 
 ## Scope
 
-- API key exposure
-- Injection vulnerabilities in data parsing
-- Insecure storage of credentials
-- Any issue that could compromise user data
+- XSS vulnerabilities in DOM rendering
+- Injection via user input (ticker symbols, config import)
+- Sensitive data exposure in localStorage or console
+- Insecure fetch patterns (missing CORS, credential leakage)
+- Supply chain risks in dependencies
 
 ## Security Best Practices (for contributors)
 
 - Never commit API keys, tokens, or secrets
-- Use `flutter_secure_storage` for sensitive data at runtime
-- Use `.env` files for local development (listed in `.gitignore`)
-- Use GitHub Secrets for CI/CD
-- Validate and sanitize all external input (API responses, user input)
+- Sanitize all user input before inserting into the DOM
+- Use `textContent` instead of `innerHTML` where possible
+- Use `.env` files for local API keys (listed in `.gitignore`)
+- Use GitHub Secrets for CI/CD credentials
+- Validate and sanitize all external input (API responses, imported JSON)
+- Keep dependencies updated — Dependabot is enabled for weekly checks
+- Review Content Security Policy headers when deploying
