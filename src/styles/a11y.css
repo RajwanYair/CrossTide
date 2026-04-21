@@ -1,0 +1,89 @@
+/**
+ * Accessibility CSS layer — focus indicators, reduced motion, screen reader utilities.
+ * @layer a11y
+ */
+@layer a11y {
+  /* ── Focus indicators ── */
+  :focus-visible {
+    outline: 3px solid var(--color-focus, #4d90fe);
+    outline-offset: 2px;
+  }
+
+  /* Remove default focus ring when not using keyboard */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* ── Skip to main content link ── */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    z-index: 9999;
+    padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+    background: var(--color-surface, #1e1e1e);
+    color: var(--color-text, #e0e0e0);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0 0 var(--radius, 4px) 0;
+  }
+
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /* ── Screen reader only ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ── High contrast mode support ── */
+  @media (forced-colors: active) {
+    .badge,
+    .btn {
+      border: 1px solid ButtonText;
+    }
+
+    .signal-buy,
+    .signal-sell {
+      forced-color-adjust: none;
+    }
+  }
+
+  /* ── Live region for announcements ── */
+  [role="status"],
+  [role="alert"],
+  [aria-live] {
+    contain: layout;
+  }
+
+  /* ── Minimum touch target ── */
+  [role="button"],
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 2rem;
+  }
+}
