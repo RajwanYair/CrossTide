@@ -2,13 +2,14 @@
  * Configuration management — load/save/defaults.
  */
 import type { AppConfig, WatchlistEntry } from "../types/domain";
+import { AppConfigSchema } from "../types/zod-schemas";
 
 const STORAGE_KEY = "crosstide-config";
 const CONFIG_VERSION = 1;
 
 interface StoredConfig {
   version: number;
-  config: AppConfig;
+  config: unknown;
 }
 
 const DEFAULT_CONFIG: AppConfig = {
@@ -21,10 +22,12 @@ export function loadConfig(): AppConfig {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_CONFIG;
     const parsed: unknown = JSON.parse(raw);
-    if (isStoredConfig(parsed) && parsed.version === CONFIG_VERSION) {
-      return parsed.config;
+    if (!isStoredEnvelope(parsed) || parsed.version !== CONFIG_VERSION) {
+      return DEFAULT_CONFIG;
     }
-    return DEFAULT_CONFIG;
+    const result = AppConfigSchema.safeParse(parsed.config);
+    if (!result.success) return DEFAULT_CONFIG;
+    return result.data as AppConfig;
   } catch {
     return DEFAULT_CONFIG;
   }
@@ -54,7 +57,7 @@ export function removeTicker(config: AppConfig, ticker: string): AppConfig {
   };
 }
 
-function isStoredConfig(val: unknown): val is StoredConfig {
+function isStoredEnvelope(val: unknown): val is StoredConfig {
   return (
     typeof val === "object" &&
     val !== null &&
