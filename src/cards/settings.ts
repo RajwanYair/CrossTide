@@ -40,7 +40,7 @@ export function renderSettings(container: HTMLElement, config: AppConfig, callba
       <span class="text-secondary">CrossTide — 12-method consensus engine</span>
     </div>`;
 
-  const themeSelect = container.querySelector("#theme-select") as HTMLSelectElement | null;
+  const themeSelect = container.querySelector<HTMLSelectElement>("#theme-select");
   themeSelect?.addEventListener("change", () => {
     callbacks.onThemeChange(themeSelect.value as AppConfig["theme"]);
   });

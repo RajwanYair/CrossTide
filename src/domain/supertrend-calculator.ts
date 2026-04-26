@@ -29,6 +29,7 @@ export function computeSuperTrendSeries(
   let prevUpperBand = Infinity;
   let prevLowerBand = -Infinity;
   let prevIsUp = true;
+  // eslint-disable-next-line no-useless-assignment
   let prevSuperTrend = 0;
   let initialized = false;
 
@@ -72,6 +73,7 @@ export function computeSuperTrendSeries(
     results.push({ date: c.date, superTrend: st, isUpTrend: isUp });
     prevUpperBand = upperBand;
     prevLowerBand = lowerBand;
+    // eslint-disable-next-line no-useless-assignment
     prevSuperTrend = st;
     prevIsUp = isUp;
   }

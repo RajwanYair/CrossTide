@@ -26,13 +26,13 @@ export function evaluate(
   const prevCandle = candles[candles.length - 2]!;
 
   // BUY: price crosses above lower band
-  if (prevCandle.close <= prev!.lower! && lastCandle.close > curr!.lower!) {
-    return sig(ticker, lastCandle, "BUY", `BUY: price crossed above lower Bollinger Band ($${lastCandle.close.toFixed(2)} > $${curr!.lower!.toFixed(2)})`);
+  if (prevCandle.close <= prev.lower && lastCandle.close > curr.lower) {
+    return sig(ticker, lastCandle, "BUY", `BUY: price crossed above lower Bollinger Band ($${lastCandle.close.toFixed(2)} > $${curr.lower.toFixed(2)})`);
   }
 
   // SELL: price crosses below upper band
-  if (prevCandle.close >= prev!.upper! && lastCandle.close < curr!.upper!) {
-    return sig(ticker, lastCandle, "SELL", `SELL: price crossed below upper Bollinger Band ($${lastCandle.close.toFixed(2)} < $${curr!.upper!.toFixed(2)})`);
+  if (prevCandle.close >= prev.upper && lastCandle.close < curr.upper) {
+    return sig(ticker, lastCandle, "SELL", `SELL: price crossed below upper Bollinger Band ($${lastCandle.close.toFixed(2)} < $${curr.upper.toFixed(2)})`);
   }
 
   return sig(ticker, lastCandle, "NEUTRAL", "No Bollinger signal");

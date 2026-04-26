@@ -26,8 +26,8 @@ export function evaluate(
 
   if (lastSma?.value == null || prevSma?.value == null) return null;
 
-  const smaT = lastSma!.value!;
-  const smaTm1 = prevSma!.value!;
+  const smaT = lastSma.value;
+  const smaTm1 = prevSma.value;
   const closeT = lastCandle.close;
   const closeTm1 = prevCandle.close;
 

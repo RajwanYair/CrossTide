@@ -47,7 +47,7 @@ export function importConfigJSON(json: string): AppConfig {
       throw new Error("Invalid addedAt");
   }
 
-  return { theme: theme as "dark" | "light" | "high-contrast", watchlist: watchlist as WatchlistEntry[] };
+  return { theme: theme, watchlist: watchlist as WatchlistEntry[] };
 }
 
 /**

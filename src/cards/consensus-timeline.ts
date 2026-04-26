@@ -20,11 +20,14 @@ export function detectTransitions(
 ): { from: SignalDirection; to: SignalDirection; at: string }[] {
   const transitions: { from: SignalDirection; to: SignalDirection; at: string }[] = [];
   for (let i = 1; i < snapshots.length; i++) {
-    if (snapshots[i].direction !== snapshots[i - 1].direction) {
+    const curr = snapshots[i];
+    const prev = snapshots[i - 1];
+    if (!curr || !prev) continue;
+    if (curr.direction !== prev.direction) {
       transitions.push({
-        from: snapshots[i - 1].direction,
-        to: snapshots[i].direction,
-        at: snapshots[i].timestamp,
+        from: prev.direction,
+        to: curr.direction,
+        at: curr.timestamp,
       });
     }
   }
@@ -36,10 +39,13 @@ export function detectTransitions(
  */
 export function currentStreak(snapshots: readonly ConsensusSnapshot[]): number {
   if (snapshots.length === 0) return 0;
-  const last = snapshots[snapshots.length - 1].direction;
+  const lastSnap = snapshots[snapshots.length - 1];
+  if (!lastSnap) return 0;
+  const last = lastSnap.direction;
   let count = 0;
   for (let i = snapshots.length - 1; i >= 0; i--) {
-    if (snapshots[i].direction !== last) break;
+    const s = snapshots[i];
+    if (s?.direction !== last) break;
     count++;
   }
   return count;
@@ -60,6 +66,10 @@ export function renderConsensusTimeline(
 
   const streak = currentStreak(snapshots);
   const latest = snapshots[snapshots.length - 1];
+  if (!latest) {
+    container.innerHTML = `<p class="empty-state">No consensus history for ${escapeHtml(ticker)}.</p>`;
+    return;
+  }
   const transitions = detectTransitions(snapshots);
 
   const dots = snapshots
@@ -89,5 +99,8 @@ function escapeHtml(s: string): string {
 }
 
 function escapeAttr(s: string): string {
-  return escapeHtml(s).replace(/"/g, "&quot;");
+  // Strip < and > from raw input first: when innerHTML re-serializes,
+  // attribute values are not entity-encoded for <>, so &lt;/&gt; would
+  // decode back to < / > and re-introduce the tag-like substring.
+  return escapeHtml(s.replace(/[<>]/g, "")).replace(/"/g, "&quot;");
 }

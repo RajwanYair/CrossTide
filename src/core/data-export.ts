@@ -30,9 +30,9 @@ export function exportAlertsJson(alerts: readonly AlertRecord[]): string {
  * Export portfolio holdings as CSV.
  */
 export function exportPortfolioCsv(holdings: readonly Holding[]): string {
-  const header = "ticker,shares,avgCostBasis,currentPrice";
+  const header = "ticker,shares,avgCost,currentPrice";
   const rows = holdings.map(
-    (h) => `${csvEscape(h.ticker)},${h.shares},${h.avgCostBasis},${h.currentPrice}`,
+    (h) => `${csvEscape(h.ticker)},${h.shares},${h.avgCost},${h.currentPrice}`,
   );
   return [header, ...rows].join("\n");
 }
@@ -48,10 +48,10 @@ export function exportPortfolioJson(holdings: readonly Holding[]): string {
  * Export backtest trades as CSV.
  */
 export function exportBacktestTradesCsv(trades: readonly BacktestTrade[]): string {
-  const header = "entryDate,exitDate,entryPrice,exitPrice,returnPct";
+  const header = "entryDate,exitDate,entryPrice,exitPrice,profitPercent";
   const rows = trades.map(
     (t) =>
-      `${t.entryDate},${t.exitDate},${t.entryPrice.toFixed(2)},${t.exitPrice.toFixed(2)},${(t.returnPct * 100).toFixed(2)}`,
+      `${t.entryDate},${t.exitDate},${t.entryPrice.toFixed(2)},${t.exitPrice.toFixed(2)},${t.profitPercent.toFixed(2)}`,
   );
   return [header, ...rows].join("\n");
 }
@@ -73,13 +73,24 @@ export function importAlertsCsv(csv: string): AlertRecord[] {
   return lines.slice(1).map((line, idx) => {
     const parts = csvParseLine(line);
     if (parts.length < 6) throw new Error(`Invalid alert CSV at line ${idx + 2}`);
+    const [id, ticker, alertType, direction, description, firedAt] = parts;
+    if (
+      id === undefined ||
+      ticker === undefined ||
+      alertType === undefined ||
+      direction === undefined ||
+      description === undefined ||
+      firedAt === undefined
+    ) {
+      throw new Error(`Invalid alert CSV at line ${idx + 2}`);
+    }
     return {
-      id: parts[0],
-      ticker: parts[1].toUpperCase(),
-      alertType: parts[2],
-      direction: parts[3] as AlertRecord["direction"],
-      description: parts[4],
-      firedAt: parts[5],
+      id,
+      ticker: ticker.toUpperCase(),
+      alertType,
+      direction: direction as AlertRecord["direction"],
+      description,
+      firedAt,
     };
   });
 }

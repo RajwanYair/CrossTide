@@ -93,5 +93,8 @@ function escapeHtml(s: string): string {
 }
 
 function escapeAttr(s: string): string {
-  return escapeHtml(s).replace(/"/g, "&quot;");
+  // Strip < and > from raw input first: when innerHTML re-serializes,
+  // attribute values are not entity-encoded for <>, so &lt;/&gt; would
+  // decode back to < / > and re-introduce the tag-like substring.
+  return escapeHtml(s.replace(/[<>]/g, "")).replace(/"/g, "&quot;");
 }

@@ -22,8 +22,8 @@ export function evaluate(
   const prev = series[series.length - 2];
   if (curr?.value == null || prev?.value == null) return null;
 
-  const currCci = curr!.value!;
-  const prevCci = prev!.value!;
+  const currCci = curr.value;
+  const prevCci = prev.value;
   const lastCandle = candles[candles.length - 1]!;
 
   if (prevCci < DEFAULTS.cciOversold && currCci >= DEFAULTS.cciOversold) {

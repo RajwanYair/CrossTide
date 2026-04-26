@@ -4,7 +4,7 @@
  * Pure domain logic: given a set of method detectors and historical data,
  * produce an equity curve and performance metrics.
  */
-import type { DailyCandle, MethodSignal, MethodName } from "../types/domain";
+import type { DailyCandle, MethodName } from "../types/domain";
 import { aggregateSignals } from "./signal-aggregator";
 
 export interface BacktestConfig {

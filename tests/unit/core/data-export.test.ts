@@ -21,13 +21,13 @@ const ALERTS: AlertRecord[] = [
 ];
 
 const HOLDINGS: Holding[] = [
-  { ticker: "AAPL", shares: 10, avgCostBasis: 150, currentPrice: 175 },
-  { ticker: "MSFT", shares: 5, avgCostBasis: 300, currentPrice: 310 },
+  { ticker: "AAPL", shares: 10, avgCost: 150, currentPrice: 175 },
+  { ticker: "MSFT", shares: 5, avgCost: 300, currentPrice: 310 },
 ];
 
 const TRADES: BacktestTrade[] = [
-  { entryDate: "2025-01-01", exitDate: "2025-01-10", entryPrice: 100, exitPrice: 110, returnPct: 0.1 },
-  { entryDate: "2025-02-01", exitDate: "2025-02-15", entryPrice: 110, exitPrice: 105, returnPct: -0.04545 },
+  { entryDate: "2025-01-01", exitDate: "2025-01-10", entryPrice: 100, exitPrice: 110, profitPercent: 10 },
+  { entryDate: "2025-02-01", exitDate: "2025-02-15", entryPrice: 110, exitPrice: 105, profitPercent: -4.545 },
 ];
 
 describe("exportAlertsCsv", () => {
@@ -66,7 +66,7 @@ describe("exportPortfolioCsv", () => {
   it("produces correct header and rows", () => {
     const csv = exportPortfolioCsv(HOLDINGS);
     const lines = csv.split("\n");
-    expect(lines[0]).toBe("ticker,shares,avgCostBasis,currentPrice");
+    expect(lines[0]).toBe("ticker,shares,avgCost,currentPrice");
     expect(lines.length).toBe(3);
   });
 });
@@ -83,10 +83,10 @@ describe("exportBacktestTradesCsv", () => {
   it("produces correct header and rows", () => {
     const csv = exportBacktestTradesCsv(TRADES);
     const lines = csv.split("\n");
-    expect(lines[0]).toBe("entryDate,exitDate,entryPrice,exitPrice,returnPct");
+    expect(lines[0]).toBe("entryDate,exitDate,entryPrice,exitPrice,profitPercent");
     expect(lines.length).toBe(3);
     expect(lines[1]).toContain("100.00");
-    expect(lines[1]).toContain("10.00"); // returnPct = 10%
+    expect(lines[1]).toContain("10.00"); // profitPercent = 10%
   });
 });
 
@@ -94,8 +94,13 @@ describe("exportBacktestJson", () => {
   it("includes result and exportedAt", () => {
     const result: BacktestResult = {
       trades: TRADES,
-      equityCurve: [1, 1.1, 1.05],
-      totalReturn: 0.05,
+      equityCurve: [
+        { date: "2025-01-01", equity: 10000 },
+        { date: "2025-01-10", equity: 11000 },
+        { date: "2025-02-15", equity: 10500 },
+      ],
+      totalReturn: 500,
+      totalReturnPercent: 5,
       winRate: 0.5,
       maxDrawdown: 0.04545,
     };

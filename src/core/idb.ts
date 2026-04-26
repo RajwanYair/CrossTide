@@ -4,6 +4,7 @@
  * Provides a thin typed interface over IndexedDB for large-data persistence
  * (candle history, alert records, etc.).
  */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 const DB_NAME = "crosstide-db";
 const DB_VERSION = 1;

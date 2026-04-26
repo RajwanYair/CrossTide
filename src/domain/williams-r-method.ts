@@ -20,8 +20,8 @@ export function evaluate(
   const prev = series[series.length - 2];
   if (curr?.value == null || prev?.value == null) return null;
 
-  const currWr = curr!.value!;
-  const prevWr = prev!.value!;
+  const currWr = curr.value;
+  const prevWr = prev.value;
   const lastCandle = candles[candles.length - 1]!;
 
   if (prevWr < DEFAULTS.williamsROversold && currWr >= DEFAULTS.williamsROversold) {

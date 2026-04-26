@@ -20,8 +20,8 @@ export function evaluate(
   const prev = series[series.length - 2];
   if (curr?.value == null || prev?.value == null) return null;
 
-  const currRsi = curr!.value!;
-  const prevRsi = prev!.value!;
+  const currRsi = curr.value;
+  const prevRsi = prev.value;
   const lastCandle = candles[candles.length - 1]!;
 
   if (prevRsi < DEFAULTS.rsiOversold && currRsi >= DEFAULTS.rsiOversold) {
