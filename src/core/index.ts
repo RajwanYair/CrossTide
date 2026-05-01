@@ -152,3 +152,7 @@ export type { TokenBucket, TokenBucketConfig } from "./token-bucket";
 export { nextDelay, retry } from "./retry-backoff";
 export type { BackoffPolicy, RetryOptions, Jitter } from "./retry-backoff";
 
+
+export { debounce, throttle } from "./throttle-debounce";
+export type { Cancellable } from "./throttle-debounce";
+
