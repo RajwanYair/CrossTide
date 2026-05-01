@@ -731,11 +731,11 @@ Everything else is hand-written or zero-dep.
 | A15 | **Playwright** E2E for 10 flows + `@axe-core/playwright`                                                                                                                |    P0    | Add `tests/e2e/`                         |
 | A16 | **Lighthouse CI** (`lhci autorun`) + budgets file                                                                                                                       |    P0    |                                          |
 | A17 | Self-host GlitchTip + Plausible on Fly.io; integrate sampled error/analytics ingestion                                                                                  |    P1    |                                          |
-| A18 | Adopt **Changesets** + `commitlint` Conventional Commits                                                                                                                |    P1    |                                          |
+| A18 | Adopt **Changesets** + `commitlint` Conventional Commits                                                                                                                |    P1    | ✅ Done (v7.2.0)                         |
 | A19 | Component preview page `dev/components.html` mounting every card with mock signals                                                                                      |    P1    |                                          |
-| A20 | CSP, Permissions-Policy, security headers via Worker (wires existing `csp-builder.ts`)                                                                                  |    P0    |                                          |
-| A21 | Storage pressure handling + LRU eviction in IDB (wires existing `lru-cache.ts` + `storage-pressure.ts`)                                                                 |    P1    |                                          |
-| A22 | Rewrite `ARCHITECTURE.md` to match v6.2 reality                                                                                                                         |    P1    |                                          |
+| A20 | CSP, Permissions-Policy, security headers via Worker (wires existing `csp-builder.ts`)                                                                                  |    P0    | ✅ Done (v7.2.0)                         |
+| A21 | Storage pressure handling + LRU eviction in IDB (wires existing `lru-cache.ts` + `storage-pressure.ts`)                                                                 |    P1    | ✅ Done (v7.2.0)                         |
+| A22 | Rewrite `ARCHITECTURE.md` to match v6.2 reality                                                                                                                         |    P1    | ✅ Done (v7.2.0)                         |
 
 **Exit criteria for v6.2:**
 
@@ -759,8 +759,8 @@ Everything else is hand-written or zero-dep.
 | B7  | OG image rendering (`/api/og/:symbol.png`)                                                           |    P2    |                                     |
 | B8  | Polygon provider (paid escape hatch)                                                                 |    P2    |                                     |
 | B9  | Synced crosshair across multi-pane chart                                                             |    P2    |                                     |
-| B10 | URL state encoder/decoder activation (wires `share-state.ts`)                                        |    P2    |                                     |
-| B11 | Cross-tab sync via BroadcastChannel                                                                  |    P2    |                                     |
+| B10 | URL state encoder/decoder activation (wires `share-state.ts`)                                        |    P2    | ✅ Done (v7.2.0)                    |
+| B11 | Cross-tab sync via BroadcastChannel                                                                  |    P2    | ✅ Done (v7.2.0)                    |
 | B12 | **Instrument-type views — Stocks / ETFs / Crypto** (see detail below)                                |    P1    | Requested by user                   |
 | B13 | **Sector grouping** - collapsible sector rows with per-sector consensus aggregate (see detail below) |    P1    | Requested by user                   |
 | B14 | **Universal sortable column headers** across all data tables (see detail below)                      |    P1    | Requested by user; extends A11 sort |
@@ -802,17 +802,17 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 
 ### Phase C — v6.4 _Reach, Polish, A11y+_
 
-| #   | Task                                                                | Priority |
-| --- | ------------------------------------------------------------------- | :------: |
-| C1  | i18n (English + Hebrew RTL) via `@formatjs/intl`                    |    P2    |
-| C2  | High-contrast & color-blind palettes (wires `palettes.ts`)          |    P2    |
-| C3  | Astro Starlight docs site at `/docs`                                |    P2    |
-| C4  | Per-indicator MDX reference (formula + defaults + tests)            |  ✅ Done  |
-| C5  | Mobile-first layout pass + container queries + View Transitions API |    P2    |
-| C6  | Dividend projection in Portfolio                                    |    P3    |
-| C7  | CSV/JSON full-data export with schema-versioned envelope            |    P2    |
-| C8  | iOS PWA install prompt + Android `beforeinstallprompt` UX           |    P3    |
-| C9  | Onboarding tour (3 steps, dismissible, persisted)                   |    P3    |
+| #   | Task                                                                |     Priority     |
+| --- | ------------------------------------------------------------------- | :--------------: |
+| C1  | i18n (English + Hebrew RTL) via `@formatjs/intl`                    |        P2        |
+| C2  | High-contrast & color-blind palettes (wires `palettes.ts`)          |        P2        |
+| C3  | Astro Starlight docs site at `/docs`                                |        P2        |
+| C4  | Per-indicator MDX reference (formula + defaults + tests)            |     ✅ Done      |
+| C5  | Mobile-first layout pass + container queries + View Transitions API |        P2        |
+| C6  | Dividend projection in Portfolio                                    |        P3        |
+| C7  | CSV/JSON full-data export with schema-versioned envelope            | ✅ Done (v7.2.0) |
+| C8  | iOS PWA install prompt + Android `beforeinstallprompt` UX           |        P3        |
+| C9  | Onboarding tour (3 steps, dismissible, persisted)                   | ✅ Done (v7.2.0) |
 
 ### Phase D — v7.0 _Optional Cloud + Power Tools_
 
@@ -832,7 +832,7 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 | #   | Task                                                               | Priority |
 | --- | ------------------------------------------------------------------ | :------: |
 | E1  | Tauri 2.0 desktop wrapper (Win/Mac/Linux)                          |    P4    |
-| E2  | Read-only public REST API (rate-limited)                           |  ✅ Done  |
+| E2  | Read-only public REST API (rate-limited)                           | ✅ Done  |
 | E3  | Public "research notes" pages (per-symbol blog, optional)          |    P5    |
 | E4  | Optional WASM hot-path for tick-level streaming compute            |    P4    |
 | E5  | Native iOS/Android via Capacitor (only if PWA proves insufficient) |    P5    |
@@ -860,56 +860,54 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 
 **v7.1.0 sprint session (10 sprints):**
 
-| Sprint | Item                                                    | Status |
-| ------ | ------------------------------------------------------- | ------ |
-| 1      | E2: Cloudflare Worker API (5 endpoints, 34 tests)       | ✅     |
-| 2      | C4: 8 indicator MDX docs (ATR, VWAP, EMA/SMA, CCI, Williams%R, OBV, Aroon, AO) | ✅ |
-| 3      | User guide MDX pages (Watchlist, Charts, Portfolio)     | ✅     |
-| 4      | D7: RTL locale wiring (`setLocale`, `getTextDirection`, `initLocale`) | ✅ |
-| 5      | Coverage: web-vitals (21 tests) + telemetry (20 tests)  | ✅     |
-| 6      | Coverage: analytics-client (15 tests) + deep-clone (21 tests) | ✅ |
-| 7      | R7: Registry — mock all 14 cards + retry-on-failure test | ✅    |
-| 8      | R13: Domain API type-level tests (20 `expectTypeOf` assertions) | ✅ |
-| 9      | R6: JSDoc sweep + ROADMAP update                        | ✅     |
-| 10     | CHANGELOG + v7.1.0 bump + `gh release`                  | ✅     |
+| Sprint | Item                                                                           | Status |
+| ------ | ------------------------------------------------------------------------------ | ------ |
+| 1      | E2: Cloudflare Worker API (5 endpoints, 34 tests)                              | ✅     |
+| 2      | C4: 8 indicator MDX docs (ATR, VWAP, EMA/SMA, CCI, Williams%R, OBV, Aroon, AO) | ✅     |
+| 3      | User guide MDX pages (Watchlist, Charts, Portfolio)                            | ✅     |
+| 4      | D7: RTL locale wiring (`setLocale`, `getTextDirection`, `initLocale`)          | ✅     |
+| 5      | Coverage: web-vitals (21 tests) + telemetry (20 tests)                         | ✅     |
+| 6      | Coverage: analytics-client (15 tests) + deep-clone (21 tests)                  | ✅     |
+| 7      | R7: Registry — mock all 14 cards + retry-on-failure test                       | ✅     |
+| 8      | R13: Domain API type-level tests (20 `expectTypeOf` assertions)                | ✅     |
+| 9      | R6: JSDoc sweep + ROADMAP update                                               | ✅     |
+| 10     | CHANGELOG + v7.1.0 bump + `gh release`                                         | ✅     |
 
 **Conclusion:** all 10 sprints complete; v7.1.0 released.
 
-
-
-| Item                                  | Status                                    |
-| ------------------------------------- | ----------------------------------------- |
-| Lightweight Charts integration        | ⏳ → A1                                   |
-| History API router                    | ⏳ → A3                                   |
-| Signals state                         | ⏳ → A4                                   |
-| Web Worker compute                    | ⏳ → A5                                   |
-| Workbox SW                            | ⏳ → A6                                   |
-| Cloudflare Pages deploy               | ⏳ → A7                                   |
-| Finnhub provider                      | ⏳ → A8                                   |
-| Valibot/Zod boundaries                | ⏳ → A9 (chose Valibot over Zod for size) |
-| Command palette + keyboard            | ⏳ → A10                                  |
-| Playwright + axe E2E                  | ⏳ → A15                                  |
-| Lighthouse CI                         | ⏳ → A16                                  |
-| GlitchTip + Plausible                 | ⏳ → A17                                  |
-| Changesets                            | ⏳ → A18                                  |
-| Component preview                     | ⏳ → A19                                  |
-| CSP via Worker                        | ⏳ → A20                                  |
-| Heatmap, Screener, Alerts cards       | ⏳ → A12/A13/A14                          |
-| WebSocket streaming                   | ⏳ → B1                                   |
-| Portfolio + risk cards                | ⏳ → B2/B3                                |
-| Backtest UI                           | ⏳ → B4                                   |
-| Provider Health card                  | ⏳ → B5                                   |
-| OG image                              | ⏳ → B7                                   |
+| Item                                  | Status                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------ |
+| Lightweight Charts integration        | ⏳ → A1                                                                        |
+| History API router                    | ⏳ → A3                                                                        |
+| Signals state                         | ⏳ → A4                                                                        |
+| Web Worker compute                    | ⏳ → A5                                                                        |
+| Workbox SW                            | ⏳ → A6                                                                        |
+| Cloudflare Pages deploy               | ⏳ → A7                                                                        |
+| Finnhub provider                      | ⏳ → A8                                                                        |
+| Valibot/Zod boundaries                | ⏳ → A9 (chose Valibot over Zod for size)                                      |
+| Command palette + keyboard            | ⏳ → A10                                                                       |
+| Playwright + axe E2E                  | ⏳ → A15                                                                       |
+| Lighthouse CI                         | ⏳ → A16                                                                       |
+| GlitchTip + Plausible                 | ⏳ → A17                                                                       |
+| Changesets                            | ⏳ → A18                                                                       |
+| Component preview                     | ⏳ → A19                                                                       |
+| CSP via Worker                        | ⏳ → A20                                                                       |
+| Heatmap, Screener, Alerts cards       | ⏳ → A12/A13/A14                                                               |
+| WebSocket streaming                   | ⏳ → B1                                                                        |
+| Portfolio + risk cards                | ⏳ → B2/B3                                                                     |
+| Backtest UI                           | ⏳ → B4                                                                        |
+| Provider Health card                  | ⏳ → B5                                                                        |
+| OG image                              | ⏳ → B7                                                                        |
 | i18n + RTL                            | ✅ Partial: RTL wiring (setLocale/dir) done; full message catalogue pending C1 |
-| High-contrast palettes                | ⏳ → C2                                   |
-| Astro Starlight docs                  | ⏳ → C3                                   |
-| Per-indicator MDX                     | ✅ Done (13 indicators, 8 added v7.1)     |
-| Mobile responsive + container queries | ⏳ → C5                                   |
-| Passkey auth + cloud sync             | ⏳ → D1                                   |
-| Multi-chart layout                    | ⏳ → D2                                   |
-| Drawing tools                         | ⏳ → D3                                   |
-| Custom-signal DSL                     | ⏳ → D4                                   |
-| Shared watchlist URLs                 | ⏳ → D5                                   |
+| High-contrast palettes                | ⏳ → C2                                                                        |
+| Astro Starlight docs                  | ⏳ → C3                                                                        |
+| Per-indicator MDX                     | ✅ Done (13 indicators, 8 added v7.1)                                          |
+| Mobile responsive + container queries | ⏳ → C5                                                                        |
+| Passkey auth + cloud sync             | ⏳ → D1                                                                        |
+| Multi-chart layout                    | ⏳ → D2                                                                        |
+| Drawing tools                         | ⏳ → D3                                                                        |
+| Custom-signal DSL                     | ⏳ → D4                                                                        |
+| Shared watchlist URLs                 | ⏳ → D5                                                                        |
 
 Anything not listed is descoped.
 

@@ -6,6 +6,44 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.2.0] - 2026-05-16
+
+### Minor — Security headers, storage manager, URL state, cross-tab sync, schema-versioned export, onboarding
+
+#### Added
+
+- **A20: Cloudflare Worker security headers middleware** (`worker/security.ts`). `withSecurityHeaders()` wraps all Worker API responses with `Content-Security-Policy`, `Strict-Transport-Security` (HSTS; max-age=31536000; preload), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy`, and `Referrer-Policy`. 10 new unit tests.
+
+- **A21: Storage pressure + LRU eviction** (`src/core/storage-manager.ts`). Polls `navigator.storage.estimate()` every 60 s; at ≥80% quota evicts 20 oldest `TieredCache` entries; at ≥95% evicts 50 entries and calls `navigator.storage.persist()`. Singleton `initStorageManager(cache)` API for `main.ts` integration. 9 new unit tests.
+
+- **A22: ARCHITECTURE.md rewrite.** Updated to v7.2 reality: Worker layer, `storage-manager`, git hooks (`simple-git-hooks` + `lint-staged`), storage tiers table, expanded Security section with all response headers, new three-tier storage model table.
+
+- **A18: Git hooks wired.** `simple-git-hooks` + `lint-staged` added; `pre-commit` runs ESLint + Prettier on staged TS/CSS/MD files; `commit-msg` runs `commitlint` for Conventional Commits enforcement.
+
+- **B10: URL state activation** (`src/core/url-state.ts`). `readCurrentUrlState()`, `updateCurrentUrlState()`, `pushUrlState()`, `clearUrlState()`, `buildCurrentShareUrl()`, `onUrlStateChange()` — wires `share-state.ts` to `window.location` / `history` API for deep-linking and shareable URLs. 12 new unit tests.
+
+- **B11: Cross-tab share sync** (`src/core/cross-tab-share.ts`). `createCrossTabShareSync()` wraps `broadcast-channel.ts` with `ShareState`-typed helpers (`broadcastShareState`, `onShareState`). No-echo (sender skips own messages). Graceful degradation when `BroadcastChannel` unavailable. 7 new unit tests.
+
+- **C7: Schema-versioned export envelope.** `exportConfigJSON()` now emits `{ schemaVersion, version, exportedAt, checksum, config }`. `checksum` is a djb2 hex hash of the canonical `config` JSON for tamper/corruption detection. `importConfigJSON()` validates the checksum and rejects `schemaVersion > EXPORT_SCHEMA_VERSION` (future-format guard). Legacy exports without `schemaVersion` are accepted (backward compat). Exported `EXPORT_SCHEMA_VERSION` constant. 6 new unit tests.
+
+- **C9: Onboarding tour hardening.** Added 3 additional test cases: Escape key dismissal, HTML escaping (XSS prevention via `innerHTML` entity check), and overlay-click dismissal. 3 new unit tests (16 total for tour).
+
+#### Tests
+
+- **backtest-worker-fallback**: 13 new tests — `runSmaCrossoverLocal()` pure sync fallback path, 0% → ~90% coverage.
+- **uuid**: +7 tests for `uuidV4` and `nanoId` fallback paths (removes `randomUUID`/`getRandomValues` via `Object.defineProperty`).
+- **og-image**: +8 tests — direction color mapping (SELL/STRONG_SELL=red, HOLD/NEUTRAL=amber, BUY=green, no badge when direction absent), `downloadSvg` DOM mock.
+- **export-import**: +6 C7 schema/checksum tests (see above).
+- **storage-manager**: 9 new tests.
+- **url-state**: 12 new tests.
+- **cross-tab-share**: 7 new tests.
+- **worker security headers**: 10 new tests (44 total for worker suite).
+- **onboarding-tour**: +3 tests (16 total).
+
+**Total: 2328 tests across 245 files (up from 2254/241).**
+
+---
+
 ## [7.1.0] - 2026-05-12
 
 ### Minor — Cloudflare Worker API, 13 indicator docs, user guides, RTL locale, coverage
@@ -37,8 +75,6 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 **Total: 2254 tests across 241 files (up from 2169/240).**
 
 ---
-
-
 
 ### Major — Full-stack hardening, real data, responsive cards, security
 
