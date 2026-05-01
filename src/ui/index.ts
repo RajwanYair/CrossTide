@@ -99,3 +99,7 @@ export type { TreemapItem, TreemapRect, Bounds } from "./treemap-layout";
 export { interpolateColor, createColorScale, createDivergentScale } from "./color-scale";
 export type { ColorStop, ColorScale, ColorScaleOptions } from "./color-scale";
 
+
+export { formatRelativeTime } from "./relative-time";
+export type { RelativeTimeOptions } from "./relative-time";
+
