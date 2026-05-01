@@ -175,6 +175,16 @@
               </select>
             </div>
             <div class="setting-group">
+              <label for="palette-select">Color palette</label>
+              <select id="palette-select">
+                <option value="default" selected>Default</option>
+                <option value="deuteranopia">Deuteranopia (red-green safe)</option>
+                <option value="protanopia">Protanopia (red-blind safe)</option>
+                <option value="tritanopia">Tritanopia (blue-yellow safe)</option>
+                <option value="high-contrast">High contrast</option>
+              </select>
+            </div>
+            <div class="setting-group">
               <label>Watchlist</label>
               <button id="btn-export" type="button">Export JSON</button>
               <button id="btn-import" type="button">Import JSON</button>

@@ -26,6 +26,7 @@ import type { ScreenerInput } from "./cards/screener";
 import { buildShareUrl, readShareUrl } from "./core/share-state";
 import { mountInstrumentFilterBar, applyInstrumentFilter, getInstrumentFilter } from "./ui/instrument-filter";
 import { bindSortableTable } from "./ui/sortable";
+import { loadPersistedPalette, applyPalette, VALID_PALETTES, type ExtendedPaletteName } from "./ui/palette-switcher";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -198,6 +199,7 @@ function main(): void {
 
   // Initialize UI
   initTheme(config.theme);
+  loadPersistedPalette(); // C2: restore color-blind palette from localStorage
   initRouter();
   refreshWatchlist(config, new Map());
 
@@ -309,6 +311,16 @@ function main(): void {
     config = { ...config, theme };
     saveAndBroadcast(config);
   });
+
+  // Color-blind palette change (C2)
+  const paletteSelect = document.getElementById("palette-select") as HTMLSelectElement | null;
+  if (paletteSelect) {
+    // Sync select to currently loaded palette
+    paletteSelect.value = document.documentElement.dataset["palette"] ?? "default";
+    paletteSelect.addEventListener("change", () => {
+      applyPalette(paletteSelect.value as ExtendedPaletteName);
+    });
+  }
 
   // Export watchlist
   document.getElementById("btn-export")?.addEventListener("click", () => {
@@ -470,6 +482,18 @@ function main(): void {
         showToast({ message: `Sector grouping ${next ? "enabled" : "disabled"}`, type: "info" });
       },
     },
+    // ── C2: Color-blind / high-contrast palette commands ──────────────────
+    ...VALID_PALETTES.map((pal) => ({
+      id: `set-palette-${pal}`,
+      label: `Color palette: ${pal.charAt(0).toUpperCase() + pal.slice(1).replace("-", " ")}`,
+      section: "Appearance",
+      run: (): void => {
+        applyPalette(pal);
+        const select = document.getElementById("palette-select") as HTMLSelectElement | null;
+        if (select) select.value = pal;
+        showToast({ message: `Palette: ${pal}`, type: "info" });
+      },
+    })),
   ];
 
   // Ctrl+K / Cmd+K → open palette

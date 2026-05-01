@@ -62,4 +62,50 @@
     --accent: #0969da;
     --accent-hover: #0550ae;
   }
+
+  /* ── Color-blind palettes (C2) — override signal / accent tokens ─────── */
+  /* Deuteranopia (red-green, ~6% males): swap red→vermillion, green→blue  */
+  [data-palette="deuteranopia"] {
+    --signal-buy:     #0072b2; /* blue */
+    --signal-sell:    #d55e00; /* vermillion */
+    --signal-neutral: #999999;
+    --accent:         #56b4e9;
+    --accent-hover:   #88cfed;
+    --change-positive: #0072b2;
+    --change-negative: #d55e00;
+  }
+
+  /* Protanopia (red-blind, ~1% males): similar, orange replaces red */
+  [data-palette="protanopia"] {
+    --signal-buy:     #0072b2;
+    --signal-sell:    #e69f00; /* amber-orange */
+    --signal-neutral: #999999;
+    --accent:         #009e73;
+    --accent-hover:   #00b884;
+    --change-positive: #0072b2;
+    --change-negative: #e69f00;
+  }
+
+  /* Tritanopia (blue-yellow, very rare): magenta/blue-green */
+  [data-palette="tritanopia"] {
+    --signal-buy:     #d81b60; /* hot pink */
+    --signal-sell:    #1e88e5; /* blue */
+    --signal-neutral: #757575;
+    --accent:         #ffc107;
+    --accent-hover:   #ffcd38;
+    --change-positive: #d81b60;
+    --change-negative: #1e88e5;
+  }
+
+  /* High-contrast (forced-colors supplement) */
+  [data-palette="high-contrast"] {
+    --signal-buy:     #00ff00;
+    --signal-sell:    #ff0000;
+    --signal-neutral: #ffffff;
+    --accent:         #ffff00;
+    --accent-hover:   #ffff66;
+    --border:         #ffffff;
+    --change-positive: #00ff00;
+    --change-negative: #ff0000;
+  }
 }
