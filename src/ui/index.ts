@@ -126,3 +126,7 @@ export { truncateEnd, truncateMiddle, graphemeLength, DEFAULT_ELLIPSIS } from ".
 export { getFocusableElements, nextFocusable, FOCUS_TRAP_SELECTOR } from "./focus-trap";
 export type { FocusableElement, FocusableHost } from "./focus-trap";
 
+
+export { parseHex, toHex, blend, lighten, darken } from "./color-blend";
+export type { Rgba } from "./color-blend";
+
