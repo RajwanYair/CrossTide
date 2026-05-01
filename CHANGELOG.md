@@ -6,6 +6,38 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.6] - 2026
+
+### Added — Sprints 71–80 (more indicators, async + UI utilities)
+
+- **TRIX** (`domain/trix`) — triple-smoothed EMA momentum with signal line.
+- **Ulcer Index** (`domain/ulcer-index`) — drawdown depth/duration measure.
+- **Coppock Curve** (`domain/coppock-curve`) — long-term momentum
+  (WMA of summed ROCs).
+- **DEMA / TEMA** (`domain/dema-tema`) — Mulloy lag-reduced moving averages.
+- **Hull MA** (`domain/hull-ma`) — Alan Hull's smooth + responsive MA.
+- **Percentile / percent-rank** (`domain/percentile-rank`) — `percentile`,
+  `percentRank`, and `rollingPercentRank` helpers.
+- **Promise pool** (`core/promise-pool`) — bounded-concurrency runner with
+  ordered results and `runPromisePoolSettled` variant.
+- **Event bus** (`core/event-bus`) — type-safe pub/sub with `once`,
+  isolated handler errors, and listener counts.
+- **SVG path builders** (`ui/svg-path`) — `buildLinePath`, `buildAreaPath`,
+  Catmull-Rom `buildSmoothLinePath` with configurable precision.
+- **Linear scale** (`ui/scale-linear`) — d3-style scale with `invert`,
+  `clamp`, and `niceTicks`.
+
+### Fixed
+
+- `domain/trix`: cascaded EMAs now correctly skip leading nulls instead of
+  treating them as zeros (only affected newly-added module).
+
+### Tests
+
+- 1430 total (+72).
+
+---
+
 ## [6.1.0-rc.5] - 2026
 
 ### Added — Sprints 61–70 (more indicators, async utilities, UI helpers)
