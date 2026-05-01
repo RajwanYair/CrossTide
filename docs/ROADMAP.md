@@ -804,7 +804,7 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 
 | #   | Task                                                                |     Priority     |
 | --- | ------------------------------------------------------------------- | :--------------: | ---------------- |
-| C1  | i18n (English + Hebrew RTL) via `@formatjs/intl`                    |        P2        |
+| C1  | i18n (English + Hebrew RTL) via `@formatjs/intl`                    |        P2        | ✅ Done (v7.5.0) |
 | C2  | High-contrast & color-blind palettes (wires `palettes.ts`)          |        P2        | ✅ Done (v7.3.0) |
 | C3  | Astro Starlight docs site at `/docs`                                |        P2        |
 | C4  | Per-indicator MDX reference (formula + defaults + tests)            |     ✅ Done      |
@@ -817,12 +817,12 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 ### Phase D — v7.0 _Optional Cloud + Power Tools_
 
 | #   | Task                                                                           | Priority |
-| --- | ------------------------------------------------------------------------------ | :------: |
+| --- | ------------------------------------------------------------------------------ | :------: | ---------------- |
 | D1  | Passkey auth (WebAuthn) + opt-in cloud sync (E2E encrypted, KV-backed)         |    P3    |
 | D2  | Multi-chart layout (2×2, 1+3) with synced crosshair                            |    P3    |
 | D3  | Drawing tools (trendline, fib retracement, channel)                            |    P3    |
 | D4  | Custom-signal mini-DSL (JSON-AST → Web Worker) — activation of `signal-dsl.ts` |    P3    |
-| D5  | Shared watchlist URLs (read-only encoded state)                                |    P3    |
+| D5  | Shared watchlist URLs (read-only encoded state)                                |    P3    | ✅ Done (v7.5.0) |
 | D6  | Native Web Push via VAPID for price/indicator alerts                           |    P3    |
 | D7  | ICU-lite message formatter (full ICU for v6.4 may be overkill)                 |    P4    |
 | D8  | Optional Supabase or Cloudflare D1 backend for multi-device families           |    P4    |

@@ -6,6 +6,81 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.5.0] - 2026-05-19
+
+### Minor — i18n message catalogue, shared watchlist URLs, coverage push
+
+#### Added
+
+- **C1: i18n message catalogue with `t()` translation helper.** `src/core/messages.ts` —
+  English (`en`) + Hebrew (`he`) catalogs covering ~80 keys across `nav.*`, `watchlist.*`,
+  `consensus.*`, `alerts.*`, `settings.*`, `common.*`, `providerHealth.*`, `stream.*`
+  namespaces. Variable substitution via `{varName}` syntax. Fallback chain: full locale →
+  BCP47 primary tag → `en` → key itself. `registerCatalogue(locale, messages)` for runtime
+  extension. 19 tests. (_commit `5c3462e`_)
+
+- **D5: Shared watchlist deep-link URLs.** "Share" button added to the watchlist toolbar.
+  Click generates a base64url-encoded `?s=…` deep-link URL and copies it to the clipboard.
+  On startup, if the URL contains a watchlist param and the local list is empty, tickers are
+  auto-imported with a toast confirmation. "Share watchlist URL" command added to the command
+  palette. Builds on existing `src/core/share-state.ts` `encodeWatchlistUrl` /
+  `decodeWatchlistUrl` API. (_commit `0c4549c`_)
+
+#### Coverage Push
+
+- **easing.ts** (76% → 100%): bisection fallback path via `cubicBezier(0,0,0,1)(0.0001)`
+  where slopeX < 1e-6 triggers slope-break (`lo=mid` and `hi=mid` branches). +2 tests.
+  (_commit `be3088a`_)
+
+- **error-boundary.ts** (79% → 100%): `vi.spyOn(window, "addEventListener")` captures the
+  `unhandledrejection` handler; tested with Error+stack and non-Error reason. +2 tests.
+  (_commit `be3088a`_)
+
+- **signals.ts** (82% → 96%): `batch()` return value + nested batch; `localStorageAdapter`
+  with `vi.stubGlobal` — absent key, save/load, setItem/getItem throws; `persistedSignal`
+  BroadcastChannel `onmessage` handler via object-property capture (no-this-alias safe).
+  +7 tests. (_commit `be3088a`_)
+
+- **sw-register.ts** (83% → 100%): `vi.stubGlobal("navigator", { userAgent:"test" })` to
+  remove `serviceWorker` property so `"serviceWorker" in navigator` is `false`. +1 test.
+  (_commit `d651d0a`_)
+
+- **icu-formatter.ts** (84% → 97%): unmatched brace / malformed / unknown block types; plural
+  "other" fallback; plural no-match; selectValue no-match; `Intl.PluralRules` fallback via
+  `vi.stubGlobal("Intl", undefined)`; string-to-number conversion; `parseCases` no-brace.
+  +11 tests. (_commit `d651d0a`_)
+
+- **contrast.ts** (85% → 96%): `matchMedia` throws (try/catch path) and `matchMedia` returns
+  `{ matches: true }`. +2 tests. (_commit `d651d0a`_)
+
+- **provider-registry.ts** (59% → 100%): New `provider-registry-breaker.test.ts` uses the
+  **real** `createProviderChain` (no mock) — exercises `createBreakerAwareProvider` internals:
+  `recordSuccess`, `recordFailure`, breaker-aware `health()`, and "circuit breaker is open"
+  throw after 3 failures. +5 tests. (_commit `15b08e5`_)
+
+- **cards/settings.ts** (68% → 100%): Finnhub API key Save/Clear button handlers — calls
+  `onFinnhubKeyChange(key)` on Save, skips on empty input, calls `onFinnhubKeyChange(null)`
+  and resets state on Clear. +3 tests. (_commit `15b08e5`_)
+
+- **alert-state-machine.ts** (76% → 97%): `consensusSell` alert fire, no-refire on
+  consecutive SELL, and `consensus.direction === "NEUTRAL"` clearing `firedAlerts`. +3 tests.
+  (_commit `15b08e5`_)
+
+- **share-state.ts** (branch: 77% → 86%): `decodeShareState` returns null when object has
+  `v` but no `s` field. +1 test. (_commit `0c4549c`_)
+
+#### Tests
+
+- Total: **2658** (+57 from v7.4.0 baseline of 2601)
+- Test files: **262** (+3)
+
+#### ROADMAP
+
+- Marked C1 ✅ Done (v7.5.0)
+- Marked D5 ✅ Done (v7.5.0)
+
+---
+
 ## [7.4.0] - 2026-05-19
 
 ### Minor — Card activation tests (A8/A11-A14/B2-B6), coverage push, ROADMAP updates
