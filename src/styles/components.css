@@ -805,4 +805,48 @@
     font-size: 0.625rem;
     padding: 1px 5px;
   }
+
+  /* ── C9: Onboarding tour tooltip ─────────────────────────────────────── */
+  .tour-tooltip {
+    background: var(--color-surface, #1e1e2e);
+    border: 1px solid var(--color-border, #3a3a5c);
+    border-radius: var(--radius, 8px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    color: var(--color-text, #e2e8f0);
+    max-width: 320px;
+    min-width: 240px;
+    padding: var(--sp-md, 1rem);
+    z-index: 9999;
+  }
+
+  .tour-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--sp-sm, 0.5rem);
+  }
+
+  .tour-step-count {
+    color: var(--text-muted, #94a3b8);
+    font-size: 0.75rem;
+  }
+
+  .tour-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 var(--sp-sm, 0.5rem);
+  }
+
+  .tour-body {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #cbd5e1);
+    line-height: 1.5;
+    margin: 0 0 var(--sp-md, 1rem);
+  }
+
+  .tour-actions {
+    display: flex;
+    gap: var(--sp-sm, 0.5rem);
+    justify-content: flex-end;
+  }
 }

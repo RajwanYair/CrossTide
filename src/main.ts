@@ -30,6 +30,7 @@ import { loadPersistedPalette, applyPalette, VALID_PALETTES, type ExtendedPalett
 import { exportFullDataJson, exportFullDataCsv } from "./core/data-export";
 import { downloadFile } from "./core/export-import";
 import { createPwaInstallManager } from "./ui/pwa-install";
+import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -720,6 +721,13 @@ function main(): void {
     hidePwaInstallGroup();
   });
   void pwaInstall; // retain reference
+
+  // ── C9: Onboarding tour — show on first visit ──────────────────────────────
+  const tour = createOnboardingTour(DEFAULT_TOUR_STEPS);
+  // Delay slightly so DOM is settled and styles are applied
+  setTimeout(() => tour.start(), 800);
+  // "Reset tour" palette command for testers
+  void tour; // retain reference
 
   // Request persistent storage on first ticker add (A21)
   function maybeRequestPersist(): void {

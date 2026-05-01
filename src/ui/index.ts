@@ -124,3 +124,6 @@ export type { AriaLivePoliteness } from "./aria-live";
 
 export { createPwaInstallManager } from "./pwa-install";
 export type { PwaInstallManager } from "./pwa-install";
+
+export { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./onboarding-tour";
+export type { TourStep, OnboardingTour } from "./onboarding-tour";
