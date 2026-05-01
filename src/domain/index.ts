@@ -240,3 +240,7 @@ export { computeWma } from "./wma";
 
 export { computeChaikinOscillator } from "./chaikin-oscillator";
 
+
+export { computeElderImpulse } from "./elder-impulse";
+export type { Impulse, ElderImpulseOptions } from "./elder-impulse";
+
