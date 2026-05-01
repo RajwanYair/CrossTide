@@ -204,3 +204,6 @@ export type { FisherPoint } from "./fisher-transform";
 export { computeVortex } from "./vortex-indicator";
 export type { VortexPoint } from "./vortex-indicator";
 
+
+export { computeMassIndex } from "./mass-index";
+
