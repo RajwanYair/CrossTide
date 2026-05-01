@@ -16,6 +16,13 @@ export interface ShareState {
   readonly range?: "1d" | "5d" | "1m" | "3m" | "1y" | "5y";
   readonly card?: string;
   readonly filters?: readonly string[];
+  /**
+   * Full watchlist ticker array for shareable watchlist URLs.
+   * Encoded as a comma-joined list inside the base64url envelope.
+   * Tickers are normalised to uppercase with whitespace stripped.
+   * Maximum 200 tickers to cap URL length.
+   */
+  readonly watchlist?: readonly string[];
 }
 
 interface Envelope {
@@ -76,4 +83,35 @@ export function readShareUrl(url: string): ShareState | null {
   const u = new URL(url, "http://placeholder/");
   const token = u.searchParams.get(PARAM);
   return token ? decodeShareState(token) : null;
+}
+
+/** Maximum number of tickers that can be packed into a shared URL. */
+export const WATCHLIST_MAX_TICKERS = 200;
+
+/**
+ * Encode a watchlist (array of ticker symbols) into a shareable URL.
+ * @param tickers  List of ticker symbols (normalised to uppercase).
+ * @param base     Optional base URL (defaults to `window.location.href`).
+ */
+export function encodeWatchlistUrl(tickers: readonly string[], base?: string): string {
+  const normalised = tickers
+    .map((t) => t.trim().toUpperCase())
+    .filter((t) => t.length > 0)
+    .slice(0, WATCHLIST_MAX_TICKERS);
+  const state: ShareState = { watchlist: normalised };
+  const resolvedBase = base ?? (typeof location !== "undefined" ? location.href : "http://localhost/");
+  return buildShareUrl(resolvedBase, state);
+}
+
+/**
+ * Decode a shared watchlist URL, returning the list of tickers.
+ * Returns an empty array if the URL contains no valid watchlist.
+ */
+export function decodeWatchlistUrl(url: string): readonly string[] {
+  const state = readShareUrl(url);
+  if (!state?.watchlist) return [];
+  return state.watchlist
+    .map((t) => t.trim().toUpperCase())
+    .filter((t) => t.length > 0)
+    .slice(0, WATCHLIST_MAX_TICKERS);
 }
