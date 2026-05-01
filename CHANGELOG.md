@@ -6,6 +6,40 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.11] - 2026
+
+### Added — Sprints 121–130 (more indicators + core/UI utilities)
+
+- **Ultimate Oscillator** (`domain/ultimate-oscillator`) — Larry Williams'
+  multi-period buying-pressure oscillator (0–100).
+- **Klinger Volume Oscillator** (`domain/klinger-oscillator`) — fast/slow
+  EMA difference of signed volume force; reuses a shared `VolumeCandle`
+  type.
+- **Choppiness Index** (`domain/choppiness-index`) — Dreiss's
+  trending-vs-ranging gauge.
+- **Ease of Movement** (`domain/ease-of-movement`) — Arms' price/volume
+  EOM with SMA smoothing.
+- **KAMA** (`domain/kama`) — Kaufman Adaptive Moving Average with
+  configurable fast/slow constants and SMA seed.
+- **UUID + nanoId** (`core/uuid`) — `uuidV4`, `isUuidV4`, and URL-safe
+  `nanoId(size)` with `crypto.randomUUID` / `getRandomValues` /
+  `Math.random` fallback chain.
+- **URL-safe Base64** (`core/base64-url`) — RFC 4648 §5
+  encode/decode for both strings (UTF-8) and `Uint8Array`, no padding.
+- **Timezone helpers** (`core/timezone`) — `currentTimeZone`,
+  `timeZoneOffsetMinutes`, `formatInTimeZone` using `Intl.DateTimeFormat`.
+- **Clipboard wrapper** (`ui/clipboard`) — async `copyToClipboard` /
+  `readClipboard` with hidden-textarea fallback for legacy contexts.
+- **ARIA live announcer** (`ui/aria-live`) — `announceLive` (re-exported
+  to avoid collision with existing `a11y.announce`) + auto-managed
+  visually-hidden polite/assertive regions.
+
+### Tests
+
+- 1772 unit tests passing (+57 from rc.10).
+
+---
+
 ## [6.1.0-rc.10] - 2026
 
 ### Added — Sprints 111–120 (more indicators + core/UI utilities)
