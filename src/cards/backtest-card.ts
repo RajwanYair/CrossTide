@@ -1,15 +1,16 @@
 /**
  * Backtest UI card — interactive parameter controls that run a
- * consensus-based backtest against a synthetic OHLCV dataset and
- * render the equity curve + trade log + summary stats.
+ * consensus-based backtest against real OHLCV data (via data-service)
+ * or a synthetic fallback, rendering equity curve + trade log + stats.
  *
  * Domain wiring:
  *   buildEquityCurve + summarizeTrades  ← src/domain/equity-curve.ts
  *   maxDrawdown + cagr                  ← src/domain/risk-ratios.ts
  *   runBacktestAsync                    ← src/core/backtest-worker.ts (Web Worker)
  *
- * The synthetic price series is generated deterministically so results
- * are reproducible without a live data connection.
+ * Data sourcing:
+ *   fetchTickerData                     ← src/core/data-service.ts (real candles)
+ *   syntheticCandles (local)            ← fallback when fetch fails
  *
  * A5: Computation is offloaded to a Web Worker via worker-rpc, keeping
  *     the main thread responsive during long backtests.
@@ -125,12 +126,14 @@ function renderTradeLog(
 }
 
 // ── Main render ───────────────────────────────────────────────────────────────
+type Candle = { date: string; open: number; high: number; low: number; close: number; volume: number };
+
 function renderBacktestCard(container: HTMLElement): void {
   let fastPeriod = 10;
   let slowPeriod = 30;
   const initialCapital = 10_000;
 
-  const CANDLES = syntheticCandles(500);
+  const CANDLES: Candle[] = syntheticCandles(500);
 
   const run = async (): Promise<void> => {
     const resultEl = container.querySelector<HTMLElement>("#backtest-result");
@@ -182,7 +185,6 @@ function renderBacktestCard(container: HTMLElement): void {
       annReturn = local.annReturn;
       finalEquity = local.finalEquity;
       totalRetPct = local.totalReturnPct;
-    }
     }
 
     const totalPnl = finalEquity - initialCapital;
@@ -248,6 +250,11 @@ function renderBacktestCard(container: HTMLElement): void {
       <form class="backtest-controls" id="backtest-form" onsubmit="return false">
         <div class="backtest-control-row">
           <label class="backtest-label">
+            Ticker
+            <input id="bt-ticker" type="text" class="input backtest-input"
+                   value="${ticker}" placeholder="AAPL" maxlength="10" />
+          </label>
+          <label class="backtest-label">
             Fast MA
             <input id="bt-fast" type="number" class="input backtest-input"
                    min="2" max="50" value="${fastPeriod}" />
@@ -259,7 +266,7 @@ function renderBacktestCard(container: HTMLElement): void {
           </label>
           <button id="bt-run" type="button" class="btn btn-primary">▶ Run</button>
         </div>
-        <p class="risk-hint">Synthetic 500-day OHLCV series · MA crossover strategy · $${initialCapital.toLocaleString()} starting capital</p>
+        <p class="risk-hint" id="bt-source">Loading real data for <strong>${ticker}</strong>…</p>
       </form>
 
       <!-- Result area -->
@@ -272,8 +279,22 @@ function renderBacktestCard(container: HTMLElement): void {
   const runBtn = form.querySelector<HTMLButtonElement>("#bt-run")!;
   const fastInput = form.querySelector<HTMLInputElement>("#bt-fast")!;
   const slowInput = form.querySelector<HTMLInputElement>("#bt-slow")!;
+  const tickerInput = form.querySelector<HTMLInputElement>("#bt-ticker")!;
+  const sourceHint = form.querySelector<HTMLElement>("#bt-source")!;
 
-  const onRun = (): void => {
+  const updateSourceHint = (): void => {
+    if (dataSource === "real") {
+      sourceHint.innerHTML = `<strong>${ticker}</strong> · ${CANDLES.length} real candles · MA crossover · $${initialCapital.toLocaleString()} capital`;
+    } else {
+      sourceHint.innerHTML = `Synthetic 500-day series (fetch failed) · MA crossover · $${initialCapital.toLocaleString()} capital`;
+    }
+  };
+
+  const onRun = async (): Promise<void> => {
+    // Read ticker
+    const newTicker = tickerInput.value.trim().toUpperCase() || "AAPL";
+    tickerInput.value = newTicker;
+
     fastPeriod = Math.max(2, Math.min(50, parseInt(fastInput.value, 10) || fastPeriod));
     slowPeriod = Math.max(
       fastPeriod + 1,
@@ -284,12 +305,25 @@ function renderBacktestCard(container: HTMLElement): void {
       slowPeriod = fastPeriod + 1;
       slowInput.value = String(slowPeriod);
     }
+
+    // Fetch fresh candles if ticker changed
+    if (newTicker !== ticker || dataSource === "synthetic") {
+      ticker = newTicker;
+      sourceHint.innerHTML = `Loading real data for <strong>${ticker}</strong>…`;
+      await loadCandles();
+      updateSourceHint();
+    }
+
     void run();
   };
 
-  runBtn.addEventListener("click", onRun);
-  // Run immediately with defaults
-  void run();
+  runBtn.addEventListener("click", () => void onRun());
+
+  // Initial load: fetch real data then run
+  void loadCandles().then(() => {
+    updateSourceHint();
+    void run();
+  });
 }
 
 const backtestCard: CardModule = {
