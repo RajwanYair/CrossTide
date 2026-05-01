@@ -160,3 +160,7 @@ export type { Cancellable } from "./throttle-debounce";
 export { runPromisePool, runPromisePoolSettled } from "./promise-pool";
 export type { PromisePoolOptions, SettledResult } from "./promise-pool";
 
+
+export { createEventBus } from "./event-bus";
+export type { EventBus, EventBusOptions, EventMap } from "./event-bus";
+
