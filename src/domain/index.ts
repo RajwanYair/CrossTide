@@ -121,3 +121,7 @@ export type { ResampleOptions } from "./resample";
 export { buildEquityCurve, summarizeTrades, tradePnl } from "./equity-curve";
 export type { ClosedTrade, EquityPoint as EquityCurvePoint, CurveStats, Side } from "./equity-curve";
 
+
+export { totalValue, positionValue, unrealizedPnl, sectorAllocation, positionMetrics, topConcentration } from "./portfolio-analytics";
+export type { Holding, SectorAllocation, PositionMetric } from "./portfolio-analytics";
+
