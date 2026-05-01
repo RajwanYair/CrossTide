@@ -29,6 +29,7 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   alerts: "alerts-container",
   heatmap: "heatmap-container",
   screener: "screener-container",
+  "provider-health": "provider-health-container",
 };
 
 async function activateCard(
@@ -327,6 +328,7 @@ function main(): void {
     { id: "nav-heatmap", label: "Go to Heatmap", hint: "G M", section: "Navigation", run: () => navigateTo("heatmap") },
     { id: "nav-screener", label: "Go to Screener", hint: "G R", section: "Navigation", run: () => navigateTo("screener") },
     { id: "nav-settings", label: "Go to Settings", hint: "G S", section: "Navigation", run: () => navigateTo("settings") },
+    { id: "nav-provider-health", label: "Go to Provider Health", hint: "G P", section: "Navigation", run: () => navigateTo("provider-health") },
     { id: "add-ticker", label: "Add Ticker", hint: "A", section: "Actions", run: () => addInput?.focus() },
     { id: "refresh-data", label: "Refresh Data", hint: "R", section: "Actions", run: () => void refreshData() },
     { id: "search-focus", label: "Focus Search", hint: "/", section: "Actions", run: () => addInput?.focus() },

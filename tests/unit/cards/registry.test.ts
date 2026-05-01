@@ -39,9 +39,9 @@ vi.mock("../../../src/cards/settings-card", () => ({
 const CTX: CardContext = { route: "watchlist", params: {} };
 
 describe("listCards", () => {
-  it("returns 7 entries covering all routes", () => {
+  it("returns 8 entries covering all routes", () => {
     const cards = listCards();
-    expect(cards).toHaveLength(7);
+    expect(cards).toHaveLength(8);
     const routes = cards.map((c) => c.route);
     expect(routes).toContain("watchlist");
     expect(routes).toContain("consensus");
@@ -50,6 +50,7 @@ describe("listCards", () => {
     expect(routes).toContain("heatmap");
     expect(routes).toContain("screener");
     expect(routes).toContain("settings");
+    expect(routes).toContain("provider-health");
   });
 
   it("each entry has a title and viewId", () => {

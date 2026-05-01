@@ -13,3 +13,5 @@ export type {
 } from "./circuit-breaker";
 export { aggregateStats, aggregateAll, pruneOld } from "./health-stats";
 export type { RequestOutcome, RequestSample, ProviderStats } from "./health-stats";
+export { getChain, getHealthSnapshot, configureFinnhub } from "./provider-registry";
+export type { HealthSnapshot, ProviderRegistryEntry } from "./provider-registry";
