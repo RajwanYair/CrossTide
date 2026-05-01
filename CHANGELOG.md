@@ -6,6 +6,37 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.2] - 2025
+
+### Added — Phase A streaming, DSL, and risk metrics (Sprints 31–40)
+
+- **Branded primitives** (`domain/branded`) — opaque `Ticker`, `ISODate`,
+  `Price`, `Percent` types with guards and constructors.
+- **Reconnecting WebSocket** (`core/reconnecting-ws`) — exponential
+  backoff with jitter, queued sends, injectable transport.
+- **Optimistic mutation** (`core/optimistic`) — store-aware
+  apply/commit/rollback helper.
+- **Freshness classifier** (`ui/freshness`) — live/fresh/recent/stale/expired
+  buckets and compact age formatter.
+- **Benchmark comparison** (`domain/benchmark`) — rebase, relative-strength
+  alignment, beta vs benchmark.
+- **CSV import/export** (`core/csv`) — RFC 4180 parser/serializer with
+  quoted fields, embedded newlines, and object mapping.
+- **Risk ratios** (`domain/risk-ratios`) — Sortino, CAGR, max-drawdown,
+  Calmar.
+- **Drawing tools** (`ui/drawing`) — pure state machine for trendlines,
+  horizontal lines, and Fibonacci retracements with hit-testing.
+- **Color-blind palettes** (`ui/palettes`) — default + deuteranopia,
+  protanopia, tritanopia variants.
+- **Signal DSL** (`domain/signal-dsl`) — safe expression evaluator
+  (arith / comparison / boolean / function calls) for custom signals.
+
+### Tests
+
+- 1120 tests across 125 files (+102 new in this RC).
+
+---
+
 ## [6.1.0-rc.1] - 2025
 
 ### Added — Phase A platform modules (Sprints 5–30)
