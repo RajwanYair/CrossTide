@@ -181,3 +181,6 @@ export { computeUlcerIndex } from "./ulcer-index";
 
 export { computeCoppockCurve } from "./coppock-curve";
 
+
+export { computeDema, computeTema } from "./dema-tema";
+
