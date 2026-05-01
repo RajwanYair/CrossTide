@@ -79,6 +79,12 @@ export type {
   PolicyOptions,
   PolicyDecision,
 } from "./tier-policy";
+export { createReconnectingWS, nextBackoff } from "./reconnecting-ws";
+export type {
+  ReconnectingWS,
+  ReconnectOptions,
+  WSEventHandler,
+} from "./reconnecting-ws";
 export {
   createStoragePressureMonitor,
   requestPersistentStorage,
