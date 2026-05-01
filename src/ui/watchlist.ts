@@ -1,11 +1,12 @@
 /**
  * Watchlist renderer — renders the watchlist table from state.
- * Supports column sorting by clicking table headers.
+ * Supports column sorting by clicking table headers and sector grouping.
  */
 import type { AppConfig, ConsensusResult, SignalDirection, InstrumentType } from "../types/domain";
 import { formatCompact } from "./number-format";
 import { renderSparkline } from "./sparkline";
 import { instrumentTypeBadge } from "./instrument-filter";
+import { groupBySector, renderSectorGroup, bindSectorHeaders } from "./sector-groups";
 
 export interface WatchlistQuote {
   ticker: string;
@@ -19,6 +20,18 @@ export interface WatchlistQuote {
   closes30d: readonly number[];
   consensus: ConsensusResult | null;
   instrumentType?: InstrumentType;
+  sector?: string;
+}
+
+let sectorGroupingEnabled = false;
+
+/** Toggle sector grouping on/off. */
+export function setSectorGrouping(enabled: boolean): void {
+  sectorGroupingEnabled = enabled;
+}
+
+export function isSectorGroupingEnabled(): boolean {
+  return sectorGroupingEnabled;
 }
 
 type SortColumn = "ticker" | "price" | "change" | "consensus" | "volume";
@@ -100,15 +113,25 @@ export function renderWatchlist(config: AppConfig, quotes: Map<string, Watchlist
 
   emptyMsg?.classList.add("hidden");
 
-  const sorted = sortEntries(config.watchlist, quotes);
-  const rows = sorted
-    .map((entry) => {
-      const q = quotes.get(entry.ticker);
-      return renderRow(entry.ticker, q ?? null);
-    })
-    .join("");
-
-  tbody.innerHTML = rows;
+  if (sectorGroupingEnabled) {
+    // Build maps needed for sector grouping
+    const sectorMap = new Map<string, string>();
+    const consensusMap = new Map<string, "BUY" | "SELL" | "NEUTRAL">();
+    for (const [ticker, q] of quotes) {
+      if (q.sector) sectorMap.set(ticker, q.sector);
+      if (q.consensus?.direction) consensusMap.set(ticker, q.consensus.direction);
+    }
+    const groups = groupBySector(config.watchlist, sectorMap, consensusMap);
+    tbody.innerHTML = groups
+      .map((g) => renderSectorGroup(g, (t) => renderRow(t, quotes.get(t) ?? null)))
+      .join("");
+    bindSectorHeaders(tbody, () => renderWatchlist(config, quotes));
+  } else {
+    const sorted = sortEntries(config.watchlist, quotes);
+    tbody.innerHTML = sorted
+      .map((entry) => renderRow(entry.ticker, quotes.get(entry.ticker) ?? null))
+      .join("");
+  }
 }
 
 function renderRow(ticker: string, quote: WatchlistQuote | null): string {

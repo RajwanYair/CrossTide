@@ -38,6 +38,7 @@ interface YahooChartResult {
         previousClose?: number;
         symbol?: string;
         instrumentType?: string; // "EQUITY", "ETF", "CRYPTOCURRENCY", etc.
+        sector?: string; // GICS sector for equities (not always present)
       };
       timestamp?: number[];
       indicators?: {
@@ -67,6 +68,8 @@ export interface TickerData {
   candles: readonly DailyCandle[];
   /** Instrument classification derived from Yahoo `instrumentType` field. */
   instrumentType?: InstrumentType;
+  /** GICS sector from Yahoo Finance (equity only). */
+  sector?: string;
   error?: string;
 }
 
@@ -83,6 +86,7 @@ function parseInstrumentType(raw: string | undefined): InstrumentType | undefine
 interface CandleResult {
   candles: DailyCandle[];
   instrumentType: InstrumentType | undefined;
+  sector: string | undefined;
 }
 
 /**
@@ -120,7 +124,7 @@ async function fetchCandles(ticker: string): Promise<CandleResult> {
     });
   }
 
-  return { candles, instrumentType: parseInstrumentType(result.meta?.instrumentType) };
+  return { candles, instrumentType: parseInstrumentType(result.meta?.instrumentType), sector: result.meta?.sector };
 }
 
 /**
@@ -128,7 +132,7 @@ async function fetchCandles(ticker: string): Promise<CandleResult> {
  */
 export async function fetchTickerData(ticker: string): Promise<TickerData> {
   try {
-    const { candles, instrumentType } = await fetchCandles(ticker);
+    const { candles, instrumentType, sector } = await fetchCandles(ticker);
 
     if (candles.length === 0) {
       return emptyData(ticker, "No candle data available");
@@ -175,6 +179,7 @@ export async function fetchTickerData(ticker: string): Promise<TickerData> {
       consensus,
       candles,
       ...(instrumentType !== undefined && { instrumentType }),
+      ...(sector !== undefined && { sector }),
     };
   } catch (err) {
     return emptyData(ticker, (err as Error).message);

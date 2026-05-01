@@ -9,7 +9,7 @@ import { watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
 import { initRouter, navigateTo, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
-import { renderWatchlist, setSortColumn, type WatchlistQuote } from "./ui/watchlist";
+import { renderWatchlist, setSortColumn, setSectorGrouping, isSectorGroupingEnabled, type WatchlistQuote } from "./ui/watchlist";
 import { loadCard, type CardHandle, type CardContext } from "./cards/registry";
 import { showToast } from "./ui/toast";
 import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
@@ -77,6 +77,7 @@ function main(): void {
         high52w: data.high52w, low52w: data.low52w, closes30d: data.closes30d,
         consensus: data.consensus,
         ...(data.instrumentType !== undefined && { instrumentType: data.instrumentType }),
+        ...(data.sector !== undefined && { sector: data.sector }),
       });
     }
     return m;
@@ -404,6 +405,21 @@ function main(): void {
         appCache.clear();
         localStorage.removeItem("crosstide-cache");
         showToast({ message: "App cache cleared.", type: "info" });
+      },
+    },
+    {
+      id: "toggle-sector-grouping",
+      label: "Toggle sector grouping in watchlist",
+      section: "Actions",
+      run: () => {
+        const next = !isSectorGroupingEnabled();
+        setSectorGrouping(next);
+        const filteredConfig = {
+          ...config,
+          watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
+        };
+        renderWatchlist(filteredConfig, buildQuotesMap());
+        showToast({ message: `Sector grouping ${next ? "enabled" : "disabled"}`, type: "info" });
       },
     },
   ];
