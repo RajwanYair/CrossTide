@@ -62,15 +62,16 @@
           </div>
           <div id="watchlist-table-container">
             <div id="instrument-filter-bar" class="instrument-filter-bar" role="group" aria-label="Filter by instrument type"></div>
+            <div id="sort-live" role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div>
             <table id="watchlist-table">
               <thead id="watchlist-head">
                 <tr>
-                  <th data-sort="ticker" class="sortable">Ticker</th>
-                  <th data-sort="price" class="sortable">Price</th>
-                  <th data-sort="change" class="sortable">Change</th>
-                  <th data-sort="consensus" class="sortable">Signal</th>
+                  <th data-sort="ticker" class="sortable" tabindex="0" aria-sort="ascending">Ticker</th>
+                  <th data-sort="price" class="sortable" tabindex="0" aria-sort="none">Price</th>
+                  <th data-sort="change" class="sortable" tabindex="0" aria-sort="none">Change</th>
+                  <th data-sort="consensus" class="sortable" tabindex="0" aria-sort="none">Signal</th>
                   <th>Sparkline</th>
-                  <th data-sort="volume" class="sortable">Volume</th>
+                  <th data-sort="volume" class="sortable" tabindex="0" aria-sort="none">Volume</th>
                   <th>52W Range</th>
                   <th></th>
                 </tr>

@@ -50,6 +50,11 @@ export function setSortColumn(column: SortColumn): void {
   }
 }
 
+/** Return the current sort config (for aria-sort and bindSortableTable). */
+export function getSortConfig(): { column: SortColumn; direction: "asc" | "desc" } {
+  return currentSort;
+}
+
 function sortEntries(
   entries: readonly { ticker: string }[],
   quotes: Map<string, WatchlistQuote>,
@@ -80,9 +85,14 @@ function sortEntries(
   return sorted;
 }
 
-function renderSortIndicator(column: SortColumn): string {
-  if (currentSort.column !== column) return "";
-  return currentSort.direction === "asc" ? " ↑" : " ↓";
+function renderSortIndicator(_column: SortColumn): string {
+  // Chevron is rendered via CSS [aria-sort="ascending"]::after / [aria-sort="descending"]::after
+  return "";
+}
+
+function sortAriaAttr(column: SortColumn): string {
+  if (currentSort.column !== column) return `aria-sort="none"`;
+  return `aria-sort="${currentSort.direction === "asc" ? "ascending" : "descending"}"`;
 }
 
 export function renderWatchlist(config: AppConfig, quotes: Map<string, WatchlistQuote>): void {
@@ -94,12 +104,12 @@ export function renderWatchlist(config: AppConfig, quotes: Map<string, Watchlist
   // Render sortable headers
   if (thead) {
     thead.innerHTML = `<tr>
-      <th data-sort="ticker" class="sortable">Ticker${renderSortIndicator("ticker")}</th>
-      <th data-sort="price" class="sortable">Price${renderSortIndicator("price")}</th>
-      <th data-sort="change" class="sortable">Change${renderSortIndicator("change")}</th>
-      <th data-sort="consensus" class="sortable">Signal${renderSortIndicator("consensus")}</th>
+      <th data-sort="ticker" class="sortable" tabindex="0" ${sortAriaAttr("ticker")}>Ticker${renderSortIndicator("ticker")}</th>
+      <th data-sort="price" class="sortable" tabindex="0" ${sortAriaAttr("price")}>Price${renderSortIndicator("price")}</th>
+      <th data-sort="change" class="sortable" tabindex="0" ${sortAriaAttr("change")}>Change${renderSortIndicator("change")}</th>
+      <th data-sort="consensus" class="sortable" tabindex="0" ${sortAriaAttr("consensus")}>Signal${renderSortIndicator("consensus")}</th>
       <th>Sparkline</th>
-      <th data-sort="volume" class="sortable">Volume${renderSortIndicator("volume")}</th>
+      <th data-sort="volume" class="sortable" tabindex="0" ${sortAriaAttr("volume")}>Volume${renderSortIndicator("volume")}</th>
       <th>52W Range</th>
       <th></th>
     </tr>`;

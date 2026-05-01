@@ -50,3 +50,46 @@ export function toggleSort<K extends string>(
   }
   return { column: clickedColumn, direction: "asc" };
 }
+
+/**
+ * Return the aria-sort attribute value for a given column header.
+ */
+export function ariaSort<K extends string>(
+  sort: SortConfig<K>,
+  col: K,
+): "ascending" | "descending" | "none" {
+  if (sort.column !== col) return "none";
+  return sort.direction === "asc" ? "ascending" : "descending";
+}
+
+/**
+ * Wire keyboard activation (Enter / Space) on all [data-sort] <th> elements.
+ * Call this after re-rendering a sortable thead.
+ *
+ * @param thead       The <thead> element (or any ancestor containing [data-sort] elements).
+ * @param onSort      Callback invoked with the column key when a header is activated.
+ * @param liveRegion  Optional aria-live region to announce the new sort state.
+ * @param getAria     Optional function to read the current aria-sort value for announcements.
+ */
+export function bindSortableTable<K extends string>(
+  thead: HTMLElement | null,
+  onSort: (col: K) => void,
+  liveRegion?: HTMLElement | null,
+  getAria?: (col: K) => string,
+): void {
+  if (!thead) return;
+  const ths = thead.querySelectorAll<HTMLElement>("[data-sort]");
+  for (const th of ths) {
+    th.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const col = th.dataset["sort"] as K;
+        onSort(col);
+        if (liveRegion && getAria) {
+          const ariaValue = getAria(col);
+          liveRegion.textContent = `Sorted by ${col} ${ariaValue}`;
+        }
+      }
+    });
+  }
+}

@@ -9,7 +9,7 @@ import { watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
 import { initRouter, navigateTo, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
-import { renderWatchlist, setSortColumn, setSectorGrouping, isSectorGroupingEnabled, type WatchlistQuote } from "./ui/watchlist";
+import { renderWatchlist as renderWatchlistCore, setSortColumn, setSectorGrouping, isSectorGroupingEnabled, getSortConfig, type WatchlistQuote } from "./ui/watchlist";
 import { loadCard, type CardHandle, type CardContext } from "./cards/registry";
 import { showToast } from "./ui/toast";
 import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
@@ -24,6 +24,7 @@ import { computeSma } from "./domain/sma-calculator";
 import type { ScreenerInput } from "./cards/screener";
 import { buildShareUrl, readShareUrl } from "./core/share-state";
 import { mountInstrumentFilterBar, applyInstrumentFilter, getInstrumentFilter } from "./ui/instrument-filter";
+import { bindSortableTable } from "./ui/sortable";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -83,6 +84,27 @@ function main(): void {
     return m;
   }
 
+  /** Render watchlist + wire keyboard sort activation + aria-sort for accessibility (B14). */
+  function refreshWatchlist(cfg: typeof config, quotes: Map<string, WatchlistQuote>): void {
+    renderWatchlistCore(cfg, quotes);
+    const thead = document.getElementById("watchlist-head");
+    const liveRegion = document.getElementById("sort-live");
+    const sortCol = (col: "ticker" | "price" | "change" | "consensus" | "volume"): void => {
+      setSortColumn(col);
+      const filteredCfg = {
+        ...cfg,
+        watchlist: applyInstrumentFilter(cfg.watchlist, getInstrumentFilter()),
+      };
+      refreshWatchlist(filteredCfg, buildQuotesMap());
+    };
+    const getAria = (col: string): string => {
+      const s = getSortConfig();
+      if (s.column !== col) return "none";
+      return s.direction === "asc" ? "ascending" : "descending";
+    };
+    bindSortableTable(thead, sortCol, liveRegion, getAria);
+  }
+
   function updateStatus(text: string): void {
     const el = document.getElementById("sync-status");
     if (el) el.textContent = text;
@@ -92,7 +114,7 @@ function main(): void {
     const tickers = config.watchlist.map((e) => e.ticker);
     if (tickers.length === 0) {
       tickerDataCache.clear();
-      renderWatchlist(config, new Map());
+      refreshWatchlist(config, new Map());
       updateStatus("Ready");
       return;
     }
@@ -110,7 +132,7 @@ function main(): void {
       ...config,
       watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
     };
-    renderWatchlist(filteredConfig, buildQuotesMap());
+    refreshWatchlist(filteredConfig, buildQuotesMap());
 
     // Update screener with live data derived from candles
     const screenerInputs: ScreenerInput[] = [];
@@ -156,7 +178,7 @@ function main(): void {
   // Initialize UI
   initTheme(config.theme);
   initRouter();
-  renderWatchlist(config, new Map());
+  refreshWatchlist(config, new Map());
 
   // Mount instrument filter bar (B12)
   mountInstrumentFilterBar(() => {
@@ -164,7 +186,7 @@ function main(): void {
       ...config,
       watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
     };
-    renderWatchlist(filteredConfig, buildQuotesMap());
+    refreshWatchlist(filteredConfig, buildQuotesMap());
   });
 
   // ── URL share-state: restore on startup ───────────────────────────────
@@ -213,7 +235,7 @@ function main(): void {
       }
       config = addTicker(config, ticker);
       saveConfig(config);
-      renderWatchlist(config, new Map());
+      refreshWatchlist(config, new Map());
       addInput.value = "";
       showToast({ message: `Added ${ticker} — fetching data…`, type: "success" });
       maybeRequestPersist();
@@ -234,7 +256,7 @@ function main(): void {
       if (ticker) {
         config = removeTicker(config, ticker);
         saveConfig(config);
-        renderWatchlist(config, new Map());
+        refreshWatchlist(config, new Map());
         showToast({ message: `Removed ${ticker}`, type: "info" });
       }
     }
@@ -251,7 +273,12 @@ function main(): void {
       ...config,
       watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
     };
-    renderWatchlist(sortedConfig, buildQuotesMap());
+    refreshWatchlist(sortedConfig, buildQuotesMap());
+    const s = getSortConfig();
+    const liveRegion = document.getElementById("sort-live");
+    if (liveRegion) {
+      liveRegion.textContent = `Sorted by ${col} ${s.direction === "asc" ? "ascending" : "descending"}`;
+    }
   });
 
   // Theme change
@@ -314,7 +341,7 @@ function main(): void {
           }
           config = { ...config, watchlist: merged };
           saveConfig(config);
-          renderWatchlist(config, new Map());
+          refreshWatchlist(config, new Map());
           showToast({
             message: `Imported ${added} new ticker(s) — fetching data…`,
             type: "success",
@@ -334,7 +361,7 @@ function main(): void {
     if (config.watchlist.length === 0) return;
     config = { ...config, watchlist: [] };
     saveConfig(config);
-    renderWatchlist(config, new Map());
+    refreshWatchlist(config, new Map());
     showToast({ message: "Watchlist cleared", type: "warning" });
   });
 
@@ -418,7 +445,7 @@ function main(): void {
           ...config,
           watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
         };
-        renderWatchlist(filteredConfig, buildQuotesMap());
+        refreshWatchlist(filteredConfig, buildQuotesMap());
         showToast({ message: `Sector grouping ${next ? "enabled" : "disabled"}`, type: "info" });
       },
     },

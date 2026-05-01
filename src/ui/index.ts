@@ -17,7 +17,7 @@ export { renderSparkline } from "./sparkline";
 export type { SparklineOptions } from "./sparkline";
 export { openModal, closeModal, isModalOpen } from "./modal";
 export type { ModalOptions } from "./modal";
-export { sortRows, toggleSort } from "./sortable";
+export { sortRows, toggleSort, ariaSort, bindSortableTable } from "./sortable";
 export type { SortConfig, SortDirection } from "./sortable";
 export { announce, trapFocus, prefersReducedMotion } from "./a11y";
 export { scoreCommand, rankCommands, createPaletteState } from "./command-palette";

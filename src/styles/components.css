@@ -8,6 +8,11 @@
     color: var(--accent);
   }
 
+  /* aria-sort visual chevrons (B14) */
+  .sortable[aria-sort="ascending"]::after  { content: " ↑"; font-size: 0.75em; }
+  .sortable[aria-sort="descending"]::after { content: " ↓"; font-size: 0.75em; }
+  .sortable:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
   .card {
     background: var(--bg-card);
     border: 1px solid var(--border);

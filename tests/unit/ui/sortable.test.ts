@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { sortRows, toggleSort } from "../../../src/ui/sortable";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { sortRows, toggleSort, ariaSort, bindSortableTable } from "../../../src/ui/sortable";
 
 describe("sortRows", () => {
   const data = [
@@ -64,5 +64,76 @@ describe("toggleSort", () => {
   it("defaults to asc on new column", () => {
     const result = toggleSort({ column: "price", direction: "desc" }, "name");
     expect(result).toEqual({ column: "name", direction: "asc" });
+  });
+});
+
+describe("ariaSort", () => {
+  it("returns ascending for the active asc column", () => {
+    expect(ariaSort({ column: "price", direction: "asc" }, "price")).toBe("ascending");
+  });
+
+  it("returns descending for the active desc column", () => {
+    expect(ariaSort({ column: "price", direction: "desc" }, "price")).toBe("descending");
+  });
+
+  it("returns none for an inactive column", () => {
+    expect(ariaSort({ column: "price", direction: "asc" }, "name")).toBe("none");
+  });
+});
+
+describe("bindSortableTable", () => {
+  let thead: HTMLElement;
+  beforeEach(() => {
+    thead = document.createElement("thead");
+    const tr = document.createElement("tr");
+    const th = document.createElement("th");
+    th.dataset["sort"] = "price";
+    th.setAttribute("tabindex", "0");
+    tr.appendChild(th);
+    thead.appendChild(tr);
+    document.body.appendChild(thead);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(thead);
+    vi.restoreAllMocks();
+  });
+
+  it("fires onSort with column key on Enter key", () => {
+    const onSort = vi.fn();
+    bindSortableTable(thead, onSort);
+    const th = thead.querySelector<HTMLElement>("[data-sort]")!;
+    th.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(onSort).toHaveBeenCalledWith("price");
+  });
+
+  it("fires onSort with column key on Space key", () => {
+    const onSort = vi.fn();
+    bindSortableTable(thead, onSort);
+    const th = thead.querySelector<HTMLElement>("[data-sort]")!;
+    th.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+    expect(onSort).toHaveBeenCalledWith("price");
+  });
+
+  it("does not fire onSort on other keys", () => {
+    const onSort = vi.fn();
+    bindSortableTable(thead, onSort);
+    const th = thead.querySelector<HTMLElement>("[data-sort]")!;
+    th.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+    expect(onSort).not.toHaveBeenCalled();
+  });
+
+  it("updates live region text when getAria is provided", () => {
+    const onSort = vi.fn();
+    const liveRegion = document.createElement("div");
+    const getAria = vi.fn().mockReturnValue("ascending");
+    bindSortableTable(thead, onSort, liveRegion, getAria);
+    const th = thead.querySelector<HTMLElement>("[data-sort]")!;
+    th.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(liveRegion.textContent).toBe("Sorted by price ascending");
+  });
+
+  it("handles null thead gracefully", () => {
+    expect(() => bindSortableTable(null, vi.fn())).not.toThrow();
   });
 });
