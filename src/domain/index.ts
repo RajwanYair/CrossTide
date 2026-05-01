@@ -140,3 +140,7 @@ export { simpleReturns, logReturns, cumulativeReturns, totalReturn, annualizedRe
 export { anchoredVwap } from "./anchored-vwap";
 export type { AnchoredVwapPoint, AnchoredVwapOptions } from "./anchored-vwap";
 
+
+export { detectMaCrossovers, crossoverFlags } from "./ma-crossover";
+export type { MaCrossEvent, CrossKind } from "./ma-crossover";
+
