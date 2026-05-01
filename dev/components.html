@@ -400,6 +400,40 @@
       </div>
     </section>
 
+    <!-- ─────────────── COLOR PALETTES (C2) ─────────────────────────────── -->
+    <section class="section">
+      <h2 class="section-title">Color Palettes (C2 — Accessibility)</h2>
+      <div
+        id="palette-switcher"
+        style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem"
+      ></div>
+      <div id="palette-swatches" style="display: flex; gap: 1rem; flex-wrap: wrap"></div>
+    </section>
+
+    <!-- ─────────────── REGISTERED CARDS (A19) ──────────────────────────── -->
+    <section class="section">
+      <h2 class="section-title">
+        Registered Cards (A19)
+        <span
+          id="card-mount-summary"
+          style="
+            font-weight: 400;
+            font-size: 0.65rem;
+            margin-left: 0.5rem;
+            color: var(--color-text);
+          "
+        ></span>
+      </h2>
+      <div
+        id="card-preview-grid"
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
+          gap: 1rem;
+        "
+      ></div>
+    </section>
+
     <script type="module">
       import { renderSparkline } from "/src/ui/sparkline.ts";
       import { showToast } from "/src/ui/toast.ts";
@@ -539,6 +573,115 @@
       document
         .getElementById("toast-sticky")
         ?.addEventListener("click", () => window.demoToast("info", 0));
+      // ── C2: palette switcher ──────────────────────────────────────────
+      {
+        const { PALETTE_NAMES, applyPalette, getPalette } = await import("/src/ui/palettes.ts");
+        const switcherEl = document.getElementById("palette-switcher");
+        const swatchesEl = document.getElementById("palette-swatches");
+
+        let activePalette = "default";
+
+        const renderPaletteSwatches = (name) => {
+          if (!swatchesEl) return;
+          const palette = getPalette(name);
+          swatchesEl.innerHTML = "";
+          Object.entries(palette).forEach(([kind, hex]) => {
+            const cell = document.createElement("div");
+            cell.style.cssText =
+              "display:flex;flex-direction:column;align-items:center;gap:4px;font-size:0.6rem;";
+            const dot = document.createElement("div");
+            dot.style.cssText = `width:36px;height:36px;border-radius:50%;background:${hex};border:1px solid var(--color-border);`;
+            const lbl = document.createElement("span");
+            lbl.textContent = kind;
+            cell.append(dot, lbl);
+            swatchesEl.append(cell);
+          });
+        };
+
+        PALETTE_NAMES.forEach((name) => {
+          const btn = document.createElement("button");
+          btn.textContent = name;
+          btn.className = `btn btn-secondary${name === "default" ? " active" : ""}`;
+          btn.style.fontSize = "0.75rem";
+          btn.addEventListener("click", () => {
+            activePalette = name;
+            applyPalette(name);
+            renderPaletteSwatches(name);
+            switcherEl?.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+          });
+          switcherEl?.append(btn);
+        });
+
+        renderPaletteSwatches("default");
+      }
+
+      // ── A19: mount registered cards ───────────────────────────────────
+      {
+        const { listCards } = await import("/src/cards/registry.ts");
+        const grid = document.getElementById("card-preview-grid");
+        const summary = document.getElementById("card-mount-summary");
+        const cards = listCards();
+        let mounted = 0;
+        let errors = 0;
+
+        if (summary) summary.textContent = `Loading ${cards.length} cards…`;
+
+        await Promise.all(
+          cards.map(async (entry) => {
+            const wrapper = document.createElement("div");
+            wrapper.style.cssText =
+              "border:1px solid var(--color-border,#30363d);border-radius:8px;overflow:hidden;";
+
+            const header = document.createElement("div");
+            header.style.cssText =
+              "display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.75rem;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--color-border,#30363d);font-size:0.7rem;";
+            header.innerHTML = `<span style="color:var(--color-accent,#58a6ff);font-weight:600;font-family:monospace">${entry.route}</span><span style="color:var(--color-text,#8b949e)">${entry.title}</span>`;
+
+            const body = document.createElement("div");
+            body.style.cssText = "padding:1rem;min-height:80px;";
+
+            const statusEl = document.createElement("div");
+            statusEl.style.cssText =
+              "font-size:0.75rem;color:var(--color-text,#8b949e);display:flex;align-items:center;gap:0.4rem;";
+            statusEl.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:var(--color-text,#8b949e);animation:pulse 1.5s ease infinite;flex-shrink:0"></span> Loading…`;
+            body.append(statusEl);
+            wrapper.append(header, body);
+            grid?.append(wrapper);
+
+            const cardCtx = {
+              route: entry.route,
+              params: {},
+            };
+
+            try {
+              const cardModule = await entry.load();
+              const container = document.createElement("div");
+              container.id = `card-preview-${entry.route}`;
+              statusEl.remove();
+              body.append(container);
+
+              cardModule.mount(container, cardCtx);
+
+              const badge = document.createElement("div");
+              badge.style.cssText =
+                "font-size:0.65rem;padding:0.15rem 0.4rem;border-radius:4px;background:rgba(63,185,80,0.15);color:#3fb950;display:inline-flex;align-items:center;gap:0.3rem;margin-top:0.5rem;";
+              badge.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:#3fb950;"></span> mounted`;
+              body.append(badge);
+              mounted++;
+            } catch (err) {
+              statusEl.style.cssText =
+                "font-size:0.75rem;color:#da3633;display:flex;align-items:center;gap:0.4rem;padding:0.5rem;border-radius:4px;background:rgba(218,54,51,0.1);";
+              statusEl.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:#da3633;flex-shrink:0"></span> Error: ${String(err instanceof Error ? err.message : err).slice(0, 80)}`;
+              errors++;
+            }
+
+            if (summary) {
+              summary.textContent = `${mounted} mounted, ${errors} error${errors !== 1 ? "s" : ""} / ${cards.length} total`;
+            }
+          }),
+        );
+      }
     </script>
   </body>
 </html>
