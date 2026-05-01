@@ -125,3 +125,7 @@ export type { ClosedTrade, EquityPoint as EquityCurvePoint, CurveStats, Side } f
 export { totalValue, positionValue, unrealizedPnl, sectorAllocation, positionMetrics, topConcentration } from "./portfolio-analytics";
 export type { Holding, SectorAllocation, PositionMetric } from "./portfolio-analytics";
 
+
+export { computeVolumeProfile } from "./volume-profile";
+export type { VolumeProfile, VolumeProfileBin, VolumeProfileOptions } from "./volume-profile";
+
