@@ -807,7 +807,7 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 | C1  | i18n (English + Hebrew RTL) via `@formatjs/intl`                    |    P2    |
 | C2  | High-contrast & color-blind palettes (wires `palettes.ts`)          |    P2    |
 | C3  | Astro Starlight docs site at `/docs`                                |    P2    |
-| C4  | Per-indicator MDX reference (formula + defaults + tests)            |    P2    |
+| C4  | Per-indicator MDX reference (formula + defaults + tests)            |  ✅ Done  |
 | C5  | Mobile-first layout pass + container queries + View Transitions API |    P2    |
 | C6  | Dividend projection in Portfolio                                    |    P3    |
 | C7  | CSV/JSON full-data export with schema-versioned envelope            |    P2    |
@@ -832,7 +832,7 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 | #   | Task                                                               | Priority |
 | --- | ------------------------------------------------------------------ | :------: |
 | E1  | Tauri 2.0 desktop wrapper (Win/Mac/Linux)                          |    P4    |
-| E2  | Read-only public REST API (rate-limited)                           |    P4    |
+| E2  | Read-only public REST API (rate-limited)                           |  ✅ Done  |
 | E3  | Public "research notes" pages (per-symbol blog, optional)          |    P5    |
 | E4  | Optional WASM hot-path for tick-level streaming compute            |    P4    |
 | E5  | Native iOS/Android via Capacitor (only if PWA proves insufficient) |    P5    |
@@ -858,7 +858,24 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 
 **Conclusion:** the legacy todo list is overwhelmingly _built but unwired_. v6.2 (Phase A) is mostly an integration sprint, not a build sprint.
 
-**From the April 2026 roadmap:**
+**v7.1.0 sprint session (10 sprints):**
+
+| Sprint | Item                                                    | Status |
+| ------ | ------------------------------------------------------- | ------ |
+| 1      | E2: Cloudflare Worker API (5 endpoints, 34 tests)       | ✅     |
+| 2      | C4: 8 indicator MDX docs (ATR, VWAP, EMA/SMA, CCI, Williams%R, OBV, Aroon, AO) | ✅ |
+| 3      | User guide MDX pages (Watchlist, Charts, Portfolio)     | ✅     |
+| 4      | D7: RTL locale wiring (`setLocale`, `getTextDirection`, `initLocale`) | ✅ |
+| 5      | Coverage: web-vitals (21 tests) + telemetry (20 tests)  | ✅     |
+| 6      | Coverage: analytics-client (15 tests) + deep-clone (21 tests) | ✅ |
+| 7      | R7: Registry — mock all 14 cards + retry-on-failure test | ✅    |
+| 8      | R13: Domain API type-level tests (20 `expectTypeOf` assertions) | ✅ |
+| 9      | R6: JSDoc sweep + ROADMAP update                        | ✅     |
+| 10     | CHANGELOG + v7.1.0 bump + `gh release`                  | ⏳     |
+
+**Conclusion:** 9 sprints complete, v7.1.0 in progress.
+
+
 
 | Item                                  | Status                                    |
 | ------------------------------------- | ----------------------------------------- |
@@ -883,10 +900,10 @@ reimplementation allowed. Covers both numeric and string columns with locale-awa
 | Backtest UI                           | ⏳ → B4                                   |
 | Provider Health card                  | ⏳ → B5                                   |
 | OG image                              | ⏳ → B7                                   |
-| i18n + RTL                            | ⏳ → C1                                   |
+| i18n + RTL                            | ✅ Partial: RTL wiring (setLocale/dir) done; full message catalogue pending C1 |
 | High-contrast palettes                | ⏳ → C2                                   |
 | Astro Starlight docs                  | ⏳ → C3                                   |
-| Per-indicator MDX                     | ⏳ → C4                                   |
+| Per-indicator MDX                     | ✅ Done (13 indicators, 8 added v7.1)     |
 | Mobile responsive + container queries | ⏳ → C5                                   |
 | Passkey auth + cloud sync             | ⏳ → D1                                   |
 | Multi-chart layout                    | ⏳ → D2                                   |

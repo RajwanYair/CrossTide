@@ -70,11 +70,10 @@ describe("MethodSignal type", () => {
 });
 
 describe("ConsensusResult type", () => {
-  it("has score, direction, and bullish/bearish counts", () => {
-    expectTypeOf<ConsensusResult>().toHaveProperty("score").toEqualTypeOf<number>();
+  it("has ticker, direction, buyMethods, sellMethods, and strength", () => {
+    expectTypeOf<ConsensusResult>().toHaveProperty("ticker").toEqualTypeOf<string>();
     expectTypeOf<ConsensusResult>().toHaveProperty("direction").toEqualTypeOf<SignalDirection>();
-    expectTypeOf<ConsensusResult>().toHaveProperty("bullish").toEqualTypeOf<number>();
-    expectTypeOf<ConsensusResult>().toHaveProperty("bearish").toEqualTypeOf<number>();
+    expectTypeOf<ConsensusResult>().toHaveProperty("strength").toEqualTypeOf<number>();
   });
 });
 
@@ -176,8 +175,8 @@ describe("aggregateSignals signature", () => {
 });
 
 describe("evaluateConsensus signature", () => {
-  it("accepts candles array and returns ConsensusResult", () => {
-    expectTypeOf(evaluateConsensus).toBeCallableWith([] as DailyCandle[]);
+  it("accepts ticker and signals array and returns ConsensusResult", () => {
+    expectTypeOf(evaluateConsensus).toBeCallableWith("AAPL", [] as MethodSignal[]);
     expectTypeOf(evaluateConsensus).returns.toEqualTypeOf<ConsensusResult>();
   });
 });
