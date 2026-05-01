@@ -175,3 +175,7 @@ export { deepEqual } from "./deep-equal";
 export { ok, err, isOk, isErr, map as mapResult, mapErr, andThen, unwrap, unwrapOr, tryCatch, tryCatchAsync } from "./result";
 export type { Ok, Err, Result } from "./result";
 
+
+export { lowerBound, upperBound, binarySearch } from "./binary-search";
+export type { Comparator } from "./binary-search";
+
