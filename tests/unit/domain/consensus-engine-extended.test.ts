@@ -63,11 +63,12 @@ describe("consensus-engine extended", () => {
     expect(result.direction).toBe("NEUTRAL");
   });
 
-  it("strength is buySignals/12 when BUY", () => {
+  it("strength reflects Micho 3x weight when BUY", () => {
     const signals = [sig("Micho", "BUY"), sig("RSI", "BUY"), sig("MACD", "BUY")];
     const result = evaluateConsensus("AAPL", signals);
     expect(result.direction).toBe("BUY");
-    expect(result.strength).toBeCloseTo(3 / 12);
+    // Micho weight=3, + 2 others (1 each) = 5, total weighted = 14
+    expect(result.strength).toBeCloseTo(5 / 14);
   });
 
   it("result contains correct ticker", () => {

@@ -18,11 +18,17 @@ import { fetchAllTickers, fetchTickerData, type TickerData } from "./core/data-s
 import type { ConsensusResult } from "./types/domain";
 import { TieredCache } from "./core/tiered-cache";
 import { createStoragePressureMonitor } from "./core/storage-pressure";
+import { setScreenerData } from "./cards/screener-data";
+import { computeRsiSeries } from "./domain/rsi-calculator";
+import { computeSma } from "./domain/sma-calculator";
+import type { ScreenerInput } from "./cards/screener";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
   chart: "chart-container",
   alerts: "alerts-container",
+  heatmap: "heatmap-container",
+  screener: "screener-container",
 };
 
 async function activateCard(
@@ -109,6 +115,27 @@ function main(): void {
     }
 
     renderWatchlist(config, quotesMap);
+
+    // Update screener with live data derived from candles
+    const screenerInputs: ScreenerInput[] = [];
+    for (const [ticker, data] of results) {
+      if (data.error || data.candles.length < 20) continue;
+      const rsiSeries = computeRsiSeries(data.candles, 14);
+      const lastRsi = rsiSeries.length > 0 ? rsiSeries[rsiSeries.length - 1]!.value : null;
+      const volumeRatio = data.avgVolume > 0 ? data.volume / data.avgVolume : 0;
+      const sma50 = computeSma(data.candles, 50);
+      const sma200 = computeSma(data.candles, 200);
+      const smaValues = new Map<number, number | null>([[50, sma50], [200, sma200]]);
+      screenerInputs.push({
+        ticker,
+        price: data.price,
+        consensus: data.consensus?.direction ?? "NEUTRAL",
+        rsi: lastRsi,
+        volumeRatio,
+        smaValues,
+      });
+    }
+    setScreenerData(screenerInputs);
 
     const errors = [...results.values()].filter((d) => d.error);
     if (errors.length > 0 && errors.length < tickers.length) {
@@ -297,6 +324,8 @@ function main(): void {
     { id: "nav-consensus", label: "Go to Consensus", hint: "G C", section: "Navigation", run: () => navigateTo("consensus") },
     { id: "nav-chart", label: "Go to Chart", hint: "G H", section: "Navigation", run: () => navigateTo("chart") },
     { id: "nav-alerts", label: "Go to Alerts", hint: "G A", section: "Navigation", run: () => navigateTo("alerts") },
+    { id: "nav-heatmap", label: "Go to Heatmap", hint: "G M", section: "Navigation", run: () => navigateTo("heatmap") },
+    { id: "nav-screener", label: "Go to Screener", hint: "G R", section: "Navigation", run: () => navigateTo("screener") },
     { id: "nav-settings", label: "Go to Settings", hint: "G S", section: "Navigation", run: () => navigateTo("settings") },
     { id: "add-ticker", label: "Add Ticker", hint: "A", section: "Actions", run: () => addInput?.focus() },
     { id: "refresh-data", label: "Refresh Data", hint: "R", section: "Actions", run: () => void refreshData() },

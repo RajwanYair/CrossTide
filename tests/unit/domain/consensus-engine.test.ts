@@ -80,8 +80,8 @@ describe("evaluateConsensus", () => {
     ];
     const result = evaluateConsensus("AAPL", signals);
     expect(result.direction).toBe("BUY");
-    // 4 of 12 methods = 0.333...
-    expect(result.strength).toBeCloseTo(4 / 12, 5);
+    // Micho weight=3 + 3 other methods (1 each) = 6, total weighted = 14
+    expect(result.strength).toBeCloseTo(6 / 14, 5);
   });
 
   it("ignores NEUTRAL signals", () => {
