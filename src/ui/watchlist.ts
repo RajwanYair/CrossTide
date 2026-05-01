@@ -1,12 +1,14 @@
 /**
  * Watchlist renderer — renders the watchlist table from state.
  * Supports column sorting by clicking table headers and sector grouping.
+ * Drag-reorder is wired via bindWatchlistReorder (A11).
  */
 import type { AppConfig, ConsensusResult, SignalDirection, InstrumentType } from "../types/domain";
 import { formatCompact } from "./number-format";
 import { renderSparkline } from "./sparkline";
 import { instrumentTypeBadge } from "./instrument-filter";
 import { groupBySector, renderSectorGroup, bindSectorHeaders } from "./sector-groups";
+import { createReorderState, startDrag, dragOver as reorderDragOver, endDrag } from "./reorder";
 
 export interface WatchlistQuote {
   ticker: string;
@@ -196,4 +198,75 @@ function formatPrice(n: number): string {
 function formatChange(change: number, pct: number): string {
   const sign = change >= 0 ? "+" : "";
   return `${sign}${change.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
+}
+
+/**
+ * Wire HTML5 drag-reorder events to the watchlist tbody.
+ *
+ * Each `<tr data-ticker="...">` acts as a drag source and drop target.
+ * When a drag completes `onReorder` receives the new ticker order.
+ * Returns a cleanup function that removes all listeners.
+ *
+ * A11: activates the existing `ui/reorder.ts` state machine in the DOM.
+ */
+export function bindWatchlistReorder(
+  tbody: HTMLElement,
+  onReorder: (tickers: readonly string[]) => void,
+): () => void {
+  function tickerRows(): Element[] {
+    return [...tbody.querySelectorAll("tr[data-ticker]")];
+  }
+
+  function rowIndex(row: Element): number {
+    return tickerRows().indexOf(row);
+  }
+
+  let state = createReorderState<string>(
+    tickerRows().map((r) => r.getAttribute("data-ticker") ?? ""),
+  );
+
+  function onDragStart(e: DragEvent): void {
+    const row = (e.target as Element).closest("tr[data-ticker]");
+    if (!row) return;
+    const idx = rowIndex(row);
+    if (idx < 0) return;
+    state = createReorderState<string>(
+      tickerRows().map((r) => r.getAttribute("data-ticker") ?? ""),
+    );
+    state = startDrag(state, idx);
+    (row as HTMLElement).classList.add("dragging");
+    e.dataTransfer?.setData("text/plain", String(idx));
+  }
+
+  function onDragOver(e: DragEvent): void {
+    e.preventDefault();
+    const row = (e.target as Element).closest("tr[data-ticker]");
+    if (!row) return;
+    const idx = rowIndex(row);
+    if (idx < 0) return;
+    state = reorderDragOver(state, idx);
+  }
+
+  function onDrop(e: DragEvent): void {
+    e.preventDefault();
+    state = endDrag(state);
+    onReorder(state.items);
+  }
+
+  function onDragEnd(): void {
+    tbody.querySelectorAll(".dragging").forEach((el) => el.classList.remove("dragging"));
+    state = endDrag(state);
+  }
+
+  tbody.addEventListener("dragstart", onDragStart);
+  tbody.addEventListener("dragover", onDragOver);
+  tbody.addEventListener("drop", onDrop);
+  tbody.addEventListener("dragend", onDragEnd);
+
+  return (): void => {
+    tbody.removeEventListener("dragstart", onDragStart);
+    tbody.removeEventListener("dragover", onDragOver);
+    tbody.removeEventListener("drop", onDrop);
+    tbody.removeEventListener("dragend", onDragEnd);
+  };
 }
