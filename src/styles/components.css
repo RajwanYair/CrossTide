@@ -609,4 +609,52 @@
     font-size: var(--font-size-xs);
     color: var(--text-secondary);
   }
+
+  /* ── Backtest card ───────────────────────────────────────────────────── */
+  .backtest-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-lg);
+  }
+
+  .backtest-controls {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-md);
+  }
+
+  .backtest-control-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--sp-md);
+    margin-bottom: var(--sp-xs);
+  }
+
+  .backtest-label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-xs);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  .backtest-input {
+    width: 80px;
+  }
+
+  .backtest-equity-wrap {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-md);
+    overflow: hidden;
+  }
+
+  .backtest-tradelog-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-sm);
+  }
 }
