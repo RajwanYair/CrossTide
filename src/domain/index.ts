@@ -214,3 +214,7 @@ export type { KstPoint, KstOptions } from "./kst";
 
 export { computeDpo } from "./dpo";
 
+
+export { computePpo } from "./ppo";
+export type { PpoPoint } from "./ppo";
+
