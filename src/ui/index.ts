@@ -95,3 +95,7 @@ export type { FormatOptions } from "./number-format";
 export { squarifyTreemap } from "./treemap-layout";
 export type { TreemapItem, TreemapRect, Bounds } from "./treemap-layout";
 
+
+export { interpolateColor, createColorScale, createDivergentScale } from "./color-scale";
+export type { ColorStop, ColorScale, ColorScaleOptions } from "./color-scale";
+
