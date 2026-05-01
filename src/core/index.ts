@@ -187,3 +187,6 @@ export type { MemoizedFn } from "./once-memoize";
 export { safeParse, safeStringify } from "./safe-json";
 export type { SafeResult, SafeStringifyOptions } from "./safe-json";
 
+
+export { deepClone } from "./deep-clone";
+
