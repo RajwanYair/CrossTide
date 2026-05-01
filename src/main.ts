@@ -31,6 +31,7 @@ import { exportFullDataJson, exportFullDataCsv } from "./core/data-export";
 import { downloadFile } from "./core/export-import";
 import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
+import { initTelemetry, getTelemetry } from "./core/telemetry";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -247,6 +248,8 @@ function main(): void {
   onRouteChange((route, info) => {
     currentRoute = route;
     void activateCard(route, info?.params ?? {});
+    // A17: track route navigation as a pageview
+    getTelemetry()?.pageview(window.location.pathname);
   });
 
   // Version display
@@ -742,6 +745,11 @@ function main(): void {
 }
 
 main();
+
+// ── A17: Telemetry — analytics + error tracking + web vitals ──────────────
+// Env-gated: no-op unless VITE_PLAUSIBLE_URL / VITE_GLITCHTIP_DSN are set.
+const telemetry = initTelemetry();
+telemetry.pageview(); // initial pageview
 
 // Register PWA service worker
 void registerServiceWorker().then((reg) => {

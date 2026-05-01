@@ -10,6 +10,10 @@ export default defineConfig({
   base: "./",
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
+    // A17: Telemetry env vars — undefined by default; set in CI / .env.local
+    __PLAUSIBLE_URL__: JSON.stringify(process.env["VITE_PLAUSIBLE_URL"] ?? ""),
+    __PLAUSIBLE_SITE__: JSON.stringify(process.env["VITE_PLAUSIBLE_SITE"] ?? ""),
+    __GLITCHTIP_DSN__: JSON.stringify(process.env["VITE_GLITCHTIP_DSN"] ?? ""),
   },
   build: {
     target: "es2022",

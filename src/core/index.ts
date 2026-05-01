@@ -34,6 +34,8 @@ export {
 export type { ExportPayload } from "./export-import";
 export { installErrorBoundary, getErrorLog, clearErrorLog } from "./error-boundary";
 export type { ErrorRecord, ErrorHandler } from "./error-boundary";
+export { initTelemetry, getTelemetry, _resetTelemetryForTests } from "./telemetry";
+export type { TelemetryHandle } from "./telemetry";
 export { registerServiceWorker } from "./sw-register";
 export { watchServiceWorkerUpdates } from "./sw-update";
 export type { SwUpdateHandle, SwUpdateOptions } from "./sw-update";
