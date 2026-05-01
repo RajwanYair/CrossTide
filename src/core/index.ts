@@ -85,6 +85,12 @@ export type {
   ReconnectOptions,
   WSEventHandler,
 } from "./reconnecting-ws";
+export { optimisticMutation, withPayload } from "./optimistic";
+export type {
+  MutationStore,
+  MutationOptions,
+  MutationResult,
+} from "./optimistic";
 export {
   createStoragePressureMonitor,
   requestPersistentStorage,
