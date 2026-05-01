@@ -6,6 +6,55 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.1] - 2025
+
+### Added — Phase A platform modules (Sprints 5–30)
+
+- **Web Worker RPC** (`core/worker-rpc`, `core/compute-worker`,
+  `core/backtest-worker`) — typed postMessage RPC with sync fallback.
+- **LRU cache** (`core/lru-cache`) — bounded least-recently-used cache.
+- **Circuit breaker** (`providers/circuit-breaker`) — closed/open/half-open
+  state machine for provider resilience.
+- **Finnhub provider** (`providers/finnhub-provider`) — quote/candle/search
+  with health tracking.
+- **Storage pressure** (`core/storage-pressure`) — quota observer +
+  persistent storage request.
+- **Web vitals** (`core/web-vitals`) — LCP/CLS/INP/FCP/TTFB collector with
+  beacon reporter.
+- **Analytics client** (`core/analytics-client`) — cookieless
+  Plausible-compatible client.
+- **Notifications** (`core/notifications`) — typed Notification API wrapper.
+- **Service Worker update** (`core/sw-update`) — update detection and
+  apply-on-demand.
+- **Sync queue** (`core/sync-queue`) — IDB-backed offline mutation queue.
+- **Command palette** (`ui/command-palette`) — pure scoring + ranking.
+- **Heatmap layout** (`cards/heatmap-layout`) — squarified treemap.
+- **Share state** (`core/share-state`) — base64url URL state encoder.
+- **CSP / SRI** (`core/csp-builder`, `core/sri`) — security header builder
+  and Subresource Integrity helper.
+- **Drag-reorder** (`ui/reorder`) — pure list reorder state machine.
+- **Multi-series sparkline** (`ui/multi-sparkline`) — SVG path builder.
+- **Provider health stats** (`providers/health-stats`) — aggregator with
+  p50/p95 latency.
+- **Range bar** (`ui/range-bar`) — 52-week range geometry helper.
+- **Container query** (`ui/container-query`) — discrete size-class observer.
+- **IDB migrations** (`core/idb-migrations`) — versioned schema upgrade
+  helper.
+- **Shortcuts catalog** (`ui/shortcuts-catalog`) — keyboard shortcut data
+  and search.
+- **Tier policy** (`core/tier-policy`) — promotion/demotion decisions for
+  the tiered cache.
+- **Contrast** (`ui/contrast`) — WCAG luminance / contrast ratio helpers.
+- **Backtest metrics** (`domain/backtest-metrics`) — Sharpe, drawdown,
+  CAGR, profit factor.
+- **Position sizing** (`domain/position-sizing`) — risk/ATR/Kelly sizing.
+
+### Quality
+
+- 26 new modules, ~200 new unit tests, 0 tsc errors, 0 eslint warnings.
+
+---
+
 ## [6.0.0] - 2025-07-21
 
 ### Changed — Web-Only Migration & Shared Toolchain
