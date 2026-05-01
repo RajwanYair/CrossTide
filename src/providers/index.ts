@@ -19,3 +19,9 @@ export type {
   CircuitBreakerOptions,
   CircuitBreakerSnapshot,
 } from "./circuit-breaker";
+export { aggregateStats, aggregateAll, pruneOld } from "./health-stats";
+export type {
+  RequestOutcome,
+  RequestSample,
+  ProviderStats,
+} from "./health-stats";
