@@ -179,3 +179,7 @@ export type { Ok, Err, Result } from "./result";
 export { lowerBound, upperBound, binarySearch } from "./binary-search";
 export type { Comparator } from "./binary-search";
 
+
+export { once, memoize } from "./once-memoize";
+export type { MemoizedFn } from "./once-memoize";
+
