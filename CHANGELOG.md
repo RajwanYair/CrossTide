@@ -6,6 +6,35 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.0.0] - 2026-05-01
+
+### Major — Full-stack hardening, real data, responsive cards, security
+
+#### Added
+
+- **A9: Valibot at all provider boundaries.** CoinGecko + Polygon providers now validate every API response with `safeParse()` schemas — no more `as` type casts.
+- **D23: Supply-chain security workflow.** `npm audit signatures`, dependency-review-action, Socket.dev scanning on PRs + weekly cron.
+- **Portfolio IDB persistence.** Holdings stored in IndexedDB via `portfolio-store.ts`; card loads user data with demo fallback.
+- **Backtest real candle data.** Ticker input fetches real OHLCV history via `fetchTickerData`; synthetic fallback on failure.
+- **C5: Container-query responsive cards.** `.card` gains `container-type: inline-size`; `@container` rules adapt portfolio columns, backtest controls, watchlist columns, and heatmap grid based on card width.
+- **C7: Schema-versioned export checksum.** DJB2 integrity hash in `FullExportPayload`; validated on import; tamper detection.
+- **Provider health degradation alerts.** State-machine monitors healthy→degraded→down transitions; fires toast + browser notification; auto-dismiss.
+- **D1: WebAuthn foundation.** Client-side passkey registration + authentication; base64url utilities; platform authenticator detection; conditional mediation check.
+
+#### Changed
+
+- **ARCHITECTURE.md rewritten** for v7.0 — updated layered diagram, runtime sequence, features table, runtime deps, 7 CI workflows, security section.
+- **Backtest card** now shows ticker input, real candle count indicator, and data source label.
+- **Portfolio card** dynamically loads from IDB, showing user-specific note vs demo label.
+
+#### Security
+
+- Supply-chain audit on every push/PR touching `package-lock.json`.
+- Export integrity: DJB2 checksum prevents silent data tampering on import.
+- WebAuthn: passkey-ready architecture (server challenge integration pending).
+
+---
+
 ## [6.5.0] - 2026-05-02
 
 ### Phase A — Activation (cards, security, performance)
