@@ -371,4 +371,51 @@
   .heatmap-flat { background: #616161; }
   .heatmap-down { background: #e53935; }
   .heatmap-strong-down { background: #b71c1c; }
+
+  /* Screener */
+  .screener-controls {
+    padding: var(--sp-md) var(--sp-lg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .screener-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-sm);
+  }
+
+  .preset-btn {
+    font-size: var(--font-size-sm);
+    padding: var(--sp-xs) var(--sp-md);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+
+  .preset-btn.active {
+    background: var(--accent);
+    color: var(--bg-app);
+    border-color: var(--accent);
+  }
+
+  .screener-results {
+    padding: var(--sp-md) var(--sp-lg);
+  }
+
+  .screener-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .screener-table th,
+  .screener-table td {
+    padding: var(--sp-xs) var(--sp-sm);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .screener-table th {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
 }
