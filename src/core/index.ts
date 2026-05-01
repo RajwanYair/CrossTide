@@ -203,3 +203,7 @@ export { djb2, djb2Hex, fnv1a32 } from "./hash-djb2";
 export { mulberry32, randomInt, randomFloat, shuffle } from "./seedrandom";
 export type { Rng } from "./seedrandom";
 
+
+export { linear, easeInQuad, easeOutQuad, easeInOutQuad, easeInCubic, easeOutCubic, easeInOutCubic, cubicBezier } from "./easing";
+export type { EasingFn } from "./easing";
+
