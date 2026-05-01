@@ -17,6 +17,8 @@ export type {
   PersistedSignalOptions,
 } from "./signals";
 export { Cache } from "./cache";
+export { LruCache } from "./lru-cache";
+export type { LruCacheOptions } from "./lru-cache";
 export { loadConfig, saveConfig, addTicker, removeTicker } from "./config";
 export { fetchWithTimeout, fetchWithRetry, FetchError } from "./fetch";
 export { createShortcutManager } from "./keyboard";
