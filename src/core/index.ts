@@ -199,3 +199,7 @@ export { pick, omit, pickBy } from "./pick-omit";
 
 export { djb2, djb2Hex, fnv1a32 } from "./hash-djb2";
 
+
+export { mulberry32, randomInt, randomFloat, shuffle } from "./seedrandom";
+export type { Rng } from "./seedrandom";
+
