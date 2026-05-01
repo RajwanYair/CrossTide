@@ -53,6 +53,13 @@ export {
 } from "./share-state";
 export type { ShareState } from "./share-state";
 export {
+  buildCsp,
+  buildPermissionsPolicy,
+  buildSecurityHeaders,
+  generateNonce,
+} from "./csp-builder";
+export type { CspOptions, SecurityHeaders } from "./csp-builder";
+export {
   createStoragePressureMonitor,
   requestPersistentStorage,
 } from "./storage-pressure";
