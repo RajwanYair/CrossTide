@@ -200,3 +200,7 @@ export { computeConnorsRsi } from "./connors-rsi";
 export { computeFisherTransform } from "./fisher-transform";
 export type { FisherPoint } from "./fisher-transform";
 
+
+export { computeVortex } from "./vortex-indicator";
+export type { VortexPoint } from "./vortex-indicator";
+
