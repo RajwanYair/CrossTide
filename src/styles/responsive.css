@@ -256,3 +256,27 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* ── Watchlist table container queries (C5) ─────────────────────────────────── */
+/* Hide low-priority columns when the card container is narrow */
+
+@container card (max-width: 480px) {
+  /* Hide volume, 52-week range, and sector columns at very narrow widths */
+  .wl-col-volume,
+  .wl-col-avg-volume,
+  .wl-col-52w,
+  .wl-col-sector {
+    display: none;
+  }
+}
+
+@container card (max-width: 360px) {
+  /* At the narrowest, also hide the change% column */
+  .wl-col-change-pct {
+    display: none;
+  }
+  /* Compact ticker cell font */
+  .ticker-cell {
+    font-size: 0.85em;
+  }
+}

@@ -55,6 +55,24 @@
     max-width: 1400px;
     width: 100%;
     margin: 0 auto;
+    /* C5: named view-transition so route-swap gets its own enter/leave animation */
+    view-transition-name: route-content;
+  }
+
+  /* C5: per-route enter / leave animations */
+  ::view-transition-old(route-content) {
+    animation: 100ms ease-in both vt-fade-out;
+  }
+
+  ::view-transition-new(route-content) {
+    animation: 140ms ease-out both vt-fade-in;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(route-content),
+    ::view-transition-new(route-content) {
+      animation: none;
+    }
   }
 
   .view {
