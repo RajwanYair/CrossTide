@@ -44,6 +44,8 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   risk: "risk-container",
   backtest: "backtest-container",
   "consensus-timeline": "consensus-timeline-container",
+  "signal-dsl": "signal-dsl-container",
+  "multi-chart": "multi-chart-container",
 };
 
 async function activateCard(

@@ -114,6 +114,12 @@ const REGISTRY: readonly CardEntry[] = [
     viewId: "view-signal-dsl",
     load: () => import("./signal-dsl-card").then((m) => m.default),
   },
+  {
+    route: "multi-chart",
+    title: "Multi-chart",
+    viewId: "view-multi-chart",
+    load: () => import("./multi-chart-layout").then((m) => m.default),
+  },
 ];
 
 const cache = new Map<RouteName, Promise<CardModule>>();
