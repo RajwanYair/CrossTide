@@ -180,4 +180,45 @@ describe("createOnboardingTour", () => {
     expect(tooltip?.textContent).toContain("Visible");
     tour.destroy();
   });
+
+  it("Escape key dismisses the tour", () => {
+    const tour = createOnboardingTour(MOCK_STEPS);
+    tour.start();
+    const tooltip = document.querySelector<HTMLElement>(".tour-tooltip");
+    expect(tooltip).toBeTruthy();
+    tooltip?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    expect(document.querySelector(".tour-tooltip")).toBeNull();
+    expect(tour.isDone()).toBe(true);
+    tour.destroy();
+  });
+
+  it("escapes HTML in step title and body to prevent XSS", () => {
+    const xssSteps: TourStep[] = [
+      {
+        target: "#step1",
+        title: "<script>alert(1)</script>",
+        body: '<img src=x onerror="alert(2)">',
+      },
+    ];
+    const tour = createOnboardingTour(xssSteps);
+    tour.start();
+    const tooltip = document.querySelector(".tour-tooltip");
+    // Raw script/img tags must NOT appear as live DOM children
+    expect(tooltip?.querySelector("script")).toBeNull();
+    expect(tooltip?.querySelector("img")).toBeNull();
+    // The escaped HTML entities should appear in innerHTML (not executed as tags)
+    expect(tooltip?.innerHTML).toContain("&lt;script&gt;");
+    tour.destroy();
+  });
+
+  it("overlay click also dismisses the tour", () => {
+    const tour = createOnboardingTour(MOCK_STEPS);
+    tour.start();
+    const overlay = document.getElementById("tour-overlay") as HTMLElement;
+    expect(overlay).toBeTruthy();
+    overlay.click();
+    expect(document.querySelector(".tour-tooltip")).toBeNull();
+    expect(tour.isDone()).toBe(true);
+    tour.destroy();
+  });
 });
