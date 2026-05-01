@@ -4,6 +4,8 @@
  * Bootstrap: load config, initialize UI, set up event listeners.
  */
 import { loadConfig, saveConfig, addTicker, removeTicker } from "./core/config";
+import { registerServiceWorker } from "./core/sw-register";
+import { watchServiceWorkerUpdates } from "./core/sw-update";
 import { initRouter, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
 import { renderWatchlist } from "./ui/watchlist";
@@ -275,3 +277,15 @@ function main(): void {
 }
 
 main();
+
+// Register PWA service worker
+void registerServiceWorker().then((reg) => {
+  if (reg) {
+    watchServiceWorkerUpdates(reg, {
+      onUpdateReady: (handle) => {
+        showToast({ message: "App update available — refreshing…", type: "info" });
+        setTimeout(() => handle.applyUpdate(), 3_000);
+      },
+    });
+  }
+});

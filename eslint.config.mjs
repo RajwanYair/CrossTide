@@ -96,7 +96,7 @@ export default tseslint.config(
     languageOptions: {
       globals: browserGlobals,
       parserOptions: {
-        project: "./tsconfig.json",
+        project: ["./tsconfig.json", "./tsconfig.sw.json"],
         tsconfigRootDir: import.meta.dirname,
       },
     },

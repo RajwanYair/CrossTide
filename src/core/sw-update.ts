@@ -24,7 +24,7 @@ interface UpdatableRegistration {
   waiting: ServiceWorker | null;
   installing: ServiceWorker | null;
   active: ServiceWorker | null;
-  update(): Promise<void>;
+  update(): Promise<ServiceWorkerRegistration | void>;
   addEventListener(type: "updatefound", listener: () => void): void;
 }
 

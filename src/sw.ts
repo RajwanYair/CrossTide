@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 /**
  * Service Worker — app shell precache + stale-while-revalidate for API.
  */
@@ -42,7 +41,7 @@ async function staleWhileRevalidate(request: Request): Promise<Response> {
 
   const fetchPromise = fetch(request)
     .then((response) => {
-      if (response.ok) cache.put(request, response.clone());
+      if (response.ok) void cache.put(request, response.clone());
       return response;
     })
     .catch(() => cached ?? new Response("Offline", { status: 503 }));

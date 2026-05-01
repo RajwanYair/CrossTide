@@ -11,15 +11,15 @@ describe("registerServiceWorker", () => {
   });
 
   it("calls navigator.serviceWorker.register when available", async () => {
-    const mockReg = { scope: "/" };
+    const mockReg = { scope: "./" };
     const register = vi.fn().mockResolvedValue(mockReg);
     Object.defineProperty(navigator, "serviceWorker", {
       value: { register },
       configurable: true,
     });
 
-    const result = await registerServiceWorker("/sw.js");
-    expect(register).toHaveBeenCalledWith("/sw.js", { scope: "/" });
+    const result = await registerServiceWorker("./sw.js");
+    expect(register).toHaveBeenCalledWith("./sw.js", { scope: "./", type: "module" });
     expect(result).toBe(mockReg);
   });
 

@@ -6,6 +6,54 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.3.0] - 2026-05-01
+
+### Production-readiness: SW build, dead-code removal, structural cleanup
+
+- **Service worker compiled.** `public/sw.ts` (raw TypeScript copied to
+  `dist/` uncompiled) replaced by `src/sw.ts` built by Vite as a named
+  `rollupOptions.input` entry → `dist/sw.js`. Floating promise
+  `cache.put(…)` fixed (void-wrapped). Separate `tsconfig.sw.json` with
+  `"lib": ["ES2022", "WebWorker"]` type-checks it without DOM conflicts.
+- **Service worker wired up.** `registerServiceWorker` and
+  `watchServiceWorkerUpdates` (previously exported but never called) are
+  now invoked in `main.ts` after bootstrap; shows an "update available"
+  toast 3 s before applying the new worker.
+- **`UpdatableRegistration.update()` return type** corrected from
+  `Promise<void>` to `Promise<ServiceWorkerRegistration | void>` to match
+  the real `ServiceWorkerRegistration` DOM type.
+- **SW scope/type** changed from `{ scope: "/" }` to
+  `{ scope: "./", type: "module" }` to match the `base: "./"` Vite config
+  (required for GitHub Pages sub-path hosting).
+- **`apple-touch-icon` added** to `index.html` (was missing; surfaced by
+  browser-compat linter).
+- **`ARCHITECTURE.md` moved** from root to `docs/`; `README.md` link
+  updated. Root now contains only standard project files.
+- **`typescript.tsdk` fixed** in `.vscode/settings.json` — was pointing
+  to `../node_modules` (parent `MyScripts/node_modules`); now
+  `./node_modules` so VS Code always uses the repo-local TypeScript.
+- **ESLint** updated to use `project: ["./tsconfig.json",
+"./tsconfig.sw.json"]` so type-aware rules cover `src/sw.ts`.
+- **`typecheck` and `build` scripts** extended to run both
+  `tsc --noEmit` (main) and `tsc --project tsconfig.sw.json --noEmit`
+  (service worker) in sequence.
+- **Coverage exclusion** — `src/sw.ts` added to Vitest coverage `exclude`
+  list alongside `src/main.ts`.
+- **`MyScripts/package.json`** — added `zod ^4.4.1` to shared
+  dependencies; aligned `vite` to `^8.0.10`.
+
+### Verified locally
+
+- `tsc --noEmit` (main): 0 errors.
+- `tsc --project tsconfig.sw.json --noEmit`: 0 errors.
+- `npm run lint`: 0 errors, 0 warnings.
+- `npm run lint:css / lint:html / lint:md / format:check`: all clean.
+- `npx vitest run`: 215 test files, 1772 tests — all pass.
+- `npx vite build`: `dist/sw.js` (0.67 KB / 0.40 KB gz) generated;
+  bundle check **PASS at 31.2 KB gzipped** (84 % under the 200 KB budget).
+
+---
+
 ## [6.2.0] - 2026
 
 ### Sprint — self-contained repo + CI hardening

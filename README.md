@@ -62,7 +62,7 @@ src/
   styles/   CSS design tokens + components
 ```
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for details.
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
 
 ## Local Verification
 
