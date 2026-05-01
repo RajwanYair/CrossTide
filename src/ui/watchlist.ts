@@ -2,11 +2,12 @@
  * Watchlist renderer — renders the watchlist table from state.
  * Supports column sorting by clicking table headers.
  */
-import type { AppConfig, ConsensusResult, SignalDirection } from "../types/domain";
+import type { AppConfig, ConsensusResult, SignalDirection, InstrumentType } from "../types/domain";
 import { formatCompact } from "./number-format";
 import { renderSparkline } from "./sparkline";
+import { instrumentTypeBadge } from "./instrument-filter";
 
-interface TickerQuote {
+export interface WatchlistQuote {
   ticker: string;
   price: number;
   change: number;
@@ -17,6 +18,7 @@ interface TickerQuote {
   low52w: number;
   closes30d: readonly number[];
   consensus: ConsensusResult | null;
+  instrumentType?: InstrumentType;
 }
 
 type SortColumn = "ticker" | "price" | "change" | "consensus" | "volume";
@@ -37,7 +39,7 @@ export function setSortColumn(column: SortColumn): void {
 
 function sortEntries(
   entries: readonly { ticker: string }[],
-  quotes: Map<string, TickerQuote>,
+  quotes: Map<string, WatchlistQuote>,
 ): { ticker: string }[] {
   const sorted = [...entries];
   const dir = currentSort.direction === "asc" ? 1 : -1;
@@ -70,7 +72,7 @@ function renderSortIndicator(column: SortColumn): string {
   return currentSort.direction === "asc" ? " ↑" : " ↓";
 }
 
-export function renderWatchlist(config: AppConfig, quotes: Map<string, TickerQuote>): void {
+export function renderWatchlist(config: AppConfig, quotes: Map<string, WatchlistQuote>): void {
   const tbody = document.getElementById("watchlist-body");
   const emptyMsg = document.getElementById("watchlist-empty");
   const thead = document.getElementById("watchlist-head");
@@ -109,7 +111,7 @@ export function renderWatchlist(config: AppConfig, quotes: Map<string, TickerQuo
   tbody.innerHTML = rows;
 }
 
-function renderRow(ticker: string, quote: TickerQuote | null): string {
+function renderRow(ticker: string, quote: WatchlistQuote | null): string {
   const price = quote ? formatPrice(quote.price) : "--";
   const change = quote ? formatChange(quote.change, quote.changePercent) : "--";
   const changeClass = quote ? (quote.change >= 0 ? "change-positive" : "change-negative") : "";
@@ -122,7 +124,7 @@ function renderRow(ticker: string, quote: TickerQuote | null): string {
   const volumeBar = quote ? renderVolumeBar(quote.volume, quote.avgVolume) : "";
 
   return `<tr data-ticker="${ticker}">
-    <td><strong>${ticker}</strong></td>
+    <td><strong>${ticker}</strong>${instrumentTypeBadge(quote?.instrumentType)}</td>
     <td class="font-mono">${price}</td>
     <td class="${changeClass} font-mono">${change}</td>
     <td>${consensus}</td>

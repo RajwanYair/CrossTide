@@ -713,4 +713,54 @@
   .dot-buy    { background: var(--positive, #3fb950); }
   .dot-sell   { background: var(--negative, #f85149); }
   .dot-neutral { background: var(--text-secondary, #8b949e); }
+
+  /* ── Instrument filter chips (B12) ───────────────────────────────── */
+  .instrument-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-xs);
+    padding: var(--sp-sm) var(--sp-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-chip {
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .filter-chip:hover {
+    border-color: var(--accent);
+    color: var(--text-primary);
+  }
+
+  .filter-chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* Instrument type badges on ticker cells */
+  .instrument-badge {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 0 4px;
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+
+  .instrument-badge-stock { background: #1d3c6e; color: #58a6ff; }
+  .instrument-badge-etf   { background: #0f3b2b; color: #3fb950; }
+  .instrument-badge-crypto { background: #3b2a00; color: #f0a400; }
+  .instrument-badge-other { background: #2a2a2a; color: #8b949e; }
 }

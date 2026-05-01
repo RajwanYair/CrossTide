@@ -4,7 +4,7 @@
  * Uses Yahoo Finance v8 chart API with a configurable CORS proxy.
  * Runs the full 12-method consensus engine on fetched candle data.
  */
-import type { DailyCandle, ConsensusResult } from "../types/domain";
+import type { DailyCandle, ConsensusResult, InstrumentType } from "../types/domain";
 import { aggregateConsensus } from "../domain/signal-aggregator";
 import { fetchWithTimeout } from "./fetch";
 
@@ -37,6 +37,7 @@ interface YahooChartResult {
         regularMarketPrice?: number;
         previousClose?: number;
         symbol?: string;
+        instrumentType?: string; // "EQUITY", "ETF", "CRYPTOCURRENCY", etc.
       };
       timestamp?: number[];
       indicators?: {
@@ -64,14 +65,31 @@ export interface TickerData {
   closes30d: readonly number[];
   consensus: ConsensusResult | null;
   candles: readonly DailyCandle[];
+  /** Instrument classification derived from Yahoo `instrumentType` field. */
+  instrumentType?: InstrumentType;
   error?: string;
+}
+
+/** Map Yahoo Finance instrumentType string to our domain InstrumentType. */
+function parseInstrumentType(raw: string | undefined): InstrumentType | undefined {
+  if (!raw) return undefined;
+  const upper = raw.toUpperCase();
+  if (upper === "EQUITY") return "stock";
+  if (upper === "ETF") return "etf";
+  if (upper === "CRYPTOCURRENCY") return "crypto";
+  return "other";
+}
+
+interface CandleResult {
+  candles: DailyCandle[];
+  instrumentType: InstrumentType | undefined;
 }
 
 /**
  * Fetch history candles from Yahoo Finance for a single ticker.
  * Uses 1-year range to have enough data for all indicators (SMA150 needs 151+ candles).
  */
-async function fetchCandles(ticker: string): Promise<DailyCandle[]> {
+async function fetchCandles(ticker: string): Promise<CandleResult> {
   const url = `${YAHOO_BASE}/v8/finance/chart/${encodeURIComponent(ticker)}?range=1y&interval=1d`;
   const res = await fetchWithTimeout(proxyUrl(url), {}, 15000);
   const data = (await res.json()) as YahooChartResult;
@@ -102,7 +120,7 @@ async function fetchCandles(ticker: string): Promise<DailyCandle[]> {
     });
   }
 
-  return candles;
+  return { candles, instrumentType: parseInstrumentType(result.meta?.instrumentType) };
 }
 
 /**
@@ -110,7 +128,7 @@ async function fetchCandles(ticker: string): Promise<DailyCandle[]> {
  */
 export async function fetchTickerData(ticker: string): Promise<TickerData> {
   try {
-    const candles = await fetchCandles(ticker);
+    const { candles, instrumentType } = await fetchCandles(ticker);
 
     if (candles.length === 0) {
       return emptyData(ticker, "No candle data available");
@@ -156,6 +174,7 @@ export async function fetchTickerData(ticker: string): Promise<TickerData> {
       closes30d,
       consensus,
       candles,
+      ...(instrumentType !== undefined && { instrumentType }),
     };
   } catch (err) {
     return emptyData(ticker, (err as Error).message);

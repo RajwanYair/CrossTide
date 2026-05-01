@@ -61,7 +61,16 @@ export type SmaPeriod = (typeof SMA_PERIODS)[number];
 export interface WatchlistEntry {
   readonly ticker: string;
   readonly addedAt: string; // ISO 8601
+  /** Instrument type — auto-classified from Yahoo quoteType; overrideable. */
+  readonly instrumentType?: InstrumentType;
 }
+
+/**
+ * Instrument classification for filter chips.
+ * Derived from Yahoo Finance `quoteType`: EQUITY→stock, ETF→etf,
+ * CRYPTOCURRENCY→crypto, any other/unknown→other.
+ */
+export type InstrumentType = "stock" | "etf" | "crypto" | "other";
 
 /** User-facing config. */
 export interface AppConfig {

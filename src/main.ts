@@ -9,13 +9,13 @@ import { watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
 import { initRouter, navigateTo, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
-import { renderWatchlist, setSortColumn } from "./ui/watchlist";
+import { renderWatchlist, setSortColumn, type WatchlistQuote } from "./ui/watchlist";
 import { loadCard, type CardHandle, type CardContext } from "./cards/registry";
 import { showToast } from "./ui/toast";
 import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
 import type { PaletteCommand } from "./ui/command-palette";
 import { fetchAllTickers, fetchTickerData, type TickerData } from "./core/data-service";
-import type { ConsensusResult } from "./types/domain";
+
 import { TieredCache } from "./core/tiered-cache";
 import { createStoragePressureMonitor, requestPersistentStorage } from "./core/storage-pressure";
 import { setScreenerData } from "./cards/screener-data";
@@ -23,6 +23,7 @@ import { computeRsiSeries } from "./domain/rsi-calculator";
 import { computeSma } from "./domain/sma-calculator";
 import type { ScreenerInput } from "./cards/screener";
 import { buildShareUrl, readShareUrl } from "./core/share-state";
+import { mountInstrumentFilterBar, applyInstrumentFilter, getInstrumentFilter } from "./ui/instrument-filter";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -66,6 +67,21 @@ function main(): void {
   let tickerDataCache = new Map<string, TickerData>();
   let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
+  // ── Helper: convert TickerData cache → the quotes map renderWatchlist expects ──
+  function buildQuotesMap(): Map<string, WatchlistQuote> {
+    const m = new Map<string, WatchlistQuote>();
+    for (const [t, data] of tickerDataCache) {
+      m.set(t, {
+        ticker: data.ticker, price: data.price, change: data.change,
+        changePercent: data.changePercent, volume: data.volume, avgVolume: data.avgVolume,
+        high52w: data.high52w, low52w: data.low52w, closes30d: data.closes30d,
+        consensus: data.consensus,
+        ...(data.instrumentType !== undefined && { instrumentType: data.instrumentType }),
+      });
+    }
+    return m;
+  }
+
   function updateStatus(text: string): void {
     const el = document.getElementById("sync-status");
     if (el) el.textContent = text;
@@ -88,39 +104,12 @@ function main(): void {
 
     tickerDataCache = results;
 
-    // Convert to the format renderWatchlist expects
-    const quotesMap = new Map<
-      string,
-      {
-        ticker: string;
-        price: number;
-        change: number;
-        changePercent: number;
-        volume: number;
-        avgVolume: number;
-        high52w: number;
-        low52w: number;
-        closes30d: readonly number[];
-        consensus: ConsensusResult | null;
-      }
-    >();
-
-    for (const [ticker, data] of results) {
-      quotesMap.set(ticker, {
-        ticker: data.ticker,
-        price: data.price,
-        change: data.change,
-        changePercent: data.changePercent,
-        volume: data.volume,
-        avgVolume: data.avgVolume,
-        high52w: data.high52w,
-        low52w: data.low52w,
-        closes30d: data.closes30d,
-        consensus: data.consensus,
-      });
-    }
-
-    renderWatchlist(config, quotesMap);
+    // Apply instrument filter before rendering
+    const filteredConfig = {
+      ...config,
+      watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
+    };
+    renderWatchlist(filteredConfig, buildQuotesMap());
 
     // Update screener with live data derived from candles
     const screenerInputs: ScreenerInput[] = [];
@@ -167,6 +156,15 @@ function main(): void {
   initTheme(config.theme);
   initRouter();
   renderWatchlist(config, new Map());
+
+  // Mount instrument filter bar (B12)
+  mountInstrumentFilterBar(() => {
+    const filteredConfig = {
+      ...config,
+      watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
+    };
+    renderWatchlist(filteredConfig, buildQuotesMap());
+  });
 
   // ── URL share-state: restore on startup ───────────────────────────────
   const startupState = readShareUrl(window.location.href);
@@ -248,7 +246,11 @@ function main(): void {
     if (!th) return;
     const col = th.dataset["sort"] as "ticker" | "price" | "change" | "consensus" | "volume";
     setSortColumn(col);
-    renderWatchlist(config, tickerDataCache);
+    const sortedConfig = {
+      ...config,
+      watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
+    };
+    renderWatchlist(sortedConfig, buildQuotesMap());
   });
 
   // Theme change
