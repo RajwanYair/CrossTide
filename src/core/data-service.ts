@@ -8,14 +8,33 @@ import type { DailyCandle, ConsensusResult, InstrumentType } from "../types/doma
 import { aggregateConsensus } from "../domain/signal-aggregator";
 import { fetchWithTimeout } from "./fetch";
 
-const YAHOO_BASE = "https://query1.finance.yahoo.com";
+/**
+ * Base URL for Yahoo Finance requests.
+ *
+ * • Dev / preview  (/api/yahoo/*):  Vite dev-server proxies to query1.finance.yahoo.com
+ *   entirely server-side (Node.js), so the browser never makes a cross-origin request.
+ *   This also honours HTTPS_PROXY / HTTP_PROXY env vars on the dev machine (corporate
+ *   firewalls).
+ *
+ * • Production (GitHub Pages / any static CDN):  Yahoo Finance v8 chart API responds
+ *   with "Access-Control-Allow-Origin: *" so the browser can call it directly.  No
+ *   third-party CORS proxy required.
+ */
+const YAHOO_DIRECT = "https://query1.finance.yahoo.com";
+
+// import.meta.env.DEV is true only during `vite dev`/`vite preview`; it is
+// replaced by the literal `false` in production builds by Vite.
+const USE_DEV_PROXY: boolean =
+  (import.meta.env.DEV as boolean | undefined) === true;
+
+const YAHOO_BASE: string = USE_DEV_PROXY ? "/api/yahoo" : YAHOO_DIRECT;
 
 /**
- * CORS proxy configuration.
- * Default uses corsproxy.io which is free, no-ads, and reliable.
- * Set to empty string to disable (e.g. if running behind own proxy/worker).
+ * Optional CORS-proxy prefix (deprecated — left for compatibility).
+ * Set to empty string to disable.  Has no effect in dev (Vite proxy is used).
+ * In production Yahoo Finance supports CORS natively so this defaults to "".
  */
-let corsProxy = "https://corsproxy.io/?";
+let corsProxy = "";
 
 export function setCorsProxy(proxy: string): void {
   corsProxy = proxy;

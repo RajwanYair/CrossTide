@@ -12,9 +12,14 @@
     <script>
       (function () {
         var l = window.location;
-        var redirect = l.pathname + l.search + l.hash;
+        // Strip the repo sub-path (/CrossTide) so the app router sees a root-relative path.
+        var basePath = "/CrossTide";
+        var path = l.pathname.startsWith(basePath)
+          ? l.pathname.slice(basePath.length) || "/"
+          : l.pathname;
+        var redirect = path + l.search + l.hash;
         // Replace history so the back button doesn't loop on the 404.
-        l.replace(l.origin + "/?spa-redirect=" + encodeURIComponent(redirect));
+        l.replace(l.origin + basePath + "/?spa-redirect=" + encodeURIComponent(redirect));
       })();
     </script>
   </head>

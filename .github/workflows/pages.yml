@@ -37,6 +37,8 @@ jobs:
 
       - name: Build
         run: npx vite build
+        env:
+          VITE_BASE: /CrossTide/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -52,6 +52,22 @@ export {
   getPluralCategory,
 } from "./icu-formatter";
 export type { MessageValues, MessageDict } from "./icu-formatter";
+export {
+  isPasskeySupported,
+  registerPasskey,
+  authenticatePasskey,
+  storePasskeyId,
+  getStoredPasskeyId,
+  clearPasskeyId,
+  bufferToBase64Url,
+  base64UrlToBuffer,
+} from "./passkey";
+export type {
+  RegisterPasskeyOptions,
+  RegisterPasskeyResult,
+  AuthenticatePasskeyOptions,
+  AuthenticatePasskeyResult,
+} from "./passkey";
 export { registerServiceWorker } from "./sw-register";
 export { watchServiceWorkerUpdates } from "./sw-update";
 export type { SwUpdateHandle, SwUpdateOptions } from "./sw-update";

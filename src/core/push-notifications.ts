@@ -61,7 +61,8 @@ export async function subscribeToPush(
   try {
     sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      // Cast to satisfy the Uint8Array<ArrayBuffer> constraint in the WebAuthn API types
+      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as unknown as ArrayBuffer,
     });
   } catch (err) {
     return { ok: false, error: `subscribe failed: ${String(err)}` };
@@ -154,8 +155,12 @@ export async function showLocalNotification(
       const reg = await navigator.serviceWorker.ready;
       await reg.showNotification(title, opts);
     } else {
-      // Non-SW context — best-effort
-      new Notification(title, { body: opts.body, icon: opts.icon, tag: opts.tag });
+      // Non-SW context — best-effort; omit undefined fields (exactOptionalPropertyTypes)
+      const notifOpts: NotificationOptions = {};
+      if (opts.body !== undefined) notifOpts.body = opts.body;
+      if (opts.icon !== undefined) notifOpts.icon = opts.icon;
+      if (opts.tag !== undefined) notifOpts.tag = opts.tag;
+      new Notification(title, notifOpts);
     }
     return { ok: true };
   } catch (err) {

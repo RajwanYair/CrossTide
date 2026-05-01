@@ -132,13 +132,12 @@ interface MountState {
 /** Mount a drawing-tool canvas overlay inside `container`. */
 export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
   const canvas = document.createElement("canvas");
-  canvas.style.cssText =
-    "position:absolute;top:0;left:0;pointer-events:none;z-index:10;";
+  canvas.style.cssText = "position:absolute;top:0;left:0;pointer-events:none;z-index:10;";
   container.style.position ||= "relative";
   container.appendChild(canvas);
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
+  const ctxOrNull = canvas.getContext("2d");
+  if (!ctxOrNull) {
     // Canvas 2D context unavailable (e.g. test environment) — return a no-op handle
     canvas.remove();
     return {
@@ -148,6 +147,8 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
       dispose: () => undefined,
     };
   }
+  // Narrowed to non-null; captured in closure as a stable CanvasRenderingContext2D
+  const ctx: CanvasRenderingContext2D = ctxOrNull;
 
   const state: MountState = {
     canvas,
@@ -208,10 +209,7 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
   // Enable pointer events only when a tool is active
   canvas.addEventListener("mousedown", state.onMouseDown);
 
-  const resizeObserver =
-    typeof ResizeObserver !== "undefined"
-      ? new ResizeObserver(resize)
-      : null;
+  const resizeObserver = typeof ResizeObserver !== "undefined" ? new ResizeObserver(resize) : null;
   resizeObserver?.observe(container);
   resize();
 
