@@ -254,3 +254,7 @@ export { computeRoc } from "./roc";
 export { computeStdDev } from "./standard-deviation";
 export type { StdDevOptions } from "./standard-deviation";
 
+
+export { computeEnvelope } from "./envelope";
+export type { EnvelopePoint } from "./envelope";
+
