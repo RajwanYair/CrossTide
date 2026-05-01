@@ -156,3 +156,7 @@ export type { BackoffPolicy, RetryOptions, Jitter } from "./retry-backoff";
 export { debounce, throttle } from "./throttle-debounce";
 export type { Cancellable } from "./throttle-debounce";
 
+
+export { runPromisePool, runPromisePoolSettled } from "./promise-pool";
+export type { PromisePoolOptions, SettledResult } from "./promise-pool";
+
