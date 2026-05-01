@@ -12,6 +12,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "vite",
+    "dev:components": "vite dev/components.html",
     "build": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",

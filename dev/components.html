@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CrossTide — Component Preview</title>
+    <link rel="stylesheet" href="/src/styles/tokens.css" />
+    <link rel="stylesheet" href="/src/styles/base.css" />
+    <link rel="stylesheet" href="/src/styles/components.css" />
+    <style>
+      body {
+        font-family: var(--font-mono, monospace);
+        background: var(--color-bg);
+        color: var(--color-text);
+        margin: 0;
+        padding: 1.5rem;
+      }
+
+      .preview-header {
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .preview-header h1 {
+        font-size: 1.25rem;
+        margin: 0;
+        color: var(--color-accent);
+      }
+
+      .theme-toggle {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .theme-toggle button {
+        padding: 0.25rem 0.75rem;
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
+        color: var(--color-text);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.75rem;
+      }
+
+      .theme-toggle button.active {
+        background: var(--color-accent);
+        color: #fff;
+        border-color: var(--color-accent);
+      }
+
+      .section {
+        margin-bottom: 3rem;
+      }
+
+      .section-title {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted, #7d8590);
+        margin-bottom: 1rem;
+        padding-bottom: 0.25rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .component-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .component-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        min-width: 120px;
+      }
+
+      .component-label {
+        font-size: 0.65rem;
+        color: var(--text-muted, #7d8590);
+        letter-spacing: 0.06em;
+      }
+
+      /* ── Toast demo ── */
+      #toast-demo-area {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      /* ── Sparkline demo ── */
+      .sparkline-demo svg {
+        display: block;
+      }
+
+      /* ── Range bar demo ── */
+      .range-bar-wrap {
+        width: 180px;
+        height: 8px;
+        background: var(--color-border);
+        border-radius: 4px;
+        position: relative;
+        overflow: visible;
+      }
+
+      .range-bar-fill {
+        height: 100%;
+        background: var(--color-accent);
+        border-radius: 4px;
+        transition: width 0.3s;
+      }
+
+      .range-bar-tick {
+        position: absolute;
+        top: -4px;
+        width: 4px;
+        height: 16px;
+        background: var(--color-text);
+        border-radius: 2px;
+        transform: translateX(-50%);
+      }
+
+      /* ── Color tokens ── */
+      .swatch-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .swatch {
+        width: 48px;
+        height: 48px;
+        border-radius: 6px;
+        border: 1px solid var(--color-border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.5rem;
+        color: var(--color-text);
+        gap: 2px;
+      }
+
+      .swatch-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+
+      /* ── Typography scale ── */
+      .type-scale {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .type-row {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+      }
+
+      .type-label {
+        font-size: 0.6rem;
+        color: var(--text-muted, #7d8590);
+        min-width: 80px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="preview-header">
+      <h1>CrossTide — Component Preview</h1>
+      <div class="theme-toggle">
+        <span style="font-size:0.7rem;color:var(--text-muted)">Theme:</span>
+        <button id="btn-dark" class="active" onclick="setTheme('dark')">dark</button>
+        <button id="btn-light" onclick="setTheme('light')">light</button>
+        <button id="btn-hc" onclick="setTheme('high-contrast')">HC</button>
+      </div>
+    </header>
+
+    <!-- ─────────────── COLOR TOKENS ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Color Tokens</h2>
+      <div class="swatch-grid" id="swatch-grid"></div>
+    </section>
+
+    <!-- ─────────────── TYPOGRAPHY ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Typography Scale</h2>
+      <div class="type-scale" id="type-scale"></div>
+    </section>
+
+    <!-- ─────────────── BUTTONS ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Buttons</h2>
+      <div class="component-row">
+        <div class="component-cell">
+          <span class="component-label">primary</span>
+          <button class="btn btn-primary">Add Ticker</button>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">secondary</span>
+          <button class="btn btn-secondary">Export CSV</button>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">ghost</span>
+          <button class="btn btn-ghost">Cancel</button>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">danger</span>
+          <button class="btn btn-danger">Delete</button>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">disabled</span>
+          <button class="btn btn-primary" disabled>Disabled</button>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">icon</span>
+          <button class="btn btn-icon" aria-label="Settings">⚙</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── BADGES ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Badges &amp; Chips</h2>
+      <div class="component-row">
+        <div class="component-cell">
+          <span class="component-label">positive</span>
+          <span class="badge badge-positive">+2.4%</span>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">negative</span>
+          <span class="badge badge-negative">−1.8%</span>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">neutral</span>
+          <span class="badge badge-neutral">0.0%</span>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">bullish</span>
+          <span class="badge badge-bullish">BULLISH</span>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">bearish</span>
+          <span class="badge badge-bearish">BEARISH</span>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">neutral-signal</span>
+          <span class="badge badge-neutral-signal">NEUTRAL</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── CARDS ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Card Shells</h2>
+      <div class="component-row">
+        <div class="component-cell">
+          <span class="component-label">default</span>
+          <div class="card" style="width:180px;padding:1rem">
+            <div class="card-header">AAPL</div>
+            <div class="card-body" style="font-size:1.25rem">$189.30</div>
+          </div>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">elevated</span>
+          <div class="card card-elevated" style="width:180px;padding:1rem">
+            <div class="card-header">Consensus</div>
+            <div class="card-body">
+              <span class="badge badge-bullish">BULLISH 8/12</span>
+            </div>
+          </div>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">loading skeleton</span>
+          <div class="card" style="width:180px;padding:1rem">
+            <div class="skeleton skeleton-line" style="width:60%;height:12px;margin-bottom:8px"></div>
+            <div class="skeleton skeleton-line" style="width:90%;height:12px;margin-bottom:8px"></div>
+            <div class="skeleton skeleton-line" style="width:40%;height:12px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── SPARKLINES ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Sparklines</h2>
+      <div class="component-row" id="sparkline-row"></div>
+    </section>
+
+    <!-- ─────────────── RANGE BARS ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">52-Week Range Bars</h2>
+      <div class="component-row" id="range-bar-row"></div>
+    </section>
+
+    <!-- ─────────────── TOASTS ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Toasts</h2>
+      <div id="toast-demo-area">
+        <button class="btn btn-secondary" onclick="demoToast('info')">Info</button>
+        <button class="btn btn-secondary" onclick="demoToast('success')">Success</button>
+        <button class="btn btn-secondary" onclick="demoToast('warning')">Warning</button>
+        <button class="btn btn-secondary" onclick="demoToast('error')">Error</button>
+        <button class="btn btn-secondary" onclick="demoToast('info',0)">Sticky</button>
+      </div>
+    </section>
+
+    <!-- ─────────────── INPUTS ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Inputs</h2>
+      <div class="component-row">
+        <div class="component-cell">
+          <span class="component-label">text</span>
+          <input class="input" type="text" placeholder="Enter ticker…" style="width:140px" />
+        </div>
+        <div class="component-cell">
+          <span class="component-label">search</span>
+          <input class="input input-search" type="search" placeholder="Search…" style="width:140px" />
+        </div>
+        <div class="component-cell">
+          <span class="component-label">select</span>
+          <select class="input" style="width:140px">
+            <option>Dark</option>
+            <option>Light</option>
+            <option>High Contrast</option>
+          </select>
+        </div>
+        <div class="component-cell">
+          <span class="component-label">toggle</span>
+          <label class="toggle-label">
+            <input type="checkbox" class="toggle-input" checked />
+            <span class="toggle-track"></span>
+            <span>Enabled</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── TABLES ─────────────── -->
+    <section class="section">
+      <h2 class="section-title">Data Table</h2>
+      <div style="overflow-x:auto">
+        <table class="data-table" style="min-width:480px">
+          <thead>
+            <tr>
+              <th scope="col" aria-sort="ascending">Ticker <span class="sort-chevron">↑</span></th>
+              <th scope="col" aria-sort="none">Price <span class="sort-chevron">⇅</span></th>
+              <th scope="col" aria-sort="none">Change <span class="sort-chevron">⇅</span></th>
+              <th scope="col" aria-sort="none">Volume <span class="sort-chevron">⇅</span></th>
+              <th scope="col" aria-sort="none">Signal <span class="sort-chevron">⇅</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>AAPL</strong></td>
+              <td>$189.30</td>
+              <td><span class="badge badge-positive">+2.41%</span></td>
+              <td>58.2M</td>
+              <td><span class="badge badge-bullish">BULLISH</span></td>
+            </tr>
+            <tr>
+              <td><strong>MSFT</strong></td>
+              <td>$374.51</td>
+              <td><span class="badge badge-negative">−0.82%</span></td>
+              <td>22.1M</td>
+              <td><span class="badge badge-bearish">BEARISH</span></td>
+            </tr>
+            <tr>
+              <td><strong>NVDA</strong></td>
+              <td>$875.00</td>
+              <td><span class="badge badge-neutral">0.00%</span></td>
+              <td>41.5M</td>
+              <td><span class="badge badge-neutral-signal">NEUTRAL</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <script type="module">
+      import { renderSparkline } from "/src/ui/sparkline.ts";
+      import { showToast } from "/src/ui/toast.ts";
+      import { computeRangeBar } from "/src/ui/range-bar.ts";
+
+      // ── theme toggle ──────────────────────────────────────────────────
+      window.setTheme = (t) => {
+        document.documentElement.dataset.theme = t;
+        document.querySelectorAll(".theme-toggle button").forEach((b) => b.classList.remove("active"));
+        const btn = document.getElementById(`btn-${t === "high-contrast" ? "hc" : t}`);
+        if (btn) btn.classList.add("active");
+      };
+
+      // ── color swatches ────────────────────────────────────────────────
+      const cssVars = [
+        "--color-bg", "--color-surface", "--color-border",
+        "--color-text", "--text-muted",
+        "--color-accent", "--color-accent-hover",
+        "--color-positive", "--color-negative", "--color-neutral",
+      ];
+      const grid = document.getElementById("swatch-grid");
+      const cs = getComputedStyle(document.documentElement);
+      cssVars.forEach((v) => {
+        const val = cs.getPropertyValue(v).trim();
+        const cell = document.createElement("div");
+        cell.className = "swatch";
+        cell.title = `${v}: ${val}`;
+        const dot = document.createElement("div");
+        dot.className = "swatch-dot";
+        dot.style.background = val;
+        const label = document.createElement("span");
+        label.textContent = v.replace("--color-", "").replace("--", "");
+        cell.append(dot, label);
+        grid?.append(cell);
+      });
+
+      // ── typography scale ──────────────────────────────────────────────
+      const typeScale = [
+        { label: "2xl / 1.5rem", size: "1.5rem" },
+        { label: "xl / 1.25rem", size: "1.25rem" },
+        { label: "lg / 1.125rem", size: "1.125rem" },
+        { label: "base / 1rem", size: "1rem" },
+        { label: "sm / 0.875rem", size: "0.875rem" },
+        { label: "xs / 0.75rem", size: "0.75rem" },
+        { label: "2xs / 0.625rem", size: "0.625rem" },
+      ];
+      const typeEl = document.getElementById("type-scale");
+      typeScale.forEach(({ label, size }) => {
+        const row = document.createElement("div");
+        row.className = "type-row";
+        row.innerHTML = `<span class="type-label">${label}</span><span style="font-size:${size}">The quick brown fox jumps over the lazy dog.</span>`;
+        typeEl?.append(row);
+      });
+
+      // ── sparklines ───────────────────────────────────────────────────
+      const datasets = [
+        { label: "uptrend", closes: [100, 103, 102, 108, 112, 110, 115, 120, 118, 125] },
+        { label: "downtrend", closes: [125, 120, 118, 115, 110, 108, 102, 103, 100, 98] },
+        { label: "volatile", closes: [100, 115, 95, 120, 90, 130, 85, 125, 105, 110] },
+        { label: "flat", closes: [100, 101, 100, 102, 100, 101, 100, 102, 100, 101] },
+      ];
+      const sparkRow = document.getElementById("sparkline-row");
+      datasets.forEach(({ label, closes }) => {
+        const cell = document.createElement("div");
+        cell.className = "component-cell sparkline-demo";
+        cell.innerHTML = `<span class="component-label">${label}</span>`;
+        const svg = renderSparkline(closes, { width: 120, height: 32, strokeWidth: 1.5 });
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = svg;
+        cell.append(wrapper);
+        sparkRow?.append(cell);
+      });
+
+      // ── range bars ───────────────────────────────────────────────────
+      const rangeCases = [
+        { label: "near high (85%)", low: 100, high: 200, current: 185 },
+        { label: "mid-range (50%)", low: 100, high: 200, current: 150 },
+        { label: "near low (12%)", low: 100, high: 200, current: 112 },
+        { label: "at low (0%)", low: 100, high: 200, current: 100 },
+      ];
+      const rangeRow = document.getElementById("range-bar-row");
+      rangeCases.forEach(({ label, low, high, current }) => {
+        const geo = computeRangeBar({ low, high, current });
+        const cell = document.createElement("div");
+        cell.className = "component-cell";
+        const wrap = document.createElement("div");
+        wrap.className = "range-bar-wrap";
+        const fill = document.createElement("div");
+        fill.className = "range-bar-fill";
+        fill.style.width = `${geo.position * 100}%`;
+        const tick = document.createElement("div");
+        tick.className = "range-bar-tick";
+        tick.style.left = `${geo.position * 100}%`;
+        wrap.append(fill, tick);
+        cell.innerHTML = `<span class="component-label">${label}</span><span class="component-label">${low}–${high} @ ${current}</span>`;
+        cell.append(wrap);
+        rangeRow?.append(cell);
+      });
+
+      // ── toasts ───────────────────────────────────────────────────────
+      window.demoToast = (type, durationMs) => {
+        const messages = {
+          info: "Fetching live data for AAPL…",
+          success: "Watchlist saved successfully.",
+          warning: "Rate limit approaching — throttling requests.",
+          error: "Failed to fetch NVDA: network timeout.",
+        };
+        showToast({ message: messages[type] ?? "Hello!", type, durationMs });
+      };
+    </script>
+  </body>
+</html>
