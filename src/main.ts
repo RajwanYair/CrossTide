@@ -6,11 +6,14 @@
 import { loadConfig, saveConfig, addTicker, removeTicker } from "./core/config";
 import { registerServiceWorker } from "./core/sw-register";
 import { watchServiceWorkerUpdates } from "./core/sw-update";
-import { initRouter, onRouteChange, type RouteName } from "./ui/router";
+import { createShortcutManager } from "./core/keyboard";
+import { initRouter, navigateTo, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
 import { renderWatchlist } from "./ui/watchlist";
 import { loadCard, type CardHandle, type CardContext } from "./cards/registry";
 import { showToast } from "./ui/toast";
+import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
+import type { PaletteCommand } from "./ui/command-palette";
 import { fetchAllTickers, fetchTickerData, type TickerData } from "./core/data-service";
 import type { ConsensusResult } from "./types/domain";
 
@@ -274,6 +277,45 @@ function main(): void {
     localStorage.removeItem("crosstide-cache");
     showToast({ message: "Cache cleared", type: "info" });
   });
+
+  // --- Command Palette & Keyboard Shortcuts ---
+  const shortcuts = createShortcutManager();
+  const paletteCommands: PaletteCommand[] = [
+    { id: "nav-watchlist", label: "Go to Watchlist", hint: "G W", section: "Navigation", run: () => navigateTo("watchlist") },
+    { id: "nav-consensus", label: "Go to Consensus", hint: "G C", section: "Navigation", run: () => navigateTo("consensus") },
+    { id: "nav-chart", label: "Go to Chart", hint: "G H", section: "Navigation", run: () => navigateTo("chart") },
+    { id: "nav-alerts", label: "Go to Alerts", hint: "G A", section: "Navigation", run: () => navigateTo("alerts") },
+    { id: "nav-settings", label: "Go to Settings", hint: "G S", section: "Navigation", run: () => navigateTo("settings") },
+    { id: "add-ticker", label: "Add Ticker", hint: "A", section: "Actions", run: () => addInput?.focus() },
+    { id: "refresh-data", label: "Refresh Data", hint: "R", section: "Actions", run: () => void refreshData() },
+    { id: "search-focus", label: "Focus Search", hint: "/", section: "Actions", run: () => addInput?.focus() },
+  ];
+
+  // Ctrl+K / Cmd+K → open palette
+  shortcuts.register({ key: "k", ctrl: true, description: "Open command palette", handler: () => openPalette(paletteCommands) });
+
+  // "/" → focus search (when palette not open)
+  shortcuts.register({ key: "/", description: "Focus ticker search", handler: () => addInput?.focus() });
+
+  // "r" → refresh data
+  shortcuts.register({ key: "r", description: "Refresh data", handler: () => void refreshData() });
+
+  // "?" → show shortcuts help
+  shortcuts.register({
+    key: "?",
+    shift: true,
+    description: "Show keyboard shortcuts",
+    handler: () => {
+      const list = shortcuts.list();
+      const msg = list.map((s) => `${s.combo}: ${s.description}`).join("\n");
+      showToast({ message: `Keyboard shortcuts:\n${msg}`, type: "info", durationMs: 8000 });
+    },
+  });
+
+  // Escape → close palette if open
+  shortcuts.register({ key: "Escape", description: "Close palette", handler: () => { if (isPaletteOpen()) { /* handled by palette input */ } } });
+
+  void shortcuts; // retain reference
 }
 
 main();
