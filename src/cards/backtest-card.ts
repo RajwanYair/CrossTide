@@ -137,21 +137,55 @@ function renderBacktestCard(container: HTMLElement): void {
 
   const CANDLES = syntheticCandles(500);
 
-  const run = (): void => {
-    const { trades, equityPoints } = runBacktest(CANDLES, {
-      fastPeriod,
-      slowPeriod,
-      initialCapital,
-    });
+  const run = async (): Promise<void> => {
+    const resultEl = container.querySelector<HTMLElement>("#backtest-result");
+    if (resultEl) resultEl.innerHTML = `<p class="empty-state">Computing…</p>`;
 
-    const stats = summarizeTrades(trades);
-    const equityValues = equityPoints.map((p) => p.equity);
-    const dd = maxDrawdown(equityValues);
-    const years = CANDLES.length / 252;
-    const annReturn = cagr(equityValues, years);
-    const finalEquity = equityValues[equityValues.length - 1] ?? initialCapital;
+    const result = await runBacktestAsync(
+      { ticker: "SYNTH", initialCapital, methods: [], windowSize: slowPeriod },
+      CANDLES.map((c) => ({ ...c, date: c.date })),
+    ).catch(() => null);
+
+    // Fallback: if worker unavailable, compute locally (import dynamically)
+    let trades: ClosedTrade[];
+    let equityPoints: ReturnType<typeof buildEquityCurve>;
+    let stats: ReturnType<typeof summarizeTrades>;
+    let dd: number;
+    let annReturn: number;
+    let finalEquity: number;
+    let totalRetPct: number;
+
+    if (result) {
+      // Domain engine result — map to our display format
+      trades = result.trades.map((t, i) => ({
+        entryTime: i * 2,
+        exitTime: i * 2 + 1,
+        entryPrice: t.entryPrice,
+        exitPrice: t.exitPrice,
+        side: "long" as const,
+      }));
+      equityPoints = result.equityCurve.map((p, i) => ({ time: i, equity: p.equity }));
+      const equityValues = equityPoints.map((p) => p.equity);
+      stats = summarizeTrades(trades);
+      dd = result.maxDrawdown;
+      const years = CANDLES.length / 252;
+      annReturn = cagr(equityValues, years);
+      finalEquity = equityValues[equityValues.length - 1] ?? initialCapital;
+      totalRetPct = result.totalReturnPercent;
+    } else {
+      // Direct fallback (worker not available)
+      const { runSmaCrossoverLocal } = await import("../core/backtest-worker-fallback");
+      const local = runSmaCrossoverLocal(CANDLES, fastPeriod, slowPeriod, initialCapital);
+      trades = local.trades;
+      equityPoints = local.equityPoints;
+      stats = local.stats;
+      dd = local.maxDrawdown;
+      annReturn = local.annReturn;
+      finalEquity = local.finalEquity;
+      totalRetPct = local.totalReturnPct;
+    }
+
     const totalPnl = finalEquity - initialCapital;
-    const totalRetPct = (totalPnl / initialCapital) * 100;
 
     const statsHtml = `
       <div class="portfolio-summary-row">
@@ -196,7 +230,6 @@ function renderBacktestCard(container: HTMLElement): void {
       </div>`;
 
     // Update result area only (controls are static)
-    const resultEl = container.querySelector<HTMLElement>("#backtest-result");
     if (resultEl) {
       resultEl.innerHTML = `
         <div class="backtest-equity-wrap">${renderEquitySVG(equityPoints)}</div>
@@ -251,12 +284,12 @@ function renderBacktestCard(container: HTMLElement): void {
       slowPeriod = fastPeriod + 1;
       slowInput.value = String(slowPeriod);
     }
-    run();
+    void run();
   };
 
   runBtn.addEventListener("click", onRun);
   // Run immediately with defaults
-  run();
+  void run();
 }
 
 const backtestCard: CardModule = {

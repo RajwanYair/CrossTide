@@ -1,0 +1,71 @@
+name: Supply Chain Security
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "package-lock.json"
+      - "package.json"
+  pull_request:
+    branches: [main]
+    paths:
+      - "package-lock.json"
+      - "package.json"
+  schedule:
+    # Weekly Monday 08:00 UTC
+    - cron: "0 8 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: npm audit + signature verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm audit (production)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Verify package signatures
+        run: npm audit signatures
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-3.0, AGPL-3.0
+          comment-summary-in-pr: always
+
+  socket:
+    name: Socket.dev analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Socket Security
+        uses: SocketDev/socket-security-action@v1
+        with:
+          # SOCKET_SECURITY_API_KEY must be set in repo secrets
+          # If not configured, this step will be skipped gracefully
+          api_key: ${{ secrets.SOCKET_SECURITY_API_KEY || '' }}
