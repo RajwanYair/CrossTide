@@ -27,7 +27,11 @@ function dirColor(direction: string): string {
 }
 
 function escXml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function buildSvg(opts: {
@@ -64,11 +68,15 @@ function buildSvg(opts: {
   <!-- Change -->
   ${change ? `<text x="${price ? "60" : "60"}" y="490" font-family="system-ui,sans-serif" font-size="36" fill="${parseFloat(change) >= 0 ? "#22c55e" : "#ef4444"}">${changeSign}${escXml(change)}%</text>` : ""}
   <!-- Consensus badge -->
-  ${direction ? `
+  ${
+    direction
+      ? `
   <rect x="60" y="530" width="160" height="56" rx="8" fill="${escXml(badge)}" opacity="0.2"/>
   <rect x="60" y="530" width="160" height="56" rx="8" fill="none" stroke="${escXml(badge)}" stroke-width="2"/>
   <text x="140" y="566" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" font-weight="700" fill="${escXml(badge)}">${escXml(direction.toUpperCase())}</text>
-  ` : ""}
+  `
+      : ""
+  }
   <!-- Watermark -->
   <text x="${OG_WIDTH - 40}" y="${OG_HEIGHT - 30}" text-anchor="end" font-family="system-ui,sans-serif" font-size="22" fill="#334155">crosstide.pages.dev</text>
 </svg>`;

@@ -78,7 +78,7 @@ export function createStorageManager(options: StorageManagerOptions): StorageMan
   const monitor: StoragePressureMonitor = createStoragePressureMonitor({
     threshold,
     intervalMs,
-    estimate,
+    ...(estimate !== undefined && { estimate }),
     onPressure: handlePressure,
   });
 

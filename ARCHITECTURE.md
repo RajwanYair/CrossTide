@@ -1,6 +1,6 @@
 # Architecture
 
-> **Last updated:** v7.2.0 (May 2026)
+> **Last updated:** v7.5.0 (June 2026)
 
 CrossTide Web is a browser-based stock monitoring dashboard built with vanilla TypeScript and Vite.
 It follows a strict layered architecture, keeps the production bundle small, and ships as a
@@ -64,7 +64,29 @@ sequenceDiagram
   SW->>Core: Background Sync / cache response
 ```
 
-## Key product features (v7.2)
+## URL sharing flow (D5)
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant UI as Watchlist toolbar
+  participant Core as share-state.ts
+  participant Clipboard
+  participant Recipient
+
+  User->>UI: click "Share"
+  UI->>Core: encodeWatchlistUrl(tickers)
+  Core-->>UI: ?s=base64url...
+  UI->>Clipboard: navigator.clipboard.writeText(url)
+  UI-->>User: toast — "Link copied!"
+
+  Recipient->>UI: open ?s=base64url...
+  UI->>Core: decodeWatchlistUrl(search)
+  Core-->>UI: string[] tickers
+  UI-->>Recipient: auto-import tickers + toast confirmation
+```
+
+## Key product features (v7.5)
 
 | Feature                    | Implementation                                                              |
 | -------------------------- | --------------------------------------------------------------------------- |
@@ -82,8 +104,10 @@ sequenceDiagram
 | Offline-first PWA          | Workbox: precache + NetworkFirst/SWR + Background Sync                      |
 | Command palette (`⌘K`)     | `src/ui/command-palette.ts` + fuzzy match                                   |
 | Keyboard-first             | `src/core/keyboard.ts` — `j/k`, `/`, `g+h`, Vim-style nav                   |
-| i18n (EN + HE RTL)         | ICU message formatter + Intl formatters                                     |
-| Color-blind palettes       | deuteranopia, protanopia, tritanopia, high-contrast                         |
+| i18n (EN + HE RTL)         | `src/core/messages.ts` — `t()` helper, ~80 keys, EN + HE catalogs           |
+| Color-blind palettes       | deuteranopia/protanopia/tritanopia/high-contrast; C2 runtime switch         |
+| View Transitions API       | Named containers + watchlist column container queries (C5)                  |
+| Drag-reorder watchlist     | Mouse/touch drag-and-drop sort; `persistSort`/`loadSort` localStorage (A11) |
 | Cross-tab sync             | BroadcastChannel `src/core/broadcast-channel.ts`                            |
 | Security headers           | Cloudflare Worker middleware `worker/security.ts` — CSP, HSTS, COOP, CORP   |
 | Storage pressure guard     | `src/core/storage-manager.ts` — polls quota, LRU-evicts TieredCache at ≥80% |
@@ -107,7 +131,7 @@ CrossTide/
 │   ├── index.ts        route dispatch: /api/quote, /api/candles, /api/search, /og-image
 │   └── security.ts     withSecurityHeaders() middleware — CSP, HSTS, COOP, CORP, COEP
 ├── docs/               Markdown/MDX reference — 13 indicator pages + user guide + roadmap
-├── tests/unit/         Vitest unit tests (≥2260 tests across ≥242 files)
+├── tests/unit/         Vitest unit tests (≥2658 tests across ≥262 files)
 └── public/             Static assets, PWA manifest, 404.html
 ```
 
@@ -167,7 +191,7 @@ Local and CI both enforce, with **zero waivers**:
 - 0 HTMLHint findings (`npm run lint:html`)
 - 0 markdownlint findings (`npm run lint:md`)
 - Prettier clean (`npm run format:check`)
-- 2260+ unit tests pass (`npm test`), v8 coverage thresholds met
+- 2658+ unit tests pass (`npm test`), v8 coverage thresholds met
 - 15 Playwright E2E flows + axe a11y audit pass
 - Lighthouse CI budgets met
 - Production build under 200 KB gzipped JS (`npm run check:bundle`)
@@ -186,17 +210,50 @@ Local and CI both enforce, with **zero waivers**:
 - **No `innerHTML`** with user data — all DOM via `textContent` or sanitized templates
 - **Dependabot** + dependency-review-action for supply chain
 
+## Routing & card registry
+
+Routes use the History API (`src/ui/router.ts`). Every route maps to a card module loaded via
+lazy `import()`. The card registry (`cards/registry.ts`) returns `{ mount(el, ctx) }` for each
+entry. Cards are never destroyed on route change — hidden/shown via CSS.
+
+| Route                 | Card module                                           |
+| --------------------- | ----------------------------------------------------- |
+| `/watchlist`          | built-in (watchlist table in `main.ts`)               |
+| `/consensus`          | `cards/consensus-card.ts`                             |
+| `/chart`              | `cards/chart-card.ts`                                 |
+| `/alerts`             | `cards/alerts-card.ts`                                |
+| `/heatmap`            | `cards/heatmap.ts`                                    |
+| `/screener`           | `cards/screener.ts`                                   |
+| `/portfolio`          | `cards/portfolio.ts`                                  |
+| `/risk`               | `cards/risk-card.ts` (Sortino, max DD, CAGR, Calmar)  |
+| `/backtest`           | `cards/backtest-card.ts` (MA crossover, equity curve) |
+| `/consensus-timeline` | `cards/consensus-timeline.ts`                         |
+| `/provider-health`    | `cards/provider-health.ts`                            |
+| `/settings`           | `cards/settings-card.ts`                              |
+
 ## Storage
 
-CrossTide uses a three-tier storage model:
+CrossTide uses a four-tier storage model:
 
-| Tier | Store          | TTL              | Notes                             |
-| ---- | -------------- | ---------------- | --------------------------------- |
-| L1   | In-memory Map  | Process          | `TieredCache` L1 layer            |
-| L2   | `localStorage` | Configurable TTL | `TieredCache` L2 layer — ~5 MB    |
-| L3   | IndexedDB      | No expiry        | Quote candles, watchlists, alerts |
+| Tier | Store                | TTL              | Notes                                  |
+| ---- | -------------------- | ---------------- | -------------------------------------- |
+| L1   | In-memory Map        | Process          | `TieredCache` L1 — hot quotes          |
+| L2   | `localStorage`       | Configurable TTL | `TieredCache` L2 — ~5 MB, config/theme |
+| L3   | IndexedDB            | No expiry        | Quote candles, watchlists, alerts      |
+| L4   | Service Worker Cache | Per-strategy     | App shell (precache) + API SWR         |
 
 `src/core/storage-manager.ts` polls `navigator.storage.estimate()` every 60 s.
 When quota usage reaches **80%** it evicts the 20 oldest L1/L2 cache entries.
 At **95%** it evicts 50 entries and calls `navigator.storage.persist()` to request
 persistent storage from the browser.
+
+## Performance budget
+
+| Asset                | Budget      | Gate           |
+| -------------------- | ----------- | -------------- |
+| JS initial           | ≤ 200 KB gz | `check:bundle` |
+| Lazy card chunk      | ≤ 50 KB gz  | build          |
+| CSS                  | ≤ 30 KB gz  | build          |
+| LCP (4G mid Android) | ≤ 1.8 s     | Lighthouse CI  |
+| INP p75              | ≤ 200 ms    | Lighthouse CI  |
+| CLS                  | ≤ 0.05      | Lighthouse CI  |

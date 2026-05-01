@@ -203,4 +203,7 @@ export function _resetTelemetryForTests(): void {
 }
 
 /** Exposed for unit testing only. */
-export { parseStackTrace as _parseStackTraceForTests, reportToGlitchTip as _reportToGlitchTipForTests };
+export {
+  parseStackTrace as _parseStackTraceForTests,
+  reportToGlitchTip as _reportToGlitchTipForTests,
+};

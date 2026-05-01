@@ -109,10 +109,13 @@ export function handleChart(url: URL): Response {
 
   const range = url.searchParams.get("range") ?? "1y";
   if (!VALID_RANGES.has(range)) {
-    return new Response(JSON.stringify({ error: `Invalid range. Valid: ${[...VALID_RANGES].join(", ")}` }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: `Invalid range. Valid: ${[...VALID_RANGES].join(", ")}` }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const days = RANGE_DAYS[range] ?? 365;

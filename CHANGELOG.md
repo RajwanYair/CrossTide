@@ -6,6 +6,47 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.6.0] - 2026-06-07
+
+### Patch — Engineering quality sprint (20-task maintenance)
+
+#### Fixed
+
+- **TS strict-mode errors** — Two pre-existing errors now resolved with zero
+  suppressions:
+  - `src/core/i18n.ts` `getTextDirection()`: replaced `split("-")[0]`
+    (unsafe under `noUncheckedIndexedAccess`) with array destructuring
+    `const [primary = ""] = …`.
+  - `src/core/storage-manager.ts` `createStorageManager()`: replaced direct
+    `estimate` property spread (violates `exactOptionalPropertyTypes`) with
+    conditional spread `...(estimate !== undefined && { estimate })`.
+- **CI: duplicate `lighthouse:` job** — `ci.yml` contained two identical
+  `lighthouse:` job blocks; the duplicate entry is removed.
+
+#### Changed
+
+- **`ARCHITECTURE.md`** updated to v7.5.0:
+  - Version header updated (`v7.2.0 → v7.5.0`).
+  - Added features: View Transitions (C5), drag-reorder watchlist (A11),
+    C2 runtime palette persistence.
+  - i18n row now references `messages.ts` `t()` helper.
+  - Test count updated (`≥2260 → ≥2658 tests across ≥262 files`).
+  - New **URL sharing flow** Mermaid sequence diagram (D5).
+  - New **Routing & card registry** section with full route → card module
+    table.
+  - Storage model expanded from 3-tier to 4-tier (added L4 Service Worker
+    Cache).
+  - New **Performance budget** table (LCP / INP / CLS / bundle targets).
+  - `docs/ARCHITECTURE.md` (stale v6.7.0) replaced with a redirect to root.
+- **`README.md`**: fixed broken link (`docs/ARCHITECTURE.md` → root
+  `ARCHITECTURE.md`), updated architecture block to reflect current
+  directory structure, added `npm run dev:components` to scripts table.
+- **`.github/dependabot.yml`**: added `docs-site/` npm ecosystem entry.
+- **`.vscode/extensions.json`**: added `DavidAnson.vscode-markdownlint`
+  recommendation.
+
+---
+
 ## [7.5.0] - 2026-05-19
 
 ### Minor — i18n message catalogue, shared watchlist URLs, coverage push

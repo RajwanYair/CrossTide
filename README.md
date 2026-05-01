@@ -20,16 +20,17 @@ npm run dev        # http://localhost:5173
 
 ## Scripts
 
-| Command                 | Description                                                       |
-| ----------------------- | ----------------------------------------------------------------- |
-| `npm run dev`           | Start dev server                                                  |
-| `npm run build`         | TypeScript check + production build                               |
-| `npm test`              | Run unit tests                                                    |
-| `npm run test:coverage` | Tests with v8 coverage                                            |
-| `npm run lint`          | ESLint                                                            |
-| `npm run lint:all`      | ESLint + Stylelint + HTMLHint + markdownlint                      |
-| `npm run format`        | Prettier auto-format                                              |
-| `npm run ci`            | Full CI pipeline (typecheck + lint + test + build + bundle check) |
+| Command                  | Description                                                          |
+| ------------------------ | -------------------------------------------------------------------- |
+| `npm run dev`            | Start dev server (<http://localhost:5173>)                           |
+| `npm run dev:components` | Component preview grid (<http://localhost:5173/dev/components.html>) |
+| `npm run build`          | TypeScript check + production build                                  |
+| `npm test`               | Run unit tests                                                       |
+| `npm run test:coverage`  | Tests with v8 coverage                                               |
+| `npm run lint`           | ESLint                                                               |
+| `npm run lint:all`       | ESLint + Stylelint + HTMLHint + markdownlint                         |
+| `npm run format`         | Prettier auto-format                                                 |
+| `npm run ci`             | Full CI pipeline (typecheck + lint + test + build + bundle check)    |
 
 ## Tech Stack
 
@@ -55,14 +56,17 @@ npm run dev        # http://localhost:5173
 
 ```text
 src/
-  domain/   Pure calculators (SMA, EMA, RSI, MACD, consensus)
-  core/     State, cache, config, fetch utilities
-  ui/       Router, theme, view renderers
-  types/    Shared interfaces
-  styles/   CSS design tokens + components
+  domain/   Pure calculators (30+ indicators, consensus, backtest, risk)
+  core/     Signals, cache, config, fetch, idb, i18n, storage-manager
+  providers/ Market-data adapters (Yahoo, Finnhub, CoinGecko, Polygon, chain)
+  cards/    Composable UI cards — 13 route cards, lazy-loaded via registry
+  ui/       Router, toast, modal, command palette, a11y, view transitions
+  types/    Shared interfaces + Valibot schemas
+  styles/   Design tokens, base, responsive, components, color-blind palettes
+worker/     Cloudflare Worker API proxy + security headers
 ```
 
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full layered diagram and CI/CD reference.
 
 ## Local Verification
 

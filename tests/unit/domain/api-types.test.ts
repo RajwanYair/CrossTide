@@ -6,7 +6,12 @@
  * at compile/typecheck time (and in `vitest run`).
  */
 import { describe, it, expectTypeOf } from "vitest";
-import type { DailyCandle, SignalDirection, MethodSignal, ConsensusResult } from "../../../src/types/domain";
+import type {
+  DailyCandle,
+  SignalDirection,
+  MethodSignal,
+  ConsensusResult,
+} from "../../../src/types/domain";
 import {
   computeRsi,
   computeRsiSeries,

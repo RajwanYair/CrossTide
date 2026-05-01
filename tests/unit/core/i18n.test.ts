@@ -38,7 +38,9 @@ describe("getLocale", () => {
     const store: Record<string, string> = { crosstide_locale: "de-DE" };
     vi.stubGlobal("localStorage", {
       getItem: (k: string) => store[k] ?? null,
-      setItem: (k: string, v: string) => { store[k] = v; },
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
     });
     vi.stubGlobal("navigator", { language: "fr-FR" });
     expect(getLocale()).toBe("de-DE");
@@ -54,7 +56,9 @@ describe("setLocale / persistLocale / getTextDirection / initLocale", () => {
     const store: Record<string, string> = {};
     vi.stubGlobal("localStorage", {
       getItem: (k: string) => store[k] ?? null,
-      setItem: (k: string, v: string) => { store[k] = v; },
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
     });
   });
   afterEach(() => {
@@ -94,7 +98,9 @@ describe("setLocale / persistLocale / getTextDirection / initLocale", () => {
     const store: Record<string, string> = {};
     vi.stubGlobal("localStorage", {
       getItem: (k: string) => store[k] ?? null,
-      setItem: (k: string, v: string) => { store[k] = v; },
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
     });
     persistLocale("ja-JP");
     expect(store["crosstide_locale"]).toBe("ja-JP");

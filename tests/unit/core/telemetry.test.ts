@@ -228,7 +228,11 @@ describe("telemetry", () => {
     });
 
     it("does not throw when sendBeacon throws", () => {
-      vi.stubGlobal("navigator", { sendBeacon: () => { throw new Error("blocked"); } });
+      vi.stubGlobal("navigator", {
+        sendBeacon: () => {
+          throw new Error("blocked");
+        },
+      });
       vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("")));
       expect(() => _reportToGlitchTipForTests(mockDsn, mockRecord)).not.toThrow();
     });

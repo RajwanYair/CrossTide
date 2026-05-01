@@ -138,7 +138,6 @@ describe("deep-clone (fallback path via _fallbackCloneForTests)", () => {
   });
 });
 
-
 describe("deep-clone", () => {
   it("clones primitives unchanged", () => {
     expect(deepClone(1)).toBe(1);

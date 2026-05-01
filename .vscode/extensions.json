@@ -3,6 +3,7 @@
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "stylelint.vscode-stylelint",
+    "DavidAnson.vscode-markdownlint",
     "vitest.explorer",
     "ms-vscode.js-debug"
   ]

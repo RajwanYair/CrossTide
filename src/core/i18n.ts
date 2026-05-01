@@ -60,7 +60,8 @@ export function persistLocale(locale: string): void {
 
 /** Returns "rtl" if the given locale uses right-to-left script, else "ltr". */
 export function getTextDirection(locale?: string): "ltr" | "rtl" {
-  const tag = (locale ?? getLocale()).split("-")[0].toLowerCase();
+  const [primary = ""] = (locale ?? getLocale()).split("-");
+  const tag = primary.toLowerCase();
   return RTL_LANGUAGES.has(tag) ? "rtl" : "ltr";
 }
 

@@ -118,7 +118,7 @@ describe("generateOgImageSvg — direction colours", () => {
     const svg = generateOgImageSvg({ ticker: "X", direction: undefined });
     // badge only rendered when direction is provided
     expect(svg).not.toContain("badge");
-    expect(svg).not.toContain("text-anchor=\"middle\"");
+    expect(svg).not.toContain('text-anchor="middle"');
   });
 });
 

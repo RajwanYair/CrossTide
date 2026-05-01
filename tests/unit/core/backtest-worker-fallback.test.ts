@@ -20,9 +20,9 @@ describe("runSmaCrossoverLocal — basic properties", () => {
   const candles = makeCandles(
     // 100 bars: gradual rise then fall — should produce at least one cross
     Array.from({ length: 100 }, (_, i) => {
-      if (i < 40) return 100 + i;   // rising: fast > slow (buy)
+      if (i < 40) return 100 + i; // rising: fast > slow (buy)
       if (i < 60) return 140 - (i - 40) * 2; // falling: fast < slow (sell)
-      return 100 + (i - 60) * 0.5;   // slow rise again
+      return 100 + (i - 60) * 0.5; // slow rise again
     }),
   );
 
@@ -70,10 +70,7 @@ describe("runSmaCrossoverLocal — basic properties", () => {
 
   it("totalReturnPct equals ((finalEquity - initialCapital) / initialCapital) * 100", () => {
     const result = runSmaCrossoverLocal(candles, 5, 20, 10_000);
-    expect(result.totalReturnPct).toBeCloseTo(
-      ((result.finalEquity - 10_000) / 10_000) * 100,
-      5,
-    );
+    expect(result.totalReturnPct).toBeCloseTo(((result.finalEquity - 10_000) / 10_000) * 100, 5);
   });
 });
 
@@ -83,8 +80,9 @@ describe("runSmaCrossoverLocal — cross detection", () => {
     // The fast SMA will cross above slow SMA as prices recover
     const prices: number[] = [];
     for (let i = 0; i < 60; i++) {
-      if (i < 25) prices.push(120 - i * 2); // falling: slow > fast initially
-      else prices.push(70 + (i - 25) * 3);  // rising: fast crosses above slow
+      if (i < 25)
+        prices.push(120 - i * 2); // falling: slow > fast initially
+      else prices.push(70 + (i - 25) * 3); // rising: fast crosses above slow
     }
     const result = runSmaCrossoverLocal(makeCandles(prices), 5, 20, 10_000);
     // A golden cross must have occurred; last trade force-closed at end
@@ -127,10 +125,12 @@ describe("runSmaCrossoverLocal — edge cases", () => {
   });
 
   it("stats object is populated", () => {
-    const candles2 = makeCandles(Array.from({ length: 100 }, (_, i) => {
-      if (i < 40) return 100 + i;
-      return 140 - (i - 40) * 2;
-    }));
+    const candles2 = makeCandles(
+      Array.from({ length: 100 }, (_, i) => {
+        if (i < 40) return 100 + i;
+        return 140 - (i - 40) * 2;
+      }),
+    );
     const result = runSmaCrossoverLocal(candles2, 5, 20, 10_000);
     expect(typeof result.stats).toBe("object");
   });

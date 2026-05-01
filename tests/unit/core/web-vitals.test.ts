@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { observeWebVitals, makeBeaconReporter, type VitalReport } from "../../../src/core/web-vitals";
+import {
+  observeWebVitals,
+  makeBeaconReporter,
+  type VitalReport,
+} from "../../../src/core/web-vitals";
 
 // ── PerformanceObserver mock helpers ─────────────────────────────────────────
 
@@ -22,7 +26,9 @@ function buildMockPO() {
       instances.push(inst);
     }
     disconnect() {
-      const idx = instances.findIndex((i) => i.obs === (this as unknown as { disconnect: () => void }));
+      const idx = instances.findIndex(
+        (i) => i.obs === (this as unknown as { disconnect: () => void }),
+      );
       if (idx !== -1) instances.splice(idx, 1);
     }
   }
@@ -104,7 +110,9 @@ describe("web-vitals", () => {
     it("reports CLS when layout-shift without hadRecentInput fires", () => {
       const handler = vi.fn<[VitalReport], void>();
       observeWebVitals(handler);
-      mockPO.triggerType("layout-shift", [{ hadRecentInput: false, value: 0.05 } as PerformanceEntry]);
+      mockPO.triggerType("layout-shift", [
+        { hadRecentInput: false, value: 0.05 } as PerformanceEntry,
+      ]);
       expect(handler).toHaveBeenCalledOnce();
       const r = handler.mock.calls[0][0];
       expect(r.name).toBe("CLS");
@@ -114,15 +122,21 @@ describe("web-vitals", () => {
     it("skips CLS entries with hadRecentInput=true", () => {
       const handler = vi.fn<[VitalReport], void>();
       observeWebVitals(handler);
-      mockPO.triggerType("layout-shift", [{ hadRecentInput: true, value: 0.5 } as PerformanceEntry]);
+      mockPO.triggerType("layout-shift", [
+        { hadRecentInput: true, value: 0.5 } as PerformanceEntry,
+      ]);
       expect(handler).not.toHaveBeenCalled();
     });
 
     it("accumulates CLS across multiple shifts", () => {
       const handler = vi.fn<[VitalReport], void>();
       observeWebVitals(handler);
-      mockPO.triggerType("layout-shift", [{ hadRecentInput: false, value: 0.1 } as PerformanceEntry]);
-      mockPO.triggerType("layout-shift", [{ hadRecentInput: false, value: 0.05 } as PerformanceEntry]);
+      mockPO.triggerType("layout-shift", [
+        { hadRecentInput: false, value: 0.1 } as PerformanceEntry,
+      ]);
+      mockPO.triggerType("layout-shift", [
+        { hadRecentInput: false, value: 0.05 } as PerformanceEntry,
+      ]);
       const lastCls = handler.mock.calls.at(-1)![0];
       expect(lastCls.value).toBeCloseTo(0.15);
     });
@@ -130,7 +144,9 @@ describe("web-vitals", () => {
     it("reports FCP for first-contentful-paint entry", () => {
       const handler = vi.fn<[VitalReport], void>();
       observeWebVitals(handler);
-      mockPO.triggerType("paint", [{ name: "first-contentful-paint", startTime: 800 } as PerformanceEntry]);
+      mockPO.triggerType("paint", [
+        { name: "first-contentful-paint", startTime: 800 } as PerformanceEntry,
+      ]);
       expect(handler).toHaveBeenCalledOnce();
       expect(handler.mock.calls[0][0].name).toBe("FCP");
       expect(handler.mock.calls[0][0].value).toBe(800);
@@ -180,13 +196,18 @@ describe("web-vitals", () => {
     it("stop() is safe to call multiple times", () => {
       const handler = vi.fn<[VitalReport], void>();
       const vitals = observeWebVitals(handler);
-      expect(() => { vitals.stop(); vitals.stop(); }).not.toThrow();
+      expect(() => {
+        vitals.stop();
+        vitals.stop();
+      }).not.toThrow();
     });
 
     it("safeObserve returns null if observe() throws", () => {
       class ThrowingPO {
         constructor(_cb: POCallback) {}
-        observe() { throw new Error("not supported"); }
+        observe() {
+          throw new Error("not supported");
+        }
         disconnect() {}
       }
       Object.defineProperty(globalThis, "PerformanceObserver", {
@@ -252,7 +273,11 @@ describe("web-vitals", () => {
       const origNav = (globalThis as { navigator?: unknown }).navigator;
       const origFetch = (globalThis as { fetch?: unknown }).fetch;
       Object.defineProperty(globalThis, "navigator", {
-        value: { sendBeacon: () => { throw new Error("blocked"); } },
+        value: {
+          sendBeacon: () => {
+            throw new Error("blocked");
+          },
+        },
         configurable: true,
       });
       Object.defineProperty(globalThis, "fetch", {
@@ -284,7 +309,6 @@ describe("web-vitals", () => {
     });
   });
 });
-
 
 describe("web-vitals", () => {
   it("returns a stoppable observer even without PerformanceObserver", () => {

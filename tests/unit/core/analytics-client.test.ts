@@ -104,7 +104,11 @@ describe("analytics-client", () => {
 
     it("falls back to fetch when sendBeacon throws", () => {
       const fetchSpy = vi.fn().mockResolvedValue(new Response(""));
-      vi.stubGlobal("navigator", { sendBeacon: () => { throw new Error("blocked"); } });
+      vi.stubGlobal("navigator", {
+        sendBeacon: () => {
+          throw new Error("blocked");
+        },
+      });
       vi.stubGlobal("fetch", fetchSpy);
       const c = createAnalyticsClient({ endpoint: "https://p.test/api/event", site: "s" });
       c.event("throw_fallback");
@@ -128,7 +132,6 @@ describe("analytics-client", () => {
     });
   });
 });
-
 
 describe("analytics-client", () => {
   it("emits pageview with site and url", () => {
