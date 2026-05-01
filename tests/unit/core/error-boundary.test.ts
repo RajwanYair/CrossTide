@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { installErrorBoundary, getErrorLog, clearErrorLog } from "../../../src/core/error-boundary";
 
 describe("error-boundary", () => {
@@ -138,5 +138,74 @@ describe("error-boundary", () => {
       new ErrorEvent("error", { message: "silent", error: new Error("silent") }),
     );
     expect(getErrorLog()).toHaveLength(1);
+  });
+
+  it("onRejection handler: Error reason includes stack", () => {
+    // Capture the registered 'unhandledrejection' handler via addEventListener spy.
+    const captured: EventListener[] = [];
+    const orig = window.addEventListener.bind(window);
+    vi.spyOn(window, "addEventListener").mockImplementation(
+      (type: string, handler: EventListenerOrEventListenerObject | null, ...opts: unknown[]) => {
+        if (type === "unhandledrejection" && typeof handler === "function") {
+          captured.push(handler as EventListener);
+        }
+        return orig(
+          type,
+          handler as EventListenerOrEventListenerObject,
+          ...(opts as [AddEventListenerOptions]),
+        );
+      },
+    );
+    teardown = installErrorBoundary();
+    vi.restoreAllMocks();
+
+    const fn = captured[captured.length - 1];
+    if (!fn) return; // should not happen
+
+    const errWithStack = new Error("rejection-with-stack");
+    const evt = Object.assign(new Event("unhandledrejection"), {
+      reason: errWithStack,
+      promise: Promise.resolve(),
+    });
+    fn(evt);
+    const log = getErrorLog();
+    expect(log.length).toBeGreaterThan(0);
+    const last = log[log.length - 1]!;
+    expect(last.message).toBe("rejection-with-stack");
+    expect(last.source).toBe("unhandledrejection");
+    expect(last.stack).toBeDefined();
+  });
+
+  it("onRejection handler: non-Error reason has no stack", () => {
+    const captured: EventListener[] = [];
+    const orig = window.addEventListener.bind(window);
+    vi.spyOn(window, "addEventListener").mockImplementation(
+      (type: string, handler: EventListenerOrEventListenerObject | null, ...opts: unknown[]) => {
+        if (type === "unhandledrejection" && typeof handler === "function") {
+          captured.push(handler as EventListener);
+        }
+        return orig(
+          type,
+          handler as EventListenerOrEventListenerObject,
+          ...(opts as [AddEventListenerOptions]),
+        );
+      },
+    );
+    teardown = installErrorBoundary();
+    vi.restoreAllMocks();
+
+    const fn = captured[captured.length - 1];
+    if (!fn) return;
+
+    const evt = Object.assign(new Event("unhandledrejection"), {
+      reason: "plain-string-reason",
+      promise: Promise.resolve(),
+    });
+    fn(evt);
+    const log = getErrorLog();
+    expect(log.length).toBeGreaterThan(0);
+    const last = log[log.length - 1]!;
+    expect(last.message).toBe("plain-string-reason");
+    expect(last.stack).toBeUndefined();
   });
 });

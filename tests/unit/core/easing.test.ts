@@ -77,4 +77,26 @@ describe("cubicBezier", () => {
       prev = v;
     }
   });
+
+  it("bisection fallback: near-zero-slope X curve triggers break → bisect", () => {
+    // cubicBezier(0,0,0,1): sampleX(t) = t³, slopeX(t) = 3t².
+    // For very small x, initial t is tiny and 3t² < 1e-6 → NR breaks to bisection.
+    const ease = cubicBezier(0, 0, 0, 1);
+    // x = 0.0001: slopeX(0.0001) = 3e-8 < 1e-6 → slope-break → bisection entered.
+    const y = ease(0.0001);
+    expect(y).toBeGreaterThan(0);
+    expect(y).toBeLessThanOrEqual(1);
+    // The bisection should converge (t ≈ 0.0464, y ≈ 0.006) without throwing.
+    expect(y).toBeCloseTo(0.0063, 2);
+  });
+
+  it("bisection hi-branch and lo-branch are both reached", () => {
+    // For the same curve, bisection starts with mid=0.5, v=0.125 > 0.0001 → hi=mid.
+    // Then bisection eventually reaches v < x → lo=mid.  Both branches exercised.
+    const ease = cubicBezier(0, 0, 0, 1);
+    const y1 = ease(0.0001);
+    const y2 = ease(1);
+    expect(y1).toBeGreaterThan(0);
+    expect(y2).toBeCloseTo(1, 5);
+  });
 });

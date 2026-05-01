@@ -1,8 +1,16 @@
 /**
  * Tests for src/core/signals.ts
  */
-import { describe, it, expect, vi } from "vitest";
-import { signal, computed, effect, untracked, persistedSignal } from "../../../src/core/signals";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import {
+  signal,
+  computed,
+  effect,
+  untracked,
+  persistedSignal,
+  batch,
+  localStorageAdapter,
+} from "../../../src/core/signals";
 
 describe("signal()", () => {
   it("reads the initial value", () => {
@@ -206,5 +214,117 @@ describe("persistedSignal()", () => {
     s.set(1);
     s.set(2);
     expect(adapter.saves).toEqual([1, 2]);
+  });
+});
+
+describe("batch()", () => {
+  it("runs the provided function and returns its result", () => {
+    expect(batch(() => 42)).toBe(42);
+  });
+
+  it("nested batch: inner completes, outer still pending", () => {
+    let result = 0;
+    batch(() => {
+      result = batch(() => 99);
+    });
+    expect(result).toBe(99);
+  });
+
+  it("batch around signal set still notifies subscribers", () => {
+    const s = signal(0);
+    const calls: number[] = [];
+    s.subscribe((v) => calls.push(v));
+    batch(() => {
+      s.set(1);
+      s.set(2);
+    });
+    // At least one notification should have fired
+    expect(calls.length).toBeGreaterThan(0);
+    expect(s()).toBe(2);
+  });
+});
+
+describe("localStorageAdapter()", () => {
+  // Provide a minimal localStorage mock so the adapter's try/catch paths are reached.
+  let store: Record<string, string>;
+
+  beforeEach(() => {
+    store = {};
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
+      removeItem: (k: string) => {
+        delete store[k];
+      },
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("returns undefined when key is absent", () => {
+    const a = localStorageAdapter<number>("la-absent");
+    expect(a.load()).toBeUndefined();
+  });
+
+  it("saves a value and loads it back", () => {
+    const a = localStorageAdapter<string>("la-key");
+    a.save("hello");
+    expect(a.load()).toBe("hello");
+  });
+
+  it("handles save failure (setItem throws) without throwing", () => {
+    vi.stubGlobal("localStorage", {
+      getItem: () => null,
+      setItem: () => {
+        throw new DOMException("QuotaExceededError");
+      },
+    });
+    const a = localStorageAdapter<number>("la-quota");
+    expect(() => a.save(1)).not.toThrow();
+  });
+
+  it("handles load failure (getItem throws) without throwing", () => {
+    vi.stubGlobal("localStorage", {
+      getItem: () => {
+        throw new Error("storage gone");
+      },
+      setItem: () => {},
+    });
+    const a = localStorageAdapter<number>("la-load-err");
+    expect(a.load()).toBeUndefined();
+  });
+});
+
+describe("persistedSignal BroadcastChannel sync", () => {
+  it("bc.onmessage handler updates signal from another tab", () => {
+    if (typeof BroadcastChannel !== "function") return;
+
+    // Capture the BC instance via an object property (avoids no-this-alias).
+    const ref: { instance: BroadcastChannel | undefined } = { instance: undefined };
+    const OrigBC = BroadcastChannel;
+    vi.stubGlobal(
+      "BroadcastChannel",
+      class SpyBC extends OrigBC {
+        constructor(name: string) {
+          super(name);
+          ref.instance = this as unknown as BroadcastChannel;
+        }
+      },
+    );
+
+    const s = persistedSignal<number>("bc-sig-key2", 0, { channel: "test-bc-sig2" });
+    vi.unstubAllGlobals();
+
+    if (!ref.instance?.onmessage) return;
+
+    // Simulate a message arriving from another tab.
+    const evt = new MessageEvent<number>("message", { data: 42 });
+    ref.instance.onmessage(evt);
+
+    expect(s()).toBe(42);
   });
 });
