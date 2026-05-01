@@ -75,3 +75,62 @@ registerRoute(
     plugins: [new ExpirationPlugin(getExpirationConfig("images")) as any],
   }),
 );
+
+// ──────────────────────────────────────────────────────────────
+// Web Push — handle incoming push messages
+// ──────────────────────────────────────────────────────────────
+
+self.addEventListener("push", (event: PushEvent) => {
+  let title = "CrossTide";
+  let body = "You have a new notification";
+  let tag = "crosstide-default";
+  let url = "/";
+
+  try {
+    if (event.data) {
+      const payload = event.data.json() as {
+        title?: string;
+        body?: string;
+        tag?: string;
+        url?: string;
+      };
+      if (payload.title) title = payload.title;
+      if (payload.body) body = payload.body;
+      if (payload.tag) tag = payload.tag;
+      if (payload.url) url = payload.url;
+    }
+  } catch {
+    /* malformed JSON — use defaults */
+  }
+
+  const notifyPromise = self.registration.showNotification(title, {
+    body,
+    tag,
+    icon: "/manifest.json",
+    badge: "/manifest.json",
+    data: { url },
+  });
+
+  event.waitUntil(notifyPromise);
+});
+
+self.addEventListener("notificationclick", (event: NotificationEvent) => {
+  event.notification.close();
+  const url: string =
+    (event.notification.data as { url?: string } | undefined)?.url ?? "/";
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if (client.url === url && "focus" in client) {
+            return (client as WindowClient).focus();
+          }
+        }
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(url);
+        }
+        return Promise.resolve();
+      }),
+  );
+});

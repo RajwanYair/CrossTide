@@ -36,6 +36,15 @@ export { installErrorBoundary, getErrorLog, clearErrorLog } from "./error-bounda
 export type { ErrorRecord, ErrorHandler } from "./error-boundary";
 export { initTelemetry, getTelemetry, _resetTelemetryForTests } from "./telemetry";
 export type { TelemetryHandle } from "./telemetry";
+export {
+  isPushSupported,
+  subscribeToPush,
+  unsubscribePush,
+  showLocalNotification,
+  urlBase64ToUint8Array,
+  arrayBufferToBase64,
+} from "./push-notifications";
+export type { PushSubscriptionPayload, LocalNotificationOptions } from "./push-notifications";
 export { registerServiceWorker } from "./sw-register";
 export { watchServiceWorkerUpdates } from "./sw-update";
 export type { SwUpdateHandle, SwUpdateOptions } from "./sw-update";
