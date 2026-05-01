@@ -258,3 +258,7 @@ export type { StdDevOptions } from "./standard-deviation";
 export { computeEnvelope } from "./envelope";
 export type { EnvelopePoint } from "./envelope";
 
+
+export { computeFractals } from "./fractals";
+export type { FractalPoint } from "./fractals";
+
