@@ -247,3 +247,6 @@ export type { Impulse, ElderImpulseOptions } from "./elder-impulse";
 
 export { computeMomentum } from "./momentum";
 
+
+export { computeRoc } from "./roc";
+
