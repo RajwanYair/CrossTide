@@ -262,3 +262,7 @@ export type { EnvelopePoint } from "./envelope";
 export { computeFractals } from "./fractals";
 export type { FractalPoint } from "./fractals";
 
+
+export { computeUltimateOscillator } from "./ultimate-oscillator";
+export type { UltimateOscillatorOptions } from "./ultimate-oscillator";
+
