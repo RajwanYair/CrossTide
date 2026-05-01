@@ -44,3 +44,8 @@ function fallbackClone(value: unknown, seen: WeakMap<object, unknown>): unknown 
   }
   return out;
 }
+
+/** @internal exposed for unit testing of the non-structuredClone fallback path */
+export function _fallbackCloneForTests<T>(value: T): T {
+  return fallbackClone(value, new WeakMap<object, unknown>()) as T;
+}
