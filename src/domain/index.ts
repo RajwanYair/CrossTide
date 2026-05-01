@@ -184,3 +184,6 @@ export { computeCoppockCurve } from "./coppock-curve";
 
 export { computeDema, computeTema } from "./dema-tema";
 
+
+export { computeHullMA } from "./hull-ma";
+
