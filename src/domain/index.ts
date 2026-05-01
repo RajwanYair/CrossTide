@@ -211,3 +211,6 @@ export { computeMassIndex } from "./mass-index";
 export { computeKst } from "./kst";
 export type { KstPoint, KstOptions } from "./kst";
 
+
+export { computeDpo } from "./dpo";
+
