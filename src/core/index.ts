@@ -187,3 +187,6 @@ export {
   exportFullDataCsv,
 } from "./data-export";
 export type { FullExportPayload, FullExportDomains } from "./data-export";
+
+export { createFinnhubStream } from "./finnhub-ws";
+export type { FinnhubStream, FinnhubTradeTick, FinnhubStreamOptions } from "./finnhub-ws";
