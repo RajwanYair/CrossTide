@@ -23,6 +23,8 @@ export interface WatchlistQuote {
   consensus: ConsensusResult | null;
   instrumentType?: InstrumentType;
   sector?: string;
+  /** Company / fund name from Yahoo Finance; shown as secondary line under the ticker symbol. */
+  name?: string;
 }
 
 let sectorGroupingEnabled = false;
@@ -158,7 +160,7 @@ function renderRow(ticker: string, quote: WatchlistQuote | null): string {
   const volumeBar = quote ? renderVolumeBar(quote.volume, quote.avgVolume) : "";
 
   return `<tr data-ticker="${ticker}" draggable="true">
-    <td><strong>${ticker}</strong>${instrumentTypeBadge(quote?.instrumentType)}</td>
+    <td><strong>${ticker}</strong>${quote?.name ? `<br><span class="ticker-name">${quote.name}</span>` : ""}${instrumentTypeBadge(quote?.instrumentType)}</td>
     <td class="font-mono">${price}</td>
     <td class="${changeClass} font-mono">${change}</td>
     <td>${consensus}</td>

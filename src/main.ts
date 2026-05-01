@@ -5,7 +5,7 @@
  */
 // G16: self-hosted Inter variable font (replaces system fallback)
 import "@fontsource-variable/inter";
-import { loadConfig, saveConfig, addTicker, removeTicker, reorderWatchlist } from "./core/config";
+import { loadConfig, saveConfig, addTicker, removeTicker, reorderWatchlist, updateWatchlistNames } from "./core/config";
 import { createCrossTabSync } from "./core/broadcast-channel";
 import { registerServiceWorker } from "./core/sw-register";
 import { watchServiceWorkerUpdates } from "./core/sw-update";
@@ -123,7 +123,12 @@ function main(): void {
   // ── Helper: convert TickerData cache → the quotes map renderWatchlist expects ──
   function buildQuotesMap(): Map<string, WatchlistQuote> {
     const m = new Map<string, WatchlistQuote>();
+    // Build a lookup of persisted names from config so they appear before first fetch.
+    const persistedNames = new Map<string, string>(
+      config.watchlist.filter((e) => e.name).map((e) => [e.ticker, e.name!]),
+    );
     for (const [t, data] of tickerDataCache) {
+      const resolvedName = data.name ?? persistedNames.get(t);
       m.set(t, {
         ticker: data.ticker,
         price: data.price,
@@ -137,6 +142,7 @@ function main(): void {
         consensus: data.consensus,
         ...(data.instrumentType !== undefined && { instrumentType: data.instrumentType }),
         ...(data.sector !== undefined && { sector: data.sector }),
+        ...(resolvedName !== undefined && { name: resolvedName }),
       });
     }
     return m;
@@ -184,6 +190,20 @@ function main(): void {
     });
 
     tickerDataCache = results;
+
+    // G19: Persist company names returned by the data service into WatchlistEntry.
+    // Build a map of ticker → name from successful fetches only.
+    const nameMap = new Map<string, string>();
+    for (const [t, data] of results) {
+      if (data.name && !data.error) nameMap.set(t, data.name);
+    }
+    if (nameMap.size > 0) {
+      const updated = updateWatchlistNames(config, nameMap);
+      if (updated !== config) {
+        config = updated;
+        saveAndBroadcast(config);
+      }
+    }
 
     // Apply instrument filter before rendering
     const filteredConfig = {

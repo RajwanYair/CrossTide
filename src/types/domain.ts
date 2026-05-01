@@ -63,6 +63,8 @@ export interface WatchlistEntry {
   readonly addedAt: string; // ISO 8601
   /** Instrument type — auto-classified from Yahoo quoteType; overrideable. */
   readonly instrumentType?: InstrumentType;
+  /** Company / fund display name populated from the first successful quote response. */
+  readonly name?: string;
 }
 
 /**

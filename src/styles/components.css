@@ -216,6 +216,18 @@
     font-size: var(--font-size-base);
   }
 
+  /* G19: secondary company name line shown below the ticker symbol. */
+  .ticker-name {
+    display: block;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 400;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 14ch;
+  }
+
   .ticker-remove:hover {
     color: var(--danger);
   }

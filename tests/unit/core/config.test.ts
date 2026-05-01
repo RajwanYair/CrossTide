@@ -8,6 +8,7 @@ import {
   addTicker,
   removeTicker,
   reorderWatchlist,
+  updateWatchlistNames,
 } from "../../../src/core/config";
 
 function createMockStorage(): Storage {
@@ -180,6 +181,64 @@ describe("config", () => {
       config = addTicker(config, "MSFT");
       const reordered = reorderWatchlist(config, 0, 0);
       expect(reordered.watchlist[0]!.ticker).toBe("AAPL");
+    });
+  });
+
+  // G19 — company name persistence ─────────────────────────────────────────
+  describe("updateWatchlistNames (G19)", () => {
+    it("updates entry name from the provided map", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      const updated = updateWatchlistNames(config, new Map([["AAPL", "Apple Inc."]]));
+      expect(updated.watchlist[0]?.name).toBe("Apple Inc.");
+    });
+
+    it("does not change entries not present in the map", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = addTicker(config, "MSFT");
+      const updated = updateWatchlistNames(config, new Map([["AAPL", "Apple Inc."]]));
+      expect(updated.watchlist[0]?.name).toBe("Apple Inc.");
+      expect(updated.watchlist[1]?.name).toBeUndefined();
+    });
+
+    it("returns same reference when nothing changed", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = updateWatchlistNames(config, new Map([["AAPL", "Apple Inc."]]));
+      // Same name again → same reference
+      const result = updateWatchlistNames(config, new Map([["AAPL", "Apple Inc."]]));
+      expect(result).toBe(config);
+    });
+  });
+
+  describe("loadConfig name re-attachment (G19)", () => {
+    it("re-attaches persisted names from raw JSON after Valibot parse", () => {
+      const raw = {
+        version: 1,
+        config: {
+          theme: "dark",
+          watchlist: [
+            { ticker: "AAPL", addedAt: "2025-01-01T00:00:00.000Z", name: "Apple Inc." },
+          ],
+        },
+      };
+      localStorage.setItem("crosstide-config", JSON.stringify(raw));
+      const config = loadConfig();
+      expect(config.watchlist[0]?.name).toBe("Apple Inc.");
+    });
+
+    it("loads config without name field normally", () => {
+      const raw = {
+        version: 1,
+        config: {
+          theme: "dark",
+          watchlist: [{ ticker: "AAPL", addedAt: "2025-01-01T00:00:00.000Z" }],
+        },
+      };
+      localStorage.setItem("crosstide-config", JSON.stringify(raw));
+      const config = loadConfig();
+      expect(config.watchlist[0]?.name).toBeUndefined();
     });
   });
 });

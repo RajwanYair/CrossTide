@@ -27,7 +27,18 @@ export function loadConfig(): AppConfig {
     }
     const result = safeParse(AppConfigSchema, parsed.config);
     if (!result.success) return DEFAULT_CONFIG;
-    return result.output;
+
+    // G19: WatchlistEntrySchema intentionally omits `name` to avoid type conflicts
+    // with exactOptionalPropertyTypes. Re-attach persisted names from the raw JSON.
+    const cfg = result.output;
+    const rawCfg = parsed.config as Record<string, unknown>;
+    const rawWatchlist = Array.isArray(rawCfg["watchlist"]) ? rawCfg["watchlist"] : [];
+    const watchlist = cfg.watchlist.map((entry, idx) => {
+      const rawEntry = rawWatchlist[idx] as Record<string, unknown> | undefined;
+      const name = typeof rawEntry?.["name"] === "string" ? rawEntry["name"] : undefined;
+      return name ? { ...entry, name } : entry;
+    });
+    return watchlist === cfg.watchlist ? cfg : { ...cfg, watchlist };
   } catch {
     return DEFAULT_CONFIG;
   }
@@ -55,6 +66,26 @@ export function removeTicker(config: AppConfig, ticker: string): AppConfig {
     ...config,
     watchlist: config.watchlist.filter((w) => w.ticker !== ticker),
   };
+}
+
+/**
+ * Merge company names returned by the data service into the watchlist entries.
+ * Only updates entries that have a `name` in the provided map and don't already
+ * have that exact name stored — avoids a no-op save cycle.
+ * Returns the same `config` object reference if nothing changed.
+ */
+export function updateWatchlistNames(
+  config: AppConfig,
+  names: ReadonlyMap<string, string>,
+): AppConfig {
+  let changed = false;
+  const next = config.watchlist.map((entry) => {
+    const name = names.get(entry.ticker);
+    if (!name || entry.name === name) return entry;
+    changed = true;
+    return { ...entry, name };
+  });
+  return changed ? { ...config, watchlist: next } : config;
 }
 
 /** Move a watchlist entry from one index to another (for drag-reorder). */

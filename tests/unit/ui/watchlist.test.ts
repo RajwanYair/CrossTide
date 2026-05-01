@@ -514,3 +514,38 @@ describe("bindWatchlistReorder", () => {
     expect(row?.getAttribute("draggable")).toBe("true");
   });
 });
+
+// ── G19: company name display ─────────────────────────────────────────────
+describe("G19 — company name below ticker", () => {
+  beforeEach(() => {
+    setSortColumn("ticker");
+    if (getSortConfig().direction !== "asc") setSortColumn("ticker");
+    document.body.innerHTML = `
+      <table>
+        <tbody id="watchlist-body"></tbody>
+      </table>
+      <div id="watchlist-empty" class="hidden"></div>
+    `;
+  });
+
+  it("shows ticker-name span when quote has a name", () => {
+    const quotes = new Map([["AAPL", { ...makeQuote("AAPL"), name: "Apple Inc." }]]);
+    renderWatchlist(makeConfig(["AAPL"]), quotes);
+    const html = document.getElementById("watchlist-body")!.innerHTML;
+    expect(html).toContain("ticker-name");
+    expect(html).toContain("Apple Inc.");
+  });
+
+  it("omits ticker-name span when quote has no name", () => {
+    const quotes = new Map([["AAPL", makeQuote("AAPL")]]);
+    renderWatchlist(makeConfig(["AAPL"]), quotes);
+    const html = document.getElementById("watchlist-body")!.innerHTML;
+    expect(html).not.toContain("ticker-name");
+  });
+
+  it("omits ticker-name span for ticker with no quote", () => {
+    renderWatchlist(makeConfig(["TSLA"]), new Map());
+    const html = document.getElementById("watchlist-body")!.innerHTML;
+    expect(html).not.toContain("ticker-name");
+  });
+});

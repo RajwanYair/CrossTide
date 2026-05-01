@@ -94,6 +94,8 @@ const YahooMetaSchema = object({
   regularMarketPrice: optional(number()),
   previousClose: optional(number()),
   symbol: optional(string()),
+  shortName: optional(string()),
+  longName: optional(string()),
   instrumentType: optional(string()),
   sector: optional(string()),
 });

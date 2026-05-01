@@ -62,6 +62,8 @@ export interface TickerData {
   instrumentType?: InstrumentType;
   /** GICS sector from Yahoo Finance (equity only). */
   sector?: string;
+  /** Company / fund display name from Yahoo Finance `shortName` / `longName`. */
+  name?: string;
   error?: string;
 }
 
@@ -79,6 +81,8 @@ interface CandleResult {
   candles: DailyCandle[];
   instrumentType: InstrumentType | undefined;
   sector: string | undefined;
+  /** Company/fund display name from Yahoo Finance `shortName` (may be absent). */
+  name: string | undefined;
 }
 
 /**
@@ -127,6 +131,7 @@ async function fetchCandles(ticker: string, signal?: AbortSignal): Promise<Candl
     candles,
     instrumentType: parseInstrumentType(result.meta?.instrumentType),
     sector: result.meta?.sector,
+    name: result.meta?.shortName ?? result.meta?.longName,
   };
 }
 
@@ -136,7 +141,7 @@ async function fetchCandles(ticker: string, signal?: AbortSignal): Promise<Candl
  */
 export async function fetchTickerData(ticker: string, signal?: AbortSignal): Promise<TickerData> {
   try {
-    const { candles, instrumentType, sector } = await fetchCandles(ticker, signal);
+    const { candles, instrumentType, sector, name } = await fetchCandles(ticker, signal);
 
     if (candles.length === 0) {
       return emptyData(ticker, "No candle data available");
@@ -184,6 +189,7 @@ export async function fetchTickerData(ticker: string, signal?: AbortSignal): Pro
       candles,
       ...(instrumentType !== undefined && { instrumentType }),
       ...(sector !== undefined && { sector }),
+      ...(name !== undefined && { name }),
     };
   } catch (err) {
     return emptyData(ticker, (err as Error).message);
