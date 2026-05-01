@@ -14,8 +14,8 @@
  * A5: Computation is offloaded to a Web Worker via worker-rpc, keeping
  *     the main thread responsive during long backtests.
  */
-import { buildEquityCurve, summarizeTrades, type ClosedTrade } from "../domain/equity-curve";
-import { maxDrawdown, cagr } from "../domain/risk-ratios";
+import { buildEquityCurve, summarizeTrades, type ClosedTrade, type EquityPoint } from "../domain/equity-curve";
+import { cagr } from "../domain/risk-ratios";
 import { runBacktestAsync } from "../core/backtest-worker";
 import type { CardModule } from "./registry";
 
@@ -57,12 +57,7 @@ function syntheticCandles(
   return out;
 }
 
-// ── Simple MA crossover backtest (off-thread via compute worker) ──────────────
-interface BacktestParams {
-  fastPeriod: number;
-  slowPeriod: number;
-  initialCapital: number;
-}
+
 
 // ── SVG equity curve ──────────────────────────────────────────────────────────
 function renderEquitySVG(equityPoints: ReturnType<typeof buildEquityCurve>): string {
@@ -148,7 +143,7 @@ function renderBacktestCard(container: HTMLElement): void {
 
     // Fallback: if worker unavailable, compute locally (import dynamically)
     let trades: ClosedTrade[];
-    let equityPoints: ReturnType<typeof buildEquityCurve>;
+    let equityPoints: EquityPoint[];
     let stats: ReturnType<typeof summarizeTrades>;
     let dd: number;
     let annReturn: number;
@@ -164,7 +159,11 @@ function renderBacktestCard(container: HTMLElement): void {
         exitPrice: t.exitPrice,
         side: "long" as const,
       }));
-      equityPoints = result.equityCurve.map((p, i) => ({ time: i, equity: p.equity }));
+      equityPoints = result.equityCurve.map((p, i) => ({
+        time: i,
+        equity: p.equity,
+        pnl: i === 0 ? 0 : p.equity - result.equityCurve[i - 1]!.equity,
+      }));
       const equityValues = equityPoints.map((p) => p.equity);
       stats = summarizeTrades(trades);
       dd = result.maxDrawdown;
@@ -183,6 +182,7 @@ function renderBacktestCard(container: HTMLElement): void {
       annReturn = local.annReturn;
       finalEquity = local.finalEquity;
       totalRetPct = local.totalReturnPct;
+    }
     }
 
     const totalPnl = finalEquity - initialCapital;

@@ -1,10 +1,7 @@
 /**
  * Portfolio card — displays position metrics, sector allocation,
- * and P/L summary derived from demo holdings data.
- *
- * In production the holdings would come from IDB / user-configured data.
- * For now the card renders a realistic demo dataset so the UI is
- * immediately useful without a broker integration.
+ * and P/L summary. Reads holdings from IDB (portfolio-store);
+ * falls back to demo data when user has no persisted positions.
  */
 import {
   positionMetrics,
@@ -13,9 +10,10 @@ import {
   topConcentration,
   type Holding,
 } from "../domain/portfolio-analytics";
+import { loadHoldings } from "./portfolio-store";
 import type { CardModule } from "./registry";
 
-// ── Demo holdings (replace with IDB-persisted data in future sprint) ─────────
+// ── Demo holdings (shown when IDB is empty / first visit) ────────────────────
 const DEMO_HOLDINGS: readonly Holding[] = [
   { ticker: "AAPL", sector: "Technology", quantity: 50, avgCost: 150.0, currentPrice: 189.3 },
   { ticker: "MSFT", sector: "Technology", quantity: 30, avgCost: 290.0, currentPrice: 374.51 },
@@ -152,7 +150,7 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
       </div><!-- /portfolio-columns -->
 
       <p class="empty-state portfolio-demo-note">
-        Demo data — connect holdings via Settings → Import in a future sprint.
+        ${holdings === DEMO_HOLDINGS ? "Demo data — import your holdings via Settings → Portfolio." : `${holdings.length} position${holdings.length > 1 ? "s" : ""} from your saved portfolio.`}
       </p>
 
     </div><!-- /portfolio-layout -->
@@ -161,6 +159,12 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
 
 const portfolioCard: CardModule = {
   mount(container, _ctx) {
+    // Load user holdings from IDB; fall back to demo if empty
+    void loadHoldings().then((persisted) => {
+      const holdings: readonly Holding[] = persisted.length > 0 ? persisted : DEMO_HOLDINGS;
+      renderPortfolio(container, holdings);
+    });
+    // Render demo immediately while IDB loads (avoids blank flash)
     renderPortfolio(container, DEMO_HOLDINGS);
     return {};
   },

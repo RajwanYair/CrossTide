@@ -17,22 +17,14 @@ import type { BacktestConfig, BacktestResult } from "../domain/backtest-engine";
 import { runBacktest } from "../domain/backtest-engine";
 import { applyFilters } from "../cards/screener";
 import type { ScreenerInput, ScreenerFilter, ScreenerRow } from "../cards/screener";
-import { buildEquityCurve, summarizeTrades, type ClosedTrade } from "../domain/equity-curve";
+import { buildEquityCurve, summarizeTrades, type ClosedTrade, type EquityPoint, type CurveStats } from "../domain/equity-curve";
 import { maxDrawdown, cagr } from "../domain/risk-ratios";
 import { serveWorkerRpc, type WorkerApi } from "./worker-rpc";
 
 export interface SmaCrossoverResult {
   readonly trades: ClosedTrade[];
-  readonly equityPoints: readonly { time: number; equity: number }[];
-  readonly stats: {
-    trades: number;
-    wins: number;
-    losses: number;
-    winRate: number;
-    profitFactor: number;
-    avgWin: number;
-    avgLoss: number;
-  };
+  readonly equityPoints: readonly EquityPoint[];
+  readonly stats: CurveStats;
   readonly finalEquity: number;
   readonly totalReturnPct: number;
   readonly annReturn: number;
@@ -104,7 +96,7 @@ serveWorkerRpc<ComputeApi>({
     const dd = maxDrawdown(equityValues);
     const years = closes.length / 252;
     const annReturn = cagr(equityValues, years);
-    const finalEquity = equityValues[equityValues.length - 1]?.equity ?? initialCapital;
+    const finalEquity = equityValues[equityValues.length - 1] ?? initialCapital;
 
     return {
       trades,
