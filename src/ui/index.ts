@@ -83,3 +83,7 @@ export type { FreshnessBucket, FreshnessConfig } from "./freshness";
 export { emptyDrawingState, addShape, removeShape, updateShape, hitTest, fibLevelPrice, DEFAULT_FIB_LEVELS } from "./drawing";
 export type { Shape, Trendline, HLine, FibRetracement, Point, DrawingKind, DrawingState, HitTestOptions } from "./drawing";
 
+
+export { getPalette, pickColor, isHexColor, PALETTE_NAMES } from "./palettes";
+export type { Palette, PaletteName, SemanticColor } from "./palettes";
+
