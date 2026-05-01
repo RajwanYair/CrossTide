@@ -3,6 +3,13 @@
  * Sources: Wong (2011) "Color blindness" Nature Methods + Paul Tol's
  * qualitative scheme. All palettes provide at minimum: bullish, bearish,
  * neutral, accent1, accent2, accent3, warning, info.
+ *
+ * Runtime activation (C2):
+ *   `applyPalette(name)` — writes palette values to CSS custom properties on
+ *   `document.documentElement` so every component that references `var(--color-bullish)`
+ *   etc. automatically re-renders in the new palette.
+ *   `persistPalette` / `loadPalette` — localStorage round-trip.
+ *   `activatePaletteFromStorage` — call once on startup to restore the user's choice.
  */
 
 export type PaletteName = "default" | "deuteranopia" | "protanopia" | "tritanopia";
@@ -90,4 +97,77 @@ const HEX_RE = /^#[0-9a-f]{6}$/i;
 
 export function isHexColor(value: string): boolean {
   return HEX_RE.test(value);
+}
+
+// ── Runtime palette activation (C2) ──────────────────────────────────────────
+
+const STORAGE_KEY = "ct_palette";
+
+/**
+ * CSS custom property prefix. Each SemanticColor maps to `--color-<name>`.
+ *
+ * For example `bullish` → `--color-bullish`.
+ */
+function cssVar(kind: SemanticColor): string {
+  return `--color-${kind}`;
+}
+
+/**
+ * Apply a palette by writing its hex values to CSS custom properties on the
+ * document root element. Every component that references `var(--color-bullish)`
+ * etc. will automatically inherit the new colors without a page reload.
+ *
+ * @param name  The palette to activate.
+ * @param root  DOM element to set properties on (defaults to `document.documentElement`).
+ */
+export function applyPalette(
+  name: PaletteName,
+  root: HTMLElement = document.documentElement,
+): void {
+  const palette = getPalette(name);
+  for (const [kind, hex] of Object.entries(palette) as [SemanticColor, string][]) {
+    root.style.setProperty(cssVar(kind), hex);
+  }
+  root.setAttribute("data-palette", name);
+}
+
+/**
+ * Persist the user's palette choice to localStorage.
+ */
+export function persistPalette(name: PaletteName): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, name);
+  } catch {
+    // localStorage unavailable — silently skip
+  }
+}
+
+/**
+ * Load the persisted palette from localStorage.
+ * Returns `null` if nothing is saved or the stored value is not a valid palette name.
+ */
+export function loadPalette(): PaletteName | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw !== null && (PALETTE_NAMES as readonly string[]).includes(raw)) {
+      return raw as PaletteName;
+    }
+  } catch {
+    // localStorage unavailable
+  }
+  return null;
+}
+
+/**
+ * Activate the palette from localStorage (if any) on page startup.
+ * Call once from `main.ts` before any card renders.
+ *
+ * @returns The palette name that was activated, or `null` if nothing was stored.
+ */
+export function activatePaletteFromStorage(): PaletteName | null {
+  const name = loadPalette();
+  if (name !== null) {
+    applyPalette(name);
+  }
+  return name;
 }
