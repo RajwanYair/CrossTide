@@ -226,3 +226,7 @@ export type { AdCandle } from "./ad-line";
 export { computeForceIndex, computeForceIndexRaw } from "./force-index";
 export type { ForceCandle } from "./force-index";
 
+
+export { computeStochRsi } from "./stochastic-rsi";
+export type { StochRsiPoint, StochRsiOptions } from "./stochastic-rsi";
+
