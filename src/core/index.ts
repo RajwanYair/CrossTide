@@ -176,3 +176,6 @@ export {
 } from "./base64-url";
 
 export { currentTimeZone, timeZoneOffsetMinutes, formatInTimeZone } from "./timezone";
+
+export { createCrossTabSync } from "./broadcast-channel";
+export type { CrossTabSync, CrossTabMessage, CrossTabEventType, CrossTabConfigEvent } from "./broadcast-channel";

@@ -4,6 +4,7 @@
  * Bootstrap: load config, initialize UI, set up event listeners.
  */
 import { loadConfig, saveConfig, addTicker, removeTicker } from "./core/config";
+import { createCrossTabSync } from "./core/broadcast-channel";
 import { registerServiceWorker } from "./core/sw-register";
 import { watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
@@ -67,6 +68,26 @@ function main(): void {
   let config = loadConfig();
   let tickerDataCache = new Map<string, TickerData>();
   let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // ── B11: Cross-tab BroadcastChannel sync ──────────────────────────────────
+  const crossTabSync = createCrossTabSync();
+
+  /** Save config locally + broadcast to other open tabs. */
+  function saveAndBroadcast(cfg: typeof config): void {
+    saveConfig(cfg);
+    crossTabSync.broadcastConfig(cfg);
+  }
+
+  // When another tab changes config, apply it here and re-render watchlist
+  crossTabSync.onConfigChange((raw) => {
+    if (!raw || typeof raw !== "object") return;
+    config = raw as typeof config;
+    const filteredCfg = {
+      ...config,
+      watchlist: applyInstrumentFilter(config.watchlist, getInstrumentFilter()),
+    };
+    refreshWatchlist(filteredCfg, buildQuotesMap());
+  });
 
   // ── Helper: convert TickerData cache → the quotes map renderWatchlist expects ──
   function buildQuotesMap(): Map<string, WatchlistQuote> {
@@ -234,7 +255,7 @@ function main(): void {
         return;
       }
       config = addTicker(config, ticker);
-      saveConfig(config);
+      saveAndBroadcast(config);
       refreshWatchlist(config, new Map());
       addInput.value = "";
       showToast({ message: `Added ${ticker} — fetching data…`, type: "success" });
@@ -255,7 +276,7 @@ function main(): void {
       const ticker = target.dataset["ticker"];
       if (ticker) {
         config = removeTicker(config, ticker);
-        saveConfig(config);
+        saveAndBroadcast(config);
         refreshWatchlist(config, new Map());
         showToast({ message: `Removed ${ticker}`, type: "info" });
       }
@@ -286,7 +307,7 @@ function main(): void {
   themeSelect?.addEventListener("change", () => {
     const theme = themeSelect.value as "dark" | "light";
     config = { ...config, theme };
-    saveConfig(config);
+    saveAndBroadcast(config);
   });
 
   // Export watchlist
@@ -340,7 +361,7 @@ function main(): void {
             }
           }
           config = { ...config, watchlist: merged };
-          saveConfig(config);
+          saveAndBroadcast(config);
           refreshWatchlist(config, new Map());
           showToast({
             message: `Imported ${added} new ticker(s) — fetching data…`,
@@ -360,7 +381,7 @@ function main(): void {
   document.getElementById("btn-clear")?.addEventListener("click", () => {
     if (config.watchlist.length === 0) return;
     config = { ...config, watchlist: [] };
-    saveConfig(config);
+    saveAndBroadcast(config);
     refreshWatchlist(config, new Map());
     showToast({ message: "Watchlist cleared", type: "warning" });
   });
