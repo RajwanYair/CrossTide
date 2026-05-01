@@ -152,3 +152,7 @@ export type { LinearRegression } from "./linear-regression";
 export { computeAroon } from "./aroon";
 export type { AroonPoint } from "./aroon";
 
+
+export { computeChaikinMoneyFlow } from "./chaikin-money-flow";
+export type { CmfPoint } from "./chaikin-money-flow";
+
