@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { uuidV4, isUuidV4, nanoId } from "../../../src/core/uuid";
 
 describe("uuidV4", () => {
@@ -36,5 +36,70 @@ describe("nanoId", () => {
   it("produces unique ids", () => {
     const set = new Set(Array.from({ length: 200 }, () => nanoId()));
     expect(set.size).toBe(200);
+  });
+});
+
+describe("uuidV4 — fallback paths", () => {
+  afterEach(() => {
+    // Restore real crypto
+    vi.restoreAllMocks();
+  });
+
+  it("falls back to getRandomValues when randomUUID is absent", () => {
+    const origRandomUUID = globalThis.crypto.randomUUID;
+    try {
+      // Temporarily remove randomUUID to force getRandomValues path
+      Object.defineProperty(globalThis.crypto, "randomUUID", {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      });
+      const id = uuidV4();
+      expect(isUuidV4(id)).toBe(true);
+    } finally {
+      Object.defineProperty(globalThis.crypto, "randomUUID", {
+        value: origRandomUUID,
+        writable: true,
+        configurable: true,
+      });
+    }
+  });
+
+  it("output matches UUID v4 format regardless of path", () => {
+    // Test the UUID pattern with multiple calls
+    for (let i = 0; i < 5; i++) {
+      const id = uuidV4();
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    }
+  });
+});
+
+describe("nanoId — fallback path", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("falls back to Math.random when getRandomValues is absent", () => {
+    const orig = globalThis.crypto.getRandomValues;
+    try {
+      Object.defineProperty(globalThis.crypto, "getRandomValues", {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      });
+      const id = nanoId(21);
+      expect(id.length).toBe(21);
+      expect(/^[A-Za-z0-9_-]+$/.test(id)).toBe(true);
+    } finally {
+      Object.defineProperty(globalThis.crypto, "getRandomValues", {
+        value: orig,
+        writable: true,
+        configurable: true,
+      });
+    }
+  });
+
+  it("size 0 returns empty string", () => {
+    expect(nanoId(0)).toBe("");
   });
 });
