@@ -92,6 +92,18 @@ export type {
   MutationResult,
 } from "./optimistic";
 export {
+  parseCsv,
+  parseCsvAsObjects,
+  serializeCsv,
+  serializeObjects,
+} from "./csv";
+export type {
+  CsvRow,
+  CsvParseOptions,
+  CsvObjectsOptions,
+  CsvSerializeOptions,
+} from "./csv";
+export {
   createStoragePressureMonitor,
   requestPersistentStorage,
 } from "./storage-pressure";
