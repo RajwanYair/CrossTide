@@ -46,6 +46,13 @@ export type { SwUpdateHandle, SwUpdateOptions } from "./sw-update";
 export { createSyncQueue } from "./sync-queue";
 export type { QueuedRequest, SyncQueue, SyncQueueOptions } from "./sync-queue";
 export {
+  encodeShareState,
+  decodeShareState,
+  buildShareUrl,
+  readShareUrl,
+} from "./share-state";
+export type { ShareState } from "./share-state";
+export {
   createStoragePressureMonitor,
   requestPersistentStorage,
 } from "./storage-pressure";
