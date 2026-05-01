@@ -4,6 +4,11 @@
 import { renderSettings } from "./settings";
 import { loadConfig, saveConfig } from "../core/config";
 import { initTheme } from "../ui/theme";
+import {
+  getStoredFinnhubKey,
+  clearStoredFinnhubKey,
+  FINNHUB_KEY_STORAGE,
+} from "../core/finnhub-stream-manager";
 import type { CardModule } from "./registry";
 
 const settingsCard: CardModule = {
@@ -25,6 +30,18 @@ const settingsCard: CardModule = {
       },
       onClearCache() {
         /* wired by main */
+      },
+      onFinnhubKeyChange(apiKey) {
+        if (apiKey) {
+          try {
+            localStorage.setItem(FINNHUB_KEY_STORAGE, apiKey);
+          } catch {
+            // ignore
+          }
+        } else {
+          clearStoredFinnhubKey();
+        }
+        void getStoredFinnhubKey(); // side-effect-free read to verify
       },
     });
     return {};

@@ -251,6 +251,19 @@ export type { FullExportPayload, FullExportDomains } from "./data-export";
 export { createFinnhubStream } from "./finnhub-ws";
 export type { FinnhubStream, FinnhubTradeTick, FinnhubStreamOptions } from "./finnhub-ws";
 
+export {
+  createStreamManager,
+  getStoredFinnhubKey,
+  clearStoredFinnhubKey,
+  FINNHUB_KEY_STORAGE,
+} from "./finnhub-stream-manager";
+export type {
+  StreamManager,
+  StreamManagerOptions,
+  StreamStatus,
+  LiveTick,
+} from "./finnhub-stream-manager";
+
 export { generateOgImageSvg, svgToDataUri, downloadSvg } from "./og-image";
 export type { OgImageOptions, ConsensusDirection } from "./og-image";
 

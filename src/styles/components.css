@@ -968,4 +968,23 @@
       transform: translateX(20px);
     }
   }
+
+  /* ── Live-price streaming (B1) ────────────────────────────────────── */
+  @keyframes live-flash {
+    0% {
+      background-color: color-mix(in sRGB, var(--accent) 30%, transparent);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  .live-flash {
+    animation: live-flash 0.6s ease-out forwards;
+  }
+
+  #sync-status.status-live {
+    color: var(--positive);
+    font-weight: 600;
+  }
 }

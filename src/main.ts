@@ -49,6 +49,7 @@ import { downloadFile } from "./core/export-import";
 import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
+import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -97,10 +98,13 @@ function main(): void {
   // ── B11: Cross-tab BroadcastChannel sync ──────────────────────────────────
   const crossTabSync = createCrossTabSync();
 
-  /** Save config locally + broadcast to other open tabs. */
+  /** Save config locally + broadcast to other open tabs + resync stream subscriptions. */
   function saveAndBroadcast(cfg: typeof config): void {
     saveConfig(cfg);
     crossTabSync.broadcastConfig(cfg);
+    if (streamManager.isActive()) {
+      streamManager.setTickers(cfg.watchlist.map((e) => e.ticker));
+    }
   }
 
   // When another tab changes config, apply it here and re-render watchlist
@@ -256,8 +260,7 @@ function main(): void {
     activeShareRoute = candidateRoute;
   }
 
-  // Fetch live data on startup
-  void refreshData().then(() => scheduleRefresh());
+  // Fetch live data on startup — moved to bottom of main() so streaming starts after data loads
 
   // Navigate to shared route after router is up (startup share-state)
   if (activeShareRoute) {
@@ -807,6 +810,82 @@ function main(): void {
       }
     });
   }
+
+  // ── B1: Finnhub WebSocket streaming ────────────────────────────────────────
+  const streamManager = createStreamManager();
+
+  /** Apply a live-price tick to the watchlist row without a full re-render. */
+  streamManager.onLiveTick(({ ticker, price }) => {
+    const priceCell = document.querySelector<HTMLElement>(
+      `#watchlist-body tr[data-ticker="${CSS.escape(ticker)}"] .price-cell`,
+    );
+    if (priceCell) {
+      priceCell.textContent = price.toFixed(2);
+      priceCell.classList.add("live-flash");
+      setTimeout(() => priceCell.classList.remove("live-flash"), 800);
+    }
+    // Also keep tickerDataCache in sync so next poll re-render shows live value
+    const cached = tickerDataCache.get(ticker);
+    if (cached) {
+      tickerDataCache.set(ticker, { ...cached, price });
+    }
+  });
+
+  streamManager.onStatusChange((status) => {
+    const statusEl = document.getElementById("sync-status");
+    if (!statusEl) return;
+    if (status === "connected") {
+      statusEl.textContent = "● LIVE";
+      statusEl.classList.add("status-live");
+    } else if (status === "connecting") {
+      statusEl.textContent = "Connecting…";
+      statusEl.classList.remove("status-live");
+    } else if (status === "disconnected" || status === "error") {
+      statusEl.textContent = "Stream disconnected";
+      statusEl.classList.remove("status-live");
+    } else {
+      statusEl.classList.remove("status-live");
+    }
+  });
+
+  /** Start or restart the stream with the current ticker list. */
+  function startStreamIfKeySet(): void {
+    const apiKey = getStoredFinnhubKey();
+    if (!apiKey) return;
+    const tickers = config.watchlist.map((e) => e.ticker);
+    streamManager.start(apiKey, tickers);
+  }
+
+  // Command-palette entry for stream control
+  paletteCommands.push({
+    id: "toggle-live-stream",
+    label: streamManager.isActive() ? "Stop real-time streaming" : "Start real-time streaming",
+    section: "Actions",
+    run: (): void => {
+      if (streamManager.isActive()) {
+        streamManager.stop();
+        showToast({ message: "Real-time streaming stopped", type: "info" });
+      } else {
+        const key = getStoredFinnhubKey();
+        if (!key) {
+          showToast({
+            message: "Add a Finnhub API key in Settings to enable live streaming",
+            type: "warning",
+          });
+          navigateTo("settings");
+        } else {
+          startStreamIfKeySet();
+          showToast({ message: "Starting live stream…", type: "info" });
+        }
+      }
+    },
+  });
+
+  // Start streaming after initial data load if key is stored
+  void refreshData().then(() => {
+    scheduleRefresh();
+    startStreamIfKeySet();
+  });
 }
 
 main();
