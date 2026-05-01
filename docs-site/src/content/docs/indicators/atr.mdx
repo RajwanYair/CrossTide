@@ -1,0 +1,65 @@
+---
+title: ATR — Average True Range
+description: ATR measures market volatility by averaging the true range of price movement over n periods.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formula
+
+$$
+TR = \max\!\bigl(\text{High} - \text{Low},\; |\text{High} - \text{Prev Close}|,\; |\text{Low} - \text{Prev Close}|\bigr)
+$$
+
+$$
+ATR_n = \frac{1}{n}\sum_{i=1}^{n} TR_i \quad \text{(initial SMA)}
+$$
+
+$$
+ATR_i = \frac{ATR_{i-1} \times (n-1) + TR_i}{n} \quad \text{(subsequent Wilder smoothing)}
+$$
+
+## Parameters
+
+| Parameter | Default | Range | Notes                         |
+| --------- | ------- | ----- | ----------------------------- |
+| `period`  | 14      | 2–200 | Wilder's original: 14 periods |
+
+## Interpretation
+
+ATR does **not** indicate direction — only the magnitude of price swings.
+
+| ATR (relative) | Meaning                        |
+| -------------- | ------------------------------ |
+| Rising         | Expanding volatility           |
+| Falling        | Contracting volatility         |
+| High vs peers  | Unusually volatile instrument  |
+
+<Aside type="tip">
+  ATR is widely used to set **stop-loss distances** (e.g. 1.5× ATR below entry)
+  and to **size positions** so every trade risks the same dollar amount regardless
+  of instrument volatility.
+</Aside>
+
+## Usage
+
+```ts
+import { computeAtr } from "../../src/domain/atr-calculator";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+const atrValues = computeAtr(candles, { period: 14 });
+// atrValues: number[] aligned to candles (NaN for first period-1 items)
+
+const latest = atrValues.at(-1) ?? NaN;
+
+// Stop-loss example: 1.5× ATR below entry price
+const entryPrice = candles.at(-1)!.close;
+const stopLoss = entryPrice - 1.5 * latest;
+```
+
+## Related Indicators
+
+- **Keltner Channels** — price envelope using ATR width around an EMA
+- **Supertrend** — trend filter that adapts its band width to ATR
+- **Position sizing** — normalise trade risk across instruments with `riskAmount / ATR`

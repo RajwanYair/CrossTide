@@ -1,0 +1,57 @@
+---
+title: OBV — On Balance Volume
+description: OBV accumulates volume on up-days and subtracts it on down-days to confirm price trends with volume.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formula
+
+$$
+\text{OBV}_t =
+\begin{cases}
+\text{OBV}_{t-1} + \text{Volume}_t & \text{if } \text{Close}_t > \text{Close}_{t-1} \\
+\text{OBV}_{t-1} - \text{Volume}_t & \text{if } \text{Close}_t < \text{Close}_{t-1} \\
+\text{OBV}_{t-1}                   & \text{if } \text{Close}_t = \text{Close}_{t-1}
+\end{cases}
+$$
+
+The absolute OBV value is meaningless — only the **direction and slope** matter.
+
+## Interpretation
+
+| OBV Pattern            | Signal                                          |
+| ---------------------- | ----------------------------------------------- |
+| OBV rising with price  | Trend confirmed by volume (healthy)             |
+| OBV falling with price | Trend confirmed by volume (healthy downtrend)   |
+| OBV rising, price flat | Accumulation — potential breakout ahead         |
+| OBV falling, price flat| Distribution — potential breakdown ahead        |
+| **Divergence**         | Price makes new high but OBV doesn't → reversal |
+
+<Aside type="tip">
+  **OBV divergence** is the most powerful signal: when price reaches a new high but OBV does
+  not confirm it, institutional money is selling into the rally — a bearish warning. CrossTide's
+  OBV method detects this divergence automatically.
+</Aside>
+
+## Usage
+
+```ts
+import { computeObv } from "../../src/domain/obv-calculator";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+const obvValues = computeObv(candles);
+// obvValues: number[] cumulative OBV, aligned to candles
+
+// Simple trend check using OBV slope
+const recent = obvValues.slice(-10);
+const slope = (recent.at(-1)! - recent[0]!) / recent.length;
+const volumeTrend = slope > 0 ? "ACCUMULATION" : "DISTRIBUTION";
+```
+
+## Related Indicators
+
+- **Chaikin Money Flow (CMF)** — volume-weighted oscillator; similar intent to OBV
+- **Volume Profile** — distribution of volume at price levels
+- **Klinger Volume Oscillator** — long vs short-term volume momentum

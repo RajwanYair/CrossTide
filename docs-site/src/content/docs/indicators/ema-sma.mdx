@@ -1,0 +1,79 @@
+---
+title: EMA / SMA — Moving Averages
+description: The Simple Moving Average (SMA) and Exponential Moving Average (EMA) smooth price data to reveal trends.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formulas
+
+### Simple Moving Average (SMA)
+
+$$
+\text{SMA}_n = \frac{1}{n}\sum_{i=0}^{n-1} \text{Close}_{t-i}
+$$
+
+### Exponential Moving Average (EMA)
+
+$$
+k = \frac{2}{n + 1}
+$$
+
+$$
+\text{EMA}_t = \text{Close}_t \times k + \text{EMA}_{t-1} \times (1 - k)
+$$
+
+EMA gives more weight to recent prices than SMA, making it more reactive to new data.
+
+## Parameters
+
+| Parameter | Default | Range  | Notes                              |
+| --------- | ------- | ------ | ---------------------------------- |
+| `period`  | 20      | 2–500  | Common: 9, 20, 50, 100, 200 EMA   |
+
+## Common Period Combinations
+
+| Combination     | Use Case                              |
+| --------------- | ------------------------------------- |
+| EMA 9 / EMA 21  | Short-term momentum cross             |
+| EMA 50 / EMA 200| Golden Cross / Death Cross (trend)    |
+| SMA 20 + 2σ     | Bollinger Bands middle line           |
+| EMA 12 / EMA 26 | MACD signal line inputs               |
+
+<Aside type="tip">
+  The **Golden Cross** (EMA 50 crosses above EMA 200) is a classic long-term bullish signal.
+  The **Death Cross** (EMA 50 crosses below EMA 200) is the bearish counterpart.
+  CrossTide's MA Crossover module detects these automatically.
+</Aside>
+
+## Usage
+
+```ts
+import { computeEma } from "../../src/domain/ema-calculator";
+import { computeSma } from "../../src/domain/sma-calculator";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+
+// EMA
+const ema20 = computeEma(candles, { period: 20 });
+const ema50 = computeEma(candles, { period: 50 });
+const ema200 = computeEma(candles, { period: 200 });
+
+// SMA
+const sma20 = computeSma(candles, { period: 20 });
+
+// Golden Cross detection
+const latestEma50 = ema50.at(-1) ?? NaN;
+const latestEma200 = ema200.at(-1) ?? NaN;
+const prevEma50 = ema50.at(-2) ?? NaN;
+const prevEma200 = ema200.at(-2) ?? NaN;
+const goldenCross = prevEma50 < prevEma200 && latestEma50 > latestEma200;
+```
+
+## Related Indicators
+
+- **DEMA / TEMA** — Double/Triple EMA for reduced lag
+- **WMA** — Weighted Moving Average (linearly weighted)
+- **HMA** — Hull Moving Average (smoothed but more responsive)
+- **KAMA** — Kaufman Adaptive Moving Average (volatility-adjusted)

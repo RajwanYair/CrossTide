@@ -1,0 +1,70 @@
+---
+title: Aroon
+description: Aroon measures how recently price made a new high or low within a lookback period, indicating trend strength and direction.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formula
+
+$$
+\text{Aroon Up} = \frac{n - \text{Bars since n-period High}}{n} \times 100
+$$
+
+$$
+\text{Aroon Down} = \frac{n - \text{Bars since n-period Low}}{n} \times 100
+$$
+
+$$
+\text{Aroon Oscillator} = \text{Aroon Up} - \text{Aroon Down}
+$$
+
+Both Aroon Up and Aroon Down are always in the range [0, 100].
+
+## Parameters
+
+| Parameter | Default | Range | Notes                         |
+| --------- | ------- | ----- | ----------------------------- |
+| `period`  | 25      | 2–200 | Tushar Chande's original: 25  |
+
+## Interpretation
+
+| Aroon Up / Down          | Signal                                        |
+| ------------------------ | --------------------------------------------- |
+| Up > 70, Down < 30       | Strong uptrend — highs are recent             |
+| Down > 70, Up < 30       | Strong downtrend — lows are recent            |
+| Both near 50             | Consolidation / no clear trend                |
+| Up crosses above Down    | Bullish trend change                          |
+| Down crosses above Up    | Bearish trend change                          |
+
+<Aside type="tip">
+  Aroon is particularly useful for **early trend identification**. When Aroon Up climbs above 70
+  from a period of consolidation, a new uptrend is often forming before traditional momentum
+  oscillators confirm it.
+</Aside>
+
+## Usage
+
+```ts
+import { computeAroon } from "../../src/domain/aroon";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+const aroon = computeAroon(candles, { period: 25 });
+// aroon: { up: number[], down: number[], oscillator: number[] }
+
+const latestUp = aroon.up.at(-1) ?? NaN;
+const latestDown = aroon.down.at(-1) ?? NaN;
+const latestOsc = aroon.oscillator.at(-1) ?? NaN;
+
+const trendStrength =
+  latestUp > 70 && latestDown < 30 ? "STRONG_UPTREND" :
+  latestDown > 70 && latestUp < 30 ? "STRONG_DOWNTREND" :
+  "NEUTRAL";
+```
+
+## Related Indicators
+
+- **ADX** — measures trend strength without direction (Aroon indicates both)
+- **CCI** — oscillator that can also identify trend turning points
+- **Ichimoku** — comprehensive trend system with multiple components

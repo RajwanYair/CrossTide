@@ -1,0 +1,68 @@
+---
+title: CCI — Commodity Channel Index
+description: CCI measures how far the current price deviates from its average, scaled by typical volatility.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formula
+
+$$
+\text{TP} = \frac{\text{High} + \text{Low} + \text{Close}}{3}
+$$
+
+$$
+\text{Mean Deviation} = \frac{1}{n}\sum_{i=1}^{n} |\overline{\text{TP}} - \text{TP}_i|
+$$
+
+$$
+\text{CCI} = \frac{\text{TP} - \overline{\text{TP}}}{0.015 \times \text{Mean Deviation}}
+$$
+
+The constant 0.015 was chosen so that approximately 70–80% of CCI values fall in the ±100 range.
+
+## Parameters
+
+| Parameter | Default | Range | Notes                        |
+| --------- | ------- | ----- | ---------------------------- |
+| `period`  | 20      | 5–200 | Lambert's original: 20 bars  |
+
+## Interpretation
+
+| CCI Value  | Signal                                         |
+| ---------- | ---------------------------------------------- |
+| > +200     | Extremely overbought — strong reversal risk    |
+| +100 to +200 | Overbought — watch for bearish divergence   |
+| −100 to +100 | Neutral                                     |
+| −100 to −200 | Oversold — watch for bullish divergence    |
+| < −200     | Extremely oversold — strong reversal risk      |
+
+<Aside type="tip">
+  CrossTide's CCI method triggers **BUY** when CCI crosses above −100 (exiting oversold territory)
+  and **SELL** when it crosses below +100 (exiting overbought). This confirms momentum is resuming
+  rather than entering extreme zones.
+</Aside>
+
+## Usage
+
+```ts
+import { computeCci } from "../../src/domain/cci-calculator";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+const cciValues = computeCci(candles, { period: 20 });
+// cciValues: number[] aligned to candles (NaN for first period-1 items)
+
+const latest = cciValues.at(-1) ?? NaN;
+
+// Simple signal
+const signal = latest > 100 ? "OVERBOUGHT"
+             : latest < -100 ? "OVERSOLD"
+             : "NEUTRAL";
+```
+
+## Related Indicators
+
+- **RSI** — also an oscillator measuring overbought/oversold via momentum
+- **Stochastic** — oscillator comparing close to price range
+- **Williams %R** — inverted stochastic, similar overbought/oversold logic

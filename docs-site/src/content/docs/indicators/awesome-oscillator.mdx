@@ -1,0 +1,63 @@
+---
+title: Awesome Oscillator (AO)
+description: The Awesome Oscillator measures market momentum by comparing a 5-period and 34-period midpoint simple moving average.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formula
+
+$$
+\text{Midpoint} = \frac{\text{High} + \text{Low}}{2}
+$$
+
+$$
+\text{AO} = \text{SMA}_{5}(\text{Midpoint}) - \text{SMA}_{34}(\text{Midpoint})
+$$
+
+Unlike most oscillators, AO uses the **midpoint** (High+Low)/2 rather than the close price.
+
+## Parameters
+
+The Awesome Oscillator has **no configurable parameters** — Bill Williams' original
+specification uses fixed periods of 5 and 34.
+
+## Interpretation
+
+| AO Pattern                     | Signal                                           |
+| ------------------------------ | ------------------------------------------------ |
+| AO crosses above zero          | Bullish momentum gaining — potential buy         |
+| AO crosses below zero          | Bearish momentum gaining — potential sell        |
+| **Saucer** (3 bars, middle low)| Short-term bullish continuation above zero line  |
+| **Twin Peaks** (divergence)    | Two peaks, second lower — bearish reversal       |
+| **Bullish Twin Peaks**         | Two troughs, second higher — bullish reversal    |
+
+<Aside type="tip">
+  The **zero-line cross** is the simplest AO signal: crossing above zero = momentum
+  shifted bullish; crossing below = shifted bearish. Bill Williams used the "Saucer"
+  pattern as a higher-probability entry within an existing trend.
+</Aside>
+
+## Usage
+
+```ts
+import { computeAwesomeOscillator } from "../../src/domain/awesome-oscillator";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+const aoValues = computeAwesomeOscillator(candles);
+// aoValues: number[] aligned to candles (NaN for first 33 items)
+
+const latest = aoValues.at(-1) ?? NaN;
+const previous = aoValues.at(-2) ?? NaN;
+
+// Zero-line cross detection
+const zeroCrossBullish = previous < 0 && latest > 0;
+const zeroCrossBearish = previous > 0 && latest < 0;
+```
+
+## Related Indicators
+
+- **MACD** — uses EMA difference and a 9-period signal line; similar concept
+- **Momentum** — raw price difference over n periods
+- **Rate of Change (ROC)** — percentage price change over n periods

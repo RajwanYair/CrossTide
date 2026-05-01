@@ -1,0 +1,65 @@
+---
+title: VWAP — Volume Weighted Average Price
+description: VWAP is the average price weighted by volume, reset at the start of each trading session.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formula
+
+$$
+\text{VWAP} = \frac{\sum_{i=1}^{n} \text{Typical Price}_i \times \text{Volume}_i}{\sum_{i=1}^{n} \text{Volume}_i}
+$$
+
+where $\text{Typical Price} = \dfrac{\text{High} + \text{Low} + \text{Close}}{3}$.
+
+CrossTide also implements **Anchored VWAP** (AVWAP), which resets the calculation at a
+user-chosen anchor bar rather than session open.
+
+## Parameters
+
+| Parameter    | Default        | Notes                                     |
+| ------------ | -------------- | ----------------------------------------- |
+| `anchorDate` | Session open   | Date string (AVWAP); omit for rolling     |
+| `period`     | Full history   | Rolling VWAP window (optional)            |
+
+## Interpretation
+
+| Price vs VWAP | Signal                                         |
+| ------------- | ---------------------------------------------- |
+| Price > VWAP  | Buyers in control; bullish intraday bias       |
+| Price < VWAP  | Sellers in control; bearish intraday bias      |
+| Price = VWAP  | Fair value; often acts as support / resistance |
+
+<Aside type="tip">
+  Institutional traders watch VWAP closely. Execution algorithms try to buy **below** VWAP
+  and sell **above** it to minimise market impact. Retail traders can use a bounce from VWAP
+  as a lower-risk entry point in a trending market.
+</Aside>
+
+## Usage
+
+```ts
+import { computeVwap } from "../../src/domain/vwap-calculator";
+import { computeAnchoredVwap } from "../../src/domain/anchored-vwap";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+
+// Rolling VWAP (resets at first candle)
+const vwapValues = computeVwap(candles);
+// vwapValues: number[] aligned to candles
+
+// Anchored VWAP — reset from a specific date
+const avwapValues = computeAnchoredVwap(candles, { anchorDate: "2024-01-15" });
+
+const latest = vwapValues.at(-1) ?? NaN;
+const lastClose = candles.at(-1)!.close;
+const priceAboveVwap = lastClose > latest;
+```
+
+## Related Indicators
+
+- **Anchored VWAP** — more flexible VWAP anchored to swing highs/lows or key events
+- **Volume Profile** — distribution of volume at price levels over a period
+- **MVWAP** — moving VWAP; rolling n-period VWAP

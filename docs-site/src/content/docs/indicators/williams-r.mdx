@@ -1,0 +1,64 @@
+---
+title: Williams %R
+description: Williams %R is an inverted stochastic oscillator that measures where the close sits within the recent high-low range.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Formula
+
+$$
+\%R = \frac{\text{Highest High}_{n} - \text{Close}}{\text{Highest High}_{n} - \text{Lowest Low}_{n}} \times (-100)
+$$
+
+The result always falls in the range $[-100, 0]$.
+
+## Parameters
+
+| Parameter | Default | Range | Notes                            |
+| --------- | ------- | ----- | -------------------------------- |
+| `period`  | 14      | 2–200 | Williams' original: 14 periods   |
+
+## Interpretation
+
+| %R Value   | Signal                                         |
+| ---------- | ---------------------------------------------- |
+| 0 to −20   | Overbought — price near recent high            |
+| −20 to −80 | Neutral                                        |
+| −80 to −100| Oversold — price near recent low               |
+
+<Aside type="note">
+  Williams %R is the **inverse** of the Fast Stochastic %K (just shifted to a −100–0 scale).
+  The primary difference is that Williams focuses on where the **close** sits relative to the
+  recent range's **high**, while Stochastic focuses on the **low**.
+</Aside>
+
+<Aside type="tip">
+  CrossTide's Williams %R method signals **BUY** when %R crosses above −80 (exiting oversold)
+  and **SELL** when it crosses below −20 (exiting overbought). As with RSI and CCI, the signal
+  fires on the *exit* from the extreme zone for higher probability timing.
+</Aside>
+
+## Usage
+
+```ts
+import { computeWilliamsR } from "../../src/domain/williams-r-calculator";
+import type { DailyCandle } from "../../src/types/domain";
+
+const candles: DailyCandle[] = [/* OHLCV data */];
+const wrValues = computeWilliamsR(candles, { period: 14 });
+// wrValues: number[] in range [-100, 0], aligned to candles
+
+const latest = wrValues.at(-1) ?? NaN;
+
+// Zone detection
+const zone = latest >= -20 ? "OVERBOUGHT"
+           : latest <= -80 ? "OVERSOLD"
+           : "NEUTRAL";
+```
+
+## Related Indicators
+
+- **Stochastic %K** — mathematically equivalent (inverted scale)
+- **RSI** — momentum oscillator with a 0–100 range
+- **CCI** — price deviation oscillator with ±100 thresholds
