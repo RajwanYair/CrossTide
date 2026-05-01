@@ -26,6 +26,12 @@ vi.mock("../../../src/cards/chart-card", () => ({
 vi.mock("../../../src/cards/alerts-card", () => ({
   default: { mount: vi.fn(() => ({})) } satisfies CardModule,
 }));
+vi.mock("../../../src/cards/heatmap-card", () => ({
+  default: { mount: vi.fn(() => ({})) } satisfies CardModule,
+}));
+vi.mock("../../../src/cards/screener-card", () => ({
+  default: { mount: vi.fn(() => ({})) } satisfies CardModule,
+}));
 vi.mock("../../../src/cards/settings-card", () => ({
   default: { mount: vi.fn(() => ({})) } satisfies CardModule,
 }));
@@ -33,14 +39,16 @@ vi.mock("../../../src/cards/settings-card", () => ({
 const CTX: CardContext = { route: "watchlist", params: {} };
 
 describe("listCards", () => {
-  it("returns 5 entries covering all routes", () => {
+  it("returns 7 entries covering all routes", () => {
     const cards = listCards();
-    expect(cards).toHaveLength(5);
+    expect(cards).toHaveLength(7);
     const routes = cards.map((c) => c.route);
     expect(routes).toContain("watchlist");
     expect(routes).toContain("consensus");
     expect(routes).toContain("chart");
     expect(routes).toContain("alerts");
+    expect(routes).toContain("heatmap");
+    expect(routes).toContain("screener");
     expect(routes).toContain("settings");
   });
 
@@ -82,7 +90,7 @@ describe("loadCard", () => {
   });
 
   it("resolves for all routes", async () => {
-    const routes = ["watchlist", "consensus", "chart", "alerts", "settings"] as const;
+    const routes = ["watchlist", "consensus", "chart", "alerts", "heatmap", "screener", "settings"] as const;
     await Promise.all(routes.map((r) => loadCard(r)));
   });
 

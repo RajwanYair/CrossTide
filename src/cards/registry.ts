@@ -61,6 +61,18 @@ const REGISTRY: readonly CardEntry[] = [
     load: () => import("./alerts-card").then((m) => m.default),
   },
   {
+    route: "heatmap",
+    title: "Heatmap",
+    viewId: "view-heatmap",
+    load: () => import("./heatmap-card").then((m) => m.default),
+  },
+  {
+    route: "screener",
+    title: "Screener",
+    viewId: "view-screener",
+    load: () => import("./screener-card").then((m) => m.default),
+  },
+  {
     route: "settings",
     title: "Settings",
     viewId: "view-settings",

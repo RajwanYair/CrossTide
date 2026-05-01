@@ -21,12 +21,16 @@ function setupDOM(): void {
       <a class="nav-link" data-route="consensus" href="/consensus">Consensus</a>
       <a class="nav-link" data-route="chart" href="/chart">Chart</a>
       <a class="nav-link" data-route="alerts" href="/alerts">Alerts</a>
+      <a class="nav-link" data-route="heatmap" href="/heatmap">Heatmap</a>
+      <a class="nav-link" data-route="screener" href="/screener">Screener</a>
       <a class="nav-link" data-route="settings" href="/settings">Settings</a>
     </nav>
     <div id="view-watchlist" class="view"></div>
     <div id="view-consensus" class="view"></div>
     <div id="view-chart" class="view"></div>
     <div id="view-alerts" class="view"></div>
+    <div id="view-heatmap" class="view"></div>
+    <div id="view-screener" class="view"></div>
     <div id="view-settings" class="view"></div>
   `;
 }

@@ -17,7 +17,14 @@
  * New: `navigateToPath`, `getCurrentRouteInfo`.
  */
 
-export type RouteName = "watchlist" | "consensus" | "chart" | "alerts" | "settings";
+export type RouteName =
+  | "watchlist"
+  | "consensus"
+  | "chart"
+  | "alerts"
+  | "heatmap"
+  | "screener"
+  | "settings";
 
 export interface RouteInfo {
   readonly name: RouteName;
@@ -27,7 +34,15 @@ export interface RouteInfo {
 
 export type RouteChangeHandler = (route: RouteName, info?: RouteInfo) => void;
 
-const VALID_ROUTES = new Set<RouteName>(["watchlist", "consensus", "chart", "alerts", "settings"]);
+const VALID_ROUTES = new Set<RouteName>([
+  "watchlist",
+  "consensus",
+  "chart",
+  "alerts",
+  "heatmap",
+  "screener",
+  "settings",
+]);
 
 interface RoutePattern {
   readonly name: RouteName;
