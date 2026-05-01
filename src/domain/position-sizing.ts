@@ -87,11 +87,7 @@ export function kellyFraction(input: KellyInput): number {
  * "Half-Kelly" sized share count — practical compromise that reduces
  * the variance of full-Kelly sizing.
  */
-export function halfKellySize(
-  input: KellyInput,
-  accountEquity: number,
-  price: number,
-): number {
+export function halfKellySize(input: KellyInput, accountEquity: number, price: number): number {
   if (accountEquity <= 0 || price <= 0) return 0;
   const f = kellyFraction(input) / 2;
   return (accountEquity * f) / price;

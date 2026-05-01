@@ -1,7 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { computeAdLine, type AdCandle } from "../../../src/domain/ad-line";
 
-const mk = (h: number, l: number, c: number, v: number): AdCandle => ({ high: h, low: l, close: c, volume: v });
+const mk = (h: number, l: number, c: number, v: number): AdCandle => ({
+  high: h,
+  low: l,
+  close: c,
+  volume: v,
+});
 
 describe("ad-line", () => {
   it("empty -> []", () => {

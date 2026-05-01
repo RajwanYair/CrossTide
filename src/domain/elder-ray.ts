@@ -30,10 +30,7 @@ const ema = (values: readonly number[], period: number): (number | null)[] => {
   return out;
 };
 
-export function computeElderRay(
-  candles: readonly Candle[],
-  period = 13,
-): ElderRayPoint[] {
+export function computeElderRay(candles: readonly Candle[], period = 13): ElderRayPoint[] {
   if (candles.length < period) return [];
   const closes = candles.map((c) => c.close);
   const emaClose = ema(closes, period);

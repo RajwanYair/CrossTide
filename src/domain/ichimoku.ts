@@ -67,16 +67,12 @@ export function computeIchimoku(
   for (let i = 0; i < n; i++) {
     const senkouAsource = i - disp;
     const senkouA =
-      senkouAsource >= 0 &&
-      tenkanRaw[senkouAsource] !== null &&
-      kijunRaw[senkouAsource] !== null
+      senkouAsource >= 0 && tenkanRaw[senkouAsource] !== null && kijunRaw[senkouAsource] !== null
         ? (tenkanRaw[senkouAsource]! + kijunRaw[senkouAsource]!) / 2
         : null;
-    const senkouB =
-      senkouAsource >= 0 ? (senkouBRaw[senkouAsource] ?? null) : null;
+    const senkouB = senkouAsource >= 0 ? (senkouBRaw[senkouAsource] ?? null) : null;
     const chikouSource = i + disp;
-    const chikou =
-      chikouSource < n ? candles[chikouSource]!.close : null;
+    const chikou = chikouSource < n ? candles[chikouSource]!.close : null;
     out.push({
       time: candles[i]!.time,
       tenkan: tenkanRaw[i] ?? null,

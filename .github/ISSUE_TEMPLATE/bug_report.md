@@ -1,30 +1,35 @@
 ---
 name: Bug Report
 about: Report a bug in CrossTide
-title: '[BUG] '
+title: "[BUG] "
 labels: bug
 ---
 
-**Describe the bug**
+## Describe the bug
+
 A clear description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce:
+## Steps to reproduce
+
 1. Go to '...'
 2. Click on '...'
 3. See error
 
-**Expected behavior**
+## Expected behavior
+
 What you expected to happen.
 
-**Environment**
+## Environment
+
 - Browser and version:
 - OS:
 - CrossTide version (shown in footer):
 - Screen size / viewport:
 
-**Console errors**
-If applicable, paste any errors from the browser developer console (F12 → Console).
+## Console errors
 
-**Screenshots**
-If applicable, add screenshots to help explain the problem.
+If applicable, paste any errors from the browser developer console (F12 -> Console).
+
+## Screenshots
+
+If applicable, attach screenshots.

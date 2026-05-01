@@ -1,8 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import {
-  nextBackoff,
-  createReconnectingWS,
-} from "../../../src/core/reconnecting-ws";
+import { nextBackoff, createReconnectingWS } from "../../../src/core/reconnecting-ws";
 
 class FakeWS {
   static instances: FakeWS[] = [];

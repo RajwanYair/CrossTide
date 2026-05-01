@@ -20,10 +20,7 @@ const toCss = (rgb: readonly [number, number, number]): string =>
   `rgb(${Math.round(rgb[0])}, ${Math.round(rgb[1])}, ${Math.round(rgb[2])})`;
 
 /** Linear interpolation between sorted stops. */
-export function interpolateColor(
-  t: number,
-  stops: readonly ColorStop[],
-): [number, number, number] {
+export function interpolateColor(t: number, stops: readonly ColorStop[]): [number, number, number] {
   if (stops.length === 0) return [0, 0, 0];
   const sorted = [...stops].sort((a, b) => a.position - b.position);
   if (t <= sorted[0]!.position) return [...sorted[0]!.rgb] as [number, number, number];
@@ -65,8 +62,7 @@ export function createColorScale(
     return t;
   };
   return {
-    rgb: (v: number): [number, number, number] =>
-      interpolateColor(normalize(v), options.stops),
+    rgb: (v: number): [number, number, number] => interpolateColor(normalize(v), options.stops),
     css: (v: number): string => toCss(interpolateColor(normalize(v), options.stops)),
   };
 }

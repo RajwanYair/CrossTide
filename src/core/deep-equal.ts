@@ -14,7 +14,8 @@ export function deepEqual(a: unknown, b: unknown): boolean {
 function eq(a: unknown, b: unknown, seen: WeakMap<object, object>): boolean {
   if (a === b) return true;
   // NaN
-  if (typeof a === "number" && typeof b === "number" && Number.isNaN(a) && Number.isNaN(b)) return true;
+  if (typeof a === "number" && typeof b === "number" && Number.isNaN(a) && Number.isNaN(b))
+    return true;
   if (a === null || b === null) return false;
   if (typeof a !== "object" || typeof b !== "object") return false;
 
@@ -27,7 +28,8 @@ function eq(a: unknown, b: unknown, seen: WeakMap<object, object>): boolean {
   if (b instanceof Date) return false;
 
   // RegExp
-  if (a instanceof RegExp) return b instanceof RegExp && a.source === b.source && a.flags === b.flags;
+  if (a instanceof RegExp)
+    return b instanceof RegExp && a.source === b.source && a.flags === b.flags;
   if (b instanceof RegExp) return false;
 
   // Map

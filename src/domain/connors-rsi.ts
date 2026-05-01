@@ -43,10 +43,7 @@ const computeStreak = (closes: readonly number[]): number[] => {
   return out;
 };
 
-const rollingPctRank = (
-  values: readonly number[],
-  window: number,
-): (number | null)[] => {
+const rollingPctRank = (values: readonly number[], window: number): (number | null)[] => {
   const out: (number | null)[] = new Array(values.length).fill(null);
   if (window <= 0) return out;
   for (let i = window - 1; i < values.length; i++) {
@@ -82,8 +79,15 @@ export function computeConnorsRsi(
     const a = rsi[i];
     const b = streakRsi[i];
     const c = pr[i];
-    if (a === null || a === undefined || b === null || b === undefined ||
-        c === null || c === undefined) continue;
+    if (
+      a === null ||
+      a === undefined ||
+      b === null ||
+      b === undefined ||
+      c === null ||
+      c === undefined
+    )
+      continue;
     out[i] = (a + b + c) / 3;
   }
   return out;

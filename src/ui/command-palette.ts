@@ -69,9 +69,7 @@ export interface PaletteState {
   readonly results: readonly PaletteRanked[];
 }
 
-export function createPaletteState(
-  commands: readonly PaletteCommand[],
-): {
+export function createPaletteState(commands: readonly PaletteCommand[]): {
   state(): PaletteState;
   setQuery(q: string): void;
   moveSelection(delta: number): void;
@@ -93,9 +91,7 @@ export function createPaletteState(
       selectedIndex = 0;
       return;
     }
-    selectedIndex =
-      ((selectedIndex + delta) % results.length + results.length) %
-      results.length;
+    selectedIndex = (((selectedIndex + delta) % results.length) + results.length) % results.length;
   }
 
   function selectIndex(i: number): void {

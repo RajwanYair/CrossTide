@@ -19,16 +19,12 @@ export interface SchemaMigration {
   readonly upgrade: (db: IDBDatabase, transaction: IDBTransaction | null) => void;
 }
 
-export function latestVersion(
-  migrations: readonly SchemaMigration[],
-): number {
+export function latestVersion(migrations: readonly SchemaMigration[]): number {
   if (migrations.length === 0) return 1;
   return migrations.reduce((max, m) => (m.version > max ? m.version : max), 0);
 }
 
-export function validateMigrations(
-  migrations: readonly SchemaMigration[],
-): void {
+export function validateMigrations(migrations: readonly SchemaMigration[]): void {
   const seen = new Set<number>();
   let prev = 0;
   for (const m of migrations) {
@@ -39,9 +35,7 @@ export function validateMigrations(
       throw new Error(`Duplicate migration version ${m.version}`);
     }
     if (m.version <= prev) {
-      throw new Error(
-        `Migrations must be in ascending order; ${m.version} after ${prev}`,
-      );
+      throw new Error(`Migrations must be in ascending order; ${m.version} after ${prev}`);
     }
     seen.add(m.version);
     prev = m.version;

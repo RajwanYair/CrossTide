@@ -28,82 +28,68 @@ import {
 
 // --- branded primitive schemas ---------------------------------------------
 
-export const TickerSchema = z
-  .string()
-  .transform((s, ctx): Ticker => {
-    try {
-      return toTicker(s);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: (e as Error).message });
-      return z.NEVER;
-    }
-  });
+export const TickerSchema = z.string().transform((s, ctx): Ticker => {
+  try {
+    return toTicker(s);
+  } catch (e) {
+    ctx.addIssue({ code: "custom", message: (e as Error).message });
+    return z.NEVER;
+  }
+});
 
-export const IsoDateSchema = z
-  .string()
-  .transform((s, ctx): IsoDate => {
-    try {
-      return toIsoDate(s);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: (e as Error).message });
-      return z.NEVER;
-    }
-  });
+export const IsoDateSchema = z.string().transform((s, ctx): IsoDate => {
+  try {
+    return toIsoDate(s);
+  } catch (e) {
+    ctx.addIssue({ code: "custom", message: (e as Error).message });
+    return z.NEVER;
+  }
+});
 
-export const IsoTimestampSchema = z
-  .string()
-  .transform((s, ctx): IsoTimestamp => {
-    try {
-      return toIsoTimestamp(s);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: (e as Error).message });
-      return z.NEVER;
-    }
-  });
+export const IsoTimestampSchema = z.string().transform((s, ctx): IsoTimestamp => {
+  try {
+    return toIsoTimestamp(s);
+  } catch (e) {
+    ctx.addIssue({ code: "custom", message: (e as Error).message });
+    return z.NEVER;
+  }
+});
 
-export const UuidSchema = z
-  .string()
-  .transform((s, ctx): Uuid => {
-    try {
-      return toUuid(s);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: (e as Error).message });
-      return z.NEVER;
-    }
-  });
+export const UuidSchema = z.string().transform((s, ctx): Uuid => {
+  try {
+    return toUuid(s);
+  } catch (e) {
+    ctx.addIssue({ code: "custom", message: (e as Error).message });
+    return z.NEVER;
+  }
+});
 
-export const NonNegativeIntSchema = z
-  .number()
-  .transform((n, ctx): NonNegativeInt => {
-    try {
-      return toNonNegativeInt(n);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: (e as Error).message });
-      return z.NEVER;
-    }
-  });
+export const NonNegativeIntSchema = z.number().transform((n, ctx): NonNegativeInt => {
+  try {
+    return toNonNegativeInt(n);
+  } catch (e) {
+    ctx.addIssue({ code: "custom", message: (e as Error).message });
+    return z.NEVER;
+  }
+});
 
-export const NonNegativeNumberSchema = z
-  .number()
-  .transform((n, ctx): NonNegativeNumber => {
-    try {
-      return toNonNegativeNumber(n);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: (e as Error).message });
-      return z.NEVER;
-    }
-  });
+export const NonNegativeNumberSchema = z.number().transform((n, ctx): NonNegativeNumber => {
+  try {
+    return toNonNegativeNumber(n);
+  } catch (e) {
+    ctx.addIssue({ code: "custom", message: (e as Error).message });
+    return z.NEVER;
+  }
+});
 
-export const UnitIntervalSchema = z
-  .number()
-  .transform((n, ctx): UnitInterval => {
-    try {
-      return toUnitInterval(n);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: (e as Error).message });
-      return z.NEVER;
-    }
-  });
+export const UnitIntervalSchema = z.number().transform((n, ctx): UnitInterval => {
+  try {
+    return toUnitInterval(n);
+  } catch (e) {
+    ctx.addIssue({ code: "custom", message: (e as Error).message });
+    return z.NEVER;
+  }
+});
 
 // --- domain schemas --------------------------------------------------------
 
@@ -253,11 +239,7 @@ export function flattenIssues(error: z.ZodError): ZodIssueDetail[] {
  * Parse with a clear error including the schema name and the first few issues.
  * Throws on failure.
  */
-export function parseOrThrow<T>(
-  schema: z.ZodType<T>,
-  value: unknown,
-  schemaName: string,
-): T {
+export function parseOrThrow<T>(schema: z.ZodType<T>, value: unknown, schemaName: string): T {
   const result = schema.safeParse(value);
   if (!result.success) {
     const issues = flattenIssues(result.error).slice(0, 3);

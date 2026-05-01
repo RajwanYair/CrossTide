@@ -1,13 +1,27 @@
 import { describe, it, expect } from "vitest";
 import {
-  linear, easeInQuad, easeOutQuad, easeInOutQuad,
-  easeInCubic, easeOutCubic, easeInOutCubic, cubicBezier,
+  linear,
+  easeInQuad,
+  easeOutQuad,
+  easeInOutQuad,
+  easeInCubic,
+  easeOutCubic,
+  easeInOutCubic,
+  cubicBezier,
 } from "../../../src/core/easing";
 
 const nearly = (a: number, b: number, eps = 1e-3): boolean => Math.abs(a - b) < eps;
 
 describe("easing endpoints", () => {
-  const fns = [linear, easeInQuad, easeOutQuad, easeInOutQuad, easeInCubic, easeOutCubic, easeInOutCubic];
+  const fns = [
+    linear,
+    easeInQuad,
+    easeOutQuad,
+    easeInOutQuad,
+    easeInCubic,
+    easeOutCubic,
+    easeInOutCubic,
+  ];
   it("all easings map 0->0 and 1->1", () => {
     for (const f of fns) {
       expect(f(0)).toBeCloseTo(0, 6);
@@ -24,7 +38,15 @@ describe("easing endpoints", () => {
 
 describe("monotonicity", () => {
   it("standard easings are non-decreasing on [0,1]", () => {
-    const fns = [linear, easeInQuad, easeOutQuad, easeInOutQuad, easeInCubic, easeOutCubic, easeInOutCubic];
+    const fns = [
+      linear,
+      easeInQuad,
+      easeOutQuad,
+      easeInOutQuad,
+      easeInCubic,
+      easeOutCubic,
+      easeInOutCubic,
+    ];
     for (const f of fns) {
       let prev = f(0);
       for (let t = 0.05; t <= 1; t += 0.05) {

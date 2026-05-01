@@ -13,9 +13,27 @@ import type { ProviderHealth } from "../../../src/providers/types";
 const NOW = 1_700_000_000_000;
 
 const PROVIDERS: ProviderHealth[] = [
-  { name: "Yahoo Finance", available: true, lastSuccessAt: NOW - 30_000, lastErrorAt: null, consecutiveErrors: 0 },
-  { name: "Twelve Data", available: true, lastSuccessAt: NOW - 120_000, lastErrorAt: NOW - 600_000, consecutiveErrors: 0 },
-  { name: "Polygon", available: false, lastSuccessAt: NOW - 7_200_000, lastErrorAt: NOW - 10_000, consecutiveErrors: 5 },
+  {
+    name: "Yahoo Finance",
+    available: true,
+    lastSuccessAt: NOW - 30_000,
+    lastErrorAt: null,
+    consecutiveErrors: 0,
+  },
+  {
+    name: "Twelve Data",
+    available: true,
+    lastSuccessAt: NOW - 120_000,
+    lastErrorAt: NOW - 600_000,
+    consecutiveErrors: 0,
+  },
+  {
+    name: "Polygon",
+    available: false,
+    lastSuccessAt: NOW - 7_200_000,
+    lastErrorAt: NOW - 10_000,
+    consecutiveErrors: 5,
+  },
 ];
 
 describe("computeHealthSummary", () => {
@@ -109,7 +127,13 @@ describe("renderProviderHealth", () => {
 
   it("escapes provider names", () => {
     const xss: ProviderHealth[] = [
-      { name: "<script>", available: true, lastSuccessAt: NOW, lastErrorAt: null, consecutiveErrors: 0 },
+      {
+        name: "<script>",
+        available: true,
+        lastSuccessAt: NOW,
+        lastErrorAt: null,
+        consecutiveErrors: 0,
+      },
     ];
     renderProviderHealth(container, { providers: xss, lastRefreshAt: NOW });
     expect(container.innerHTML).not.toContain("<script>");

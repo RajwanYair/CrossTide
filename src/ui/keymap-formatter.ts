@@ -81,7 +81,10 @@ export function formatKeymap(accel: string, options: KeymapOptions = {}): string
   const platform = options.platform ?? detectPlatform();
   const isMac = platform === "mac";
   const sep = options.separator ?? (isMac ? "" : "+");
-  const tokens = accel.split("+").map((t) => t.trim()).filter((t) => t.length > 0);
+  const tokens = accel
+    .split("+")
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0);
   if (tokens.length === 0) return "";
 
   const map = isMac ? MAC_SYMBOLS : OTHER_LABELS;
@@ -104,7 +107,9 @@ export function formatKeymap(accel: string, options: KeymapOptions = {}): string
 
 function detectPlatform(): "mac" | "other" {
   if (typeof navigator === "undefined") return "other";
-  const platform = (navigator as { userAgentData?: { platform?: string } })
-    .userAgentData?.platform ?? navigator.platform ?? "";
+  const platform =
+    (navigator as { userAgentData?: { platform?: string } }).userAgentData?.platform ??
+    navigator.platform ??
+    "";
   return /mac|iphone|ipad|ipod/i.test(platform) ? "mac" : "other";
 }

@@ -23,10 +23,7 @@ export function startDrag<T>(state: ReorderState<T>, index: number): ReorderStat
  * the new array. If targetIndex equals items.length, the item is moved
  * to the end. No-op if no drag is active or target is the same slot.
  */
-export function dragOver<T>(
-  state: ReorderState<T>,
-  targetIndex: number,
-): ReorderState<T> {
+export function dragOver<T>(state: ReorderState<T>, targetIndex: number): ReorderState<T> {
   const from = state.draggingIndex;
   if (from === null) return state;
   const len = state.items.length;
@@ -48,11 +45,7 @@ export function endDrag<T>(state: ReorderState<T>): ReorderState<T> {
 }
 
 /** Move the item at `from` to position `to` (declarative version). */
-export function moveItem<T>(
-  items: readonly T[],
-  from: number,
-  to: number,
-): T[] {
+export function moveItem<T>(items: readonly T[], from: number, to: number): T[] {
   if (from < 0 || from >= items.length) return [...items];
   const next = [...items];
   const item = next[from] as T;

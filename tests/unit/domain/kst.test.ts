@@ -34,7 +34,17 @@ describe("kst", () => {
 
   it("custom periods", () => {
     const data = Array.from({ length: 80 }, (_, i) => 100 + i);
-    const out = computeKst(data, { roc1: 5, roc2: 7, roc3: 9, roc4: 11, sma1: 3, sma2: 3, sma3: 3, sma4: 4, signal: 5 });
+    const out = computeKst(data, {
+      roc1: 5,
+      roc2: 7,
+      roc3: 9,
+      roc4: 11,
+      sma1: 3,
+      sma2: 3,
+      sma3: 3,
+      sma4: 4,
+      signal: 5,
+    });
     expect(out.length).toBeGreaterThan(0);
   });
 });

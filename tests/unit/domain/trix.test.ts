@@ -13,7 +13,12 @@ const c = (i: number, close: number): Candle => ({
 describe("trix", () => {
   it("empty / too-short -> []", () => {
     expect(computeTrix([])).toEqual([]);
-    expect(computeTrix(Array.from({ length: 10 }, (_, i) => c(i, i)), 15)).toEqual([]);
+    expect(
+      computeTrix(
+        Array.from({ length: 10 }, (_, i) => c(i, i)),
+        15,
+      ),
+    ).toEqual([]);
   });
 
   it("constant series -> trix = 0", () => {

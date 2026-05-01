@@ -29,8 +29,6 @@ export function computeSuperTrendSeries(
   let prevUpperBand = Infinity;
   let prevLowerBand = -Infinity;
   let prevIsUp = true;
-  // eslint-disable-next-line no-useless-assignment
-  let prevSuperTrend = 0;
   let initialized = false;
 
   for (let i = atrPeriod; i < candles.length; i++) {
@@ -46,9 +44,9 @@ export function computeSuperTrendSeries(
       prevUpperBand = upperBand;
       prevLowerBand = lowerBand;
       prevIsUp = c.close <= upperBand;
-      prevSuperTrend = prevIsUp ? lowerBand : upperBand;
+      const initialSuperTrend = prevIsUp ? lowerBand : upperBand;
       initialized = true;
-      results.push({ date: c.date, superTrend: prevSuperTrend, isUpTrend: prevIsUp });
+      results.push({ date: c.date, superTrend: initialSuperTrend, isUpTrend: prevIsUp });
       continue;
     }
 
@@ -63,18 +61,26 @@ export function computeSuperTrendSeries(
     let isUp: boolean;
     let st: number;
     if (prevIsUp) {
-      if (c.close < lowerBand) { isUp = false; st = upperBand; }
-      else { isUp = true; st = lowerBand; }
+      if (c.close < lowerBand) {
+        isUp = false;
+        st = upperBand;
+      } else {
+        isUp = true;
+        st = lowerBand;
+      }
     } else {
-      if (c.close > upperBand) { isUp = true; st = lowerBand; }
-      else { isUp = false; st = upperBand; }
+      if (c.close > upperBand) {
+        isUp = true;
+        st = lowerBand;
+      } else {
+        isUp = false;
+        st = upperBand;
+      }
     }
 
     results.push({ date: c.date, superTrend: st, isUpTrend: isUp });
     prevUpperBand = upperBand;
     prevLowerBand = lowerBand;
-    // eslint-disable-next-line no-useless-assignment
-    prevSuperTrend = st;
     prevIsUp = isUp;
   }
   return results;

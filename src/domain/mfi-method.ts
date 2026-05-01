@@ -9,10 +9,7 @@ import type { DailyCandle, MethodSignal, SignalDirection } from "../types/domain
 import { computeMfiSeries } from "./mfi-calculator";
 import { DEFAULTS } from "./technical-defaults";
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   if (candles.length < DEFAULTS.period + 2) return null;
 
   const series = computeMfiSeries(candles, DEFAULTS.period);
@@ -25,14 +22,36 @@ export function evaluate(
   const lastCandle = candles[candles.length - 1]!;
 
   if (prevMfi < DEFAULTS.mfiOversold && currMfi >= DEFAULTS.mfiOversold) {
-    return sig(ticker, lastCandle, "BUY", `BUY: MFI exited oversold (${prevMfi.toFixed(1)} → ${currMfi.toFixed(1)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "BUY",
+      `BUY: MFI exited oversold (${prevMfi.toFixed(1)} → ${currMfi.toFixed(1)})`,
+    );
   }
   if (prevMfi > DEFAULTS.mfiOverbought && currMfi <= DEFAULTS.mfiOverbought) {
-    return sig(ticker, lastCandle, "SELL", `SELL: MFI exited overbought (${prevMfi.toFixed(1)} → ${currMfi.toFixed(1)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "SELL",
+      `SELL: MFI exited overbought (${prevMfi.toFixed(1)} → ${currMfi.toFixed(1)})`,
+    );
   }
   return sig(ticker, lastCandle, "NEUTRAL", "No MFI signal");
 }
 
-function sig(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "MFI", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function sig(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "MFI",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

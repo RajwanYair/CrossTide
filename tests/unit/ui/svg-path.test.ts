@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  buildLinePath,
-  buildAreaPath,
-  buildSmoothLinePath,
-} from "../../../src/ui/svg-path";
+import { buildLinePath, buildAreaPath, buildSmoothLinePath } from "../../../src/ui/svg-path";
 
 describe("svg-path", () => {
   it("buildLinePath: empty / single -> ''", () => {
@@ -12,17 +8,33 @@ describe("svg-path", () => {
   });
 
   it("buildLinePath: basic", () => {
-    const d = buildLinePath([{ x: 0, y: 10 }, { x: 5, y: 20 }, { x: 10, y: 0 }]);
+    const d = buildLinePath([
+      { x: 0, y: 10 },
+      { x: 5, y: 20 },
+      { x: 10, y: 0 },
+    ]);
     expect(d).toBe("M0 10 L5 20 L10 0");
   });
 
   it("buildLinePath: precision strips trailing zeros", () => {
-    const d = buildLinePath([{ x: 1.234567, y: 2 }, { x: 3, y: 4 }], { precision: 3 });
+    const d = buildLinePath(
+      [
+        { x: 1.234567, y: 2 },
+        { x: 3, y: 4 },
+      ],
+      { precision: 3 },
+    );
     expect(d).toBe("M1.235 2 L3 4");
   });
 
   it("buildAreaPath: closes with baseline", () => {
-    const d = buildAreaPath([{ x: 0, y: 5 }, { x: 10, y: 15 }], 0);
+    const d = buildAreaPath(
+      [
+        { x: 0, y: 5 },
+        { x: 10, y: 15 },
+      ],
+      0,
+    );
     expect(d).toBe("M0 0 L0 5 L10 15 L10 0 Z");
   });
 
@@ -33,7 +45,12 @@ describe("svg-path", () => {
 
   it("buildSmoothLinePath: < 3 points falls back", () => {
     expect(buildSmoothLinePath([])).toBe("");
-    expect(buildSmoothLinePath([{ x: 0, y: 0 }, { x: 1, y: 1 }])).toBe("M0 0 L1 1");
+    expect(
+      buildSmoothLinePath([
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+      ]),
+    ).toBe("M0 0 L1 1");
   });
 
   it("buildSmoothLinePath: produces C commands for 3+ points", () => {

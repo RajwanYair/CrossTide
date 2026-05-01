@@ -10,10 +10,7 @@ import { computeObvSeries } from "./obv-calculator";
 
 const LOOKBACK = 10;
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   if (candles.length < LOOKBACK + 2) return null;
 
   const series = computeObvSeries(candles);
@@ -31,14 +28,36 @@ export function evaluate(
   const priceFalling = priceNow < pricePrev;
 
   if (obvRising && priceFalling) {
-    return sig(ticker, lastCandle, "BUY", "BUY: Bullish OBV divergence — OBV rising while price falling");
+    return sig(
+      ticker,
+      lastCandle,
+      "BUY",
+      "BUY: Bullish OBV divergence — OBV rising while price falling",
+    );
   }
   if (obvFalling && priceRising) {
-    return sig(ticker, lastCandle, "SELL", "SELL: Bearish OBV divergence — OBV falling while price rising");
+    return sig(
+      ticker,
+      lastCandle,
+      "SELL",
+      "SELL: Bearish OBV divergence — OBV falling while price rising",
+    );
   }
   return sig(ticker, lastCandle, "NEUTRAL", "No OBV divergence");
 }
 
-function sig(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "OBV", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function sig(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "OBV",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

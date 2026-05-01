@@ -12,10 +12,7 @@ import { DEFAULTS } from "./technical-defaults";
 const OVERSOLD = 20;
 const OVERBOUGHT = 80;
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   const required = DEFAULTS.period + 3 + 3; // period + smoothK + smoothD
   if (candles.length < required) return null;
 
@@ -28,17 +25,43 @@ export function evaluate(
 
   // BUY: %K crosses above %D in oversold zone
   if (prev.percentK <= prev.percentD && curr.percentK > curr.percentD && curr.percentK < OVERSOLD) {
-    return sig(ticker, lastCandle, "BUY", `BUY: %K crossed above %D in oversold zone (K=${curr.percentK.toFixed(1)}, D=${curr.percentD.toFixed(1)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "BUY",
+      `BUY: %K crossed above %D in oversold zone (K=${curr.percentK.toFixed(1)}, D=${curr.percentD.toFixed(1)})`,
+    );
   }
 
   // SELL: %K crosses below %D in overbought zone
-  if (prev.percentK >= prev.percentD && curr.percentK < curr.percentD && curr.percentK > OVERBOUGHT) {
-    return sig(ticker, lastCandle, "SELL", `SELL: %K crossed below %D in overbought zone (K=${curr.percentK.toFixed(1)}, D=${curr.percentD.toFixed(1)})`);
+  if (
+    prev.percentK >= prev.percentD &&
+    curr.percentK < curr.percentD &&
+    curr.percentK > OVERBOUGHT
+  ) {
+    return sig(
+      ticker,
+      lastCandle,
+      "SELL",
+      `SELL: %K crossed below %D in overbought zone (K=${curr.percentK.toFixed(1)}, D=${curr.percentD.toFixed(1)})`,
+    );
   }
 
   return sig(ticker, lastCandle, "NEUTRAL", "No Stochastic signal");
 }
 
-function sig(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "Stochastic", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function sig(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "Stochastic",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

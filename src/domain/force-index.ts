@@ -36,10 +36,7 @@ export function computeForceIndexRaw(candles: readonly ForceCandle[]): (number |
   return out;
 }
 
-export function computeForceIndex(
-  candles: readonly ForceCandle[],
-  period = 13,
-): (number | null)[] {
+export function computeForceIndex(candles: readonly ForceCandle[], period = 13): (number | null)[] {
   const raw = computeForceIndexRaw(candles);
   const out: (number | null)[] = new Array(candles.length).fill(null);
   // Raw[0] is null; smoothed EMA over the dense tail starting at index 1.

@@ -28,15 +28,7 @@ export interface EvalContext {
   readonly funcs?: Readonly<Record<string, FnImpl>>;
 }
 
-type TokKind =
-  | "num"
-  | "ident"
-  | "lparen"
-  | "rparen"
-  | "comma"
-  | "op"
-  | "kw"
-  | "eof";
+type TokKind = "num" | "ident" | "lparen" | "rparen" | "comma" | "op" | "kw" | "eof";
 
 interface Token {
   readonly kind: TokKind;

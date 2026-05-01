@@ -25,19 +25,13 @@ describe("anchored-vwap", () => {
   });
 
   it("anchorIndex skips earlier candles", () => {
-    const out = anchoredVwap(
-      [c(0, 100, 1), c(1, 10, 1), c(2, 20, 1)],
-      { anchorIndex: 1 },
-    );
+    const out = anchoredVwap([c(0, 100, 1), c(1, 10, 1), c(2, 20, 1)], { anchorIndex: 1 });
     expect(out.length).toBe(2);
     expect(out[1]!.vwap).toBeCloseTo(15, 6);
   });
 
   it("anchorTime selects first candle >= time", () => {
-    const out = anchoredVwap(
-      [c(0, 10, 1), c(100, 20, 1), c(200, 30, 1)],
-      { anchorTime: 50 },
-    );
+    const out = anchoredVwap([c(0, 10, 1), c(100, 20, 1), c(200, 30, 1)], { anchorTime: 50 });
     expect(out.length).toBe(2);
     expect(out[0]!.time).toBe(100);
   });
@@ -51,9 +45,7 @@ describe("anchored-vwap", () => {
   it("bands widen with price dispersion", () => {
     const out = anchoredVwap([c(0, 10, 1), c(1, 30, 1), c(2, 20, 1)]);
     expect(out[2]!.upper1).toBeGreaterThan(out[2]!.vwap);
-    expect(out[2]!.upper2 - out[2]!.lower2).toBeGreaterThan(
-      out[2]!.upper1 - out[2]!.lower1,
-    );
+    expect(out[2]!.upper2 - out[2]!.lower2).toBeGreaterThan(out[2]!.upper1 - out[2]!.lower1);
   });
 
   it("zero volume falls back to typical price", () => {

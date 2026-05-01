@@ -147,7 +147,7 @@ describe("serveWorkerRpc", () => {
         selfMessages.push(msg);
       },
     };
-     
+
     (globalThis as any).self = fakeSelf;
     handler = null;
   });
@@ -160,7 +160,7 @@ describe("serveWorkerRpc", () => {
       },
     };
     serveWorkerRpc(api);
-     
+
     handler = (globalThis as any).self.onmessage;
     const req: RpcRequest = {
       __rpc: true,
@@ -184,7 +184,7 @@ describe("serveWorkerRpc", () => {
       },
     };
     serveWorkerRpc(api);
-     
+
     handler = (globalThis as any).self.onmessage;
     const req: RpcRequest = { __rpc: true, id: 9, method: "fail", args: [] };
     handler!(new MessageEvent("message", { data: req }));
@@ -196,7 +196,7 @@ describe("serveWorkerRpc", () => {
 
   it("replies unknown method error", async () => {
     serveWorkerRpc({} as WorkerApi);
-     
+
     handler = (globalThis as any).self.onmessage;
     const req: RpcRequest = { __rpc: true, id: 1, method: "nope", args: [] };
     handler!(new MessageEvent("message", { data: req }));
@@ -208,7 +208,7 @@ describe("serveWorkerRpc", () => {
 
   it("ignores non-rpc messages", async () => {
     serveWorkerRpc({} as WorkerApi);
-     
+
     handler = (globalThis as any).self.onmessage;
     handler!(new MessageEvent("message", { data: { unrelated: true } }));
     await new Promise((r) => setTimeout(r, 0));

@@ -30,10 +30,7 @@ const ema = (values: readonly number[], period: number): (number | null)[] => {
   return out;
 };
 
-const emaOfDefined = (
-  series: readonly (number | null)[],
-  period: number,
-): (number | null)[] => {
+const emaOfDefined = (series: readonly (number | null)[], period: number): (number | null)[] => {
   const out: (number | null)[] = new Array(series.length).fill(null);
   let firstIdx = -1;
   for (let i = 0; i < series.length; i++) {
@@ -65,7 +62,8 @@ export function computeTrix(
   for (let i = 1; i < candles.length; i++) {
     const cur = e3[i];
     const prev = e3[i - 1];
-    if (cur === null || prev === null || cur === undefined || prev === undefined || prev === 0) continue;
+    if (cur === null || prev === null || cur === undefined || prev === undefined || prev === 0)
+      continue;
     trixSeries[i] = (100 * (cur - prev)) / prev;
   }
   // Signal line: EMA of trix where defined.

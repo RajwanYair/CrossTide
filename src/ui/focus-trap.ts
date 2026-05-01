@@ -65,7 +65,7 @@ export function nextFocusable<T extends FocusableElement>(
     return direction === 1 ? elements[0]! : elements[elements.length - 1]!;
   }
   const len = elements.length;
-  const nextIdx = ((idx + direction) % len + len) % len;
+  const nextIdx = (((idx + direction) % len) + len) % len;
   return elements[nextIdx]!;
 }
 

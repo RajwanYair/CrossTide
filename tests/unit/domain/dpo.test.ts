@@ -9,14 +9,22 @@ describe("dpo", () => {
   });
 
   it("constant series -> DPO = 0 once defined", () => {
-    const out = computeDpo(Array.from({ length: 40 }, () => 100), 10);
+    const out = computeDpo(
+      Array.from({ length: 40 }, () => 100),
+      10,
+    );
     const defined = out.filter((v) => v !== null) as number[];
     expect(defined.length).toBeGreaterThan(0);
     for (const v of defined) expect(v).toBeCloseTo(0, 9);
   });
 
   it("output length equals input", () => {
-    expect(computeDpo(Array.from({ length: 50 }, (_, i) => i + 1), 10).length).toBe(50);
+    expect(
+      computeDpo(
+        Array.from({ length: 50 }, (_, i) => i + 1),
+        10,
+      ).length,
+    ).toBe(50);
   });
 
   it("linear ramp -> DPO equals constant offset (period dependent)", () => {

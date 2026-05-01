@@ -5,7 +5,9 @@
  *    with sentinel strings; returns the supplied fallback if anything fails.
  */
 
-export type SafeResult<T> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: Error };
+export type SafeResult<T> =
+  | { readonly ok: true; readonly value: T }
+  | { readonly ok: false; readonly error: Error };
 
 export function safeParse<T = unknown>(input: string): SafeResult<T> {
   try {

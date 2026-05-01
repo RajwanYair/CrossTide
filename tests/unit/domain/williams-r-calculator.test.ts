@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { computeWilliamsRSeries, computeWilliamsR } from "../../../src/domain/williams-r-calculator";
+import {
+  computeWilliamsRSeries,
+  computeWilliamsR,
+} from "../../../src/domain/williams-r-calculator";
 import { makeCandles } from "../../helpers/candle-factory";
 
 describe("computeWilliamsRSeries", () => {

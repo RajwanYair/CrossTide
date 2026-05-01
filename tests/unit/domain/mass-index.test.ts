@@ -3,7 +3,11 @@ import { computeMassIndex } from "../../../src/domain/mass-index";
 import type { Candle } from "../../../src/domain/heikin-ashi";
 
 const c = (i: number, h: number, l: number): Candle => ({
-  time: i, open: l, high: h, low: l, close: l,
+  time: i,
+  open: l,
+  high: h,
+  low: l,
+  close: l,
 });
 
 describe("mass-index", () => {

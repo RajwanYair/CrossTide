@@ -25,12 +25,9 @@ describe("ticker", () => {
     expect(ticker("BF-B")).toBe("BF-B");
   });
 
-  it.each(["", "1ABC", "TOOLONGSYMBOL", " ", "AB C"])(
-    "rejects invalid: %s",
-    (input) => {
-      expect(() => ticker(input)).toThrow(BrandError);
-    },
-  );
+  it.each(["", "1ABC", "TOOLONGSYMBOL", " ", "AB C"])("rejects invalid: %s", (input) => {
+    expect(() => ticker(input)).toThrow(BrandError);
+  });
 
   it("tryTicker returns null on invalid", () => {
     expect(tryTicker("123")).toBeNull();
@@ -43,12 +40,9 @@ describe("isoDate", () => {
     expect(isoDate("2025-06-15")).toBe("2025-06-15");
   });
 
-  it.each(["2025-13-01", "2025-02-30", "20250101", "2025-1-1"])(
-    "rejects invalid: %s",
-    (input) => {
-      expect(() => isoDate(input)).toThrow(BrandError);
-    },
-  );
+  it.each(["2025-13-01", "2025-02-30", "20250101", "2025-1-1"])("rejects invalid: %s", (input) => {
+    expect(() => isoDate(input)).toThrow(BrandError);
+  });
 });
 
 describe("isoTimestamp", () => {

@@ -19,9 +19,7 @@ const COMMANDS: PaletteCommand[] = [
 
 describe("command-palette", () => {
   it("scoreCommand rewards exact matches", () => {
-    expect(
-      scoreCommand({ id: "x", label: "Go Home", run: noop }, "Go Home"),
-    ).toBe(100);
+    expect(scoreCommand({ id: "x", label: "Go Home", run: noop }, "Go Home")).toBe(100);
   });
 
   it("scoreCommand rewards prefix", () => {
@@ -37,9 +35,7 @@ describe("command-palette", () => {
   });
 
   it("scoreCommand matches subsequence", () => {
-    expect(
-      scoreCommand({ id: "x", label: "command palette", run: noop }, "cp"),
-    ).toBeGreaterThan(0);
+    expect(scoreCommand({ id: "x", label: "command palette", run: noop }, "cp")).toBeGreaterThan(0);
   });
 
   it("rankCommands sorts by score", () => {
@@ -57,9 +53,7 @@ describe("command-palette", () => {
     const p = createPaletteState(COMMANDS);
     expect(p.state().results).toHaveLength(COMMANDS.length);
     p.setQuery("Ticker");
-    expect(p.state().results.every((c) => c.label.includes("Ticker"))).toBe(
-      true,
-    );
+    expect(p.state().results.every((c) => c.label.includes("Ticker"))).toBe(true);
     p.moveSelection(1);
     expect(p.state().selectedIndex).toBe(1);
   });

@@ -41,21 +41,14 @@ describe("heikinAshi", () => {
   });
 
   it("preserves time and volume", () => {
-    const input: Candle[] = [
-      { time: 1000, open: 1, high: 2, low: 0.5, close: 1.5, volume: 500 },
-    ];
+    const input: Candle[] = [{ time: 1000, open: 1, high: 2, low: 0.5, close: 1.5, volume: 500 }];
     const r = heikinAshi(input);
     expect(r[0]!.time).toBe(1000);
     expect(r[0]!.volume).toBe(500);
   });
 
   it("smooths a trend (consecutive haCloses move monotonically)", () => {
-    const trend = [
-      c(10, 11, 10, 11),
-      c(11, 12, 11, 12),
-      c(12, 13, 12, 13),
-      c(13, 14, 13, 14),
-    ];
+    const trend = [c(10, 11, 10, 11), c(11, 12, 11, 12), c(12, 13, 12, 13), c(13, 14, 13, 14)];
     const r = heikinAshi(trend);
     for (let i = 1; i < r.length; i++) {
       expect(r[i]!.haClose).toBeGreaterThan(r[i - 1]!.haClose);

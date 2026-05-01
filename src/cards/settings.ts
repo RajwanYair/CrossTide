@@ -11,7 +11,11 @@ export interface SettingsCallbacks {
   onClearCache: () => void;
 }
 
-export function renderSettings(container: HTMLElement, config: AppConfig, callbacks: SettingsCallbacks): void {
+export function renderSettings(
+  container: HTMLElement,
+  config: AppConfig,
+  callbacks: SettingsCallbacks,
+): void {
   container.innerHTML = `
     <div class="setting-group">
       <label for="theme-select">Theme</label>
@@ -47,6 +51,10 @@ export function renderSettings(container: HTMLElement, config: AppConfig, callba
 
   container.querySelector("#btn-export")?.addEventListener("click", () => callbacks.onExport());
   container.querySelector("#btn-import")?.addEventListener("click", () => callbacks.onImport());
-  container.querySelector("#btn-clear")?.addEventListener("click", () => callbacks.onClearWatchlist());
-  container.querySelector("#btn-clear-cache")?.addEventListener("click", () => callbacks.onClearCache());
+  container
+    .querySelector("#btn-clear")
+    ?.addEventListener("click", () => callbacks.onClearWatchlist());
+  container
+    .querySelector("#btn-clear-cache")
+    ?.addEventListener("click", () => callbacks.onClearCache());
 }

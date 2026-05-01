@@ -40,16 +40,47 @@ const QUOTE_RESPONSE = {
 const TIME_SERIES_RESPONSE = {
   status: "ok",
   values: [
-    { datetime: "2024-01-03", open: "151.00", high: "153.00", low: "150.00", close: "152.00", volume: "45000000" },
-    { datetime: "2024-01-02", open: "150.00", high: "151.00", low: "149.00", close: "150.50", volume: "40000000" },
-    { datetime: "2024-01-01", open: "148.00", high: "151.00", low: "147.00", close: "149.00", volume: "35000000" },
+    {
+      datetime: "2024-01-03",
+      open: "151.00",
+      high: "153.00",
+      low: "150.00",
+      close: "152.00",
+      volume: "45000000",
+    },
+    {
+      datetime: "2024-01-02",
+      open: "150.00",
+      high: "151.00",
+      low: "149.00",
+      close: "150.50",
+      volume: "40000000",
+    },
+    {
+      datetime: "2024-01-01",
+      open: "148.00",
+      high: "151.00",
+      low: "147.00",
+      close: "149.00",
+      volume: "35000000",
+    },
   ],
 };
 
 const SEARCH_RESPONSE = {
   data: [
-    { symbol: "AAPL", instrument_name: "Apple Inc.", exchange: "NASDAQ", instrument_type: "Common Stock" },
-    { symbol: "AAPD", instrument_name: "Direxion AAPL Bear", exchange: "NYSE", instrument_type: "ETF" },
+    {
+      symbol: "AAPL",
+      instrument_name: "Apple Inc.",
+      exchange: "NASDAQ",
+      instrument_type: "Common Stock",
+    },
+    {
+      symbol: "AAPD",
+      instrument_name: "Direxion AAPL Bear",
+      exchange: "NYSE",
+      instrument_type: "ETF",
+    },
   ],
 };
 

@@ -35,8 +35,11 @@ export function buildSparkbar(values: readonly number[], opts: SparkbarOptions =
   const negativeColor = opts.negativeColor ?? positiveColor;
   const background = opts.background ?? null;
 
-  const bg = background ? `<rect width="${width}" height="${height}" fill="${escapeAttr(background)}"/>` : "";
-  if (values.length === 0) return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${bg}</svg>`;
+  const bg = background
+    ? `<rect width="${width}" height="${height}" fill="${escapeAttr(background)}"/>`
+    : "";
+  if (values.length === 0)
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${bg}</svg>`;
 
   let min = Infinity;
   let max = -Infinity;
@@ -59,7 +62,9 @@ export function buildSparkbar(values: readonly number[], opts: SparkbarOptions =
     ? height * (max / (max - min)) // proportional zero line
     : height; // baseline at bottom
 
-  const parts: string[] = [`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">`];
+  const parts: string[] = [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">`,
+  ];
   if (bg) parts.push(bg);
   for (let i = 0; i < values.length; i++) {
     const v = values[i]!;

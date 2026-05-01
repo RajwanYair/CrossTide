@@ -24,7 +24,9 @@ export interface ReconnectOptions {
   readonly random?: () => number;
 }
 
-const DEFAULT_OPTIONS: Required<Omit<ReconnectOptions, "WebSocketImpl" | "random" | "maxAttempts">> = {
+const DEFAULT_OPTIONS: Required<
+  Omit<ReconnectOptions, "WebSocketImpl" | "random" | "maxAttempts">
+> = {
   minDelayMs: 500,
   maxDelayMs: 30_000,
   backoffMultiplier: 2,
@@ -48,13 +50,8 @@ export interface ReconnectingWS {
   on(event: "open" | "close" | "error" | "message", handler: WSEventHandler): void;
 }
 
-export function createReconnectingWS(
-  url: string,
-  options: ReconnectOptions = {},
-): ReconnectingWS {
-  const Impl =
-    options.WebSocketImpl ??
-    (globalThis as { WebSocket?: typeof WebSocket }).WebSocket;
+export function createReconnectingWS(url: string, options: ReconnectOptions = {}): ReconnectingWS {
+  const Impl = options.WebSocketImpl ?? (globalThis as { WebSocket?: typeof WebSocket }).WebSocket;
   if (typeof Impl !== "function") {
     throw new Error("WebSocket implementation not available");
   }

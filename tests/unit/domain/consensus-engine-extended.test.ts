@@ -6,8 +6,18 @@ import { evaluateConsensus } from "../../../src/domain/consensus-engine";
 import type { MethodSignal, MethodName } from "../../../src/types/domain";
 
 const ALL_METHODS: MethodName[] = [
-  "Micho", "RSI", "MACD", "Bollinger", "Stochastic",
-  "OBV", "ADX", "CCI", "SAR", "WilliamsR", "MFI", "SuperTrend",
+  "Micho",
+  "RSI",
+  "MACD",
+  "Bollinger",
+  "Stochastic",
+  "OBV",
+  "ADX",
+  "CCI",
+  "SAR",
+  "WilliamsR",
+  "MFI",
+  "SuperTrend",
 ];
 
 function sig(method: MethodName, direction: "BUY" | "SELL" | "NEUTRAL"): MethodSignal {

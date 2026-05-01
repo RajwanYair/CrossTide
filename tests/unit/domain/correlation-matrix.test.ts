@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  pearson,
-  correlationMatrix,
-} from "../../../src/domain/correlation-matrix";
+import { pearson, correlationMatrix } from "../../../src/domain/correlation-matrix";
 
 describe("correlation-matrix", () => {
   it("perfect positive correlation = 1", () => {

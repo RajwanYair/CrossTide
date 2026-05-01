@@ -24,10 +24,7 @@ const DEFAULT: Required<FreshnessConfig> = {
   staleMs: 5 * 60_000,
 };
 
-export function classifyFreshness(
-  ageMs: number,
-  config: FreshnessConfig = {},
-): FreshnessBucket {
+export function classifyFreshness(ageMs: number, config: FreshnessConfig = {}): FreshnessBucket {
   const c = { ...DEFAULT, ...config };
   if (!Number.isFinite(ageMs) || ageMs < 0) return "expired";
   if (ageMs <= c.liveMs) return "live";

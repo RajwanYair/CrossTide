@@ -40,10 +40,7 @@ const DETECTORS: readonly Detector[] = [
  * Run all method detectors and return their individual signals.
  * Null results (insufficient data) are excluded.
  */
-export function aggregateSignals(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal[] {
+export function aggregateSignals(ticker: string, candles: readonly DailyCandle[]): MethodSignal[] {
   const signals: MethodSignal[] = [];
   for (const detect of DETECTORS) {
     const sig = detect(ticker, candles);

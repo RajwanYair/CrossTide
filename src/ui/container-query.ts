@@ -57,13 +57,9 @@ export function observeContainer(
   options: ContainerQueryOptions = {},
 ): ContainerQueryHandle {
   const bp = options.breakpoints ?? DEFAULT_BREAKPOINTS;
-  let current: ContainerSize = classifyWidth(
-    el.getBoundingClientRect().width,
-    bp,
-  );
+  let current: ContainerSize = classifyWidth(el.getBoundingClientRect().width, bp);
 
-  const RO = (globalThis as { ResizeObserver?: typeof ResizeObserver })
-    .ResizeObserver;
+  const RO = (globalThis as { ResizeObserver?: typeof ResizeObserver }).ResizeObserver;
   if (typeof RO !== "function") {
     return {
       get current(): ContainerSize {

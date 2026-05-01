@@ -17,10 +17,7 @@ export interface FuzzyOptions<T> {
 }
 
 /** Returns score >0 on match, 0 on miss; also returns matched indices. */
-export function fuzzyScore(
-  query: string,
-  target: string,
-): { score: number; indices: number[] } {
+export function fuzzyScore(query: string, target: string): { score: number; indices: number[] } {
   if (!query) return { score: 1, indices: [] };
   const q = query.toLowerCase();
   const t = target.toLowerCase();
@@ -32,7 +29,8 @@ export function fuzzyScore(
     if (t[i] === q[qi]) {
       indices.push(i);
       let bonus = 1;
-      if (i === 0) bonus += 5; // prefix match
+      if (i === 0)
+        bonus += 5; // prefix match
       else if (t[i - 1] === " " || t[i - 1] === "-" || t[i - 1] === "_") {
         bonus += 3; // word boundary
       }

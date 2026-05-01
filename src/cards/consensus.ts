@@ -44,8 +44,7 @@ function renderMethodGrid(methods: readonly MethodSignal[], overall: SignalDirec
 }
 
 function renderMethodCard(signal: MethodSignal): string {
-  const cls =
-    signal.direction === "BUY" ? "buy" : signal.direction === "SELL" ? "sell" : "neutral";
+  const cls = signal.direction === "BUY" ? "buy" : signal.direction === "SELL" ? "sell" : "neutral";
   return `<div class="method-card">
     <div class="method-indicator ${cls}"></div>
     <div>
@@ -57,5 +56,9 @@ function renderMethodCard(signal: MethodSignal): string {
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

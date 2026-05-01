@@ -2,13 +2,7 @@
  * Tests for src/core/signals.ts
  */
 import { describe, it, expect, vi } from "vitest";
-import {
-  signal,
-  computed,
-  effect,
-  untracked,
-  persistedSignal,
-} from "../../../src/core/signals";
+import { signal, computed, effect, untracked, persistedSignal } from "../../../src/core/signals";
 
 describe("signal()", () => {
   it("reads the initial value", () => {

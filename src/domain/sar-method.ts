@@ -8,10 +8,7 @@
 import type { DailyCandle, MethodSignal, SignalDirection } from "../types/domain";
 import { computeSarSeries } from "./parabolic-sar-calculator";
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   if (candles.length < 5) return null;
 
   const series = computeSarSeries(candles);
@@ -28,12 +25,29 @@ export function evaluate(
 
   // SELL: SAR flips to downtrend
   if (prev.isUpTrend && !curr.isUpTrend) {
-    return sig(ticker, lastCandle, "SELL", `SELL: SAR flipped bearish (SAR=${curr.sar.toFixed(2)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "SELL",
+      `SELL: SAR flipped bearish (SAR=${curr.sar.toFixed(2)})`,
+    );
   }
 
   return sig(ticker, lastCandle, "NEUTRAL", "No SAR signal");
 }
 
-function sig(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "SAR", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function sig(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "SAR",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

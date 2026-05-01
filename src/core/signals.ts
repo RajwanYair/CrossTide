@@ -284,8 +284,7 @@ export function persistedSignal<T>(
 
   let suspendBroadcast = false;
   const channelName = options.channel ?? `crosstide:${key}`;
-  const bc =
-    typeof BroadcastChannel === "function" ? new BroadcastChannel(channelName) : undefined;
+  const bc = typeof BroadcastChannel === "function" ? new BroadcastChannel(channelName) : undefined;
 
   sig.subscribe((value) => {
     adapter.save(value);

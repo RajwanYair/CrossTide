@@ -13,10 +13,7 @@ export interface AroonPoint {
   readonly oscillator: number;
 }
 
-export function computeAroon(
-  candles: readonly Candle[],
-  period = 14,
-): AroonPoint[] {
+export function computeAroon(candles: readonly Candle[], period = 14): AroonPoint[] {
   if (period <= 0 || candles.length <= period) return [];
   const out: AroonPoint[] = [];
   for (let i = period; i < candles.length; i++) {

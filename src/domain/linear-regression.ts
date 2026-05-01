@@ -11,10 +11,7 @@ export interface LinearRegression {
   readonly predict: (x: number) => number;
 }
 
-export function linearRegression(
-  xs: readonly number[],
-  ys: readonly number[],
-): LinearRegression {
+export function linearRegression(xs: readonly number[], ys: readonly number[]): LinearRegression {
   const n = Math.min(xs.length, ys.length);
   if (n < 2) {
     return { slope: 0, intercept: ys[0] ?? 0, r2: 0, predict: (): number => ys[0] ?? 0 };

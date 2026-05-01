@@ -9,10 +9,7 @@ import type { DailyCandle, MethodSignal, SignalDirection } from "../types/domain
 import { computeWilliamsRSeries } from "./williams-r-calculator";
 import { DEFAULTS } from "./technical-defaults";
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   if (candles.length < DEFAULTS.period + 1) return null;
 
   const series = computeWilliamsRSeries(candles, DEFAULTS.period);
@@ -25,14 +22,36 @@ export function evaluate(
   const lastCandle = candles[candles.length - 1]!;
 
   if (prevWr < DEFAULTS.williamsROversold && currWr >= DEFAULTS.williamsROversold) {
-    return sig(ticker, lastCandle, "BUY", `BUY: Williams %R exited oversold (${prevWr.toFixed(1)} → ${currWr.toFixed(1)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "BUY",
+      `BUY: Williams %R exited oversold (${prevWr.toFixed(1)} → ${currWr.toFixed(1)})`,
+    );
   }
   if (prevWr > DEFAULTS.williamsROverbought && currWr <= DEFAULTS.williamsROverbought) {
-    return sig(ticker, lastCandle, "SELL", `SELL: Williams %R exited overbought (${prevWr.toFixed(1)} → ${currWr.toFixed(1)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "SELL",
+      `SELL: Williams %R exited overbought (${prevWr.toFixed(1)} → ${currWr.toFixed(1)})`,
+    );
   }
   return sig(ticker, lastCandle, "NEUTRAL", "No Williams %R signal");
 }
 
-function sig(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "WilliamsR", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function sig(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "WilliamsR",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

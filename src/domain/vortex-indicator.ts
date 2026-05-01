@@ -16,10 +16,7 @@ export interface VortexPoint {
   readonly viMinus: number;
 }
 
-export function computeVortex(
-  candles: readonly Candle[],
-  period = 14,
-): VortexPoint[] {
+export function computeVortex(candles: readonly Candle[], period = 14): VortexPoint[] {
   if (period <= 0 || candles.length <= period) return [];
   const vmp: number[] = new Array(candles.length).fill(0);
   const vmm: number[] = new Array(candles.length).fill(0);

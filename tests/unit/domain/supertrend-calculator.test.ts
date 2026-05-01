@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { computeSuperTrendSeries, computeSuperTrend } from "../../../src/domain/supertrend-calculator";
+import {
+  computeSuperTrendSeries,
+  computeSuperTrend,
+} from "../../../src/domain/supertrend-calculator";
 import { makeCandles } from "../../helpers/candle-factory";
 
 describe("computeSuperTrendSeries", () => {

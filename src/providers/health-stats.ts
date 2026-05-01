@@ -30,10 +30,7 @@ export interface ProviderStats {
 
 function percentile(sorted: readonly number[], p: number): number {
   if (sorted.length === 0) return 0;
-  const idx = Math.min(
-    sorted.length - 1,
-    Math.max(0, Math.floor((p / 100) * sorted.length)),
-  );
+  const idx = Math.min(sorted.length - 1, Math.max(0, Math.floor((p / 100) * sorted.length)));
   return sorted[idx] ?? 0;
 }
 
@@ -84,9 +81,7 @@ export function aggregateStats(
   };
 }
 
-export function aggregateAll(
-  samples: readonly RequestSample[],
-): ProviderStats[] {
+export function aggregateAll(samples: readonly RequestSample[]): ProviderStats[] {
   const ids = new Set(samples.map((s) => s.providerId));
   return Array.from(ids).map((id) => aggregateStats(samples, id));
 }

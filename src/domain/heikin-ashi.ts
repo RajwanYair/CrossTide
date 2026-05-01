@@ -32,8 +32,7 @@ export function heikinAshi(candles: readonly Candle[]): HeikinAshiCandle[] {
   for (let i = 0; i < candles.length; i++) {
     const c = candles[i]!;
     const haClose = (c.open + c.high + c.low + c.close) / 4;
-    const haOpen =
-      i === 0 ? (c.open + c.close) / 2 : (prevHaOpen + prevHaClose) / 2;
+    const haOpen = i === 0 ? (c.open + c.close) / 2 : (prevHaOpen + prevHaClose) / 2;
     const haHigh = Math.max(c.high, haOpen, haClose);
     const haLow = Math.min(c.low, haOpen, haClose);
     out.push({ ...c, haOpen, haHigh, haLow, haClose });

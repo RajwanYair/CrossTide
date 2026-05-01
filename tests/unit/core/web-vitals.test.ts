@@ -1,13 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
-import {
-  observeWebVitals,
-  makeBeaconReporter,
-} from "../../../src/core/web-vitals";
+import { observeWebVitals, makeBeaconReporter } from "../../../src/core/web-vitals";
 
 describe("web-vitals", () => {
   it("returns a stoppable observer even without PerformanceObserver", () => {
-    const orig = (globalThis as { PerformanceObserver?: unknown })
-      .PerformanceObserver;
+    const orig = (globalThis as { PerformanceObserver?: unknown }).PerformanceObserver;
     Object.defineProperty(globalThis, "PerformanceObserver", {
       value: undefined,
       configurable: true,

@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  parseCsv,
-  parseCsvAsObjects,
-  serializeCsv,
-  serializeObjects,
-} from "../../../src/core/csv";
+import { parseCsv, parseCsvAsObjects, serializeCsv, serializeObjects } from "../../../src/core/csv";
 
 describe("csv", () => {
   it("parses simple comma-separated rows", () => {
@@ -29,17 +24,11 @@ describe("csv", () => {
   });
 
   it("handles embedded quotes (doubled)", () => {
-    expect(parseCsv('a\n"He said ""hi"""')).toEqual([
-      ["a"],
-      ['He said "hi"'],
-    ]);
+    expect(parseCsv('a\n"He said ""hi"""')).toEqual([["a"], ['He said "hi"']]);
   });
 
   it("handles embedded newlines in quoted fields", () => {
-    expect(parseCsv('a\n"line1\nline2"')).toEqual([
-      ["a"],
-      ["line1\nline2"],
-    ]);
+    expect(parseCsv('a\n"line1\nline2"')).toEqual([["a"], ["line1\nline2"]]);
   });
 
   it("handles trailing newline", () => {
@@ -61,9 +50,7 @@ describe("csv", () => {
   });
 
   it("parseCsvAsObjects handles missing trailing fields", () => {
-    expect(parseCsvAsObjects("a,b,c\n1,2")).toEqual([
-      { a: "1", b: "2", c: "" },
-    ]);
+    expect(parseCsvAsObjects("a,b,c\n1,2")).toEqual([{ a: "1", b: "2", c: "" }]);
   });
 
   it("serializeCsv quotes when necessary", () => {

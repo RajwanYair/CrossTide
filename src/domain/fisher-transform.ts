@@ -17,10 +17,7 @@ export interface FisherPoint {
   readonly trigger: number; // previous fisher value
 }
 
-export function computeFisherTransform(
-  candles: readonly Candle[],
-  period = 9,
-): FisherPoint[] {
+export function computeFisherTransform(candles: readonly Candle[], period = 9): FisherPoint[] {
   if (period <= 0 || candles.length < period) return [];
   const out: FisherPoint[] = [];
   let x = 0;

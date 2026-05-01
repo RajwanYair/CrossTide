@@ -22,9 +22,7 @@ export interface EventBusOptions {
   readonly onError?: (error: unknown, eventName: string) => void;
 }
 
-export function createEventBus<M extends EventMap>(
-  options: EventBusOptions = {},
-): EventBus<M> {
+export function createEventBus<M extends EventMap>(options: EventBusOptions = {}): EventBus<M> {
   const handlers = new Map<keyof M, Set<(payload: unknown) => void>>();
   const onError = options.onError;
 

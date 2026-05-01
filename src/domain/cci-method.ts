@@ -11,10 +11,7 @@ import { DEFAULTS } from "./technical-defaults";
 
 const PERIOD = 20;
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   if (candles.length < PERIOD + 2) return null;
 
   const series = computeCciSeries(candles, PERIOD);
@@ -27,14 +24,36 @@ export function evaluate(
   const lastCandle = candles[candles.length - 1]!;
 
   if (prevCci < DEFAULTS.cciOversold && currCci >= DEFAULTS.cciOversold) {
-    return sig(ticker, lastCandle, "BUY", `BUY: CCI exited oversold (${prevCci.toFixed(1)} → ${currCci.toFixed(1)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "BUY",
+      `BUY: CCI exited oversold (${prevCci.toFixed(1)} → ${currCci.toFixed(1)})`,
+    );
   }
   if (prevCci > DEFAULTS.cciOverbought && currCci <= DEFAULTS.cciOverbought) {
-    return sig(ticker, lastCandle, "SELL", `SELL: CCI exited overbought (${prevCci.toFixed(1)} → ${currCci.toFixed(1)})`);
+    return sig(
+      ticker,
+      lastCandle,
+      "SELL",
+      `SELL: CCI exited overbought (${prevCci.toFixed(1)} → ${currCci.toFixed(1)})`,
+    );
   }
   return sig(ticker, lastCandle, "NEUTRAL", "No CCI signal");
 }
 
-function sig(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "CCI", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function sig(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "CCI",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

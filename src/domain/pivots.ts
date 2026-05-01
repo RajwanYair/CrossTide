@@ -56,12 +56,12 @@ export function computePivots(input: PivotInput, kind: PivotKind = "classic"): P
       const p = (h + l + c) / 3;
       return {
         p,
-        r1: c + range * 1.1 / 12,
-        s1: c - range * 1.1 / 12,
-        r2: c + range * 1.1 / 6,
-        s2: c - range * 1.1 / 6,
-        r3: c + range * 1.1 / 4,
-        s3: c - range * 1.1 / 4,
+        r1: c + (range * 1.1) / 12,
+        s1: c - (range * 1.1) / 12,
+        r2: c + (range * 1.1) / 6,
+        s2: c - (range * 1.1) / 6,
+        r3: c + (range * 1.1) / 4,
+        s3: c - (range * 1.1) / 4,
       };
     }
     case "woodie": {

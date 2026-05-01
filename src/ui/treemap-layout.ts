@@ -97,10 +97,7 @@ const layoutRow = (
   };
 };
 
-export function squarifyTreemap(
-  items: readonly TreemapItem[],
-  bounds: Bounds,
-): TreemapRect[] {
+export function squarifyTreemap(items: readonly TreemapItem[], bounds: Bounds): TreemapRect[] {
   const positive = items.filter((i) => i.value > 0);
   if (positive.length === 0) return [];
   const sorted = [...positive].sort((a, b) => b.value - a.value);

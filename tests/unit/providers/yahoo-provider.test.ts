@@ -130,7 +130,15 @@ describe("yahoo-provider", () => {
               meta: {},
               timestamp: [1700000000, 1700086400],
               indicators: {
-                quote: [{ open: [100, null], high: [101, null], low: [99, null], close: [100, null], volume: [1000, 1000] }],
+                quote: [
+                  {
+                    open: [100, null],
+                    high: [101, null],
+                    low: [99, null],
+                    close: [100, null],
+                    volume: [1000, 1000],
+                  },
+                ],
               },
             },
           ],
@@ -157,7 +165,11 @@ describe("yahoo-provider", () => {
     it("becomes unavailable after 5 consecutive errors", async () => {
       mockFetch.mockRejectedValue(new Error("fail"));
       for (let i = 0; i < 5; i++) {
-        try { await provider.getQuote("X"); } catch { /* expected */ }
+        try {
+          await provider.getQuote("X");
+        } catch {
+          /* expected */
+        }
       }
       expect(provider.health().available).toBe(false);
       expect(provider.health().consecutiveErrors).toBe(5);
@@ -165,7 +177,11 @@ describe("yahoo-provider", () => {
 
     it("resets errors on success", async () => {
       mockFetch.mockRejectedValue(new Error("fail"));
-      try { await provider.getQuote("X"); } catch { /* expected */ }
+      try {
+        await provider.getQuote("X");
+      } catch {
+        /* expected */
+      }
       expect(provider.health().consecutiveErrors).toBe(1);
 
       mockFetch.mockResolvedValue(jsonResponse(CHART_RESPONSE));

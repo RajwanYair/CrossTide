@@ -55,14 +55,14 @@ src/
 
 ## Key Design Decisions
 
-| Decision | Rationale |
-|---|---|
+| Decision                  | Rationale                                     |
+| ------------------------- | --------------------------------------------- |
 | Vanilla TS (no framework) | Minimal bundle, fast load, no framework churn |
-| Vite | Fast dev server, optimized production builds |
-| CSS custom properties | Theming without JS runtime cost |
-| `as const` defaults | Type-safe indicator thresholds |
-| EventTarget store | Native browser API, no state library needed |
-| Hash-based routing | Works on static hosts without server config |
+| Vite                      | Fast dev server, optimized production builds  |
+| CSS custom properties     | Theming without JS runtime cost               |
+| `as const` defaults       | Type-safe indicator thresholds                |
+| EventTarget store         | Native browser API, no state library needed   |
+| Hash-based routing        | Works on static hosts without server config   |
 
 ## Testing
 

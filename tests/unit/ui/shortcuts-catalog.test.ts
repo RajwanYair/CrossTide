@@ -40,7 +40,11 @@ describe("shortcuts-catalog", () => {
   it("searchShortcuts filters by description", () => {
     const found = searchShortcuts("watchlist");
     expect(found.length).toBeGreaterThan(0);
-    expect(found.every((s) => s.description.toLowerCase().includes("watchlist") || s.id.includes("watchlist"))).toBe(true);
+    expect(
+      found.every(
+        (s) => s.description.toLowerCase().includes("watchlist") || s.id.includes("watchlist"),
+      ),
+    ).toBe(true);
   });
 
   it("searchShortcuts filters by key", () => {

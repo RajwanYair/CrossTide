@@ -3,11 +3,7 @@
  * graceful degradation, permission flow, and tag-based deduplication.
  */
 
-export type NotificationPermissionState =
-  | "default"
-  | "granted"
-  | "denied"
-  | "unsupported";
+export type NotificationPermissionState = "default" | "granted" | "denied" | "unsupported";
 
 export interface AppNotificationOptions {
   readonly body?: string;
@@ -56,23 +52,21 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
  * Show a notification. Returns a `close()` function (no-op when unsupported
  * or permission is not granted).
  */
-export function showNotification(
-  title: string,
-  options: AppNotificationOptions = {},
-): () => void {
+export function showNotification(title: string, options: AppNotificationOptions = {}): () => void {
   const ctor = getCtor();
   if (ctor?.permission !== "granted") {
     return (): void => {
       /* no-op */
     };
   }
-  const n = new ctor(title, {
-    body: options.body,
-    icon: options.icon,
-    tag: options.tag,
-    requireInteraction: options.requireInteraction,
-    silent: options.silent,
-  });
+  const init: NotificationOptions = {};
+  if (options.body !== undefined) init.body = options.body;
+  if (options.icon !== undefined) init.icon = options.icon;
+  if (options.tag !== undefined) init.tag = options.tag;
+  if (options.requireInteraction !== undefined)
+    init.requireInteraction = options.requireInteraction;
+  if (options.silent !== undefined) init.silent = options.silent;
+  const n = new ctor(title, init);
   if (options.onClick) {
     n.onclick = options.onClick;
   }

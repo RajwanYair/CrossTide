@@ -62,9 +62,7 @@ describe("volume-profile", () => {
   });
 
   it("value area covers >= valueAreaPct of volume", () => {
-    const candles = Array.from({ length: 20 }, (_, i) =>
-      candle(10 + i, 11 + i, 50 + i * 10),
-    );
+    const candles = Array.from({ length: 20 }, (_, i) => candle(10 + i, 11 + i, 50 + i * 10));
     const p = computeVolumeProfile(candles, { bins: 20, valueAreaPct: 0.7 });
     const va = p.bins
       .filter((b) => b.priceHigh > p.valueAreaLow && b.priceLow < p.valueAreaHigh)

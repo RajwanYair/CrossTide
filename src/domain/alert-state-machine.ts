@@ -114,12 +114,32 @@ export function evaluateAlerts(
     const types = methodAlertTypes(sig.method);
     if (!types) continue;
 
-    if (sig.direction === "BUY" && enabledAlerts.has(types.buy) && !state.firedAlerts.has(types.buy)) {
-      alerts.push({ ticker: state.ticker, alertType: types.buy, direction: "BUY", description: sig.description, firedAt: now });
+    if (
+      sig.direction === "BUY" &&
+      enabledAlerts.has(types.buy) &&
+      !state.firedAlerts.has(types.buy)
+    ) {
+      alerts.push({
+        ticker: state.ticker,
+        alertType: types.buy,
+        direction: "BUY",
+        description: sig.description,
+        firedAt: now,
+      });
       newFired.add(types.buy);
       newFired.delete(types.sell); // reset opposite
-    } else if (sig.direction === "SELL" && enabledAlerts.has(types.sell) && !state.firedAlerts.has(types.sell)) {
-      alerts.push({ ticker: state.ticker, alertType: types.sell, direction: "SELL", description: sig.description, firedAt: now });
+    } else if (
+      sig.direction === "SELL" &&
+      enabledAlerts.has(types.sell) &&
+      !state.firedAlerts.has(types.sell)
+    ) {
+      alerts.push({
+        ticker: state.ticker,
+        alertType: types.sell,
+        direction: "SELL",
+        description: sig.description,
+        firedAt: now,
+      });
       newFired.add(types.sell);
       newFired.delete(types.buy); // reset opposite
     } else if (sig.direction === "NEUTRAL") {
@@ -131,12 +151,32 @@ export function evaluateAlerts(
 
   // Consensus alerts
   if (consensus) {
-    if (consensus.direction === "BUY" && enabledAlerts.has("consensusBuy") && !state.firedAlerts.has("consensusBuy")) {
-      alerts.push({ ticker: state.ticker, alertType: "consensusBuy", direction: "BUY", description: `Consensus BUY (strength ${(consensus.strength * 100).toFixed(0)}%)`, firedAt: now });
+    if (
+      consensus.direction === "BUY" &&
+      enabledAlerts.has("consensusBuy") &&
+      !state.firedAlerts.has("consensusBuy")
+    ) {
+      alerts.push({
+        ticker: state.ticker,
+        alertType: "consensusBuy",
+        direction: "BUY",
+        description: `Consensus BUY (strength ${(consensus.strength * 100).toFixed(0)}%)`,
+        firedAt: now,
+      });
       newFired.add("consensusBuy");
       newFired.delete("consensusSell");
-    } else if (consensus.direction === "SELL" && enabledAlerts.has("consensusSell") && !state.firedAlerts.has("consensusSell")) {
-      alerts.push({ ticker: state.ticker, alertType: "consensusSell", direction: "SELL", description: `Consensus SELL (strength ${(consensus.strength * 100).toFixed(0)}%)`, firedAt: now });
+    } else if (
+      consensus.direction === "SELL" &&
+      enabledAlerts.has("consensusSell") &&
+      !state.firedAlerts.has("consensusSell")
+    ) {
+      alerts.push({
+        ticker: state.ticker,
+        alertType: "consensusSell",
+        direction: "SELL",
+        description: `Consensus SELL (strength ${(consensus.strength * 100).toFixed(0)}%)`,
+        firedAt: now,
+      });
       newFired.add("consensusSell");
       newFired.delete("consensusBuy");
     } else if (consensus.direction === "NEUTRAL") {

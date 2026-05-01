@@ -12,10 +12,7 @@ import { DEFAULTS } from "./technical-defaults";
 const PERIOD = DEFAULTS.sma150Period;
 const MAX_ABOVE_RATIO = 0.05;
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   if (candles.length < PERIOD + 1) return null;
 
   const series = computeSmaSeries(candles, PERIOD);
@@ -39,18 +36,40 @@ export function evaluate(
   const isMaRising = slope >= 0;
 
   if (isCrossUp && isNearMa && isMaRising) {
-    return signal(ticker, lastCandle, "BUY", `BUY: price crossed above MA150 ($${closeT.toFixed(2)} > $${smaT.toFixed(2)}), MA150 rising`);
+    return signal(
+      ticker,
+      lastCandle,
+      "BUY",
+      `BUY: price crossed above MA150 ($${closeT.toFixed(2)} > $${smaT.toFixed(2)}), MA150 rising`,
+    );
   }
 
   // SELL: cross-down
   const isCrossDown = closeTm1 >= smaTm1 && closeT < smaT;
   if (isCrossDown) {
-    return signal(ticker, lastCandle, "SELL", `SELL: price crossed below MA150 ($${closeT.toFixed(2)} < $${smaT.toFixed(2)})`);
+    return signal(
+      ticker,
+      lastCandle,
+      "SELL",
+      `SELL: price crossed below MA150 ($${closeT.toFixed(2)} < $${smaT.toFixed(2)})`,
+    );
   }
 
   return signal(ticker, lastCandle, "NEUTRAL", "No Micho signal");
 }
 
-function signal(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "Micho", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function signal(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "Micho",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

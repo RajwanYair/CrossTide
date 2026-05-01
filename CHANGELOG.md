@@ -6,6 +6,56 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0] - 2026
+
+### Added — Production-readiness pass
+
+- **Strict TypeScript** — `exactOptionalPropertyTypes: true` enabled
+  project-wide; refactored `error-boundary`, `notifications`, `sync-queue`,
+  `polygon-provider`, `yahoo-provider` to construct optional fields
+  conditionally.
+- **Strict Markdown lint** — re-enabled `MD036/no-emphasis-as-heading`,
+  `MD060/table-column-style`, `MD041/first-line-heading`; converted GitHub
+  issue/PR templates to proper headings; tables auto-formatted via Prettier.
+- **Strict Stylelint** — re-enabled
+  `declaration-block-no-redundant-longhand-properties`.
+- **Strict ESLint** — removed all `eslint-disable` directives from `src/`;
+  refactored `idb.ts` callback return types, `worker-rpc.ts` `AnyFn` to
+  `(...args: never[]) => unknown`, and `supertrend-calculator.ts` to drop
+  dead `prevSuperTrend` assignment. `scripts/**` now linted (was ignored).
+- **Bundle size script** — `check-bundle-size.mjs` now measures gzipped
+  output (matching the 200 KB gzipped figure quoted in docs) instead of
+  raw bytes.
+- **`clean` script** — replaced inline `node -e "require(...)"` (broken in
+  ESM packages) with proper `scripts/clean.mjs`.
+- **`format` / `format:check`** — now scoped to source globs, excludes
+  build artifacts and the archived roadmap; included in `lint:all` and CI.
+- **Prettier** — moved `extends` (unsupported by Prettier) to inline
+  options matching `tooling/prettier.base.json`; markdown is no longer
+  ignored.
+
+### Removed
+
+- `vite-env.d.ts` moved from repo root to `src/vite-env.d.ts` (and
+  removed from `tsconfig.json` `include`).
+- Legacy `build/` directory (20 MB of leftover Flutter desktop EXE
+  artifacts from a pre-web era of the project).
+- All `eslint-disable` directives in `src/`.
+
+### Verified
+
+- `tsc --noEmit`: 0 errors with all strict flags on.
+- `eslint . --max-warnings 0`: 0 issues.
+- `stylelint`: 0 issues.
+- `htmlhint`: 0 issues.
+- `markdownlint-cli2`: 0 issues across 11 docs.
+- `prettier --check`: clean across 254 source/doc files.
+- `vitest run`: 215 files, **1772 tests** pass.
+- `vite build`: 74.45 KB raw / 21.29 KB gzipped (89% under 200 KB budget).
+- `check:bundle`: PASS at 20.6 KB gzipped.
+
+---
+
 ## [6.1.0-rc.11] - 2026
 
 ### Added — Sprints 121–130 (more indicators + core/UI utilities)

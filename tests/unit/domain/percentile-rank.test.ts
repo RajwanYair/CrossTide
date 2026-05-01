@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  percentile,
-  percentRank,
-  rollingPercentRank,
-} from "../../../src/domain/percentile-rank";
+import { percentile, percentRank, rollingPercentRank } from "../../../src/domain/percentile-rank";
 
 describe("percentile-rank", () => {
   it("percentile empty -> null", () => {

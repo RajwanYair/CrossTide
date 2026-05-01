@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { computeStochasticSeries, computeStochastic } from "../../../src/domain/stochastic-calculator";
+import {
+  computeStochasticSeries,
+  computeStochastic,
+} from "../../../src/domain/stochastic-calculator";
 import { makeCandles } from "../../helpers/candle-factory";
 
 describe("computeStochasticSeries", () => {

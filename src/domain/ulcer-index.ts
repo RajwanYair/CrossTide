@@ -6,10 +6,7 @@
  * Higher = more painful drawdowns.
  */
 
-export function computeUlcerIndex(
-  closes: readonly number[],
-  period = 14,
-): number[] {
+export function computeUlcerIndex(closes: readonly number[], period = 14): number[] {
   if (period <= 0 || closes.length < period) return [];
   const out: number[] = [];
   for (let i = period - 1; i < closes.length; i++) {

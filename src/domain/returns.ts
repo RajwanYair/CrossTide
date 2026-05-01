@@ -54,10 +54,7 @@ export function annualizedReturn(total: number, years: number): number {
   return Math.pow(1 + total, 1 / years) - 1;
 }
 
-export function rollingReturns(
-  prices: readonly number[],
-  window: number,
-): number[] {
+export function rollingReturns(prices: readonly number[], window: number): number[] {
   if (window <= 0) return [];
   const out: number[] = [];
   for (let i = window; i < prices.length; i++) {

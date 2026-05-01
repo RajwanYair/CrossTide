@@ -36,10 +36,7 @@ describe("share-state", () => {
     let bin = "";
     const bytes = new TextEncoder().encode(bad);
     for (const b of bytes) bin += String.fromCharCode(b);
-    const tok = btoa(bin)
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
+    const tok = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     expect(decodeShareState(tok)).toBeNull();
   });
 

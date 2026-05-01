@@ -36,7 +36,7 @@ describe("trapFocus", () => {
 
   it("returns a cleanup function", () => {
     const container = document.createElement("div");
-    container.innerHTML = '<button>A</button><button>B</button>';
+    container.innerHTML = "<button>A</button><button>B</button>";
     document.body.appendChild(container);
     const cleanup = trapFocus(container);
     expect(typeof cleanup).toBe("function");

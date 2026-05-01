@@ -11,10 +11,7 @@ describe("url-builder", () => {
   });
 
   it("appends path segments and trims slashes", () => {
-    const u = urlBuilder("https://api.example.com/v1")
-      .path("/coins/")
-      .path("bitcoin")
-      .toString();
+    const u = urlBuilder("https://api.example.com/v1").path("/coins/").path("bitcoin").toString();
     expect(u).toBe("https://api.example.com/v1/coins/bitcoin");
   });
 
@@ -24,10 +21,7 @@ describe("url-builder", () => {
   });
 
   it("undefined query values are dropped; null becomes empty", () => {
-    const u = urlBuilder("https://x.test")
-      .query("a", undefined)
-      .query("b", null)
-      .toString();
+    const u = urlBuilder("https://x.test").query("a", undefined).query("b", null).toString();
     expect(u).toBe("https://x.test/?b=");
   });
 
@@ -37,15 +31,15 @@ describe("url-builder", () => {
   });
 
   it("queryAll merges params, skipping undefined", () => {
-    const u = urlBuilder("https://x.test")
-      .queryAll({ a: 1, b: undefined, c: true })
-      .toString();
+    const u = urlBuilder("https://x.test").queryAll({ a: 1, b: undefined, c: true }).toString();
     expect(u).toBe("https://x.test/?a=1&c=true");
   });
 
   it("hash fragment", () => {
     expect(urlBuilder("https://x.test").hash("section").toString()).toBe("https://x.test/#section");
-    expect(urlBuilder("https://x.test").hash("#section").toString()).toBe("https://x.test/#section");
+    expect(urlBuilder("https://x.test").hash("#section").toString()).toBe(
+      "https://x.test/#section",
+    );
   });
 
   it("immutability: each call returns a new builder", () => {

@@ -24,8 +24,12 @@ export function timeZoneOffsetMinutes(date: Date | number, timeZone: string): nu
   const d = typeof date === "number" ? new Date(date) : date;
   const dtf = new Intl.DateTimeFormat("en-US", {
     timeZone,
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
     hour12: false,
   });
   const parts = dtf.formatToParts(d);

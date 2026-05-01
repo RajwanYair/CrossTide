@@ -23,14 +23,14 @@ npm run dev      # http://localhost:5173
 
 All of the following must pass before merging:
 
-| Gate | Command | Requirement |
-|------|---------|-------------|
-| Type check | `npm run typecheck` | Zero errors |
-| Lint | `npm run lint:all` | Zero warnings |
-| Format | `npm run format:check` | Exit 0 |
-| Tests | `npm run test:coverage` | All pass, ≥90% coverage |
-| Build | `npm run build` | Successful |
-| Bundle | `npm run check:bundle` | Under 200 KB |
+| Gate       | Command                 | Requirement             |
+| ---------- | ----------------------- | ----------------------- |
+| Type check | `npm run typecheck`     | Zero errors             |
+| Lint       | `npm run lint:all`      | Zero warnings           |
+| Format     | `npm run format:check`  | Exit 0                  |
+| Tests      | `npm run test:coverage` | All pass, ≥90% coverage |
+| Build      | `npm run build`         | Successful              |
+| Bundle     | `npm run check:bundle`  | Under 200 KB            |
 
 Or run everything at once: `npm run ci`
 

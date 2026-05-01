@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { computeForceIndex, computeForceIndexRaw, type ForceCandle } from "../../../src/domain/force-index";
+import {
+  computeForceIndex,
+  computeForceIndexRaw,
+  type ForceCandle,
+} from "../../../src/domain/force-index";
 
 const mk = (c: number, v: number): ForceCandle => ({ close: c, volume: v });
 

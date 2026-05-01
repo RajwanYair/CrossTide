@@ -2,14 +2,14 @@ import { describe, it, expect } from "vitest";
 import { resampleCandles, TIMEFRAMES } from "../../../src/domain/resample";
 import type { Candle } from "../../../src/domain/heikin-ashi";
 
-const mk = (
-  t: number,
-  o: number,
-  h: number,
-  l: number,
-  c: number,
-  v?: number,
-): Candle => ({ time: t, open: o, high: h, low: l, close: c, volume: v });
+const mk = (t: number, o: number, h: number, l: number, c: number, v?: number): Candle => ({
+  time: t,
+  open: o,
+  high: h,
+  low: l,
+  close: c,
+  volume: v,
+});
 
 describe("resample", () => {
   it("rejects bad interval", () => {
@@ -62,10 +62,7 @@ describe("resample", () => {
 
   it("buckets align to interval boundaries (not first candle time)", () => {
     const minute = 60_000;
-    const cs: Candle[] = [
-      mk(7 * minute, 10, 11, 9, 10),
-      mk(8 * minute, 10, 11, 9, 11),
-    ];
+    const cs: Candle[] = [mk(7 * minute, 10, 11, 9, 10), mk(8 * minute, 10, 11, 9, 11)];
     const out = resampleCandles(cs, { intervalMs: 5 * minute });
     // Both fall into bucket starting at 5m.
     expect(out[0]!.time).toBe(5 * minute);

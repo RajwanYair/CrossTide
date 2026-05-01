@@ -9,10 +9,38 @@ import {
 } from "../../../src/cards/alert-history";
 
 const ALERTS: AlertRecord[] = [
-  { id: "1", ticker: "AAPL", alertType: "rsiMethodBuy", direction: "BUY", description: "RSI oversold bounce", firedAt: "2025-06-01T10:00:00Z" },
-  { id: "2", ticker: "GOOG", alertType: "macdMethodSell", direction: "SELL", description: "MACD bearish cross", firedAt: "2025-06-02T12:00:00Z" },
-  { id: "3", ticker: "AAPL", alertType: "consensusBuy", direction: "BUY", description: "Consensus BUY 75%", firedAt: "2025-06-03T08:30:00Z" },
-  { id: "4", ticker: "MSFT", alertType: "bollingerMethodBuy", direction: "NEUTRAL", description: "Bollinger neutral", firedAt: "2025-06-04T09:00:00Z" },
+  {
+    id: "1",
+    ticker: "AAPL",
+    alertType: "rsiMethodBuy",
+    direction: "BUY",
+    description: "RSI oversold bounce",
+    firedAt: "2025-06-01T10:00:00Z",
+  },
+  {
+    id: "2",
+    ticker: "GOOG",
+    alertType: "macdMethodSell",
+    direction: "SELL",
+    description: "MACD bearish cross",
+    firedAt: "2025-06-02T12:00:00Z",
+  },
+  {
+    id: "3",
+    ticker: "AAPL",
+    alertType: "consensusBuy",
+    direction: "BUY",
+    description: "Consensus BUY 75%",
+    firedAt: "2025-06-03T08:30:00Z",
+  },
+  {
+    id: "4",
+    ticker: "MSFT",
+    alertType: "bollingerMethodBuy",
+    direction: "NEUTRAL",
+    description: "Bollinger neutral",
+    firedAt: "2025-06-04T09:00:00Z",
+  },
 ];
 
 describe("alert-history card", () => {
@@ -95,7 +123,7 @@ describe("alert-history card", () => {
       renderAlertHistory(container, [xss]);
       expect(container.innerHTML).not.toContain("<script>");
       expect(container.innerHTML).toContain("&lt;script&gt;");
-      expect(container.innerHTML).not.toContain('<img ');
+      expect(container.innerHTML).not.toContain("<img ");
     });
   });
 });

@@ -16,8 +16,22 @@ import type { Holding } from "../../../src/cards/portfolio";
 import type { BacktestResult, BacktestTrade } from "../../../src/domain/backtest-engine";
 
 const ALERTS: AlertRecord[] = [
-  { id: "1", ticker: "AAPL", alertType: "rsiBuy", direction: "BUY", description: "RSI bounce", firedAt: "2025-06-01T10:00:00Z" },
-  { id: "2", ticker: "GOOG", alertType: "macdSell", direction: "SELL", description: "MACD cross", firedAt: "2025-06-02T12:00:00Z" },
+  {
+    id: "1",
+    ticker: "AAPL",
+    alertType: "rsiBuy",
+    direction: "BUY",
+    description: "RSI bounce",
+    firedAt: "2025-06-01T10:00:00Z",
+  },
+  {
+    id: "2",
+    ticker: "GOOG",
+    alertType: "macdSell",
+    direction: "SELL",
+    description: "MACD cross",
+    firedAt: "2025-06-02T12:00:00Z",
+  },
 ];
 
 const HOLDINGS: Holding[] = [
@@ -26,8 +40,20 @@ const HOLDINGS: Holding[] = [
 ];
 
 const TRADES: BacktestTrade[] = [
-  { entryDate: "2025-01-01", exitDate: "2025-01-10", entryPrice: 100, exitPrice: 110, profitPercent: 10 },
-  { entryDate: "2025-02-01", exitDate: "2025-02-15", entryPrice: 110, exitPrice: 105, profitPercent: -4.545 },
+  {
+    entryDate: "2025-01-01",
+    exitDate: "2025-01-10",
+    entryPrice: 100,
+    exitPrice: 110,
+    profitPercent: 10,
+  },
+  {
+    entryDate: "2025-02-01",
+    exitDate: "2025-02-15",
+    entryPrice: 110,
+    exitPrice: 105,
+    profitPercent: -4.545,
+  },
 ];
 
 describe("exportAlertsCsv", () => {
@@ -46,7 +72,14 @@ describe("exportAlertsCsv", () => {
 
   it("escapes commas in description", () => {
     const a: AlertRecord[] = [
-      { id: "1", ticker: "X", alertType: "t", direction: "BUY", description: "a, b", firedAt: "2025-01-01" },
+      {
+        id: "1",
+        ticker: "X",
+        alertType: "t",
+        direction: "BUY",
+        description: "a, b",
+        firedAt: "2025-01-01",
+      },
     ];
     const csv = exportAlertsCsv(a);
     expect(csv).toContain('"a, b"');
@@ -125,7 +158,8 @@ describe("importAlertsCsv", () => {
   });
 
   it("handles quoted fields", () => {
-    const csv = 'id,ticker,alertType,direction,description,firedAt\n1,X,t,BUY,"hello, world",2025-01-01';
+    const csv =
+      'id,ticker,alertType,direction,description,firedAt\n1,X,t,BUY,"hello, world",2025-01-01';
     const imported = importAlertsCsv(csv);
     expect(imported[0].description).toBe("hello, world");
   });

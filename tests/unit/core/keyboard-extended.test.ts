@@ -15,7 +15,10 @@ describe("keyboard manager extended", () => {
     manager.destroy();
   });
 
-  function fireKey(key: string, opts: { ctrlKey?: boolean; shiftKey?: boolean; altKey?: boolean } = {}): void {
+  function fireKey(
+    key: string,
+    opts: { ctrlKey?: boolean; shiftKey?: boolean; altKey?: boolean } = {},
+  ): void {
     document.dispatchEvent(
       new KeyboardEvent("keydown", {
         key,

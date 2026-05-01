@@ -8,13 +8,20 @@ describe("ulcer-index", () => {
   });
 
   it("monotonic uptrend -> UI > 0 (early bars are below current max)", () => {
-    const out = computeUlcerIndex(Array.from({ length: 30 }, (_, i) => 100 + i), 10);
+    const out = computeUlcerIndex(
+      Array.from({ length: 30 }, (_, i) => 100 + i),
+      10,
+    );
     for (const v of out) expect(v).toBeGreaterThan(0);
   });
 
   it("flat series -> UI = 0", () => {
-    expect(computeUlcerIndex(Array.from({ length: 20 }, () => 50), 10).every((v) => v === 0))
-      .toBe(true);
+    expect(
+      computeUlcerIndex(
+        Array.from({ length: 20 }, () => 50),
+        10,
+      ).every((v) => v === 0),
+    ).toBe(true);
   });
 
   it("drawdown -> positive UI", () => {
@@ -32,7 +39,12 @@ describe("ulcer-index", () => {
   });
 
   it("output length = closes - period + 1", () => {
-    expect(computeUlcerIndex(Array.from({ length: 20 }, (_, i) => i + 1), 5).length).toBe(16);
+    expect(
+      computeUlcerIndex(
+        Array.from({ length: 20 }, (_, i) => i + 1),
+        5,
+      ).length,
+    ).toBe(16);
   });
 
   it("rejects non-positive period", () => {

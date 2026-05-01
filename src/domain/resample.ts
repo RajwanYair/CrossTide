@@ -38,10 +38,7 @@ export const TIMEFRAMES = {
   w1: 7 * DAY,
 } as const;
 
-export function resampleCandles(
-  candles: readonly Candle[],
-  options: ResampleOptions,
-): Candle[] {
+export function resampleCandles(candles: readonly Candle[], options: ResampleOptions): Candle[] {
   const interval = options.intervalMs;
   if (!Number.isFinite(interval) || interval <= 0) {
     throw new RangeError("intervalMs must be a positive finite number");

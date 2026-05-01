@@ -39,9 +39,7 @@ describe("sri", () => {
 
   it("integrityAttr formats both attributes", () => {
     const v = "sha384-AAAA";
-    expect(integrityAttr(v)).toBe(
-      'integrity="sha384-AAAA" crossorigin="anonymous"',
-    );
+    expect(integrityAttr(v)).toBe('integrity="sha384-AAAA" crossorigin="anonymous"');
   });
 
   it("isValidSriValue rejects garbage", () => {

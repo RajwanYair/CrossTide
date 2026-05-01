@@ -12,10 +12,7 @@ export interface DonchianPoint {
   readonly middle: number;
 }
 
-export function computeDonchian(
-  candles: readonly Candle[],
-  period = 20,
-): DonchianPoint[] {
+export function computeDonchian(candles: readonly Candle[], period = 20): DonchianPoint[] {
   if (period <= 0 || !Number.isInteger(period)) {
     throw new RangeError("period must be a positive integer");
   }

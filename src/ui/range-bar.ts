@@ -37,8 +37,7 @@ export function computeRangeBar(input: RangeBarInput): RangeBarGeometry {
   const range = high - low;
   const raw = (current - low) / range;
   const position = Math.max(0, Math.min(1, raw));
-  const zone: RangeBarGeometry["zone"] =
-    raw < 0 ? "below" : raw > 1 ? "above" : "in";
+  const zone: RangeBarGeometry["zone"] = raw < 0 ? "below" : raw > 1 ? "above" : "in";
   return {
     position,
     zone,
@@ -47,9 +46,9 @@ export function computeRangeBar(input: RangeBarInput): RangeBarGeometry {
   };
 }
 
-export function rangeFromCandles(candles: readonly { high: number; low: number; close: number }[]):
-  | RangeBarInput
-  | null {
+export function rangeFromCandles(
+  candles: readonly { high: number; low: number; close: number }[],
+): RangeBarInput | null {
   if (candles.length === 0) return null;
   let lo = Infinity;
   let hi = -Infinity;

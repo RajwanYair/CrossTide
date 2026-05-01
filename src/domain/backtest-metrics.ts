@@ -63,16 +63,11 @@ export function maxDrawdown(curve: readonly EquityPoint[]): number {
  * Annualized Sharpe ratio. Caller provides the periods-per-year
  * sampling rate (252 for daily bars, 12 for monthly, etc.).
  */
-export function sharpe(
-  returns: readonly number[],
-  periodsPerYear = 252,
-  riskFreeRate = 0,
-): number {
+export function sharpe(returns: readonly number[], periodsPerYear = 252, riskFreeRate = 0): number {
   if (returns.length < 2) return 0;
   const excess = returns.map((r) => r - riskFreeRate / periodsPerYear);
   const mean = excess.reduce((s, x) => s + x, 0) / excess.length;
-  const variance =
-    excess.reduce((s, x) => s + (x - mean) ** 2, 0) / (excess.length - 1);
+  const variance = excess.reduce((s, x) => s + (x - mean) ** 2, 0) / (excess.length - 1);
   const std = Math.sqrt(variance);
   if (std === 0) return 0;
   return (mean / std) * Math.sqrt(periodsPerYear);
@@ -123,9 +118,6 @@ export function computeMetrics(
     winRate: winRate(trades),
     profitFactor: profitFactor(trades),
     tradeCount: trades.length,
-    avgTradePnl:
-      trades.length === 0
-        ? 0
-        : trades.reduce((s, t) => s + t.pnl, 0) / trades.length,
+    avgTradePnl: trades.length === 0 ? 0 : trades.reduce((s, t) => s + t.pnl, 0) / trades.length,
   };
 }

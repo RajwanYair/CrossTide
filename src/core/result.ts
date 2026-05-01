@@ -28,18 +28,15 @@ export const map = <T, U, E>(r: Result<T, E>, fn: (value: T) => U): Result<U, E>
 export const mapErr = <T, E, F>(r: Result<T, E>, fn: (error: E) => F): Result<T, F> =>
   r.ok ? r : err(fn(r.error));
 
-export const andThen = <T, U, E>(
-  r: Result<T, E>,
-  fn: (value: T) => Result<U, E>,
-): Result<U, E> => (r.ok ? fn(r.value) : r);
+export const andThen = <T, U, E>(r: Result<T, E>, fn: (value: T) => Result<U, E>): Result<U, E> =>
+  r.ok ? fn(r.value) : r;
 
 export const unwrap = <T, E>(r: Result<T, E>): T => {
   if (r.ok) return r.value;
   throw r.error instanceof Error ? r.error : new Error(String(r.error));
 };
 
-export const unwrapOr = <T, E>(r: Result<T, E>, fallback: T): T =>
-  r.ok ? r.value : fallback;
+export const unwrapOr = <T, E>(r: Result<T, E>, fallback: T): T => (r.ok ? r.value : fallback);
 
 export function tryCatch<T>(fn: () => T): Result<T, unknown> {
   try {

@@ -83,9 +83,15 @@ export function computeStochRsi(
     let sum = 0;
     let ok = true;
     for (let j = i - kSmooth + 1; j <= i; j++) {
-      if (j < 0) { ok = false; break; }
+      if (j < 0) {
+        ok = false;
+        break;
+      }
       const v = raw[j];
-      if (v === null || v === undefined) { ok = false; break; }
+      if (v === null || v === undefined) {
+        ok = false;
+        break;
+      }
       sum += v;
     }
     if (ok) k[i] = sum / kSmooth;
@@ -96,9 +102,15 @@ export function computeStochRsi(
     let sum = 0;
     let ok = true;
     for (let j = i - dSmooth + 1; j <= i; j++) {
-      if (j < 0) { ok = false; break; }
+      if (j < 0) {
+        ok = false;
+        break;
+      }
       const v = k[j];
-      if (v === null || v === undefined) { ok = false; break; }
+      if (v === null || v === undefined) {
+        ok = false;
+        break;
+      }
       sum += v;
     }
     if (ok) d[i] = sum / dSmooth;

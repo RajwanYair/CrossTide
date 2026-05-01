@@ -6,17 +6,12 @@ import {
   showNotification,
 } from "../../../src/core/notifications";
 
-const origDescriptor = Object.getOwnPropertyDescriptor(
-  globalThis,
-  "Notification",
-);
+const origDescriptor = Object.getOwnPropertyDescriptor(globalThis, "Notification");
 
 class FakeNotification {
   static permission: NotificationPermission = "default";
   static lastInstance: FakeNotification | null = null;
-  static requestPermission = vi.fn(
-    async (): Promise<NotificationPermission> => "granted",
-  );
+  static requestPermission = vi.fn(async (): Promise<NotificationPermission> => "granted");
   public onclick: (() => void) | null = null;
   public closed = false;
   constructor(

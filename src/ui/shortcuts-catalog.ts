@@ -10,16 +10,15 @@ export interface KeyboardShortcut {
   readonly category: ShortcutCategory;
 }
 
-export type ShortcutCategory =
-  | "navigation"
-  | "search"
-  | "view"
-  | "data"
-  | "alerts"
-  | "system";
+export type ShortcutCategory = "navigation" | "search" | "view" | "data" | "alerts" | "system";
 
 export const SHORTCUTS: readonly KeyboardShortcut[] = [
-  { id: "open-palette", keys: ["Ctrl", "K"], description: "Open command palette", category: "search" },
+  {
+    id: "open-palette",
+    keys: ["Ctrl", "K"],
+    description: "Open command palette",
+    category: "search",
+  },
   { id: "search", keys: ["/"], description: "Focus search box", category: "search" },
   { id: "help", keys: ["?"], description: "Show keyboard help", category: "system" },
   { id: "toggle-theme", keys: ["T"], description: "Toggle light/dark theme", category: "view" },

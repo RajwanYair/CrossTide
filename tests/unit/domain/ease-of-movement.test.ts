@@ -3,7 +3,14 @@ import { computeEaseOfMovement } from "../../../src/domain/ease-of-movement";
 import type { VolumeCandle } from "../../../src/domain/klinger-oscillator";
 
 function make(midpoints: number[], vols: number[]): VolumeCandle[] {
-  return midpoints.map((m, i) => ({ time: i, open: m, high: m + 1, low: m - 1, close: m, volume: vols[i] ?? 1000 }));
+  return midpoints.map((m, i) => ({
+    time: i,
+    open: m,
+    high: m + 1,
+    low: m - 1,
+    close: m,
+    volume: vols[i] ?? 1000,
+  }));
 }
 
 describe("computeEaseOfMovement", () => {
@@ -28,7 +35,12 @@ describe("computeEaseOfMovement", () => {
   });
   it("zero range bar contributes 0 to average", () => {
     const candles: VolumeCandle[] = Array.from({ length: 10 }, (_, i) => ({
-      time: i, open: 5, high: 5, low: 5, close: 5, volume: 100,
+      time: i,
+      open: 5,
+      high: 5,
+      low: 5,
+      close: 5,
+      volume: 100,
     }));
     const out = computeEaseOfMovement(candles, { period: 3 });
     expect(out[5]).toBe(0);

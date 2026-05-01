@@ -13,7 +13,10 @@ export interface KamaOptions {
   readonly slow?: number;
 }
 
-export function computeKama(values: readonly number[], opts: KamaOptions = {}): Array<number | null> {
+export function computeKama(
+  values: readonly number[],
+  opts: KamaOptions = {},
+): Array<number | null> {
   const period = opts.period ?? 10;
   const fast = opts.fast ?? 2;
   const slow = opts.slow ?? 30;

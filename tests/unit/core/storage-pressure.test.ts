@@ -40,9 +40,7 @@ describe("storage-pressure", () => {
   });
 
   it("requestPersistentStorage returns false without API", async () => {
-    const orig = (
-      globalThis as { navigator?: { storage?: unknown } }
-    ).navigator;
+    const orig = (globalThis as { navigator?: { storage?: unknown } }).navigator;
     Object.defineProperty(globalThis, "navigator", {
       value: { storage: undefined },
       configurable: true,
@@ -59,9 +57,7 @@ describe("storage-pressure", () => {
 
   it("start/stop manages interval timer", async () => {
     vi.useFakeTimers();
-    const probe = vi
-      .fn()
-      .mockResolvedValue({ usage: 10, quota: 100, ratio: 0.1 });
+    const probe = vi.fn().mockResolvedValue({ usage: 10, quota: 100, ratio: 0.1 });
     const m = createStoragePressureMonitor({
       intervalMs: 1000,
       estimate: probe,

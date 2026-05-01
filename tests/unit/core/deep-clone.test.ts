@@ -40,7 +40,10 @@ describe("deep-clone", () => {
   });
 
   it("clones Map and Set", () => {
-    const m = new Map<string, number>([["a", 1], ["b", 2]]);
+    const m = new Map<string, number>([
+      ["a", 1],
+      ["b", 2],
+    ]);
     const cm = deepClone(m);
     expect(cm.get("a")).toBe(1);
     expect(cm).not.toBe(m);

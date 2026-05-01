@@ -4,14 +4,14 @@ Coding conventions, prompt patterns, and guardrails for using GitHub Copilot in 
 
 ## Stack
 
-| Area | Tool | Version |
-|------|------|---------|
-| Language | TypeScript (strict) | 5.8+ |
-| Build | Vite | 6.3+ |
-| Test | Vitest + happy-dom | 3.1+ |
-| Lint | ESLint flat config | 9.25+ |
-| CSS | Vanilla CSS + @layer | -- |
-| Format | Prettier | 3.5+ |
+| Area     | Tool                 | Version |
+| -------- | -------------------- | ------- |
+| Language | TypeScript (strict)  | 5.8+    |
+| Build    | Vite                 | 6.3+    |
+| Test     | Vitest + happy-dom   | 3.1+    |
+| Lint     | ESLint flat config   | 9.25+   |
+| CSS      | Vanilla CSS + @layer | --      |
+| Format   | Prettier             | 3.5+    |
 
 ## Architecture
 
@@ -57,7 +57,7 @@ export function computeSma(candles: DailyCandle[], period: number): number | nul
 
 // WRONG -- side effect in domain
 export async function computeSma(ticker: string): Promise<number | null> {
-  const candles = await fetch(`/api/${ticker}`);  // forbidden
+  const candles = await fetch(`/api/${ticker}`); // forbidden
 }
 ```
 
@@ -65,35 +65,35 @@ export async function computeSma(ticker: string): Promise<number | null> {
 
 CrossTide evaluates 12 trading methods combined through a consensus engine:
 
-| Method | BUY Condition | SELL Condition |
-|--------|--------------|----------------|
-| **Micho** (primary) | Price crosses above SMA150 | Price crosses below SMA150 |
-| **RSI** | RSI exits oversold (<30->>=30) | RSI exits overbought (>70-><=70) |
-| **MACD** | MACD crosses above signal | MACD crosses below signal |
-| **Bollinger** | Price crosses above lower band | Price crosses below upper band |
-| **Stochastic** | %K crosses above %D from oversold | %K crosses below %D from overbought |
-| **OBV** | Positive OBV divergence | Negative OBV divergence |
-| **ADX** | Strong trend + DI+ > DI- | Strong trend + DI- > DI+ |
-| **CCI** | CCI exits oversold (>-100) | CCI exits overbought (<+100) |
-| **SAR** | Parabolic SAR flips to BUY | Parabolic SAR flips to SELL |
-| **Williams %R** | %R exits oversold (>-80) | %R exits overbought (<-20) |
-| **MFI** | MFI exits oversold (<20->>=20) | MFI exits overbought (>80-><=80) |
-| **SuperTrend** | Direction flip to bullish | Direction flip to bearish |
+| Method              | BUY Condition                     | SELL Condition                      |
+| ------------------- | --------------------------------- | ----------------------------------- |
+| **Micho** (primary) | Price crosses above SMA150        | Price crosses below SMA150          |
+| **RSI**             | RSI exits oversold (<30->>=30)    | RSI exits overbought (>70-><=70)    |
+| **MACD**            | MACD crosses above signal         | MACD crosses below signal           |
+| **Bollinger**       | Price crosses above lower band    | Price crosses below upper band      |
+| **Stochastic**      | %K crosses above %D from oversold | %K crosses below %D from overbought |
+| **OBV**             | Positive OBV divergence           | Negative OBV divergence             |
+| **ADX**             | Strong trend + DI+ > DI-          | Strong trend + DI- > DI+            |
+| **CCI**             | CCI exits oversold (>-100)        | CCI exits overbought (<+100)        |
+| **SAR**             | Parabolic SAR flips to BUY        | Parabolic SAR flips to SELL         |
+| **Williams %R**     | %R exits oversold (>-80)          | %R exits overbought (<-20)          |
+| **MFI**             | MFI exits oversold (<20->>=20)    | MFI exits overbought (>80-><=80)    |
+| **SuperTrend**      | Direction flip to bullish         | Direction flip to bearish           |
 
 **Consensus rule**: `BUY` = Micho BUY + >=1 other BUY. `SELL` = Micho SELL + >=1 other SELL.
 
 ## Quality Gates -- Zero Tolerance
 
-| Gate | Command | Requirement |
-|------|---------|-------------|
-| Type check | `npm run typecheck` | Zero errors |
-| ESLint | `npm run lint` | Zero warnings |
-| Stylelint | `npm run lint:css` | Zero CSS warnings |
-| HTMLHint | `npm run lint:html` | Zero issues |
-| Prettier | `npm run format:check` | Exit 0 |
-| Tests | `npm run test:coverage` | All pass, >=90% coverage |
-| Build | `npm run build` | Successful |
-| Bundle | `npm run check:bundle` | Under 200 KB |
+| Gate       | Command                 | Requirement              |
+| ---------- | ----------------------- | ------------------------ |
+| Type check | `npm run typecheck`     | Zero errors              |
+| ESLint     | `npm run lint`          | Zero warnings            |
+| Stylelint  | `npm run lint:css`      | Zero CSS warnings        |
+| HTMLHint   | `npm run lint:html`     | Zero issues              |
+| Prettier   | `npm run format:check`  | Exit 0                   |
+| Tests      | `npm run test:coverage` | All pass, >=90% coverage |
+| Build      | `npm run build`         | Successful               |
+| Bundle     | `npm run check:bundle`  | Under 200 KB             |
 
 Run all at once: `npm run ci`
 

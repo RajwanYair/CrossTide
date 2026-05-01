@@ -16,10 +16,7 @@ import { runBacktest } from "../domain/backtest-engine";
 import { serveWorkerRpc, type WorkerApi } from "./worker-rpc";
 
 export interface ComputeApi extends WorkerApi {
-  runBacktest(
-    config: BacktestConfig,
-    candles: readonly DailyCandle[],
-  ): BacktestResult;
+  runBacktest(config: BacktestConfig, candles: readonly DailyCandle[]): BacktestResult;
 }
 
 serveWorkerRpc<ComputeApi>({

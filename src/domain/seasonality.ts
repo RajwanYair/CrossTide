@@ -12,8 +12,18 @@ export interface SeasonalityBucket {
 }
 
 const MONTH_LABELS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 const DOW_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -44,9 +54,7 @@ export interface DailyReturn {
   readonly returnFraction: number;
 }
 
-export function seasonalityByMonth(
-  returns: readonly DailyReturn[],
-): SeasonalityBucket[] {
+export function seasonalityByMonth(returns: readonly DailyReturn[]): SeasonalityBucket[] {
   const groups = new Map<number, number[]>();
   for (const r of returns) {
     const m = new Date(r.time).getUTCMonth();
@@ -57,9 +65,7 @@ export function seasonalityByMonth(
   return aggregate(groups, (k) => MONTH_LABELS[k] ?? String(k));
 }
 
-export function seasonalityByDayOfWeek(
-  returns: readonly DailyReturn[],
-): SeasonalityBucket[] {
+export function seasonalityByDayOfWeek(returns: readonly DailyReturn[]): SeasonalityBucket[] {
   const groups = new Map<number, number[]>();
   for (const r of returns) {
     const d = new Date(r.time).getUTCDay();

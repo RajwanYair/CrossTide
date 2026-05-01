@@ -14,7 +14,11 @@ export function parseHexColor(hex: string): RGB | null {
   const m = /^#?([\da-f]{3}|[\da-f]{6})$/i.exec(hex.trim());
   if (!m) return null;
   let h = m[1] ?? "";
-  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  if (h.length === 3)
+    h = h
+      .split("")
+      .map((c) => c + c)
+      .join("");
   if (h.length !== 6) return null;
   return {
     r: parseInt(h.slice(0, 2), 16),

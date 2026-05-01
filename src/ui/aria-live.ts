@@ -26,9 +26,15 @@ function ensureRegion(politeness: AriaLivePoliteness): HTMLElement | null {
   el.setAttribute("aria-live", politeness);
   el.setAttribute("aria-atomic", "true");
   Object.assign(el.style, {
-    position: "absolute", width: "1px", height: "1px",
-    margin: "-1px", padding: "0", overflow: "hidden",
-    clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: "0",
+    position: "absolute",
+    width: "1px",
+    height: "1px",
+    margin: "-1px",
+    padding: "0",
+    overflow: "hidden",
+    clip: "rect(0 0 0 0)",
+    whiteSpace: "nowrap",
+    border: "0",
   } as Partial<CSSStyleDeclaration>);
   document.body.appendChild(el);
   return el;

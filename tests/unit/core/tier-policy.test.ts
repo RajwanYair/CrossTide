@@ -36,11 +36,7 @@ describe("tier-policy", () => {
 
   it("enforces maxHotItems with LRU demotion", () => {
     const d = decide(
-      [
-        rec("a", "hot", 1, 100),
-        rec("b", "hot", 1, 200),
-        rec("c", "hot", 1, 300),
-      ],
+      [rec("a", "hot", 1, 100), rec("b", "hot", 1, 200), rec("c", "hot", 1, 300)],
       300,
       { maxHotItems: 2, hotIdleMs: 99_999 },
     );
@@ -48,22 +44,15 @@ describe("tier-policy", () => {
   });
 
   it("enforces maxHotBytes", () => {
-    const d = decide(
-      [
-        rec("big", "hot", 1, 100, 5_000_000),
-      ],
-      100,
-      { maxHotBytes: 1_000_000, hotIdleMs: 99_999 },
-    );
+    const d = decide([rec("big", "hot", 1, 100, 5_000_000)], 100, {
+      maxHotBytes: 1_000_000,
+      hotIdleMs: 99_999,
+    });
     expect(d.demote.map((x) => x.key)).toContain("big");
   });
 
   it("evicts excess warm items", () => {
-    const records = [
-      rec("a", "warm", 1, 100),
-      rec("b", "warm", 1, 200),
-      rec("c", "warm", 1, 300),
-    ];
+    const records = [rec("a", "warm", 1, 100), rec("b", "warm", 1, 200), rec("c", "warm", 1, 300)];
     const d = decide(records, 300, { maxWarmItems: 1, promotionHits: 99 });
     expect(d.evict.length).toBe(2);
     expect(d.evict).toContain("a");
@@ -71,11 +60,7 @@ describe("tier-policy", () => {
   });
 
   it("does not double-demote a key being promoted", () => {
-    const d = decide(
-      [rec("hot1", "warm", 5, 0)],
-      999_999,
-      { promotionHits: 3 },
-    );
+    const d = decide([rec("hot1", "warm", 5, 0)], 999_999, { promotionHits: 3 });
     expect(d.promote).toHaveLength(1);
     expect(d.evict).toHaveLength(0);
   });

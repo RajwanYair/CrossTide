@@ -26,7 +26,14 @@ export function computeBollingerSeries(
     const candle = candles[i];
     if (!candle) continue;
     if (i < period - 1) {
-      results.push({ date: candle.date, middle: null, upper: null, lower: null, bandwidth: null, percentB: null });
+      results.push({
+        date: candle.date,
+        middle: null,
+        upper: null,
+        lower: null,
+        bandwidth: null,
+        percentB: null,
+      });
       continue;
     }
     const slice = candles.slice(i - period + 1, i + 1);

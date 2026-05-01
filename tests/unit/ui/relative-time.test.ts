@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import {
-  formatRelativeTime,
-  _clearRelativeTimeCache,
-} from "../../../src/ui/relative-time";
+import { formatRelativeTime, _clearRelativeTimeCache } from "../../../src/ui/relative-time";
 
 const NOW = Date.UTC(2025, 5, 15, 12, 0, 0); // 2025-06-15 12:00 UTC
 const opt = { now: NOW, locale: "en-US" };

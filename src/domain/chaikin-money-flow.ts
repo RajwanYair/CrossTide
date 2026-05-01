@@ -13,17 +13,14 @@ export interface CmfPoint {
   readonly cmf: number;
 }
 
-export function computeChaikinMoneyFlow(
-  candles: readonly Candle[],
-  period = 20,
-): CmfPoint[] {
+export function computeChaikinMoneyFlow(candles: readonly Candle[], period = 20): CmfPoint[] {
   if (period <= 0 || candles.length < period) return [];
   const mfv: number[] = [];
   const vol: number[] = [];
   for (const c of candles) {
     const range = c.high - c.low;
     const v = c.volume ?? 0;
-    const mult = range === 0 ? 0 : ((c.close - c.low) - (c.high - c.close)) / range;
+    const mult = range === 0 ? 0 : (c.close - c.low - (c.high - c.close)) / range;
     mfv.push(mult * v);
     vol.push(v);
   }

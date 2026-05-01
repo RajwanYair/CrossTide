@@ -4,7 +4,13 @@ import { computePpo } from "../../../src/domain/ppo";
 describe("ppo", () => {
   it("rejects bad params / too short", () => {
     expect(computePpo([], 12, 26)).toEqual([]);
-    expect(computePpo(Array.from({ length: 10 }, (_, i) => i), 12, 26)).toEqual([]);
+    expect(
+      computePpo(
+        Array.from({ length: 10 }, (_, i) => i),
+        12,
+        26,
+      ),
+    ).toEqual([]);
     expect(computePpo([1, 2, 3], 0)).toEqual([]);
   });
 
@@ -34,7 +40,12 @@ describe("ppo", () => {
   });
 
   it("first point has index >= slow-1", () => {
-    const out = computePpo(Array.from({ length: 60 }, (_, i) => 100 + i), 12, 26, 9);
+    const out = computePpo(
+      Array.from({ length: 60 }, (_, i) => 100 + i),
+      12,
+      26,
+      9,
+    );
     expect(out[0]!.index).toBeGreaterThanOrEqual(25);
   });
 });

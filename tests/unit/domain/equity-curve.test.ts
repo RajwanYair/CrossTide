@@ -6,13 +6,7 @@ import {
   type ClosedTrade,
 } from "../../../src/domain/equity-curve";
 
-const long = (
-  entry: number,
-  exit: number,
-  qty = 1,
-  entryT = 0,
-  exitT = 1,
-): ClosedTrade => ({
+const long = (entry: number, exit: number, qty = 1, entryT = 0, exitT = 1): ClosedTrade => ({
   side: "long",
   entryPrice: entry,
   exitPrice: exit,
@@ -47,10 +41,7 @@ describe("equity-curve", () => {
   });
 
   it("buildEquityCurve sorts by exit time", () => {
-    const trades: ClosedTrade[] = [
-      long(100, 110, 1, 0, 200),
-      long(100, 105, 1, 0, 100),
-    ];
+    const trades: ClosedTrade[] = [long(100, 110, 1, 0, 200), long(100, 105, 1, 0, 100)];
     const c = buildEquityCurve(trades, 1000);
     expect(c[0]!.time).toBe(100);
     expect(c[1]!.time).toBe(200);

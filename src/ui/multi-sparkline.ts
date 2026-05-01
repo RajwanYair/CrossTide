@@ -73,10 +73,7 @@ export function buildSparklinePaths(
       const v = s.values[i];
       if (v === undefined || !Number.isFinite(v)) continue;
       const x = pad + i * stepX;
-      const y =
-        range === 0
-          ? pad + h / 2
-          : pad + h - ((v - lo) / range) * h;
+      const y = range === 0 ? pad + h / 2 : pad + h - ((v - lo) / range) * h;
       d += started ? `L${x.toFixed(2)} ${y.toFixed(2)} ` : `M${x.toFixed(2)} ${y.toFixed(2)} `;
       started = true;
     }

@@ -129,9 +129,7 @@ describe("renderWatchlist", () => {
   });
 
   it("renders sparkline SVG for 30d closes", () => {
-    const quotes = new Map([
-      ["AAPL", makeQuote("AAPL", { closes30d: [100, 102, 105, 103, 108] })],
-    ]);
+    const quotes = new Map([["AAPL", makeQuote("AAPL", { closes30d: [100, 102, 105, 103, 108] })]]);
     renderWatchlist(makeConfig(["AAPL"]), quotes);
 
     const html = document.getElementById("watchlist-body")!.innerHTML;

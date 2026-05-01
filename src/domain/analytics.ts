@@ -51,8 +51,7 @@ export function sortinoRatio(
   const downsideReturns = returns.filter((r) => r < 0);
   if (downsideReturns.length === 0) return null; // no downside = infinite sortino
 
-  const downsideVariance =
-    downsideReturns.reduce((a, r) => a + r ** 2, 0) / downsideReturns.length;
+  const downsideVariance = downsideReturns.reduce((a, r) => a + r ** 2, 0) / downsideReturns.length;
   const downsideStd = Math.sqrt(downsideVariance);
 
   if (downsideStd === 0) return 0;
@@ -90,9 +89,7 @@ export interface FibonacciLevels {
   readonly level786: number;
 }
 
-export function fibonacciRetracement(
-  candles: readonly DailyCandle[],
-): FibonacciLevels | null {
+export function fibonacciRetracement(candles: readonly DailyCandle[]): FibonacciLevels | null {
   if (candles.length < 2) return null;
 
   let high = -Infinity;

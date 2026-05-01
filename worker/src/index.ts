@@ -10,7 +10,13 @@
  *   GET  /api/twelve/:symbol         → Twelve Data proxy
  */
 import { handleHealth } from "./routes/health";
-import { handleQuote, handleHistory, handleSearch, handleCrypto, handleTwelve } from "./routes/proxy";
+import {
+  handleQuote,
+  handleHistory,
+  handleSearch,
+  handleCrypto,
+  handleTwelve,
+} from "./routes/proxy";
 import { applyCors } from "./middleware/cors";
 import { checkRateLimit } from "./middleware/rate-limit";
 

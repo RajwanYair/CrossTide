@@ -19,7 +19,7 @@ export function computeAdLine(candles: readonly AdCandle[]): number[] {
   for (let i = 0; i < candles.length; i++) {
     const c = candles[i]!;
     const range = c.high - c.low;
-    const mfm = range === 0 ? 0 : ((c.close - c.low) - (c.high - c.close)) / range;
+    const mfm = range === 0 ? 0 : (c.close - c.low - (c.high - c.close)) / range;
     acc += mfm * c.volume;
     out[i] = acc;
   }

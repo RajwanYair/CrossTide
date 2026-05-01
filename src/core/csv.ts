@@ -121,10 +121,7 @@ export interface CsvSerializeOptions {
   readonly crlf?: boolean;
 }
 
-export function serializeCsv(
-  rows: readonly CsvRow[],
-  options: CsvSerializeOptions = {},
-): string {
+export function serializeCsv(rows: readonly CsvRow[], options: CsvSerializeOptions = {}): string {
   const delim = options.delimiter ?? ",";
   const eol = options.crlf ? "\r\n" : "\n";
   return rows.map((r) => r.map((f) => quoteField(f, delim)).join(delim)).join(eol);

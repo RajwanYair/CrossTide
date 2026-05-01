@@ -33,18 +33,18 @@ const getDateFmt = (locale: string, sameYear: boolean): Intl.DateTimeFormat => {
   const key = `${locale}|${sameYear}`;
   let f = dateFmtCache.get(key);
   if (!f) {
-    f = new Intl.DateTimeFormat(locale, sameYear
-      ? { month: "short", day: "numeric" }
-      : { year: "numeric", month: "short", day: "numeric" });
+    f = new Intl.DateTimeFormat(
+      locale,
+      sameYear
+        ? { month: "short", day: "numeric" }
+        : { year: "numeric", month: "short", day: "numeric" },
+    );
     dateFmtCache.set(key, f);
   }
   return f;
 };
 
-export function formatRelativeTime(
-  time: number,
-  options: RelativeTimeOptions = {},
-): string {
+export function formatRelativeTime(time: number, options: RelativeTimeOptions = {}): string {
   const now = options.now ?? Date.now();
   const locale = options.locale ?? "en-US";
   const numeric = options.numeric ?? "auto";

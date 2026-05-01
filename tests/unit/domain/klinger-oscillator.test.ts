@@ -1,8 +1,18 @@
 import { describe, it, expect } from "vitest";
-import { computeKlingerOscillator, type VolumeCandle } from "../../../src/domain/klinger-oscillator";
+import {
+  computeKlingerOscillator,
+  type VolumeCandle,
+} from "../../../src/domain/klinger-oscillator";
 
 function make(closes: number[], vols: number[]): VolumeCandle[] {
-  return closes.map((c, i) => ({ time: i, open: c, high: c + 1, low: c - 1, close: c, volume: vols[i] ?? 1000 }));
+  return closes.map((c, i) => ({
+    time: i,
+    open: c,
+    high: c + 1,
+    low: c - 1,
+    close: c,
+    volume: vols[i] ?? 1000,
+  }));
 }
 
 describe("computeKlingerOscillator", () => {

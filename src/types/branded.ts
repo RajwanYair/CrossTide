@@ -39,8 +39,7 @@ export type Percent = Brand<number, "Percent">;
 
 const TICKER_RE = /^[A-Z][A-Z0-9.-]{0,9}$/;
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export class BrandError extends Error {
   constructor(
@@ -98,7 +97,8 @@ export function nonNegativeNumber(value: number): NonNegativeNumber {
 }
 
 export function unitInterval(value: number): UnitInterval {
-  if (!Number.isFinite(value) || value < 0 || value > 1) throw new BrandError("UnitInterval", value);
+  if (!Number.isFinite(value) || value < 0 || value > 1)
+    throw new BrandError("UnitInterval", value);
   return value as UnitInterval;
 }
 

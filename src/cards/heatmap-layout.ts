@@ -62,12 +62,7 @@ function worst(row: HeatmapItem[], side: number, scale: number): number {
   return Math.max((mx * sideArea) / (s * s), (s * s) / (mn * sideArea), a1, a2);
 }
 
-function placeRow(
-  row: HeatmapItem[],
-  frame: Frame,
-  scale: number,
-  out: HeatmapRect[],
-): void {
+function placeRow(row: HeatmapItem[], frame: Frame, scale: number, out: HeatmapRect[]): void {
   if (row.length === 0) return;
   let total = 0;
   for (const r of row) total += r.weight * scale;

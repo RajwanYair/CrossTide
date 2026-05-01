@@ -6,7 +6,9 @@
  *  - isAbortError: type-guard for the standard AbortError DOMException.
  */
 
-export function combineSignals(...signals: readonly (AbortSignal | undefined | null)[]): AbortSignal {
+export function combineSignals(
+  ...signals: readonly (AbortSignal | undefined | null)[]
+): AbortSignal {
   const ctrl = new AbortController();
   const filtered: AbortSignal[] = [];
   for (const s of signals) if (s) filtered.push(s);

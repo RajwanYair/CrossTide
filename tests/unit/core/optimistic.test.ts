@@ -1,9 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import {
-  optimisticMutation,
-  withPayload,
-  type MutationStore,
-} from "../../../src/core/optimistic";
+import { optimisticMutation, withPayload, type MutationStore } from "../../../src/core/optimistic";
 
 function makeStore<S>(initial: S): MutationStore<S> & { snapshots: S[] } {
   let s = initial;

@@ -35,7 +35,11 @@ const ema = (values: readonly number[], period: number): (number | null)[] => {
 const emaOfNullable = (values: readonly (number | null)[], period: number): (number | null)[] => {
   const out: (number | null)[] = new Array(values.length).fill(null);
   let firstIdx = -1;
-  for (let i = 0; i < values.length; i++) if (values[i] !== null) { firstIdx = i; break; }
+  for (let i = 0; i < values.length; i++)
+    if (values[i] !== null) {
+      firstIdx = i;
+      break;
+    }
   if (firstIdx < 0) return out;
   const dense: number[] = [];
   for (let i = firstIdx; i < values.length; i++) dense.push(values[i] as number);
@@ -77,8 +81,17 @@ export function computeElderImpulse(
     const e1 = ema13[i];
     const h0 = hist[i - 1];
     const h1 = hist[i];
-    if (e0 === null || e0 === undefined || e1 === null || e1 === undefined ||
-        h0 === null || h0 === undefined || h1 === null || h1 === undefined) continue;
+    if (
+      e0 === null ||
+      e0 === undefined ||
+      e1 === null ||
+      e1 === undefined ||
+      h0 === null ||
+      h0 === undefined ||
+      h1 === null ||
+      h1 === undefined
+    )
+      continue;
     const emaUp = e1 > e0;
     const emaDown = e1 < e0;
     const histUp = h1 > h0;

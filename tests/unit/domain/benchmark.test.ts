@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  rebaseToHundred,
-  compareToBenchmark,
-  beta,
-} from "../../../src/domain/benchmark";
+import { rebaseToHundred, compareToBenchmark, beta } from "../../../src/domain/benchmark";
 
 const series = (...pts: [number, number][]): { timestamp: number; value: number }[] =>
   pts.map(([timestamp, value]) => ({ timestamp, value }));
@@ -38,10 +34,7 @@ describe("benchmark", () => {
   });
 
   it("compareToBenchmark drops timestamps without overlap", () => {
-    const r = compareToBenchmark(
-      series([1, 100], [2, 110]),
-      series([2, 200]),
-    );
+    const r = compareToBenchmark(series([1, 100], [2, 110]), series([2, 200]));
     expect(r).toHaveLength(1);
   });
 
@@ -51,10 +44,7 @@ describe("benchmark", () => {
   });
 
   it("compareToBenchmark computes excessPct", () => {
-    const r = compareToBenchmark(
-      series([1, 100], [2, 120]),
-      series([1, 100], [2, 110]),
-    );
+    const r = compareToBenchmark(series([1, 100], [2, 120]), series([1, 100], [2, 110]));
     expect(r[1]!.excessPct).toBeCloseTo(10, 5);
   });
 

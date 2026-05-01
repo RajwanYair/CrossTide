@@ -5,12 +5,7 @@
  * (never sent from the browser).
  */
 import type { DailyCandle } from "../types/domain";
-import type {
-  MarketDataProvider,
-  ProviderHealth,
-  Quote,
-  SearchResult,
-} from "./types";
+import type { MarketDataProvider, ProviderHealth, Quote, SearchResult } from "./types";
 import { FetchError, fetchWithRetry } from "../core/fetch";
 
 const DEFAULT_BASE_URL = "https://finnhub.io/api/v1";
@@ -94,10 +89,7 @@ export function createFinnhubProvider(
     }
   }
 
-  async function getHistory(
-    ticker: string,
-    days: number,
-  ): Promise<readonly DailyCandle[]> {
+  async function getHistory(ticker: string, days: number): Promise<readonly DailyCandle[]> {
     const to = Math.floor(Date.now() / 1000);
     const from = to - days * 24 * 60 * 60;
     const url =
@@ -144,9 +136,7 @@ export function createFinnhubProvider(
   }
 
   async function search(query: string): Promise<readonly SearchResult[]> {
-    const url =
-      `${baseUrl}/search?q=${encodeURIComponent(query)}` +
-      `&token=${encodeURIComponent(apiKey)}`;
+    const url = `${baseUrl}/search?q=${encodeURIComponent(query)}&token=${encodeURIComponent(apiKey)}`;
     try {
       const res = await fetchWithRetry(url, {}, 2, 500);
       const data = (await res.json()) as FinnhubSearchResponse;

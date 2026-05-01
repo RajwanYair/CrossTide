@@ -1,8 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import {
-  classifyWidth,
-  observeContainer,
-} from "../../../src/ui/container-query";
+import { classifyWidth, observeContainer } from "../../../src/ui/container-query";
 
 describe("container-query", () => {
   it("classifyWidth picks the correct bucket", () => {
@@ -14,12 +11,8 @@ describe("container-query", () => {
   });
 
   it("custom breakpoints respected", () => {
-    expect(
-      classifyWidth(50, { sm: 100, md: 200, lg: 300, xl: 400 }),
-    ).toBe("xs");
-    expect(
-      classifyWidth(150, { sm: 100, md: 200, lg: 300, xl: 400 }),
-    ).toBe("sm");
+    expect(classifyWidth(50, { sm: 100, md: 200, lg: 300, xl: 400 })).toBe("xs");
+    expect(classifyWidth(150, { sm: 100, md: 200, lg: 300, xl: 400 })).toBe("sm");
   });
 
   it("observeContainer reports initial size from getBoundingClientRect", () => {
@@ -53,9 +46,7 @@ describe("container-query", () => {
 
     const h = observeContainer(el, { onChange });
     expect(h.current).toBe("xs");
-    captured?.([
-      { contentRect: { width: 800 } } as unknown as ResizeObserverEntry,
-    ]);
+    captured?.([{ contentRect: { width: 800 } } as unknown as ResizeObserverEntry]);
     expect(onChange).toHaveBeenCalledWith("lg", 800);
     expect(h.current).toBe("lg");
     h.dispose();

@@ -39,11 +39,17 @@ const ema = (values: readonly number[], period: number): (number | null)[] => {
   return out;
 };
 
-const emaOfNullableTail = (values: readonly (number | null)[], period: number): (number | null)[] => {
+const emaOfNullableTail = (
+  values: readonly (number | null)[],
+  period: number,
+): (number | null)[] => {
   const out: (number | null)[] = new Array(values.length).fill(null);
   let firstIdx = -1;
   for (let i = 0; i < values.length; i++) {
-    if (values[i] !== null) { firstIdx = i; break; }
+    if (values[i] !== null) {
+      firstIdx = i;
+      break;
+    }
   }
   if (firstIdx < 0) return out;
   const dense: number[] = [];

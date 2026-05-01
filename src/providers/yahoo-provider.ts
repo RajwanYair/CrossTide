@@ -130,12 +130,14 @@ export function createYahooProvider(baseUrl: string = DEFAULT_BASE_URL): MarketD
       const data = (await res.json()) as YahooSearchResult;
       recordSuccess();
       return (
-        data.quotes?.map((q) => ({
-          symbol: q.symbol ?? "",
-          name: q.longname ?? q.shortname ?? "",
-          exchange: q.exchDisp,
-          type: q.quoteType,
-        })) ?? []
+        data.quotes?.map((q): SearchResult => {
+          const base = { symbol: q.symbol ?? "", name: q.longname ?? q.shortname ?? "" };
+          if (q.exchDisp !== undefined && q.quoteType !== undefined)
+            return { ...base, exchange: q.exchDisp, type: q.quoteType };
+          if (q.exchDisp !== undefined) return { ...base, exchange: q.exchDisp };
+          if (q.quoteType !== undefined) return { ...base, type: q.quoteType };
+          return base;
+        }) ?? []
       );
     } catch (err) {
       recordError();

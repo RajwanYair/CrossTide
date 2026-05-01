@@ -10,8 +10,7 @@ const mk = (close: number, hi: number, lo: number, t = 0): Candle => ({
   close,
 });
 
-const flat = (n: number): Candle[] =>
-  Array.from({ length: n }, (_, i) => mk(100, 101, 99, i));
+const flat = (n: number): Candle[] => Array.from({ length: n }, (_, i) => mk(100, 101, 99, i));
 
 describe("keltner", () => {
   it("rejects invalid length", () => {

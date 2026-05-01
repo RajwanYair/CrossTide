@@ -47,9 +47,7 @@ async function loadAll(db: IDB): Promise<QueuedRequest[]> {
   return out;
 }
 
-export async function createSyncQueue(
-  options: SyncQueueOptions = {},
-): Promise<SyncQueue> {
+export async function createSyncQueue(options: SyncQueueOptions = {}): Promise<SyncQueue> {
   const db = options.db ?? (await openIDB("crosstide-sync", [STORE], 1));
   const maxAttempts = options.maxAttempts ?? 5;
   const now = options.now ?? ((): number => Date.now());
@@ -58,15 +56,13 @@ export async function createSyncQueue(
   return {
     async enqueue(req): Promise<number> {
       const id = nextId++;
-      const item: QueuedRequest = {
-        id,
-        url: req.url,
-        method: req.method,
-        body: req.body,
-        headers: req.headers,
-        enqueuedAt: now(),
-        attempts: 0,
-      };
+      const base = { id, url: req.url, method: req.method, enqueuedAt: now(), attempts: 0 };
+      let item: QueuedRequest;
+      if (req.body !== undefined && req.headers !== undefined)
+        item = { ...base, body: req.body, headers: req.headers };
+      else if (req.body !== undefined) item = { ...base, body: req.body };
+      else if (req.headers !== undefined) item = { ...base, headers: req.headers };
+      else item = base;
       await db.set(String(id), item, STORE);
       return id;
     },
@@ -86,11 +82,10 @@ export async function createSyncQueue(
       for (const item of items) {
         let ok: boolean;
         try {
-          const res = await fetcher(item.url, {
-            method: item.method,
-            body: item.body,
-            headers: item.headers,
-          });
+          const init: RequestInit = { method: item.method };
+          if (item.body !== undefined) init.body = item.body;
+          if (item.headers !== undefined) init.headers = item.headers;
+          const res = await fetcher(item.url, init);
           ok = res.ok;
         } catch {
           ok = false;

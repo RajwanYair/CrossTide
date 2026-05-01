@@ -42,9 +42,7 @@ export function totalValue(holdings: readonly Holding[]): number {
   return s;
 }
 
-export function sectorAllocation(
-  holdings: readonly Holding[],
-): SectorAllocation[] {
+export function sectorAllocation(holdings: readonly Holding[]): SectorAllocation[] {
   const total = totalValue(holdings);
   if (total === 0) return [];
   const map = new Map<string, { value: number; tickers: number }>();
@@ -67,9 +65,7 @@ export function sectorAllocation(
   return out.sort((a, b) => b.value - a.value);
 }
 
-export function positionMetrics(
-  holdings: readonly Holding[],
-): PositionMetric[] {
+export function positionMetrics(holdings: readonly Holding[]): PositionMetric[] {
   const total = totalValue(holdings);
   return holdings.map((h) => {
     const value = positionValue(h);
@@ -85,10 +81,7 @@ export function positionMetrics(
 }
 
 /** Concentration of the top-N holdings as a fraction of portfolio value. */
-export function topConcentration(
-  holdings: readonly Holding[],
-  n: number,
-): number {
+export function topConcentration(holdings: readonly Holding[], n: number): number {
   if (n <= 0 || holdings.length === 0) return 0;
   const total = totalValue(holdings);
   if (total === 0) return 0;

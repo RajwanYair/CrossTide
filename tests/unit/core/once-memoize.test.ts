@@ -33,7 +33,8 @@ describe("memoize", () => {
   it("clear() resets cache", () => {
     const spy = vi.fn((x: number) => x + 1);
     const f = memoize(spy);
-    f(1); f(1);
+    f(1);
+    f(1);
     expect(spy).toHaveBeenCalledTimes(1);
     f.clear();
     f(1);
@@ -43,7 +44,8 @@ describe("memoize", () => {
   it("delete(key) removes a single entry", () => {
     const spy = vi.fn((x: number) => x);
     const f = memoize(spy, (x) => String(x));
-    f(7); f(7);
+    f(7);
+    f(7);
     expect(spy).toHaveBeenCalledTimes(1);
     expect(f.delete("7")).toBe(true);
     expect(f.delete("missing")).toBe(false);

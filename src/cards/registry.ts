@@ -25,10 +25,7 @@ export interface CardHandle {
 }
 
 export type CardModule = {
-  readonly mount: (
-    container: HTMLElement,
-    ctx: CardContext,
-  ) => CardHandle | void;
+  readonly mount: (container: HTMLElement, ctx: CardContext) => CardHandle | void;
 };
 
 export interface CardEntry {

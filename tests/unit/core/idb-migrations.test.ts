@@ -23,9 +23,7 @@ describe("idb-migrations", () => {
   });
 
   it("validateMigrations rejects version 0", () => {
-    expect(() =>
-      validateMigrations([{ version: 0, upgrade: () => undefined }]),
-    ).toThrow();
+    expect(() => validateMigrations([{ version: 0, upgrade: () => undefined }])).toThrow();
   });
 
   it("validateMigrations rejects duplicate versions", () => {

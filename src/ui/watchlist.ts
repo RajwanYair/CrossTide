@@ -48,8 +48,7 @@ function renderRow(ticker: string, quote: TickerQuote | null): string {
     ? renderBadge(quote.consensus.direction)
     : renderBadge("NEUTRAL");
   const volume = quote ? formatVolume(quote.volume) : "--";
-  const sparkline =
-    quote && quote.closes30d.length >= 2 ? renderSparkline(quote.closes30d) : "--";
+  const sparkline = quote && quote.closes30d.length >= 2 ? renderSparkline(quote.closes30d) : "--";
   const range52w = quote ? render52wRange(quote.price, quote.low52w, quote.high52w) : "--";
   const volumeBar = quote ? renderVolumeBar(quote.volume, quote.avgVolume) : "";
 

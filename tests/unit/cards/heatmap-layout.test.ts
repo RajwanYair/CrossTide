@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  computeHeatmap,
-  heatmapColor,
-  type HeatmapItem,
-} from "../../../src/cards/heatmap-layout";
+import { computeHeatmap, heatmapColor, type HeatmapItem } from "../../../src/cards/heatmap-layout";
 
 const BOUNDS = { x: 0, y: 0, width: 100, height: 100 };
 

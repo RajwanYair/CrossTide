@@ -1,6 +1,1 @@
-{
-  "extends": ["../tooling/stylelint/base.json"],
-  "rules": {
-    "declaration-block-no-redundant-longhand-properties": null
-  }
-}
+{ "extends": ["../tooling/stylelint/base.json"] }

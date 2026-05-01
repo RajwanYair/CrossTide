@@ -65,7 +65,13 @@ describe("modal", () => {
 
   it("calls onClose callback", () => {
     let called = false;
-    openModal({ title: "T", content: "C", onClose: () => { called = true; } });
+    openModal({
+      title: "T",
+      content: "C",
+      onClose: () => {
+        called = true;
+      },
+    });
     closeModal();
     expect(called).toBe(true);
   });

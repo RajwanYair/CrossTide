@@ -20,16 +20,16 @@ npm run dev        # http://localhost:5173
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start dev server |
-| `npm run build` | TypeScript check + production build |
-| `npm test` | Run unit tests |
-| `npm run test:coverage` | Tests with v8 coverage |
-| `npm run lint` | ESLint |
-| `npm run lint:all` | ESLint + Stylelint + HTMLHint + markdownlint |
-| `npm run format` | Prettier auto-format |
-| `npm run ci` | Full CI pipeline (typecheck + lint + test + build + bundle check) |
+| Command                 | Description                                                       |
+| ----------------------- | ----------------------------------------------------------------- |
+| `npm run dev`           | Start dev server                                                  |
+| `npm run build`         | TypeScript check + production build                               |
+| `npm test`              | Run unit tests                                                    |
+| `npm run test:coverage` | Tests with v8 coverage                                            |
+| `npm run lint`          | ESLint                                                            |
+| `npm run lint:all`      | ESLint + Stylelint + HTMLHint + markdownlint                      |
+| `npm run format`        | Prettier auto-format                                              |
+| `npm run ci`            | Full CI pipeline (typecheck + lint + test + build + bundle check) |
 
 ## Tech Stack
 

@@ -54,12 +54,7 @@ export function decodeShareState(token: string): ShareState | null {
     const bytes = base64UrlToBytes(token);
     const json = new TextDecoder().decode(bytes);
     const parsed = JSON.parse(json) as unknown;
-    if (
-      !parsed ||
-      typeof parsed !== "object" ||
-      !("v" in parsed) ||
-      !("s" in parsed)
-    ) {
+    if (!parsed || typeof parsed !== "object" || !("v" in parsed) || !("s" in parsed)) {
       return null;
     }
     const env = parsed as Envelope;

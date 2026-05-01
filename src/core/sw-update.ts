@@ -28,10 +28,7 @@ interface UpdatableRegistration {
   addEventListener(type: "updatefound", listener: () => void): void;
 }
 
-function makeHandle(
-  reg: UpdatableRegistration,
-  cleanup: () => void,
-): SwUpdateHandle {
+function makeHandle(reg: UpdatableRegistration, cleanup: () => void): SwUpdateHandle {
   return {
     applyUpdate(): void {
       reg.waiting?.postMessage({ type: "SKIP_WAITING" });

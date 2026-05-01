@@ -28,10 +28,7 @@ describe("contrast", () => {
   });
 
   it("contrastRatio black/white = 21", () => {
-    const ratio = contrastRatio(
-      { r: 0, g: 0, b: 0 },
-      { r: 255, g: 255, b: 255 },
-    );
+    const ratio = contrastRatio({ r: 0, g: 0, b: 0 }, { r: 255, g: 255, b: 255 });
     expect(ratio).toBeCloseTo(21, 1);
   });
 

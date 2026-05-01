@@ -53,9 +53,7 @@ describe("finnhub-provider", () => {
   });
 
   it("getQuote sends symbol + token in URL", async () => {
-    mockFetch.mockResolvedValue(
-      jsonResponse({ c: 1, o: 1, h: 1, l: 1, pc: 1, t: 1 }),
-    );
+    mockFetch.mockResolvedValue(jsonResponse({ c: 1, o: 1, h: 1, l: 1, pc: 1, t: 1 }));
     await provider.getQuote("MSFT");
     const url = mockFetch.mock.calls[0][0] as string;
     expect(url).toContain("symbol=MSFT");
@@ -105,16 +103,12 @@ describe("finnhub-provider", () => {
       }),
     );
     const r = await provider.search("apple");
-    expect(r).toEqual([
-      { symbol: "AAPL", name: "Apple Inc.", type: "Common Stock" },
-    ]);
+    expect(r).toEqual([{ symbol: "AAPL", name: "Apple Inc.", type: "Common Stock" }]);
   });
 
   it("health tracks success/error state", async () => {
     expect(provider.health().consecutiveErrors).toBe(0);
-    mockFetch.mockResolvedValue(
-      jsonResponse({ c: 1, o: 1, h: 1, l: 1, pc: 1, t: 1 }),
-    );
+    mockFetch.mockResolvedValue(jsonResponse({ c: 1, o: 1, h: 1, l: 1, pc: 1, t: 1 }));
     await provider.getQuote("AAPL");
     expect(provider.health().lastSuccessAt).not.toBeNull();
     expect(provider.health().available).toBe(true);

@@ -26,10 +26,7 @@ export function percentRank(values: readonly number[], target: number): number |
   return (100 * count) / values.length;
 }
 
-export function rollingPercentRank(
-  series: readonly number[],
-  window: number,
-): (number | null)[] {
+export function rollingPercentRank(series: readonly number[], window: number): (number | null)[] {
   const out: (number | null)[] = new Array(series.length).fill(null);
   if (window <= 0) return out;
   for (let i = window - 1; i < series.length; i++) {

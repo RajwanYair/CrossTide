@@ -76,7 +76,9 @@ export function openModal(options: ModalOptions): HTMLElement {
 
 export function closeModal(): void {
   if (!activeModal) return;
-  const cb = (activeModal as unknown as Record<string, unknown>).__onClose as (() => void) | undefined;
+  const cb = (activeModal as unknown as Record<string, unknown>).__onClose as
+    | (() => void)
+    | undefined;
   document.removeEventListener("keydown", handleKeyDown);
   activeModal.remove();
   activeModal = null;

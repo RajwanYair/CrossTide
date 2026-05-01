@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  detectMaCrossovers,
-  crossoverFlags,
-} from "../../../src/domain/ma-crossover";
+import { detectMaCrossovers, crossoverFlags } from "../../../src/domain/ma-crossover";
 
 describe("ma-crossover", () => {
   it("empty inputs return no events", () => {

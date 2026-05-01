@@ -4,7 +4,6 @@
  * Provides a thin typed interface over IndexedDB for large-data persistence
  * (candle history, alert records, etc.).
  */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 const DB_NAME = "crosstide-db";
 const DB_VERSION = 1;
@@ -27,7 +26,7 @@ export function openIDB(
   return new Promise<IDB>((resolve, reject) => {
     const request = indexedDB.open(dbName, version);
 
-    request.onupgradeneeded = () => {
+    request.onupgradeneeded = (): void => {
       const db = request.result;
       for (const name of storeNames) {
         if (!db.objectStoreNames.contains(name)) {
@@ -36,57 +35,57 @@ export function openIDB(
       }
     };
 
-    request.onsuccess = () => {
+    request.onsuccess = (): void => {
       const db = request.result;
 
       const api: IDB = {
         get<T>(key: string, storeName = DEFAULT_STORE): Promise<T | null> {
-          return new Promise((res, rej) => {
+          return new Promise((res, rej): void => {
             const tx = db.transaction(storeName, "readonly");
             const store = tx.objectStore(storeName);
             const req = store.get(key);
-            req.onsuccess = () => res((req.result as T) ?? null);
-            req.onerror = () => rej(req.error);
+            req.onsuccess = (): void => res((req.result as T) ?? null);
+            req.onerror = (): void => rej(req.error);
           });
         },
 
         set<T>(key: string, value: T, storeName = DEFAULT_STORE): Promise<void> {
-          return new Promise((res, rej) => {
+          return new Promise((res, rej): void => {
             const tx = db.transaction(storeName, "readwrite");
             const store = tx.objectStore(storeName);
             const req = store.put(value, key);
-            req.onsuccess = () => res();
-            req.onerror = () => rej(req.error);
+            req.onsuccess = (): void => res();
+            req.onerror = (): void => rej(req.error);
           });
         },
 
         delete(key: string, storeName = DEFAULT_STORE): Promise<void> {
-          return new Promise((res, rej) => {
+          return new Promise((res, rej): void => {
             const tx = db.transaction(storeName, "readwrite");
             const store = tx.objectStore(storeName);
             const req = store.delete(key);
-            req.onsuccess = () => res();
-            req.onerror = () => rej(req.error);
+            req.onsuccess = (): void => res();
+            req.onerror = (): void => rej(req.error);
           });
         },
 
         clear(storeName = DEFAULT_STORE): Promise<void> {
-          return new Promise((res, rej) => {
+          return new Promise((res, rej): void => {
             const tx = db.transaction(storeName, "readwrite");
             const store = tx.objectStore(storeName);
             const req = store.clear();
-            req.onsuccess = () => res();
-            req.onerror = () => rej(req.error);
+            req.onsuccess = (): void => res();
+            req.onerror = (): void => rej(req.error);
           });
         },
 
         keys(storeName = DEFAULT_STORE): Promise<string[]> {
-          return new Promise((res, rej) => {
+          return new Promise((res, rej): void => {
             const tx = db.transaction(storeName, "readonly");
             const store = tx.objectStore(storeName);
             const req = store.getAllKeys();
-            req.onsuccess = () => res(req.result as string[]);
-            req.onerror = () => rej(req.error);
+            req.onsuccess = (): void => res(req.result as string[]);
+            req.onerror = (): void => rej(req.error);
           });
         },
 
@@ -98,6 +97,6 @@ export function openIDB(
       resolve(api);
     };
 
-    request.onerror = () => reject(request.error);
+    request.onerror = (): void => reject(request.error);
   });
 }

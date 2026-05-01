@@ -24,22 +24,32 @@ function record(r: ErrorRecord): void {
 }
 
 function onError(event: ErrorEvent): void {
-  record({
-    message: event.message || "Unknown error",
-    source: event.filename ?? "unknown",
-    timestamp: Date.now(),
-    stack: event.error?.stack,
-  });
+  const stack: string | undefined = event.error instanceof Error ? event.error.stack : undefined;
+  const r: ErrorRecord =
+    stack === undefined
+      ? {
+          message: event.message || "Unknown error",
+          source: event.filename ?? "unknown",
+          timestamp: Date.now(),
+        }
+      : {
+          message: event.message || "Unknown error",
+          source: event.filename ?? "unknown",
+          timestamp: Date.now(),
+          stack,
+        };
+  record(r);
 }
 
 function onRejection(event: PromiseRejectionEvent): void {
-  const err = event.reason;
-  record({
-    message: err instanceof Error ? err.message : String(err),
-    source: "unhandledrejection",
-    timestamp: Date.now(),
-    stack: err instanceof Error ? err.stack : undefined,
-  });
+  const err: unknown = event.reason;
+  const message = err instanceof Error ? err.message : String(err);
+  const stack: string | undefined = err instanceof Error ? err.stack : undefined;
+  const r: ErrorRecord =
+    stack === undefined
+      ? { message, source: "unhandledrejection", timestamp: Date.now() }
+      : { message, source: "unhandledrejection", timestamp: Date.now(), stack };
+  record(r);
 }
 
 /**

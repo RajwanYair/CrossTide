@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import {
-  installErrorBoundary,
-  getErrorLog,
-  clearErrorLog,
-} from "../../../src/core/error-boundary";
+import { installErrorBoundary, getErrorLog, clearErrorLog } from "../../../src/core/error-boundary";
 
 describe("error-boundary", () => {
   let teardown: (() => void) | null = null;
@@ -45,7 +41,10 @@ describe("error-boundary", () => {
       // Directly test the error recording via a window error instead
       teardown = installErrorBoundary();
       window.dispatchEvent(
-        new ErrorEvent("error", { message: "rejection-proxy", error: new Error("rejection-proxy") }),
+        new ErrorEvent("error", {
+          message: "rejection-proxy",
+          error: new Error("rejection-proxy"),
+        }),
       );
       const log = getErrorLog();
       expect(log.length).toBeGreaterThan(0);
@@ -74,9 +73,7 @@ describe("error-boundary", () => {
 
   it("clearErrorLog empties the log", () => {
     teardown = installErrorBoundary();
-    window.dispatchEvent(
-      new ErrorEvent("error", { message: "err", error: new Error("err") }),
-    );
+    window.dispatchEvent(new ErrorEvent("error", { message: "err", error: new Error("err") }));
     expect(getErrorLog()).toHaveLength(1);
     clearErrorLog();
     expect(getErrorLog()).toHaveLength(0);
@@ -86,9 +83,7 @@ describe("error-boundary", () => {
     teardown = installErrorBoundary();
     teardown();
     teardown = null;
-    window.dispatchEvent(
-      new ErrorEvent("error", { message: "after", error: new Error("after") }),
-    );
+    window.dispatchEvent(new ErrorEvent("error", { message: "after", error: new Error("after") }));
     expect(getErrorLog()).toHaveLength(0);
   });
 });

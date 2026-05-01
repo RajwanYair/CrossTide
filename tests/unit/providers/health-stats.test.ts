@@ -39,10 +39,7 @@ describe("health-stats", () => {
   });
 
   it("filters by providerId", () => {
-    const s = aggregateStats(
-      [sample("a", "success", 10), sample("b", "error", 20)],
-      "a",
-    );
+    const s = aggregateStats([sample("a", "success", 10), sample("b", "error", 20)], "a");
     expect(s.total).toBe(1);
   });
 
@@ -73,10 +70,7 @@ describe("health-stats", () => {
   });
 
   it("pruneOld removes stale samples", () => {
-    const samples = [
-      sample("p", "success", 10, 1000),
-      sample("p", "success", 10, 5000),
-    ];
+    const samples = [sample("p", "success", 10, 1000), sample("p", "success", 10, 5000)];
     expect(pruneOld(samples, 6000, 2000)).toHaveLength(1);
   });
 });

@@ -29,10 +29,7 @@ function mean(arr: readonly number[]): number {
  * Sortino ratio: (mean - mar) / downside_dev, annualized.
  * Returns 0 when downside deviation is zero or input is empty.
  */
-export function sortinoRatio(
-  returns: readonly number[],
-  options: RatioOptions = {},
-): number {
+export function sortinoRatio(returns: readonly number[], options: RatioOptions = {}): number {
   if (returns.length === 0) return 0;
   const ppy = options.periodsPerYear ?? DEFAULT_PPY;
   const rf = options.riskFreeRate ?? 0;

@@ -28,18 +28,14 @@ describe("awesome-oscillator", () => {
     const out = computeAwesomeOscillator(data);
     const last = out[out.length - 1]!;
     expect(last.value).toBeGreaterThan(0);
-    expect(out.slice(-3).every((p) => p.color === "green" || p.color === "flat")).toBe(
-      true,
-    );
+    expect(out.slice(-3).every((p) => p.color === "green" || p.color === "flat")).toBe(true);
   });
 
   it("falling trend -> negative AO and red bars", () => {
     const data = Array.from({ length: 40 }, (_, i) => c(i, 100 - i));
     const out = computeAwesomeOscillator(data);
     expect(out[out.length - 1]!.value).toBeLessThan(0);
-    expect(out.slice(-3).every((p) => p.color === "red" || p.color === "flat")).toBe(
-      true,
-    );
+    expect(out.slice(-3).every((p) => p.color === "red" || p.color === "flat")).toBe(true);
   });
 
   it("constant prices -> AO = 0", () => {

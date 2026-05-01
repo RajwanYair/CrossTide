@@ -49,14 +49,8 @@ export function buildCsp(options: CspOptions = {}): string {
   const directives: Record<string, string> = {
     "default-src": "'self'",
     "script-src": joinSources(["'self'"], nonce, options.scriptSrc ?? []),
-    "style-src": joinSources(
-      ["'self'", "'unsafe-inline'"],
-      options.styleSrc ?? [],
-    ),
-    "img-src": joinSources(
-      ["'self'", "data:", "blob:"],
-      options.imgSrc ?? [],
-    ),
+    "style-src": joinSources(["'self'", "'unsafe-inline'"], options.styleSrc ?? []),
+    "img-src": joinSources(["'self'", "data:", "blob:"], options.imgSrc ?? []),
     "font-src": "'self' data:",
     "connect-src": joinSources(["'self'"], options.connectSrc ?? []),
     "worker-src": "'self' blob:",

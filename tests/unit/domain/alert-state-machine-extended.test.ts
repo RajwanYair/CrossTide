@@ -58,12 +58,7 @@ describe("alert-state-machine extended", () => {
 
   it("fires consensus alert when consensus direction is BUY", () => {
     const s1 = createAlertState("AAPL");
-    const { alerts } = evaluateAlerts(
-      s1,
-      [],
-      consensus("BUY"),
-      DEFAULT_ENABLED_ALERTS,
-    );
+    const { alerts } = evaluateAlerts(s1, [], consensus("BUY"), DEFAULT_ENABLED_ALERTS);
     const consensusAlerts = alerts.filter((a) => a.alertType === "consensusBuy");
     expect(consensusAlerts.length).toBe(1);
   });
@@ -83,11 +78,7 @@ describe("alert-state-machine extended", () => {
 
   it("handles multiple signals in same pass", () => {
     const s1 = createAlertState("AAPL");
-    const signals = [
-      sig("RSI", "BUY"),
-      sig("MACD", "SELL"),
-      sig("Bollinger", "NEUTRAL"),
-    ];
+    const signals = [sig("RSI", "BUY"), sig("MACD", "SELL"), sig("Bollinger", "NEUTRAL")];
     const { alerts } = evaluateAlerts(s1, signals, null);
     expect(Array.isArray(alerts)).toBe(true);
   });

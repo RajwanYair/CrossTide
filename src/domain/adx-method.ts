@@ -11,10 +11,7 @@ import { DEFAULTS } from "./technical-defaults";
 
 const THRESHOLD = 25;
 
-export function evaluate(
-  ticker: string,
-  candles: readonly DailyCandle[],
-): MethodSignal | null {
+export function evaluate(ticker: string, candles: readonly DailyCandle[]): MethodSignal | null {
   if (candles.length < 2 * DEFAULTS.period + 2) return null;
 
   const series = computeAdxSeries(candles, DEFAULTS.period);
@@ -26,17 +23,39 @@ export function evaluate(
 
   // BUY: +DI crosses above −DI with strong trend
   if (curr.adx > THRESHOLD && prev.plusDi <= prev.minusDi && curr.plusDi > curr.minusDi) {
-    return sig(ticker, lastCandle, "BUY", `BUY: +DI crossed above −DI with ADX=${curr.adx.toFixed(1)}`);
+    return sig(
+      ticker,
+      lastCandle,
+      "BUY",
+      `BUY: +DI crossed above −DI with ADX=${curr.adx.toFixed(1)}`,
+    );
   }
 
   // SELL: −DI crosses above +DI with strong trend
   if (curr.adx > THRESHOLD && prev.minusDi <= prev.plusDi && curr.minusDi > curr.plusDi) {
-    return sig(ticker, lastCandle, "SELL", `SELL: −DI crossed above +DI with ADX=${curr.adx.toFixed(1)}`);
+    return sig(
+      ticker,
+      lastCandle,
+      "SELL",
+      `SELL: −DI crossed above +DI with ADX=${curr.adx.toFixed(1)}`,
+    );
   }
 
   return sig(ticker, lastCandle, "NEUTRAL", "No ADX signal");
 }
 
-function sig(ticker: string, candle: DailyCandle, direction: SignalDirection, description: string): MethodSignal {
-  return { ticker, method: "ADX", direction, description, currentClose: candle.close, evaluatedAt: candle.date };
+function sig(
+  ticker: string,
+  candle: DailyCandle,
+  direction: SignalDirection,
+  description: string,
+): MethodSignal {
+  return {
+    ticker,
+    method: "ADX",
+    direction,
+    description,
+    currentClose: candle.close,
+    evaluatedAt: candle.date,
+  };
 }

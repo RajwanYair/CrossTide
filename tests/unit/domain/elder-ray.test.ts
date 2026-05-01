@@ -17,9 +17,7 @@ describe("elder-ray", () => {
   });
 
   it("bullPower >= bearPower (since high >= low)", () => {
-    const data = Array.from({ length: 30 }, (_, i) =>
-      c(i, 10 + i, 8 + i, 9 + i),
-    );
+    const data = Array.from({ length: 30 }, (_, i) => c(i, 10 + i, 8 + i, 9 + i));
     for (const p of computeElderRay(data, 13)) {
       expect(p.bullPower).toBeGreaterThanOrEqual(p.bearPower);
     }
@@ -34,17 +32,13 @@ describe("elder-ray", () => {
   });
 
   it("rising trend yields positive bullPower at end", () => {
-    const data = Array.from({ length: 30 }, (_, i) =>
-      c(i, 10 + i, 8 + i, 9 + i),
-    );
+    const data = Array.from({ length: 30 }, (_, i) => c(i, 10 + i, 8 + i, 9 + i));
     const out = computeElderRay(data, 13);
     expect(out[out.length - 1]!.bullPower).toBeGreaterThan(0);
   });
 
   it("falling trend yields negative bearPower at end", () => {
-    const data = Array.from({ length: 30 }, (_, i) =>
-      c(i, 30 - i, 28 - i, 29 - i),
-    );
+    const data = Array.from({ length: 30 }, (_, i) => c(i, 30 - i, 28 - i, 29 - i));
     const out = computeElderRay(data, 13);
     expect(out[out.length - 1]!.bearPower).toBeLessThan(0);
   });

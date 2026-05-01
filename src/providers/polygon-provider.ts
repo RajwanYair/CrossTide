@@ -120,12 +120,14 @@ export function createPolygonProvider(
       const res = await fetchWithRetry(url, {}, 1, 500);
       const data = (await res.json()) as PolygonTickersResponse;
       recordSuccess();
-      return (data.results ?? []).map((r) => ({
-        symbol: r.ticker,
-        name: r.name,
-        exchange: r.primary_exchange,
-        type: r.type,
-      }));
+      return (data.results ?? []).map((r): SearchResult => {
+        const base = { symbol: r.ticker, name: r.name };
+        if (r.primary_exchange !== undefined && r.type !== undefined)
+          return { ...base, exchange: r.primary_exchange, type: r.type };
+        if (r.primary_exchange !== undefined) return { ...base, exchange: r.primary_exchange };
+        if (r.type !== undefined) return { ...base, type: r.type };
+        return base;
+      });
     } catch (err) {
       recordError();
       throw err;

@@ -20,14 +20,16 @@ function binaryToBytes(binary: string): Uint8Array {
 function b64Encode(bytes: Uint8Array): string {
   if (typeof btoa === "function") return btoa(bytesToBinary(bytes));
   // Node fallback
-  return (globalThis as unknown as { Buffer: { from(b: Uint8Array): { toString(enc: string): string } } })
-    .Buffer.from(bytes).toString("base64");
+  return (
+    globalThis as unknown as { Buffer: { from(b: Uint8Array): { toString(enc: string): string } } }
+  ).Buffer.from(bytes).toString("base64");
 }
 
 function b64Decode(b64: string): Uint8Array {
   if (typeof atob === "function") return binaryToBytes(atob(b64));
-  return (globalThis as unknown as { Buffer: { from(s: string, e: string): Uint8Array } })
-    .Buffer.from(b64, "base64");
+  return (
+    globalThis as unknown as { Buffer: { from(s: string, e: string): Uint8Array } }
+  ).Buffer.from(b64, "base64");
 }
 
 export function base64UrlEncodeBytes(bytes: Uint8Array): string {

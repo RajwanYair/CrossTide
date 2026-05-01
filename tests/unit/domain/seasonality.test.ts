@@ -1,11 +1,7 @@
 import { describe, it, expect } from "vitest";
-import {
-  seasonalityByMonth,
-  seasonalityByDayOfWeek,
-} from "../../../src/domain/seasonality";
+import { seasonalityByMonth, seasonalityByDayOfWeek } from "../../../src/domain/seasonality";
 
-const day = (year: number, month0: number, day1: number): number =>
-  Date.UTC(year, month0, day1);
+const day = (year: number, month0: number, day1: number): number => Date.UTC(year, month0, day1);
 
 describe("seasonality", () => {
   it("empty input returns empty", () => {

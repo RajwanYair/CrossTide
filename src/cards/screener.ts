@@ -38,7 +38,12 @@ export function applyFilters(
           matched.push(filterLabel(f));
         }
       }
-      return { ticker: input.ticker, price: input.price, consensus: input.consensus, matchedFilters: matched };
+      return {
+        ticker: input.ticker,
+        price: input.price,
+        consensus: input.consensus,
+        matchedFilters: matched,
+      };
     })
     .filter((row) => row.matchedFilters.length === filters.length);
 }

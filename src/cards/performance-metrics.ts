@@ -33,10 +33,14 @@ export function formatPercent(value: number): string {
 /**
  * Classify performance quality based on metrics.
  */
-export function classifyPerformance(metrics: PerformanceMetrics): "excellent" | "good" | "fair" | "poor" {
+export function classifyPerformance(
+  metrics: PerformanceMetrics,
+): "excellent" | "good" | "fair" | "poor" {
   const { sharpeRatio, maxDrawdown, totalReturn } = metrics;
-  if (sharpeRatio !== null && sharpeRatio >= 2 && maxDrawdown < 0.1 && totalReturn > 0.2) return "excellent";
-  if (sharpeRatio !== null && sharpeRatio >= 1 && maxDrawdown < 0.2 && totalReturn > 0) return "good";
+  if (sharpeRatio !== null && sharpeRatio >= 2 && maxDrawdown < 0.1 && totalReturn > 0.2)
+    return "excellent";
+  if (sharpeRatio !== null && sharpeRatio >= 1 && maxDrawdown < 0.2 && totalReturn > 0)
+    return "good";
   if (totalReturn >= 0) return "fair";
   return "poor";
 }
@@ -65,7 +69,8 @@ export function renderPerformanceMetrics(
 
   const html = rows
     .map(
-      (r) => `<tr><td class="text-secondary">${escapeHtml(r.label)}</td><td class="font-mono">${escapeHtml(r.value)}</td></tr>`,
+      (r) =>
+        `<tr><td class="text-secondary">${escapeHtml(r.label)}</td><td class="font-mono">${escapeHtml(r.value)}</td></tr>`,
     )
     .join("");
 

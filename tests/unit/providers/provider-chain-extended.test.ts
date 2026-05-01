@@ -10,12 +10,18 @@ function makeProvider(
 ): MarketDataProvider {
   return {
     name,
-    getQuote: vi.fn().mockImplementation(() =>
-      quoteResult instanceof Error ? Promise.reject(quoteResult) : Promise.resolve(quoteResult),
-    ),
-    getHistory: vi.fn().mockImplementation(() =>
-      historyResult instanceof Error ? Promise.reject(historyResult) : Promise.resolve(historyResult),
-    ),
+    getQuote: vi
+      .fn()
+      .mockImplementation(() =>
+        quoteResult instanceof Error ? Promise.reject(quoteResult) : Promise.resolve(quoteResult),
+      ),
+    getHistory: vi
+      .fn()
+      .mockImplementation(() =>
+        historyResult instanceof Error
+          ? Promise.reject(historyResult)
+          : Promise.resolve(historyResult),
+      ),
     search: vi.fn().mockResolvedValue([]),
     health: (): ProviderHealth => ({
       name,
@@ -108,7 +114,9 @@ describe("provider-chain (extended)", () => {
   });
 
   describe("getHistory fallback", () => {
-    const CANDLES = [{ date: "2024-01-01", open: 148, high: 152, low: 147, close: 150, volume: 1000 }];
+    const CANDLES = [
+      { date: "2024-01-01", open: 148, high: 152, low: 147, close: 150, volume: 1000 },
+    ];
 
     it("falls back on history fetch failure", async () => {
       const p1 = makeProvider("p1", true, AAPL_QUOTE, new Error("history fail"));

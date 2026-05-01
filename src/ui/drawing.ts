@@ -38,9 +38,7 @@ export interface FibRetracement extends BaseShape {
 
 export type Shape = Trendline | HLine | FibRetracement;
 
-export const DEFAULT_FIB_LEVELS: readonly number[] = [
-  0, 0.236, 0.382, 0.5, 0.618, 0.786, 1,
-];
+export const DEFAULT_FIB_LEVELS: readonly number[] = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
 
 export interface DrawingState {
   readonly shapes: readonly Shape[];
@@ -60,11 +58,7 @@ export interface ShapePatch {
   readonly color?: string;
 }
 
-export function updateShape(
-  state: DrawingState,
-  id: string,
-  patch: ShapePatch,
-): DrawingState {
+export function updateShape(state: DrawingState, id: string, patch: ShapePatch): DrawingState {
   return {
     shapes: state.shapes.map((s) => (s.id === id ? { ...s, ...patch } : s)),
   };

@@ -42,9 +42,7 @@ describe("position-sizing", () => {
   });
 
   it("atrBasedSize uses 2x ATR by default", () => {
-    expect(
-      atrBasedSize({ accountEquity: 10000, riskPerTrade: 0.01, atr: 1 }),
-    ).toBe(50);
+    expect(atrBasedSize({ accountEquity: 10000, riskPerTrade: 0.01, atr: 1 })).toBe(50);
   });
 
   it("atrBasedSize respects multiplier", () => {
@@ -59,9 +57,7 @@ describe("position-sizing", () => {
   });
 
   it("atrBasedSize returns 0 for non-positive atr", () => {
-    expect(
-      atrBasedSize({ accountEquity: 1000, riskPerTrade: 0.01, atr: 0 }),
-    ).toBe(0);
+    expect(atrBasedSize({ accountEquity: 1000, riskPerTrade: 0.01, atr: 0 })).toBe(0);
   });
 
   it("fixedFractionalSize", () => {
@@ -76,15 +72,11 @@ describe("position-sizing", () => {
 
   it("kellyFraction sample", () => {
     // 60% wins, 1:1 W/L → f = 0.6 - 0.4/1 = 0.2
-    expect(
-      kellyFraction({ winRate: 0.6, avgWin: 1, avgLoss: 1 }),
-    ).toBeCloseTo(0.2, 5);
+    expect(kellyFraction({ winRate: 0.6, avgWin: 1, avgLoss: 1 })).toBeCloseTo(0.2, 5);
   });
 
   it("kellyFraction returns 0 for negative edge", () => {
-    expect(
-      kellyFraction({ winRate: 0.4, avgWin: 1, avgLoss: 1 }),
-    ).toBe(0);
+    expect(kellyFraction({ winRate: 0.4, avgWin: 1, avgLoss: 1 })).toBe(0);
   });
 
   it("kellyFraction caps at 1", () => {
@@ -93,18 +85,12 @@ describe("position-sizing", () => {
   });
 
   it("halfKellySize is half the kelly position", () => {
-    const shares = halfKellySize(
-      { winRate: 0.6, avgWin: 1, avgLoss: 1 },
-      10000,
-      100,
-    );
+    const shares = halfKellySize({ winRate: 0.6, avgWin: 1, avgLoss: 1 }, 10000, 100);
     // Kelly fraction = 0.2, half = 0.1, equity 10k, price 100 → 10 shares
     expect(shares).toBeCloseTo(10, 5);
   });
 
   it("halfKellySize handles bad inputs", () => {
-    expect(
-      halfKellySize({ winRate: 0.6, avgWin: 1, avgLoss: 1 }, 0, 100),
-    ).toBe(0);
+    expect(halfKellySize({ winRate: 0.6, avgWin: 1, avgLoss: 1 }, 0, 100)).toBe(0);
   });
 });

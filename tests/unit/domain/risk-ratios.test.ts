@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  sortinoRatio,
-  maxDrawdown,
-  cagr,
-  calmarRatio,
-} from "../../../src/domain/risk-ratios";
+import { sortinoRatio, maxDrawdown, cagr, calmarRatio } from "../../../src/domain/risk-ratios";
 
 describe("risk-ratios", () => {
   it("sortino returns 0 for empty input", () => {

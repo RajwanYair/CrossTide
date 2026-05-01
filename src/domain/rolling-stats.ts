@@ -18,10 +18,7 @@ export function rollingMean(values: readonly number[], window: number): number[]
 }
 
 /** Sample standard deviation (Bessel-corrected, n-1). */
-export function rollingStdDev(
-  values: readonly number[],
-  window: number,
-): number[] {
+export function rollingStdDev(values: readonly number[], window: number): number[] {
   if (window <= 1 || values.length < window) return [];
   const out: number[] = [];
   for (let i = window - 1; i < values.length; i++) {
@@ -65,10 +62,7 @@ export function rollingMax(values: readonly number[], window: number): number[] 
 }
 
 /** z = (x - mean(window)) / stdDev(window) for each terminal index. */
-export function rollingZScore(
-  values: readonly number[],
-  window: number,
-): number[] {
+export function rollingZScore(values: readonly number[], window: number): number[] {
   const means = rollingMean(values, window);
   const sds = rollingStdDev(values, window);
   const out: number[] = [];

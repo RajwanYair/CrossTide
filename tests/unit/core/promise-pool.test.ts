@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  runPromisePool,
-  runPromisePoolSettled,
-} from "../../../src/core/promise-pool";
+import { runPromisePool, runPromisePoolSettled } from "../../../src/core/promise-pool";
 
 const wait = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 

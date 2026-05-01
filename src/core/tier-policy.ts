@@ -69,9 +69,7 @@ export function decide(
   // Phase 3: enforce size caps on hot tier (LRU by lastAccessMs).
   const hotItems = records
     .filter((r) => r.tier === "hot")
-    .filter(
-      (r) => !demote.some((d) => d.key === r.key),
-    );
+    .filter((r) => !demote.some((d) => d.key === r.key));
   const sortedHot = [...hotItems].sort((a, b) => a.lastAccessMs - b.lastAccessMs);
   let totalBytes = sortedHot.reduce((s, r) => s + r.bytes, 0);
   let count = sortedHot.length;

@@ -26,10 +26,7 @@ export interface FormatOptions {
 const DEFAULT_LOCALE = "en-US";
 
 /** Price with adaptive precision: < $1 shows 4 decimals, otherwise 2. */
-export function formatPrice(
-  value: number,
-  options: FormatOptions = {},
-): string {
+export function formatPrice(value: number, options: FormatOptions = {}): string {
   if (!Number.isFinite(value)) return "—";
   const locale = options.locale ?? DEFAULT_LOCALE;
   const min = options.minDigits ?? (Math.abs(value) < 1 ? 4 : 2);
@@ -49,10 +46,7 @@ export function formatPrice(
 }
 
 /** Compact volume / market cap: 1.2K, 3.4M, 5.6B. */
-export function formatCompact(
-  value: number,
-  options: FormatOptions = {},
-): string {
+export function formatCompact(value: number, options: FormatOptions = {}): string {
   if (!Number.isFinite(value)) return "—";
   const locale = options.locale ?? DEFAULT_LOCALE;
   return fmt(locale, {
@@ -81,10 +75,7 @@ export function formatPercent(
 }
 
 /** Signed change in absolute units: +1.23 / -4.56. */
-export function formatChange(
-  value: number,
-  options: FormatOptions = {},
-): string {
+export function formatChange(value: number, options: FormatOptions = {}): string {
   if (!Number.isFinite(value)) return "—";
   const sign = value > 0 ? "+" : "";
   return `${sign}${formatPrice(value, options)}`;

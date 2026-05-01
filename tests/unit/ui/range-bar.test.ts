@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  computeRangeBar,
-  rangeFromCandles,
-} from "../../../src/ui/range-bar";
+import { computeRangeBar, rangeFromCandles } from "../../../src/ui/range-bar";
 
 describe("range-bar", () => {
   it("midpoint maps to 0.5", () => {

@@ -19,7 +19,14 @@ const eq = (curve: readonly [number, number][]): EquityPoint[] =>
 
 describe("backtest-metrics", () => {
   it("totalReturn", () => {
-    expect(totalReturn(eq([[0, 100], [1, 110]]))).toBeCloseTo(0.1, 5);
+    expect(
+      totalReturn(
+        eq([
+          [0, 100],
+          [1, 110],
+        ]),
+      ),
+    ).toBeCloseTo(0.1, 5);
   });
 
   it("totalReturn handles short curves", () => {
@@ -28,21 +35,49 @@ describe("backtest-metrics", () => {
   });
 
   it("cagr over one year", () => {
-    expect(cagr(eq([[0, 100], [YEAR_MS, 110]]))).toBeCloseTo(0.1, 4);
+    expect(
+      cagr(
+        eq([
+          [0, 100],
+          [YEAR_MS, 110],
+        ]),
+      ),
+    ).toBeCloseTo(0.1, 4);
   });
 
   it("maxDrawdown picks worst dip", () => {
     expect(
-      maxDrawdown(eq([[0, 100], [1, 120], [2, 60], [3, 80]])),
+      maxDrawdown(
+        eq([
+          [0, 100],
+          [1, 120],
+          [2, 60],
+          [3, 80],
+        ]),
+      ),
     ).toBeCloseTo(0.5, 5);
   });
 
   it("maxDrawdown is 0 for monotonic curve", () => {
-    expect(maxDrawdown(eq([[0, 1], [1, 2], [2, 3]]))).toBe(0);
+    expect(
+      maxDrawdown(
+        eq([
+          [0, 1],
+          [1, 2],
+          [2, 3],
+        ]),
+      ),
+    ).toBe(0);
   });
 
   it("periodReturns returns one less than length", () => {
-    const rets = periodReturns(eq([[0, 100], [1, 110], [2, 99]]));
+    const rets = periodReturns(
+      eq([
+        [0, 100],
+        [1, 110],
+        [2, 99],
+      ]),
+    );
     expect(rets).toHaveLength(2);
     expect(rets[0]).toBeCloseTo(0.1, 5);
   });
@@ -74,9 +109,7 @@ describe("backtest-metrics", () => {
   });
 
   it("profitFactor with no losses is Infinity", () => {
-    expect(
-      profitFactor([{ entryTimestamp: 0, exitTimestamp: 1, pnl: 10 }]),
-    ).toBe(Infinity);
+    expect(profitFactor([{ entryTimestamp: 0, exitTimestamp: 1, pnl: 10 }])).toBe(Infinity);
   });
 
   it("profitFactor empty is 0", () => {
@@ -85,7 +118,10 @@ describe("backtest-metrics", () => {
 
   it("computeMetrics composes all", () => {
     const m = computeMetrics(
-      eq([[0, 100], [YEAR_MS, 200]]),
+      eq([
+        [0, 100],
+        [YEAR_MS, 200],
+      ]),
       [{ entryTimestamp: 0, exitTimestamp: 1, pnl: 100 }],
     );
     expect(m.totalReturn).toBeCloseTo(1, 5);

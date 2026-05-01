@@ -37,7 +37,18 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
 
 export async function handleHistory(symbol: string, days: number, env: Env): Promise<Response> {
   const base = env.YAHOO_BASE_URL ?? YAHOO_BASE;
-  const range = days <= 5 ? "5d" : days <= 30 ? "1mo" : days <= 90 ? "3mo" : days <= 180 ? "6mo" : days <= 365 ? "1y" : "2y";
+  const range =
+    days <= 5
+      ? "5d"
+      : days <= 30
+        ? "1mo"
+        : days <= 90
+          ? "3mo"
+          : days <= 180
+            ? "6mo"
+            : days <= 365
+              ? "1y"
+              : "2y";
   const url = `${base}/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=1d`;
   return proxyFetch(url, CACHE_TTL_HISTORY);
 }

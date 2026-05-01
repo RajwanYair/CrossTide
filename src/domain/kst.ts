@@ -37,10 +37,7 @@ const roc = (closes: readonly number[], period: number): (number | null)[] => {
   return out;
 };
 
-const smaOfNullable = (
-  values: readonly (number | null)[],
-  period: number,
-): (number | null)[] => {
+const smaOfNullable = (values: readonly (number | null)[], period: number): (number | null)[] => {
   const out: (number | null)[] = new Array(values.length).fill(null);
   for (let i = period - 1; i < values.length; i++) {
     let sum = 0;
@@ -58,10 +55,7 @@ const smaOfNullable = (
   return out;
 };
 
-export function computeKst(
-  closes: readonly number[],
-  options: KstOptions = {},
-): KstPoint[] {
+export function computeKst(closes: readonly number[], options: KstOptions = {}): KstPoint[] {
   const r1 = options.roc1 ?? 10;
   const r2 = options.roc2 ?? 15;
   const r3 = options.roc3 ?? 20;
@@ -82,8 +76,17 @@ export function computeKst(
     const b = c2[i];
     const cc = c3[i];
     const d = c4[i];
-    if (a === null || a === undefined || b === null || b === undefined ||
-        cc === null || cc === undefined || d === null || d === undefined) return null;
+    if (
+      a === null ||
+      a === undefined ||
+      b === null ||
+      b === undefined ||
+      cc === null ||
+      cc === undefined ||
+      d === null ||
+      d === undefined
+    )
+      return null;
     return a * 1 + b * 2 + cc * 3 + d * 4;
   });
   const signal = smaOfNullable(kst, sig);

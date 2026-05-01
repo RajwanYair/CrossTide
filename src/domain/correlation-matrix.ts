@@ -44,14 +44,10 @@ export function pearson(a: readonly number[], b: readonly number[]): number {
   return r;
 }
 
-export function correlationMatrix(
-  series: readonly CorrelationInput[],
-): CorrelationResult {
+export function correlationMatrix(series: readonly CorrelationInput[]): CorrelationResult {
   const ids = series.map((s) => s.id);
   const n = series.length;
-  const matrix: number[][] = Array.from({ length: n }, () =>
-    new Array<number>(n).fill(0),
-  );
+  const matrix: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0));
   for (let i = 0; i < n; i++) {
     matrix[i]![i] = 1;
     for (let j = i + 1; j < n; j++) {

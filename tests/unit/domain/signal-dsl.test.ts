@@ -1,23 +1,10 @@
 import { describe, it, expect } from "vitest";
-import {
-  tokenize,
-  parse,
-  evaluate,
-  compileSignal,
-} from "../../../src/domain/signal-dsl";
+import { tokenize, parse, evaluate, compileSignal } from "../../../src/domain/signal-dsl";
 
 describe("signal-dsl", () => {
   it("tokenizes numbers, identifiers, operators", () => {
     const t = tokenize("rsi(14) < 30");
-    expect(t.map((x) => x.kind)).toEqual([
-      "ident",
-      "lparen",
-      "num",
-      "rparen",
-      "op",
-      "num",
-      "eof",
-    ]);
+    expect(t.map((x) => x.kind)).toEqual(["ident", "lparen", "num", "rparen", "op", "num", "eof"]);
   });
 
   it("evaluates arithmetic with precedence", () => {

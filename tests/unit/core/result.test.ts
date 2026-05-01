@@ -1,7 +1,16 @@
 import { describe, it, expect } from "vitest";
 import {
-  ok, err, isOk, isErr, map, mapErr, andThen, unwrap, unwrapOr,
-  tryCatch, tryCatchAsync,
+  ok,
+  err,
+  isOk,
+  isErr,
+  map,
+  mapErr,
+  andThen,
+  unwrap,
+  unwrapOr,
+  tryCatch,
+  tryCatchAsync,
 } from "../../../src/core/result";
 
 describe("result", () => {
@@ -16,7 +25,9 @@ describe("result", () => {
 
   it("map only transforms Ok", () => {
     expect(map(ok(2), (n) => n * 10)).toEqual(ok(20));
-    expect(map(err("x") as ReturnType<typeof err<string>>, (n: number) => n * 10)).toEqual(err("x"));
+    expect(map(err("x") as ReturnType<typeof err<string>>, (n: number) => n * 10)).toEqual(
+      err("x"),
+    );
   });
 
   it("mapErr only transforms Err", () => {

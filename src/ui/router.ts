@@ -27,13 +27,7 @@ export interface RouteInfo {
 
 export type RouteChangeHandler = (route: RouteName, info?: RouteInfo) => void;
 
-const VALID_ROUTES = new Set<RouteName>([
-  "watchlist",
-  "consensus",
-  "chart",
-  "alerts",
-  "settings",
-]);
+const VALID_ROUTES = new Set<RouteName>(["watchlist", "consensus", "chart", "alerts", "settings"]);
 
 interface RoutePattern {
   readonly name: RouteName;

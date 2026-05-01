@@ -1,8 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import {
-  createSyncQueue,
-  type QueuedRequest,
-} from "../../../src/core/sync-queue";
+import { createSyncQueue, type QueuedRequest } from "../../../src/core/sync-queue";
 import type { IDB } from "../../../src/core/idb";
 
 function makeMemDb(): IDB {

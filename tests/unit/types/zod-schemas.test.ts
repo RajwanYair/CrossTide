@@ -123,9 +123,7 @@ describe("AppConfigSchema", () => {
   });
 
   it("rejects bad theme", () => {
-    expect(
-      AppConfigSchema.safeParse({ theme: "neon", watchlist: [] }).success,
-    ).toBe(false);
+    expect(AppConfigSchema.safeParse({ theme: "neon", watchlist: [] }).success).toBe(false);
   });
 });
 
@@ -160,9 +158,7 @@ describe("Provider shapes", () => {
   });
 
   it("CoinGeckoOhlcSchema accepts tuple array", () => {
-    expect(
-      CoinGeckoOhlcSchema.parse([[1718409600000, 100, 105, 99, 104]]),
-    ).toHaveLength(1);
+    expect(CoinGeckoOhlcSchema.parse([[1718409600000, 100, 105, 99, 104]])).toHaveLength(1);
   });
 });
 

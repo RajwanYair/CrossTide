@@ -12,10 +12,7 @@ export interface CciPoint {
   readonly value: number | null;
 }
 
-export function computeCciSeries(
-  candles: readonly DailyCandle[],
-  period = 20,
-): CciPoint[] {
+export function computeCciSeries(candles: readonly DailyCandle[], period = 20): CciPoint[] {
   if (candles.length < period) {
     return candles.map((c) => ({ date: c.date, value: null }));
   }
@@ -47,10 +44,7 @@ export function computeCciSeries(
   return results;
 }
 
-export function computeCci(
-  candles: readonly DailyCandle[],
-  period = 20,
-): number | null {
+export function computeCci(candles: readonly DailyCandle[], period = 20): number | null {
   const series = computeCciSeries(candles, period);
   for (let i = series.length - 1; i >= 0; i--) {
     const p = series[i];

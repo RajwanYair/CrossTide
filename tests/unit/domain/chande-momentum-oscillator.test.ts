@@ -9,17 +9,26 @@ describe("chande-momentum-oscillator", () => {
   });
 
   it("monotonic uptrend -> CMO = 100", () => {
-    const out = computeCmo(Array.from({ length: 30 }, (_, i) => 100 + i), 9);
+    const out = computeCmo(
+      Array.from({ length: 30 }, (_, i) => 100 + i),
+      9,
+    );
     for (let i = 9; i < out.length; i++) expect(out[i]).toBe(100);
   });
 
   it("monotonic downtrend -> CMO = -100", () => {
-    const out = computeCmo(Array.from({ length: 30 }, (_, i) => 200 - i), 9);
+    const out = computeCmo(
+      Array.from({ length: 30 }, (_, i) => 200 - i),
+      9,
+    );
     for (let i = 9; i < out.length; i++) expect(out[i]).toBe(-100);
   });
 
   it("flat series -> CMO = 0", () => {
-    const out = computeCmo(Array.from({ length: 20 }, () => 100), 9);
+    const out = computeCmo(
+      Array.from({ length: 20 }, () => 100),
+      9,
+    );
     for (let i = 9; i < out.length; i++) expect(out[i]).toBe(0);
   });
 
@@ -34,11 +43,19 @@ describe("chande-momentum-oscillator", () => {
   });
 
   it("output length equals input", () => {
-    expect(computeCmo(Array.from({ length: 50 }, (_, i) => i), 9).length).toBe(50);
+    expect(
+      computeCmo(
+        Array.from({ length: 50 }, (_, i) => i),
+        9,
+      ).length,
+    ).toBe(50);
   });
 
   it("first defined index is at `period`", () => {
-    const out = computeCmo(Array.from({ length: 50 }, (_, i) => i), 9);
+    const out = computeCmo(
+      Array.from({ length: 50 }, (_, i) => i),
+      9,
+    );
     expect(out[8]).toBeNull();
     expect(out[9]).not.toBeNull();
   });

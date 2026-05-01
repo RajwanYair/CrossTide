@@ -2,7 +2,9 @@
  * Service Worker registration utility.
  */
 
-export async function registerServiceWorker(swPath = "/sw.js"): Promise<ServiceWorkerRegistration | null> {
+export async function registerServiceWorker(
+  swPath = "/sw.js",
+): Promise<ServiceWorkerRegistration | null> {
   if (!("serviceWorker" in navigator)) return null;
 
   try {

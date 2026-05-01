@@ -4,7 +4,13 @@
  * repeated keys; encodes safely via `URLSearchParams`.
  */
 
-export type QueryValue = string | number | boolean | null | undefined | readonly (string | number | boolean)[];
+export type QueryValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | readonly (string | number | boolean)[];
 
 export interface UrlBuilder {
   path(segment: string): UrlBuilder;
@@ -64,7 +70,7 @@ function make(
       const params = new URLSearchParams();
       for (const [k, v] of pairs) params.append(k, v);
       url.search = params.toString();
-      url.hash = hashFrag === undefined ? "" : (hashFrag.startsWith("#") ? hashFrag : "#" + hashFrag);
+      url.hash = hashFrag === undefined ? "" : hashFrag.startsWith("#") ? hashFrag : "#" + hashFrag;
       return url;
     },
     toString(): string {

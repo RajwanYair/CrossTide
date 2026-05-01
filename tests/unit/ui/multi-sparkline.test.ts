@@ -42,34 +42,33 @@ describe("multi-sparkline", () => {
   });
 
   it("empty values produce empty path", () => {
-    const paths = buildSparklinePaths(
-      [{ id: "x", values: [] }],
-      { width: 50, height: 50 },
-    );
+    const paths = buildSparklinePaths([{ id: "x", values: [] }], { width: 50, height: 50 });
     expect(paths[0].d).toBe("");
   });
 
   it("constant series places points at vertical midpoint", () => {
-    const paths = buildSparklinePaths(
-      [{ id: "x", values: [5, 5, 5] }],
-      { width: 100, height: 100, padding: 0 },
-    );
+    const paths = buildSparklinePaths([{ id: "x", values: [5, 5, 5] }], {
+      width: 100,
+      height: 100,
+      padding: 0,
+    });
     expect(paths[0].d).toMatch(/M0\.00 50\.00 L/);
   });
 
   it("skips NaN values gracefully", () => {
-    const paths = buildSparklinePaths(
-      [{ id: "x", values: [1, NaN, 3] }],
-      { width: 30, height: 10, padding: 0 },
-    );
+    const paths = buildSparklinePaths([{ id: "x", values: [1, NaN, 3] }], {
+      width: 30,
+      height: 10,
+      padding: 0,
+    });
     expect(paths[0].d).not.toMatch(/NaN/);
   });
 
   it("propagates color", () => {
-    const paths = buildSparklinePaths(
-      [{ id: "x", values: [1, 2], color: "red" }],
-      { width: 10, height: 10 },
-    );
+    const paths = buildSparklinePaths([{ id: "x", values: [1, 2], color: "red" }], {
+      width: 10,
+      height: 10,
+    });
     expect(paths[0].color).toBe("red");
   });
 });

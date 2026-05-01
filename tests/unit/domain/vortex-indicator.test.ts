@@ -3,7 +3,11 @@ import { computeVortex } from "../../../src/domain/vortex-indicator";
 import type { Candle } from "../../../src/domain/heikin-ashi";
 
 const c = (i: number, o: number, h: number, l: number, cl: number): Candle => ({
-  time: i, open: o, high: h, low: l, close: cl,
+  time: i,
+  open: o,
+  high: h,
+  low: l,
+  close: cl,
 });
 
 describe("vortex-indicator", () => {

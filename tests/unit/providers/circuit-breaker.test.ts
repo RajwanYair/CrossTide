@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  CircuitBreaker,
-  CircuitOpenError,
-} from "../../../src/providers/circuit-breaker";
+import { CircuitBreaker, CircuitOpenError } from "../../../src/providers/circuit-breaker";
 
 function makeClock(): { now: () => number; advance: (ms: number) => void } {
   let t = 0;
@@ -89,9 +86,7 @@ describe("CircuitBreaker", () => {
       cooldownMs: 1000,
     });
     cb.onFailure();
-    await expect(cb.run(async () => 42)).rejects.toBeInstanceOf(
-      CircuitOpenError,
-    );
+    await expect(cb.run(async () => 42)).rejects.toBeInstanceOf(CircuitOpenError);
   });
 
   it("run() records success/failure", async () => {
@@ -120,13 +115,7 @@ describe("CircuitBreaker", () => {
   });
 
   it("validates options", () => {
-    expect(
-      () =>
-        new CircuitBreaker("p", { failureThreshold: 0, cooldownMs: 100 }),
-    ).toThrow();
-    expect(
-      () =>
-        new CircuitBreaker("p", { failureThreshold: 1, cooldownMs: -1 }),
-    ).toThrow();
+    expect(() => new CircuitBreaker("p", { failureThreshold: 0, cooldownMs: 100 })).toThrow();
+    expect(() => new CircuitBreaker("p", { failureThreshold: 1, cooldownMs: -1 })).toThrow();
   });
 });

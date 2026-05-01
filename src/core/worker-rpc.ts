@@ -39,8 +39,7 @@ export type RpcMessage = RpcRequest | RpcResponse | RpcError;
 
 // ── API shape helpers ────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyFn = (...args: any[]) => unknown;
+export type AnyFn = (...args: never[]) => unknown;
 export type WorkerApi = { [K: string]: AnyFn };
 
 export type WorkerClient<Api extends WorkerApi> = {
@@ -55,24 +54,18 @@ export type WorkerClient<Api extends WorkerApi> = {
 
 let nextId = 1;
 
-export function createWorkerClient<Api extends WorkerApi>(
-  worker: Worker,
-): WorkerClient<Api> {
-  const pending = new Map<
-    number,
-    { resolve: (v: unknown) => void; reject: (e: Error) => void }
-  >();
+export function createWorkerClient<Api extends WorkerApi>(worker: Worker): WorkerClient<Api> {
+  const pending = new Map<number, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
 
   worker.addEventListener("message", (e: MessageEvent<unknown>) => {
     const msg = e.data as RpcMessage;
-    if (!msg || typeof msg !== "object" || !("__rpc" in msg) || !("id" in msg))
-      return;
+    if (!msg || typeof msg !== "object" || !("__rpc" in msg) || !("id" in msg)) return;
     const p = pending.get(msg.id);
     if (!p) return;
     pending.delete(msg.id);
     if ("ok" in msg) {
-      if (msg.ok) p.resolve((msg).result);
-      else p.reject(new Error((msg).message));
+      if (msg.ok) p.resolve(msg.result);
+      else p.reject(new Error(msg.message));
     }
   });
 
@@ -98,8 +91,7 @@ export function createWorkerClient<Api extends WorkerApi>(
     },
     terminate(): void {
       worker.terminate();
-      for (const p of pending.values())
-        p.reject(new Error("Worker terminated"));
+      for (const p of pending.values()) p.reject(new Error("Worker terminated"));
       pending.clear();
     },
   };
@@ -107,17 +99,14 @@ export function createWorkerClient<Api extends WorkerApi>(
 
 // ── server (inside worker) ───────────────────────────────────────────────────
 
-export function serveWorkerRpc<Api extends Record<string, AnyFn>>(
-  api: Api,
-): void {
+export function serveWorkerRpc<Api extends Record<string, AnyFn>>(api: Api): void {
   // `self` is the global inside a Web Worker
   const ctx = self as unknown as Worker & {
     onmessage: ((e: MessageEvent) => void) | null;
   };
   const handler = (e: MessageEvent<unknown>): void => {
     const msg = e.data as RpcMessage;
-    if (!msg || typeof msg !== "object" || !("__rpc" in msg) || !msg.__rpc)
-      return;
+    if (!msg || typeof msg !== "object" || !("__rpc" in msg) || !msg.__rpc) return;
     const req = msg as RpcRequest;
     const fn: AnyFn | undefined = api[req.method];
     if (typeof fn !== "function") {
@@ -131,7 +120,7 @@ export function serveWorkerRpc<Api extends Record<string, AnyFn>>(
       return;
     }
     void Promise.resolve()
-      .then(() => fn(...req.args))
+      .then(() => fn(...(req.args as never[])))
       .then((result) => {
         const res: RpcResponse = {
           __rpc: true,

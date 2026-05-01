@@ -17,7 +17,7 @@ export function computeSarSeries(
   candles: readonly DailyCandle[],
   afStart = 0.02,
   afStep = 0.02,
-  afMax = 0.20,
+  afMax = 0.2,
 ): SarPoint[] {
   if (candles.length < 2) return [];
 

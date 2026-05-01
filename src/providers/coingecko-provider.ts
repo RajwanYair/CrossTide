@@ -75,7 +75,8 @@ export function createCoinGeckoProvider(baseUrl: string = DEFAULT_BASE_URL): Mar
         low: Math.min(price, prevClose),
         previousClose: prevClose,
         volume: Math.round(coinData.usd_24h_vol ?? 0),
-        timestamp: coinData.last_updated_at !== undefined ? coinData.last_updated_at * 1000 : Date.now(),
+        timestamp:
+          coinData.last_updated_at !== undefined ? coinData.last_updated_at * 1000 : Date.now(),
       };
     } catch (err) {
       recordError();

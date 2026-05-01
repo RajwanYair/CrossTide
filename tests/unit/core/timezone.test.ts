@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { currentTimeZone, timeZoneOffsetMinutes, formatInTimeZone } from "../../../src/core/timezone";
+import {
+  currentTimeZone,
+  timeZoneOffsetMinutes,
+  formatInTimeZone,
+} from "../../../src/core/timezone";
 
 describe("currentTimeZone", () => {
   it("returns a non-empty IANA-like string", () => {
@@ -27,7 +31,9 @@ describe("timeZoneOffsetMinutes", () => {
 describe("formatInTimeZone", () => {
   it("formats date in given tz", () => {
     const s = formatInTimeZone(new Date("2024-06-01T12:00:00Z"), "UTC", {
-      year: "numeric", month: "2-digit", day: "2-digit",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
     expect(s).toContain("2024");
   });

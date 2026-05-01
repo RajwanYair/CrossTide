@@ -50,10 +50,7 @@ describe("provider-chain", () => {
   });
 
   it("uses the first healthy provider", async () => {
-    const chain = createProviderChain([
-      makeMockProvider("primary"),
-      makeMockProvider("fallback"),
-    ]);
+    const chain = createProviderChain([makeMockProvider("primary"), makeMockProvider("fallback")]);
     const q = await chain.getQuote("AAPL");
     expect(q.ticker).toBe("AAPL");
   });
@@ -77,9 +74,7 @@ describe("provider-chain", () => {
   });
 
   it("tries unavailable providers as last resort", async () => {
-    const chain = createProviderChain([
-      makeMockProvider("down", { available: false }),
-    ]);
+    const chain = createProviderChain([makeMockProvider("down", { available: false })]);
     // Only provider is "unavailable" but still functional
     const q = await chain.getQuote("AAPL");
     expect(q.ticker).toBe("AAPL");

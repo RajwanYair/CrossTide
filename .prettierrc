@@ -1,5 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/prettierrc",
-  "extends": "../tooling/prettier.base.json",
-  "singleQuote": false
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "overrides": [
+    { "files": ["*.json", "*.jsonc"], "options": { "trailingComma": "none" } },
+    { "files": ["*.md"], "options": { "printWidth": 120, "proseWrap": "preserve" } }
+  ]
 }

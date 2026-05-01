@@ -44,6 +44,12 @@ describe("safeStringify", () => {
   });
 
   it("handles function values", () => {
-    expect(safeStringify({ fn: function named() { /* noop */ } })).toContain("[Function:named]");
+    expect(
+      safeStringify({
+        fn: function named() {
+          /* noop */
+        },
+      }),
+    ).toContain("[Function:named]");
   });
 });

@@ -31,20 +31,14 @@ describe("applyFilters", () => {
   });
 
   it("filters by RSI below threshold", () => {
-    const inputs = [
-      makeInput({ ticker: "AAPL", rsi: 25 }),
-      makeInput({ ticker: "TSLA", rsi: 55 }),
-    ];
+    const inputs = [makeInput({ ticker: "AAPL", rsi: 25 }), makeInput({ ticker: "TSLA", rsi: 55 })];
     const rows = applyFilters(inputs, [{ type: "rsiBelow", threshold: 30 }]);
     expect(rows.length).toBe(1);
     expect(rows[0]!.ticker).toBe("AAPL");
   });
 
   it("filters by RSI above threshold", () => {
-    const inputs = [
-      makeInput({ ticker: "AAPL", rsi: 75 }),
-      makeInput({ ticker: "TSLA", rsi: 50 }),
-    ];
+    const inputs = [makeInput({ ticker: "AAPL", rsi: 75 }), makeInput({ ticker: "TSLA", rsi: 50 })];
     const rows = applyFilters(inputs, [{ type: "rsiAbove", threshold: 70 }]);
     expect(rows.length).toBe(1);
     expect(rows[0]!.ticker).toBe("AAPL");

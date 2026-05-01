@@ -23,7 +23,11 @@ export function graphemeLength(s: string): number {
   return toGraphemes(s).length;
 }
 
-export function truncateEnd(input: string, max: number, ellipsis: string = DEFAULT_ELLIPSIS): string {
+export function truncateEnd(
+  input: string,
+  max: number,
+  ellipsis: string = DEFAULT_ELLIPSIS,
+): string {
   if (max <= 0) return "";
   const parts = toGraphemes(input);
   if (parts.length <= max) return input;
@@ -32,7 +36,11 @@ export function truncateEnd(input: string, max: number, ellipsis: string = DEFAU
   return parts.slice(0, max - ellLen).join("") + ellipsis;
 }
 
-export function truncateMiddle(input: string, max: number, ellipsis: string = DEFAULT_ELLIPSIS): string {
+export function truncateMiddle(
+  input: string,
+  max: number,
+  ellipsis: string = DEFAULT_ELLIPSIS,
+): string {
   if (max <= 0) return "";
   const parts = toGraphemes(input);
   if (parts.length <= max) return input;

@@ -19,10 +19,7 @@ const ema = (values: readonly number[], period: number): (number | null)[] => {
   return out;
 };
 
-const emaOfDefined = (
-  series: readonly (number | null)[],
-  period: number,
-): (number | null)[] => {
+const emaOfDefined = (series: readonly (number | null)[], period: number): (number | null)[] => {
   const out: (number | null)[] = new Array(series.length).fill(null);
   // Slice off leading nulls, run EMA on the dense tail.
   let firstIdx = -1;
@@ -62,10 +59,14 @@ export function computeTema(values: readonly number[], period = 20): (number | n
     const b = e2[i];
     const c = e3[i];
     if (
-      a === null || a === undefined ||
-      b === null || b === undefined ||
-      c === null || c === undefined
-    ) return null;
+      a === null ||
+      a === undefined ||
+      b === null ||
+      b === undefined ||
+      c === null ||
+      c === undefined
+    )
+      return null;
     return 3 * a - 3 * b + c;
   });
 }
