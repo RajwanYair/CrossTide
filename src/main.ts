@@ -4,9 +4,40 @@
  * Bootstrap: load config, initialize UI, set up event listeners.
  */
 import { loadConfig, saveConfig, addTicker, removeTicker } from "./core/config";
-import { initRouter } from "./ui/router";
+import { initRouter, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
 import { renderWatchlist } from "./ui/watchlist";
+import { loadCard, type CardHandle, type CardContext } from "./cards/registry";
+
+const cardHandles = new Map<RouteName, CardHandle>();
+const cardContainers: Partial<Record<RouteName, string>> = {
+  chart: "chart-container",
+  alerts: "alerts-container",
+};
+
+async function activateCard(
+  route: RouteName,
+  params: Readonly<Record<string, string>>,
+): Promise<void> {
+  const containerId = cardContainers[route];
+  if (!containerId) return;
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const ctx: CardContext = { route, params };
+  const existing = cardHandles.get(route);
+  if (existing) {
+    existing.update?.(ctx);
+    return;
+  }
+  try {
+    const mod = await loadCard(route);
+    const handle = mod.mount(el, ctx);
+    if (handle) cardHandles.set(route, handle);
+  } catch (err) {
+    el.innerHTML = `<p class="empty-state">Failed to load ${route} card.</p>`;
+    console.error("Card load failed:", route, err);
+  }
+}
 
 function main(): void {
   let config = loadConfig();
@@ -15,6 +46,10 @@ function main(): void {
   initTheme(config.theme);
   initRouter();
   renderWatchlist(config, new Map());
+
+  onRouteChange((route, info) => {
+    void activateCard(route, info?.params ?? {});
+  });
 
   // Version display
   const versionEl = document.getElementById("app-version");

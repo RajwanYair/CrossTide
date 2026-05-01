@@ -25,6 +25,8 @@
       <nav id="app-nav">
         <a href="/watchlist" class="nav-link active" data-route="watchlist">Watchlist</a>
         <a href="/consensus" class="nav-link" data-route="consensus">Consensus</a>
+        <a href="/chart" class="nav-link" data-route="chart">Chart</a>
+        <a href="/alerts" class="nav-link" data-route="alerts">Alerts</a>
         <a href="/settings" class="nav-link" data-route="settings">Settings</a>
       </nav>
       <div id="market-status" class="status-badge">--</div>
@@ -74,6 +76,24 @@
             <p class="empty-state">
               Select a ticker from the watchlist to view its consensus breakdown.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-chart" class="view">
+        <div class="card">
+          <div class="card-header"><h2>Chart</h2></div>
+          <div id="chart-container">
+            <p class="empty-state">Loading chart…</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-alerts" class="view">
+        <div class="card">
+          <div class="card-header"><h2>Alerts</h2></div>
+          <div id="alerts-container">
+            <p class="empty-state">Loading alerts…</p>
           </div>
         </div>
       </section>
