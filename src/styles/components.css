@@ -549,4 +549,64 @@
     color: var(--text-secondary);
     margin: 0;
   }
+
+  /* ── Risk metrics card ───────────────────────────────────────────────── */
+  .risk-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-lg);
+  }
+
+  .risk-equity-chart {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-md);
+  }
+
+  .risk-equity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--sp-sm);
+  }
+
+  .risk-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--sp-md);
+  }
+
+  .risk-metric-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-xs);
+  }
+
+  .risk-gauge-wrap {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: var(--sp-xs) 0;
+  }
+
+  .risk-gauge-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .risk-gauge-fill.text-positive { background: var(--positive); }
+  .risk-gauge-fill.text-negative { background: var(--negative); }
+
+  .risk-hint {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+  }
 }

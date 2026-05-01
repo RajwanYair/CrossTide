@@ -26,7 +26,8 @@ export type RouteName =
   | "screener"
   | "settings"
   | "provider-health"
-  | "portfolio";
+  | "portfolio"
+  | "risk";
 
 export interface RouteInfo {
   readonly name: RouteName;
@@ -46,6 +47,7 @@ const VALID_ROUTES = new Set<RouteName>([
   "settings",
   "provider-health",
   "portfolio",
+  "risk",
 ]);
 
 interface RoutePattern {
@@ -65,6 +67,7 @@ const PATTERNS: readonly RoutePattern[] = [
   { name: "settings", segments: ["settings"] },
   { name: "provider-health", segments: ["provider-health"] },
   { name: "portfolio", segments: ["portfolio"] },
+  { name: "risk", segments: ["risk"] },
 ];
 
 const listeners: RouteChangeHandler[] = [];
