@@ -113,3 +113,7 @@ export type { PivotInput, PivotLevels, PivotKind } from "./pivots";
 export { computeZigZag } from "./zigzag";
 export type { ZigZagPivot, ZigZagOptions, PivotDirection } from "./zigzag";
 
+
+export { resampleCandles, TIMEFRAMES } from "./resample";
+export type { ResampleOptions } from "./resample";
+
