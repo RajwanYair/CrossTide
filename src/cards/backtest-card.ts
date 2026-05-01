@@ -122,8 +122,8 @@ function renderEquitySVG(equityPoints: ReturnType<typeof buildEquityCurve>): str
   const yMin = Math.min(...values);
   const yMax = Math.max(...values);
   const yRange = yMax - yMin || 1;
-  const xScale = (i: number) => (i / (values.length - 1)) * W;
-  const yScale = (v: number) => H - ((v - yMin) / yRange) * (H - 8) - 4;
+  const xScale = (i: number): number => (i / (values.length - 1)) * W;
+  const yScale = (v: number): number => H - ((v - yMin) / yRange) * (H - 8) - 4;
 
   const pts = values.map((v, i) => `${xScale(i).toFixed(1)},${yScale(v).toFixed(1)}`).join(" ");
   const isProfit = (values[values.length - 1] ?? 0) >= (values[0] ?? 0);

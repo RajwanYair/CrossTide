@@ -21,6 +21,10 @@ export default defineConfig({
     __PLAUSIBLE_URL__: JSON.stringify(process.env["VITE_PLAUSIBLE_URL"] ?? ""),
     __PLAUSIBLE_SITE__: JSON.stringify(process.env["VITE_PLAUSIBLE_SITE"] ?? ""),
     __GLITCHTIP_DSN__: JSON.stringify(process.env["VITE_GLITCHTIP_DSN"] ?? ""),
+    // E2: Worker API base URL — override in .env.local for local Worker dev
+    __WORKER_BASE_URL__: JSON.stringify(
+      process.env["VITE_WORKER_BASE_URL"] ?? "https://worker.crosstide.pages.dev",
+    ),
   },
   build: {
     target: "es2022",

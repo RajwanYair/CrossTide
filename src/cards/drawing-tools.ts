@@ -214,13 +214,13 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
   resize();
 
   return {
-    setTool(mode: DrawingToolMode) {
+    setTool(mode: DrawingToolMode): void {
       state.mode = mode;
       state.pendingPoint = null;
       canvas.style.pointerEvents = mode === "none" ? "none" : "auto";
       canvas.style.cursor = mode !== "none" ? "crosshair" : "default";
     },
-    clearDrawings() {
+    clearDrawings(): void {
       state.drawings = [];
       state.pendingPoint = null;
       render();
@@ -228,7 +228,7 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
     getDrawings(): readonly Drawing[] {
       return state.drawings;
     },
-    dispose() {
+    dispose(): void {
       canvas.removeEventListener("mousedown", state.onMouseDown);
       resizeObserver?.disconnect();
       canvas.remove();

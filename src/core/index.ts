@@ -270,3 +270,18 @@ export type {
   RelativeTimeUnit,
   RelativeTimeOptions,
 } from "./i18n";
+
+export { createApiClient, getApiClient, _resetApiClientForTests } from "./worker-api-client";
+export type {
+  WorkerApiClient,
+  HealthResponse,
+  ChartParams,
+  ChartResponse,
+  CandleRecord,
+  SearchParams,
+  SearchResponse,
+  SearchHit,
+  ScreenerParams,
+  ScreenerResponse,
+  ScreenerRow,
+} from "./worker-api-client";

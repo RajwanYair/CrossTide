@@ -150,7 +150,7 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
   });
 
   return {
-    dispose() {
+    dispose(): void {
       // Event listeners are GC'd with the DOM nodes.
     },
   };

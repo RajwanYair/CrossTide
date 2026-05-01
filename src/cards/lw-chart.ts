@@ -199,7 +199,7 @@ export async function attachLwChart(
   ro.observe(container);
 
   return {
-    dispose() {
+    dispose(): void {
       unsubCrosshair?.();
       ro.disconnect();
       chart.remove();

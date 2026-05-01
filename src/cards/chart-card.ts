@@ -41,13 +41,13 @@ function renderBacktestUI(container: HTMLElement, ticker: string): void {
   const btn = section.querySelector<HTMLButtonElement>("#btn-run-backtest")!;
   const resultDiv = section.querySelector<HTMLElement>("#backtest-result")!;
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", (): void => {
     if (!ticker) return;
     btn.disabled = true;
     btn.textContent = "Running…";
     resultDiv.textContent = "";
 
-    void (async () => {
+    void (async (): Promise<void> => {
       try {
         const data = await fetchTickerData(ticker);
         if (!data.candles || data.candles.length < 30) {

@@ -740,7 +740,8 @@ function main(): void {
     storagePersistRequested = true;
     void requestPersistentStorage().then((granted) => {
       if (!granted) {
-        console.info("[storage] Persistent storage not granted (normal on first visit).");
+        // Storage not granted on first visit — this is normal
+        void granted;
       }
     });
   }

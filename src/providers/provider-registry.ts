@@ -89,7 +89,7 @@ function ensureChain(): MarketDataProvider {
 }
 
 // Bootstrap: always add Yahoo as the primary provider
-(function initRegistry() {
+(function initRegistry(): void {
   const yahooBreaker = createCircuitBreaker({ failureThreshold: 3, cooldownMs: 60_000 });
   registryEntries.push({ provider: createYahooProvider(), breaker: yahooBreaker });
 })();

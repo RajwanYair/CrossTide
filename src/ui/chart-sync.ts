@@ -38,15 +38,15 @@ export function createChartSyncBus(): ChartSyncBus {
   const entries = new Map<string, ChartCrosshairEntry>();
 
   return {
-    subscribe(id, entry) {
+    subscribe(id, entry): void {
       entries.set(id, entry);
     },
 
-    unsubscribe(id) {
+    unsubscribe(id): void {
       entries.delete(id);
     },
 
-    publish(fromId, time) {
+    publish(fromId, time): void {
       for (const [id, entry] of entries) {
         if (id !== fromId) {
           entry.setCrosshair(time);
@@ -54,7 +54,7 @@ export function createChartSyncBus(): ChartSyncBus {
       }
     },
 
-    clear() {
+    clear(): void {
       entries.clear();
     },
   };
@@ -90,11 +90,11 @@ export function wireCrosshairSync(
 
   // When this chart's crosshair moves, publish to bus
    
-  const unsubLwc = chart.subscribeCrosshairMove((param: any) => {
+  const unsubLwc = chart.subscribeCrosshairMove((param: unknown) => {
     if (isSyncing) return;
      
-    const time = param?.time ?? null;
-    bus.publish(chartId, time as CrosshairTime | null);
+    const time = (param as { time?: CrosshairTime } | null)?.time ?? null;
+    bus.publish(chartId, time ?? null);
   });
 
   // When bus has an update, apply to this chart

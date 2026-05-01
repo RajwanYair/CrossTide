@@ -26,7 +26,7 @@ const providerHealthCard: CardModule = {
     const timer = setInterval(() => refresh(container), 30_000);
 
     return {
-      dispose() {
+      dispose(): void {
         clearInterval(timer);
       },
     };

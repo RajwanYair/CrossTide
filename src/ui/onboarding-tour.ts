@@ -203,7 +203,7 @@ export function createOnboardingTour(steps: readonly TourStep[]): OnboardingTour
     });
 
     // Focus the next/get-started button
-    (tooltip.querySelector(".tour-next"))?.focus();
+    tooltip.querySelector<HTMLElement>(".tour-next")?.focus();
 
     // Keyboard: Escape → skip
     tooltip.addEventListener("keydown", (e) => {

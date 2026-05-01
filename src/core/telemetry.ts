@@ -130,10 +130,10 @@ export function initTelemetry(): TelemetryHandle {
   // If neither sink is configured, return a no-op handle
   if (!hasAnalytics && !hasErrorTracking) {
     _handle = {
-      event: () => undefined,
-      pageview: () => undefined,
-      setEnabled: () => undefined,
-      destroy() {
+      event: (): undefined => undefined,
+      pageview: (): undefined => undefined,
+      setEnabled: (): undefined => undefined,
+      destroy(): void {
         _handle = null;
       },
     };
@@ -174,16 +174,16 @@ export function initTelemetry(): TelemetryHandle {
   }
 
   _handle = {
-    event(name, props) {
+    event(name, props): void {
       analytics?.event(name, props);
     },
-    pageview(path) {
+    pageview(path): void {
       analytics?.pageview(path);
     },
-    setEnabled(enabled) {
+    setEnabled(enabled): void {
       analytics?.setEnabled(enabled);
     },
-    destroy() {
+    destroy(): void {
       teardownErrors?.();
       vitalsObserver?.stop();
       _handle = null;

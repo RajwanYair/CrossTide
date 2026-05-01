@@ -370,7 +370,7 @@ function mount(container: HTMLElement): CardHandle {
   render();
 
   return {
-    dispose() {
+    dispose(): void {
       // Unsubscribe all panels from the bus
       panelIds.forEach((id) => bus.unsubscribe(id));
       if (document.getElementById("multi-chart-styles")) {

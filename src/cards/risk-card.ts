@@ -58,11 +58,11 @@ function renderRiskCard(container: HTMLElement): void {
   const normalized = EQUITY.map((v) => v / EQUITY[0]!);
   const w = 320;
   const h = 80;
-  const xScale = (i: number) => (i / (normalized.length - 1)) * w;
+  const xScale = (i: number): number => (i / (normalized.length - 1)) * w;
   const yMin = Math.min(...normalized);
   const yMax = Math.max(...normalized);
   const yRange = yMax - yMin || 1;
-  const yScale = (v: number) => h - ((v - yMin) / yRange) * (h - 4) - 2;
+  const yScale = (v: number): number => h - ((v - yMin) / yRange) * (h - 4) - 2;
 
   const points = normalized.map((v, i) => `${xScale(i).toFixed(1)},${yScale(v).toFixed(1)}`).join(" ");
   const polyline = `<polyline fill="none" stroke="var(--color-accent, #58a6ff)" stroke-width="1.5" points="${points}" />`;
