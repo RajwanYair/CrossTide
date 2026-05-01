@@ -129,3 +129,7 @@ export type { Holding, SectorAllocation, PositionMetric } from "./portfolio-anal
 export { computeVolumeProfile } from "./volume-profile";
 export type { VolumeProfile, VolumeProfileBin, VolumeProfileOptions } from "./volume-profile";
 
+
+export { pearson, correlationMatrix } from "./correlation-matrix";
+export type { CorrelationInput, CorrelationResult } from "./correlation-matrix";
+
