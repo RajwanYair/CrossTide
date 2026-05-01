@@ -16,6 +16,8 @@ import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
 import type { PaletteCommand } from "./ui/command-palette";
 import { fetchAllTickers, fetchTickerData, type TickerData } from "./core/data-service";
 import type { ConsensusResult } from "./types/domain";
+import { TieredCache } from "./core/tiered-cache";
+import { createStoragePressureMonitor } from "./core/storage-pressure";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -326,6 +328,23 @@ function main(): void {
   shortcuts.register({ key: "Escape", description: "Close palette", handler: () => { if (isPaletteOpen()) { /* handled by palette input */ } } });
 
   void shortcuts; // retain reference
+
+  // --- Storage Pressure Monitor ---
+  const appCache = new TieredCache();
+  const pressureMonitor = createStoragePressureMonitor({
+    threshold: 0.8,
+    intervalMs: 60_000,
+    onPressure: (estimate) => {
+      const evicted = appCache.evictOldest(10);
+      if (evicted > 0) {
+        console.warn(
+          `[storage-pressure] ${(estimate.ratio * 100).toFixed(1)}% used — evicted ${evicted} cache entries`,
+        );
+      }
+    },
+  });
+  pressureMonitor.start();
+  void appCache; // retain reference
 }
 
 main();

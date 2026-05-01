@@ -3,6 +3,8 @@
  *
  * L1 is fast/transient (process lifetime).
  * L2 is persistent (survives refresh, ~5 MB limit).
+ *
+ * Supports LRU eviction under storage pressure via `evictOldest(count)`.
  */
 
 interface CacheEntry<T> {
@@ -78,5 +80,22 @@ export class TieredCache {
 
   get size(): number {
     return this.l1.size;
+  }
+
+  /**
+   * Evict the N oldest entries from both L1 and L2.
+   * Used by storage-pressure monitor to free space under quota pressure.
+   */
+  evictOldest(count: number): number {
+    let evicted = 0;
+    const entries = [...this.l1.entries()]
+      .sort(([, a], [, b]) => a.expiresAt - b.expiresAt);
+
+    for (const [key] of entries) {
+      if (evicted >= count) break;
+      this.delete(key);
+      evicted++;
+    }
+    return evicted;
   }
 }
