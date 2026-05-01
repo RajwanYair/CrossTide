@@ -136,3 +136,7 @@ export { combineSignals, withTimeout, isAbortError } from "./abort-helpers";
 
 export { formatDate, isoDate, isoTime, isoDateTime } from "./date-format";
 
+
+export { highlightSubstring, highlightWords } from "./text-highlight";
+export type { TextSegment } from "./text-highlight";
+

@@ -6,6 +6,38 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.10] - 2026
+
+### Added — Sprints 111–120 (more indicators + core/UI utilities)
+
+- **Momentum** (`domain/momentum`) — classic price-difference oscillator.
+- **Rate of Change** (`domain/roc`) — percentage variant of momentum,
+  null on zero baseline.
+- **Rolling Standard Deviation** (`domain/standard-deviation`) — windowed
+  population (default) or sample stddev.
+- **Moving Average Envelope** (`domain/envelope`) — SMA ± fixed percent
+  bands.
+- **Bill Williams Fractals** (`domain/fractals`) — 5-bar swing high/low
+  pivot detector.
+- **String hashes** (`core/hash-djb2`) — `djb2`, `djb2Hex`, `fnv1a32`
+  non-cryptographic 32-bit hashes for cache keys.
+- **Seeded PRNG** (`core/seedrandom`) — Mulberry32 generator with
+  `randomInt`, `randomFloat`, and Fisher-Yates `shuffle` helpers.
+- **Easing functions** (`core/easing`) — quad/cubic/in/out/inOut family
+  plus a CSS-compatible `cubicBezier(p1x, p1y, p2x, p2y)` factory.
+- **Date formatter** (`ui/date-format`) — DOM-free UTC token formatter
+  (`YYYY-MM-DD HH:mm:ss.SSS`) and `isoDate`/`isoTime`/`isoDateTime`
+  helpers.
+- **Text highlighting** (`ui/text-highlight`) — `highlightSubstring` /
+  `highlightWords` returning `{ text, match }` segments for safe
+  rendering of search results.
+
+### Tests
+
+- 1715 unit tests passing (was 1648; +67 from Sprints 111–120).
+
+---
+
 ## [6.1.0-rc.9] - 2026
 
 ### Added — Sprints 101–110 (more indicators + core/UI utilities)
