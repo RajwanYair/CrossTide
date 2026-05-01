@@ -140,3 +140,7 @@ export { runBacktestAsync, disposeBacktestWorker } from "./backtest-worker";
 export { fuzzyScore, fuzzySearch } from "./fuzzy-match";
 export type { FuzzyMatch, FuzzyOptions } from "./fuzzy-match";
 
+
+export { createCircuitBreaker } from "./circuit-breaker";
+export type { CircuitBreaker, BreakerState, BreakerConfig, BreakerSnapshot } from "./circuit-breaker";
+
