@@ -50,6 +50,8 @@ export type {
   StoragePressureOptions,
   StoragePressureMonitor,
 } from "./storage-pressure";
+export { observeWebVitals, makeBeaconReporter } from "./web-vitals";
+export type { VitalName, VitalReport, VitalHandler, VitalsObserver } from "./web-vitals";
 export { createWorkerClient, serveWorkerRpc } from "./worker-rpc";
 export type {
   RpcRequest,
