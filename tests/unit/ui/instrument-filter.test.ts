@@ -5,6 +5,8 @@ import {
   getInstrumentFilter,
   setInstrumentFilter,
   loadInstrumentFilter,
+  renderChipBar,
+  mountInstrumentFilterBar,
 } from "../../../src/ui/instrument-filter";
 import type { WatchlistEntry } from "../../../src/types/domain";
 
@@ -127,6 +129,105 @@ describe("instrument-filter", () => {
 
     it("returns C badge for crypto", () => {
       expect(instrumentTypeBadge("crypto")).toContain("C");
+    });
+  });
+
+  // ── renderChipBar DOM tests (B12) ───────────────────────────────────────────
+
+  describe("renderChipBar", () => {
+    let bar: HTMLDivElement;
+
+    beforeEach(() => {
+      bar = document.createElement("div");
+      bar.id = "instrument-filter-bar";
+      document.body.appendChild(bar);
+      setInstrumentFilter("all");
+    });
+
+    afterEach(() => {
+      bar.remove();
+    });
+
+    it("renders a chip button for every filter option", () => {
+      renderChipBar();
+      const buttons = bar.querySelectorAll<HTMLButtonElement>(".filter-chip");
+      expect(buttons.length).toBe(5); // all, stock, etf, crypto, other
+    });
+
+    it("marks the active filter chip with the 'active' class", () => {
+      setInstrumentFilter("etf");
+      renderChipBar();
+      const activeBtn = bar.querySelector<HTMLButtonElement>(".filter-chip.active");
+      expect(activeBtn?.dataset["filter"]).toBe("etf");
+    });
+
+    it("each button has a data-filter attribute matching a valid filter", () => {
+      renderChipBar();
+      const buttons = bar.querySelectorAll<HTMLButtonElement>(".filter-chip");
+      const filters = [...buttons].map((b) => b.dataset["filter"]);
+      expect(filters).toContain("all");
+      expect(filters).toContain("stock");
+      expect(filters).toContain("etf");
+      expect(filters).toContain("crypto");
+      expect(filters).toContain("other");
+    });
+
+    it("clicking a chip updates the active filter", () => {
+      renderChipBar();
+      const stockBtn = bar.querySelector<HTMLButtonElement>('[data-filter="stock"]')!;
+      stockBtn.click();
+      expect(getInstrumentFilter()).toBe("stock");
+    });
+
+    it("clicking a chip invokes onChange callback", () => {
+      const onChange = vi.fn();
+      renderChipBar(onChange);
+      const etfBtn = bar.querySelector<HTMLButtonElement>('[data-filter="etf"]')!;
+      etfBtn.click();
+      expect(onChange).toHaveBeenCalledOnce();
+    });
+
+    it("clicking a chip re-renders bar with correct active chip", () => {
+      renderChipBar();
+      const cryptoBtn = bar.querySelector<HTMLButtonElement>('[data-filter="crypto"]')!;
+      cryptoBtn.click();
+      // After click re-renders, active chip should be crypto
+      const active = bar.querySelector<HTMLButtonElement>(".filter-chip.active");
+      expect(active?.dataset["filter"]).toBe("crypto");
+    });
+
+    it("does nothing when bar element is not in DOM", () => {
+      bar.remove();
+      expect(() => renderChipBar()).not.toThrow();
+    });
+  });
+
+  // ── mountInstrumentFilterBar DOM tests (B12) ─────────────────────────────────
+
+  describe("mountInstrumentFilterBar", () => {
+    let bar: HTMLDivElement;
+
+    beforeEach(() => {
+      bar = document.createElement("div");
+      bar.id = "instrument-filter-bar";
+      document.body.appendChild(bar);
+    });
+
+    afterEach(() => {
+      bar.remove();
+    });
+
+    it("loads persisted filter from localStorage on mount", () => {
+      localStorage.setItem("ct_instrument_filter", "stock");
+      const onChange = vi.fn();
+      mountInstrumentFilterBar(onChange);
+      expect(getInstrumentFilter()).toBe("stock");
+    });
+
+    it("renders chip buttons after mounting", () => {
+      mountInstrumentFilterBar(vi.fn());
+      const buttons = bar.querySelectorAll<HTMLButtonElement>(".filter-chip");
+      expect(buttons.length).toBeGreaterThan(0);
     });
   });
 });
