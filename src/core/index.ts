@@ -19,6 +19,8 @@ export { LruCache } from "./lru-cache";
 export type { LruCacheOptions } from "./lru-cache";
 export { loadConfig, saveConfig, addTicker, removeTicker } from "./config";
 export { fetchWithTimeout, fetchWithRetry, FetchError } from "./fetch";
+export { toDisposable, abortOnDispose, onRouteChangeDisposable } from "./disposable";
+export type { SyncDisposable, DisposableAbortController } from "./disposable";
 export { createShortcutManager } from "./keyboard";
 export type { Shortcut } from "./keyboard";
 export { openIDB } from "./idb";
