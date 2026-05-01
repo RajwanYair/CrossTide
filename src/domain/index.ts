@@ -193,3 +193,6 @@ export { percentile, percentRank, rollingPercentRank } from "./percentile-rank";
 
 export { computeCmo } from "./chande-momentum-oscillator";
 
+
+export { computeConnorsRsi } from "./connors-rsi";
+
