@@ -29,7 +29,8 @@ export type RouteName =
   | "portfolio"
   | "risk"
   | "backtest"
-  | "consensus-timeline";
+  | "consensus-timeline"
+  | "signal-dsl";
 
 export interface RouteInfo {
   readonly name: RouteName;
@@ -52,6 +53,7 @@ const VALID_ROUTES = new Set<RouteName>([
   "risk",
   "backtest",
   "consensus-timeline",
+  "signal-dsl",
 ]);
 
 interface RoutePattern {
@@ -74,6 +76,7 @@ const PATTERNS: readonly RoutePattern[] = [
   { name: "risk", segments: ["risk"] },
   { name: "backtest", segments: ["backtest"] },
   { name: "consensus-timeline", segments: ["consensus-timeline"] },
+  { name: "signal-dsl", segments: ["signal-dsl"] },
 ];
 
 const listeners: RouteChangeHandler[] = [];
