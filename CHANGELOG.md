@@ -6,6 +6,48 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.3.0] - 2026-05-19
+
+### Minor — Sortable persistence, palette activation, component preview, a11y coverage, instrument filters, chart crosshair sync
+
+#### Added
+
+- **B14: Universal sortable column headers persistence.** `persistSort(tableKey, config)` and `loadSort(tableKey)` added to `ui/sortable.ts`. Sort state (column + direction) is stored under `"ct_sort_<tableKey>"` in `localStorage` with validation on load. Covers all data tables app-wide. 11 new unit tests.
+
+- **B12: Instrument-type filter bar.** `renderChipBar(onChange?)` renders `All / Stocks / ETFs / Crypto` chip bar above the watchlist. `mountInstrumentFilterBar(onChange)` handles mount + auto-chip click based on persisted selection. DOM tests added: chip render, active-chip class toggling, chip-click updates filter + calls onChange, re-render after click, graceful skip when container missing, persisted filter loaded on mount. 9 new unit tests.
+
+- **C2: Runtime palette activation.** `applyPalette(name, root?)` sets CSS custom properties (`--color-<kind>`) on the root element and sets `data-palette` attribute. `persistPalette(name)` / `loadPalette()` persist to `localStorage` under `"ct_palette"`. `activatePaletteFromStorage()` bootstraps palette from storage on startup. 12 new unit tests (20 total in palettes suite).
+
+- **A19: Component preview page.** `dev/components.html` extended with two new sections:
+  - **Color Palettes (C2):** palette-switcher buttons + live CSS swatch grid per palette.
+  - **Registered Cards (A19):** iterates `listCards()` from the registry, dynamically mounts each `CardContext` in its own container, shows mounted / error badges.
+
+- **B9: Chart crosshair sync** (`ui/chart-sync.ts`). `createChartSyncBus()` singleton EventEmitter keeps crosshairs aligned across multiple Lightweight Charts instances. `wireCrosshairSync(chartId, chart, series, bus?)` registers a chart to the bus and returns a cleanup function. Uses `isSyncing` flag to prevent echo loops. 9 unit tests across `createChartSyncBus` and `wireCrosshairSync`.
+
+- **A10: Command palette keyboard shortcut.** `Ctrl+K` / `⌘K` bound in `main.ts` via `shortcuts.register()` to call `openPalette(paletteCommands)`.
+
+#### Tests
+
+- **clipboard**: +7 tests — `fallbackCopy` DOM textarea path (`execCommand` succeeds/returns false/throws), DOM fallback after `clipboard.writeText` rejects. Uses `Object.defineProperty` for `document.execCommand` (not natively defined in happy-dom). 10 tests total.
+
+- **provider-registry**: +4 tests — `createBreakerAwareProvider` pass-through to underlying provider, circuit breaker initial state (0 failures / `"closed"`), health snapshot merges inner health with breaker state, `getChain` returns same instance on repeated calls. 11 tests total.
+
+- **a11y**: +12 tests — `trapFocus` Tab-wraps-to-first (on last element), Shift+Tab-wraps-to-last (on first element), mid-element Tab passes through, empty container prevents default, non-Tab key ignored, cleanup removes listener. `prefersReducedMotion` stubs `matchMedia` for both `true`/`false`. 14 tests total (up from 2).
+
+- **error-boundary**: +4 tests — error without stack (non-Error `event.error`), unhandled rejection with string reason (no stack), MAX_LOG=100 cap with oldest-entry eviction, no-handler `installErrorBoundary` still records. 10 tests total (up from 6).
+
+- **data-service** (Sprint 1): 26 tests — `fetchTickerData`, `fetchAllTickers`, `setCorsProxy/getCorsProxy`, `parseInstrumentType` mapping (EQUITY→stock, ETF→etf, CRYPTOCURRENCY→crypto, unknown→other).
+
+- **palette-overlay** (Sprint 2): 21 tests — `openPalette` singleton, keyboard nav (ArrowDown/Up/Enter/Escape), search filter, backdrop click.
+
+**Total: 2427 tests across 247 files (up from 2328/245).**
+
+#### Docs
+
+- **ROADMAP.md:** Marked A10, A19, B9, B12, B13, B14, C2 as ✅ Done (v7.3.0).
+
+---
+
 ## [7.2.0] - 2026-05-16
 
 ### Minor — Security headers, storage manager, URL state, cross-tab sync, schema-versioned export, onboarding
