@@ -22,6 +22,7 @@ import { setScreenerData } from "./cards/screener-data";
 import { computeRsiSeries } from "./domain/rsi-calculator";
 import { computeSma } from "./domain/sma-calculator";
 import type { ScreenerInput } from "./cards/screener";
+import { buildShareUrl, readShareUrl } from "./core/share-state";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -30,6 +31,10 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   heatmap: "heatmap-container",
   screener: "screener-container",
   "provider-health": "provider-health-container",
+  portfolio: "portfolio-container",
+  risk: "risk-container",
+  backtest: "backtest-container",
+  "consensus-timeline": "consensus-timeline-container",
 };
 
 async function activateCard(
@@ -163,10 +168,27 @@ function main(): void {
   initRouter();
   renderWatchlist(config, new Map());
 
+  // ── URL share-state: restore on startup ───────────────────────────────
+  const startupState = readShareUrl(window.location.href);
+  let activeShareRoute: RouteName | undefined;
+  if (startupState?.card && typeof startupState.card === "string") {
+    // Navigate to shared card if it's a valid route
+    const candidateRoute = startupState.card as RouteName;
+    activeShareRoute = candidateRoute;
+  }
+
   // Fetch live data on startup
   void refreshData().then(() => scheduleRefresh());
 
+  // Navigate to shared route after router is up (startup share-state)
+  if (activeShareRoute) {
+    navigateTo(activeShareRoute);
+  }
+
+  let currentRoute: RouteName = "watchlist";
+
   onRouteChange((route, info) => {
+    currentRoute = route;
     void activateCard(route, info?.params ?? {});
   });
 
@@ -329,9 +351,28 @@ function main(): void {
     { id: "nav-screener", label: "Go to Screener", hint: "G R", section: "Navigation", run: () => navigateTo("screener") },
     { id: "nav-settings", label: "Go to Settings", hint: "G S", section: "Navigation", run: () => navigateTo("settings") },
     { id: "nav-provider-health", label: "Go to Provider Health", hint: "G P", section: "Navigation", run: () => navigateTo("provider-health") },
+    { id: "nav-portfolio", label: "Go to Portfolio", section: "Navigation", run: () => navigateTo("portfolio") },
+    { id: "nav-risk", label: "Go to Risk Metrics", section: "Navigation", run: () => navigateTo("risk") },
+    { id: "nav-backtest", label: "Go to Backtest", section: "Navigation", run: () => navigateTo("backtest") },
+    { id: "nav-consensus-timeline", label: "Go to Consensus Timeline", section: "Navigation", run: () => navigateTo("consensus-timeline") },
     { id: "add-ticker", label: "Add Ticker", hint: "A", section: "Actions", run: () => addInput?.focus() },
     { id: "refresh-data", label: "Refresh Data", hint: "R", section: "Actions", run: () => void refreshData() },
     { id: "search-focus", label: "Focus Search", hint: "/", section: "Actions", run: () => addInput?.focus() },
+    {
+      id: "copy-share-link",
+      label: "Copy share link for current view",
+      hint: "Shift+S",
+      section: "Actions",
+      run: () => {
+        const shareUrl = buildShareUrl(window.location.pathname, { card: currentRoute });
+        const fullUrl = window.location.origin + shareUrl;
+        void navigator.clipboard.writeText(fullUrl).then(() => {
+          showToast({ message: "Share link copied to clipboard!", type: "success" });
+        }).catch(() => {
+          showToast({ message: `Share link: ${fullUrl}`, type: "info", durationMs: 0 });
+        });
+      },
+    },
   ];
 
   // Ctrl+K / Cmd+K → open palette
@@ -342,6 +383,22 @@ function main(): void {
 
   // "r" → refresh data
   shortcuts.register({ key: "r", description: "Refresh data", handler: () => void refreshData() });
+
+  // Shift+S → copy share link
+  shortcuts.register({
+    key: "s",
+    shift: true,
+    description: "Copy share link for current view",
+    handler: () => {
+      const shareUrl = buildShareUrl(window.location.pathname, { card: currentRoute });
+      const fullUrl = window.location.origin + shareUrl;
+      void navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast({ message: "Share link copied to clipboard!", type: "success" });
+      }).catch(() => {
+        showToast({ message: `Share link: ${fullUrl}`, type: "info", durationMs: 0 });
+      });
+    },
+  });
 
   // "?" → show shortcuts help
   shortcuts.register({
