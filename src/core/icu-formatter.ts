@@ -178,7 +178,7 @@ function selectPlural(
 
   // Fallback to `other`
   if ("other" in cases) {
-    const template = cases["other"]!;
+    const template = cases["other"];
     return parseSegment(template.replace(/#/g, String(value)), values, locale);
   }
 
@@ -201,7 +201,7 @@ function selectValue(
     return parseSegment(cases[value]!, values, locale);
   }
   if ("other" in cases) {
-    return parseSegment(cases["other"]!, values, locale);
+    return parseSegment(cases["other"], values, locale);
   }
   return value;
 }
@@ -247,7 +247,7 @@ export function getPluralCategory(
   if (typeof Intl !== "undefined" && Intl.PluralRules) {
     try {
       const pr = new Intl.PluralRules(locale);
-      return pr.select(n) as "zero" | "one" | "two" | "few" | "many" | "other";
+      return pr.select(n);
     } catch {
       /* fall through */
     }

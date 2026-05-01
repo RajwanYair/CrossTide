@@ -121,14 +121,14 @@ self.addEventListener("notificationclick", (event: NotificationEvent) => {
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
-      .then((clientList) => {
+      .then((clientList): Promise<void> => {
         for (const client of clientList) {
           if (client.url === url && "focus" in client) {
-            return (client as WindowClient).focus();
+            return (client).focus().then(() => undefined);
           }
         }
         if (self.clients.openWindow) {
-          return self.clients.openWindow(url);
+          return self.clients.openWindow(url).then(() => undefined);
         }
         return Promise.resolve();
       }),

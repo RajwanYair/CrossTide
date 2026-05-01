@@ -1,0 +1,78 @@
+---
+title: Architecture
+description: CrossTide codebase overview — layers, modules, and data flow.
+---
+
+## Layer Diagram
+
+```
+┌─────────────────────────────────────────────────────┐
+│  UI Layer  (src/ui/*)                               │
+│  Cards     (src/cards/*)                            │
+├─────────────────────────────────────────────────────┤
+│  Core Utilities  (src/core/*)                       │
+│  signals · idb · fetch · worker-rpc · sync-queue    │
+├─────────────────────────────────────────────────────┤
+│  Domain Library  (src/domain/*)                     │
+│  30+ indicators · 12 methods · consensus engine     │
+├─────────────────────────────────────────────────────┤
+│  Types  (src/types/*)                               │
+└─────────────────────────────────────────────────────┘
+        ↕                           ↕
+  Web Worker              Cloudflare Worker
+  (compute-worker.ts)     (worker/)
+```
+
+## Key Modules
+
+### Domain (`src/domain/`)
+
+Pure functions — no side effects, no DOM, fully testable in Node.
+
+- **Indicators**: RSI, MACD, Bollinger, ADX, ATR, VWAP, CCI, SAR, Williams%R, MFI, SuperTrend, Aroon, AO, anchored VWAP
+- **Consensus**: `aggregateConsensus()` combines all 12 method signals into one weighted score
+- **Backtest**: `runBacktest()` — equity curve, Sharpe, Calmar, drawdown metrics
+- **Alert state machine**: price/indicator alerts with cooldown and snooze
+
+### Core (`src/core/`)
+
+Infrastructure and utilities:
+
+- `signals.ts` — reactive signals with `effect()`, `computed()`
+- `idb.ts` — typed IndexedDB wrapper
+- `tiered-cache.ts` — LRU memory + IDB persistence
+- `worker-rpc.ts` — type-safe Worker ↔ main-thread RPC
+- `retry-backoff.ts` — exponential backoff with jitter
+- `circuit-breaker.ts` — per-provider open/close breaker
+- `event-bus.ts` — typed pub/sub
+
+### Cards (`src/cards/`)
+
+Self-contained feature panels that mount into `<section>` elements:
+
+| Card | Purpose |
+|---|---|
+| `watchlist-card` | Live ticker list with consensus badges |
+| `chart-card` | Lightweight Charts OHLC + overlay indicators |
+| `consensus-card` | 12-method gauge + timeline |
+| `heatmap` | Sector heatmap with color-coded returns |
+| `screener` | Multi-criteria filter across watchlist |
+| `alerts-card` | Alert rule manager |
+| `settings-card` | Theme, layout, export/import |
+| `multi-chart-layout` | 2×2 / 1+3 synchronized sparkline grid |
+
+## Data Flow
+
+```
+Yahoo Finance v8 API
+       ↓
+  data-service.ts   (Vite proxy in dev → direct in prod)
+       ↓
+  tiered-cache.ts   (IDB + memory LRU)
+       ↓
+  domain functions  (indicators, consensus)
+       ↓
+  signals store     (reactive state)
+       ↓
+  cards / UI layer
+```

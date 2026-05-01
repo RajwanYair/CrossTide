@@ -219,7 +219,7 @@ function activateView(route: RouteName): void {
 function activateViewWithTransition(route: RouteName): void {
   // View Transitions API (C5) — Chrome 111+, Firefox 129+, Safari 18+
   if (typeof document !== "undefined" && "startViewTransition" in document) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (document as any).startViewTransition(() => activateView(route));
   } else {
     activateView(route);

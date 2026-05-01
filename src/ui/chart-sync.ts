@@ -89,10 +89,10 @@ export function wireCrosshairSync(
   let isSyncing = false;
 
   // When this chart's crosshair moves, publish to bus
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+   
   const unsubLwc = chart.subscribeCrosshairMove((param: any) => {
     if (isSyncing) return;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+     
     const time = param?.time ?? null;
     bus.publish(chartId, time as CrosshairTime | null);
   });
@@ -103,10 +103,10 @@ export function wireCrosshairSync(
       isSyncing = true;
       try {
         if (time === null) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+           
           chart.clearCrosshairPosition();
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+           
           chart.setCrosshairPosition(0, time, series);
         }
       } catch {
@@ -120,7 +120,7 @@ export function wireCrosshairSync(
 
   return () => {
     bus.unsubscribe(chartId);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+     
     unsubLwc?.();
   };
 }

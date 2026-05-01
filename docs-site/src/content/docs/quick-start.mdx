@@ -1,0 +1,57 @@
+---
+title: Quick Start
+description: Get CrossTide running in under 5 minutes.
+---
+
+## Installation
+
+CrossTide is a web application — clone the repository and run with Vite.
+
+```bash
+git clone https://github.com/RajwanYair/CrossTide.git
+cd CrossTide
+npm install
+npm run dev        # Dev server at http://localhost:5173
+npm test           # 2000+ unit tests
+npm run build      # Production build
+```
+
+## Using the Indicator Library
+
+Import any indicator directly from the `domain/` barrel:
+
+```ts
+import { computeRsi } from "./src/domain/rsi-calculator";
+import { computeMacd } from "./src/domain/macd-calculator";
+import { aggregateConsensus } from "./src/domain/consensus";
+import type { DailyCandle } from "./src/types/domain";
+
+const candles: DailyCandle[] = [ /* your OHLCV data */ ];
+
+// Single indicator
+const rsiValues = computeRsi(candles, { period: 14 });
+console.log("RSI:", rsiValues.at(-1));
+
+// Consensus across all 12 methods
+const result = aggregateConsensus(candles);
+console.log("Consensus:", result.signal, result.score);
+```
+
+## Data Format
+
+All domain functions operate on `DailyCandle[]`:
+
+```ts
+interface DailyCandle {
+  date: string;    // ISO-8601: "2024-01-15"
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+```
+
+## Live App
+
+Open the live app at [rajwanyair.github.io/CrossTide](https://rajwanyair.github.io/CrossTide) to explore the full UI.

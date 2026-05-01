@@ -129,7 +129,7 @@ export async function registerPasskey(
     return { ok: false, error: `credentials.create failed: ${String(err)}` };
   }
 
-  if (!credential || credential.type !== "public-key") {
+  if (credential?.type !== "public-key") {
     return { ok: false, error: "Unexpected credential type returned" };
   }
 
@@ -188,7 +188,7 @@ export async function authenticatePasskey(
     return { ok: false, error: `credentials.get failed: ${String(err)}` };
   }
 
-  if (!assertion || assertion.type !== "public-key") {
+  if (assertion?.type !== "public-key") {
     return { ok: false, error: "Unexpected assertion type returned" };
   }
 
