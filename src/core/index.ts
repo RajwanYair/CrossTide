@@ -289,6 +289,9 @@ export type {
   RelativeTimeOptions,
 } from "./i18n";
 
+export { t, registerCatalogue } from "./messages";
+export type { Messages } from "./messages";
+
 export { createApiClient, getApiClient, _resetApiClientForTests } from "./worker-api-client";
 export type {
   WorkerApiClient,
