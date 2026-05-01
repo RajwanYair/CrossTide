@@ -115,3 +115,7 @@ export type { LinearScale, LinearScaleOptions } from "./scale-linear";
 export { buildSparkbar } from "./sparkbar";
 export type { SparkbarOptions } from "./sparkbar";
 
+
+export { formatKeymap } from "./keymap-formatter";
+export type { KeymapOptions } from "./keymap-formatter";
+
