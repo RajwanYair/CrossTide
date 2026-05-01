@@ -193,3 +193,6 @@ export { deepClone } from "./deep-clone";
 
 export { chunk, window as windowSlide, zip } from "./chunk-array";
 
+
+export { pick, omit, pickBy } from "./pick-omit";
+
