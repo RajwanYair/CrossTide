@@ -85,3 +85,7 @@ export type { SeriesPoint, RelativePoint } from "./benchmark";
 export { cagr, calmarRatio } from "./risk-ratios";
 export type { RatioOptions } from "./risk-ratios";
 
+
+export { tokenize, parse, evaluate, compileSignal } from "./signal-dsl";
+export type { Value, Node, EvalContext, FnImpl } from "./signal-dsl";
+
