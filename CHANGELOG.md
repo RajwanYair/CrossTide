@@ -6,6 +6,22 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.5.0] - 2026-05-02
+
+### Phase A — Activation (cards, security, performance)
+
+- **A4: Remove state.ts.** Signals are now the sole state primitive; dead `createStore` code deleted.
+- **A10: Command palette + keyboard shortcuts.** Ctrl+K opens fuzzy-search palette; `/` focuses search; `R` refreshes; `Shift+?` shows help.
+- **A5: Wire backtest into Web Worker.** Chart card now runs backtest off main thread via `runBacktestAsync`.
+- **A11: Watchlist column sorting.** Click any column header to sort ascending/descending with visual indicators.
+- **A14: Alert card activation.** Alerts persist to localStorage (last 200), fires browser Notification on new alert.
+- **A12: Heatmap card.** Sector heatmap treemap (11 sectors, color-coded by % change) with new `/heatmap` route.
+- **A13: Screener card.** 6 preset filters (oversold, overbought, trend-following, volume breakout, etc.) with interactive results table.
+- **A20: CSP meta tag.** Content-Security-Policy enforced via `<meta>` tag; `public/_headers` for Cloudflare Pages deployment (HSTS, COOP, CORP, X-Frame-Options).
+- **A21: Storage pressure + LRU eviction.** TieredCache gains `evictOldest(n)` method; pressure monitor polls every 60s and evicts at 80% quota.
+
+---
+
 ## [6.4.0] - 2026-05-01
 
 ### Deduplication & architecture enforcement
