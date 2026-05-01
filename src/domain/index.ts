@@ -133,3 +133,6 @@ export type { VolumeProfile, VolumeProfileBin, VolumeProfileOptions } from "./vo
 export { pearson, correlationMatrix } from "./correlation-matrix";
 export type { CorrelationInput, CorrelationResult } from "./correlation-matrix";
 
+
+export { simpleReturns, logReturns, cumulativeReturns, totalReturn, annualizedReturn, rollingReturns } from "./returns";
+
