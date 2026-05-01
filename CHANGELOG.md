@@ -6,6 +6,47 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.4.0] - 2026-05-19
+
+### Minor — Card activation tests (A8/A11-A14/B2-B6), coverage push, ROADMAP updates
+
+#### Added
+
+- **A8: Finnhub + circuit-breaker integration tests.** 11 new tests in `tests/unit/providers/breaker-provider-integration.test.ts` covering: circuit opens after failure threshold; rejected calls without hitting provider when open; health() reflects open circuit (available=false); resetOnSuccess; all three methods (getQuote/getHistory/search) protected; `configureFinnhub` adds Finnhub with closed breaker. Inline `wrapWithBreaker()` helper mirrors the registry's private `createBreakerAwareProvider`.
+
+- **A11: Watchlist drag-reorder wiring.** `bindWatchlistReorder(tbody, onReorder)` added to `src/ui/watchlist.ts`. Wires HTML5 drag events to the `ui/reorder.ts` state machine; returns a cleanup function. 18 new tests covering sort-by-volume/change/consensus, vol-high/normal/low badge classes, 52W range edge cases (high≤low → "--"), drag-reorder DOM binding, and cleanup.
+
+- **A12/A13: Heatmap + Screener card activation tests.** `tests/unit/cards/heatmap-card.test.ts` (7 tests): mounts, renders 11 sector tiles, shows Technology, fills container, has `.heatmap-grid`. `tests/unit/cards/screener-card.test.ts` (11 tests): mounts, preset buttons, empty state, ticker count, preset click marks active, switching removes active from previous, screener-data bridge set/clear.
+
+- **A14/B5: Alerts card + Provider Health card tests.** `tests/unit/cards/alerts-card.test.ts` (9 tests): mount, empty state, renders stored alerts, update() re-renders, handle.update exists, pushAlert saves/prepends/caps-at-200/handles invalid JSON. `tests/unit/cards/provider-health-card.test.ts` (8 tests): mount, renders "yahoo", dispose function, dispose clears interval, auto-refreshes on 30s interval, checkHealthTransition called.
+
+- **B2: Portfolio card activation tests.** 11 tests in `tests/unit/cards/portfolio-card.test.ts`: mounts without blank flash (DEMO_HOLDINGS rendered immediately), shows total value / unrealized P/L / sector allocation / positions table headers, badge-positive for profitable holdings, top-3 concentration metric, re-renders with custom IDB holdings after async load.
+
+- **B3: Risk metrics card tests.** 10 tests in `tests/unit/cards/risk-card.test.ts`: Sortino Ratio, Max Drawdown, CAGR, Calmar Ratio all present; equity curve SVG rendered; 4 gauge bars (`risk-gauge-wrap`); demo note present; Sortino value > 0.
+
+- **B4: Backtest UI card tests.** 10 tests in `tests/unit/cards/backtest-card.test.ts`: ticker input (default "AAPL"), fast MA input (default 10), slow MA input (default 30), Run button, `.backtest-controls`, `#backtest-result` container, `CardHandle` return, Run button triggers computation. Mocks `backtest-worker` and `data-service`.
+
+- **B6: Consensus timeline card tests.** 9 tests in `tests/unit/cards/consensus-timeline-card.test.ts`: ticker select has all 5 demo tickers (AAPL/MSFT/NVDA/JPM/XOM), days select defaults to 60, single-view section populated, multi-view has 5 `.timeline-multi-item` elements, "All Demo Tickers" heading, changing ticker rerenders with different HTML, `.timeline-card-layout` class.
+
+#### Coverage Push (Sprint 8)
+
+- **notifications-extended** (+4 tests): `requestNotificationPermission()` without Notification API (line 46 branch), `showNotification()` with `icon`, `requireInteraction`, and `silent` options (lines 64, 66-68).
+
+- **router-extended** (+7 tests): `initRouter()` called twice hits `if (initialized)` branch (lines 251-252); `?spa-redirect=` query param restores URL from 404 fallback (line 260); `data-param-*` extraction on anchor click; modifier-key clicks do not fire route-change handlers.
+
+- **telemetry-extended** (+8 tests): analytics-active path (lines 141-190) — `createAnalyticsClient` called with correct endpoint/site, `observeWebVitals` wired, `destroy()` stops vitals observer, `handle.event` delegates; error-tracking-active path — `installErrorBoundary` called with custom handler (GlitchTip DSN), teardown called on destroy; both sinks active path. All sinks mocked (no network calls).
+
+#### Documentation
+
+- **ROADMAP.md**: Marked A8, A11, A12, A13, A14, B2, B3, B4, B5, B6 as ✅ Done (v7.4.0).
+
+#### Tests
+
+- Total: **2547** (+120 from v7.3.0 baseline of 2427)
+- Test files: **259** (+12)
+
+---
+
 ## [7.3.0] - 2026-05-19
 
 ### Minor — Sortable persistence, palette activation, component preview, a11y coverage, instrument filters, chart crosshair sync
