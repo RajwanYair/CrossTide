@@ -109,3 +109,7 @@ export type { IchimokuPoint, IchimokuOptions } from "./ichimoku";
 export { computePivots } from "./pivots";
 export type { PivotInput, PivotLevels, PivotKind } from "./pivots";
 
+
+export { computeZigZag } from "./zigzag";
+export type { ZigZagPivot, ZigZagOptions, PivotDirection } from "./zigzag";
+
