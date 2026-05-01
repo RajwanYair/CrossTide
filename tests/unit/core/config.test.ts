@@ -2,7 +2,13 @@
  * Config management tests.
  */
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { loadConfig, saveConfig, addTicker, removeTicker } from "../../../src/core/config";
+import {
+  loadConfig,
+  saveConfig,
+  addTicker,
+  removeTicker,
+  reorderWatchlist,
+} from "../../../src/core/config";
 
 function createMockStorage(): Storage {
   let store = new Map<string, string>();
@@ -44,6 +50,45 @@ describe("config", () => {
 
     it("returns default for corrupt data", () => {
       localStorage.setItem("crosstide-config", "not-json");
+      const config = loadConfig();
+      expect(config.theme).toBe("dark");
+    });
+
+    it("returns default when version is wrong", () => {
+      localStorage.setItem(
+        "crosstide-config",
+        JSON.stringify({ version: 99, config: { theme: "light", watchlist: [] } }),
+      );
+      const config = loadConfig();
+      expect(config.theme).toBe("dark");
+    });
+
+    it("returns default when stored envelope lacks version field", () => {
+      localStorage.setItem("crosstide-config", JSON.stringify({ config: { theme: "light" } }));
+      const config = loadConfig();
+      expect(config.theme).toBe("dark");
+    });
+
+    it("returns default when config fails schema validation", () => {
+      localStorage.setItem(
+        "crosstide-config",
+        JSON.stringify({ version: 1, config: { theme: 123, watchlist: "bad" } }),
+      );
+      const config = loadConfig();
+      expect(config.theme).toBe("dark");
+    });
+
+    it("returns default when localStorage throws", () => {
+      vi.stubGlobal("localStorage", {
+        getItem: () => {
+          throw new Error("storage error");
+        },
+        setItem: () => undefined,
+        removeItem: () => undefined,
+        clear: () => undefined,
+        length: 0,
+        key: () => null,
+      });
       const config = loadConfig();
       expect(config.theme).toBe("dark");
     });
@@ -92,6 +137,49 @@ describe("config", () => {
       config = addTicker(config, "AAPL");
       config = removeTicker(config, "GOOG");
       expect(config.watchlist).toHaveLength(1);
+    });
+  });
+
+  describe("reorderWatchlist", () => {
+    it("moves a ticker from one position to another", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = addTicker(config, "MSFT");
+      config = addTicker(config, "GOOG");
+      const reordered = reorderWatchlist(config, 0, 2);
+      expect(reordered.watchlist[0]!.ticker).toBe("MSFT");
+      expect(reordered.watchlist[1]!.ticker).toBe("GOOG");
+      expect(reordered.watchlist[2]!.ticker).toBe("AAPL");
+    });
+
+    it("returns unchanged config for out-of-bounds from index", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      const result = reorderWatchlist(config, 5, 0);
+      expect(result).toStrictEqual(config);
+    });
+
+    it("returns unchanged config for negative from index", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      const result = reorderWatchlist(config, -1, 0);
+      expect(result).toStrictEqual(config);
+    });
+
+    it("clamps to index within bounds", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = addTicker(config, "MSFT");
+      const reordered = reorderWatchlist(config, 0, 100);
+      expect(reordered.watchlist[reordered.watchlist.length - 1]!.ticker).toBe("AAPL");
+    });
+
+    it("handles moving to same position (no-op)", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = addTicker(config, "MSFT");
+      const reordered = reorderWatchlist(config, 0, 0);
+      expect(reordered.watchlist[0]!.ticker).toBe("AAPL");
     });
   });
 });

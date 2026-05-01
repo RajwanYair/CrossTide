@@ -238,4 +238,122 @@ describe("showLocalNotification", () => {
       expect.objectContaining({ body: "World" }),
     );
   });
+
+  it("returns ok:false when showNotification throws", async () => {
+    vi.stubGlobal("Notification", { permission: "granted" });
+    const reg = makeRegistration(makePushManager(null));
+    (reg.showNotification as ReturnType<typeof vi.fn>).mockRejectedValue(new Error("SW error"));
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { ready: Promise.resolve(reg) },
+    });
+    const result = await showLocalNotification("Hello");
+    expect(result.ok).toBe(false);
+  });
+});
+
+describe("subscribeToPush — error paths", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("returns ok:false when SW.ready rejects", async () => {
+    vi.stubGlobal("PushManager", {});
+    vi.stubGlobal("Notification", {
+      permission: "granted",
+      requestPermission: vi.fn(async () => "granted"),
+    });
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { ready: Promise.reject(new Error("SW not ready")) },
+    });
+    const result = await subscribeToPush("dGVzdA");
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain("SW not ready");
+  });
+
+  it("returns ok:false when subscribe() throws", async () => {
+    vi.stubGlobal("PushManager", {});
+    vi.stubGlobal("Notification", {
+      permission: "granted",
+      requestPermission: vi.fn(async () => "granted"),
+    });
+    const pm = {
+      ...makePushManager(null),
+      subscribe: vi.fn().mockRejectedValue(new Error("sub error")),
+    } as unknown as PushManager;
+    const reg = makeRegistration(pm);
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { ready: Promise.resolve(reg) },
+    });
+    const result = await subscribeToPush("dGVzdA");
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain("subscribe failed");
+  });
+
+  it("returns ok:false when p256dh key is null", async () => {
+    vi.stubGlobal("PushManager", {});
+    vi.stubGlobal("Notification", {
+      permission: "granted",
+      requestPermission: vi.fn(async () => "granted"),
+    });
+    const nullKeySub = {
+      endpoint: "https://push.example.com/3",
+      getKey: vi.fn().mockReturnValue(null),
+      unsubscribe: vi.fn(),
+    } as unknown as PushSubscription;
+    const pm = {
+      ...makePushManager(nullKeySub),
+      subscribe: vi.fn().mockResolvedValue(nullKeySub),
+    } as unknown as PushManager;
+    const reg = makeRegistration(pm);
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { ready: Promise.resolve(reg) },
+    });
+    const result = await subscribeToPush("dGVzdA");
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain("Missing");
+  });
+});
+
+describe("unsubscribePush — error paths", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("returns ok:false when getSubscription throws", async () => {
+    vi.stubGlobal("PushManager", {});
+    vi.stubGlobal("Notification", { permission: "granted" });
+    const pm = {
+      ...makePushManager(null),
+      getSubscription: vi.fn().mockRejectedValue(new Error("store error")),
+    } as unknown as PushManager;
+    const reg = makeRegistration(pm);
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { ready: Promise.resolve(reg) },
+    });
+    const result = await unsubscribePush();
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain("getSubscription failed");
+  });
+
+  it("returns ok:false when sub.unsubscribe throws", async () => {
+    vi.stubGlobal("PushManager", {});
+    vi.stubGlobal("Notification", { permission: "granted" });
+    const sub = {
+      ...makePushSubscription("https://x.com", new ArrayBuffer(0), new ArrayBuffer(0)),
+      unsubscribe: vi.fn().mockRejectedValue(new Error("unsub error")),
+    } as unknown as PushSubscription;
+    const pm = {
+      ...makePushManager(sub),
+      getSubscription: vi.fn().mockResolvedValue(sub),
+    } as unknown as PushManager;
+    const reg = makeRegistration(pm);
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { ready: Promise.resolve(reg) },
+    });
+    const result = await unsubscribePush();
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain("unsubscribe failed");
+  });
 });
