@@ -6,6 +6,36 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.5] - 2026
+
+### Added — Sprints 61–70 (more indicators, async utilities, UI helpers)
+
+- **Aroon** (`domain/aroon`) — up/down/oscillator from N-period
+  high/low recency.
+- **Chaikin Money Flow** (`domain/chaikin-money-flow`) — volume-weighted
+  buying/selling pressure in [-1, 1].
+- **Awesome Oscillator** (`domain/awesome-oscillator`) — Bill Williams'
+  SMA(5)−SMA(34) of median price with bar coloring.
+- **Rolling stats** (`domain/rolling-stats`) — mean / sample std /
+  min / max / z-score over a window.
+- **Seasonality** (`domain/seasonality`) — return aggregation by month
+  and day-of-week with mean and win rate.
+- **Elder Ray** (`domain/elder-ray`) — bull/bear power vs EMA(close).
+- **Retry + backoff** (`core/retry-backoff`) — exponential backoff with
+  full/equal jitter and pluggable sleep.
+- **Debounce / throttle** (`core/throttle-debounce`) — both with
+  `cancel()` and `flush()`.
+- **Color scale** (`ui/color-scale`) — linear interpolation between
+  stops, divergent red→white→green palette helper.
+- **Relative time** (`ui/relative-time`) — locale-aware "5m ago" /
+  "yesterday" / `Mar 5` formatter via `Intl.RelativeTimeFormat`.
+
+### Tests
+
+- 1358 tests across 155 files (+73 new in this RC).
+
+---
+
 ## [6.1.0-rc.4] - 2026
 
 ### Added — Sprints 51–60 (search, resilience, advanced indicators)
