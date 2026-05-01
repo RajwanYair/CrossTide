@@ -6,6 +6,38 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.4] - 2026
+
+### Added — Sprints 51–60 (search, resilience, advanced indicators)
+
+- **Fuzzy matcher** (`core/fuzzy-match`) — subsequence scoring with
+  prefix / word-boundary / consecutive bonuses for command palette.
+- **Circuit breaker** (`core/circuit-breaker`) — three-state
+  (closed/open/half-open) provider isolation with configurable
+  thresholds and rehydratable snapshot.
+- **Token bucket** (`core/token-bucket`) — pure rate limiter with
+  continuous refill and `waitMs` estimation.
+- **Squarified treemap layout** (`ui/treemap-layout`) — Bruls/Huijing/
+  van Wijk algorithm for sector heatmap.
+- **Volume profile** (`domain/volume-profile`) — price-by-volume bins
+  with POC and value-area boundaries.
+- **Correlation matrix** (`domain/correlation-matrix`) — Pearson r
+  across N aligned series.
+- **Returns** (`domain/returns`) — simple / log / cumulative / rolling
+  / total / annualized.
+- **Anchored VWAP** (`domain/anchored-vwap`) — cumulative VWAP from
+  any anchor with ±1σ / ±2σ bands.
+- **MA crossover detector** (`domain/ma-crossover`) — golden/death
+  cross events between any two MA series.
+- **Linear regression** (`domain/linear-regression`) — OLS fit, r²,
+  trend line and ±k σ regression channel.
+
+### Tests
+
+- 1285 tests across 145 files (+81 new in this RC).
+
+---
+
 ## [6.1.0-rc.3] - 2026
 
 ### Added — Phase A indicators, portfolio analytics, formatters (Sprints 41–50)
