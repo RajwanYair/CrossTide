@@ -712,30 +712,30 @@ Everything else is hand-written or zero-dep.
 
 **Sprint cadence:** 5 sprints per RC. Each RC ends with a green Lighthouse run.
 
-| #   | Task                                                                                                                                                                    | Priority | Notes                                    |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ---------------------------------------- |
-| A1  | Add `lightweight-charts@^5`, integrate in `cards/chart.ts` (multi-pane, signal markers, sub-indicators wired to existing domain calcs)                                  |    P0    | Largest single win                       |
-| A2  | Wire `card-registry` in `main.ts` with lazy `import()` per route                                                                                                        |    P0    | Activates 15+ existing cards             |
-| A3  | Replace hash router with History API + 404 fallback for static-host mirror                                                                                              |    P0    | Existing `ui/router.ts` rewrite          |
-| A4  | Replace `core/state.ts` with `signals.ts`-only API; migrate cards; delete `state.ts`                                                                                    |    P0    | One source of truth                      |
-| A5  | Move backtest + full-history scan into Web Worker via existing `worker-rpc.ts`                                                                                          |    P0    | Existing `compute-worker.ts` activation  |
-| A6  | Workbox SW: precache + runtime caching (NetworkFirst for `/api/*`, StaleWhileRevalidate for assets) + Background Sync (wires `core/sync-queue.ts`) + Navigation Preload |    P1    | Replaces hand-rolled `sw.ts`             |
-| A7  | Deploy Worker to Cloudflare; switch deploy target to Cloudflare Pages with preview-per-PR                                                                               |    P0    | Requires Cloudflare account + DNS        |
-| A8  | Add Finnhub provider + circuit-breaker activation + Provider Health card surfacing                                                                                      |    P0    | Existing `circuit-breaker.ts` activation |
-| A9  | Adopt **Valibot** schemas at every provider boundary; brand `Ticker`/`ISODate`/`Price` everywhere (already in `branded.ts`)                                             |    P0    | Replace any leftover `as` casts          |
-| A10 | Activate command palette (`⌘K`) + finish keyboard shortcuts (`j/k`, `/`, `g h`) — wires existing `ui/command-palette.ts` + `core/keyboard.ts`                           |    P0    | ✅ Done (v7.3.0)                         |
-| A11 | Watchlist polish: sparkline, 52W range, volume vs avg, sort, drag reorder — wires existing `ui/sparkline.ts` + `ui/sortable.ts` + `ui/reorder.ts`                       |    P0    |                                          |
-| A12 | Heatmap card activation (existing `cards/heatmap.ts` + `core/treemap-layout.ts`)                                                                                        |    P1    |                                          |
-| A13 | Screener card activation: preset filters (oversold, breakout, golden cross) + custom builder                                                                            |    P1    |                                          |
-| A14 | Alert history card activation + browser Notifications API permission flow (in-tab; Web Push deferred to v7)                                                             |    P1    |                                          |
-| A15 | **Playwright** E2E for 10 flows + `@axe-core/playwright`                                                                                                                |    P0    | Add `tests/e2e/`                         |
-| A16 | **Lighthouse CI** (`lhci autorun`) + budgets file                                                                                                                       |    P0    |                                          |
-| A17 | Self-host GlitchTip + Plausible on Fly.io; integrate sampled error/analytics ingestion                                                                                  |    P1    |                                          |
-| A18 | Adopt **Changesets** + `commitlint` Conventional Commits                                                                                                                |    P1    | ✅ Done (v7.2.0)                         |
-| A19 | Component preview page `dev/components.html` mounting every card with mock signals                                                                                      |    P1    | ✅ Done (v7.3.0)                         |
-| A20 | CSP, Permissions-Policy, security headers via Worker (wires existing `csp-builder.ts`)                                                                                  |    P0    | ✅ Done (v7.2.0)                         |
-| A21 | Storage pressure handling + LRU eviction in IDB (wires existing `lru-cache.ts` + `storage-pressure.ts`)                                                                 |    P1    | ✅ Done (v7.2.0)                         |
-| A22 | Rewrite `ARCHITECTURE.md` to match v6.2 reality                                                                                                                         |    P1    | ✅ Done (v7.2.0)                         |
+| #   | Task                                                                                                                                                                    | Priority | Notes                                   |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | --------------------------------------- |
+| A1  | Add `lightweight-charts@^5`, integrate in `cards/chart.ts` (multi-pane, signal markers, sub-indicators wired to existing domain calcs)                                  |    P0    | Largest single win                      |
+| A2  | Wire `card-registry` in `main.ts` with lazy `import()` per route                                                                                                        |    P0    | Activates 15+ existing cards            |
+| A3  | Replace hash router with History API + 404 fallback for static-host mirror                                                                                              |    P0    | Existing `ui/router.ts` rewrite         |
+| A4  | Replace `core/state.ts` with `signals.ts`-only API; migrate cards; delete `state.ts`                                                                                    |    P0    | One source of truth                     |
+| A5  | Move backtest + full-history scan into Web Worker via existing `worker-rpc.ts`                                                                                          |    P0    | Existing `compute-worker.ts` activation |
+| A6  | Workbox SW: precache + runtime caching (NetworkFirst for `/api/*`, StaleWhileRevalidate for assets) + Background Sync (wires `core/sync-queue.ts`) + Navigation Preload |    P1    | Replaces hand-rolled `sw.ts`            |
+| A7  | Deploy Worker to Cloudflare; switch deploy target to Cloudflare Pages with preview-per-PR                                                                               |    P0    | Requires Cloudflare account + DNS       |
+| A8  | Add Finnhub provider + circuit-breaker activation + Provider Health card surfacing                                                                                      |    P0    | ✅ Done (v7.4.0)                        |
+| A9  | Adopt **Valibot** schemas at every provider boundary; brand `Ticker`/`ISODate`/`Price` everywhere (already in `branded.ts`)                                             |    P0    | Replace any leftover `as` casts         |
+| A10 | Activate command palette (`⌘K`) + finish keyboard shortcuts (`j/k`, `/`, `g h`) — wires existing `ui/command-palette.ts` + `core/keyboard.ts`                           |    P0    | ✅ Done (v7.3.0)                        |
+| A11 | Watchlist polish: sparkline, 52W range, volume vs avg, sort, drag reorder — wires existing `ui/sparkline.ts` + `ui/sortable.ts` + `ui/reorder.ts`                       |    P0    | ✅ Done (v7.4.0)                        |
+| A12 | Heatmap card activation (existing `cards/heatmap.ts` + `core/treemap-layout.ts`)                                                                                        |    P1    | ✅ Done (v7.4.0)                        |
+| A13 | Screener card activation: preset filters (oversold, breakout, golden cross) + custom builder                                                                            |    P1    | ✅ Done (v7.4.0)                        |
+| A14 | Alert history card activation + browser Notifications API permission flow (in-tab; Web Push deferred to v7)                                                             |    P1    | ✅ Done (v7.4.0)                        |
+| A15 | **Playwright** E2E for 10 flows + `@axe-core/playwright`                                                                                                                |    P0    | Add `tests/e2e/`                        |
+| A16 | **Lighthouse CI** (`lhci autorun`) + budgets file                                                                                                                       |    P0    |                                         |
+| A17 | Self-host GlitchTip + Plausible on Fly.io; integrate sampled error/analytics ingestion                                                                                  |    P1    |                                         |
+| A18 | Adopt **Changesets** + `commitlint` Conventional Commits                                                                                                                |    P1    | ✅ Done (v7.2.0)                        |
+| A19 | Component preview page `dev/components.html` mounting every card with mock signals                                                                                      |    P1    | ✅ Done (v7.3.0)                        |
+| A20 | CSP, Permissions-Policy, security headers via Worker (wires existing `csp-builder.ts`)                                                                                  |    P0    | ✅ Done (v7.2.0)                        |
+| A21 | Storage pressure handling + LRU eviction in IDB (wires existing `lru-cache.ts` + `storage-pressure.ts`)                                                                 |    P1    | ✅ Done (v7.2.0)                        |
+| A22 | Rewrite `ARCHITECTURE.md` to match v6.2 reality                                                                                                                         |    P1    | ✅ Done (v7.2.0)                        |
 
 **Exit criteria for v6.2:**
 
@@ -751,11 +751,11 @@ Everything else is hand-written or zero-dep.
 | #   | Task                                                                                                 | Priority | Notes                                                 |
 | --- | ---------------------------------------------------------------------------------------------------- | :------: | ----------------------------------------------------- |
 | B1  | WebSocket streaming via Finnhub (Durable Object fan-out)                                             |    P1    |                                                       |
-| B2  | Portfolio card: holdings, P/L, sector allocation (wires `portfolio-analytics.ts`), benchmark vs SPY  |    P1    |                                                       |
-| B3  | Risk metrics card: Sharpe, Sortino, max DD, beta, volatility (wires `risk-ratios.ts`)                |    P1    |                                                       |
-| B4  | Backtest UI on top of existing engine (equity curve via `equity-curve.ts` + perf table)              |    P1    |                                                       |
-| B5  | Provider Health card from circuit-breaker stats                                                      |    P2    |                                                       |
-| B6  | Consensus history timeline (wires `cards/consensus-timeline.ts`)                                     |    P2    |                                                       |
+| B2  | Portfolio card: holdings, P/L, sector allocation (wires `portfolio-analytics.ts`), benchmark vs SPY  |    P1    | ✅ Done (v7.4.0)                                      |
+| B3  | Risk metrics card: Sharpe, Sortino, max DD, beta, volatility (wires `risk-ratios.ts`)                |    P1    | ✅ Done (v7.4.0)                                      |
+| B4  | Backtest UI on top of existing engine (equity curve via `equity-curve.ts` + perf table)              |    P1    | ✅ Done (v7.4.0)                                      |
+| B5  | Provider Health card from circuit-breaker stats                                                      |    P2    | ✅ Done (v7.4.0)                                      |
+| B6  | Consensus history timeline (wires `cards/consensus-timeline.ts`)                                     |    P2    | ✅ Done (v7.4.0)                                      |
 | B7  | OG image rendering (`/api/og/:symbol.png`)                                                           |    P2    |                                                       |
 | B8  | Polygon provider (paid escape hatch)                                                                 |    P2    |                                                       |
 | B9  | Synced crosshair across multi-pane chart                                                             |    P2    | ✅ Done (v7.3.0)                                      |
