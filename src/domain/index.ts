@@ -97,3 +97,7 @@ export type { Candle, HeikinAshiCandle } from "./heikin-ashi";
 export { computeDonchian } from "./donchian";
 export type { DonchianPoint } from "./donchian";
 
+
+export { computeKeltner } from "./keltner";
+export type { KeltnerPoint, KeltnerOptions } from "./keltner";
+
