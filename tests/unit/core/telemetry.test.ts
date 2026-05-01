@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { initTelemetry, getTelemetry, _resetTelemetryForTests } from "../../../src/core/telemetry";
+import {
+  initTelemetry,
+  getTelemetry,
+  _resetTelemetryForTests,
+  _parseStackTraceForTests,
+  _reportToGlitchTipForTests,
+} from "../../../src/core/telemetry";
 import { createAnalyticsClient } from "../../../src/core/analytics-client";
+import type { ErrorRecord } from "../../../src/core/error-boundary";
 
 describe("telemetry", () => {
   beforeEach(() => {
@@ -118,6 +125,112 @@ describe("telemetry", () => {
       expect(beaconSpy).not.toHaveBeenCalled();
 
       vi.unstubAllGlobals();
+    });
+  });
+
+  // ── parseStackTrace ──────────────────────────────────────────────────────
+
+  describe("parseStackTrace", () => {
+    it("extracts filename and lineno from V8 stack frames", () => {
+      const stack = `Error: boom
+    at handleClick (https://example.com/app.js:12:34)
+    at HTMLButtonElement.onClick (https://example.com/main.js:99:5)`;
+      const frames = _parseStackTraceForTests(stack);
+      expect(frames.length).toBeGreaterThan(0);
+      expect(frames[0]).toMatchObject({ filename: "https://example.com/app.js", lineno: 12 });
+    });
+
+    it("returns unknown for unparseable lines", () => {
+      const stack = "Error: boom\n    at native";
+      const frames = _parseStackTraceForTests(stack);
+      expect(frames[0]).toMatchObject({ filename: "unknown", lineno: 0 });
+    });
+
+    it("limits frames to 10", () => {
+      const lines = ["Error: test"];
+      for (let i = 0; i < 15; i++) {
+        lines.push(`    at fn${i} (https://x.com/a.js:${i}:0)`);
+      }
+      const frames = _parseStackTraceForTests(lines.join("\n"));
+      expect(frames.length).toBeLessThanOrEqual(10);
+    });
+  });
+
+  // ── reportToGlitchTip ────────────────────────────────────────────────────
+
+  describe("reportToGlitchTip", () => {
+    const mockRecord: ErrorRecord = {
+      message: "Test error",
+      source: "https://example.com/app.js:42:1",
+      timestamp: Date.now(),
+    };
+    const mockDsn = "https://pubkey123@glitchtip.example.com/456";
+
+    beforeEach(() => {
+      // Force Math.random to always pass the 25% sample check
+      vi.spyOn(Math, "random").mockReturnValue(0.1);
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+      vi.unstubAllGlobals();
+    });
+
+    it("sends via sendBeacon when available", () => {
+      const beaconSpy = vi.fn().mockReturnValue(true);
+      vi.stubGlobal("navigator", { sendBeacon: beaconSpy });
+      _reportToGlitchTipForTests(mockDsn, mockRecord);
+      expect(beaconSpy).toHaveBeenCalledOnce();
+      const [url] = beaconSpy.mock.calls[0] as [string, unknown];
+      expect(url).toContain("glitchtip.example.com");
+      expect(url).toContain("pubkey123");
+    });
+
+    it("falls back to fetch when sendBeacon unavailable", async () => {
+      const fetchSpy = vi.fn().mockResolvedValue(new Response(""));
+      vi.stubGlobal("navigator", {});
+      vi.stubGlobal("fetch", fetchSpy);
+      _reportToGlitchTipForTests(mockDsn, mockRecord);
+      expect(fetchSpy).toHaveBeenCalledOnce();
+    });
+
+    it("includes stack trace when record.stack is provided", () => {
+      const beaconSpy = vi.fn().mockReturnValue(true);
+      vi.stubGlobal("navigator", { sendBeacon: beaconSpy });
+      _reportToGlitchTipForTests(mockDsn, {
+        ...mockRecord,
+        stack: "Error: boom\n    at fn (https://example.com/app.js:5:1)",
+      });
+      // Verify the blob body contains exception data
+      const [, blob] = beaconSpy.mock.calls[0] as [string, Blob];
+      expect(blob).toBeInstanceOf(Blob);
+    });
+
+    it("is a no-op when Math.random is above 0.25", () => {
+      vi.spyOn(Math, "random").mockReturnValue(0.5);
+      const beaconSpy = vi.fn();
+      vi.stubGlobal("navigator", { sendBeacon: beaconSpy });
+      _reportToGlitchTipForTests(mockDsn, mockRecord);
+      expect(beaconSpy).not.toHaveBeenCalled();
+    });
+
+    it("is a no-op for invalid DSN", () => {
+      const beaconSpy = vi.fn();
+      vi.stubGlobal("navigator", { sendBeacon: beaconSpy });
+      _reportToGlitchTipForTests("not-a-dsn", mockRecord);
+      expect(beaconSpy).not.toHaveBeenCalled();
+    });
+
+    it("does not throw when fetch rejects", () => {
+      vi.stubGlobal("navigator", {});
+      vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network")));
+      expect(() => _reportToGlitchTipForTests(mockDsn, mockRecord)).not.toThrow();
+    });
+
+    it("does not throw when sendBeacon throws", () => {
+      vi.stubGlobal("navigator", { sendBeacon: () => { throw new Error("blocked"); } });
+      vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("")));
+      expect(() => _reportToGlitchTipForTests(mockDsn, mockRecord)).not.toThrow();
     });
   });
 });

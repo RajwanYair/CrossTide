@@ -201,3 +201,6 @@ export function getTelemetry(): TelemetryHandle | null {
 export function _resetTelemetryForTests(): void {
   _handle = null;
 }
+
+/** Exposed for unit testing only. */
+export { parseStackTrace as _parseStackTraceForTests, reportToGlitchTip as _reportToGlitchTipForTests };
