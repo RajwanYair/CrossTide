@@ -114,6 +114,56 @@ function main(): void {
     a.download = "crosstide-watchlist.json";
     a.click();
     URL.revokeObjectURL(url);
+    showToast({ message: `Exported ${config.watchlist.length} tickers`, type: "success" });
+  });
+
+  // Import watchlist
+  document.getElementById("btn-import")?.addEventListener("click", () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.addEventListener("change", () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        try {
+          const parsed = JSON.parse(String(reader.result));
+          if (!Array.isArray(parsed)) throw new Error("Expected an array");
+          const cleaned: { ticker: string; addedAt: number }[] = [];
+          const now = Date.now();
+          for (const raw of parsed) {
+            const ticker =
+              typeof raw === "string" ? raw : typeof raw?.ticker === "string" ? raw.ticker : null;
+            if (ticker && /^[A-Z][A-Z0-9.-]{0,9}$/.test(ticker.toUpperCase())) {
+              cleaned.push({ ticker: ticker.toUpperCase(), addedAt: now });
+            }
+          }
+          if (cleaned.length === 0) {
+            showToast({ message: "No valid tickers found", type: "warning" });
+            return;
+          }
+          const seen = new Set(config.watchlist.map((e) => e.ticker));
+          const merged = [...config.watchlist];
+          let added = 0;
+          for (const e of cleaned) {
+            if (!seen.has(e.ticker)) {
+              merged.push(e);
+              seen.add(e.ticker);
+              added++;
+            }
+          }
+          config = { ...config, watchlist: merged };
+          saveConfig(config);
+          renderWatchlist(config, new Map());
+          showToast({ message: `Imported ${added} new ticker(s)`, type: "success" });
+        } catch (err) {
+          showToast({ message: `Import failed: ${(err as Error).message}`, type: "error" });
+        }
+      });
+      reader.readAsText(file);
+    });
+    input.click();
   });
 
   // Clear all
