@@ -117,3 +117,7 @@ export type { ZigZagPivot, ZigZagOptions, PivotDirection } from "./zigzag";
 export { resampleCandles, TIMEFRAMES } from "./resample";
 export type { ResampleOptions } from "./resample";
 
+
+export { buildEquityCurve, summarizeTrades, tradePnl } from "./equity-curve";
+export type { ClosedTrade, EquityPoint as EquityCurvePoint, CurveStats, Side } from "./equity-curve";
+
