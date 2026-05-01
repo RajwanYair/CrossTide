@@ -48,6 +48,16 @@ describe("share-state", () => {
     expect(url).toMatch(/^\/chart\?s=/);
   });
 
+  it("decodeShareState returns null when object has v but no s field", () => {
+    // Build a valid base64url token for { v: 1 } (missing "s")
+    const json = JSON.stringify({ v: 1 });
+    const bytes = new TextEncoder().encode(json);
+    let bin = "";
+    for (const b of bytes) bin += String.fromCharCode(b);
+    const tok = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    expect(decodeShareState(tok)).toBeNull();
+  });
+
   it("readShareUrl extracts state", () => {
     const url = buildShareUrl("/chart", { symbol: "GOOG", range: "5d" });
     expect(readShareUrl(url)).toEqual({ symbol: "GOOG", range: "5d" });

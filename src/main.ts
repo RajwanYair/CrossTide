@@ -31,7 +31,7 @@ import { setScreenerData } from "./cards/screener-data";
 import { computeRsiSeries } from "./domain/rsi-calculator";
 import { computeSma } from "./domain/sma-calculator";
 import type { ScreenerInput } from "./cards/screener";
-import { buildShareUrl, readShareUrl } from "./core/share-state";
+import { buildShareUrl, readShareUrl, encodeWatchlistUrl } from "./core/share-state";
 import {
   mountInstrumentFilterBar,
   applyInstrumentFilter,
@@ -259,6 +259,22 @@ function main(): void {
     const candidateRoute = startupState.card as RouteName;
     activeShareRoute = candidateRoute;
   }
+  // D5: restore shared watchlist from URL (only when local watchlist is empty)
+  if (
+    Array.isArray(startupState?.watchlist) &&
+    startupState.watchlist.length > 0 &&
+    config.watchlist.length === 0
+  ) {
+    for (const ticker of startupState.watchlist) {
+      if (typeof ticker === "string" && ticker) config = addTicker(config, ticker);
+    }
+    saveAndBroadcast(config);
+    refreshWatchlist(config, new Map());
+    showToast({
+      message: `Loaded ${config.watchlist.length} tickers from shared link`,
+      type: "success",
+    });
+  }
 
   // Fetch live data on startup — moved to bottom of main() so streaming starts after data loads
 
@@ -308,6 +324,21 @@ function main(): void {
         void refreshData();
       });
     }
+  });
+
+  // D5: Share watchlist button — encode tickers into a deep-link URL
+  const shareWlBtn = document.getElementById("btn-share-watchlist") as HTMLButtonElement | null;
+  shareWlBtn?.addEventListener("click", () => {
+    const tickers = config.watchlist.map((e) => e.ticker);
+    const url = encodeWatchlistUrl(tickers, window.location.href);
+    void navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        showToast({ message: "Watchlist link copied to clipboard!", type: "success" });
+      })
+      .catch(() => {
+        showToast({ message: `Watchlist link: ${url}`, type: "info", durationMs: 0 });
+      });
   });
 
   // Remove ticker via event delegation
@@ -625,6 +656,12 @@ function main(): void {
             showToast({ message: `Share link: ${fullUrl}`, type: "info", durationMs: 0 });
           });
       },
+    },
+    {
+      id: "share-watchlist",
+      label: "Share watchlist URL",
+      section: "Actions",
+      run: () => shareWlBtn?.click(),
     },
     {
       id: "check-storage",
