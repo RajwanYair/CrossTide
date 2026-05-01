@@ -160,3 +160,6 @@ export type { CmfPoint } from "./chaikin-money-flow";
 export { computeAwesomeOscillator } from "./awesome-oscillator";
 export type { AoPoint } from "./awesome-oscillator";
 
+
+export { rollingMean, rollingStdDev, rollingMin, rollingMax, rollingZScore } from "./rolling-stats";
+
