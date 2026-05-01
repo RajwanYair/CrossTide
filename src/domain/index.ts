@@ -178,3 +178,6 @@ export type { TrixPoint } from "./trix";
 
 export { computeUlcerIndex } from "./ulcer-index";
 
+
+export { computeCoppockCurve } from "./coppock-curve";
+
