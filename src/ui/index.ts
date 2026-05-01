@@ -30,3 +30,11 @@ export type {
   PaletteRanked,
   PaletteState,
 } from "./command-palette";
+export {
+  createReorderState,
+  startDrag,
+  dragOver,
+  endDrag,
+  moveItem,
+} from "./reorder";
+export type { ReorderState } from "./reorder";
