@@ -168,3 +168,100 @@ describe("importAlertsCsv", () => {
     expect(() => importAlertsCsv("id,ticker\nonly,two")).toThrow();
   });
 });
+
+// ── C7: Full-data export / import ─────────────────────────────────────────────
+import {
+  exportFullDataJson,
+  importFullDataJson,
+  exportFullDataCsv,
+  EXPORT_SCHEMA_VERSION,
+} from "../../../src/core/data-export";
+import type { WatchlistEntry } from "../../../src/types/domain";
+
+const WATCHLIST: WatchlistEntry[] = [
+  { ticker: "AAPL", addedAt: "2025-01-01", instrumentType: "stock" },
+  { ticker: "SPY", addedAt: "2025-01-02", instrumentType: "etf" },
+];
+
+describe("exportFullDataJson / importFullDataJson (C7)", () => {
+  it("includes schema_version, exported_at, app, and data", () => {
+    const json = exportFullDataJson({ watchlist: WATCHLIST });
+    const parsed = JSON.parse(json);
+    expect(parsed.schema_version).toBe(EXPORT_SCHEMA_VERSION);
+    expect(parsed.app).toBe("CrossTide");
+    expect(parsed.exported_at).toBeDefined();
+    expect(parsed.data.watchlist).toHaveLength(2);
+  });
+
+  it("round-trips watchlist through importFullDataJson", () => {
+    const json = exportFullDataJson({ watchlist: WATCHLIST });
+    const payload = importFullDataJson(json);
+    expect(payload.data.watchlist).toEqual(WATCHLIST);
+  });
+
+  it("accepts exports from older schema versions without error", () => {
+    const oldPayload = JSON.stringify({
+      schema_version: EXPORT_SCHEMA_VERSION - 1,
+      exported_at: "2024-01-01T00:00:00.000Z",
+      app: "CrossTide",
+      data: { watchlist: WATCHLIST },
+    });
+    expect(() => importFullDataJson(oldPayload)).not.toThrow();
+  });
+
+  it("rejects exports from a newer schema version", () => {
+    const futurePayload = JSON.stringify({
+      schema_version: EXPORT_SCHEMA_VERSION + 1,
+      exported_at: "2030-01-01T00:00:00.000Z",
+      app: "CrossTide",
+      data: {},
+    });
+    expect(() => importFullDataJson(futurePayload)).toThrow(/newer than supported/);
+  });
+
+  it("throws on non-object JSON", () => {
+    expect(() => importFullDataJson('"just a string"')).toThrow();
+    expect(() => importFullDataJson("42")).toThrow();
+  });
+
+  it("throws when schema_version is missing", () => {
+    expect(() => importFullDataJson(JSON.stringify({ app: "CrossTide", data: {} }))).toThrow();
+  });
+
+  it("includes alerts and holdings when provided", () => {
+    const json = exportFullDataJson({
+      watchlist: WATCHLIST,
+      alerts: ALERTS,
+    });
+    const p = JSON.parse(json);
+    expect(p.data.alerts).toHaveLength(2);
+    expect(p.data.watchlist).toHaveLength(2);
+  });
+});
+
+describe("exportFullDataCsv (C7)", () => {
+  it("starts with schema version comment", () => {
+    const csv = exportFullDataCsv({ watchlist: WATCHLIST });
+    expect(csv).toMatch(/## CrossTide full export/);
+    expect(csv).toContain(`schema v${EXPORT_SCHEMA_VERSION}`);
+  });
+
+  it("includes WATCHLIST section", () => {
+    const csv = exportFullDataCsv({ watchlist: WATCHLIST });
+    expect(csv).toContain("## WATCHLIST");
+    expect(csv).toContain("AAPL");
+    expect(csv).toContain("SPY");
+  });
+
+  it("includes ALERTS section when alerts provided", () => {
+    const csv = exportFullDataCsv({ watchlist: WATCHLIST, alerts: ALERTS });
+    expect(csv).toContain("## ALERTS");
+    expect(csv).toContain("rsiBuy");
+  });
+
+  it("omits sections with no data", () => {
+    const csv = exportFullDataCsv({ watchlist: [] });
+    expect(csv).not.toContain("## WATCHLIST");
+    expect(csv).not.toContain("## ALERTS");
+  });
+});

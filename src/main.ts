@@ -27,6 +27,8 @@ import { buildShareUrl, readShareUrl } from "./core/share-state";
 import { mountInstrumentFilterBar, applyInstrumentFilter, getInstrumentFilter } from "./ui/instrument-filter";
 import { bindSortableTable } from "./ui/sortable";
 import { loadPersistedPalette, applyPalette, VALID_PALETTES, type ExtendedPaletteName } from "./ui/palette-switcher";
+import { exportFullDataJson, exportFullDataCsv } from "./core/data-export";
+import { downloadFile } from "./core/export-import";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -95,9 +97,15 @@ function main(): void {
     const m = new Map<string, WatchlistQuote>();
     for (const [t, data] of tickerDataCache) {
       m.set(t, {
-        ticker: data.ticker, price: data.price, change: data.change,
-        changePercent: data.changePercent, volume: data.volume, avgVolume: data.avgVolume,
-        high52w: data.high52w, low52w: data.low52w, closes30d: data.closes30d,
+        ticker: data.ticker,
+        price: data.price,
+        change: data.change,
+        changePercent: data.changePercent,
+        volume: data.volume,
+        avgVolume: data.avgVolume,
+        high52w: data.high52w,
+        low52w: data.low52w,
+        closes30d: data.closes30d,
         consensus: data.consensus,
         ...(data.instrumentType !== undefined && { instrumentType: data.instrumentType }),
         ...(data.sector !== undefined && { sector: data.sector }),
@@ -165,7 +173,10 @@ function main(): void {
       const volumeRatio = data.avgVolume > 0 ? data.volume / data.avgVolume : 0;
       const sma50 = computeSma(data.candles, 50);
       const sma200 = computeSma(data.candles, 200);
-      const smaValues = new Map<number, number | null>([[50, sma50], [200, sma200]]);
+      const smaValues = new Map<number, number | null>([
+        [50, sma50],
+        [200, sma200],
+      ]);
       screenerInputs.push({
         ticker,
         price: data.price,
@@ -404,24 +415,127 @@ function main(): void {
     showToast({ message: "Cache cleared", type: "info" });
   });
 
+  // Full-data export (C7)
+  document.getElementById("btn-export-full-json")?.addEventListener("click", () => {
+    const json = exportFullDataJson({ watchlist: config.watchlist });
+    downloadFile(
+      json,
+      `crosstide-export-${new Date().toISOString().slice(0, 10)}.json`,
+      "application/json",
+    );
+    showToast({ message: "Full data exported as JSON", type: "success" });
+  });
+
+  document.getElementById("btn-export-full-csv")?.addEventListener("click", () => {
+    const csv = exportFullDataCsv({ watchlist: config.watchlist });
+    downloadFile(csv, `crosstide-export-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv");
+    showToast({ message: "Full data exported as CSV", type: "success" });
+  });
+
   // --- Command Palette & Keyboard Shortcuts ---
   const shortcuts = createShortcutManager();
   const paletteCommands: PaletteCommand[] = [
-    { id: "nav-watchlist", label: "Go to Watchlist", hint: "G W", section: "Navigation", run: () => navigateTo("watchlist") },
-    { id: "nav-consensus", label: "Go to Consensus", hint: "G C", section: "Navigation", run: () => navigateTo("consensus") },
-    { id: "nav-chart", label: "Go to Chart", hint: "G H", section: "Navigation", run: () => navigateTo("chart") },
-    { id: "nav-alerts", label: "Go to Alerts", hint: "G A", section: "Navigation", run: () => navigateTo("alerts") },
-    { id: "nav-heatmap", label: "Go to Heatmap", hint: "G M", section: "Navigation", run: () => navigateTo("heatmap") },
-    { id: "nav-screener", label: "Go to Screener", hint: "G R", section: "Navigation", run: () => navigateTo("screener") },
-    { id: "nav-settings", label: "Go to Settings", hint: "G S", section: "Navigation", run: () => navigateTo("settings") },
-    { id: "nav-provider-health", label: "Go to Provider Health", hint: "G P", section: "Navigation", run: () => navigateTo("provider-health") },
-    { id: "nav-portfolio", label: "Go to Portfolio", section: "Navigation", run: () => navigateTo("portfolio") },
-    { id: "nav-risk", label: "Go to Risk Metrics", section: "Navigation", run: () => navigateTo("risk") },
-    { id: "nav-backtest", label: "Go to Backtest", section: "Navigation", run: () => navigateTo("backtest") },
-    { id: "nav-consensus-timeline", label: "Go to Consensus Timeline", section: "Navigation", run: () => navigateTo("consensus-timeline") },
-    { id: "add-ticker", label: "Add Ticker", hint: "A", section: "Actions", run: () => addInput?.focus() },
-    { id: "refresh-data", label: "Refresh Data", hint: "R", section: "Actions", run: () => void refreshData() },
-    { id: "search-focus", label: "Focus Search", hint: "/", section: "Actions", run: () => addInput?.focus() },
+    {
+      id: "nav-watchlist",
+      label: "Go to Watchlist",
+      hint: "G W",
+      section: "Navigation",
+      run: () => navigateTo("watchlist"),
+    },
+    {
+      id: "nav-consensus",
+      label: "Go to Consensus",
+      hint: "G C",
+      section: "Navigation",
+      run: () => navigateTo("consensus"),
+    },
+    {
+      id: "nav-chart",
+      label: "Go to Chart",
+      hint: "G H",
+      section: "Navigation",
+      run: () => navigateTo("chart"),
+    },
+    {
+      id: "nav-alerts",
+      label: "Go to Alerts",
+      hint: "G A",
+      section: "Navigation",
+      run: () => navigateTo("alerts"),
+    },
+    {
+      id: "nav-heatmap",
+      label: "Go to Heatmap",
+      hint: "G M",
+      section: "Navigation",
+      run: () => navigateTo("heatmap"),
+    },
+    {
+      id: "nav-screener",
+      label: "Go to Screener",
+      hint: "G R",
+      section: "Navigation",
+      run: () => navigateTo("screener"),
+    },
+    {
+      id: "nav-settings",
+      label: "Go to Settings",
+      hint: "G S",
+      section: "Navigation",
+      run: () => navigateTo("settings"),
+    },
+    {
+      id: "nav-provider-health",
+      label: "Go to Provider Health",
+      hint: "G P",
+      section: "Navigation",
+      run: () => navigateTo("provider-health"),
+    },
+    {
+      id: "nav-portfolio",
+      label: "Go to Portfolio",
+      section: "Navigation",
+      run: () => navigateTo("portfolio"),
+    },
+    {
+      id: "nav-risk",
+      label: "Go to Risk Metrics",
+      section: "Navigation",
+      run: () => navigateTo("risk"),
+    },
+    {
+      id: "nav-backtest",
+      label: "Go to Backtest",
+      section: "Navigation",
+      run: () => navigateTo("backtest"),
+    },
+    {
+      id: "nav-consensus-timeline",
+      label: "Go to Consensus Timeline",
+      section: "Navigation",
+      run: () => navigateTo("consensus-timeline"),
+    },
+    {
+      id: "add-ticker",
+      label: "Add Ticker",
+      hint: "A",
+      section: "Actions",
+      run: () => addInput?.focus(),
+    },
+    {
+      id: "refresh-data",
+      label: "Refresh Data",
+      hint: "R",
+      section: "Actions",
+      run: () => void refreshData(),
+    },
+    {
+      id: "search-focus",
+      label: "Focus Search",
+      hint: "/",
+      section: "Actions",
+      run: () => addInput?.focus(),
+    },
     {
       id: "copy-share-link",
       label: "Copy share link for current view",
@@ -430,11 +544,14 @@ function main(): void {
       run: () => {
         const shareUrl = buildShareUrl(window.location.pathname, { card: currentRoute });
         const fullUrl = window.location.origin + shareUrl;
-        void navigator.clipboard.writeText(fullUrl).then(() => {
-          showToast({ message: "Share link copied to clipboard!", type: "success" });
-        }).catch(() => {
-          showToast({ message: `Share link: ${fullUrl}`, type: "info", durationMs: 0 });
-        });
+        void navigator.clipboard
+          .writeText(fullUrl)
+          .then(() => {
+            showToast({ message: "Share link copied to clipboard!", type: "success" });
+          })
+          .catch(() => {
+            showToast({ message: `Share link: ${fullUrl}`, type: "info", durationMs: 0 });
+          });
       },
     },
     {
@@ -497,10 +614,19 @@ function main(): void {
   ];
 
   // Ctrl+K / Cmd+K → open palette
-  shortcuts.register({ key: "k", ctrl: true, description: "Open command palette", handler: () => openPalette(paletteCommands) });
+  shortcuts.register({
+    key: "k",
+    ctrl: true,
+    description: "Open command palette",
+    handler: () => openPalette(paletteCommands),
+  });
 
   // "/" → focus search (when palette not open)
-  shortcuts.register({ key: "/", description: "Focus ticker search", handler: () => addInput?.focus() });
+  shortcuts.register({
+    key: "/",
+    description: "Focus ticker search",
+    handler: () => addInput?.focus(),
+  });
 
   // "r" → refresh data
   shortcuts.register({ key: "r", description: "Refresh data", handler: () => void refreshData() });
@@ -513,11 +639,14 @@ function main(): void {
     handler: () => {
       const shareUrl = buildShareUrl(window.location.pathname, { card: currentRoute });
       const fullUrl = window.location.origin + shareUrl;
-      void navigator.clipboard.writeText(fullUrl).then(() => {
-        showToast({ message: "Share link copied to clipboard!", type: "success" });
-      }).catch(() => {
-        showToast({ message: `Share link: ${fullUrl}`, type: "info", durationMs: 0 });
-      });
+      void navigator.clipboard
+        .writeText(fullUrl)
+        .then(() => {
+          showToast({ message: "Share link copied to clipboard!", type: "success" });
+        })
+        .catch(() => {
+          showToast({ message: `Share link: ${fullUrl}`, type: "info", durationMs: 0 });
+        });
     },
   });
 
@@ -534,7 +663,15 @@ function main(): void {
   });
 
   // Escape → close palette if open
-  shortcuts.register({ key: "Escape", description: "Close palette", handler: () => { if (isPaletteOpen()) { /* handled by palette input */ } } });
+  shortcuts.register({
+    key: "Escape",
+    description: "Close palette",
+    handler: () => {
+      if (isPaletteOpen()) {
+        /* handled by palette input */
+      }
+    },
+  });
 
   void shortcuts; // retain reference
 
@@ -552,9 +689,7 @@ function main(): void {
         type: "warning",
         durationMs: 8000,
       });
-      console.warn(
-        `[storage-pressure] ${pct}% used — evicted ${evicted} cache entries`,
-      );
+      console.warn(`[storage-pressure] ${pct}% used — evicted ${evicted} cache entries`);
     },
   });
   pressureMonitor.start();

@@ -179,3 +179,11 @@ export { currentTimeZone, timeZoneOffsetMinutes, formatInTimeZone } from "./time
 
 export { createCrossTabSync } from "./broadcast-channel";
 export type { CrossTabSync, CrossTabMessage, CrossTabEventType, CrossTabConfigEvent } from "./broadcast-channel";
+
+export {
+  EXPORT_SCHEMA_VERSION,
+  exportFullDataJson,
+  importFullDataJson,
+  exportFullDataCsv,
+} from "./data-export";
+export type { FullExportPayload, FullExportDomains } from "./data-export";
