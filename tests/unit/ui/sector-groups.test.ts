@@ -3,6 +3,8 @@ import {
   groupBySector,
   isSectorCollapsed,
   toggleSectorCollapsed,
+  renderSectorGroup,
+  bindSectorHeaders,
 } from "../../../src/ui/sector-groups";
 import type { WatchlistEntry } from "../../../src/types/domain";
 
@@ -123,6 +125,118 @@ describe("sector-groups", () => {
       toggleSectorCollapsed("Technology");
       expect(isSectorCollapsed("Technology")).toBe(true);
       expect(isSectorCollapsed("Healthcare")).toBe(false);
+    });
+  });
+
+  describe("renderSectorGroup", () => {
+    it("renders a sector header row with chevron and count", () => {
+      const group = {
+        name: "Technology",
+        entries: [
+          { ticker: "AAPL", sector: "Technology" },
+          { ticker: "MSFT", sector: "Technology" },
+        ],
+        buyRatio: 0,
+      };
+      const html = renderSectorGroup(group, (t) => `<tr><td>${t}</td></tr>`);
+      expect(html).toContain("Technology");
+      expect(html).toContain("(2)");
+      expect(html).toContain("▼"); // expanded by default
+    });
+
+    it("renders data rows when expanded", () => {
+      const group = {
+        name: "Healthcare",
+        entries: [{ ticker: "JNJ", sector: "Healthcare" }],
+        buyRatio: 0,
+      };
+      const html = renderSectorGroup(group, (t) => `<tr><td>${t}</td></tr>`);
+      expect(html).toContain("JNJ");
+    });
+
+    it("hides data rows when collapsed", () => {
+      toggleSectorCollapsed("Collapsed");
+      const group = {
+        name: "Collapsed",
+        entries: [{ ticker: "X", sector: "Collapsed" }],
+        buyRatio: 0,
+      };
+      const html = renderSectorGroup(group, (t) => `<tr><td>${t}</td></tr>`);
+      expect(html).toContain("▶"); // collapsed chevron
+      expect(html).not.toContain("<tr><td>X</td></tr>");
+    });
+
+    it("renders consensus badge when there are entries with consensus", () => {
+      const group = {
+        name: "Finance",
+        entries: [
+          { ticker: "GS", sector: "Finance", consensus: "BUY" as const },
+          { ticker: "MS", sector: "Finance", consensus: "BUY" as const },
+        ],
+        buyRatio: 1.0,
+      };
+      const html = renderSectorGroup(group, () => "");
+      expect(html).toContain("badge-buy");
+      expect(html).toContain("100% BUY");
+    });
+  });
+
+  describe("bindSectorHeaders", () => {
+    it("toggles collapse state on click", () => {
+      const container = document.createElement("div");
+      container.innerHTML = `<table><tbody>
+        <tr data-sector="${encodeURIComponent("Technology")}"><td>Tech</td></tr>
+      </tbody></table>`;
+      document.body.appendChild(container);
+
+      let called = 0;
+      bindSectorHeaders(container, () => { called++; });
+
+      const row = container.querySelector<HTMLElement>("[data-sector]")!;
+      row.click();
+      expect(called).toBe(1);
+      expect(isSectorCollapsed("Technology")).toBe(true);
+
+      document.body.removeChild(container);
+    });
+
+    it("toggles collapse state on Enter key", () => {
+      const container = document.createElement("div");
+      container.innerHTML = `<table><tbody>
+        <tr data-sector="${encodeURIComponent("Energy")}"><td>Energy</td></tr>
+      </tbody></table>`;
+      document.body.appendChild(container);
+
+      let called = 0;
+      bindSectorHeaders(container, () => {
+        called++;
+      });
+
+      const row = container.querySelector<HTMLElement>("[data-sector]")!;
+      row.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+      expect(called).toBe(1);
+      expect(isSectorCollapsed("Energy")).toBe(true);
+
+      document.body.removeChild(container);
+    });
+
+    it("ignores keydown for non-Enter/Space keys", () => {
+      const container = document.createElement("div");
+      container.innerHTML = `<table><tbody>
+        <tr data-sector="${encodeURIComponent("Materials")}"><td>M</td></tr>
+      </tbody></table>`;
+      document.body.appendChild(container);
+
+      let called = 0;
+      bindSectorHeaders(container, () => {
+        called++;
+      });
+
+      const row = container.querySelector<HTMLElement>("[data-sector]")!;
+      row.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+      expect(called).toBe(0);
+
+      document.body.removeChild(container);
     });
   });
 });

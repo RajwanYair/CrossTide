@@ -2,7 +2,12 @@
  * Watchlist renderer tests.
  */
 import { describe, it, expect, beforeEach } from "vitest";
-import { renderWatchlist } from "../../../src/ui/watchlist";
+import {
+  renderWatchlist,
+  setSortColumn,
+  setSectorGrouping,
+  getSortConfig,
+} from "../../../src/ui/watchlist";
 import type { AppConfig, ConsensusResult } from "../../../src/types/domain";
 
 function makeConfig(tickers: string[]): AppConfig {
@@ -155,5 +160,116 @@ describe("renderWatchlist", () => {
 
     const html = document.getElementById("watchlist-body")!.innerHTML;
     expect(html).toContain("vol-bar");
+  });
+});
+
+describe("setSortColumn + sort behavior", () => {
+  beforeEach(() => {
+    // Reset sort to default
+    setSortColumn("ticker");
+    if (getSortConfig().direction !== "asc") setSortColumn("ticker");
+    document.body.innerHTML = `
+      <table>
+        <thead id="watchlist-head"></thead>
+        <tbody id="watchlist-body"></tbody>
+      </table>
+      <div id="watchlist-empty" class="hidden"></div>
+    `;
+  });
+
+  it("getSortConfig returns default ticker/asc", () => {
+    const cfg = getSortConfig();
+    expect(cfg.column).toBe("ticker");
+    expect(cfg.direction).toBe("asc");
+  });
+
+  it("setSortColumn toggles direction when same column", () => {
+    setSortColumn("ticker");
+    expect(getSortConfig().direction).toBe("desc");
+    setSortColumn("ticker");
+    expect(getSortConfig().direction).toBe("asc");
+  });
+
+  it("setSortColumn defaults to desc for non-ticker columns", () => {
+    setSortColumn("price");
+    expect(getSortConfig().column).toBe("price");
+    expect(getSortConfig().direction).toBe("desc");
+  });
+
+  it("sorts rows by ticker ascending", () => {
+    setSortColumn("price"); // change away from ticker
+    setSortColumn("ticker"); // back to ticker asc
+    const quotes = new Map([
+      ["MSFT", makeQuote("MSFT")],
+      ["AAPL", makeQuote("AAPL")],
+      ["TSLA", makeQuote("TSLA")],
+    ]);
+    renderWatchlist(makeConfig(["MSFT", "AAPL", "TSLA"]), quotes);
+
+    const rows = document.querySelectorAll("#watchlist-body tr");
+    expect(rows[0]!.textContent).toContain("AAPL");
+    expect(rows[1]!.textContent).toContain("MSFT");
+    expect(rows[2]!.textContent).toContain("TSLA");
+  });
+
+  it("sorts rows by price descending", () => {
+    setSortColumn("price");
+    const quotes = new Map([
+      ["LOW", makeQuote("LOW", { price: 50 })],
+      ["HIGH", makeQuote("HIGH", { price: 200 })],
+      ["MID", makeQuote("MID", { price: 100 })],
+    ]);
+    renderWatchlist(makeConfig(["LOW", "HIGH", "MID"]), quotes);
+
+    const rows = document.querySelectorAll("#watchlist-body tr");
+    expect(rows[0]!.textContent).toContain("HIGH");
+    expect(rows[1]!.textContent).toContain("MID");
+    expect(rows[2]!.textContent).toContain("LOW");
+  });
+
+  it("renders aria-sort attributes on headers", () => {
+    setSortColumn("price");
+    renderWatchlist(makeConfig(["AAPL"]), new Map([["AAPL", makeQuote("AAPL")]]));
+
+    const thead = document.getElementById("watchlist-head")!;
+    expect(thead.innerHTML).toContain('aria-sort="descending"');
+    expect(thead.innerHTML).toContain('aria-sort="none"');
+  });
+});
+
+describe("sector grouping branch", () => {
+  beforeEach(() => {
+    setSectorGrouping(false);
+    document.body.innerHTML = `
+      <table>
+        <thead id="watchlist-head"></thead>
+        <tbody id="watchlist-body"></tbody>
+      </table>
+      <div id="watchlist-empty" class="hidden"></div>
+    `;
+  });
+
+  it("renders sector headers when sector grouping is enabled", () => {
+    setSectorGrouping(true);
+    const quotes = new Map([
+      [
+        "AAPL",
+        {
+          ...makeQuote("AAPL"),
+          sector: "Technology",
+          consensus: { ticker: "AAPL", direction: "BUY" as const, strength: 0.8, buyMethods: [], sellMethods: [] },
+        },
+      ],
+    ]);
+    renderWatchlist(
+      { watchlist: [{ ticker: "AAPL", addedAt: new Date().toISOString(), instrumentType: "stock" }], theme: "dark" },
+      quotes,
+    );
+
+    const html = document.getElementById("watchlist-body")!.innerHTML;
+    expect(html).toContain("sector-header");
+    expect(html).toContain("Technology");
+
+    setSectorGrouping(false);
   });
 });
