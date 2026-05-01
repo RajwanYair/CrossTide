@@ -5,6 +5,7 @@ import {
   exportWatchlistCSV,
   importWatchlistCSV,
   downloadFile,
+  EXPORT_SCHEMA_VERSION,
 } from "../../../src/core/export-import";
 import type { AppConfig } from "../../../src/types/domain";
 
@@ -30,6 +31,45 @@ describe("exportConfigJSON / importConfigJSON", () => {
     const parsed = JSON.parse(json);
     expect(parsed.version).toBe("6.0.0");
     expect(parsed.exportedAt).toBeDefined();
+  });
+
+  it("C7: includes schemaVersion and checksum in envelope", () => {
+    const json = exportConfigJSON(SAMPLE_CONFIG, "7.2.0");
+    const parsed = JSON.parse(json);
+    expect(parsed.schemaVersion).toBe(EXPORT_SCHEMA_VERSION);
+    expect(typeof parsed.checksum).toBe("string");
+    expect(parsed.checksum).toHaveLength(8); // djb2 hex is 8 chars
+  });
+
+  it("C7: round-trips with checksum verification", () => {
+    const json = exportConfigJSON(SAMPLE_CONFIG, "7.2.0");
+    const restored = importConfigJSON(json);
+    expect(restored.theme).toBe("dark");
+  });
+
+  it("C7: rejects tampered checksum", () => {
+    const json = exportConfigJSON(SAMPLE_CONFIG, "7.2.0");
+    const tampered = json.replace(/"checksum":\s*"[0-9a-f]+"/, '"checksum":"deadbeef"');
+    expect(() => importConfigJSON(tampered)).toThrow("checksum mismatch");
+  });
+
+  it("C7: accepts legacy export without schemaVersion (backward compat)", () => {
+    const legacy = JSON.stringify({
+      version: "6.0.0",
+      exportedAt: "2025-01-01T00:00:00Z",
+      config: { theme: "light", watchlist: [] },
+    });
+    expect(() => importConfigJSON(legacy)).not.toThrow();
+  });
+
+  it("C7: rejects export with future schema version", () => {
+    const future = JSON.stringify({
+      schemaVersion: 999,
+      version: "99.0.0",
+      exportedAt: "2025-01-01T00:00:00Z",
+      config: { theme: "dark", watchlist: [] },
+    });
+    expect(() => importConfigJSON(future)).toThrow("Unsupported export schema version");
   });
 
   it("rejects invalid JSON", () => {

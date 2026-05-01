@@ -1,28 +1,52 @@
 /**
  * Data export/import — JSON and CSV export of watchlist + settings.
+ *
+ * The JSON envelope is schema-versioned (C7):
+ *   { schemaVersion, version, exportedAt, checksum, config }
+ *
+ * `schemaVersion` is an integer incremented whenever the envelope shape
+ * changes, allowing forward-compatible migration on import.
+ * `checksum` is a djb2 hex hash of the canonical JSON of `config` for
+ * tamper detection (not cryptographic — for accidental corruption only).
  */
 import type { AppConfig, WatchlistEntry } from "../types/domain";
+import { djb2Hex } from "./hash-djb2";
+
+/** Current envelope schema version. Increment on breaking changes. */
+export const EXPORT_SCHEMA_VERSION = 1;
 
 export interface ExportPayload {
+  /** Schema version for forward-compat migration. */
+  readonly schemaVersion: number;
+  /** App version string (e.g. "7.2.0"). */
   readonly version: string;
+  /** ISO-8601 timestamp of export. */
   readonly exportedAt: string;
+  /** djb2 hex hash of the canonical JSON of `config`. */
+  readonly checksum: string;
   readonly config: AppConfig;
 }
 
 /**
- * Export config as a JSON string.
+ * Export config as a JSON string with a schema-versioned envelope (C7).
+ * The envelope includes a djb2 checksum of the config for tamper detection.
  */
 export function exportConfigJSON(config: AppConfig, version: string): string {
+  const configJson = JSON.stringify(config);
+  const checksum = djb2Hex(configJson);
   const payload: ExportPayload = {
+    schemaVersion: EXPORT_SCHEMA_VERSION,
     version,
     exportedAt: new Date().toISOString(),
+    checksum,
     config,
   };
   return JSON.stringify(payload, null, 2);
 }
 
 /**
- * Import config from a JSON string. Validates structure.
+ * Import config from a JSON string. Validates structure and checksum.
+ * Accepts exports with any schemaVersion <= EXPORT_SCHEMA_VERSION.
  */
 export function importConfigJSON(json: string): AppConfig {
   const parsed: unknown = JSON.parse(json);
@@ -31,6 +55,25 @@ export function importConfigJSON(json: string): AppConfig {
   const obj = parsed as Record<string, unknown>;
   const config = obj["config"] as Record<string, unknown> | undefined;
   if (!config) throw new Error("Missing config in export");
+
+  // Schema version check — reject future versions we don't understand
+  const schemaVersion = obj["schemaVersion"];
+  if (
+    schemaVersion !== undefined &&
+    typeof schemaVersion === "number" &&
+    schemaVersion > EXPORT_SCHEMA_VERSION
+  ) {
+    throw new Error(`Unsupported export schema version: ${String(schemaVersion)}`);
+  }
+
+  // Checksum verification (optional — only if checksum field is present)
+  const checksum = obj["checksum"];
+  if (typeof checksum === "string") {
+    const expected = djb2Hex(JSON.stringify(config));
+    if (checksum !== expected) {
+      throw new Error("Export checksum mismatch — file may be corrupted");
+    }
+  }
 
   const theme = config["theme"];
   if (theme !== "dark" && theme !== "light" && theme !== "high-contrast")
