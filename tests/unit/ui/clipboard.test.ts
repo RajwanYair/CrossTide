@@ -5,6 +5,7 @@ describe("copyToClipboard", () => {
   const origNav = (globalThis as { navigator?: Navigator }).navigator;
   afterEach(() => {
     (globalThis as { navigator?: Navigator }).navigator = origNav;
+    vi.restoreAllMocks();
   });
 
   it("uses navigator.clipboard when available", async () => {
@@ -33,6 +34,58 @@ describe("copyToClipboard", () => {
     const r = await copyToClipboard("x");
     (globalThis as { document?: unknown }).document = orig;
     expect(r.ok).toBe(false);
+  });
+
+  // ── DOM fallback (execCommand) path ────────────────────────────────────────
+
+  it("falls back to execCommand when clipboard API absent", async () => {
+    (globalThis as { navigator?: unknown }).navigator = {};
+    // happy-dom does not implement execCommand — define it first
+    Object.defineProperty(document, "execCommand", {
+      value: vi.fn().mockReturnValue(true),
+      writable: true,
+      configurable: true,
+    });
+    const r = await copyToClipboard("fallback-text");
+    expect(r.ok).toBe(true);
+  });
+
+  it("returns ok false when execCommand returns false", async () => {
+    (globalThis as { navigator?: unknown }).navigator = {};
+    Object.defineProperty(document, "execCommand", {
+      value: vi.fn().mockReturnValue(false),
+      writable: true,
+      configurable: true,
+    });
+    const r = await copyToClipboard("x");
+    expect(r.ok).toBe(false);
+    expect(r.error).toContain("execCommand returned false");
+  });
+
+  it("returns ok false when execCommand throws", async () => {
+    (globalThis as { navigator?: unknown }).navigator = {};
+    Object.defineProperty(document, "execCommand", {
+      value: vi.fn().mockImplementation(() => {
+        throw new Error("not allowed");
+      }),
+      writable: true,
+      configurable: true,
+    });
+    const r = await copyToClipboard("x");
+    expect(r.ok).toBe(false);
+    expect(r.error).toBe("not allowed");
+  });
+
+  it("uses DOM fallback when clipboard.writeText rejects and DOM is available", async () => {
+    const writeText = vi.fn().mockRejectedValue(new Error("permission denied"));
+    (globalThis as { navigator?: unknown }).navigator = { clipboard: { writeText } };
+    Object.defineProperty(document, "execCommand", {
+      value: vi.fn().mockReturnValue(true),
+      writable: true,
+      configurable: true,
+    });
+    const r = await copyToClipboard("fallback-after-rejection");
+    expect(r.ok).toBe(true);
   });
 });
 

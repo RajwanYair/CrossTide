@@ -110,4 +110,45 @@ describe("provider registry", () => {
     // A new chain instance should be built after Finnhub is configured
     expect(chainAfter).not.toBe(chainBefore);
   });
+
+  it("getChain returns the same instance on repeated calls", async () => {
+    const { getChain } = await import("../../../src/providers/provider-registry");
+    expect(getChain()).toBe(getChain());
+  });
+});
+
+// ── createBreakerAwareProvider tests (exercises the breaker wrapper) ──────────
+
+describe("provider registry — breaker-aware wrapper", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("getChain().getHistory proxies to the underlying provider", async () => {
+    const { getChain } = await import("../../../src/providers/provider-registry");
+    const chain = getChain();
+    // Yahoo provider mock returns [] for getHistory
+    const candles = await chain.getHistory("AAPL", 30);
+    expect(Array.isArray(candles)).toBe(true);
+  });
+
+  it("circuit breaker starts with 0 failures for fresh registry", async () => {
+    const { getHealthSnapshot } = await import("../../../src/providers/provider-registry");
+    const snap = getHealthSnapshot();
+    // Freshly created breaker should have 0 recorded failures
+    expect(snap.entries[0]?.breakerFailures).toBe(0);
+    expect(snap.entries[0]?.breakerState).toBe("closed");
+  });
+
+  it("health merges inner provider health with breaker state", async () => {
+    const { getHealthSnapshot } = await import("../../../src/providers/provider-registry");
+    const snap = getHealthSnapshot();
+    for (const entry of snap.entries) {
+      // breakerState must be one of the valid states
+      expect(["closed", "open", "half-open"]).toContain(entry.breakerState);
+      // health must be defined
+      expect(entry.health).toBeDefined();
+      expect(typeof entry.health.available).toBe("boolean");
+    }
+  });
 });
