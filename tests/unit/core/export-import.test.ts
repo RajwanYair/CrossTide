@@ -1,10 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   exportConfigJSON,
   importConfigJSON,
   exportWatchlistCSV,
   importWatchlistCSV,
   downloadFile,
+  downloadCompressedFile,
   EXPORT_SCHEMA_VERSION,
 } from "../../../src/core/export-import";
 import type { AppConfig } from "../../../src/types/domain";
@@ -167,5 +168,33 @@ describe("downloadFile", () => {
 
     // Blob is created with the correct type — indirectly tested via createObjectURL
     expect(createObjSpy).toHaveBeenCalled();
+  });
+});
+
+describe("downloadCompressedFile — G11 Compression Streams", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("falls back to plain downloadFile when CompressionStream is unavailable", async () => {
+    // @ts-expect-error intentionally removing global for this test
+    const orig = globalThis.CompressionStream;
+    // @ts-expect-error intentionally
+    delete globalThis.CompressionStream;
+
+    const mockAnchor = { href: "", download: "", click: vi.fn() } as unknown as HTMLAnchorElement;
+    vi.spyOn(document, "createElement").mockReturnValue(mockAnchor);
+    vi.spyOn(document.body, "appendChild").mockImplementation(() => mockAnchor);
+    vi.spyOn(document.body, "removeChild").mockImplementation(() => mockAnchor);
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:fallback");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+
+    await downloadCompressedFile("content", "export.json.gz", "application/json");
+
+    // Fallback strips .gz extension
+    expect(mockAnchor.download).toBe("export.json");
+
+    // @ts-expect-error restore
+    globalThis.CompressionStream = orig;
   });
 });

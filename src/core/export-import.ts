@@ -134,3 +134,48 @@ export function downloadFile(content: string, filename: string, mimeType: string
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+/**
+ * Gzip-compress a UTF-8 string with the Compression Streams API (G11),
+ * then trigger a browser download. Falls back to plain download if the API
+ * is unavailable (Safari < 16.4, older browsers).
+ *
+ * @param content  UTF-8 string to compress and download.
+ * @param filename Suggested filename (should end in `.gz`).
+ * @param mimeType MIME type of the *uncompressed* content
+ *                 (e.g. `"application/json"` or `"text/csv"`).
+ */
+export async function downloadCompressedFile(
+  content: string,
+  filename: string,
+  mimeType: string,
+): Promise<void> {
+  if (typeof CompressionStream === "undefined") {
+    // Graceful fallback — download uncompressed.
+    downloadFile(content, filename.replace(/\.gz$/, ""), mimeType);
+    return;
+  }
+
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(content);
+  const stream = new Response(bytes).body!;
+  const compressed = stream.pipeThrough(new CompressionStream("gzip"));
+  const reader = compressed.getReader();
+
+  const chunks: Uint8Array<ArrayBuffer>[] = [];
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+
+  const blob = new Blob(chunks, { type: "application/gzip" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}

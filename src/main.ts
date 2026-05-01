@@ -45,7 +45,7 @@ import {
   type ExtendedPaletteName,
 } from "./ui/palette-switcher";
 import { exportFullDataJson, exportFullDataCsv } from "./core/data-export";
-import { downloadFile } from "./core/export-import";
+import { downloadFile, downloadCompressedFile } from "./core/export-import";
 import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
@@ -527,6 +527,16 @@ function main(): void {
       "application/json",
     );
     showToast({ message: "Full data exported as JSON", type: "success" });
+  });
+
+  // Compressed export (G11) — .json.gz via Compression Streams API
+  document.getElementById("btn-export-gz")?.addEventListener("click", () => {
+    const json = exportFullDataJson({ watchlist: config.watchlist });
+    void downloadCompressedFile(
+      json,
+      `crosstide-export-${new Date().toISOString().slice(0, 10)}.json.gz`,
+      "application/json",
+    ).then(() => showToast({ message: "Full data exported as .json.gz", type: "success" }));
   });
 
   document.getElementById("btn-export-full-csv")?.addEventListener("click", () => {

@@ -7,6 +7,8 @@ import { FINNHUB_KEY_STORAGE } from "../core/finnhub-stream-manager";
 export interface SettingsCallbacks {
   onThemeChange: (theme: AppConfig["theme"]) => void;
   onExport: () => void;
+  /** Called when user requests a gzip-compressed export (G11). */
+  onExportGz?: () => void;
   onImport: () => void;
   onClearWatchlist: () => void;
   onClearCache: () => void;
@@ -43,6 +45,7 @@ export function renderSettings(
     <div class="setting-group">
       <label>Actions</label>
       <button id="btn-export" type="button">Export JSON</button>
+      <button id="btn-export-gz" type="button">Export .json.gz</button>
       <button id="btn-import" type="button">Import JSON</button>
       <button id="btn-clear" type="button" class="btn-danger">Clear All</button>
     </div>
@@ -84,6 +87,7 @@ export function renderSettings(
   });
 
   container.querySelector("#btn-export")?.addEventListener("click", () => callbacks.onExport());
+  container.querySelector("#btn-export-gz")?.addEventListener("click", () => callbacks.onExportGz?.());
   container.querySelector("#btn-import")?.addEventListener("click", () => callbacks.onImport());
   container
     .querySelector("#btn-clear")

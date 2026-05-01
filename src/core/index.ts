@@ -30,6 +30,7 @@ export {
   exportWatchlistCSV,
   importWatchlistCSV,
   downloadFile,
+  downloadCompressedFile,
 } from "./export-import";
 export type { ExportPayload } from "./export-import";
 export { installErrorBoundary, getErrorLog, clearErrorLog } from "./error-boundary";
