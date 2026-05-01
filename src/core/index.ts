@@ -41,6 +41,15 @@ export {
 } from "./error-boundary";
 export type { ErrorRecord, ErrorHandler } from "./error-boundary";
 export { registerServiceWorker } from "./sw-register";
+export {
+  createStoragePressureMonitor,
+  requestPersistentStorage,
+} from "./storage-pressure";
+export type {
+  StorageEstimate,
+  StoragePressureOptions,
+  StoragePressureMonitor,
+} from "./storage-pressure";
 export { createWorkerClient, serveWorkerRpc } from "./worker-rpc";
 export type {
   RpcRequest,
