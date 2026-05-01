@@ -266,3 +266,7 @@ export type { FractalPoint } from "./fractals";
 export { computeUltimateOscillator } from "./ultimate-oscillator";
 export type { UltimateOscillatorOptions } from "./ultimate-oscillator";
 
+
+export { computeKlingerOscillator } from "./klinger-oscillator";
+export type { KlingerOptions, VolumeCandle } from "./klinger-oscillator";
+
