@@ -6,6 +6,37 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [6.1.0-rc.7] - 2026
+
+### Added — Sprints 81–90 (more indicators + core/UI utilities)
+
+- **Chande Momentum Oscillator** (`domain/chande-momentum-oscillator`) —
+  CMO in [-100, 100] using O(1) sliding-window updates.
+- **Connors RSI** (`domain/connors-rsi`) — composite of Wilder RSI,
+  streak RSI, and rolling ROC percent-rank.
+- **Fisher Transform** (`domain/fisher-transform`) — Ehlers near-Gaussian
+  oscillator with one-bar trigger.
+- **Vortex Indicator** (`domain/vortex-indicator`) — VI+ / VI- trend
+  rotation indicator (Botes & Siepman).
+- **Mass Index** (`domain/mass-index`) — Dorsey's range-expansion
+  reversal indicator (double-EMA ratio sum).
+- **URL builder** (`core/url-builder`) — fluent immutable builder with
+  typed query params, array values, and hash fragments.
+- **deepEqual** (`core/deep-equal`) — structural equality covering Map,
+  Set, Date, RegExp, NaN, and cyclic references.
+- **Result<T, E>** (`core/result`) — discriminated-union helpers
+  (`ok`/`err`/`map`/`mapErr`/`andThen`/`unwrap`/`tryCatch`/`tryCatchAsync`).
+- **Sparkbar** (`ui/sparkbar`) — pure SVG mini bar chart string with
+  zero-baseline support and HTML-attribute escaping.
+- **Keymap formatter** (`ui/keymap-formatter`) — platform-aware
+  accelerator labels (⌘K vs Ctrl+K) with HIG ordering on macOS.
+
+### Tests
+
+- 1504 total (+74).
+
+---
+
 ## [6.1.0-rc.6] - 2026
 
 ### Added — Sprints 71–80 (more indicators, async + UI utilities)
