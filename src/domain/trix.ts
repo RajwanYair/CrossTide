@@ -30,6 +30,26 @@ const ema = (values: readonly number[], period: number): (number | null)[] => {
   return out;
 };
 
+const emaOfDefined = (
+  series: readonly (number | null)[],
+  period: number,
+): (number | null)[] => {
+  const out: (number | null)[] = new Array(series.length).fill(null);
+  let firstIdx = -1;
+  for (let i = 0; i < series.length; i++) {
+    if (series[i] !== null) {
+      firstIdx = i;
+      break;
+    }
+  }
+  if (firstIdx < 0) return out;
+  const dense: number[] = [];
+  for (let i = firstIdx; i < series.length; i++) dense.push(series[i] as number);
+  const e = ema(dense, period);
+  for (let j = 0; j < e.length; j++) out[firstIdx + j] = e[j] ?? null;
+  return out;
+};
+
 export function computeTrix(
   candles: readonly Candle[],
   period = 15,
@@ -38,14 +58,8 @@ export function computeTrix(
   if (period <= 0 || candles.length < period * 3) return [];
   const closes = candles.map((c) => c.close);
   const e1 = ema(closes, period);
-  const e2 = ema(
-    e1.map((v) => v ?? 0),
-    period,
-  ).map((v, i) => (e1[i] === null ? null : v));
-  const e3 = ema(
-    e2.map((v) => v ?? 0),
-    period,
-  ).map((v, i) => (e2[i] === null ? null : v));
+  const e2 = emaOfDefined(e1, period);
+  const e3 = emaOfDefined(e2, period);
 
   const trixSeries: (number | null)[] = new Array(candles.length).fill(null);
   for (let i = 1; i < candles.length; i++) {
