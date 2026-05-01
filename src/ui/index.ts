@@ -46,3 +46,10 @@ export type {
 } from "./multi-sparkline";
 export { computeRangeBar, rangeFromCandles } from "./range-bar";
 export type { RangeBarInput, RangeBarGeometry } from "./range-bar";
+export { classifyWidth, observeContainer } from "./container-query";
+export type {
+  ContainerSize,
+  ContainerSizeBreakpoints,
+  ContainerQueryHandle,
+  ContainerQueryOptions,
+} from "./container-query";
