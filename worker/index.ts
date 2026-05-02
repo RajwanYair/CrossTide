@@ -28,6 +28,7 @@ import { handleSearch } from "./routes/search.js";
 import { handleScreener } from "./routes/screener.js";
 import { handleOgImage } from "./routes/og.js";
 import { handleSignalDslExecute } from "./routes/signal-dsl.js";
+import { handleOpenApiSpec } from "./routes/openapi.js";
 
 export interface Env {
   ENVIRONMENT?: string;
@@ -82,6 +83,9 @@ app.get("/api/og/:symbol", (c) => Promise.resolve(handleOgImage(new URL(c.req.ur
 app.get("/api/og", (c) => Promise.resolve(handleOgImage(new URL(c.req.url))));
 
 app.post("/api/signal-dsl/execute", async (c) => handleSignalDslExecute(c.req.raw));
+
+// ── OpenAPI spec (G10) ────────────────────────────────────────────────────────
+app.get("/openapi.json", () => handleOpenApiSpec());
 
 // ── Favicon (no-op) ───────────────────────────────────────────────────────────
 app.get("/favicon.ico", (c) => c.newResponse(null, 204));

@@ -396,3 +396,51 @@ describe("Security headers on API responses", () => {
     expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
   });
 });
+
+// ── GET /openapi.json (G10) ────────────────────────────────────────────────
+
+describe("GET /openapi.json", () => {
+  it("returns 200 with application/json content-type", async () => {
+    const res = await worker.fetch(makeRequest("GET", "/openapi.json"), ENV);
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toContain("application/json");
+  });
+
+  it("response body is valid OpenAPI 3.1 JSON", async () => {
+    const res = await worker.fetch(makeRequest("GET", "/openapi.json"), ENV);
+    const body = (await res.json()) as Record<string, unknown>;
+    expect(body.openapi).toBe("3.1.0");
+    expect(body.info).toBeDefined();
+    expect((body.info as Record<string, unknown>).title).toBe("CrossTide Worker API");
+  });
+
+  it("spec includes all registered routes", async () => {
+    const res = await worker.fetch(makeRequest("GET", "/openapi.json"), ENV);
+    const body = (await res.json()) as { paths: Record<string, unknown> };
+    expect(body.paths).toHaveProperty("/api/health");
+    expect(body.paths).toHaveProperty("/api/chart");
+    expect(body.paths).toHaveProperty("/api/search");
+    expect(body.paths).toHaveProperty("/api/screener");
+    expect(body.paths).toHaveProperty("/api/og/{symbol}");
+    expect(body.paths).toHaveProperty("/api/signal-dsl/execute");
+    expect(body.paths).toHaveProperty("/openapi.json");
+  });
+
+  it("spec has components with all referenced schemas", async () => {
+    const res = await worker.fetch(makeRequest("GET", "/openapi.json"), ENV);
+    const body = (await res.json()) as {
+      components: { schemas: Record<string, unknown>; responses: Record<string, unknown> };
+    };
+    expect(body.components.schemas).toHaveProperty("HealthResponse");
+    expect(body.components.schemas).toHaveProperty("CandleRecord");
+    expect(body.components.schemas).toHaveProperty("ScreenerRequest");
+    expect(body.components.schemas).toHaveProperty("ErrorResponse");
+    expect(body.components.responses).toHaveProperty("BadRequest");
+    expect(body.components.responses).toHaveProperty("RateLimited");
+  });
+
+  it("sets Cache-Control header", async () => {
+    const res = await worker.fetch(makeRequest("GET", "/openapi.json"), ENV);
+    expect(res.headers.get("Cache-Control")).toContain("max-age=3600");
+  });
+});
