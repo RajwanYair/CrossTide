@@ -78,7 +78,9 @@ describe("modal", () => {
 
   it("Escape key closes modal", () => {
     openModal({ title: "T", content: "C" });
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    // G9: <dialog> fires "cancel" on Escape; simulate the browser event.
+    const dialog = document.querySelector("dialog")!;
+    dialog.dispatchEvent(new Event("cancel", { bubbles: false }));
     expect(isModalOpen()).toBe(false);
   });
 });

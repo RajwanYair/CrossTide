@@ -3,6 +3,10 @@
  *
  * Creates a container once, appends toast elements that self-remove.
  * No external dependencies.
+ *
+ * G9: The container uses `popover="manual"` when supported so it renders
+ * in the browser's top layer (bypassing z-index). Falls back to the
+ * previous fixed-position approach on older browsers.
  */
 
 export type ToastType = "info" | "success" | "warning" | "error";
@@ -25,12 +29,21 @@ const DEFAULT_DURATION = 4000;
 let container: HTMLElement | null = null;
 const activeToasts: ActiveToast[] = [];
 
+function supportsPopover(el: HTMLElement): el is HTMLElement & {
+  showPopover(): void;
+  hidePopover(): void;
+} {
+  return typeof (el as unknown as { showPopover?: unknown }).showPopover === "function";
+}
+
 function ensureContainer(): HTMLElement {
   if (container && document.body.contains(container)) return container;
   container = document.createElement("div");
   container.id = CONTAINER_ID;
   container.setAttribute("aria-live", "polite");
   container.setAttribute("role", "status");
+  // G9: Popover API — top-layer rendering when supported (Chrome 114+, Safari 17+, Firefox 125+).
+  container.setAttribute("popover", "manual");
   document.body.appendChild(container);
   return container;
 }
@@ -42,9 +55,16 @@ function dismiss(toast: ActiveToast): void {
   const idx = activeToasts.indexOf(toast);
   if (idx !== -1) activeToasts.splice(idx, 1);
 
-  // Remove from DOM after animation (or immediately if no animation support)
   const onEnd = (): void => {
     toast.el.remove();
+    // G9: hide the popover container once all toasts are gone.
+    if (activeToasts.length === 0 && container && supportsPopover(container)) {
+      try {
+        container.hidePopover();
+      } catch {
+        // hidePopover throws if the element is not currently shown — ignore.
+      }
+    }
   };
   if (typeof toast.el.getAnimations === "function" && toast.el.getAnimations().length > 0) {
     toast.el.addEventListener("animationend", onEnd, { once: true });
@@ -70,6 +90,15 @@ export function showToast(options: ToastOptions): () => void {
   el.appendChild(closeBtn);
 
   parent.appendChild(el);
+
+  // G9: show the container popover when the first toast arrives.
+  if (activeToasts.length === 0 && supportsPopover(parent)) {
+    try {
+      parent.showPopover();
+    } catch {
+      // showPopover throws if already shown — safe to ignore.
+    }
+  }
 
   const timer = duration > 0 ? setTimeout(() => dismiss(toast), duration) : null;
   const toast: ActiveToast = { el, timer };

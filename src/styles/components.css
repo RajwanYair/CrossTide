@@ -1037,7 +1037,7 @@
   }
 
   .corr-warnings {
-    background: color-mix(in srgb, var(--danger) 10%, var(--bg-card));
+    background: color-mix(in sRGB, var(--danger) 10%, var(--bg-card));
     border: 1px solid var(--danger);
     border-radius: var(--radius-sm);
     padding: var(--sp-sm) var(--sp-md);
@@ -1132,9 +1132,16 @@
     transition: width 0.3s ease;
   }
 
-  .breadth-ad-up { background: var(--success); }
-  .breadth-ad-flat { background: var(--text-secondary); opacity: 0.4; }
-  .breadth-ad-down { background: var(--danger); }
+  .breadth-ad-up {
+    background: var(--success);
+  }
+  .breadth-ad-flat {
+    background: var(--text-secondary);
+    opacity: 0.4;
+  }
+  .breadth-ad-down {
+    background: var(--danger);
+  }
 
   .breadth-ad-legend {
     display: flex;
@@ -1159,9 +1166,15 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .up { color: var(--success); }
-  .dn { color: var(--danger); }
-  .flat { color: var(--text-secondary); }
+  .up {
+    color: var(--success);
+  }
+  .dn {
+    color: var(--danger);
+  }
+  .flat {
+    color: var(--text-secondary);
+  }
 
   /* H18: Earnings Calendar */
   .earnings-table {
@@ -1178,7 +1191,7 @@
   }
 
   .earnings-imminent {
-    background: color-mix(in srgb, var(--warning) 12%, transparent);
+    background: color-mix(in sRGB, var(--warning) 12%, transparent);
   }
 
   /* H19: Macro Dashboard */
@@ -1241,15 +1254,15 @@
   }
 
   .rot-outperform {
-    background: color-mix(in srgb, var(--success) 20%, transparent);
+    background: color-mix(in sRGB, var(--success) 20%, transparent);
   }
 
   .rot-underperform {
-    background: color-mix(in srgb, var(--danger) 20%, transparent);
+    background: color-mix(in sRGB, var(--danger) 20%, transparent);
   }
 
   .rot-flat {
-    background: color-mix(in srgb, var(--text-secondary) 10%, transparent);
+    background: color-mix(in sRGB, var(--text-secondary) 10%, transparent);
   }
 
   /* H21: Relative Strength */
@@ -1363,6 +1376,21 @@
     gap: var(--sp-sm, 0.5rem);
     pointer-events: none;
     max-width: 360px;
+    /* G9: reset default popover styles so our fixed positioning takes effect */
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    color: inherit;
+    inset: unset;
+  }
+
+  /* When rendered in the browser top layer via Popover API, z-index is irrelevant */
+  #toast-container:popover-open {
+    z-index: unset;
+    position: fixed;
+    top: var(--sp-lg, 1.5rem);
+    right: var(--sp-lg, 1.5rem);
   }
 
   .toast {

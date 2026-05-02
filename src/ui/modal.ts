@@ -1,5 +1,8 @@
 /**
  * Modal component — accessible dialog with focus trap.
+ *
+ * G9: migrated from div+custom-keydown to <dialog> + showModal() so the
+ * browser owns focus-trapping, Escape handling and the top-layer stacking.
  */
 
 export interface ModalOptions {
@@ -8,22 +11,17 @@ export interface ModalOptions {
   readonly onClose?: () => void;
 }
 
-const MODAL_OVERLAY_CLASS = "modal-overlay";
 const MODAL_CLASS = "modal";
-let activeModal: HTMLElement | null = null;
+let activeModal: HTMLDialogElement | null = null;
 
-function handleKeyDown(e: KeyboardEvent): void {
-  if (e.key === "Escape") closeModal();
-}
-
-export function openModal(options: ModalOptions): HTMLElement {
+export function openModal(options: ModalOptions): HTMLDialogElement {
   closeModal(); // Only one modal at a time
 
-  const overlay = document.createElement("div");
-  overlay.className = MODAL_OVERLAY_CLASS;
-  overlay.setAttribute("role", "dialog");
-  overlay.setAttribute("aria-modal", "true");
-  overlay.setAttribute("aria-label", options.title);
+  const dialog = document.createElement("dialog");
+  dialog.className = "modal-overlay"; // keep class for CSS + test compat
+  dialog.setAttribute("role", "dialog");
+  dialog.setAttribute("aria-modal", "true");
+  dialog.setAttribute("aria-label", options.title);
 
   const modal = document.createElement("div");
   modal.className = MODAL_CLASS;
@@ -53,25 +51,31 @@ export function openModal(options: ModalOptions): HTMLElement {
 
   modal.appendChild(header);
   modal.appendChild(body);
-  overlay.appendChild(modal);
+  dialog.appendChild(modal);
 
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) closeModal();
+  // G9: <dialog> fires "cancel" on Escape — no custom keydown listener needed.
+  dialog.addEventListener("cancel", (e) => {
+    e.preventDefault(); // We handle the close ourselves for cleanup.
+    closeModal();
   });
 
-  document.addEventListener("keydown", handleKeyDown);
-  document.body.appendChild(overlay);
-  activeModal = overlay;
+  // Light-dismiss on backdrop click.
+  dialog.addEventListener("click", (e) => {
+    if (e.target === dialog) closeModal();
+  });
 
-  // Store onClose callback
   if (options.onClose) {
-    (overlay as unknown as Record<string, unknown>).__onClose = options.onClose;
+    (dialog as unknown as Record<string, unknown>).__onClose = options.onClose;
   }
 
-  // Focus the close button
+  document.body.appendChild(dialog);
+  dialog.showModal();
+  activeModal = dialog;
+
+  // Focus the close button (showModal() moves focus to dialog; override to close btn)
   closeBtn.focus();
 
-  return overlay;
+  return dialog;
 }
 
 export function closeModal(): void {
@@ -79,7 +83,7 @@ export function closeModal(): void {
   const cb = (activeModal as unknown as Record<string, unknown>).__onClose as
     | (() => void)
     | undefined;
-  document.removeEventListener("keydown", handleKeyDown);
+  activeModal.close();
   activeModal.remove();
   activeModal = null;
   cb?.();
