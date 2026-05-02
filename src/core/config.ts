@@ -137,6 +137,39 @@ export function reorderWatchlist(config: AppConfig, from: number, to: number): A
   return { ...config, watchlist: next };
 }
 
+/**
+ * Return a new `AppConfig` with per-card settings for `cardId` updated.
+ *
+ * This is a pure function — it does not call `saveConfig`.  Callers should
+ * call `saveConfig(newConfig)` after applying all desired mutations.
+ *
+ * @example
+ *   const next = setCardSetting(cfg, "watchlist", { visibleColumns: ["ticker", "price"] });
+ *   saveConfig(next);
+ */
+export function setCardSetting<K extends CardId>(
+  config: AppConfig,
+  cardId: K,
+  settings: NonNullable<CardSettingsMap[K]>,
+): AppConfig {
+  const prev = config.cardSettings ?? {};
+  return {
+    ...config,
+    cardSettings: { ...prev, [cardId]: settings },
+  };
+}
+
+/**
+ * Read per-card settings for a single card from `AppConfig`.
+ * Returns `undefined` when no settings have been saved for that card.
+ */
+export function getCardSetting<K extends CardId>(
+  config: AppConfig,
+  cardId: K,
+): CardSettingsMap[K] | undefined {
+  return config.cardSettings?.[cardId];
+}
+
 function isStoredEnvelope(val: unknown): val is StoredConfig {
   return (
     typeof val === "object" &&
@@ -148,8 +181,18 @@ function isStoredEnvelope(val: unknown): val is StoredConfig {
 }
 
 const WEIGHT_KEYS: ReadonlyArray<keyof MethodWeights> = [
-  "Micho", "RSI", "MACD", "Bollinger", "Stochastic", "OBV",
-  "ADX", "CCI", "SAR", "WilliamsR", "MFI", "SuperTrend",
+  "Micho",
+  "RSI",
+  "MACD",
+  "Bollinger",
+  "Stochastic",
+  "OBV",
+  "ADX",
+  "CCI",
+  "SAR",
+  "WilliamsR",
+  "MFI",
+  "SuperTrend",
 ];
 
 /**

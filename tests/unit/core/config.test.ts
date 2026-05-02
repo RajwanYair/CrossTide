@@ -218,9 +218,7 @@ describe("config", () => {
         version: 1,
         config: {
           theme: "dark",
-          watchlist: [
-            { ticker: "AAPL", addedAt: "2025-01-01T00:00:00.000Z", name: "Apple Inc." },
-          ],
+          watchlist: [{ ticker: "AAPL", addedAt: "2025-01-01T00:00:00.000Z", name: "Apple Inc." }],
         },
       };
       localStorage.setItem("crosstide-config", JSON.stringify(raw));
@@ -328,5 +326,63 @@ describe("config", () => {
       const config = loadConfig();
       expect(config.cardSettings).toBeUndefined();
     });
+  });
+});
+
+// ─────────────────────────── G24: setCardSetting / getCardSetting ─────────────
+
+import { setCardSetting, getCardSetting } from "../../../src/core/config";
+
+describe("setCardSetting / getCardSetting (G24)", () => {
+  const baseConfig = { theme: "dark" as const, watchlist: [] };
+
+  it("setCardSetting returns a new config with the card settings applied", () => {
+    const next = setCardSetting(baseConfig, "chart", {
+      defaultInterval: "4h",
+      crosshairSnap: false,
+    });
+    expect(next.cardSettings?.chart?.defaultInterval).toBe("4h");
+    expect(next.cardSettings?.chart?.crosshairSnap).toBe(false);
+  });
+
+  it("setCardSetting does not mutate the original config", () => {
+    const original = { ...baseConfig };
+    setCardSetting(original, "chart", { defaultInterval: "1d", crosshairSnap: true });
+    expect(original.cardSettings).toBeUndefined();
+  });
+
+  it("setCardSetting merges with existing cardSettings", () => {
+    const withChart = setCardSetting(baseConfig, "chart", {
+      defaultInterval: "1d",
+      crosshairSnap: true,
+    });
+    const withBoth = setCardSetting(withChart, "screener", { autoRun: true, maxResults: 50 });
+    expect(withBoth.cardSettings?.chart?.defaultInterval).toBe("1d");
+    expect(withBoth.cardSettings?.screener?.autoRun).toBe(true);
+  });
+
+  it("getCardSetting returns undefined when cardSettings absent", () => {
+    expect(getCardSetting(baseConfig, "chart")).toBeUndefined();
+  });
+
+  it("getCardSetting returns the stored settings for the correct card", () => {
+    const cfg = setCardSetting(baseConfig, "watchlist", {
+      visibleColumns: ["ticker", "price"],
+      autoRefreshMs: 5000,
+    });
+    const result = getCardSetting(cfg, "watchlist");
+    expect(result?.visibleColumns).toEqual(["ticker", "price"]);
+    expect(result?.autoRefreshMs).toBe(5000);
+  });
+
+  it("getCardSetting returns undefined for a card that hasn't been set", () => {
+    const cfg = setCardSetting(baseConfig, "chart", { defaultInterval: "1d", crosshairSnap: true });
+    expect(getCardSetting(cfg, "heatmap")).toBeUndefined();
+  });
+
+  it("multiple setCardSetting calls accumulate correctly", () => {
+    let cfg = setCardSetting(baseConfig, "chart", { defaultInterval: "1d", crosshairSnap: true });
+    cfg = setCardSetting(cfg, "chart", { defaultInterval: "4h", crosshairSnap: false });
+    expect(getCardSetting(cfg, "chart")?.defaultInterval).toBe("4h");
   });
 });

@@ -17,7 +17,14 @@ export type {
 export { Cache } from "./cache";
 export { LruCache } from "./lru-cache";
 export type { LruCacheOptions } from "./lru-cache";
-export { loadConfig, saveConfig, addTicker, removeTicker } from "./config";
+export {
+  loadConfig,
+  saveConfig,
+  addTicker,
+  removeTicker,
+  setCardSetting,
+  getCardSetting,
+} from "./config";
 export { fetchWithTimeout, fetchWithRetry, fetchConditional, FetchError } from "./fetch";
 export {
   getValidators,
