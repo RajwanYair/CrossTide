@@ -359,3 +359,13 @@ export type {
   ScreenerResponse,
   ScreenerRow,
 } from "./worker-api-client";
+
+export {
+  createWorkbook,
+  addSheet,
+  generateXlsx,
+  cellRef,
+  escapeXml,
+  inferCellType,
+} from "./xlsx-export";
+export type { CellValue, SheetData, Workbook, CellType } from "./xlsx-export";
