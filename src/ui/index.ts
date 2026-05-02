@@ -130,3 +130,5 @@ export type { TourStep, OnboardingTour } from "./onboarding-tour";
 
 export { createChartSyncBus, getGlobalChartSyncBus, wireCrosshairSync } from "./chart-sync";
 export type { ChartSyncBus, ChartCrosshairEntry, CrosshairTime } from "./chart-sync";
+export { cssAnchorPositioningSupported, createAnchorTooltip } from "./anchor-tooltip";
+export type { AnchorTooltip } from "./anchor-tooltip";

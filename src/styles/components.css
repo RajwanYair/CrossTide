@@ -1517,6 +1517,76 @@
     font-weight: 600;
   }
 
+  /* ── H1: CSS Anchor Positioning — chart crosshair tooltip ─────────── */
+  /*
+   * CSS Anchor Positioning (Baseline 2025 — Chrome 125+, Firefox 130+).
+   * The crosshair marker element gets `anchor-name` via JS (anchor-tooltip.ts).
+   * The tooltip declares `position-anchor` and uses `anchor()` for inset.
+   * Browsers without support fall back to JS-positioned `style.left/top`.
+   *
+   * No @supports guard: @supports(anchor-name:--x) wraps the native rules so
+   * legacy browsers skip them entirely; the fallback path remains unconditional.
+   */
+
+  /* Base chart-tooltip styles (applied in both native and fallback paths) */
+  .chart-tooltip {
+    position: absolute; /* overridden to position-anchor path below */
+    pointer-events: none;
+    white-space: nowrap;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+    /* Hide when no anchor is active */
+    visibility: hidden;
+  }
+
+  .chart-tooltip.is-visible {
+    visibility: visible;
+  }
+
+  /* Crosshair anchor marker (invisible; just a positioned point) */
+  .chart-crosshair-anchor {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    transform: translate(var(--ct-x, 0), var(--ct-y, 0));
+  }
+
+  /* CSS-native path: use anchor() for tooltip positioning */
+  @supports (anchor-name: --test) {
+    .chart-tooltip {
+      /*
+       * `position-anchor` is set inline by anchor-tooltip.ts when the API
+       * is supported.  The inset below positions the tooltip above-right of
+       * the crosshair anchor.
+       */
+      inset-block-start: anchor(top);
+      inset-inline-start: calc(anchor(right) + 8px);
+      /*
+       * Flip to the left side when there is not enough space on the right
+       * (position-try-fallbacks is part of the same spec).
+       */
+      position-try-fallbacks: --flip-left, --flip-above;
+    }
+
+    @position-try --flip-left {
+      inset-inline-start: auto;
+      inset-inline-end: calc(anchor-size(width) + 8px);
+    }
+
+    @position-try --flip-above {
+      inset-block-start: auto;
+      inset-block-end: calc(anchor(bottom) + 8px);
+      inset-inline-start: anchor(left);
+    }
+  }
+
   /* ── H2: @starting-style — card + dialog + toast mount animations ─── */
   /*
    * @starting-style defines the FROM state of a CSS transition when the
