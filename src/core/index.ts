@@ -201,6 +201,8 @@ export type {
   PaginationParams,
   PaginatedMeta,
 } from "./public-api";
+export { createChannelManager, WS_OPEN } from "./ws-fanout";
+export type { WsLike, ChannelStats, ManagerStats, ChannelManager } from "./ws-fanout";
 export { runBacktestAsync, disposeBacktestWorker } from "./backtest-worker";
 
 export { fuzzyScore, fuzzySearch } from "./fuzzy-match";
