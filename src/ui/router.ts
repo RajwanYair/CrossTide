@@ -34,7 +34,8 @@ export type RouteName =
   | "multi-chart"
   | "correlation"
   | "market-breadth"
-  | "earnings-calendar";
+  | "earnings-calendar"
+  | "macro-dashboard";
 
 export interface RouteInfo {
   readonly name: RouteName;
@@ -62,6 +63,7 @@ const VALID_ROUTES = new Set<RouteName>([
   "correlation",
   "market-breadth",
   "earnings-calendar",
+  "macro-dashboard",
 ]);
 
 interface RoutePattern {

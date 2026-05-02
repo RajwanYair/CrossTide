@@ -71,6 +71,7 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   correlation: "correlation-container",
   "market-breadth": "market-breadth-container",
   "earnings-calendar": "earnings-calendar-container",
+  "macro-dashboard": "macro-dashboard-container",
 };
 
 function initCardPrefetchOnIntent(): void {

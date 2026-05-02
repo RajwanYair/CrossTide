@@ -1181,6 +1181,47 @@
     background: color-mix(in srgb, var(--warning) 12%, transparent);
   }
 
+  /* H19: Macro Dashboard */
+  .macro-card .card-header {
+    align-items: center;
+  }
+
+  .macro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--sp-sm);
+  }
+
+  .macro-metric-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-sm);
+    background: var(--bg-card);
+  }
+
+  .macro-metric-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .macro-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  .macro-value {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .macro-spark {
+    width: 100%;
+    height: 26px;
+    color: var(--accent);
+  }
+
   .sector-count {
     margin-right: var(--sp-sm);
     color: var(--text-muted);
