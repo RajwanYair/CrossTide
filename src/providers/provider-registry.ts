@@ -19,6 +19,7 @@ import { createYahooProvider } from "./yahoo-provider";
 import { createFinnhubProvider } from "./finnhub-provider";
 import { createProviderChain } from "./provider-chain";
 import { createStooqProvider } from "./stooq-provider";
+import { createTiingoProvider } from "./tiingo-provider";
 
 export interface ProviderRegistryEntry {
   readonly provider: MarketDataProvider;
@@ -114,6 +115,24 @@ export function configureFinnhub(apiKey: string): void {
   });
 
   // Invalidate cached chain so it rebuilds with the new provider
+  chain = null;
+}
+
+/**
+ * Add the Tiingo provider to the chain using the given API key.  (H15)
+ * Safe to call at any time; re-builds the chain on next access.
+ * Tiingo is inserted after Stooq and before any existing Finnhub entry.
+ */
+export function configureTiingo(apiKey: string): void {
+  const idx = registryEntries.findIndex((e) => e.provider.name === "tiingo");
+  if (idx !== -1) registryEntries.splice(idx, 1);
+
+  const tiingoBreaker = createCircuitBreaker({ failureThreshold: 4, cooldownMs: 90_000 });
+  registryEntries.push({
+    provider: createTiingoProvider(apiKey),
+    breaker: tiingoBreaker,
+  });
+
   chain = null;
 }
 

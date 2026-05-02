@@ -300,10 +300,7 @@ export const TickerSchema = pipe(
 
 export const IsoTimestampSchema = pipe(
   string(),
-  check(
-    (s: string) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(s),
-    "Not an ISO-8601 timestamp",
-  ),
+  check((s: string) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(s), "Not an ISO-8601 timestamp"),
   transform((s: string): IsoTimestamp => toIsoTimestamp(s)),
 );
 
@@ -465,6 +462,44 @@ export const AppConfigSchema = object({
 });
 
 // ---------------------------------------------------------------------------
+// Tiingo schemas (H15) — EOD history, IEX quote, search
+// ---------------------------------------------------------------------------
+
+/** Tiingo IEX real-time quote — /iex?tickers={t}&token={k} */
+export const TiingoQuoteItemSchema = object({
+  ticker: string(),
+  last: optional(number()),
+  prevClose: optional(number()),
+  high: optional(number()),
+  low: optional(number()),
+  open: optional(number()),
+  volume: optional(number()),
+  timestamp: optional(string()), // ISO 8601
+});
+export const TiingoQuoteSchema = array(TiingoQuoteItemSchema);
+
+/** Tiingo EOD prices — /tiingo/daily/{ticker}/prices */
+export const TiingoEodItemSchema = object({
+  date: string(),
+  open: optional(number()),
+  high: optional(number()),
+  low: optional(number()),
+  close: optional(number()),
+  volume: optional(number()),
+  adjClose: optional(number()),
+});
+export const TiingoEodSchema = array(TiingoEodItemSchema);
+
+/** Tiingo symbol search — /tiingo/utilities/search */
+export const TiingoSearchItemSchema = object({
+  ticker: string(),
+  name: string(),
+  exchange: optional(string()),
+  assetType: optional(string()),
+});
+export const TiingoSearchSchema = array(TiingoSearchItemSchema);
+
+// ---------------------------------------------------------------------------
 // Twelve Data schema (legacy — Twelve Data is being retired from provider chain;
 // kept for schema-version migration compatibility)
 // ---------------------------------------------------------------------------
@@ -526,9 +561,7 @@ export function parseOrThrow<T>(
     return (parse as any)(schema, value) as T;
   } catch (e) {
     if (e instanceof ValiError) {
-      const issues = flattenIssues(
-        e as { issues: FlatIssue[] },
-      ).slice(0, 3);
+      const issues = flattenIssues(e as { issues: FlatIssue[] }).slice(0, 3);
       throw new Error(
         `${schemaName} validation failed: ${issues
           .map((i) => `${i.path || "<root>"}: ${i.message}`)
