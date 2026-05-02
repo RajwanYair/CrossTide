@@ -68,8 +68,9 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   "consensus-timeline": "consensus-timeline-container",
   "signal-dsl": "signal-dsl-container",
   "multi-chart": "multi-chart-container",
-  "correlation": "correlation-container",
+  correlation: "correlation-container",
   "market-breadth": "market-breadth-container",
+  "earnings-calendar": "earnings-calendar-container",
 };
 
 function initCardPrefetchOnIntent(): void {

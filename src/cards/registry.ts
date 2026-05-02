@@ -132,6 +132,12 @@ const REGISTRY: readonly CardEntry[] = [
     viewId: "view-market-breadth",
     load: () => import("./market-breadth-card").then((m) => m.default),
   },
+  {
+    route: "earnings-calendar",
+    title: "Earnings Calendar",
+    viewId: "view-earnings-calendar",
+    load: () => import("./earnings-calendar-card").then((m) => m.default),
+  },
 ];
 
 const cache = new Map<RouteName, Promise<CardModule>>();

@@ -1163,6 +1163,24 @@
   .dn { color: var(--danger); }
   .flat { color: var(--text-secondary); }
 
+  /* H18: Earnings Calendar */
+  .earnings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .earnings-table th,
+  .earnings-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .earnings-imminent {
+    background: color-mix(in srgb, var(--warning) 12%, transparent);
+  }
+
   .sector-count {
     margin-right: var(--sp-sm);
     color: var(--text-muted);
