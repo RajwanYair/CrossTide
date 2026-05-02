@@ -240,7 +240,15 @@ export {
   base64UrlDecodeBytes,
 } from "./base64-url";
 
-export { currentTimeZone, timeZoneOffsetMinutes, formatInTimeZone } from "./timezone";
+export {
+  currentTimeZone,
+  timeZoneOffsetMinutes,
+  formatInTimeZone,
+  Temporal,
+  toPlainDate,
+  plainDateRange,
+  addTradingDays,
+} from "./timezone";
 
 export { createCrossTabSync } from "./broadcast-channel";
 export type {
