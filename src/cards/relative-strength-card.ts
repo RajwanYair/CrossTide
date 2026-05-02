@@ -3,6 +3,7 @@
  */
 import { loadConfig } from "../core/config";
 import { fetchAllTickers } from "../core/data-service";
+import { getNavigationSignal } from "../ui/router";
 import type { CardModule } from "./registry";
 
 type WindowKey = "1m" | "3m" | "6m" | "1y" | "ytd";
@@ -89,7 +90,7 @@ const relativeStrengthCard: CardModule = {
         container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">No watchlist tickers for comparison.</p></div></div>`;
         return;
       }
-      const rows = await fetchAllTickers(tickers);
+      const rows = await fetchAllTickers(tickers, undefined, getNavigationSignal());
       if (disposed) return;
 
       const series: SeriesData[] = [];
@@ -133,7 +134,7 @@ const relativeStrengthCard: CardModule = {
     void loadAndRender();
 
     return {
-      dispose() {
+      dispose(): void {
         disposed = true;
       },
     };

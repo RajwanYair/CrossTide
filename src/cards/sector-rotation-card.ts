@@ -4,6 +4,7 @@
  * Shows relative strength of sector ETFs versus SPY across multiple windows.
  */
 import { fetchAllTickers } from "../core/data-service";
+import { getNavigationSignal } from "../ui/router";
 import type { DailyCandle } from "../types/domain";
 import type { CardModule } from "./registry";
 
@@ -68,7 +69,7 @@ const sectorRotationCard: CardModule = {
 
     async function load(): Promise<void> {
       const tickers = [...SECTOR_ETFS, "SPY"];
-      const data = await fetchAllTickers(tickers);
+      const data = await fetchAllTickers(tickers, undefined, getNavigationSignal());
       if (disposed) return;
 
       const spy = data.get("SPY")?.candles ?? [];
@@ -90,7 +91,7 @@ const sectorRotationCard: CardModule = {
     void load();
 
     return {
-      dispose() {
+      dispose(): void {
         disposed = true;
       },
     };

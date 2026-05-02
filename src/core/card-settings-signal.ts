@@ -21,7 +21,7 @@ export function updateCardSettingsSignal<K extends CardId>(
 }
 
 export function getCardSettingsSignal<K extends CardId>(cardId: K): CardSettingsMap[K] | undefined {
-  return cardSettingsSignal.peek()[cardId] as CardSettingsMap[K] | undefined;
+  return cardSettingsSignal.peek()[cardId];
 }
 
 export function onCardSettingsChange<K extends CardId>(
@@ -29,6 +29,6 @@ export function onCardSettingsChange<K extends CardId>(
   cb: (settings: CardSettingsMap[K] | undefined) => void,
 ): () => void {
   return cardSettingsSignal.subscribe((all) => {
-    cb(all[cardId] as CardSettingsMap[K] | undefined);
+    cb(all[cardId]);
   });
 }

@@ -5,6 +5,7 @@
  * and a simple risk regime badge derived from VIX + DXY direction.
  */
 import { fetchAllTickers, type TickerData } from "../core/data-service";
+import { getNavigationSignal } from "../ui/router";
 import type { CardModule } from "./registry";
 
 interface MacroMetric {
@@ -85,7 +86,7 @@ const macroDashboardCard: CardModule = {
 
     async function load(): Promise<void> {
       const tickers = METRICS.map((m) => m.ticker);
-      const rows = await fetchAllTickers(tickers);
+      const rows = await fetchAllTickers(tickers, undefined, getNavigationSignal());
       if (disposed) return;
       renderMacroDashboard(container, rows);
     }
@@ -94,7 +95,7 @@ const macroDashboardCard: CardModule = {
     void load();
 
     return {
-      dispose() {
+      dispose(): void {
         disposed = true;
       },
     };

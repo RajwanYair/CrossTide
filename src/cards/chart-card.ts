@@ -11,6 +11,7 @@ import { attachLwChart, type LwChartHandle } from "./lw-chart";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
 import { showToast } from "../ui/toast";
+import { getNavigationSignal } from "../ui/router";
 import type { CardModule, CardContext } from "./registry";
 import type { BacktestConfig } from "../domain/backtest-engine";
 
@@ -49,7 +50,7 @@ function renderBacktestUI(container: HTMLElement, ticker: string): void {
 
     void (async (): Promise<void> => {
       try {
-        const data = await fetchTickerData(ticker);
+        const data = await fetchTickerData(ticker, getNavigationSignal());
         if (!data.candles || data.candles.length < 30) {
           resultDiv.textContent = "Insufficient data (need 30+ candles).";
           return;
@@ -101,7 +102,7 @@ async function renderChartWithData(
   renderChart(container, { ticker, candles: [] });
 
   try {
-    const data = await fetchTickerData(ticker);
+    const data = await fetchTickerData(ticker, getNavigationSignal());
     const candles = data.candles ?? [];
 
     // Re-render the HTML header with real data

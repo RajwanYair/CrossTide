@@ -15,7 +15,6 @@ describe("toDisposable", () => {
   it("is usable with the using keyword", () => {
     const fn = vi.fn();
     {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       using d = toDisposable(fn);
       expect(fn).not.toHaveBeenCalled();
     }
@@ -49,7 +48,6 @@ describe("abortOnDispose", () => {
   it("aborts via using keyword", () => {
     const ctl = new AbortController();
     {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       using d = abortOnDispose(ctl);
       expect(ctl.signal.aborted).toBe(false);
     }

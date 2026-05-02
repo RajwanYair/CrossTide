@@ -13,7 +13,7 @@ import { correlationMatrix, type CorrelationInput } from "../domain/correlation-
 import { fetchTickerData } from "../core/data-service";
 import { loadConfig } from "../core/config";
 import type { CardModule } from "./registry";
-import type { DailyCandle, InstrumentType } from "../types/domain";
+import type { InstrumentType } from "../types/domain";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 export type CorrelationPeriod = 20 | 60 | 120;
@@ -230,7 +230,7 @@ const correlationMatrixCard: CardModule = {
             const { ticker, candles, instrumentType } = result.value;
             const entry: TickerSeries = {
               ticker,
-              closes: (candles as readonly DailyCandle[]).map((c) => c.close),
+              closes: candles.map((c) => c.close),
             };
             if (instrumentType !== undefined) entry.instrumentType = instrumentType;
             loaded.push(entry);
@@ -255,7 +255,7 @@ const correlationMatrixCard: CardModule = {
     void load();
 
     return {
-      dispose() {
+      dispose(): void {
         abortController?.abort();
       },
     };

@@ -147,7 +147,7 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
       /^https?:$/.test(location.protocol) &&
       import.meta.env.MODE !== "test";
     if (canCallWorker) {
-      void (async () => {
+      void (async (): Promise<void> => {
         const remote = await getApiClient().signalDslExecute({ expression: expr, vars });
         if (remote.ok) {
           resultArea.innerHTML = `<span class="text-secondary">Result (Worker): </span>${renderResult(remote.value.result)}`;
@@ -165,14 +165,14 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
     }
   });
 
-  clearBtn.addEventListener("click", () => {
+  clearBtn.addEventListener("click", (): void => {
     exprInput.value = "";
     varsInput.value = "";
     resultArea.innerHTML = "";
   });
 
-  saveBtn.addEventListener("click", () => {
-    void (async () => {
+  saveBtn.addEventListener("click", (): void => {
+    void (async (): Promise<void> => {
       const payload = {
         expression: exprInput.value,
         varsJson: varsInput.value,
@@ -186,8 +186,8 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
     })();
   });
 
-  openBtn.addEventListener("click", () => {
-    void (async () => {
+  openBtn.addEventListener("click", (): void => {
+    void (async (): Promise<void> => {
       const payload = await openStrategyFromDisk();
       if (!payload) {
         resultArea.innerHTML = `<span class="text-secondary">No strategy loaded.</span>`;

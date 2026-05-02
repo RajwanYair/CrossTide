@@ -19,6 +19,7 @@ import { summarizeTrades, type ClosedTrade, type EquityPoint, type buildEquityCu
 import { cagr } from "../domain/risk-ratios";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
+import { getNavigationSignal } from "../ui/router";
 import type { CardModule } from "./registry";
 
 // ── Synthetic price generator ─────────────────────────────────────────────────
@@ -146,7 +147,7 @@ function renderBacktestCard(container: HTMLElement): void {
   /** Fetch real candles for the selected ticker; fall back to synthetic. */
   async function loadCandles(): Promise<void> {
     try {
-      const data = await fetchTickerData(ticker);
+      const data = await fetchTickerData(ticker, getNavigationSignal());
       if (data.candles.length >= 30) {
         CANDLES = data.candles.map(
           (c: {
