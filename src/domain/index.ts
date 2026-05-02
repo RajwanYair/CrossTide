@@ -268,3 +268,24 @@ export type {
   TensorSpec,
   OrtLike,
 } from "./onnx-patterns";
+
+export {
+  bodySize,
+  candleRange,
+  upperShadow,
+  lowerShadow,
+  isBullish as isBullishCandle,
+  isDoji,
+  isHammer,
+  isShootingStar,
+  isSpinningTop,
+  isMarubozu,
+  isBullishEngulfing,
+  isBearishEngulfing,
+  isMorningStar,
+  isEveningStar,
+  isThreeWhiteSoldiers,
+  isThreeBlackCrows,
+  detectAllPatterns,
+} from "./pattern-recognition";
+export type { PatternCandle, PatternDirection, DetectedPattern } from "./pattern-recognition";
