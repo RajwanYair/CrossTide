@@ -448,6 +448,76 @@
     background: #b71c1c;
   }
 
+  /* ── G21: Heatmap sector drill-down ──────────────────────────────────── */
+  .heatmap-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-xs);
+    padding: var(--sp-sm) 0 var(--sp-md);
+    font-size: var(--font-size-sm);
+  }
+
+  .breadcrumb-sep {
+    color: var(--text-secondary);
+  }
+
+  .heatmap-sort-bar {
+    display: flex;
+    gap: var(--sp-xs);
+    align-items: center;
+    margin-bottom: var(--sp-md);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  .btn-sort {
+    padding: 2px var(--sp-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+  }
+
+  .btn-sort:hover,
+  .btn-sort.sort-active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .heatmap-drill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .heatmap-drill-table th,
+  .heatmap-drill-table td {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .heatmap-drill-table th {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+  }
+
+  .heatmap-attr-cell {
+    width: 120px;
+  }
+
+  .heatmap-attr-bar {
+    height: 8px;
+    background: var(--accent);
+    border-radius: 4px;
+    min-width: 2px;
+  }
+
   /* Screener */
   .screener-controls {
     padding: var(--sp-md) var(--sp-lg);

@@ -1,12 +1,17 @@
 /**
  * Sector heatmap card tests.
  */
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   computeHeatmapLayout,
   changeColor,
   renderHeatmap,
+  renderSectorDrillDown,
+  sortConstituents,
+  absoluteMove,
   type SectorData,
+  type ConstituentStock,
+  type SectorDataWithConstituents,
 } from "../../../src/cards/heatmap";
 
 const SECTORS: SectorData[] = [
@@ -98,5 +103,111 @@ describe("renderHeatmap", () => {
     renderHeatmap(container, xss);
     expect(container.innerHTML).not.toContain("<script>");
     expect(container.innerHTML).toContain("&lt;script&gt;");
+  });
+});
+
+// ── G21: Drill-down helpers ────────────────────────────────────────────────
+
+const STOCKS: ConstituentStock[] = [
+  { ticker: "AAPL", name: "Apple Inc.", price: 200, changePercent: 2.5, weight: 0.30 },
+  { ticker: "MSFT", name: "Microsoft", price: 400, changePercent: 1.0, weight: 0.25 },
+  { ticker: "NVDA", name: "NVIDIA", price: 900, changePercent: 4.0, weight: 0.15 },
+];
+
+const SECTOR_WITH_STOCKS: SectorDataWithConstituents = {
+  sector: "Technology", marketCap: 14_200, changePercent: 1.2, tickerCount: 3,
+  constituents: STOCKS,
+};
+
+describe("absoluteMove", () => {
+  it("computes |changePercent * price * weight|", () => {
+    const stock = STOCKS[0]!;
+    expect(absoluteMove(stock)).toBeCloseTo(2.5 * 200 * 0.30);
+  });
+});
+
+describe("sortConstituents", () => {
+  it("sorts by |changePercent| descending", () => {
+    const sorted = sortConstituents(STOCKS, "changePercent");
+    expect(sorted[0]!.ticker).toBe("NVDA"); // 4.0 > 2.5 > 1.0
+    expect(sorted[1]!.ticker).toBe("AAPL");
+  });
+
+  it("sorts by weight descending", () => {
+    const sorted = sortConstituents(STOCKS, "weight");
+    expect(sorted[0]!.ticker).toBe("AAPL"); // 0.30 > 0.25 > 0.15
+  });
+
+  it("sorts by absoluteMove descending", () => {
+    const sorted = sortConstituents(STOCKS, "absoluteMove");
+    // AAPL: 2.5*200*0.3=150, MSFT: 1.0*400*0.25=100, NVDA: 4.0*900*0.15=540
+    expect(sorted[0]!.ticker).toBe("NVDA");
+  });
+
+  it("does not mutate the original array", () => {
+    const original = [...STOCKS];
+    sortConstituents(STOCKS, "changePercent");
+    expect(STOCKS[0]!.ticker).toBe(original[0]!.ticker);
+  });
+});
+
+describe("renderSectorDrillDown", () => {
+  let container: HTMLElement;
+  const mockBack = vi.fn();
+
+  beforeEach(() => {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    mockBack.mockReset();
+  });
+
+  it("renders breadcrumb with sector name", () => {
+    renderSectorDrillDown(container, SECTOR_WITH_STOCKS, mockBack);
+    expect(container.innerHTML).toContain("Technology");
+    expect(container.innerHTML).toContain("All Sectors");
+  });
+
+  it("renders a row per constituent", () => {
+    renderSectorDrillDown(container, SECTOR_WITH_STOCKS, mockBack);
+    const rows = container.querySelectorAll("tbody tr");
+    expect(rows.length).toBe(3);
+  });
+
+  it("shows sort buttons", () => {
+    renderSectorDrillDown(container, SECTOR_WITH_STOCKS, mockBack);
+    expect(container.querySelectorAll(".btn-sort").length).toBe(3);
+  });
+
+  it("calls onBack when back button clicked", () => {
+    renderSectorDrillDown(container, SECTOR_WITH_STOCKS, mockBack);
+    (container.querySelector("#heatmap-back") as HTMLButtonElement).click();
+    expect(mockBack).toHaveBeenCalledOnce();
+  });
+
+  it("re-renders on sort button click", () => {
+    renderSectorDrillDown(container, SECTOR_WITH_STOCKS, mockBack);
+    const weightBtn = container.querySelector<HTMLButtonElement>('[data-sort="weight"]');
+    weightBtn?.click();
+    // After clicking weight sort, AAPL (weight=0.30) should be first
+    const firstRow = container.querySelector("tbody tr td:first-child");
+    expect(firstRow?.textContent).toBe("AAPL");
+  });
+
+  it("shows empty state when no constituents", () => {
+    const emptySector: SectorDataWithConstituents = {
+      sector: "Energy", marketCap: 3500, changePercent: -2.3, tickerCount: 0, constituents: [],
+    };
+    renderSectorDrillDown(container, emptySector, mockBack);
+    expect(container.innerHTML).toContain("empty-state");
+  });
+
+  it("escapes XSS in ticker names", () => {
+    const xssSector: SectorDataWithConstituents = {
+      sector: "Test", marketCap: 100, changePercent: 0, tickerCount: 1,
+      constituents: [{ ticker: "<xss>", price: 10, changePercent: 0, weight: 1 }],
+    };
+    renderSectorDrillDown(container, xssSector, mockBack);
+    expect(container.innerHTML).not.toContain("<xss>");
+    expect(container.innerHTML).toContain("&lt;xss&gt;");
   });
 });

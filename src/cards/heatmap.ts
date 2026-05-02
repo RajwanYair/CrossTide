@@ -12,6 +12,23 @@ export interface SectorData {
   readonly tickerCount: number;
 }
 
+/** G21: A single constituent stock within a sector. */
+export interface ConstituentStock {
+  readonly ticker: string;
+  readonly name?: string;
+  readonly price: number;
+  readonly changePercent: number;
+  /** Market-cap proxy weight in the sector (0–1, sums to 1 across constituents). */
+  readonly weight: number;
+}
+
+/** G21: SectorData extended with optional constituent breakdown. */
+export interface SectorDataWithConstituents extends SectorData {
+  readonly constituents?: readonly ConstituentStock[];
+}
+
+export type SortKey = "changePercent" | "weight" | "absoluteMove";
+
 export interface HeatmapOptions {
   readonly width?: number;
   readonly height?: number;
@@ -97,4 +114,112 @@ function escapeAttr(s: string): string {
   // attribute values are not entity-encoded for <>, so &lt;/&gt; would
   // decode back to < / > and re-introduce the tag-like substring.
   return escapeHtml(s.replace(/[<>]/g, "")).replace(/"/g, "&quot;");
+}
+
+/**
+ * G21: Compute absolute price move proxy (changePercent × price × weight).
+ * Used for "absolute move" sort and attribution bar.
+ */
+export function absoluteMove(stock: ConstituentStock): number {
+  return Math.abs(stock.changePercent * stock.price * stock.weight);
+}
+
+/**
+ * G21: Sort constituent stocks by the given key.
+ */
+export function sortConstituents(
+  stocks: readonly ConstituentStock[],
+  key: SortKey,
+): ConstituentStock[] {
+  return [...stocks].sort((a, b) => {
+    switch (key) {
+      case "changePercent":
+        return Math.abs(b.changePercent) - Math.abs(a.changePercent);
+      case "weight":
+        return b.weight - a.weight;
+      case "absoluteMove":
+        return absoluteMove(b) - absoluteMove(a);
+    }
+  });
+}
+
+/**
+ * G21: Render the sector drill-down view.
+ * Shows constituent stocks with attribution bar and sort controls.
+ */
+export function renderSectorDrillDown(
+  container: HTMLElement,
+  sector: SectorDataWithConstituents,
+  onBack: () => void,
+  sortKey: SortKey = "changePercent",
+): void {
+  const stocks = sector.constituents ?? [];
+
+  if (stocks.length === 0) {
+    container.innerHTML = `
+      <div class="heatmap-breadcrumb">
+        <button class="btn-link" id="heatmap-back">← All Sectors</button>
+        <span class="breadcrumb-sep">›</span>
+        <span>${escapeHtml(sector.sector)}</span>
+      </div>
+      <p class="empty-state">No constituent data available for ${escapeHtml(sector.sector)}.</p>`;
+    container.querySelector("#heatmap-back")?.addEventListener("click", onBack);
+    return;
+  }
+
+  const sorted = sortConstituents(stocks, sortKey);
+  const maxMove = Math.max(...sorted.map(absoluteMove), 0.001);
+
+  const rows = sorted.map((s) => {
+    const move = absoluteMove(s);
+    const barPct = ((move / maxMove) * 100).toFixed(1);
+    const sign = s.changePercent >= 0 ? "+" : "";
+    const cls = s.changePercent >= 0 ? "up" : "dn";
+    return `<tr>
+      <td class="font-mono">${escapeHtml(s.ticker)}</td>
+      <td>${s.name ? escapeHtml(s.name) : ""}</td>
+      <td class="font-mono">$${s.price.toFixed(2)}</td>
+      <td class="font-mono ${cls}">${sign}${s.changePercent.toFixed(2)}%</td>
+      <td class="font-mono text-secondary">${(s.weight * 100).toFixed(1)}%</td>
+      <td class="heatmap-attr-cell">
+        <div class="heatmap-attr-bar" style="width:${barPct}%"></div>
+      </td>
+    </tr>`;
+  }).join("");
+
+  const activeSortClass = (k: SortKey): string =>
+    k === sortKey ? " sort-active" : "";
+
+  container.innerHTML = `
+    <div class="heatmap-breadcrumb">
+      <button class="btn-link" id="heatmap-back">← All Sectors</button>
+      <span class="breadcrumb-sep">›</span>
+      <span>${escapeHtml(sector.sector)}</span>
+      <span class="text-secondary">(${stocks.length} stocks)</span>
+    </div>
+    <div class="heatmap-sort-bar">
+      Sort:
+      <button class="btn-sort${activeSortClass("changePercent")}" data-sort="changePercent">% Change</button>
+      <button class="btn-sort${activeSortClass("weight")}" data-sort="weight">Weight</button>
+      <button class="btn-sort${activeSortClass("absoluteMove")}" data-sort="absoluteMove">Abs Move</button>
+    </div>
+    <div class="card">
+      <table class="heatmap-drill-table">
+        <thead>
+          <tr>
+            <th>Ticker</th><th>Name</th><th>Price</th><th>Change</th><th>Weight</th>
+            <th>Attribution</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+
+  container.querySelector("#heatmap-back")?.addEventListener("click", onBack);
+  container.querySelectorAll<HTMLElement>(".btn-sort").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset["sort"] as SortKey;
+      renderSectorDrillDown(container, sector, onBack, key);
+    });
+  });
 }
