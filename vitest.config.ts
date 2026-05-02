@@ -8,6 +8,7 @@ export default defineConfig({
     testTimeout: 10000,
     hookTimeout: 10000,
     include: ["tests/**/*.test.ts"],
+    exclude: ["tests/browser/**"],
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],
