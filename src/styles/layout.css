@@ -87,6 +87,31 @@
 
   .view.active {
     display: block;
+    animation: route-enter 180ms var(--transition-medium, ease-out) both;
+  }
+
+  @starting-style {
+    .view.active {
+      opacity: 0;
+      transform: translateY(6px) scale(0.995);
+    }
+  }
+
+  @keyframes route-enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.995);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .view.active {
+      animation: none;
+    }
   }
 
   #app-footer {
