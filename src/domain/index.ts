@@ -322,3 +322,18 @@ export {
   isMarketMoving,
 } from "./economic-calendar";
 export type { EconEvent, RawEconEvent, SurpriseDirection } from "./economic-calendar";
+
+export {
+  detectFormat,
+  parseRssFeed,
+  parseAtomFeed,
+  parseFeed,
+  extractTickers,
+  groupByTicker,
+  scoreSentiment,
+  classifySentiment,
+  deduplicateItems,
+  sortByDate,
+  summariseDigest,
+} from "./news-digest";
+export type { FeedItem, FeedFormat, SentimentLabel, DigestSummary } from "./news-digest";
