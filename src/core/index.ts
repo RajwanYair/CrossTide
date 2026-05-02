@@ -82,6 +82,14 @@ export { registerServiceWorker } from "./sw-register";
 export { watchServiceWorkerUpdates } from "./sw-update";
 export type { SwUpdateHandle, SwUpdateOptions } from "./sw-update";
 export {
+  backgroundFetchSupported,
+  startArchiveDownload,
+  getActiveFetches,
+  onFetchProgress,
+  fetchWithFallback,
+} from "./background-fetch";
+export type { ArchiveDownloadOptions, FetchProgress, ProgressCallback } from "./background-fetch";
+export {
   CACHE_VERSION,
   CACHE_NAMES,
   EXPIRATION_CONFIGS,
