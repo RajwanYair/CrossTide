@@ -289,3 +289,18 @@ export {
   detectAllPatterns,
 } from "./pattern-recognition";
 export type { PatternCandle, PatternDirection, DetectedPattern } from "./pattern-recognition";
+
+export {
+  Regime,
+  classifyVix,
+  classifyBreadth,
+  classifyYieldCurve,
+  classifyDollar,
+  trendRegime,
+  volatilityRegime,
+  combinedRegime,
+  regimeScore,
+  regimeLabel,
+  regimeColor,
+} from "./market-regime";
+export type { RegimeSignal } from "./market-regime";
