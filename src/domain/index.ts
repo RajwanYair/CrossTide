@@ -304,3 +304,21 @@ export {
   regimeColor,
 } from "./market-regime";
 export type { RegimeSignal } from "./market-regime";
+
+export {
+  EventImpact,
+  EventCategory,
+  parseEconEvent,
+  filterByImpact,
+  filterByCountry,
+  filterByDateRange,
+  groupByDate,
+  groupByCountry,
+  nextEvent,
+  classifyImpact,
+  classifyCategory,
+  formatSurprise,
+  surprisePct,
+  isMarketMoving,
+} from "./economic-calendar";
+export type { EconEvent, RawEconEvent, SurpriseDirection } from "./economic-calendar";
