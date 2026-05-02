@@ -55,6 +55,7 @@ import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
 
 const cardHandles = new Map<RouteName, CardHandle>();
+const prefetchedCards = new Set<RouteName>();
 const cardContainers: Partial<Record<RouteName, string>> = {
   chart: "chart-container",
   alerts: "alerts-container",
@@ -70,6 +71,23 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   "correlation": "correlation-container",
   "market-breadth": "market-breadth-container",
 };
+
+function initCardPrefetchOnIntent(): void {
+  const links = document.querySelectorAll<HTMLAnchorElement>("#app-nav .nav-link[data-route]");
+  links.forEach((link) => {
+    const route = link.dataset["route"] as RouteName | undefined;
+    if (!route) return;
+    const prefetch = (): void => {
+      if (prefetchedCards.has(route)) return;
+      prefetchedCards.add(route);
+      void loadCard(route).catch(() => {
+        // Keep intent prefetch best-effort; navigation path handles real errors.
+      });
+    };
+    link.addEventListener("mouseenter", prefetch, { passive: true });
+    link.addEventListener("focus", prefetch, { passive: true });
+  });
+}
 
 async function activateCard(
   route: RouteName,
@@ -99,6 +117,9 @@ function main(): void {
   let config = loadConfig();
   let tickerDataCache = new Map<string, TickerData>();
   let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // H3: eager-prefetch card chunks on hover/focus intent.
+  initCardPrefetchOnIntent();
 
   // ── B11: Cross-tab BroadcastChannel sync ──────────────────────────────────
   const crossTabSync = createCrossTabSync();
