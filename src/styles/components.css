@@ -1222,6 +1222,36 @@
     color: var(--accent);
   }
 
+  /* H20: Sector Rotation */
+  .rotation-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .rotation-table th,
+  .rotation-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rot-cell {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .rot-outperform {
+    background: color-mix(in srgb, var(--success) 20%, transparent);
+  }
+
+  .rot-underperform {
+    background: color-mix(in srgb, var(--danger) 20%, transparent);
+  }
+
+  .rot-flat {
+    background: color-mix(in srgb, var(--text-secondary) 10%, transparent);
+  }
+
   .sector-count {
     margin-right: var(--sp-sm);
     color: var(--text-muted);

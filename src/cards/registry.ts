@@ -144,6 +144,12 @@ const REGISTRY: readonly CardEntry[] = [
     viewId: "view-macro-dashboard",
     load: () => import("./macro-dashboard-card").then((m) => m.default),
   },
+  {
+    route: "sector-rotation",
+    title: "Sector Rotation",
+    viewId: "view-sector-rotation",
+    load: () => import("./sector-rotation-card").then((m) => m.default),
+  },
 ];
 
 const cache = new Map<RouteName, Promise<CardModule>>();
