@@ -6,6 +6,47 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.12.0] - 2026-07-30
+
+### Added — 10-sprint delivery (H6, H21, G21, G8, G9, H3, H5, G18, G19, G16)
+
+- **H6 — File System Access API tests**: Full test coverage for existing
+  `file-system-access.ts` (`saveStrategyToDisk`, `openStrategyFromDisk`) with
+  `showSaveFilePicker`/`showOpenFilePicker` mocks and `<a>` fallback paths (14 new tests).
+- **H21 — Relative Strength Comparison** (`relative-strength.ts`): `normalizeSeries`,
+  `windowStartDate` (1W/1M/3M/6M/1Y/YTD windows), `computeRelativeStrengths`,
+  `findOutperformer`, `findUnderperformer`, `summariseReturns` (24 new tests).
+- **G21 — Heatmap Sector Drilldown** (`heatmap-drilldown.ts`): `buildDrilldown`,
+  `sortDrilldown`, `buildBreadcrumb`, `computeAttributionBar`, `buildDrilldownEntries`
+  with `DrilldownEntry.attributionShare` (25 new tests).
+- **G8 — Navigation API module** (`navigation-api.ts`): `supportsNavigationApi`,
+  `getNavigationApi`, `interceptNavigation`, `navigateWithApi`, `currentNavigationUrl`,
+  `onNavigationStart`, `isSameOrigin` — progressive enhancement over History API
+  with `history.pushState` fallback (20 new tests).
+- **G9 — Popover API utility** (`ui/popover.ts`): `supportsPopover`, `openPopover`,
+  `closePopover`, `togglePopover`, `isPopoverOpen`, `createManagedPopover`,
+  `attachAnchorTrigger` — Baseline 2024 wrappers with `display` fallback (18 new tests).
+- **H3 — Speculation Rules API** (`speculation-rules.ts`): `speculationRulesSupported`,
+  `injectSpeculationRules`, `buildPrefetchRules`, `buildPrerenderRules`,
+  `removeSpeculationRules`, `linkPrefetchFallback` — Chromium 121+ with
+  `<link rel="prefetch">` fallback (20 new tests).
+- **H5 — CSS @scope utility** (`css-scope.ts`): `supportsCssScope`, `buildScopeRule`,
+  `injectScopedStyles`, `removeScopedStyles`, `removeAllScopedStyles` — Baseline 2024
+  `@scope` injection with verbatim-CSS fallback (16 new tests).
+- **G18 — ETF constituent drilldown** (`etf-drilldown.ts`): `buildEtfDrilldown`,
+  `topHoldingsByWeight`, `topHoldersByContribution`, `positiveContributors`,
+  `negativeContributors` — weighted contribution analytics with attribution shares (19 new tests).
+- **G19 — Name enrichment helpers** (`name-enrichment.ts`): `normaliseCompanyName`,
+  `extractShortName`, `formatDisplayName`, `enrichWatchlistEntry`, `buildNameMap` —
+  strips legal suffixes and share-class qualifiers; builds O(1) name lookup maps (28 new tests).
+- **G16 — Inter Variable font loading** (`font-loader.ts` + `styles/fonts.css`):
+  `fontLoadingSupported`, `isFontLoaded`, `waitForFont`, `preloadFont`, `observeFontLoad`;
+  `@font-face` declarations for Inter Variable + JetBrains Mono with `font-display: optional` (13 new tests).
+
+**Total new tests: +197 (3042 → 3239)**
+
+---
+
 ## [7.11.0] - 2026-07-29
 
 ### Added — 8-sprint delivery (G11, G20, G22, G23, G24, H18, H19, H20)
