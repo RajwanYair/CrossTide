@@ -33,6 +33,14 @@ import { handleOpenApiSpec } from "./routes/openapi.js";
 export interface Env {
   ENVIRONMENT?: string;
   API_VERSION?: string;
+  /**
+   * G13: Cloudflare native Rate Limiting API binding.
+   * When present the worker delegates to CF's global rate limiter; when absent
+   * (local dev, unit tests) it falls back to the in-memory token bucket.
+   */
+  RATE_LIMITER?: {
+    limit(options: { key: string }): Promise<{ success: boolean }>;
+  };
   // Optional KV + R2 bindings (declared in wrangler.toml)
   // QUOTE_CACHE?: KVNamespace;
   // OHLCV_STORE?: R2Bucket;
@@ -47,7 +55,11 @@ app.options("*", (c) => handlePreflight(c.req.raw));
 app.use("*", async (c, next) => {
   if (c.req.method !== "OPTIONS") {
     const key = rateLimitKey(c.req.raw);
-    if (!checkRateLimit(key)) {
+    const allowed =
+      c.env.RATE_LIMITER != null
+        ? (await c.env.RATE_LIMITER.limit({ key })).success // G13: CF native
+        : checkRateLimit(key); // fallback: in-memory
+    if (!allowed) {
       const origin = c.req.header("Origin") ?? null;
       return new Response(JSON.stringify({ error: "Too many requests" }), {
         status: 429,

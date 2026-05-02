@@ -444,3 +444,43 @@ describe("GET /openapi.json", () => {
     expect(res.headers.get("Cache-Control")).toContain("max-age=3600");
   });
 });
+
+// ── G13: Cloudflare native Rate Limiting API ──────────────────────────────
+
+describe("G13: CF native RATE_LIMITER binding", () => {
+  it("uses RATE_LIMITER.limit when binding is present and allows request", async () => {
+    const limitFn = vi.fn().mockResolvedValue({ success: true });
+    const ENV_WITH_RL = { ...ENV, RATE_LIMITER: { limit: limitFn } };
+    const res = await worker.fetch(makeRequest("GET", "/api/health"), ENV_WITH_RL);
+    expect(res.status).toBe(200);
+    expect(limitFn).toHaveBeenCalledOnce();
+    expect(limitFn).toHaveBeenCalledWith({ key: "1.2.3.4" });
+  });
+
+  it("returns 429 when RATE_LIMITER.limit returns success: false", async () => {
+    const limitFn = vi.fn().mockResolvedValue({ success: false });
+    const ENV_WITH_RL = { ...ENV, RATE_LIMITER: { limit: limitFn } };
+    const res = await worker.fetch(makeRequest("GET", "/api/health"), ENV_WITH_RL);
+    expect(res.status).toBe(429);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toContain("Too many requests");
+    expect(res.headers.get("Retry-After")).toBe("60");
+  });
+
+  it("skips RATE_LIMITER for OPTIONS preflight", async () => {
+    const limitFn = vi.fn().mockResolvedValue({ success: true });
+    const ENV_WITH_RL = { ...ENV, RATE_LIMITER: { limit: limitFn } };
+    const res = await worker.fetch(
+      makeRequest("OPTIONS", "/api/health", { origin: "https://example.com" }),
+      ENV_WITH_RL,
+    );
+    // OPTIONS is handled before rate-limit middleware — limit must not be called
+    expect(limitFn).not.toHaveBeenCalled();
+    expect(res.status).toBe(204);
+  });
+
+  it("falls back to in-memory bucket when RATE_LIMITER is absent", async () => {
+    const res = await worker.fetch(makeRequest("GET", "/api/health"), ENV);
+    expect(res.status).toBe(200);
+  });
+});

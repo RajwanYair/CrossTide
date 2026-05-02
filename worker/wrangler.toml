@@ -7,6 +7,18 @@ ENVIRONMENT = "production"
 # Bump this whenever you make a backwards-incompatible API change
 API_VERSION = "1"
 
+# G13: Cloudflare native Rate Limiting API binding.
+# Provides global (cross-edge) rate limiting via CF's managed service.
+# Declared here so `wrangler deploy` wires up the binding automatically.
+# The binding is optional — the worker falls back to the in-memory bucket
+# when RATE_LIMITER is not available (local dev / unit tests).
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+# 60 requests per 60-second window per unique key
+simple = { limit = 60, period = 60 }
+
 [dev]
 port = 8787
 local_protocol = "http"
