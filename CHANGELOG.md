@@ -6,6 +6,43 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.11.0] - 2026-07-29
+
+### Added — 8-sprint delivery (G11, G20, G22, G23, G24, H18, H19, H20)
+
+- **G11 — Compression Streams** (`compress.ts`): `compressStringToGzip`,
+  `compressionStreamSupported`, `estimateGzipRatio`, `gzipFilename` — gzip
+  export helpers via the Baseline-2023 CompressionStream API with graceful
+  fallback (16 new tests).
+- **G20 — Custom weight edge-cases**: Extended consensus-engine tests covering
+  `weight=0` silencing indicators, all-zero → NEUTRAL, boosted-weight amplification,
+  and strength clamping to [0, 1] (8 new tests, 19 total in file).
+- **G22 — Correlation Heatmap render-data** (`correlation-heatmap.ts`):
+  `rToHslColor`, `buildHeatmapRenderData` (flat n×n cell array, diagonal
+  detection, warning pairs sorted by |r|), `sliceCorrelationResult` (19 new tests).
+- **G23 — Market Breadth analytics** (`market-breadth.ts`): `computeMarketBreadth`
+  aggregates per-ticker change/SMA data into buy/sell/neutral counts; `classifyBreadthCondition`
+  produces bullish/bearish/neutral regime (18 new tests).
+- **G24 — Per-card settings helpers**: `setCardSetting<K>` and `getCardSetting<K>`
+  pure functions added to `config.ts`; reactive `onCardSettingsChange` signal
+  exported from `card-settings-signal.ts` (16 new tests across 2 files).
+- **H18 — Earnings Calendar domain** (`earnings-calendar.ts`): `parseEarningsResponse`,
+  `sortByDate`, `filterUpcoming`, `getDaysUntilEarnings`, `classifySurprise` (23 new tests).
+- **H19 — Macro Dashboard domain** (`macro-dashboard.ts`): `MACRO_TICKERS` constants,
+  `classifyMacroRegime`, `classifyMacroRegimeExtended`, `formatMacroChange`,
+  `regimeLabel`, `regimeCssClass`, `getMacroTicker` (20 new tests).
+- **H20 — Sector Rotation domain** (`sector-rotation.ts`): `SECTOR_ETFS` (11 SPDR ETFs),
+  `computeReturn`, `computeRelativeReturn`, `classifySectorPerformance`, `rankSectors`
+  (22 new tests).
+
+### Stats
+
+- Tests: **3042** (+149 from v7.10.0)
+- New source files: 7 (compress.ts, correlation-heatmap.ts, market-breadth.ts,
+  earnings-calendar.ts, macro-dashboard.ts, sector-rotation.ts, card-settings-signal.ts exists)
+
+---
+
 ## [7.10.0] - 2026-07-28
 
 ### Added — 10-sprint delivery (G5, G10, G12, G13, G7, H15, H7, H2, H1, G17)
