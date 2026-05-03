@@ -51,3 +51,69 @@ Use GitHub Issues. Include:
 - Browser and OS version
 - Console errors (if any)
 - Screenshots (if applicable)
+
+## Commit Conventions
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat(scope): add new feature
+fix(scope): fix specific bug
+docs(scope): documentation only
+refactor(scope): code change without feature/fix
+test(scope): add or update tests
+chore(scope): maintenance (deps, CI, config)
+perf(scope): performance improvement
+```
+
+Common scopes: `watchlist`, `chart`, `screener`, `portfolio`, `core`, `worker`, `ci`, `docs`
+
+## Architecture Overview
+
+```
+src/
+├── types/       ← shared interfaces (no imports from other layers)
+├── domain/      ← pure functions (no DOM, no fetch, no side effects)
+├── core/        ← state, config, caching, network (no UI code)
+├── providers/   ← data provider adapters (Yahoo, Finnhub, etc.)
+├── cards/       ← route cards (CardModule pattern: mount/update/dispose)
+├── ui/          ← reusable UI utilities (theme, router, toast, etc.)
+├── styles/      ← CSS layers (tokens, base, components, responsive)
+└── locales/     ← i18n translation dictionaries
+```
+
+**Key principles:**
+
+- Domain layer is 100% pure — no DOM, no I/O, no `Date.now()`
+- Cards follow `CardModule` interface: `mount(container, ctx) → CardHandle`
+- Use `patchDOM()` for incremental rendering (not raw `innerHTML`)
+- Use `data-action` event delegation at card roots
+
+## Testing Guidelines
+
+| Test type     | Location         | Framework        | Run command            |
+| ------------- | ---------------- | ---------------- | ---------------------- |
+| Unit tests    | `tests/unit/`    | Vitest           | `npm test`             |
+| Browser tests | `tests/browser/` | Vitest + browser | `npm run test:browser` |
+| E2E tests     | `tests/e2e/`     | Playwright       | `npm run test:e2e`     |
+
+**Rules:**
+
+- Domain logic: always add unit tests (aim for 100% branch coverage)
+- UI changes: add at least one integration test
+- New cards: add both unit test and E2E smoke test
+- Mock external APIs — never hit real networks in tests
+- Use `makeCandles()` from `tests/helpers/` for fixture data
+
+## File Naming
+
+- TypeScript: `kebab-case.ts` (e.g., `signal-dsl.ts`)
+- Tests: `<module-name>.test.ts` (e.g., `signal-dsl.test.ts`)
+- CSS: layer-based in `src/styles/`
+- Docs: `kebab-case.mdx` in `docs-site/src/content/docs/`
+
+## Getting Help
+
+- Read `docs/ARCHITECTURE.md` for the full system design
+- Check `docs/COPILOT_GUIDE.md` for AI-assisted development tips
+- Browse the [Astro docs-site](https://crosstide.pages.dev/docs) for user guides

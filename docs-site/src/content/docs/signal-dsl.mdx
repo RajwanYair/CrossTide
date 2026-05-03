@@ -12,8 +12,8 @@ rules using a safe, sandboxed expression language. Expressions combine variables
 (price, indicator values) with logic operators to produce boolean or numeric results.
 
 <Aside type="tip">
-  The DSL is intentionally minimal for safety — no loops, no string manipulation, no
-  network access. It evaluates pure mathematical/logical expressions only.
+  The DSL is intentionally minimal for safety — no loops, no string manipulation, no network access.
+  It evaluates pure mathematical/logical expressions only.
 </Aside>
 
 ## Quick Start
@@ -23,11 +23,13 @@ rules using a safe, sandboxed expression language. Expressions combine variables
 1. Open the **Signal DSL** card from the sidebar or command palette (`⌘K` → "signal")
 
 2. Enter an expression in the editor, e.g.:
+
    ```
    rsi < 30 and price > 50
    ```
 
 3. Supply variable values in the JSON editor:
+
    ```json
    { "rsi": 25, "price": 152 }
    ```
@@ -55,52 +57,58 @@ atom   := NUMBER | IDENT | '(' expr ')' | 'true' | 'false'
 
 ### Operators
 
-| Operator | Meaning              | Example              |
-| -------- | -------------------- | -------------------- |
-| `and`    | Logical AND          | `rsi < 30 and macd > 0` |
-| `or`     | Logical OR           | `price > 200 or volume > 1000000` |
-| `not`    | Logical NOT          | `not overbought`     |
-| `<`      | Less than            | `rsi < 30`           |
-| `<=`     | Less than or equal   | `price <= sma200`    |
-| `>`      | Greater than         | `volume > avgVolume` |
-| `>=`     | Greater or equal     | `price >= support`   |
-| `==`     | Equality             | `signal == 1`        |
-| `!=`     | Not equal            | `trend != 0`         |
-| `+`      | Addition             | `price + atr`        |
-| `-`      | Subtraction          | `high - low`         |
-| `*`      | Multiplication       | `atr * 2`            |
-| `/`      | Division             | `volume / avgVolume` |
+| Operator | Meaning            | Example                           |
+| -------- | ------------------ | --------------------------------- |
+| `and`    | Logical AND        | `rsi < 30 and macd > 0`           |
+| `or`     | Logical OR         | `price > 200 or volume > 1000000` |
+| `not`    | Logical NOT        | `not overbought`                  |
+| `<`      | Less than          | `rsi < 30`                        |
+| `<=`     | Less than or equal | `price <= sma200`                 |
+| `>`      | Greater than       | `volume > avgVolume`              |
+| `>=`     | Greater or equal   | `price >= support`                |
+| `==`     | Equality           | `signal == 1`                     |
+| `!=`     | Not equal          | `trend != 0`                      |
+| `+`      | Addition           | `price + atr`                     |
+| `-`      | Subtraction        | `high - low`                      |
+| `*`      | Multiplication     | `atr * 2`                         |
+| `/`      | Division           | `volume / avgVolume`              |
 
 ### Built-in Functions
 
-| Function    | Description             | Example           |
-| ----------- | ----------------------- | ----------------- |
-| `abs(x)`    | Absolute value          | `abs(change)`     |
-| `min(a, b)` | Minimum of two values   | `min(price, sma)` |
-| `max(a, b)` | Maximum of two values   | `max(high, prev)` |
-| `round(x)`  | Round to nearest integer | `round(rsi)`     |
-| `floor(x)`  | Round down              | `floor(score)`    |
-| `ceil(x)`   | Round up                | `ceil(ratio)`     |
+| Function    | Description              | Example           |
+| ----------- | ------------------------ | ----------------- |
+| `abs(x)`    | Absolute value           | `abs(change)`     |
+| `min(a, b)` | Minimum of two values    | `min(price, sma)` |
+| `max(a, b)` | Maximum of two values    | `max(high, prev)` |
+| `round(x)`  | Round to nearest integer | `round(rsi)`      |
+| `floor(x)`  | Round down               | `floor(score)`    |
+| `ceil(x)`   | Round up                 | `ceil(ratio)`     |
 
 ## Example Expressions
 
 ### Mean Reversion Entry
+
 ```
 rsi < 30 and price > sma200 and volume > avgVolume * 1.5
 ```
-*Buy when RSI is oversold, price is above long-term support, and volume confirms.*
+
+_Buy when RSI is oversold, price is above long-term support, and volume confirms._
 
 ### Breakout Detection
+
 ```
 price > high52w * 0.98 and volume > avgVolume * 2
 ```
-*Trigger when price approaches 52-week high with strong volume.*
+
+_Trigger when price approaches 52-week high with strong volume._
 
 ### Risk Filter
+
 ```
 not (vix > 25 or drawdown > 0.1)
 ```
-*Block signals when market volatility is high or drawdown exceeds 10%.*
+
+_Block signals when market volatility is high or drawdown exceeds 10%._
 
 ## Server-Side Execution
 
@@ -122,7 +130,7 @@ Files are stored locally; nothing is uploaded to any server.
 
 ## Keyboard Shortcuts
 
-| Key        | Action                         |
-| ---------- | ------------------------------ |
-| `Ctrl+Enter` | Evaluate expression         |
-| `⌘K`      | Open command palette → "dsl"   |
+| Key          | Action                       |
+| ------------ | ---------------------------- |
+| `Ctrl+Enter` | Evaluate expression          |
+| `⌘K`         | Open command palette → "dsl" |
