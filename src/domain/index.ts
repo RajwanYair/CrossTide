@@ -1,37 +1,79 @@
+/**
+ * Domain barrel — public API for the CrossTide analysis engine.
+ *
+ * @module domain
+ */
+
+// ── Technical indicator defaults ─────────────────────────────────────────
+
 export { DEFAULTS } from "./technical-defaults";
+
+// ── Core indicators ──────────────────────────────────────────────────────
+
+/** Simple Moving Average (SMA). */
 export { computeSma, computeSmaSeries } from "./sma-calculator";
 export type { SmaPoint } from "./sma-calculator";
+/** Exponential Moving Average (EMA). */
 export { computeEma, computeEmaSeries } from "./ema-calculator";
 export type { EmaPoint } from "./ema-calculator";
+/** Relative Strength Index (RSI). */
 export { computeRsi, computeRsiSeries } from "./rsi-calculator";
 export type { RsiPoint } from "./rsi-calculator";
+/** Moving Average Convergence Divergence (MACD). */
 export { computeMacdSeries } from "./macd-calculator";
 export type { MacdPoint } from "./macd-calculator";
+
+// ── Consensus & signals ──────────────────────────────────────────────────
+
+/** 12-method consensus signal engine. */
 export { evaluateConsensus } from "./consensus-engine";
+/** Bullish/bearish cross-up detection. */
 export { detectCrossUp } from "./cross-up-detector";
 export type { CrossUpResult } from "./cross-up-detector";
+// ── Volatility & range indicators ────────────────────────────────────────
+
+/** Average True Range (ATR) — volatility measurement. */
 export { computeAtr, computeAtrSeries } from "./atr-calculator";
 export type { AtrPoint } from "./atr-calculator";
+/** Bollinger Bands — price envelope using standard deviations. */
 export { computeBollinger, computeBollingerSeries } from "./bollinger-calculator";
 export type { BollingerPoint } from "./bollinger-calculator";
+// ── Oscillators ──────────────────────────────────────────────────────────
+
+/** Stochastic %K / %D oscillator. */
 export { computeStochastic, computeStochasticSeries } from "./stochastic-calculator";
 export type { StochasticPoint } from "./stochastic-calculator";
+
+// ── Volume indicators ────────────────────────────────────────────────────
+
+/** On-Balance Volume (OBV). */
 export { computeObv, computeObvSeries } from "./obv-calculator";
 export type { ObvPoint } from "./obv-calculator";
+// ── Trend & momentum indicators ──────────────────────────────────────────
+
+/** Average Directional Index (ADX) — trend strength. */
 export { computeAdx, computeAdxSeries } from "./adx-calculator";
 export type { AdxPoint } from "./adx-calculator";
+/** Commodity Channel Index (CCI). */
 export { computeCci, computeCciSeries } from "./cci-calculator";
 export type { CciPoint } from "./cci-calculator";
+/** Money Flow Index (MFI) — volume-weighted RSI. */
 export { computeMfi, computeMfiSeries } from "./mfi-calculator";
 export type { MfiPoint } from "./mfi-calculator";
+/** Williams %R oscillator. */
 export { computeWilliamsR, computeWilliamsRSeries } from "./williams-r-calculator";
 export type { WilliamsRPoint } from "./williams-r-calculator";
+/** Parabolic SAR — trailing stop indicator. */
 export { computeSar, computeSarSeries } from "./parabolic-sar-calculator";
 export type { SarPoint } from "./parabolic-sar-calculator";
+/** SuperTrend — trend-following overlay. */
 export { computeSuperTrend, computeSuperTrendSeries } from "./supertrend-calculator";
 export type { SuperTrendPoint } from "./supertrend-calculator";
+/** Volume-Weighted Average Price (VWAP). */
 export { computeVwap, computeVwapSeries } from "./vwap-calculator";
 export type { VwapPoint } from "./vwap-calculator";
+// ── Method evaluators (consensus inputs) ─────────────────────────────────
+
 export { evaluate as evaluateMicho } from "./micho-method";
 export { evaluate as evaluateRsi } from "./rsi-method";
 export { evaluate as evaluateMacd } from "./macd-method";
@@ -44,11 +86,23 @@ export { evaluate as evaluateSar } from "./sar-method";
 export { evaluate as evaluateWilliamsR } from "./williams-r-method";
 export { evaluate as evaluateMfi } from "./mfi-method";
 export { evaluate as evaluateSuperTrend } from "./supertrend-method";
+/** Multi-method signal aggregation. */
 export { aggregateSignals, aggregateConsensus } from "./signal-aggregator";
+
+// ── Alerts ───────────────────────────────────────────────────────────────
+
+/** State-machine-based price/volume alert engine. */
 export { createAlertState, evaluateAlerts, DEFAULT_ENABLED_ALERTS } from "./alert-state-machine";
 export type { AlertType, FiredAlert, TickerAlertState } from "./alert-state-machine";
+
+// ── Backtesting ──────────────────────────────────────────────────────────
+
+/** Event-driven backtest engine with commission and slippage. */
 export { runBacktest } from "./backtest-engine";
 export type { BacktestConfig, BacktestTrade, BacktestResult } from "./backtest-engine";
+// ── Risk analytics ───────────────────────────────────────────────────────
+
+/** Daily returns, Sharpe, Sortino, max drawdown, Fibonacci levels. */
 export {
   dailyReturns,
   sharpeRatio,
@@ -58,9 +112,13 @@ export {
 } from "./analytics";
 export type { FibonacciLevels } from "./analytics";
 
+/** Extended backtest metrics (win rate, expectancy, etc.). */
 export { computeMetrics as computeBacktestMetrics } from "./backtest-metrics";
 export type { BacktestMetrics, EquityPoint, Trade } from "./backtest-metrics";
 
+// ── Position sizing ──────────────────────────────────────────────────────
+
+/** Risk-based, ATR-based, and Kelly criterion position sizing. */
 export {
   riskBasedSize,
   atrBasedSize,
@@ -70,6 +128,9 @@ export {
 } from "./position-sizing";
 export type { RiskBasedSizingInput, AtrSizingInput, KellyInput } from "./position-sizing";
 
+// ── Branded types ────────────────────────────────────────────────────────
+
+/** Nominal-typed wrappers for Ticker, ISODate, Price, Percent. */
 export {
   isTicker,
   asTicker,
@@ -83,36 +144,57 @@ export {
 } from "./branded";
 export type { Ticker, ISODate, Price, Percent } from "./branded";
 
+// ── Benchmark & risk ratios ──────────────────────────────────────────────
+
+/** Rebase series, compare to benchmark, compute beta. */
 export { rebaseToHundred, compareToBenchmark, beta } from "./benchmark";
 export type { SeriesPoint, RelativePoint } from "./benchmark";
 
+/** CAGR and Calmar ratio helpers. */
 export { cagr, calmarRatio } from "./risk-ratios";
 export type { RatioOptions } from "./risk-ratios";
 
+// ── Signal DSL ───────────────────────────────────────────────────────────
+
+/** Tokenize, parse, and evaluate user-defined signal expressions. */
 export { tokenize, parse, evaluate, compileSignal } from "./signal-dsl";
 export type { Value, Node, EvalContext, FnImpl } from "./signal-dsl";
 
+// ── Chart helpers ────────────────────────────────────────────────────────
+
+/** Heikin-Ashi smoothed candlesticks. */
 export { heikinAshi } from "./heikin-ashi";
 export type { Candle, HeikinAshiCandle } from "./heikin-ashi";
 
+/** Donchian Channels — high/low price envelope. */
 export { computeDonchian } from "./donchian";
 export type { DonchianPoint } from "./donchian";
 
+/** Keltner Channels — ATR-based envelope around EMA. */
 export { computeKeltner } from "./keltner";
 export type { KeltnerPoint, KeltnerOptions } from "./keltner";
 
+/** Ichimoku Kinko Hyo — multi-line trend system. */
 export { computeIchimoku } from "./ichimoku";
 export type { IchimokuPoint, IchimokuOptions } from "./ichimoku";
 
+/** Classical and Fibonacci pivot points. */
 export { computePivots } from "./pivots";
 export type { PivotInput, PivotLevels, PivotKind } from "./pivots";
 
+/** ZigZag — swing high/low detection with threshold filter. */
 export { computeZigZag } from "./zigzag";
 export type { ZigZagPivot, ZigZagOptions, PivotDirection } from "./zigzag";
 
+// ── Resampling & time helpers ────────────────────────────────────────────
+
+/** Resample intraday candles to weekly/monthly timeframes. */
 export { resampleCandles, TIMEFRAMES } from "./resample";
 export type { ResampleOptions } from "./resample";
 
+// ── Portfolio & equity ───────────────────────────────────────────────────
+
+/** Build equity curve and summarise closed trades. */
 export { buildEquityCurve, summarizeTrades, tradePnl } from "./equity-curve";
 export type {
   ClosedTrade,
@@ -121,6 +203,7 @@ export type {
   Side,
 } from "./equity-curve";
 
+/** Portfolio analytics — holdings value, sector allocation, concentration. */
 export {
   totalValue,
   positionValue,
@@ -131,12 +214,21 @@ export {
 } from "./portfolio-analytics";
 export type { Holding, SectorAllocation, PositionMetric } from "./portfolio-analytics";
 
+// ── Volume analysis ──────────────────────────────────────────────────────
+
+/** Volume profile — price level distribution analysis. */
 export { computeVolumeProfile } from "./volume-profile";
 export type { VolumeProfile, VolumeProfileBin, VolumeProfileOptions } from "./volume-profile";
 
+// ── Correlation ──────────────────────────────────────────────────────────
+
+/** Pearson correlation coefficient and cross-ticker matrix. */
 export { pearson, correlationMatrix } from "./correlation-matrix";
 export type { CorrelationInput, CorrelationResult } from "./correlation-matrix";
 
+// ── Returns ──────────────────────────────────────────────────────────────
+
+/** Simple, log, cumulative, and rolling return calculations. */
 export {
   simpleReturns,
   logReturns,
@@ -146,111 +238,164 @@ export {
   rollingReturns,
 } from "./returns";
 
+// ── Anchored VWAP ────────────────────────────────────────────────────────
+
+/** VWAP anchored to a user-selected date. */
 export { anchoredVwap } from "./anchored-vwap";
 export type { AnchoredVwapPoint, AnchoredVwapOptions } from "./anchored-vwap";
 
+// ── Moving average crossovers ────────────────────────────────────────────
+
+/** Golden/death cross detection for SMA/EMA pairs. */
 export { detectMaCrossovers, crossoverFlags } from "./ma-crossover";
 export type { MaCrossEvent, CrossKind } from "./ma-crossover";
 
+// ── Linear regression ────────────────────────────────────────────────────
+
+/** Least-squares regression line and channel for price series. */
 export { linearRegression, regressionLine, regressionChannel } from "./linear-regression";
 export type { LinearRegression } from "./linear-regression";
 
+// ── Supplementary indicators ─────────────────────────────────────────────
+
+/** Aroon Up/Down — trend age indicator. */
 export { computeAroon } from "./aroon";
 export type { AroonPoint } from "./aroon";
 
+/** Chaikin Money Flow — accumulation/distribution pressure. */
 export { computeChaikinMoneyFlow } from "./chaikin-money-flow";
 export type { CmfPoint } from "./chaikin-money-flow";
 
+/** Awesome Oscillator (Bill Williams). */
 export { computeAwesomeOscillator } from "./awesome-oscillator";
 export type { AoPoint } from "./awesome-oscillator";
 
+/** Rolling statistics — mean, stddev, min, max, z-score. */
 export { rollingMean, rollingStdDev, rollingMin, rollingMax, rollingZScore } from "./rolling-stats";
 
+/** Monthly and day-of-week seasonal return patterns. */
 export { seasonalityByMonth, seasonalityByDayOfWeek } from "./seasonality";
 export type { SeasonalityBucket, DailyReturn } from "./seasonality";
 
+/** Elder Ray — bull/bear power with EMA baseline. */
 export { computeElderRay } from "./elder-ray";
 export type { ElderRayPoint } from "./elder-ray";
 
+/** TRIX — triple-smoothed EMA momentum oscillator. */
 export { computeTrix } from "./trix";
 export type { TrixPoint } from "./trix";
 
+/** Ulcer Index — downside volatility measure. */
 export { computeUlcerIndex } from "./ulcer-index";
 
+/** Coppock Curve — long-term momentum indicator. */
 export { computeCoppockCurve } from "./coppock-curve";
 
+/** DEMA and TEMA — double/triple exponential moving averages. */
 export { computeDema, computeTema } from "./dema-tema";
 
+/** Hull Moving Average — reduced-lag weighted MA. */
 export { computeHullMA } from "./hull-ma";
 
+/** Percentile rank and rolling percentile rank. */
 export { percentile, percentRank, rollingPercentRank } from "./percentile-rank";
 
+/** Chande Momentum Oscillator (CMO). */
 export { computeCmo } from "./chande-momentum-oscillator";
 
+/** Connors RSI — composite RSI with streak and percentile rank. */
 export { computeConnorsRsi } from "./connors-rsi";
 
+/** Fisher Transform — Gaussian price normalization. */
 export { computeFisherTransform } from "./fisher-transform";
 export type { FisherPoint } from "./fisher-transform";
 
+/** Vortex Indicator — trend direction and strength. */
 export { computeVortex } from "./vortex-indicator";
 export type { VortexPoint } from "./vortex-indicator";
 
+/** Mass Index — reversal signal based on range expansion. */
 export { computeMassIndex } from "./mass-index";
 
+/** Know Sure Thing (KST) — multi-timeframe momentum. */
 export { computeKst } from "./kst";
 export type { KstPoint, KstOptions } from "./kst";
 
+/** Detrended Price Oscillator — removes trend to isolate cycles. */
 export { computeDpo } from "./dpo";
 
+/** Percentage Price Oscillator — normalized MACD. */
 export { computePpo } from "./ppo";
 export type { PpoPoint } from "./ppo";
 
+// ── Accumulation / distribution ──────────────────────────────────────────
+
+/** Accumulation/Distribution line. */
 export { computeAdLine } from "./ad-line";
 export type { AdCandle } from "./ad-line";
 
+/** Force Index — price × volume momentum. */
 export { computeForceIndex, computeForceIndexRaw } from "./force-index";
 export type { ForceCandle } from "./force-index";
 
+/** Stochastic RSI — RSI fed through stochastic formula. */
 export { computeStochRsi } from "./stochastic-rsi";
 export type { StochRsiPoint, StochRsiOptions } from "./stochastic-rsi";
 
+/** True Strength Index (TSI) — double-smoothed momentum. */
 export { computeTsi } from "./tsi";
 export type { TsiPoint, TsiOptions } from "./tsi";
 
+/** Weighted Moving Average (WMA). */
 export { computeWma } from "./wma";
 
+/** Chaikin Oscillator — MACD of A/D line. */
 export { computeChaikinOscillator } from "./chaikin-oscillator";
 
+/** Elder Impulse System — trend + momentum color classification. */
 export { computeElderImpulse } from "./elder-impulse";
 export type { Impulse, ElderImpulseOptions } from "./elder-impulse";
 
+/** Momentum — N-period price change. */
 export { computeMomentum } from "./momentum";
 
+/** Rate of Change (ROC) — percentage price change. */
 export { computeRoc } from "./roc";
 
+/** Rolling standard deviation. */
 export { computeStdDev } from "./standard-deviation";
 export type { StdDevOptions } from "./standard-deviation";
 
+/** Price envelope — percentage bands around moving average. */
 export { computeEnvelope } from "./envelope";
 export type { EnvelopePoint } from "./envelope";
 
+/** Williams Fractals — swing point identification. */
 export { computeFractals } from "./fractals";
 export type { FractalPoint } from "./fractals";
 
+/** Ultimate Oscillator — multi-timeframe buying pressure. */
 export { computeUltimateOscillator } from "./ultimate-oscillator";
 export type { UltimateOscillatorOptions } from "./ultimate-oscillator";
 
+/** Klinger Volume Oscillator — volume trend confirmation. */
 export { computeKlingerOscillator } from "./klinger-oscillator";
 export type { KlingerOptions, VolumeCandle } from "./klinger-oscillator";
 
+/** Choppiness Index — trend vs range-bound classifier. */
 export { computeChoppinessIndex } from "./choppiness-index";
 
+/** Ease of Movement — price/volume relationship. */
 export { computeEaseOfMovement } from "./ease-of-movement";
 export type { EaseOfMovementOptions } from "./ease-of-movement";
 
+/** Kaufman Adaptive Moving Average (KAMA). */
 export { computeKama } from "./kama";
 export type { KamaOptions } from "./kama";
 
+// ── ML / ONNX inference ──────────────────────────────────────────────────
+
+/** ONNX Runtime helpers — model loading, tensor preprocessing, inference. */
 export {
   onnxSupported,
   preprocessCandles,
@@ -269,6 +414,7 @@ export type {
   OrtLike,
 } from "./onnx-patterns";
 
+/** ONNX pipeline — model versioning, normalization, metrics. */
 export {
   DEFAULT_LABELS,
   DEFAULT_QUANTIZATION,
@@ -292,6 +438,10 @@ export type {
   FeatureNormalization,
 } from "./onnx-pipeline";
 
+// ── Candlestick patterns ─────────────────────────────────────────────────
+
+/** Japanese candlestick pattern recognition (engulfing, doji, etc.). */
+
 export {
   bodySize,
   candleRange,
@@ -313,6 +463,7 @@ export {
 } from "./pattern-recognition";
 export type { PatternCandle, PatternDirection, DetectedPattern } from "./pattern-recognition";
 
+/** Backtest pattern trade statistics. */
 export { evaluatePatternTrade, aggregatePatternStats, backtestPatterns } from "./pattern-backtest";
 export type {
   PatternBacktestConfig,
@@ -321,6 +472,9 @@ export type {
   PatternBacktestReport,
 } from "./pattern-backtest";
 
+// ── Market regime ────────────────────────────────────────────────────────
+
+/** Classify market regime (bull/bear/neutral) using VIX, breadth, yield. */
 export {
   Regime,
   classifyVix,
@@ -336,6 +490,9 @@ export {
 } from "./market-regime";
 export type { RegimeSignal } from "./market-regime";
 
+// ── Economic calendar ────────────────────────────────────────────────────
+
+/** Parse, filter, and classify economic events (FOMC, NFP, CPI, etc.). */
 export {
   EventImpact,
   EventCategory,
@@ -354,6 +511,9 @@ export {
 } from "./economic-calendar";
 export type { EconEvent, RawEconEvent, SurpriseDirection } from "./economic-calendar";
 
+// ── News digest ──────────────────────────────────────────────────────────
+
+/** RSS/Atom feed parsing, ticker extraction, and sentiment scoring. */
 export {
   detectFormat,
   parseRssFeed,
@@ -369,6 +529,9 @@ export {
 } from "./news-digest";
 export type { FeedItem, FeedFormat, SentimentLabel, DigestSummary } from "./news-digest";
 
+// ── Strategy import/export ───────────────────────────────────────────────
+
+/** Serialize, deserialize, and share signal strategies as URLs. */
 export {
   exportStrategy,
   importStrategy,
@@ -383,6 +546,9 @@ export {
 } from "./signal-strategy-io";
 export type { StrategyPayload, StrategyBundle, ImportResult } from "./signal-strategy-io";
 
+// ── Watchlist sharing ────────────────────────────────────────────────────
+
+/** Encode/decode watchlists as shareable URLs and merge snapshots. */
 export {
   createWatchlistSnapshot,
   encodeWatchlistUrl,
@@ -393,6 +559,9 @@ export {
 } from "./watchlist-share";
 export type { WatchlistSnapshot, WatchlistImportResult, MergeResult } from "./watchlist-share";
 
+// ── Market hours ─────────────────────────────────────────────────────────
+
+/** Exchange schedules, open/close detection, and WebSocket gating. */
 export {
   SCHEDULES,
   isMarketOpen,
