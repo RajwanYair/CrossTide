@@ -6,6 +6,46 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.19.0] - 2026-05-05
+
+### Added — 10-sprint delivery (coverage sweep session 11)
+
+- **Coverage — push-notifications.ts** (81%→98%): 6 tests covering non-SW Notification
+  fallback path, Notification API absent branch, and no-subscription path in subscribeToPush.
+- **Coverage — plugin-api.ts** (83%→100%): 6 tests covering `loadIndicatorModule`
+  dynamic-import branches for valid, invalid-export, schema-fail, and empty-module URLs
+  via `vi.mock` HTTP URL interception.
+- **Coverage — drawing-tools.ts** (91%→97%): 2 tests covering the null canvas context
+  no-op handle branch (all draw/resize/cursor callbacks are safe no-ops).
+- **Coverage — popover.ts** (83%→100%): 5 tests covering native Popover API toggle,
+  `isPopoverOpen` via `matches(:popover-open)`, `ManagedPopover.toggle()`, and
+  `attachAnchorTrigger` with popover.id set.
+- **Coverage — polygon-provider.ts** (83%→98%) + **yahoo-provider.ts** (84%→93%)\*\*:
+  10 tests covering schema parse failure, partial field mapping (only exchange / only
+  type / neither), and catch branches in both providers.
+- **Coverage — worker-rpc.ts** (86%→98%): 4 tests covering `callWithTransfer` method —
+  resolve, reject, ID increment, and empty transfer list.
+- **Coverage — toast.ts** (87%→95%) + **aria-live.ts** (91%→100%)\*\*: 7 tests covering
+  Popover API `showPopover`/`hidePopover` paths, `animationend` listener branch, and
+  non-DOM environment early returns.
+- **Coverage — sw-update.ts** (86%→95%) + **broadcast-channel.ts** (88%→98%) +
+  **chart-sync.ts** (86%→97%)\*\*: 8 tests covering `onUpdateFound` when `installing` is
+  null but `waiting` is set, `console.error` when a config-change handler throws,
+  `console.warn` when `postMessage` fails on a closed channel, and the
+  `subscribeCrosshairMove` callback body including the `isSyncing` re-entrancy guard.
+- **Coverage — obv-method.ts** (86%→100%): 2 tests covering the SELL bearish-divergence
+  branch (OBV falling while price rising) and signal field population.
+- **Coverage — settings.ts** (89%→97%): 7 tests covering `readCardSettingsFromPanel`
+  for all remaining card types — consensus, heatmap, backtest, alerts, portfolio, and
+  risk — via field change events.
+
+### Stats
+
+- **Total tests**: ~4 191 passing across ~348 test files
+- **New tests this release**: +57 across 13 new coverage test files
+
+---
+
 ## [7.18.0] - 2026-05-04
 
 ### Added — 10-sprint delivery (coverage sweep + J11/J16)
