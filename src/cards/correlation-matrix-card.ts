@@ -12,6 +12,8 @@
 import { correlationMatrix, type CorrelationInput } from "../domain/correlation-matrix";
 import { fetchTickerData } from "../core/data-service";
 import { loadConfig } from "../core/config";
+import { patchDOM } from "../core/patch-dom";
+import { createDelegate } from "../ui/delegate";
 import type { CardModule } from "./registry";
 import type { InstrumentType } from "../types/domain";
 
@@ -109,8 +111,6 @@ function renderContent(
     loading: boolean;
     error: string | null;
   },
-  onPeriodChange: (p: CorrelationPeriod) => void,
-  onExcludeCryptoChange: (v: boolean) => void,
 ): void {
   const { period, excludeCrypto, series, loading, error } = state;
 
@@ -118,14 +118,14 @@ function renderContent(
     <div class="corr-controls">
       <label>
         Period:
-        <select id="corr-period">
+        <select id="corr-period" data-action="change-period">
           <option value="20"${period === 20 ? " selected" : ""}>20 days</option>
           <option value="60"${period === 60 ? " selected" : ""}>60 days</option>
           <option value="120"${period === 120 ? " selected" : ""}>120 days</option>
         </select>
       </label>
       <label class="corr-toggle">
-        <input type="checkbox" id="corr-exclude-crypto"${excludeCrypto ? " checked" : ""}> Exclude crypto
+        <input type="checkbox" id="corr-exclude-crypto" data-action="toggle-crypto"${excludeCrypto ? " checked" : ""}> Exclude crypto
       </label>
     </div>`;
 
@@ -161,7 +161,7 @@ function renderContent(
     }
   }
 
-  container.innerHTML = `
+  const html = `
     <div class="card">
       <div class="card-header">
         <h2>Correlation Matrix</h2>
@@ -173,15 +173,7 @@ function renderContent(
       </div>
     </div>`;
 
-  const periodSel = container.querySelector<HTMLSelectElement>("#corr-period");
-  periodSel?.addEventListener("change", () => {
-    onPeriodChange(Number(periodSel.value) as CorrelationPeriod);
-  });
-
-  const cryptoChk = container.querySelector<HTMLInputElement>("#corr-exclude-crypto");
-  cryptoChk?.addEventListener("change", () => {
-    onExcludeCryptoChange(cryptoChk.checked);
-  });
+  patchDOM(container, html);
 }
 
 // ── Card module ─────────────────────────────────────────────────────────────
@@ -194,35 +186,31 @@ const correlationMatrixCard: CardModule = {
     let abortController: AbortController | null = null;
 
     function rerender(): void {
-      renderContent(
-        container,
-        { period, excludeCrypto, series, loading: false, error: null },
-        (p) => {
-          period = p;
-          rerender();
-        },
-        (v) => {
-          excludeCrypto = v;
-          rerender();
-        },
-      );
+      renderContent(container, { period, excludeCrypto, series, loading: false, error: null });
     }
+
+    // Event delegation: single listener handles period and crypto toggle changes
+    const delegate = createDelegate(
+      container,
+      {
+        "change-period": (el) => {
+          period = Number((el as HTMLSelectElement).value) as CorrelationPeriod;
+          rerender();
+        },
+        "toggle-crypto": (el) => {
+          excludeCrypto = (el as HTMLInputElement).checked;
+          rerender();
+        },
+      },
+      { eventTypes: ["change"] },
+    );
 
     async function load(): Promise<void> {
       abortController?.abort();
       const ac = new AbortController();
       abortController = ac;
 
-      renderContent(
-        container,
-        { period, excludeCrypto, series: null, loading: true, error: null },
-        (p) => {
-          period = p;
-        },
-        (v) => {
-          excludeCrypto = v;
-        },
-      );
+      renderContent(container, { period, excludeCrypto, series: null, loading: true, error: null });
 
       const config = loadConfig();
       const tickers = config.watchlist.map((e) => e.ticker);
@@ -254,18 +242,13 @@ const correlationMatrixCard: CardModule = {
         }
       } catch {
         if (!ac.signal.aborted) {
-          renderContent(
-            container,
-            { period, excludeCrypto, series: null, loading: false, error: "Failed to load data." },
-            (p) => {
-              period = p;
-              rerender();
-            },
-            (v) => {
-              excludeCrypto = v;
-              rerender();
-            },
-          );
+          renderContent(container, {
+            period,
+            excludeCrypto,
+            series: null,
+            loading: false,
+            error: "Failed to load data.",
+          });
         }
       }
     }
@@ -275,6 +258,7 @@ const correlationMatrixCard: CardModule = {
     return {
       dispose(): void {
         abortController?.abort();
+        delegate.dispose();
       },
     };
   },
