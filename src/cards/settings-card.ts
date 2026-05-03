@@ -16,7 +16,7 @@ const settingsCard: CardModule = {
   mount(container, _ctx) {
     const config = loadConfig();
     hydrateCardSettings(config.cardSettings);
-    renderSettings(container, config, {
+    const delegate = renderSettings(container, config, {
       onThemeChange(theme) {
         saveConfig({ ...loadConfig(), theme });
         initTheme(theme);
@@ -59,7 +59,7 @@ const settingsCard: CardModule = {
         updateCardSettingsSignal(cardId, settings);
       },
     });
-    return {};
+    return { dispose: () => delegate.dispose() };
   },
 };
 

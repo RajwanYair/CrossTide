@@ -55,25 +55,25 @@ describe("renderSettings", () => {
 
   it("calls onExport when export button clicked", () => {
     renderSettings(container, makeConfig(), callbacks);
-    (container.querySelector("#btn-export") as HTMLButtonElement).click();
+    (container.querySelector("[data-action='export']") as HTMLButtonElement).click();
     expect(callbacks.onExport).toHaveBeenCalled();
   });
 
   it("calls onImport when import button clicked", () => {
     renderSettings(container, makeConfig(), callbacks);
-    (container.querySelector("#btn-import") as HTMLButtonElement).click();
+    (container.querySelector("[data-action='import']") as HTMLButtonElement).click();
     expect(callbacks.onImport).toHaveBeenCalled();
   });
 
   it("calls onClearWatchlist when clear button clicked", () => {
     renderSettings(container, makeConfig(), callbacks);
-    (container.querySelector("#btn-clear") as HTMLButtonElement).click();
+    (container.querySelector("[data-action='clear-watchlist']") as HTMLButtonElement).click();
     expect(callbacks.onClearWatchlist).toHaveBeenCalled();
   });
 
   it("calls onClearCache when clear cache button clicked", () => {
     renderSettings(container, makeConfig(), callbacks);
-    (container.querySelector("#btn-clear-cache") as HTMLButtonElement).click();
+    (container.querySelector("[data-action='clear-cache']") as HTMLButtonElement).click();
     expect(callbacks.onClearCache).toHaveBeenCalled();
   });
 
@@ -82,7 +82,7 @@ describe("renderSettings", () => {
       const onFinnhubKeyChange = vi.fn();
       renderSettings(container, makeConfig(), { ...callbacks, onFinnhubKeyChange });
       const keyInput = container.querySelector("#finnhub-key-input") as HTMLInputElement;
-      const saveBtn = container.querySelector("#btn-finnhub-save") as HTMLButtonElement;
+      const saveBtn = container.querySelector("[data-action='finnhub-save']") as HTMLButtonElement;
       keyInput.value = "test-api-key-123";
       saveBtn.click();
       expect(onFinnhubKeyChange).toHaveBeenCalledWith("test-api-key-123");
@@ -93,7 +93,7 @@ describe("renderSettings", () => {
       renderSettings(container, makeConfig(), { ...callbacks, onFinnhubKeyChange });
       const keyInput = container.querySelector("#finnhub-key-input") as HTMLInputElement;
       keyInput.value = "";
-      (container.querySelector("#btn-finnhub-save") as HTMLButtonElement).click();
+      (container.querySelector("[data-action='finnhub-save']") as HTMLButtonElement).click();
       expect(onFinnhubKeyChange).not.toHaveBeenCalled();
     });
 
@@ -101,7 +101,9 @@ describe("renderSettings", () => {
       const onFinnhubKeyChange = vi.fn();
       renderSettings(container, makeConfig(), { ...callbacks, onFinnhubKeyChange });
       const keyInput = container.querySelector("#finnhub-key-input") as HTMLInputElement;
-      const clearBtn = container.querySelector("#btn-finnhub-clear") as HTMLButtonElement;
+      const clearBtn = container.querySelector(
+        "[data-action='finnhub-clear']",
+      ) as HTMLButtonElement;
       keyInput.value = "existing-key";
       clearBtn.removeAttribute("disabled");
       clearBtn.click();

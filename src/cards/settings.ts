@@ -4,6 +4,8 @@
 import type { AppConfig, CardId, CardSettingsMap, MethodWeights } from "../types/domain";
 import { DEFAULT_METHOD_WEIGHTS } from "../types/domain";
 import { FINNHUB_KEY_STORAGE } from "../core/finnhub-stream-manager";
+import { patchDOM } from "../core/patch-dom";
+import { createDelegate, type DelegateHandle } from "../ui/delegate";
 
 const METHOD_NAMES = [
   "Micho",
@@ -55,7 +57,7 @@ export function renderSettings(
   container: HTMLElement,
   config: AppConfig,
   callbacks: SettingsCallbacks,
-): void {
+): DelegateHandle {
   const storedKey = ((): string => {
     try {
       return localStorage.getItem(FINNHUB_KEY_STORAGE) ?? "";
@@ -64,7 +66,9 @@ export function renderSettings(
     }
   })();
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="setting-group">
       <label for="theme-select">Theme</label>
       <select id="theme-select">
@@ -79,14 +83,14 @@ export function renderSettings(
     </div>
     <div class="setting-group">
       <label>Actions</label>
-      <button id="btn-export" type="button">Export JSON</button>
-      <button id="btn-export-gz" type="button">Export .json.gz</button>
-      <button id="btn-import" type="button">Import JSON</button>
-      <button id="btn-clear" type="button" class="btn-danger">Clear All</button>
+      <button data-action="export" type="button">Export JSON</button>
+      <button data-action="export-gz" type="button">Export .json.gz</button>
+      <button data-action="import" type="button">Import JSON</button>
+      <button data-action="clear-watchlist" type="button" class="btn-danger">Clear All</button>
     </div>
     <div class="setting-group">
       <label>Cache</label>
-      <button id="btn-clear-cache" type="button">Clear Cache</button>
+      <button data-action="clear-cache" type="button">Clear Cache</button>
     </div>
     <div class="setting-group">
       <label>About</label>
@@ -116,45 +120,56 @@ export function renderSettings(
         value="${escapeAttr(storedKey)}"
         aria-describedby="finnhub-key-hint"
       />
-      <button id="btn-finnhub-save" type="button">Save Key</button>
-      <button id="btn-finnhub-clear" type="button" class="btn-danger"${!storedKey ? " disabled" : ""}>Clear</button>
+      <button data-action="finnhub-save" type="button">Save Key</button>
+      <button data-action="finnhub-clear" type="button" class="btn-danger"${!storedKey ? " disabled" : ""}>Clear</button>
       <p id="finnhub-key-hint" class="text-secondary" style="font-size:0.8em;margin:0">
         Key is stored only in your browser's localStorage. Get a free key at
         <a href="https://finnhub.io" rel="noopener noreferrer" target="_blank">finnhub.io</a>.
       </p>
-    </div>`;
+    </div>`,
+  );
 
   const themeSelect = container.querySelector<HTMLSelectElement>("#theme-select");
   themeSelect?.addEventListener("change", () => {
     callbacks.onThemeChange(themeSelect.value as AppConfig["theme"]);
   });
 
-  container.querySelector("#btn-export")?.addEventListener("click", () => callbacks.onExport());
-  container
-    .querySelector("#btn-export-gz")
-    ?.addEventListener("click", () => callbacks.onExportGz?.());
-  container.querySelector("#btn-import")?.addEventListener("click", () => callbacks.onImport());
-  container
-    .querySelector("#btn-clear")
-    ?.addEventListener("click", () => callbacks.onClearWatchlist());
-  container
-    .querySelector("#btn-clear-cache")
-    ?.addEventListener("click", () => callbacks.onClearCache());
-
-  // Finnhub API key save/clear
+  // Delegated button actions
   const keyInput = container.querySelector<HTMLInputElement>("#finnhub-key-input");
-  const clearBtn = container.querySelector<HTMLButtonElement>("#btn-finnhub-clear");
-  container.querySelector("#btn-finnhub-save")?.addEventListener("click", () => {
-    const key = keyInput?.value.trim() ?? "";
-    if (!key) return;
-    callbacks.onFinnhubKeyChange?.(key);
-    if (clearBtn) clearBtn.disabled = false;
-  });
-  clearBtn?.addEventListener("click", () => {
-    if (keyInput) keyInput.value = "";
-    clearBtn.disabled = true;
-    callbacks.onFinnhubKeyChange?.(null);
-  });
+  const clearBtn = container.querySelector<HTMLButtonElement>("[data-action='finnhub-clear']");
+
+  const delegate = createDelegate(
+    container,
+    {
+      export: () => callbacks.onExport(),
+      "export-gz": () => callbacks.onExportGz?.(),
+      import: () => callbacks.onImport(),
+      "clear-watchlist": () => callbacks.onClearWatchlist(),
+      "clear-cache": () => callbacks.onClearCache(),
+      "reset-weights": () => {
+        for (const method of METHOD_NAMES) {
+          const slider = container.querySelector<HTMLInputElement>(`#weight-${method}`);
+          const label = container.querySelector<HTMLOutputElement>(`#weight-${method}-out`);
+          const def = DEFAULT_METHOD_WEIGHTS[method] ?? 1;
+          if (slider) slider.value = String(def);
+          if (label) label.textContent = def.toFixed(1);
+        }
+        callbacks.onMethodWeightsChange?.({ ...DEFAULT_METHOD_WEIGHTS });
+      },
+      "finnhub-save": () => {
+        const key = keyInput?.value.trim() ?? "";
+        if (!key) return;
+        callbacks.onFinnhubKeyChange?.(key);
+        if (clearBtn) clearBtn.disabled = false;
+      },
+      "finnhub-clear": () => {
+        if (keyInput) keyInput.value = "";
+        if (clearBtn) clearBtn.disabled = true;
+        callbacks.onFinnhubKeyChange?.(null);
+      },
+    },
+    { eventTypes: ["click"] },
+  );
 
   // G20: consensus weight sliders
   function readWeights(): MethodWeights {
@@ -178,17 +193,6 @@ export function renderSettings(
     });
   }
 
-  container.querySelector("#btn-reset-weights")?.addEventListener("click", () => {
-    for (const method of METHOD_NAMES) {
-      const slider = container.querySelector<HTMLInputElement>(`#weight-${method}`);
-      const label = container.querySelector<HTMLOutputElement>(`#weight-${method}-out`);
-      const def = DEFAULT_METHOD_WEIGHTS[method] ?? 1;
-      if (slider) slider.value = String(def);
-      if (label) label.textContent = def.toFixed(1);
-    }
-    callbacks.onMethodWeightsChange?.({ ...DEFAULT_METHOD_WEIGHTS });
-  });
-
   // G24: Per-card settings picker + dynamic section
   const picker = container.querySelector<HTMLSelectElement>("#card-settings-picker");
   const panel = container.querySelector<HTMLElement>("#card-settings-panel");
@@ -209,7 +213,7 @@ export function renderSettings(
 
   function rerenderCardSettingsPanel(): void {
     if (!panel) return;
-    panel.innerHTML = renderCardSettingsPanel(selectedCard, config.cardSettings);
+    patchDOM(panel, renderCardSettingsPanel(selectedCard, config.cardSettings));
     bindCardSettingsEvents();
   }
 
@@ -220,6 +224,8 @@ export function renderSettings(
     rerenderCardSettingsPanel();
   });
   rerenderCardSettingsPanel();
+
+  return delegate;
 }
 
 function renderWeightsSection(methodWeights?: MethodWeights): string {
@@ -247,7 +253,7 @@ function renderWeightsSection(methodWeights?: MethodWeights): string {
       </span>
     </label>
     <div class="weight-grid">${rows}</div>
-    <button id="btn-reset-weights" type="button">Reset to defaults</button>
+    <button data-action="reset-weights" type="button">Reset to defaults</button>
   </div>`;
 }
 
