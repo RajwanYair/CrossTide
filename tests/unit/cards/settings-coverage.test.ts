@@ -110,6 +110,78 @@ describe("settings — card settings panel branches", () => {
     );
   });
 
+  it("reads consensus settings via field change event (line 381)", () => {
+    renderSettings(container, makeConfig(), cbs);
+    selectCard("consensus");
+    const input = container.querySelector("#card-settings-historyDepth") as HTMLInputElement;
+    input.value = "75";
+    input.dispatchEvent(new Event("change"));
+    expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
+      "consensus",
+      expect.objectContaining({ historyDepth: 75 }),
+    );
+  });
+
+  it("reads heatmap settings via field change event (line 393)", () => {
+    renderSettings(container, makeConfig(), cbs);
+    selectCard("heatmap");
+    const input = container.querySelector("#card-settings-colorScale") as HTMLInputElement;
+    input.value = "sequential";
+    input.dispatchEvent(new Event("change"));
+    expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
+      "heatmap",
+      expect.objectContaining({ colorScale: "sequential" }),
+    );
+  });
+
+  it("reads backtest settings via field change event (line 398)", () => {
+    renderSettings(container, makeConfig(), cbs);
+    selectCard("backtest");
+    const input = container.querySelector("#card-settings-lookbackWindow") as HTMLInputElement;
+    input.value = "60";
+    input.dispatchEvent(new Event("change"));
+    expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
+      "backtest",
+      expect.objectContaining({ lookbackWindow: 60 }),
+    );
+  });
+
+  it("reads alerts settings via field change event (line 405)", () => {
+    renderSettings(container, makeConfig(), cbs);
+    selectCard("alerts");
+    const input = container.querySelector("#card-settings-thresholdType") as HTMLInputElement;
+    input.value = "absolute";
+    input.dispatchEvent(new Event("change"));
+    expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
+      "alerts",
+      expect.objectContaining({ thresholdType: "absolute" }),
+    );
+  });
+
+  it("reads portfolio settings via field change event (line 412)", () => {
+    renderSettings(container, makeConfig(), cbs);
+    selectCard("portfolio");
+    const input = container.querySelector("#card-settings-benchmarkTicker") as HTMLInputElement;
+    input.value = "QQQ";
+    input.dispatchEvent(new Event("change"));
+    expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
+      "portfolio",
+      expect.objectContaining({ benchmarkTicker: "QQQ" }),
+    );
+  });
+
+  it("reads risk settings via field change event (line 418)", () => {
+    renderSettings(container, makeConfig(), cbs);
+    selectCard("risk");
+    const input = container.querySelector("#card-settings-varConfidence") as HTMLInputElement;
+    input.value = "0.99";
+    input.dispatchEvent(new Event("change"));
+    expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
+      "risk",
+      expect.objectContaining({ varConfidence: 0.99 }),
+    );
+  });
+
   it("renders with existing cardSettings values", () => {
     const config = makeConfig({
       cardSettings: {
