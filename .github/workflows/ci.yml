@@ -115,7 +115,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: npx playwright test --reporter=github
+        run: npx playwright test --project=chromium --reporter=github
 
       - name: Upload Playwright report
         if: always()
