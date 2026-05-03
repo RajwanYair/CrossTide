@@ -52,7 +52,7 @@ function renderPopupContent(ticker: string, quote: WatchlistQuote): string {
 
   const consensusHtml = quote.consensus
     ? `<span class="badge badge-${quote.consensus.direction.toLowerCase()}">${quote.consensus.direction}</span>
-       <span class="muted">(${quote.consensus.score.toFixed(0)}%)</span>`
+       <span class="muted">(${(quote.consensus.strength * 100).toFixed(0)}%)</span>`
     : `<span class="badge badge-neutral">NEUTRAL</span>`;
 
   return `<div class="hover-zoom-header">

@@ -16,7 +16,7 @@ function makeQuote(ticker: string): WatchlistQuote {
     high52w: 180,
     low52w: 120,
     closes30d: Array.from({ length: 30 }, (_, i) => 140 + i * 0.5),
-    consensus: { direction: "BUY", score: 75, methods: {} },
+    consensus: { direction: "BUY", strength: 0.75, ticker, buyMethods: [], sellMethods: [] },
     name: "Apple Inc.",
   };
 }
