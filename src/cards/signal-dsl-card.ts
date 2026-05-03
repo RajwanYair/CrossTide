@@ -114,7 +114,6 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
 
   const exprInput = container.querySelector<HTMLTextAreaElement>("#dsl-expr-input")!;
   const varsInput = container.querySelector<HTMLTextAreaElement>("#dsl-vars-input")!;
-  const evalBtn = container.querySelector<HTMLButtonElement>("#dsl-eval-btn")!;
   const resultArea = container.querySelector<HTMLDivElement>("#dsl-result-area")!;
 
   function evaluate(): void {
@@ -158,8 +157,6 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
     }
   }
 
-  evalBtn.addEventListener("click", evaluate);
-
   exprInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
@@ -168,6 +165,7 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
   });
 
   const delegate = createDelegate(container, {
+    evaluate,
     clear: () => {
       exprInput.value = "";
       varsInput.value = "";

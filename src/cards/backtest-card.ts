@@ -27,6 +27,7 @@ import { fetchTickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import type { CardContext, CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
+import { createDelegate } from "../ui/delegate";
 
 // ── Synthetic price generator ─────────────────────────────────────────────────
 function syntheticCandles(
@@ -315,7 +316,7 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
             <input id="bt-slow" type="number" class="input backtest-input"
                    min="5" max="200" value="${slowPeriod}" />
           </label>
-          <button id="bt-run" type="button" class="btn btn-primary">▶ Run</button>
+          <button type="button" class="btn btn-primary" data-action="run-backtest">▶ Run</button>
         </div>
         <p class="risk-hint" id="bt-source">Loading real data for <strong>${ticker}</strong>…</p>
       </form>
@@ -327,7 +328,6 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
 
   // Wire controls
   const form = container.querySelector<HTMLFormElement>("#backtest-form")!;
-  const runBtn = form.querySelector<HTMLButtonElement>("#bt-run")!;
   const fastInput = form.querySelector<HTMLInputElement>("#bt-fast")!;
   const slowInput = form.querySelector<HTMLInputElement>("#bt-slow")!;
   const tickerInput = form.querySelector<HTMLInputElement>("#bt-ticker")!;
@@ -368,7 +368,9 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
     void run();
   };
 
-  runBtn.addEventListener("click", () => void onRun());
+  createDelegate(container, {
+    "run-backtest": () => void onRun(),
+  });
 
   // Initial load: fetch real data then run
   void loadCandles().then(() => {

@@ -60,7 +60,7 @@ describe("backtest-card (CardModule)", () => {
   it("renders the Run button", async () => {
     const { default: backtestCard } = await import("../../../src/cards/backtest-card");
     backtestCard.mount(container, { route: "backtest", params: {} });
-    const runBtn = container.querySelector<HTMLButtonElement>("#bt-run");
+    const runBtn = container.querySelector<HTMLButtonElement>("[data-action='run-backtest']");
     expect(runBtn).not.toBeNull();
     expect(runBtn?.textContent).toContain("Run");
   });
@@ -97,7 +97,7 @@ describe("backtest-card (CardModule)", () => {
     // Wait for initial load to settle
     await new Promise<void>((r) => setTimeout(r, 10));
 
-    const runBtn = container.querySelector<HTMLButtonElement>("#bt-run");
+    const runBtn = container.querySelector<HTMLButtonElement>("[data-action='run-backtest']");
     runBtn?.click();
 
     await new Promise<void>((r) => setTimeout(r, 10));
