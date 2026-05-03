@@ -5,7 +5,14 @@
  */
 // G16: self-hosted Inter variable font (replaces system fallback)
 import "@fontsource-variable/inter";
-import { loadConfig, saveConfig, addTicker, removeTicker, reorderWatchlist, updateWatchlistNames } from "./core/config";
+import {
+  loadConfig,
+  saveConfig,
+  addTicker,
+  removeTicker,
+  reorderWatchlist,
+  updateWatchlistNames,
+} from "./core/config";
 import { createCrossTabSync } from "./core/broadcast-channel";
 import { registerServiceWorker } from "./core/sw-register";
 import { watchServiceWorkerUpdates } from "./core/sw-update";
@@ -101,6 +108,14 @@ async function activateCard(
   if (!containerId) return;
   const el = document.getElementById(containerId);
   if (!el) return;
+
+  // K6: Ensure card containers are ARIA live regions so screen readers
+  // announce content updates (data refreshes, loading states).
+  if (!el.hasAttribute("aria-live")) {
+    el.setAttribute("aria-live", "polite");
+    el.setAttribute("aria-atomic", "false");
+  }
+
   const ctx: CardContext = { route, params };
   const existing = cardHandles.get(route);
   if (existing) {
@@ -215,7 +230,9 @@ function main(): void {
 
     const results = await fetchAllTickers(
       tickers,
-      (done, total) => { updateStatus(`Loading ${done}/${total}…`); },
+      (done, total) => {
+        updateStatus(`Loading ${done}/${total}…`);
+      },
       undefined,
       config.methodWeights,
     );
@@ -273,12 +290,14 @@ function main(): void {
       price: si.price,
       changePercent: results.get(si.ticker)?.changePercent ?? 0,
       consensus: si.consensus,
-      aboveSma50: si.smaValues.get(50) !== null && si.smaValues.get(50) !== undefined
-        ? (results.get(si.ticker)?.price ?? 0) > si.smaValues.get(50)!
-        : null,
-      aboveSma200: si.smaValues.get(200) !== null && si.smaValues.get(200) !== undefined
-        ? (results.get(si.ticker)?.price ?? 0) > si.smaValues.get(200)!
-        : null,
+      aboveSma50:
+        si.smaValues.get(50) !== null && si.smaValues.get(50) !== undefined
+          ? (results.get(si.ticker)?.price ?? 0) > si.smaValues.get(50)!
+          : null,
+      aboveSma200:
+        si.smaValues.get(200) !== null && si.smaValues.get(200) !== undefined
+          ? (results.get(si.ticker)?.price ?? 0) > si.smaValues.get(200)!
+          : null,
     }));
     setBreadthData(breadthInputs);
 
