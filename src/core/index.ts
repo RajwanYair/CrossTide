@@ -450,3 +450,12 @@ export type { CellValue, SheetData, Workbook, CellType } from "./xlsx-export";
 
 export { createCacheManager } from "./cache-manager";
 export type { CacheTier, CacheManagerOptions, CacheManager, CacheStats } from "./cache-manager";
+
+export {
+  hashIp,
+  startLogEntry,
+  finalizeLogEntry,
+  formatLogLine,
+  statusToLevel,
+} from "./request-logger";
+export type { LogEntry, LogLevel, PendingLogEntry } from "./request-logger";
