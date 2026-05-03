@@ -1,0 +1,73 @@
+---
+title: Correlation Matrix
+description: Visualize how your watchlist tickers move together using the CrossTide correlation matrix heatmap.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Correlation Matrix** card shows an n×n heatmap of Pearson correlation coefficients
+between every pair of tickers in your watchlist. It helps identify diversification gaps
+and over-concentrated positions.
+
+<Aside type="caution">
+  Correlation is computed from historical returns and can change rapidly during market
+  stress events (correlations tend to spike toward 1.0 in crashes).
+</Aside>
+
+## How It Works
+
+1. Fetches daily close prices for all watchlist tickers
+2. Computes pairwise Pearson-r correlation over the selected lookback window
+3. Renders an interactive heatmap with color-coded cells
+
+## Reading the Heatmap
+
+| Correlation (r) | Color       | Meaning                               |
+| --------------- | ----------- | ------------------------------------- |
+| +0.85 to +1.00  | Deep red    | Highly correlated — over-concentration risk |
+| +0.50 to +0.85  | Orange      | Moderate positive correlation         |
+| −0.20 to +0.50  | White/gray  | Low correlation — good diversification |
+| −0.50 to −0.20  | Light blue  | Mild negative — some hedging benefit  |
+| −1.00 to −0.50  | Deep blue   | Strong inverse — effective hedge      |
+
+## Controls
+
+### Period Selector
+
+Choose the lookback window:
+
+- **20 days** — Recent short-term correlation (≈1 month)
+- **60 days** — Medium-term (≈1 quarter)
+- **120 days** — Long-term structure (≈6 months)
+
+Shorter windows capture regime changes faster but are noisier.
+
+### Exclude Crypto Toggle
+
+Cryptocurrency pairs often have different correlation dynamics than equities.
+Toggle this to focus on stock-to-stock relationships only.
+
+## Over-Concentration Warnings
+
+Pairs with |r| > 0.85 are highlighted with a warning indicator. If your portfolio
+holds multiple highly correlated assets, you have concentrated directional risk —
+a decline in one is likely mirrored by the other.
+
+**Example:** Holding both MSFT and AAPL (historically r ≈ 0.7–0.8) provides less
+diversification than holding MSFT + XOM (historically r ≈ 0.3).
+
+## Practical Tips
+
+- A well-diversified watchlist typically has an **average pairwise correlation < 0.5**
+- Consider adding assets from different sectors, geographies, or asset classes
+- Use the 120-day window for strategic allocation decisions
+- Use the 20-day window to spot short-term regime shifts
+
+## Keyboard Shortcuts
+
+| Key   | Action                             |
+| ----- | ---------------------------------- |
+| `c`   | Navigate to Correlation card       |
+| `⌘K`  | Open command palette               |
