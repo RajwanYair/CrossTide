@@ -19,7 +19,8 @@ export type DrawingToolMode =
   | "channel"
   | "ray"
   | "hline"
-  | "text";
+  | "text"
+  | "pitchfork";
 
 export interface Point {
   x: number;
@@ -75,6 +76,17 @@ export interface TextDrawing {
   color: string;
 }
 
+export interface PitchforkDrawing {
+  kind: "pitchfork";
+  /** Pivot point (the starting handle — typically a swing high/low). */
+  pivot: Point;
+  /** Left prong anchor. */
+  left: Point;
+  /** Right prong anchor. */
+  right: Point;
+  color: string;
+}
+
 export type Drawing =
   | TrendlineDrawing
   | FibDrawing
@@ -82,7 +94,8 @@ export type Drawing =
   | ChannelDrawing
   | RayDrawing
   | HLineDrawing
-  | TextDrawing;
+  | TextDrawing
+  | PitchforkDrawing;
 
 // Fibonacci retracement levels (standard)
 export const FIB_LEVELS: readonly { level: number; label: string }[] = [
@@ -102,6 +115,7 @@ const CHANNEL_COLOR = "#ec4899";
 const RAY_COLOR = "#f97316";
 const HLINE_COLOR = "#8b5cf6";
 const TEXT_COLOR = "#e2e8f0";
+const PITCHFORK_COLOR = "#14b8a6";
 const CHANNEL_WIDTH = 30;
 const FIB_LINE_ALPHA = 0.7;
 const FONT_SIZE = 11;
@@ -277,6 +291,69 @@ export function drawText(ctx: CanvasRenderingContext2D, d: TextDrawing): void {
   ctx.restore();
 }
 
+/**
+ * Draw Andrew's Pitchfork — a 3-point tool:
+ *   pivot → midpoint of (left, right) forms the median line.
+ *   Upper and lower prongs pass through left and right anchors
+ *   and extend parallel to the median.
+ */
+export function drawPitchfork(
+  ctx: CanvasRenderingContext2D,
+  d: PitchforkDrawing,
+  canvasWidth: number,
+  canvasHeight: number,
+): void {
+  const { pivot, left, right, color } = d;
+
+  // Midpoint of the left/right anchors
+  const midX = (left.x + right.x) / 2;
+  const midY = (left.y + right.y) / 2;
+
+  // Direction of the median line (pivot → midpoint)
+  const dx = midX - pivot.x;
+  const dy = midY - pivot.y;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+  // Extend all prongs to canvas boundary
+  const scale = Math.max(canvasWidth, canvasHeight) * 2;
+  const unitX = dx / len;
+  const unitY = dy / len;
+
+  ctx.save();
+  ctx.lineWidth = 1.5;
+
+  // Median line (pivot → midpoint → extended)
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(pivot.x, pivot.y);
+  ctx.lineTo(midX + unitX * scale, midY + unitY * scale);
+  ctx.stroke();
+
+  // Upper prong (through left anchor, parallel to median)
+  ctx.setLineDash([5, 3]);
+  ctx.beginPath();
+  ctx.moveTo(left.x, left.y);
+  ctx.lineTo(left.x + unitX * scale, left.y + unitY * scale);
+  ctx.stroke();
+
+  // Lower prong (through right anchor, parallel to median)
+  ctx.beginPath();
+  ctx.moveTo(right.x, right.y);
+  ctx.lineTo(right.x + unitX * scale, right.y + unitY * scale);
+  ctx.stroke();
+
+  // Anchor dots
+  ctx.setLineDash([]);
+  ctx.fillStyle = color;
+  for (const p of [pivot, left, right]) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
 // ──────────────────────────────────────────────────────────────
 // Canvas overlay manager
 // ──────────────────────────────────────────────────────────────
@@ -294,6 +371,7 @@ interface MountState {
   drawings: Drawing[];
   mode: DrawingToolMode;
   pendingPoint: Point | null;
+  pendingPoints: Point[];
   onMouseDown: (e: MouseEvent) => void;
   onResize: () => void;
 }
@@ -325,6 +403,7 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
     drawings: [],
     mode: "none",
     pendingPoint: null,
+    pendingPoints: [],
     onMouseDown: () => undefined,
     onResize: () => undefined,
   };
@@ -361,6 +440,9 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
         case "text":
           drawText(ctx, d);
           break;
+        case "pitchfork":
+          drawPitchfork(ctx, d, canvas.width, canvas.height);
+          break;
       }
     }
   }
@@ -381,6 +463,19 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
       const content = prompt("Enter annotation text:");
       if (content) {
         state.drawings.push({ kind: "text", position: pt, content, color: TEXT_COLOR });
+        render();
+      }
+      return;
+    }
+
+    // Three-click tool: pitchfork (pivot, left, right)
+    if (state.mode === "pitchfork") {
+      state.pendingPoints.push(pt);
+      if (state.pendingPoints.length === 3) {
+        const [pivot, left, right] = state.pendingPoints as [Point, Point, Point];
+        state.drawings.push({ kind: "pitchfork", pivot, left, right, color: PITCHFORK_COLOR });
+        state.pendingPoints = [];
+        canvas.style.cursor = "default";
         render();
       }
       return;
@@ -441,12 +536,14 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
     setTool(mode: DrawingToolMode): void {
       state.mode = mode;
       state.pendingPoint = null;
+      state.pendingPoints = [];
       canvas.style.pointerEvents = mode === "none" ? "none" : "auto";
       canvas.style.cursor = mode !== "none" ? "crosshair" : "default";
     },
     clearDrawings(): void {
       state.drawings = [];
       state.pendingPoint = null;
+      state.pendingPoints = [];
       render();
     },
     getDrawings(): readonly Drawing[] {

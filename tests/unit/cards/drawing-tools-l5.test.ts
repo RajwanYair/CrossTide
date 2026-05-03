@@ -8,6 +8,7 @@ import {
   drawRay,
   drawHLine,
   drawText,
+  drawPitchfork,
 } from "../../../src/cards/drawing-tools";
 import type {
   RectangleDrawing,
@@ -15,6 +16,7 @@ import type {
   RayDrawing,
   HLineDrawing,
   TextDrawing,
+  PitchforkDrawing,
 } from "../../../src/cards/drawing-tools";
 
 function makeCtx(): CanvasRenderingContext2D {
@@ -165,5 +167,45 @@ describe("drawText", () => {
     expect(ctx.save).toHaveBeenCalled();
     expect(ctx.fillText).toHaveBeenCalledWith("Hello", 30, 60);
     expect(ctx.restore).toHaveBeenCalled();
+  });
+});
+
+describe("drawPitchfork", () => {
+  it("draws median line from pivot through midpoint of left/right", () => {
+    const ctx = makeCtx();
+    const d: PitchforkDrawing = {
+      kind: "pitchfork",
+      pivot: { x: 50, y: 100 },
+      left: { x: 100, y: 50 },
+      right: { x: 100, y: 150 },
+      color: "#14b8a6",
+    };
+
+    drawPitchfork(ctx, d, 800, 600);
+
+    expect(ctx.save).toHaveBeenCalled();
+    // Median starts at pivot
+    expect(ctx.moveTo).toHaveBeenCalledWith(50, 100);
+    // 3 anchor dots drawn
+    expect(ctx.arc).toHaveBeenCalledTimes(3);
+    expect(ctx.restore).toHaveBeenCalled();
+  });
+
+  it("draws upper and lower prongs parallel to median", () => {
+    const ctx = makeCtx();
+    const d: PitchforkDrawing = {
+      kind: "pitchfork",
+      pivot: { x: 0, y: 50 },
+      left: { x: 50, y: 20 },
+      right: { x: 50, y: 80 },
+      color: "#14b8a6",
+    };
+
+    drawPitchfork(ctx, d, 400, 300);
+
+    // Should have stroke calls for median + 2 prongs = 3 strokes
+    expect(ctx.stroke).toHaveBeenCalledTimes(3);
+    // Prongs use dashed lines
+    expect(ctx.setLineDash).toHaveBeenCalledWith([5, 3]);
   });
 });
