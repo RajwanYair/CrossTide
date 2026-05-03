@@ -1,0 +1,71 @@
+---
+title: Earnings Calendar
+description: Track upcoming and past earnings dates, EPS estimates, and surprise percentages for your watchlist.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Earnings Calendar** card shows a timeline of earnings report dates for all
+tickers in your watchlist. It displays EPS estimates, prior results, and
+surprise percentages so you can plan around high-volatility events.
+
+<Aside type="caution">
+  Earnings reports are the #1 source of gap risk. Options implied volatility
+  typically spikes 3–5 days before the report date. Plan position sizing accordingly.
+</Aside>
+
+## Card Layout
+
+The calendar displays upcoming earnings in chronological order:
+
+| Column         | Description                                         |
+| -------------- | --------------------------------------------------- |
+| Date           | Scheduled earnings report date                      |
+| Ticker         | Company symbol                                      |
+| Company        | Full company name                                   |
+| EPS Estimate   | Wall Street consensus earnings per share estimate   |
+| Prior EPS      | Actual EPS from the previous quarter                |
+| Surprise %     | How much the prior report beat/missed estimates     |
+
+## Color Coding
+
+- **Green (positive):** Prior earnings beat estimates (positive surprise)
+- **Red (negative):** Prior earnings missed estimates (negative surprise)
+- **Neutral:** Within ±1% of estimate
+
+## How to Use
+
+### Pre-Earnings Planning
+
+1. **Identify upcoming reports** — Check which watchlist tickers report this week
+2. **Assess surprise history** — Stocks that consistently beat tend to continue
+3. **Manage risk** — Consider reducing position size before reports if uncertain
+4. **Set alerts** — Use the Alerts card to notify you the day before a report
+
+### Post-Earnings Analysis
+
+After a report is released:
+- Check the surprise % to gauge how the market might react
+- Compare the magnitude of the surprise to historical surprises
+- Look for post-earnings announcement drift (PEAD) opportunities
+
+## Timing
+
+- **BMO** (Before Market Open): Report released pre-market
+- **AMC** (After Market Close): Report released after hours
+
+The card currently shows calendar dates. A future update will add BMO/AMC timing.
+
+## Data Source
+
+The card uses deterministic scheduling based on your watchlist tickers. When
+Finnhub or Yahoo Finance calendar data is available, it will automatically
+use real earnings dates.
+
+## Keyboard Shortcuts
+
+| Key   | Action                              |
+| ----- | ----------------------------------- |
+| `⌘K`  | Open command palette → "earnings"   |
