@@ -17,7 +17,7 @@ export type DrilldownSortKey = "changePercent" | "weight" | "absoluteMove";
 /** A constituent stock augmented with computed drill-down fields. */
 export interface DrilldownEntry {
   readonly ticker: string;
-  readonly name?: string;
+  readonly name?: string | undefined;
   /** Daily % change, e.g. 1.5 = +1.5 %. */
   readonly changePercent: number;
   /** Market-cap proxy weight in the sector (0–1). */

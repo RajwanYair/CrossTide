@@ -60,7 +60,7 @@ export function parseRssFeed(xml: string): FeedItem[] {
   let match: RegExpExecArray | null;
 
   while ((match = itemRe.exec(xml)) !== null) {
-    const block = match[1];
+    const block = match[1]!;
     const title = extractTag(block, "title") ?? "";
     const link = extractTag(block, "link") ?? "";
     const pubDate = extractTag(block, "pubDate") ?? "";
@@ -88,7 +88,7 @@ export function parseAtomFeed(xml: string): FeedItem[] {
   let match: RegExpExecArray | null;
 
   while ((match = entryRe.exec(xml)) !== null) {
-    const block = match[1];
+    const block = match[1]!;
     const title = extractTag(block, "title") ?? "";
     const link = extractAtomLink(block);
     const updated = extractTag(block, "updated") ?? extractTag(block, "published") ?? "";
@@ -126,7 +126,7 @@ export function extractTickers(text: string): string[] {
   let m: RegExpExecArray | null;
   const re = new RegExp(TICKER_RE.source, TICKER_RE.flags);
   while ((m = re.exec(text)) !== null) {
-    tickers.add(m[1]);
+    tickers.add(m[1]!);
   }
   return [...tickers].sort();
 }
@@ -283,12 +283,12 @@ export function summariseDigest(items: FeedItem[]): DigestSummary {
 function extractTag(xml: string, tag: string): string | undefined {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, "i");
   const m = re.exec(xml);
-  return m ? m[1].trim() : undefined;
+  return m ? m[1]!.trim() : undefined;
 }
 
 function extractAtomLink(block: string): string {
   const m = /<link[^>]+href=["']([^"']+)["']/i.exec(block);
-  return m ? m[1] : "";
+  return m ? m[1]! : "";
 }
 
 function stripHtml(html: string): string {

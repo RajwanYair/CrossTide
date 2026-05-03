@@ -16,6 +16,7 @@ import { registerRoute } from "workbox-routing";
 import { NetworkFirst, StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 import { enable as enableNavigationPreload } from "workbox-navigation-preload";
+import type { WorkboxPlugin } from "workbox-core";
 import { CACHE_NAMES, NETWORK_TIMEOUT_SECONDS, getExpirationConfig } from "./core/sw-cache-config";
 
 declare const self: ServiceWorkerGlobalScope;
@@ -43,9 +44,7 @@ registerRoute(
   new NetworkFirst({
     cacheName: CACHE_NAMES.api,
     networkTimeoutSeconds: NETWORK_TIMEOUT_SECONDS,
-    // Workbox types predate exactOptionalPropertyTypes — safe cast
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plugins: [new ExpirationPlugin(getExpirationConfig("api")) as any],
+    plugins: [new ExpirationPlugin(getExpirationConfig("api")) as unknown as WorkboxPlugin],
   }),
 );
 
@@ -57,8 +56,7 @@ registerRoute(
     request.destination === "worker",
   new StaleWhileRevalidate({
     cacheName: CACHE_NAMES.static,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plugins: [new ExpirationPlugin(getExpirationConfig("static")) as any],
+    plugins: [new ExpirationPlugin(getExpirationConfig("static")) as unknown as WorkboxPlugin],
   }),
 );
 
@@ -67,8 +65,7 @@ registerRoute(
   ({ request }: { request: Request }) => request.destination === "image",
   new CacheFirst({
     cacheName: CACHE_NAMES.images,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plugins: [new ExpirationPlugin(getExpirationConfig("images")) as any],
+    plugins: [new ExpirationPlugin(getExpirationConfig("images")) as unknown as WorkboxPlugin],
   }),
 );
 

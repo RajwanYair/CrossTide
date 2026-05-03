@@ -76,7 +76,7 @@ export function serializeCandles(candles: readonly OhlcvCandle[]): ArrayBuffer {
   const buffer = new ArrayBuffer(candles.length * BYTES_PER_CANDLE);
   const view = new Float64Array(buffer);
   for (let i = 0; i < candles.length; i++) {
-    const c = candles[i];
+    const c = candles[i]!;
     const off = i * 6;
     view[off] = c.timestamp;
     view[off + 1] = c.open;
@@ -96,12 +96,12 @@ export function deserializeCandles(buffer: ArrayBuffer): OhlcvCandle[] {
   for (let i = 0; i < count; i++) {
     const off = i * 6;
     candles.push({
-      timestamp: view[off],
-      open: view[off + 1],
-      high: view[off + 2],
-      low: view[off + 3],
-      close: view[off + 4],
-      volume: view[off + 5],
+      timestamp: view[off]!,
+      open: view[off + 1]!,
+      high: view[off + 2]!,
+      low: view[off + 3]!,
+      close: view[off + 4]!,
+      volume: view[off + 5]!,
     });
   }
   return candles;

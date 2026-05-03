@@ -114,7 +114,7 @@ export function trendRegime(prices: number[], span: number = 50): Regime {
   if (prices.length < span) return Regime.Neutral;
   const slice = prices.slice(-span);
   const sma = slice.reduce((s, v) => s + v, 0) / span;
-  const current = prices[prices.length - 1];
+  const current = prices[prices.length - 1]!;
   const deviation = ((current - sma) / sma) * 100;
 
   if (deviation > 5) return Regime.RiskOn;

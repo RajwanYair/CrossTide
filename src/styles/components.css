@@ -1038,12 +1038,12 @@
     align-items: center;
     gap: var(--sp-xs);
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
   }
 
   .corr-scroll {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   .corr-table {

@@ -21,7 +21,7 @@ export interface ModelMeta {
   readonly labels: readonly string[];
   readonly createdAt: string;
   readonly quantization: QuantizationConfig;
-  readonly metrics?: ModelMetrics;
+  readonly metrics?: ModelMetrics | undefined;
 }
 
 export interface QuantizationConfig {
@@ -174,7 +174,7 @@ function seededShuffle<T>(arr: T[], seed?: number): T[] {
   for (let i = arr.length - 1; i > 0; i--) {
     s = (s * 1664525 + 1013904223) | 0;
     const j = (s >>> 0) % (i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
   }
   return arr;
 }
@@ -195,23 +195,23 @@ export function computeNormalization(data: Float64Array, features: number): Feat
 
   for (let r = 0; r < rows; r++) {
     for (let f = 0; f < features; f++) {
-      const v = data[r * features + f];
-      mean[f] += v;
-      if (v < min[f]) min[f] = v;
-      if (v > max[f]) max[f] = v;
+      const v = data[r * features + f]!;
+      mean[f] = (mean[f] ?? 0) + v;
+      if (v < min[f]!) min[f] = v;
+      if (v > max[f]!) max[f] = v;
     }
   }
 
-  for (let f = 0; f < features; f++) mean[f] /= rows;
+  for (let f = 0; f < features; f++) mean[f] = mean[f]! / rows;
 
   const std = new Float64Array(features);
   for (let r = 0; r < rows; r++) {
     for (let f = 0; f < features; f++) {
-      const diff = data[r * features + f] - mean[f];
-      std[f] += diff * diff;
+      const diff = data[r * features + f]! - mean[f]!;
+      std[f] = (std[f] ?? 0) + diff * diff;
     }
   }
-  for (let f = 0; f < features; f++) std[f] = Math.sqrt(std[f] / rows);
+  for (let f = 0; f < features; f++) std[f] = Math.sqrt(std[f]! / rows);
 
   return { mean, std, min, max };
 }
@@ -228,8 +228,8 @@ export function normalizeZScore(
   for (let r = 0; r < rows; r++) {
     for (let f = 0; f < features; f++) {
       const idx = r * features + f;
-      const s = norm.std[f] === 0 ? 1 : norm.std[f];
-      data[idx] = (data[idx] - norm.mean[f]) / s;
+      const s = norm.std[f]! === 0 ? 1 : norm.std[f]!;
+      data[idx] = (data[idx]! - norm.mean[f]!) / s;
     }
   }
 }
@@ -246,8 +246,8 @@ export function normalizeMinMax(
   for (let r = 0; r < rows; r++) {
     for (let f = 0; f < features; f++) {
       const idx = r * features + f;
-      const range = norm.max[f] - norm.min[f];
-      data[idx] = range === 0 ? 0 : (data[idx] - norm.min[f]) / range;
+      const range = norm.max[f]! - norm.min[f]!;
+      data[idx] = range === 0 ? 0 : (data[idx]! - norm.min[f]!) / range;
     }
   }
 }

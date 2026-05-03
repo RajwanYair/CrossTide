@@ -49,9 +49,9 @@ export interface EconEvent {
   dateTime: number; // epoch ms
   impact: EventImpact;
   category: EventCategory;
-  forecast?: number;
-  actual?: number;
-  previous?: number;
+  forecast?: number | undefined;
+  actual?: number | undefined;
+  previous?: number | undefined;
 }
 
 export interface RawEconEvent {

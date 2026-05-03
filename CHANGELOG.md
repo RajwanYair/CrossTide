@@ -323,7 +323,7 @@ more` support, and `focus-within` outline on card sections.
   `fontLoadingSupported`, `isFontLoaded`, `waitForFont`, `preloadFont`, `observeFontLoad`;
   `@font-face` declarations for Inter Variable + JetBrains Mono with `font-display: optional` (13 new tests).
 
-**Total new tests: +197 (3042 → 3239)**
+Total new tests: +197 (3042 → 3239)
 
 ---
 

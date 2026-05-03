@@ -47,8 +47,8 @@ export interface NavigateEventLike {
   preventDefault(): void;
 }
 
-interface WindowWithNav extends Window {
-  navigation?: NavigationApiLike;
+interface WindowWithNav {
+  navigation?: NavigationApiLike | undefined;
 }
 
 // ─── feature detection ────────────────────────────────────────────────────────

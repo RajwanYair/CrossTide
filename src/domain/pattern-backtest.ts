@@ -93,8 +93,8 @@ export function evaluatePatternTrade(
   const exitIndex = detection.index + holdBars;
   if (exitIndex >= candles.length) return null;
 
-  const entryPrice = candles[detection.index].close;
-  const exitPrice = candles[exitIndex].close;
+  const entryPrice = candles[detection.index]!.close;
+  const exitPrice = candles[exitIndex]!.close;
   if (entryPrice === 0) return null;
 
   const returnPct = ((exitPrice - entryPrice) / entryPrice) * 100;
@@ -133,7 +133,7 @@ export function aggregatePatternStats(trades: readonly PatternTradeResult[]): Pa
 
   const stats: PatternStats[] = [];
   for (const [, group] of groups) {
-    const first = group[0];
+    const first = group[0]!;
     const wins = group.filter((t) => t.win).length;
     const losses = group.length - wins;
     const returns = group.map((t) => t.returnPct);

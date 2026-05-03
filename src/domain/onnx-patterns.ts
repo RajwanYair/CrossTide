@@ -133,7 +133,7 @@ export function preprocessCandles(candles: readonly OnnxCandle[], windowSize: nu
 
   // Left-pad with zeros (already zero-initialised)
   for (let i = 0; i < effective.length; i++) {
-    const c = effective[i];
+    const c = effective[i]!;
     const base = (pad + i) * 5;
     data[base] = (c.open - minPrice) / priceRange;
     data[base + 1] = (c.high - minPrice) / priceRange;
@@ -165,10 +165,10 @@ export function softmax(logits: readonly number[]): number[] {
 export function argmax(values: readonly number[]): number {
   if (values.length === 0) return -1;
   let maxIdx = 0;
-  let maxVal = values[0];
+  let maxVal = values[0]!;
   for (let i = 1; i < values.length; i++) {
-    if (values[i] > maxVal) {
-      maxVal = values[i];
+    if (values[i]! > maxVal) {
+      maxVal = values[i]!;
       maxIdx = i;
     }
   }
@@ -293,15 +293,17 @@ export function createModelLoader(
     const ort = await opts.loadRuntime();
     const session = await ort.InferenceSession.create(buffer);
 
-    const inputName = session.inputNames[0];
-    const outputName = session.outputNames[0];
+    const inputName = session.inputNames[0]!;
+    const outputName = session.outputNames[0]!;
 
     return {
       url,
       async run(input: Float32Array, dims: number[]): Promise<Float32Array> {
         const tensor = new ort.Tensor("float32", input, dims);
         const results = await session.run({ [inputName]: tensor });
-        return results[outputName].data as Float32Array;
+        const output = results[outputName];
+        if (!output) throw new Error(`ONNX output "${outputName}" missing`);
+        return output.data;
       },
       async dispose(): Promise<void> {
         await session.release();

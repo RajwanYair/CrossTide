@@ -551,14 +551,12 @@ export function flattenIssues(error: { issues: FlatIssue[] }): ValibotIssueDetai
  * Throws on failure.
  */
 export function parseOrThrow<T>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema: any,
+  schema: Parameters<typeof parse>[0],
   value: unknown,
   schemaName: string,
 ): T {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (parse as any)(schema, value) as T;
+    return parse(schema, value) as T;
   } catch (e) {
     if (e instanceof ValiError) {
       const issues = flattenIssues(e as { issues: FlatIssue[] }).slice(0, 3);

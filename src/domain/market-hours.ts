@@ -98,7 +98,7 @@ export const SCHEDULES: Record<ExchangeCode, MarketSchedule> = {
 
 function parseHHMM(hhmm: string): { hours: number; minutes: number } {
   const [h, m] = hhmm.split(":").map(Number);
-  return { hours: h, minutes: m };
+  return { hours: h!, minutes: m! };
 }
 
 function getLocalParts(

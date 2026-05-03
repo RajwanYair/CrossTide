@@ -92,6 +92,7 @@ describe("wireCrosshairSync", () => {
     const mockCrosshairMove = vi.fn().mockReturnValue(() => undefined);
     const mockChart = {
       subscribeCrosshairMove: mockCrosshairMove,
+      unsubscribeCrosshairMove: vi.fn(),
       setCrosshairPosition: vi.fn(),
       clearCrosshairPosition: vi.fn(),
     };
@@ -107,6 +108,7 @@ describe("wireCrosshairSync", () => {
     const mockCrosshairMove = vi.fn().mockReturnValue(() => undefined);
     const mockChart = {
       subscribeCrosshairMove: mockCrosshairMove,
+      unsubscribeCrosshairMove: vi.fn(),
       setCrosshairPosition: vi.fn(),
       clearCrosshairPosition: vi.fn(),
     };
@@ -126,6 +128,7 @@ describe("wireCrosshairSync", () => {
     const mockClear = vi.fn();
     const mockChart = {
       subscribeCrosshairMove: vi.fn().mockReturnValue(() => undefined),
+      unsubscribeCrosshairMove: vi.fn(),
       setCrosshairPosition: vi.fn(),
       clearCrosshairPosition: mockClear,
     };
@@ -144,6 +147,7 @@ describe("wireCrosshairSync", () => {
     const mockSeries = {};
     const mockChart = {
       subscribeCrosshairMove: vi.fn().mockReturnValue(() => undefined),
+      unsubscribeCrosshairMove: vi.fn(),
       setCrosshairPosition: mockSetCross,
       clearCrosshairPosition: vi.fn(),
     };

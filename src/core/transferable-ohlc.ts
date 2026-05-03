@@ -59,7 +59,7 @@ export function packOhlcv(rows: readonly OhlcvRow[]): PackedOhlcv {
   const buf = new Float64Array(len * STRIDE);
   for (let i = 0; i < len; i++) {
     const off = i * STRIDE;
-    const r = rows[i];
+    const r = rows[i]!;
     buf[off + Field.Open] = r.open;
     buf[off + Field.High] = r.high;
     buf[off + Field.Low] = r.low;
@@ -83,12 +83,12 @@ export function unpackOhlcv(buffer: Float64Array, length: number): OhlcvRow[] {
   for (let i = 0; i < length; i++) {
     const off = i * STRIDE;
     result[i] = {
-      open: buffer[off + Field.Open],
-      high: buffer[off + Field.High],
-      low: buffer[off + Field.Low],
-      close: buffer[off + Field.Close],
-      volume: buffer[off + Field.Volume],
-      timestamp: buffer[off + Field.Timestamp],
+      open: buffer[off + Field.Open]!,
+      high: buffer[off + Field.High]!,
+      low: buffer[off + Field.Low]!,
+      close: buffer[off + Field.Close]!,
+      volume: buffer[off + Field.Volume]!,
+      timestamp: buffer[off + Field.Timestamp]!,
     };
   }
   return result;
@@ -107,7 +107,7 @@ export function extractColumn(
 ): Float64Array {
   const col = new Float64Array(length);
   for (let i = 0; i < length; i++) {
-    col[i] = buffer[i * STRIDE + field];
+    col[i] = buffer[i * STRIDE + field]!;
   }
   return col;
 }
@@ -137,12 +137,12 @@ export function packFromColumns(
   const buf = new Float64Array(len * STRIDE);
   for (let i = 0; i < len; i++) {
     const off = i * STRIDE;
-    buf[off + Field.Open] = open[i];
-    buf[off + Field.High] = high[i];
-    buf[off + Field.Low] = low[i];
-    buf[off + Field.Close] = close[i];
-    buf[off + Field.Volume] = volume[i];
-    buf[off + Field.Timestamp] = timestamp[i];
+    buf[off + Field.Open] = open[i]!;
+    buf[off + Field.High] = high[i]!;
+    buf[off + Field.Low] = low[i]!;
+    buf[off + Field.Close] = close[i]!;
+    buf[off + Field.Volume] = volume[i]!;
+    buf[off + Field.Timestamp] = timestamp[i]!;
   }
   return { buffer: buf, length: len };
 }

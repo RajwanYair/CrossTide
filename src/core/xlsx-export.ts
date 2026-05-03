@@ -78,7 +78,7 @@ export function generateXlsx(wb: Workbook): Uint8Array {
   for (let i = 0; i < wb.sheets.length; i++) {
     files.push({
       path: `xl/worksheets/sheet${i + 1}.xml`,
-      data: buildSheetXml(wb.sheets[i]),
+      data: buildSheetXml(wb.sheets[i]!),
     });
   }
 
@@ -312,7 +312,7 @@ const CRC_TABLE = ((): Uint32Array => {
 function crc32(data: Uint8Array): number {
   let crc = 0xffffffff;
   for (let i = 0; i < data.length; i++) {
-    crc = CRC_TABLE[(crc ^ data[i]) & 0xff] ^ (crc >>> 8);
+    crc = CRC_TABLE[(crc ^ data[i]!) & 0xff]! ^ (crc >>> 8);
   }
   return (crc ^ 0xffffffff) >>> 0;
 }

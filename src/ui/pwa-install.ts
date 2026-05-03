@@ -32,16 +32,19 @@ export interface PwaInstallManager {
   destroy(): void;
 }
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
+
 export function createPwaInstallManager(): PwaInstallManager {
-  // BeforeInstallPromptEvent is non-standard; typed as any to avoid lib errors
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let deferredPrompt: any = null;
+  let deferredPrompt: BeforeInstallPromptEvent | null = null;
   const readyCbs: Array<() => void> = [];
   const installedCbs: Array<() => void> = [];
 
   function onBeforeInstallPrompt(e: Event): void {
     e.preventDefault();
-    deferredPrompt = e;
+    deferredPrompt = e as BeforeInstallPromptEvent;
     if (!wasDismissed()) {
       for (const cb of readyCbs) cb();
     }

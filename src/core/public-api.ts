@@ -76,7 +76,7 @@ export function extractApiKey(headers: { get(name: string): string | null }): st
   const auth = headers.get("Authorization");
   if (auth) {
     const match = /^Bearer\s+(\S+)$/i.exec(auth);
-    if (match) return match[1];
+    if (match) return match[1]!;
   }
   return null;
 }

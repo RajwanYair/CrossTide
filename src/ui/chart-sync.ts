@@ -15,6 +15,8 @@
  * from the Lightweight Charts API.
  */
 
+import type { IChartApi, ISeriesApi, SeriesType } from "lightweight-charts";
+
 /** Opaque crosshair time position (logical time string, e.g. "2024-01-15"). */
 export type CrosshairTime = string;
 
@@ -80,22 +82,22 @@ export function getGlobalChartSyncBus(): ChartSyncBus {
  */
 export function wireCrosshairSync(
   chartId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  chart: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  series: any,
+  chart: IChartApi,
+  series: ISeriesApi<SeriesType>,
   bus: ChartSyncBus = getGlobalChartSyncBus(),
 ): () => void {
   let isSyncing = false;
 
   // When this chart's crosshair moves, publish to bus
 
-  const unsubLwc = chart.subscribeCrosshairMove((param: unknown) => {
+  const handler = (param: unknown): void => {
     if (isSyncing) return;
 
     const time = (param as { time?: CrosshairTime } | null)?.time ?? null;
     bus.publish(chartId, time ?? null);
-  });
+  };
+
+  chart.subscribeCrosshairMove(handler);
 
   // When bus has an update, apply to this chart
   const entry: ChartCrosshairEntry = {
@@ -119,6 +121,6 @@ export function wireCrosshairSync(
   return () => {
     bus.unsubscribe(chartId);
 
-    unsubLwc?.();
+    chart.unsubscribeCrosshairMove(handler);
   };
 }

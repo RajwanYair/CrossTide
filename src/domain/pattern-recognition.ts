@@ -243,7 +243,7 @@ export function detectAllPatterns(candles: readonly PatternCandle[]): DetectedPa
   const results: DetectedPattern[] = [];
 
   for (let i = 0; i < candles.length; i++) {
-    const c = candles[i];
+    const c = candles[i]!;
 
     // Single-candle patterns
     const dojiConf = isDoji(c);
@@ -274,7 +274,7 @@ export function detectAllPatterns(candles: readonly PatternCandle[]): DetectedPa
 
     // Two-candle patterns
     if (i >= 1) {
-      const prev = candles[i - 1];
+      const prev = candles[i - 1]!;
       const bullEngConf = isBullishEngulfing(prev, c);
       if (bullEngConf > 0)
         results.push({
@@ -296,8 +296,8 @@ export function detectAllPatterns(candles: readonly PatternCandle[]): DetectedPa
 
     // Three-candle patterns
     if (i >= 2) {
-      const first = candles[i - 2];
-      const second = candles[i - 1];
+      const first = candles[i - 2]!;
+      const second = candles[i - 1]!;
 
       const morningConf = isMorningStar(first, second, c);
       if (morningConf > 0)

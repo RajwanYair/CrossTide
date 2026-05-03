@@ -187,8 +187,8 @@ export function closesToSparklineData(
   const ts: number[] = new Array(len);
   const vals: number[] = new Array(len);
   for (let i = 0; i < len; i++) {
-    ts[i] = Math.floor(timestamps[i] / 1000);
-    vals[i] = closes[i];
+    ts[i] = Math.floor(timestamps[i]! / 1000);
+    vals[i] = closes[i]!;
   }
   return [ts, vals];
 }
@@ -216,7 +216,7 @@ export function candlesToUplotData(
   const volumes: number[] = new Array(len);
 
   for (let i = 0; i < len; i++) {
-    const c = candles[i];
+    const c = candles[i]!;
     ts[i] = Math.floor(c.timestamp / 1000);
     opens[i] = c.open;
     highs[i] = c.high;
@@ -277,7 +277,12 @@ export function hexToRgba(hex: string, alpha: number): string {
   const sanitised = hex.replace("#", "");
   const full =
     sanitised.length === 3
-      ? sanitised[0] + sanitised[0] + sanitised[1] + sanitised[1] + sanitised[2] + sanitised[2]
+      ? sanitised[0]! +
+        sanitised[0]! +
+        sanitised[1]! +
+        sanitised[1]! +
+        sanitised[2]! +
+        sanitised[2]!
       : sanitised;
   const r = parseInt(full.substring(0, 2), 16);
   const g = parseInt(full.substring(2, 4), 16);

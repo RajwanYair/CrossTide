@@ -15,6 +15,7 @@ vi.mock("lightweight-charts", () => {
     applyOptions: vi.fn(),
     remove: vi.fn(),
     subscribeCrosshairMove: vi.fn(() => () => undefined),
+    unsubscribeCrosshairMove: vi.fn(),
     setCrosshairPosition: vi.fn(),
     clearCrosshairPosition: vi.fn(),
   };

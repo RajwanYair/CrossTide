@@ -67,7 +67,7 @@ export const WS_OPEN = 1;
 
 export function createChannelManager<Meta = unknown>(): ChannelManager<Meta> {
   // channel → Set of { ws, meta }
-  type Entry = { ws: WsLike; meta?: Meta };
+  type Entry = { ws: WsLike; meta?: Meta | undefined };
   const channelMap = new Map<string, Set<Entry>>();
 
   function getOrCreate(channel: string): Set<Entry> {

@@ -19,7 +19,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "vite",
-    "dev:components": "vite dev/components.html",
+    "dev:components": "vite docs/components-preview.html",
     "build": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit && vite build && node scripts/workbox-inject.mjs",
     "preview": "vite preview",
     "test": "vitest run",

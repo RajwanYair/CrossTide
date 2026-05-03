@@ -38,3 +38,7 @@ npm-debug.log*
 # Playwright outputs
 test-results/
 playwright-report/
+
+# Temporary debug output
+test-out.txt
+*.tmp

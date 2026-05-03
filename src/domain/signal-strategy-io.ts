@@ -107,14 +107,14 @@ export function importStrategy(json: string): ImportResult<StrategyPayload> {
   }
 
   const exprCheck = validateExpression(obj["expression"]);
-  if (!exprCheck.ok) return exprCheck as ImportResult<StrategyPayload>;
+  if (!exprCheck.ok) return exprCheck as unknown as ImportResult<StrategyPayload>;
 
   if (typeof obj["vars"] !== "object" || obj["vars"] === null || Array.isArray(obj["vars"])) {
     return { ok: false, error: "'vars' must be a plain object" };
   }
 
   const varsCheck = validateVars(obj["vars"] as Record<string, unknown>);
-  if (!varsCheck.ok) return varsCheck as ImportResult<StrategyPayload>;
+  if (!varsCheck.ok) return varsCheck as unknown as ImportResult<StrategyPayload>;
 
   if (typeof obj["createdAt"] !== "string") {
     return { ok: false, error: "Missing 'createdAt'" };
