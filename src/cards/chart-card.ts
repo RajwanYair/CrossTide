@@ -7,9 +7,11 @@
  * import so the ~40 KB gz LWC bundle only lands in this route's chunk.
  */
 import { renderChart } from "./chart";
+import { renderFundamentalsOverlay } from "./fundamental-overlay";
 import { attachLwChart, type LwChartHandle } from "./lw-chart";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
+import { fetchFundamentals } from "../domain/fundamental-data";
 import { showToast } from "../ui/toast";
 import { getNavigationSignal } from "../ui/router";
 import type { CardModule, CardContext } from "./registry";
@@ -107,6 +109,23 @@ async function renderChartWithData(
 
     // Re-render the HTML header with real data
     renderChart(container, { ticker, candles });
+
+    // Fetch and render fundamental data overlay (non-blocking)
+    const signal = getNavigationSignal();
+    void fetchFundamentals(ticker, signal).then((fundamentals) => {
+      if (signal?.aborted) return;
+      const html = renderFundamentalsOverlay(fundamentals);
+      if (!html) return;
+      const overlay = container.querySelector<HTMLElement>(".fundamental-overlay");
+      if (overlay) {
+        overlay.outerHTML = html;
+      } else {
+        const chartCanvas = container.querySelector(".chart-canvas");
+        if (chartCanvas) {
+          chartCanvas.insertAdjacentHTML("beforebegin", html);
+        }
+      }
+    });
 
     // Replace the static OHLC table with a real interactive LWC chart
     const canvasEl = container.querySelector<HTMLElement>(".chart-canvas");

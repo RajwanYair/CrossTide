@@ -123,6 +123,75 @@ export const YahooChartSchema = object({
 });
 
 // ---------------------------------------------------------------------------
+// Yahoo Finance quoteSummary API schema (fundamentals)
+// ---------------------------------------------------------------------------
+
+const YahooRawValueSchema = object({ raw: optional(number()) });
+
+const YahooDefaultKeyStatisticsSchema = object({
+  trailingPE: optional(YahooRawValueSchema),
+  forwardPE: optional(YahooRawValueSchema),
+  priceToBook: optional(YahooRawValueSchema),
+  enterpriseValue: optional(YahooRawValueSchema),
+  profitMargins: optional(YahooRawValueSchema),
+  returnOnEquity: optional(YahooRawValueSchema),
+});
+
+const YahooFinancialDataSchema = object({
+  totalRevenue: optional(YahooRawValueSchema),
+  debtToEquity: optional(YahooRawValueSchema),
+  returnOnEquity: optional(YahooRawValueSchema),
+  profitMargins: optional(YahooRawValueSchema),
+});
+
+const YahooSummaryDetailSchema = object({
+  trailingPE: optional(YahooRawValueSchema),
+  forwardPE: optional(YahooRawValueSchema),
+  dividendYield: optional(YahooRawValueSchema),
+  marketCap: optional(YahooRawValueSchema),
+  priceToBook: optional(YahooRawValueSchema),
+});
+
+const YahooEarningsSchema = object({
+  earningsChart: optional(
+    object({
+      currentQuarterEstimate: optional(YahooRawValueSchema),
+    }),
+  ),
+  financialsChart: optional(
+    object({
+      yearly: optional(
+        array(
+          object({
+            date: optional(number()),
+            revenue: optional(YahooRawValueSchema),
+            earnings: optional(YahooRawValueSchema),
+          }),
+        ),
+      ),
+    }),
+  ),
+});
+
+const YahooQuoteSummaryResultSchema = object({
+  defaultKeyStatistics: optional(YahooDefaultKeyStatisticsSchema),
+  financialData: optional(YahooFinancialDataSchema),
+  summaryDetail: optional(YahooSummaryDetailSchema),
+  earnings: optional(YahooEarningsSchema),
+});
+
+export const YahooQuoteSummarySchema = object({
+  quoteSummary: optional(
+    object({
+      result: optional(array(YahooQuoteSummaryResultSchema)),
+      error: optional(
+        nullable(object({ code: optional(string()), description: optional(string()) })),
+      ),
+    }),
+  ),
+});
+
+// ---------------------------------------------------------------------------
 // Yahoo Finance symbol search API schema
 // ---------------------------------------------------------------------------
 

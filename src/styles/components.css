@@ -1658,3 +1658,39 @@
     }
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Fundamental data overlay
+   --------------------------------------------------------------------------- */
+
+.fundamental-overlay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm);
+  padding: var(--sp-md);
+  border-top: 1px solid var(--border);
+}
+
+.fundamental-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
+  padding: var(--sp-xs) var(--sp-sm);
+  background: var(--bg-app);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.fundamental-label {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.fundamental-value {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}

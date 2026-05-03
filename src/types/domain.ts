@@ -190,6 +190,21 @@ export interface AlertRecord {
   readonly firedAt: string; // ISO 8601
 }
 
+/** Fundamental financial data for a ticker (from quoteSummary). */
+export interface FundamentalData {
+  readonly peRatio?: number;
+  readonly forwardPe?: number;
+  readonly eps?: number;
+  readonly revenue?: number;
+  readonly marketCap?: number;
+  readonly dividendYield?: number;
+  readonly priceToBook?: number;
+  readonly debtToEquity?: number;
+  readonly returnOnEquity?: number;
+  readonly profitMargin?: number;
+  readonly fetchedAt: string; // ISO 8601
+}
+
 /** A single portfolio holding. */
 export interface Holding {
   readonly ticker: string;
