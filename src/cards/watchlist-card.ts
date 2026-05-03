@@ -5,10 +5,11 @@
  * after provider hydration via the `update` hook.
  */
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 const watchlistCard: CardModule = {
   mount(container, _ctx) {
-    container.innerHTML = `<p class="empty-state">Loading watchlist…</p>`;
+    patchDOM(container, `<p class="empty-state">Loading watchlist…</p>`);
     return {
       update(_ctx): void {
         // Real data binding is handled by main.ts after provider fetch.
