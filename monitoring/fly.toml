@@ -1,0 +1,39 @@
+# Uptime Kuma deployment for CrossTide status monitoring.
+#
+# Deploy with: flyctl launch --config monitoring/fly.toml
+# Or: flyctl deploy --config monitoring/fly.toml
+#
+# Uptime Kuma monitors the CrossTide Worker API endpoints
+# and provides a public status page.
+
+app = "crosstide-status"
+primary_region = "iad"
+
+[build]
+  image = "louislam/uptime-kuma:1"
+
+[env]
+  # Persistence volume mount
+  DATA_DIR = "/app/data"
+
+[[mounts]]
+  source = "uptime_kuma_data"
+  destination = "/app/data"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  path = "/api/status-page/heartbeat/crosstide"
+  timeout = "5s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
