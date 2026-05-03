@@ -15,6 +15,8 @@ import {
   showNotification,
 } from "../core/notifications";
 import { playAlertSound } from "../core/alert-sound";
+import { patchDOM } from "../core/patch-dom";
+import { createDelegate } from "../ui/delegate";
 import type { CardModule } from "./registry";
 
 const STORAGE_KEY = "crosstide-alerts";
@@ -58,28 +60,23 @@ function renderPermissionUI(container: HTMLElement): void {
   if (!isNotificationsSupported()) return;
 
   const perm = getNotificationPermission();
-  const wrapper = document.createElement("div");
-  wrapper.className = "notification-perm";
+  let wrapper = container.querySelector<HTMLElement>(".notification-perm");
+  if (!wrapper) {
+    wrapper = document.createElement("div");
+    wrapper.className = "notification-perm";
+    container.prepend(wrapper);
+  }
 
   if (perm === "granted") {
-    wrapper.innerHTML = `<span class="badge badge-buy">Notifications enabled</span>`;
+    patchDOM(wrapper, `<span class="badge badge-buy">Notifications enabled</span>`);
   } else if (perm === "denied") {
-    wrapper.innerHTML = `<span class="badge badge-sell">Notifications blocked</span>`;
+    patchDOM(wrapper, `<span class="badge badge-sell">Notifications blocked</span>`);
   } else {
-    wrapper.innerHTML = `<button class="btn btn-sm" id="btn-enable-notify">Enable Notifications</button>`;
-    container.prepend(wrapper);
-    wrapper.querySelector("#btn-enable-notify")?.addEventListener("click", () => {
-      void requestNotificationPermission().then((result) => {
-        if (result === "granted") {
-          wrapper.innerHTML = `<span class="badge badge-buy">Notifications enabled</span>`;
-        } else {
-          wrapper.innerHTML = `<span class="badge badge-sell">Notifications denied</span>`;
-        }
-      });
-    });
-    return;
+    patchDOM(
+      wrapper,
+      `<button class="btn btn-sm" data-action="enable-notify">Enable Notifications</button>`,
+    );
   }
-  container.prepend(wrapper);
 }
 
 const alertsCard: CardModule = {
@@ -87,11 +84,23 @@ const alertsCard: CardModule = {
     const alerts = loadAlerts();
     renderAlertHistory(container, alerts);
     renderPermissionUI(container);
+
+    const delegate = createDelegate(container, {
+      "enable-notify": () => {
+        void requestNotificationPermission().then(() => {
+          renderPermissionUI(container);
+        });
+      },
+    });
+
     return {
       update(): void {
         const freshAlerts = loadAlerts();
         renderAlertHistory(container, freshAlerts);
         renderPermissionUI(container);
+      },
+      dispose(): void {
+        delegate.dispose();
       },
     };
   },
