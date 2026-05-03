@@ -8,6 +8,8 @@ interactive charting, and offline-first PWA support.
 [![CI](https://img.shields.io/github/actions/workflow/status/RajwanYair/CrossTide/ci.yml?label=CI&logo=github-actions)](https://github.com/RajwanYair/CrossTide/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/RajwanYair/CrossTide?logo=github)](https://github.com/RajwanYair/CrossTide/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](tsconfig.json)
+[![Bundle](https://img.shields.io/badge/Bundle-%3C200KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
 [![Docs](https://img.shields.io/badge/Docs-Indicator%20Reference-blue)](https://rajwanyair.github.io/CrossTide/docs/)
 
 > **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
@@ -47,6 +49,35 @@ npm run dev        # http://localhost:5173
 | ![Watchlist](docs/screenshots/watchlist.png) | ![Chart](docs/screenshots/chart.png) | ![Heatmap](docs/screenshots/heatmap.png) |
 
 > Screenshots are from the latest release. Run locally with `npm run dev` to explore all 22 card views.
+
+### Card Gallery
+
+CrossTide ships with **22 route cards**, each accessible from the sidebar navigation:
+
+| Card                | Description                                                    |
+| ------------------- | -------------------------------------------------------------- |
+| Watchlist           | Real-time ticker table with sparklines, volume bars, 52W range |
+| Consensus           | 12-method signal aggregation with confidence meter             |
+| Chart               | Candlestick + 8 overlay indicators + drawing tools             |
+| Multi-Chart         | Side-by-side 2–4 chart grid layout                             |
+| Backtest            | SMA crossover backtest with equity curve + trade log           |
+| Strategy Comparison | Compare two backtest strategies side-by-side                   |
+| Screener            | Filter + sort 10K+ tickers with virtual scrolling              |
+| Portfolio           | Holdings, allocation chart, P&L, sector exposure               |
+| Risk Metrics        | VaR, Sharpe, Sortino, max drawdown analysis                    |
+| Heatmap             | Treemap by sector cap, drill-down to constituents              |
+| Sector Rotation     | RRG-style sector momentum quadrant chart                       |
+| Relative Strength   | Normalized multi-ticker performance comparison                 |
+| Market Breadth      | Advance/decline, new highs/lows, McClellan                     |
+| Correlation Matrix  | Cross-ticker correlation heatmap                               |
+| Seasonality         | Month-over-month historical return patterns                    |
+| Earnings Calendar   | Upcoming earnings dates for watchlist                          |
+| Macro Dashboard     | Economic indicators and Fed data                               |
+| Consensus Timeline  | Historical signal timeline per ticker                          |
+| Alerts              | Multi-condition alert rules (AND/OR), history log              |
+| Signal DSL          | Custom indicator expressions with live evaluation              |
+| Comparison          | Multi-ticker normalized price overlay                          |
+| Settings            | Theme, API keys, export/import, locale, a11y                   |
 
 ## Why CrossTide?
 
