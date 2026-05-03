@@ -261,3 +261,106 @@ describe("reconnect stress — readyState reporting", () => {
     expect(ws.readyState).toBe(3); // CLOSED
   });
 });
+
+describe("reconnect stress — backoff ceiling", () => {
+  it("never exceeds maxDelayMs regardless of attempt count", () => {
+    const ws = createReconnectingWS("wss://stress", {
+      WebSocketImpl: Impl,
+      random: () => 0, // no jitter
+      minDelayMs: 100,
+      maxDelayMs: 5000,
+      backoffMultiplier: 2,
+    });
+
+    // Simulate 50 rapid failures — attempt counter should climb but delay capped
+    for (let i = 0; i < 50; i++) {
+      const inst = FakeWS.instances[FakeWS.instances.length - 1]!;
+      inst.fire("close");
+      // Advance enough for even the max delay
+      vi.advanceTimersByTime(6000);
+    }
+
+    // 51 total connections: 1 initial + 50 reconnects
+    expect(FakeWS.instances.length).toBe(51);
+  });
+});
+
+describe("reconnect stress — concurrent listener registration", () => {
+  it("supports multiple handlers on same event", () => {
+    const ws = createReconnectingWS("wss://stress", {
+      WebSocketImpl: Impl,
+      random: () => 0,
+    });
+
+    const handlers = Array.from({ length: 10 }, () => vi.fn());
+    for (const h of handlers) ws.on("message", h);
+
+    const inst = FakeWS.instances[0]!;
+    inst.readyState = 1;
+    inst.fire("open");
+    inst.fire("message", { data: "hello" });
+
+    for (const h of handlers) {
+      expect(h).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("does not lose handlers across reconnections", () => {
+    const onMsg = vi.fn();
+    const ws = createReconnectingWS("wss://stress", {
+      WebSocketImpl: Impl,
+      random: () => 0,
+      minDelayMs: 50,
+    });
+    ws.on("message", onMsg);
+
+    // First connection — receive message
+    const inst1 = FakeWS.instances[0]!;
+    inst1.readyState = 1;
+    inst1.fire("open");
+    inst1.fire("message", { data: "msg-1" });
+    expect(onMsg).toHaveBeenCalledTimes(1);
+
+    // Disconnect + reconnect
+    inst1.fire("close");
+    vi.advanceTimersByTime(1000);
+
+    const inst2 = FakeWS.instances[FakeWS.instances.length - 1]!;
+    inst2.readyState = 1;
+    inst2.fire("open");
+    inst2.fire("message", { data: "msg-2" });
+
+    // Handler still active on new connection
+    expect(onMsg).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("reconnect stress — 100 rapid flaps in 1 second", () => {
+  it("handles extremely fast disconnect/reconnect without crashing", () => {
+    const ws = createReconnectingWS("wss://stress", {
+      WebSocketImpl: Impl,
+      random: () => 0,
+      minDelayMs: 10,
+      maxDelayMs: 100,
+    });
+
+    for (let i = 0; i < 100; i++) {
+      const inst = FakeWS.instances[FakeWS.instances.length - 1]!;
+      inst.readyState = 1;
+      inst.fire("open");
+      inst.readyState = 3;
+      inst.fire("close");
+      vi.advanceTimersByTime(10);
+    }
+
+    // Verify no unhandled exceptions — module survived 100 flaps
+    expect(FakeWS.instances.length).toBe(101); // 1 initial + 100 reconnects
+
+    // Verify it can still stabilize
+    const final = FakeWS.instances[FakeWS.instances.length - 1]!;
+    final.readyState = 1;
+    final.fire("open");
+    expect(ws.readyState).toBe(1);
+    expect(ws.attempt).toBe(0);
+  });
+});
