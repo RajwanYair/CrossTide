@@ -46,6 +46,8 @@ export function saveVisibleColumns(columns: ReadonlySet<ScreenerColumn>): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...columns]));
 }
 
+import { createDelegate } from "../ui/delegate";
+
 /** Render the column toggle panel HTML. */
 export function renderColumnToggles(
   visible: ReadonlySet<ScreenerColumn>,
@@ -64,9 +66,7 @@ export function renderColumnToggles(
     checkbox.type = "checkbox";
     checkbox.checked = visible.has(col.id);
     checkbox.dataset["column"] = col.id;
-    checkbox.addEventListener("change", () => {
-      onChange(col.id, checkbox.checked);
-    });
+    checkbox.dataset["action"] = "column-toggle";
 
     const span = document.createElement("span");
     span.textContent = col.label;
@@ -75,6 +75,18 @@ export function renderColumnToggles(
     label.appendChild(span);
     panel.appendChild(label);
   }
+
+  createDelegate(
+    panel,
+    {
+      "column-toggle": (target) => {
+        const cb = target as HTMLInputElement;
+        const col = cb.dataset["column"] as ScreenerColumn | undefined;
+        if (col) onChange(col, cb.checked);
+      },
+    },
+    { eventTypes: ["change"] },
+  );
 
   return panel;
 }
