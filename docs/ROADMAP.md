@@ -1,7 +1,7 @@
 # CrossTide — Strategic Roadmap v3 (Deep Rethink, May 2026)
 
 > **Last updated:** May 3, 2026
-> **Declared version:** v7.23.0
+> **Declared version:** v7.24.0
 > **Codebase scale:** 264 source modules, 4308 unit tests, 2 E2E spec files
 > **Sprint cadence:** 5 sprints per minor release
 > **Previous roadmap archived at:** `docs/ROADMAP.archive-2026-05.md`

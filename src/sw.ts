@@ -1,3 +1,4 @@
+/// <reference lib="webworker" />
 /**
  * Service Worker — Workbox-powered precache + runtime caching.
  *

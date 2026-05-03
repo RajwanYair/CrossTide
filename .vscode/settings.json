@@ -39,7 +39,10 @@
   "files.insertFinalNewline": true,
   "css.lint.validProperties": [],
   "css.lint.compatibleVendorPrefixes": "ignore",
+  "css.lint.unknownAtRules": "ignore",
+  "css.validate": false,
   "css.customData": [],
   "html.validate.scripts": true,
-  "github-actions.workflows.pinned.ignoredActionsAuthors": ["actions", "cloudflare"]
+  "html.format.wrapLineLength": 120,
+  "github-actions.workflows.pinned.ignoredActionsAuthors": ["actions", "cloudflare", "softprops"]
 }

@@ -6,6 +6,32 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.24.0] - 2026-05-04
+
+### Fixed
+
+- **Service Worker types**: Added `/// <reference lib="webworker" />` triple-slash
+  directive to `src/sw.ts`, resolving all 9 VS Code type errors for
+  `ServiceWorkerGlobalScope` APIs without changing runtime behavior.
+- **Vite preview proxy**: Made `secure` flag conditional on proxy presence
+  (`secure: !proxyAgent`) so corporate MITM proxies don't break preview mode.
+
+### Changed
+
+- **VS Code settings**: Disabled built-in CSS validation (project uses Stylelint),
+  suppressed unknown-at-rule lint for `@starting-style`/`@scope`, added `softprops`
+  to GitHub Actions trusted authors.
+
+### Verified
+
+- 0 TypeScript errors (strict mode, noUncheckedIndexedAccess)
+- 0 ESLint warnings (--max-warnings 0)
+- 4,308 unit tests passing (367 test files)
+- Production build: 129.1 KB gzip JS, 44 SW precache entries (633.7 KB)
+- Bundle budget: PASS (129.1 KB < 200 KB)
+
+---
+
 ## [7.23.0] - 2026-05-03
 
 ### Changed — 20-task production readiness sprint
