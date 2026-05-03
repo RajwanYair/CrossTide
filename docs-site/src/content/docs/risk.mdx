@@ -1,0 +1,74 @@
+---
+title: Risk Metrics
+description: Understand portfolio risk with Sortino ratio, max drawdown, CAGR, and Calmar ratio in the CrossTide risk card.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Risk Card** calculates key portfolio risk metrics from an equity curve. It provides
+at-a-glance insight into downside risk, compounding performance, and risk-adjusted returns.
+
+<Aside type="tip">
+  These metrics use daily returns from your portfolio equity curve. A longer history
+  (≥1 year) produces more statistically significant results.
+</Aside>
+
+## Metrics Explained
+
+| Metric          | Formula / Meaning                                                      | Good Value    |
+| --------------- | ---------------------------------------------------------------------- | ------------- |
+| **Sortino**     | Excess return ÷ downside deviation (penalizes only losses)             | ≥ 1.5         |
+| **Max Drawdown** | Largest peak-to-trough decline in the equity curve                    | < 10%         |
+| **CAGR**        | Compound Annual Growth Rate — geometric average annual return          | > 10%         |
+| **Calmar**      | CAGR ÷ Max Drawdown — reward per unit of tail risk                    | ≥ 1.0         |
+
+## Reading the Card
+
+The card displays:
+
+1. **Equity Curve** — A sparkline SVG showing the normalized growth of $10,000 over the
+   analysis period. The slope indicates compounding; flat sections indicate drawdowns.
+
+2. **Metric Grid** — Four cards with:
+   - Numeric value (color-coded green/red)
+   - Gauge bar showing relative position (0–max range)
+   - Interpretive hint text
+
+## Color Coding
+
+- **Green** (`text-positive`): Metric is in the excellent range
+- **Default** (no highlight): Metric is acceptable
+- **Red** (`text-negative`): Metric signals elevated risk
+
+## Interpreting Results
+
+### Sortino vs Sharpe
+
+CrossTide uses the **Sortino ratio** instead of the traditional Sharpe ratio because
+Sortino only penalizes downside volatility. Upside volatility (large gains) is desirable
+and should not reduce the risk-adjusted score.
+
+### Max Drawdown Context
+
+A 20% drawdown requires a 25% gain to recover. A 50% drawdown requires a 100% gain.
+Always evaluate max drawdown alongside recovery time.
+
+### Calmar Ratio
+
+Calmar combines return and risk into a single number. A Calmar of 2.0 means you earned
+2× your worst drawdown in annual returns — an excellent risk/reward profile.
+
+## Keyboard Shortcuts
+
+| Key   | Action                        |
+| ----- | ----------------------------- |
+| `r`   | Navigate to Risk card         |
+| `⌘K`  | Open command palette          |
+
+## Data Source
+
+Currently the card uses a **demo equity curve** (5-year simulated daily data with
+~7.5% annualized drift). In production, this connects to your actual portfolio
+P&L history from the Portfolio card.
