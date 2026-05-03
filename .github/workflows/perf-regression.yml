@@ -1,0 +1,131 @@
+name: Performance Regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "package-lock.json"
+      - "vite.config.ts"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  perf-check:
+    name: Bundle Size & Performance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build PR branch
+        run: npx vite build
+
+      - name: Measure PR bundle size
+        id: pr_size
+        run: |
+          JS_GZ=$(find dist/assets -name "*.js" -exec gzip -c {} \; | wc -c)
+          CSS_GZ=$(find dist/assets -name "*.css" -exec gzip -c {} \; | wc -c)
+          echo "js_gz=$JS_GZ" >> "$GITHUB_OUTPUT"
+          echo "css_gz=$CSS_GZ" >> "$GITHUB_OUTPUT"
+          echo "js_kb=$(echo "scale=1; $JS_GZ / 1024" | bc)" >> "$GITHUB_OUTPUT"
+          echo "css_kb=$(echo "scale=1; $CSS_GZ / 1024" | bc)" >> "$GITHUB_OUTPUT"
+
+      - name: Build base branch for comparison
+        run: |
+          git checkout ${{ github.event.pull_request.base.sha }}
+          npm ci
+          npx vite build
+        continue-on-error: true
+
+      - name: Measure base bundle size
+        id: base_size
+        run: |
+          if [ -d "dist/assets" ]; then
+            JS_GZ=$(find dist/assets -name "*.js" -exec gzip -c {} \; | wc -c)
+            CSS_GZ=$(find dist/assets -name "*.css" -exec gzip -c {} \; | wc -c)
+            echo "js_gz=$JS_GZ" >> "$GITHUB_OUTPUT"
+            echo "css_gz=$CSS_GZ" >> "$GITHUB_OUTPUT"
+          else
+            echo "js_gz=0" >> "$GITHUB_OUTPUT"
+            echo "css_gz=0" >> "$GITHUB_OUTPUT"
+          fi
+        continue-on-error: true
+
+      - name: Compare and comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prJs = parseInt('${{ steps.pr_size.outputs.js_gz }}') || 0;
+            const baseJs = parseInt('${{ steps.base_size.outputs.js_gz }}') || 0;
+            const prCss = parseInt('${{ steps.pr_size.outputs.css_gz }}') || 0;
+            const baseCss = parseInt('${{ steps.base_size.outputs.css_gz }}') || 0;
+
+            const jsDiff = prJs - baseJs;
+            const cssDiff = prCss - baseCss;
+            const jsDiffKb = (jsDiff / 1024).toFixed(1);
+            const cssDiffKb = (cssDiff / 1024).toFixed(1);
+            const prJsKb = (prJs / 1024).toFixed(1);
+            const prCssKb = (prCss / 1024).toFixed(1);
+
+            const BUDGET_KB = 200;
+            const WARNING_THRESHOLD = 5 * 1024; // 5 KB increase triggers warning
+
+            let status = '✅';
+            if (prJs / 1024 > BUDGET_KB) status = '🚨 OVER BUDGET';
+            else if (jsDiff > WARNING_THRESHOLD) status = '⚠️ Increased';
+
+            const body = [
+              '## 📦 Bundle Size Report',
+              '',
+              '| Asset | Size (gzip) | Δ vs base | Budget |',
+              '|-------|------------|-----------|--------|',
+              `| JS | ${prJsKb} KB | ${jsDiff >= 0 ? '+' : ''}${jsDiffKb} KB | ${BUDGET_KB} KB |`,
+              `| CSS | ${prCssKb} KB | ${cssDiff >= 0 ? '+' : ''}${cssDiffKb} KB | — |`,
+              '',
+              `**Status:** ${status}`,
+              '',
+              baseJs === 0 ? '_Base branch comparison unavailable._' : '',
+            ].join('\n');
+
+            // Find and update existing comment or create new
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body?.includes('## 📦 Bundle Size Report'));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+            // Fail if over budget
+            if (prJs / 1024 > BUDGET_KB) {
+              core.setFailed(`JS bundle ${prJsKb} KB exceeds ${BUDGET_KB} KB budget`);
+            }
