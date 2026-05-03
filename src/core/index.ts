@@ -219,6 +219,31 @@ export {
   buildSyncEnvelope,
 } from "./crdt-sync";
 export type { LwwRegister, GSet, OrSetEntry, OrSet, SyncEnvelope, MergeReport } from "./crdt-sync";
+
+export {
+  isTauriEnv,
+  getTauriInvoke,
+  safeInvoke,
+  getAppVersion,
+  getAppInfo,
+  setWindowTitle,
+  resizeWindow,
+  toggleFullscreen,
+  setAlwaysOnTop,
+  minimizeToTray,
+  parseDeepLink,
+  buildTrayActions,
+  defaultWindowOptions,
+} from "./tauri-bridge";
+export type {
+  TauriInvoke,
+  TauriEvent,
+  WindowOptions,
+  AppInfo,
+  TrayAction,
+  DeepLinkPayload,
+} from "./tauri-bridge";
+
 export { runBacktestAsync, disposeBacktestWorker } from "./backtest-worker";
 
 export { fuzzyScore, fuzzySearch } from "./fuzzy-match";
