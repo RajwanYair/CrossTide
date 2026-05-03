@@ -1,0 +1,83 @@
+---
+title: Sector Rotation
+description: Track the relative strength of 11 GICS sector ETFs versus SPY across multiple time windows.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Sector Rotation** card shows how the 11 GICS sector ETFs perform relative to
+the S&P 500 (SPY) across rolling time windows. It helps identify which sectors are
+leading or lagging the broad market.
+
+<Aside type="note">
+  Sector rotation is a core concept in market regime analysis. Capital flows between
+  defensive (Utilities, Health Care) and cyclical (Technology, Consumer Discretionary)
+  sectors depending on the economic cycle phase.
+</Aside>
+
+## Sector ETFs Tracked
+
+| ETF   | Sector                 |
+| ----- | ---------------------- |
+| XLC   | Communication Services |
+| XLY   | Consumer Discretionary |
+| XLP   | Consumer Staples       |
+| XLE   | Energy                 |
+| XLF   | Financials             |
+| XLV   | Health Care            |
+| XLI   | Industrials            |
+| XLB   | Materials              |
+| XLRE  | Real Estate            |
+| XLK   | Technology             |
+| XLU   | Utilities              |
+
+## Time Windows
+
+The card calculates relative return (sector ETF return minus SPY return) over:
+
+- **1W** (5 days) — Very short-term momentum
+- **1M** (21 days) — Short-term trend
+- **3M** (63 days) — Medium-term rotation
+- **6M** (126 days) — Longer-term regime shift
+
+## Reading the Display
+
+Each sector row shows:
+
+- **Sector name and ETF ticker**
+- **Relative performance bars** — Green bars indicate outperformance vs SPY; red bars
+  indicate underperformance
+- **Numeric return** — The percentage point difference vs SPY
+
+## Rotation Analysis
+
+### Economic Cycle Mapping
+
+| Cycle Phase   | Typically Leading Sectors            |
+| ------------- | ------------------------------------ |
+| Early Recovery | Financials, Technology, Discretionary |
+| Mid Cycle     | Industrials, Technology, Materials   |
+| Late Cycle    | Energy, Health Care, Staples         |
+| Recession     | Utilities, Health Care, Staples      |
+
+### What to Look For
+
+1. **Broad leadership** — Many sectors outperforming SPY → healthy market
+2. **Narrow leadership** — Only 1–2 sectors leading → fragile rally
+3. **Defensive rotation** — XLU, XLP, XLV leading → risk-off sentiment
+4. **Cyclical rotation** — XLK, XLY, XLF leading → risk-on sentiment
+
+## Practical Usage
+
+- Compare 1W vs 3M windows: short-term reversal of a 3M trend may signal
+  sector rotation beginning
+- Overweight sectors showing improving relative strength across all windows
+- Underweight sectors deteriorating across all windows
+
+## Keyboard Shortcuts
+
+| Key   | Action                           |
+| ----- | -------------------------------- |
+| `⌘K`  | Open command palette → "sector"  |
