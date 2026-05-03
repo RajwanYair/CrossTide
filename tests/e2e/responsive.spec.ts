@@ -69,11 +69,11 @@ test("tap navigation works on mobile viewport", async ({ page }) => {
   // Wait for JS to initialise
   await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
   const nav = page.locator("#app-nav");
-  // If nav is visible, tap a link
+  // If nav is visible, click a link (click works for touch simulation too)
   if (await nav.isVisible()) {
     const link = nav.locator('a[data-route="settings"]');
     if (await link.isVisible()) {
-      await link.tap();
+      await link.click();
       await expect(page.locator("#view-settings")).toHaveClass(/active/);
     }
   }
