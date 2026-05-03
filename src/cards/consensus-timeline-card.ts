@@ -6,6 +6,8 @@
  * immediately useful without a live data connection.
  */
 import { renderConsensusTimeline, type ConsensusSnapshot } from "./consensus-timeline";
+import { patchDOM } from "../core/patch-dom";
+import { createDelegate, type DelegateHandle } from "../ui/delegate";
 import type { CardModule, CardContext } from "./registry";
 import type { SignalDirection } from "../types/domain";
 
@@ -48,7 +50,7 @@ function syntheticHistory(ticker: string, days = 60): ConsensusSnapshot[] {
 const DEMO_TICKERS = ["AAPL", "MSFT", "NVDA", "JPM", "XOM"];
 
 // ── Render ────────────────────────────────────────────────────────────────────
-function renderTimelineCard(container: HTMLElement, initialTicker?: string): void {
+function renderTimelineCard(container: HTMLElement, initialTicker?: string): DelegateHandle {
   // If a ticker was selected, ensure it's in the demo list
   const tickers =
     initialTicker && !DEMO_TICKERS.includes(initialTicker)
@@ -56,15 +58,17 @@ function renderTimelineCard(container: HTMLElement, initialTicker?: string): voi
       : DEMO_TICKERS;
   const defaultTicker = initialTicker || tickers[0]!;
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="timeline-card-layout">
       <div class="timeline-controls">
         <label class="backtest-label" for="tl-ticker">Ticker</label>
-        <select id="tl-ticker" class="input">
+        <select id="tl-ticker" class="input" data-action="change-ticker">
           ${tickers.map((t) => `<option value="${t}"${t === defaultTicker ? " selected" : ""}>${t}</option>`).join("")}
         </select>
         <label class="backtest-label" for="tl-days">History (days)</label>
-        <select id="tl-days" class="input">
+        <select id="tl-days" class="input" data-action="change-days">
           <option value="30">30</option>
           <option value="60" selected>60</option>
           <option value="90">90</option>
@@ -75,16 +79,17 @@ function renderTimelineCard(container: HTMLElement, initialTicker?: string): voi
       <hr class="timeline-divider" />
       <h3 class="section-subtitle">All Demo Tickers — 60-Day Snapshot</h3>
       <div id="timeline-multi-view"></div>
-    </div>`;
+    </div>`,
+  );
 
-  const tickerSelect = container.querySelector<HTMLSelectElement>("#tl-ticker")!;
-  const daysSelect = container.querySelector<HTMLSelectElement>("#tl-days")!;
   const singleView = container.querySelector<HTMLElement>("#timeline-single-view")!;
   const multiView = container.querySelector<HTMLElement>("#timeline-multi-view")!;
 
   const renderSingle = (): void => {
-    const ticker = tickerSelect.value;
-    const days = parseInt(daysSelect.value, 10) || 60;
+    const tickerSel = container.querySelector<HTMLSelectElement>("#tl-ticker");
+    const daysSel = container.querySelector<HTMLSelectElement>("#tl-days");
+    const ticker = tickerSel?.value ?? defaultTicker;
+    const days = parseInt(daysSel?.value ?? "60", 10) || 60;
     renderConsensusTimeline(singleView, ticker, syntheticHistory(ticker, days));
   };
 
@@ -98,21 +103,31 @@ function renderTimelineCard(container: HTMLElement, initialTicker?: string): voi
     }
   };
 
-  tickerSelect.addEventListener("change", renderSingle);
-  daysSelect.addEventListener("change", renderSingle);
-
   renderSingle();
   renderMulti();
+
+  return createDelegate(
+    container,
+    {
+      "change-ticker": () => renderSingle(),
+      "change-days": () => renderSingle(),
+    },
+    { eventTypes: ["change"] },
+  );
 }
 
 const consensusTimelineCard: CardModule = {
   mount(container, ctx) {
     const ticker = ctx.params["symbol"] ?? "";
-    renderTimelineCard(container, ticker || undefined);
+    let delegateHandle = renderTimelineCard(container, ticker || undefined);
     return {
       update(newCtx: CardContext): void {
         const t = newCtx.params["symbol"] ?? "";
-        renderTimelineCard(container, t || undefined);
+        delegateHandle.dispose();
+        delegateHandle = renderTimelineCard(container, t || undefined);
+      },
+      dispose(): void {
+        delegateHandle.dispose();
       },
     };
   },
