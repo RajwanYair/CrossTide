@@ -12,6 +12,7 @@ import type { CardModule, CardHandle } from "./registry";
 import { getGlobalChartSyncBus } from "../ui/chart-sync";
 import { loadConfig } from "../core/config";
 import { patchDOM } from "../core/patch-dom";
+import { createDelegate, type DelegateHandle } from "../ui/delegate";
 
 const STORAGE_KEY = "crosstide-multi-chart";
 const PANEL_COUNT = 4;
@@ -153,7 +154,7 @@ function buildPanelHtml(
   return `
     <div class="mc-panel${isLarge ? " mc-panel--large" : ""}" data-panel="${panelIndex}">
       <div class="mc-panel-header">
-        <select class="mc-ticker-select" data-panel="${panelIndex}" aria-label="Chart ${panelIndex + 1} ticker">
+        <select class="mc-ticker-select" data-panel="${panelIndex}" data-action="mc-ticker-change" aria-label="Chart ${panelIndex + 1} ticker">
           <option value="">— Select ticker —</option>
           ${options}
         </select>
@@ -175,9 +176,9 @@ function buildLayoutHtml(state: MultiChartState, availableTickers: string[]): st
       <span class="mc-section-title">Multi-chart Layout</span>
       <div class="mc-layout-btns" role="group" aria-label="Layout mode">
         <button class="mc-layout-btn${state.layout === "2x2" ? " mc-layout-btn--active" : ""}"
-          data-layout="2x2" title="2×2 grid">⊞ 2×2</button>
+          data-action="mc-layout" data-layout="2x2" title="2×2 grid">⊞ 2×2</button>
         <button class="mc-layout-btn${state.layout === "1+3" ? " mc-layout-btn--active" : ""}"
-          data-layout="1+3" title="1 large + 3 small">⊡ 1+3</button>
+          data-action="mc-layout" data-layout="1+3" title="1 large + 3 small">⊡ 1+3</button>
       </div>
     </div>
     <div class="mc-grid mc-grid--${state.layout}">
@@ -304,22 +305,34 @@ function mount(container: HTMLElement): CardHandle {
     // Unsubscribe previous panel registrations before re-render
     panelIds.forEach((id) => bus.unsubscribe(id));
     patchDOM(container, buildLayoutHtml(state, availableTickers));
-    wirePanelEvents();
-    wireLayoutButtons();
+    wireCrosshairSync();
   }
 
-  function wirePanelEvents(): void {
-    container.querySelectorAll<HTMLSelectElement>(".mc-ticker-select").forEach((sel) => {
-      sel.addEventListener("change", () => {
+  // Delegated click + change events
+  const delegate: DelegateHandle = createDelegate(
+    container,
+    {
+      "mc-ticker-change": (target) => {
+        const sel = target as HTMLSelectElement;
         const idx = Number(sel.dataset["panel"] ?? "0");
         if (!Number.isFinite(idx)) return;
         state = { ...state, tickers: state.tickers.map((t, i) => (i === idx ? sel.value : t)) };
         saveState(state);
         render();
-      });
-    });
+      },
+      "mc-layout": (target) => {
+        const mode = target.dataset["layout"] as LayoutMode | undefined;
+        if (!mode || mode === state.layout) return;
+        state = { ...state, layout: mode };
+        saveState(state);
+        render();
+      },
+    },
+    { eventTypes: ["click", "change"] },
+  );
 
-    // Crosshair sync via mousemove on each SVG
+  function wireCrosshairSync(): void {
+    // Crosshair sync via mousemove on each SVG (non-delegatable mouse tracking)
     container.querySelectorAll<HTMLDivElement>(".mc-panel-chart").forEach((chartDiv, idx) => {
       const svg = chartDiv.querySelector<SVGElement>("svg.multi-chart-svg");
       if (!svg) return;
@@ -351,23 +364,12 @@ function mount(container: HTMLElement): CardHandle {
     });
   }
 
-  function wireLayoutButtons(): void {
-    container.querySelectorAll<HTMLButtonElement>(".mc-layout-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const mode = btn.dataset["layout"] as LayoutMode | undefined;
-        if (!mode || mode === state.layout) return;
-        state = { ...state, layout: mode };
-        saveState(state);
-        render();
-      });
-    });
-  }
-
   render();
 
   return {
     dispose(): void {
       // Unsubscribe all panels from the bus
+      delegate.dispose();
       panelIds.forEach((id) => bus.unsubscribe(id));
       if (document.getElementById("multi-chart-styles")) {
         document.getElementById("multi-chart-styles")?.remove();

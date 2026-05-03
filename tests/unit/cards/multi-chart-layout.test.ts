@@ -189,7 +189,7 @@ describe("multi-chart-layout card", () => {
     );
     expect(firstSelect).not.toBeNull();
     firstSelect!.value = "MSFT";
-    firstSelect!.dispatchEvent(new Event("change"));
+    firstSelect!.dispatchEvent(new Event("change", { bubbles: true }));
     // After change the panel should now reference MSFT
     const stored = JSON.parse(localStorage.getItem("crosstide-multi-chart")!) as {
       tickers: string[];
