@@ -6,6 +6,41 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.1.0] - 2025-07-03
+
+### Highlights
+
+Feature sprint completing all remaining Phase L & M roadmap items: watchlist
+hover zoom, comprehensive user guides for 8 cards, and expanded contributing
+documentation.
+
+### Added
+
+- **Watchlist hover zoom** (L11): pointerenter popup shows mini sparkline,
+  day-change, consensus badge, and volume for any watchlist row. 300 ms show
+  delay, 150 ms hide delay, auto-positions left when overflow detected.
+- **User guides** (M4): added docs-site MDX pages for Risk Metrics,
+  Correlation Matrix, Market Breadth, Sector Rotation, Macro Dashboard,
+  Earnings Calendar, Signal DSL, and Relative Strength cards.
+- **Contributing guide expansion** (M5): architecture overview, conventional
+  commit conventions, testing guidelines, and file-naming rules.
+
+### Fixed
+
+- `ConsensusResult.strength` used correctly in hover zoom (was referencing
+  non-existent `.score` property).
+
+---
+
+## [11.0.0] - 2025-07-02
+
+### Highlights
+
+Major release: cross-browser compatibility fixes, instrument type filter
+correction, version bump, and hover zoom roadmap planning.
+
+---
+
 ## [10.0.0] - 2025-06-15
 
 ### Highlights
