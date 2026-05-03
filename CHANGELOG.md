@@ -6,6 +6,42 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [10.0.0] - 2025-06-15
+
+### Highlights
+
+Major release completing Phase L & M of the roadmap: strategy comparison,
+extended charting tools, image export, comprehensive testing infrastructure,
+CI automation, i18n expansion, and documentation showcase.
+
+### Added
+
+- **Strategy comparison** (L4): `compareStrategies()` domain function runs two
+  backtest configs side-by-side and produces delta metrics (return, win rate,
+  drawdown, trade count) with a winner determination.
+- **Additional drawing tools** (L5): Rectangle, channel, ray, horizontal line,
+  and text annotation tools added to the chart canvas overlay.
+- **Export to image** (L9): `captureElementAsPng()` and `captureElementAsSvg()`
+  utilities for exporting any card/chart as PNG (2x scale) or vector SVG.
+- **Load testing** (M1): 7 stress tests validating VirtualScroller at 10K–50K
+  rows with sub-50ms update performance assertions.
+- **Mobile responsive audit** (M2): 10 unit tests covering WCAG 2.5.5 touch
+  targets, horizontal overflow prevention, iOS Safari safe areas.
+- **WebSocket reconnect stress tests** (M3): Extended to 13 tests covering
+  backoff ceiling, concurrent listeners, handler persistence across reconnects,
+  and 100 rapid flaps in 1 second.
+- **Performance regression CI** (M7): New `perf-regression.yml` workflow that
+  compares PR bundle size vs base, posts delta comments, fails on budget breach.
+- **Dependency audit automation** (M8): Auto-creates GitHub issues on weekly
+  audit failures; added license-compliance job (rejects GPL/AGPL in production).
+- **README showcase** (M9): Feature highlights table, competitive comparison
+  (vs TradingView/Yahoo/Finviz), screenshots section.
+- **i18n expansion** (M6): Full translation dictionaries for Spanish (es),
+  German (de), and Chinese Simplified (zh) — 100+ keys each with ICU plural
+  support. Barrel export with `SUPPORTED_LOCALES` and `LOCALE_LABELS`.
+
+---
+
 ## [8.0.0] - 2026-05-03
 
 ### Highlights

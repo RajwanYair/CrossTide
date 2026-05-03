@@ -1,6 +1,6 @@
 {
   "name": "crosstide",
-  "version": "8.0.0",
+  "version": "10.0.0",
   "description": "CrossTide Web — browser-based stock monitoring dashboard with 12-method consensus signals, interactive charting, and offline-first PWA.",
   "type": "module",
   "private": true,
