@@ -116,6 +116,8 @@ jobs:
 
       - name: Run E2E tests
         run: npx playwright test --project=chromium --reporter=github
+        env:
+          VITE_BASE: /
 
       - name: Upload Playwright report
         if: always()
