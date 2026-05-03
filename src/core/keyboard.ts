@@ -35,7 +35,8 @@ function comboKey(key: string, ctrl?: boolean, shift?: boolean, alt?: boolean): 
 function isInputFocused(): boolean {
   const tag = document.activeElement?.tagName;
   if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
-  if ((document.activeElement as HTMLElement)?.isContentEditable) return true;
+  if (document.activeElement instanceof HTMLElement && document.activeElement.isContentEditable)
+    return true;
   return false;
 }
 

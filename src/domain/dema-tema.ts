@@ -31,7 +31,7 @@ const emaOfDefined = (series: readonly (number | null)[], period: number): (numb
   }
   if (firstIdx < 0) return out;
   const dense: number[] = [];
-  for (let i = firstIdx; i < series.length; i++) dense.push(series[i] as number);
+  for (let i = firstIdx; i < series.length; i++) dense.push(series[i]!);
   const e = ema(dense, period);
   for (let j = 0; j < e.length; j++) out[firstIdx + j] = e[j] ?? null;
   return out;

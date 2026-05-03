@@ -56,7 +56,7 @@ export function computePpo(
   const signal: (number | null)[] = new Array(closes.length).fill(null);
   if (firstIdx >= 0) {
     const dense: number[] = [];
-    for (let i = firstIdx; i < ppoSeries.length; i++) dense.push(ppoSeries[i] as number);
+    for (let i = firstIdx; i < ppoSeries.length; i++) dense.push(ppoSeries[i]!);
     const sigDense = ema(dense, signalPeriod);
     for (let j = 0; j < sigDense.length; j++) signal[firstIdx + j] = sigDense[j] ?? null;
   }

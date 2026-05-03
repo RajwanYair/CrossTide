@@ -42,7 +42,7 @@ export function computeForceIndex(candles: readonly ForceCandle[], period = 13):
   // Raw[0] is null; smoothed EMA over the dense tail starting at index 1.
   if (raw.length <= 1) return out;
   const dense: number[] = [];
-  for (let i = 1; i < raw.length; i++) dense.push(raw[i] as number);
+  for (let i = 1; i < raw.length; i++) dense.push(raw[i]!);
   const smoothed = ema(dense, period);
   for (let j = 0; j < smoothed.length; j++) out[j + 1] = smoothed[j] ?? null;
   return out;

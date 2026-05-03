@@ -55,9 +55,9 @@ export function isoDateTime(d: Date | number): string {
 export function parseIsoDate(s: string): Date | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   if (!match) return null;
-  const year = parseInt(match[1], 10);
-  const month = parseInt(match[2], 10);
-  const day = parseInt(match[3], 10);
+  const year = parseInt(match[1]!, 10);
+  const month = parseInt(match[2]!, 10);
+  const day = parseInt(match[3]!, 10);
   if (month < 1 || month > 12 || day < 1 || day > 31) return null;
   const d = new Date(Date.UTC(year, month - 1, day));
   // Validate round-trip (guards against Feb 30, etc.)

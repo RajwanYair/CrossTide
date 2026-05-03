@@ -41,7 +41,7 @@ export function computeHullMA(values: readonly number[], period = 16): (number |
   const out: (number | null)[] = values.map(() => null);
   if (firstIdx < 0) return out;
   const dense: number[] = [];
-  for (let i = firstIdx; i < diff.length; i++) dense.push(diff[i] as number);
+  for (let i = firstIdx; i < diff.length; i++) dense.push(diff[i]!);
   const w = wma(dense, sqrtP);
   for (let j = 0; j < w.length; j++) out[firstIdx + j] = w[j] ?? null;
   return out;

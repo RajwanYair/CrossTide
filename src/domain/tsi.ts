@@ -53,7 +53,7 @@ const emaOfNullableTail = (
   }
   if (firstIdx < 0) return out;
   const dense: number[] = [];
-  for (let i = firstIdx; i < values.length; i++) dense.push(values[i] as number);
+  for (let i = firstIdx; i < values.length; i++) dense.push(values[i]!);
   const ed = ema(dense, period);
   for (let j = 0; j < ed.length; j++) out[firstIdx + j] = ed[j] ?? null;
   return out;

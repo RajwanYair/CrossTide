@@ -45,7 +45,7 @@ export function computeMassIndex(
   }
   if (firstIdx >= 0) {
     const dense: number[] = [];
-    for (let i = firstIdx; i < e1.length; i++) dense.push(e1[i] as number);
+    for (let i = firstIdx; i < e1.length; i++) dense.push(e1[i]!);
     const e2dense = ema(dense, emaPeriod);
     for (let j = 0; j < e2dense.length; j++) e2[firstIdx + j] = e2dense[j] ?? null;
   }

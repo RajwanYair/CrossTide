@@ -196,7 +196,7 @@ export async function fetchTickerData(
       ...(name !== undefined && { name }),
     };
   } catch (err) {
-    return emptyData(ticker, (err as Error).message);
+    return emptyData(ticker, err instanceof Error ? err.message : String(err));
   }
 }
 

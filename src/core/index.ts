@@ -461,7 +461,7 @@ export {
 export type { LogEntry, LogLevel, PendingLogEntry } from "./request-logger";
 
 export {
-  formatDate,
+  formatDate as formatDatePattern,
   isoDate,
   isoTime,
   isoDateTime,
