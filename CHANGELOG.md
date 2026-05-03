@@ -6,6 +6,33 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.20.0] - 2026-05-05
+
+### Added — 10-sprint delivery (coverage sweep session 12)
+
+- **Coverage — pattern-recognition.ts + scale-linear.ts**: 8 tests covering Bearish
+  Engulfing, Evening Star, Three Black Crows patterns, and `tickStep` rounding.
+- **Coverage — signal-dsl.ts**: 15 tests covering `*`, `/`, `<=`, `!=` operators,
+  multi-arg function calls, whitespace tolerance, and boolean literal parsing.
+- **Coverage — backtest-engine.ts**: 5 tests covering force-close at simulation end,
+  drawdown calculation, majority-signal edge, zero initial capital, and HOLD signals.
+- **Coverage — export-import.ts**: 3 tests covering schema version rejection, checksum
+  mismatch detection, and CompressionStream fallback path.
+- **Coverage — push-notifications.ts**: 5 tests covering missing p256dh/auth keys, SW
+  ready rejection, permission denied, getSubscription throws, unsubscribe throws.
+- **Coverage — finnhub-stream-manager.ts**: 4 tests covering empty/whitespace apiKey
+  guard, setTickers no-stream no-op, and localStorage throw during persistence.
+- **Coverage — onboarding-tour.ts**: 4 tests covering empty steps early return, Back
+  button navigation, Escape key dismissal, and overlay click close.
+- **Coverage — file-system-access.ts + circuit-breaker.ts + webauthn.ts**: 7 tests
+  covering non-AbortError fallback in file picker, initial circuit-breaker state
+  snapshot, and webauthn conditional mediation absent / getPublicKey undefined.
+- **Coverage — tiered-cache.ts**: 7 tests covering localStorage quota exceeded in
+  `set()`, corrupt JSON in `get()`, expired L2 cleanup, `clear()`/`delete()` with
+  localStorage errors, and `evictOldest` boundary cases.
+
+---
+
 ## [7.19.0] - 2026-05-05
 
 ### Added — 10-sprint delivery (coverage sweep session 11)
