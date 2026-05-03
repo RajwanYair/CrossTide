@@ -95,7 +95,10 @@ const macroDashboardCard: CardModule = {
       renderMacroDashboard(container, rows);
     }
 
-    container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">Loading macro context…</p></div></div>`;
+    patchDOM(
+      container,
+      `<div class="card"><div class="card-body"><p class="empty-state">Loading macro context…</p></div></div>`,
+    );
     void load();
 
     return {

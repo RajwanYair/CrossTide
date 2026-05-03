@@ -101,7 +101,10 @@ const sectorRotationCard: CardModule = {
       renderSectorRotation(container, matrix);
     }
 
-    container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">Loading sector rotation…</p></div></div>`;
+    patchDOM(
+      container,
+      `<div class="card"><div class="card-body"><p class="empty-state">Loading sector rotation…</p></div></div>`,
+    );
     void load();
 
     return {
