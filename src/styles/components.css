@@ -1773,6 +1773,58 @@
   opacity: 0.7;
 }
 
+/* ── L3: Alert Rules UI ────────────────────────────────────────────────────── */
+.alert-rules-section {
+  margin-bottom: var(--space-lg);
+}
+
+.alert-rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-sm);
+}
+
+.alert-rules-table th,
+.alert-rules-table td {
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.alert-rule-row.rule-disabled {
+  opacity: 0.5;
+}
+
+.rule-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.rule-condition-row {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.rule-condition-row select {
+  flex: 1;
+}
+
+.rule-form-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.rule-create-form summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+
 .seasonal-return {
   font-size: var(--fs-xs);
   font-weight: 600;

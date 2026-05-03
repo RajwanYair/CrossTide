@@ -7,6 +7,7 @@
  * - Fires browser notifications for new alerts
  */
 import { renderAlertHistory } from "./alert-history";
+import { renderAlertRulesSection } from "./alert-rules-ui";
 import type { AlertRecord } from "../types/domain";
 import {
   isNotificationsSupported,
@@ -82,7 +83,20 @@ function renderPermissionUI(container: HTMLElement): void {
 const alertsCard: CardModule = {
   mount(container, _ctx) {
     const alerts = loadAlerts();
-    renderAlertHistory(container, alerts);
+
+    // Rules section at top
+    const rulesSection = document.createElement("section");
+    rulesSection.className = "alert-rules-section";
+    container.appendChild(rulesSection);
+    const { delegate: rulesDelegate, refresh: refreshRules } =
+      renderAlertRulesSection(rulesSection);
+
+    // History section below
+    const historySection = document.createElement("div");
+    historySection.className = "alert-history-section";
+    container.appendChild(historySection);
+
+    renderAlertHistory(historySection, alerts);
     renderPermissionUI(container);
 
     const delegate = createDelegate(container, {
@@ -96,11 +110,13 @@ const alertsCard: CardModule = {
     return {
       update(): void {
         const freshAlerts = loadAlerts();
-        renderAlertHistory(container, freshAlerts);
+        renderAlertHistory(historySection, freshAlerts);
         renderPermissionUI(container);
+        refreshRules();
       },
       dispose(): void {
         delegate.dispose();
+        rulesDelegate.dispose();
       },
     };
   },
