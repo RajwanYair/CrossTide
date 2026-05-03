@@ -6,6 +6,42 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.2.0] - 2025-07-03
+
+### Highlights
+
+Architecture quality sprint: complete patchDOM migration (K1) and event
+delegation expansion (K4) across all remaining card modules. Every card now
+uses incremental DOM diffing instead of innerHTML, and delegated `data-action`
+handlers replace per-render addEventListener calls.
+
+### Refactored
+
+- **correlation-matrix-card**: patchDOM + createDelegate for period/crypto changes
+- **comparison-card**: patchDOM for container + output, delegate for compare button
+- **consensus-timeline-card**: patchDOM + delegate for ticker/days selects
+- **alerts-card**: patchDOM for permission UI, delegate for enable-notify
+- **signal-dsl-card**: patchDOM for initial render, delegate for clear/save/open
+- **chart-card**: patchDOM for backtest section, delegate for timeframe + run-backtest
+- **settings**: patchDOM + delegate for all action buttons (export, import, clear, Finnhub key)
+- **screener-card**: patchDOM for empty states, delegate for preset filter buttons
+- **watchlist-card**: patchDOM for loading placeholder
+- **heatmap-card**: delegate for sector drill-down tile clicks
+
+### Fixed
+
+- Test selectors updated from `#btn-*` IDs to `[data-action='*']` attributes
+- Consensus-timeline test uses `bubbles: true` for delegated change events
+
+### Stats
+
+- 4565 unit tests passing
+- TypeScript strict mode clean
+- K1 patchDOM migration: 100% complete (all 19 cards)
+- K4 Event delegation: expanded from 1 to 10 cards
+
+---
+
 ## [11.1.0] - 2025-07-03
 
 ### Highlights
