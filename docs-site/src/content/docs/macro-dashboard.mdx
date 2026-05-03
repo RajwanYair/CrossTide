@@ -1,0 +1,82 @@
+---
+title: Macro Dashboard
+description: Monitor VIX, bond yields, US Dollar, Gold, and Crude Oil with an automatic risk regime indicator.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Macro Dashboard** card tracks five key macro-economic indicators that influence
+equity markets. It also derives an automatic **risk regime** badge to quickly assess
+the current market environment.
+
+## Indicators Tracked
+
+| Label  | Ticker   | Description                                         |
+| ------ | -------- | --------------------------------------------------- |
+| VIX    | ^VIX     | CBOE Volatility Index ("fear gauge")                |
+| US 10Y | ^TNX     | 10-Year US Treasury yield                           |
+| DXY    | DX-Y.NYB | US Dollar Index (strength of USD vs basket)        |
+| Gold   | GC=F     | Gold futures (safe-haven asset)                     |
+| WTI    | CL=F     | West Texas Intermediate crude oil futures           |
+
+Each indicator shows:
+- Current value
+- Daily change and percentage
+- 30-day sparkline trend
+
+## Risk Regime Badge
+
+The card automatically classifies the current macro environment:
+
+| Regime       | Condition                              | Implication               |
+| ------------ | -------------------------------------- | ------------------------- |
+| **Risk-On**  | VIX < 16 and DXY weakening            | Favorable for equities    |
+| **Risk-Off** | VIX ≥ 22 or DXY strengthening > 0.35% | Capital fleeing to safety |
+| **Neutral**  | Neither extreme                        | Mixed signals             |
+
+<Aside type="tip">
+  Use the risk regime badge as a quick filter: avoid adding new long positions
+  during sustained "Risk-Off" periods. The macro backdrop often overrides individual
+  stock signals.
+</Aside>
+
+## Cross-Asset Relationships
+
+Understanding how these indicators interact:
+
+| Relationship             | Typical Pattern                              |
+| ------------------------ | -------------------------------------------- |
+| VIX ↑ + Equities ↓      | Fear rising → sell pressure                  |
+| 10Y ↑ + Growth stocks ↓ | Higher discount rate hurts long-duration assets |
+| DXY ↑ + Gold ↓          | Strong dollar weighs on commodities          |
+| Gold ↑ + VIX ↑          | Flight to safety during uncertainty          |
+| WTI ↑ + Energy ↑        | Oil bull benefits energy sector              |
+
+## Interpreting Changes
+
+### VIX Levels
+
+- **< 14:** Extreme complacency (historically precedes spikes)
+- **14–20:** Normal conditions
+- **20–30:** Elevated fear
+- **> 30:** Crisis/panic levels
+
+### 10-Year Yield Context
+
+Rising yields compress P/E multiples for growth stocks while benefiting financials.
+Watch the *rate of change* more than the absolute level.
+
+### Dollar Strength
+
+A strong DXY headwind affects:
+- US multinational earnings (negative FX translation)
+- Emerging markets (dollar-denominated debt pressure)
+- Commodities priced in USD (inverse relationship)
+
+## Keyboard Shortcuts
+
+| Key   | Action                          |
+| ----- | ------------------------------- |
+| `⌘K`  | Open command palette → "macro"  |
