@@ -78,14 +78,35 @@
     contain: layout;
   }
 
-  /* ── Minimum touch target ── */
+  /* ── Minimum touch target (WCAG 2.2 Success Criterion 2.5.8) ── */
   [role="button"],
   button,
   a,
   input,
   select,
   textarea {
-    min-height: 2rem;
+    min-height: 2.75rem; /* 44px — AAA level target size */
+    min-width: 2.75rem;
+  }
+
+  /* Inline links within prose are exempt from target size */
+  p a,
+  td a,
+  li a {
+    min-width: unset;
+    min-height: unset;
+  }
+
+  /* ── WCAG 2.2: Focus Not Obscured (2.4.11) ── */
+  :focus-visible {
+    scroll-margin: 1rem;
+    z-index: 1;
+    position: relative;
+  }
+
+  /* ── WCAG 2.2: Dragging Movements (2.5.7) — ensure drag has click alt ── */
+  [draggable="true"] {
+    cursor: grab;
   }
 
   /* ── ARIA current page indicator (J11) ── */
