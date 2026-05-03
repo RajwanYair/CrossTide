@@ -9,6 +9,8 @@ import { normalizeForComparison, computeComparisonStats } from "../domain/chart-
 import { fetchTickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import { showToast } from "../ui/toast";
+import { patchDOM } from "../core/patch-dom";
+import { createDelegate } from "../ui/delegate";
 import type { DailyCandle } from "../types/domain";
 import type { CardModule, CardHandle, CardContext } from "./registry";
 
@@ -101,15 +103,18 @@ function renderStatsTable(
 
 function mount(container: HTMLElement, ctx: CardContext): CardHandle {
   const initialSymbol = ctx.params["symbol"] ?? "";
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <h2>Chart Comparison</h2>
     <div class="comparison-input-row">
       <label for="comparison-tickers">Tickers (comma-separated):</label>
       <input id="comparison-tickers" type="text" placeholder="AAPL, MSFT, GOOGL" class="input" value="${initialSymbol ? initialSymbol + ", SPY" : ""}" />
-      <button id="btn-compare" class="btn btn-sm">Compare</button>
+      <button id="btn-compare" class="btn btn-sm" data-action="compare">Compare</button>
     </div>
     <div id="comparison-output" class="comparison-output"></div>
-  `;
+  `,
+  );
 
   const input = container.querySelector<HTMLInputElement>("#comparison-tickers")!;
   const btn = container.querySelector<HTMLButtonElement>("#btn-compare")!;
@@ -132,7 +137,7 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
 
     btn.disabled = true;
     btn.textContent = "Loading…";
-    output.innerHTML = `<p class="muted">Fetching data for ${tickers.join(", ")}…</p>`;
+    patchDOM(output, `<p class="muted">Fetching data for ${tickers.join(", ")}…</p>`);
 
     try {
       const signal = getNavigationSignal();
@@ -154,14 +159,17 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
       }
 
       if (tickerCandles.size < 2) {
-        output.innerHTML = `<p class="muted">Not enough data found — need at least 2 tickers with candle data.</p>`;
+        patchDOM(
+          output,
+          `<p class="muted">Not enough data found — need at least 2 tickers with candle data.</p>`,
+        );
         return;
       }
 
       const series = normalizeForComparison(tickerCandles);
-      output.innerHTML = renderSvgChart(series) + renderStatsTable(series);
+      patchDOM(output, renderSvgChart(series) + renderStatsTable(series));
     } catch (err) {
-      output.innerHTML = `<p class="error">Error: ${escapeHtml((err as Error).message)}</p>`;
+      patchDOM(output, `<p class="error">Error: ${escapeHtml((err as Error).message)}</p>`);
       showToast({ message: "Comparison failed", type: "error" });
     } finally {
       btn.disabled = false;
@@ -169,7 +177,12 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
     }
   }
 
-  btn.addEventListener("click", () => void runComparison());
+  // Event delegation for compare button
+  const delegate = createDelegate(container, {
+    compare: () => void runComparison(),
+  });
+
+  // Enter key in input triggers comparison
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") void runComparison();
   });
@@ -184,6 +197,9 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
         input.value = `${t}, SPY`;
         void runComparison();
       }
+    },
+    dispose(): void {
+      delegate.dispose();
     },
   };
 }
