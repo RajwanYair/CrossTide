@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatDate, isoDate, isoTime, isoDateTime } from "../../../src/ui/date-format";
+import { formatDate, isoDate, isoTime, isoDateTime } from "../../../src/core/date-format";
 
 const REF_MS = Date.UTC(2024, 0, 5, 7, 8, 9, 123); // 2024-01-05T07:08:09.123Z
 

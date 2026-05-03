@@ -6,7 +6,29 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [7.22.0] - 2025-07-03
+## [7.23.0] - 2026-05-03
+
+### Changed — 20-task production readiness sprint
+
+- **Dead code removal**: Deleted `src/ui/date-format.ts` (dead re-export superseded
+  by `core/date-format.ts` since v7.15.0). Updated test import paths.
+- **Barrel export cleanup**: Removed dead date-format re-exports from `src/ui/index.ts`.
+- **ROADMAP updated**: Added Sprint Log section with 20-task checklist, updated
+  declared version and test count (4308 tests).
+- **ARCHITECTURE.md**: Updated version stamp to v7.23.0.
+
+### Verified (all 20 sprint tasks)
+
+- 0 TypeScript errors (strict mode, noUncheckedIndexedAccess)
+- 0 ESLint warnings (--max-warnings 0)
+- 4,308 unit tests passing (367 test files)
+- Production build: 78 KB main bundle (25.6 KB gzip), 44 SW precache entries
+- No non-web code paths, no Python, no duplicate utilities
+- CI/Release workflows, .vscode standards, Dependabot all confirmed operational
+
+---
+
+## [7.22.0] - 2026-05-03
 
 ### Added — Production hardening & proxy support
 
