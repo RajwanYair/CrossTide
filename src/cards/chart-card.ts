@@ -9,6 +9,8 @@
 import { renderChart } from "./chart";
 import { renderFundamentalsOverlay } from "./fundamental-overlay";
 import { attachLwChart, type LwChartHandle } from "./lw-chart";
+import { mountDrawingTools, type DrawingToolHandle } from "./drawing-tools";
+import { saveDrawings, loadDrawings } from "./drawing-persistence";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
 import { TIMEFRAME_PRESETS, DEFAULT_TIMEFRAME, type TimeframePreset } from "../core/data-service";
@@ -92,6 +94,7 @@ async function renderChartWithData(
   ticker: string,
   lwHandle: { current: LwChartHandle | null },
   timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
+  drawingRef?: { current: DrawingToolHandle | null; ticker: string },
 ): Promise<void> {
   // Dispose previous LWC instance before re-rendering
   lwHandle.current?.dispose();
@@ -135,6 +138,15 @@ async function renderChartWithData(
       canvasEl.innerHTML = "";
       canvasEl.style.height = "400px";
       lwHandle.current = await attachLwChart(canvasEl, { ticker, candles });
+
+      // Mount drawing tools overlay and restore persisted drawings
+      if (drawingRef) {
+        drawingRef.current?.dispose();
+        const drawingHandle = mountDrawingTools(canvasEl);
+        const saved = loadDrawings(ticker);
+        if (saved.length > 0) drawingHandle.setDrawings(saved);
+        drawingRef.current = drawingHandle;
+      }
     }
   } catch (err) {
     // Leave the HTML header visible; log the error
@@ -146,6 +158,10 @@ const chartCard: CardModule = {
   mount(container, ctx) {
     const ticker = ctx.params["symbol"] ?? "";
     const lwHandle: { current: LwChartHandle | null } = { current: null };
+    const drawingRef: { current: DrawingToolHandle | null; ticker: string } = {
+      current: null,
+      ticker,
+    };
     let activeTimeframe: TimeframePreset = DEFAULT_TIMEFRAME;
 
     // ── Timeframe selector bar ──
@@ -162,22 +178,37 @@ const chartCard: CardModule = {
         activeTimeframe = preset;
         tfBar.querySelectorAll(".timeframe-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        void renderChartWithData(container, ticker, lwHandle, preset);
+        // Save current drawings before switching timeframe
+        if (drawingRef.current && drawingRef.ticker) {
+          saveDrawings(drawingRef.ticker, drawingRef.current.getDrawings());
+        }
+        void renderChartWithData(container, ticker, lwHandle, preset, drawingRef);
       });
       tfBar.appendChild(btn);
     }
     container.prepend(tfBar);
 
-    void renderChartWithData(container, ticker, lwHandle, activeTimeframe);
+    void renderChartWithData(container, ticker, lwHandle, activeTimeframe, drawingRef);
     renderBacktestUI(container, ticker);
 
     return {
       update(newCtx: CardContext): void {
         const t = newCtx.params["symbol"] ?? "";
-        void renderChartWithData(container, t, lwHandle, activeTimeframe);
+        // Save drawings for the old ticker before navigating
+        if (drawingRef.current && drawingRef.ticker) {
+          saveDrawings(drawingRef.ticker, drawingRef.current.getDrawings());
+        }
+        drawingRef.ticker = t;
+        void renderChartWithData(container, t, lwHandle, activeTimeframe, drawingRef);
         renderBacktestUI(container, t);
       },
       dispose(): void {
+        // Persist drawings before teardown
+        if (drawingRef.current && drawingRef.ticker) {
+          saveDrawings(drawingRef.ticker, drawingRef.current.getDrawings());
+          drawingRef.current.dispose();
+          drawingRef.current = null;
+        }
         lwHandle.current?.dispose();
         lwHandle.current = null;
       },

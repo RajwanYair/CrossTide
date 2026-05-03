@@ -1986,3 +1986,87 @@
   background: rgba(239, 68, 68, 0.15);
   color: var(--red, #ef4444);
 }
+
+/* ── L11: Hover zoom popup ─────────────────────────────────────────────────── */
+.hover-zoom-popup {
+  position: fixed;
+  z-index: 9999;
+  width: 280px;
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.hover-zoom-popup.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.hover-zoom-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.hover-zoom-ticker {
+  font-size: var(--fs-lg);
+  color: var(--text-primary);
+}
+
+.hover-zoom-name {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.hover-zoom-chart {
+  margin-bottom: var(--space-sm);
+  padding: var(--space-xs);
+  background: var(--bg-app);
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: center;
+}
+
+.hover-zoom-chart svg {
+  width: 100%;
+  height: 60px;
+}
+
+.hover-zoom-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xs);
+}
+
+.hover-zoom-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hover-zoom-label {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hover-zoom-value {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}

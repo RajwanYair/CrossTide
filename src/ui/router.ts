@@ -83,6 +83,7 @@ const PATTERNS: readonly RoutePattern[] = [
   { name: "watchlist", segments: [] },
   { name: "watchlist", segments: ["watchlist"] },
   { name: "consensus", segments: ["consensus"] },
+  { name: "consensus", segments: ["consensus", ":symbol"] },
   { name: "chart", segments: ["chart"] },
   { name: "chart", segments: ["chart", ":symbol"] },
   { name: "alerts", segments: ["alerts"] },
@@ -93,9 +94,15 @@ const PATTERNS: readonly RoutePattern[] = [
   { name: "portfolio", segments: ["portfolio"] },
   { name: "risk", segments: ["risk"] },
   { name: "backtest", segments: ["backtest"] },
+  { name: "backtest", segments: ["backtest", ":symbol"] },
   { name: "consensus-timeline", segments: ["consensus-timeline"] },
+  { name: "consensus-timeline", segments: ["consensus-timeline", ":symbol"] },
   { name: "signal-dsl", segments: ["signal-dsl"] },
   { name: "multi-chart", segments: ["multi-chart"] },
+  { name: "comparison", segments: ["comparison"] },
+  { name: "comparison", segments: ["comparison", ":symbol"] },
+  { name: "seasonality", segments: ["seasonality"] },
+  { name: "seasonality", segments: ["seasonality", ":symbol"] },
 ];
 
 const listeners: RouteChangeHandler[] = [];

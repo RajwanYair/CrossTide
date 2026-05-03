@@ -6,7 +6,7 @@
  * immediately useful without a live data connection.
  */
 import { renderConsensusTimeline, type ConsensusSnapshot } from "./consensus-timeline";
-import type { CardModule } from "./registry";
+import type { CardModule, CardContext } from "./registry";
 import type { SignalDirection } from "../types/domain";
 
 // ── Synthetic history generator ───────────────────────────────────────────────
@@ -48,13 +48,20 @@ function syntheticHistory(ticker: string, days = 60): ConsensusSnapshot[] {
 const DEMO_TICKERS = ["AAPL", "MSFT", "NVDA", "JPM", "XOM"];
 
 // ── Render ────────────────────────────────────────────────────────────────────
-function renderTimelineCard(container: HTMLElement): void {
+function renderTimelineCard(container: HTMLElement, initialTicker?: string): void {
+  // If a ticker was selected, ensure it's in the demo list
+  const tickers =
+    initialTicker && !DEMO_TICKERS.includes(initialTicker)
+      ? [initialTicker, ...DEMO_TICKERS]
+      : DEMO_TICKERS;
+  const defaultTicker = initialTicker || tickers[0]!;
+
   container.innerHTML = `
     <div class="timeline-card-layout">
       <div class="timeline-controls">
         <label class="backtest-label" for="tl-ticker">Ticker</label>
         <select id="tl-ticker" class="input">
-          ${DEMO_TICKERS.map((t) => `<option value="${t}">${t}</option>`).join("")}
+          ${tickers.map((t) => `<option value="${t}"${t === defaultTicker ? " selected" : ""}>${t}</option>`).join("")}
         </select>
         <label class="backtest-label" for="tl-days">History (days)</label>
         <select id="tl-days" class="input">
@@ -99,9 +106,15 @@ function renderTimelineCard(container: HTMLElement): void {
 }
 
 const consensusTimelineCard: CardModule = {
-  mount(container, _ctx) {
-    renderTimelineCard(container);
-    return {};
+  mount(container, ctx) {
+    const ticker = ctx.params["symbol"] ?? "";
+    renderTimelineCard(container, ticker || undefined);
+    return {
+      update(newCtx: CardContext): void {
+        const t = newCtx.params["symbol"] ?? "";
+        renderTimelineCard(container, t || undefined);
+      },
+    };
   },
 };
 

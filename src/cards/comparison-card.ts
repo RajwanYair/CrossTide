@@ -99,12 +99,13 @@ function renderStatsTable(
   </table>`;
 }
 
-function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
+function mount(container: HTMLElement, ctx: CardContext): CardHandle {
+  const initialSymbol = ctx.params["symbol"] ?? "";
   container.innerHTML = `
     <h2>Chart Comparison</h2>
     <div class="comparison-input-row">
       <label for="comparison-tickers">Tickers (comma-separated):</label>
-      <input id="comparison-tickers" type="text" placeholder="AAPL, MSFT, GOOGL" class="input" />
+      <input id="comparison-tickers" type="text" placeholder="AAPL, MSFT, GOOGL" class="input" value="${initialSymbol ? initialSymbol + ", SPY" : ""}" />
       <button id="btn-compare" class="btn btn-sm">Compare</button>
     </div>
     <div id="comparison-output" class="comparison-output"></div>
@@ -173,7 +174,18 @@ function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
     if (e.key === "Enter") void runComparison();
   });
 
-  return {};
+  // Auto-run if symbol was provided
+  if (initialSymbol) void runComparison();
+
+  return {
+    update(newCtx: CardContext): void {
+      const t = newCtx.params["symbol"] ?? "";
+      if (t) {
+        input.value = `${t}, SPY`;
+        void runComparison();
+      }
+    },
+  };
 }
 
 const card: CardModule = { mount };

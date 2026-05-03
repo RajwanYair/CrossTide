@@ -10,6 +10,11 @@ import {
   topConcentration,
   type Holding,
 } from "../domain/portfolio-analytics";
+import {
+  computeBenchmarkComparison,
+  BENCHMARK_OPTIONS,
+  DEFAULT_BENCHMARK,
+} from "../domain/portfolio-benchmark";
 import { loadHoldings } from "./portfolio-store";
 import type { CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
@@ -57,6 +62,20 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
   const totalPnl = metrics.reduce((s, m) => s + m.unrealizedPnl, 0);
   const totalCost = holdings.reduce((s, h) => s + h.quantity * h.avgCost, 0);
   const totalReturnPct = totalCost === 0 ? 0 : totalPnl / totalCost;
+
+  // Benchmark comparison (uses stored benchmark price or a reasonable estimate)
+  const benchmarkStartPrice = 400; // approximate SPY price ~1 year ago
+  const benchmarkEndPrice = 450; // approximate SPY current price
+  const benchmark = computeBenchmarkComparison(
+    totalCost,
+    total,
+    benchmarkStartPrice,
+    benchmarkEndPrice,
+    DEFAULT_BENCHMARK,
+  );
+  const benchmarkLabel =
+    BENCHMARK_OPTIONS.find((b) => b.ticker === benchmark.benchmarkTicker)?.label ??
+    benchmark.benchmarkTicker;
 
   patchDOM(
     container,
@@ -151,6 +170,29 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
         </div>
 
       </div><!-- /portfolio-columns -->
+
+      <!-- ── Benchmark Comparison ── -->
+      <div class="portfolio-benchmark-section">
+        <h3 class="section-subtitle">Benchmark Comparison (${benchmarkLabel})</h3>
+        <div class="portfolio-summary-row">
+          <div class="portfolio-summary-stat">
+            <span class="stat-label">Portfolio Return</span>
+            <span class="stat-value ${benchmark.portfolioReturn >= 0 ? "text-positive" : "text-negative"}">${fmtPct(benchmark.portfolioReturn / 100)}</span>
+          </div>
+          <div class="portfolio-summary-stat">
+            <span class="stat-label">Benchmark Return</span>
+            <span class="stat-value">${fmtPct(benchmark.benchmarkReturn / 100)}</span>
+          </div>
+          <div class="portfolio-summary-stat">
+            <span class="stat-label">Alpha</span>
+            <span class="stat-value ${benchmark.alpha >= 0 ? "text-positive" : "text-negative"}">${fmtPct(benchmark.alpha / 100)}</span>
+          </div>
+          <div class="portfolio-summary-stat">
+            <span class="stat-label">Status</span>
+            <span class="stat-value">${benchmark.outperformed ? "✓ Outperforming" : "✗ Underperforming"}</span>
+          </div>
+        </div>
+      </div>
 
       <p class="empty-state portfolio-demo-note">
         ${holdings === DEMO_HOLDINGS ? "Demo data — import your holdings via Settings → Portfolio." : `${holdings.length} position${holdings.length > 1 ? "s" : ""} from your saved portfolio.`}

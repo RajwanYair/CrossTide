@@ -5,6 +5,7 @@ import type {
   AppConfig,
   CardId,
   CardSettingsMap,
+  InstrumentType,
   MethodWeights,
   WatchlistEntry,
 } from "../types/domain";
@@ -123,6 +124,25 @@ export function updateWatchlistNames(
     if (!name || entry.name === name) return entry;
     changed = true;
     return { ...entry, name };
+  });
+  return changed ? { ...config, watchlist: next } : config;
+}
+
+/**
+ * Persist instrument type classifications from fetched data into watchlist entries.
+ * Only updates entries whose type is currently undefined or has changed.
+ * Returns the same config reference if nothing changed.
+ */
+export function updateWatchlistInstrumentTypes(
+  config: AppConfig,
+  types: ReadonlyMap<string, InstrumentType>,
+): AppConfig {
+  let changed = false;
+  const next = config.watchlist.map((entry) => {
+    const t = types.get(entry.ticker);
+    if (!t || entry.instrumentType === t) return entry;
+    changed = true;
+    return { ...entry, instrumentType: t };
   });
   return changed ? { ...config, watchlist: next } : config;
 }

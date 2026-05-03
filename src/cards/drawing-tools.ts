@@ -361,6 +361,7 @@ export function drawPitchfork(
 export interface DrawingToolHandle {
   setTool(mode: DrawingToolMode): void;
   clearDrawings(): void;
+  setDrawings(drawings: readonly Drawing[]): void;
   getDrawings(): readonly Drawing[];
   dispose(): void;
 }
@@ -390,6 +391,7 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
     return {
       setTool: () => undefined,
       clearDrawings: () => undefined,
+      setDrawings: () => undefined,
       getDrawings: () => [],
       dispose: () => undefined,
     };
@@ -542,6 +544,12 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
     },
     clearDrawings(): void {
       state.drawings = [];
+      state.pendingPoint = null;
+      state.pendingPoints = [];
+      render();
+    },
+    setDrawings(drawings: readonly Drawing[]): void {
+      state.drawings = [...drawings];
       state.pendingPoint = null;
       state.pendingPoints = [];
       render();

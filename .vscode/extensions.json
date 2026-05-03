@@ -6,7 +6,10 @@
     "DavidAnson.vscode-markdownlint",
     "vitest.explorer",
     "ms-vscode.js-debug",
-    "nicedoc.vscode-caniuse",
-    "nicedoc.vscode-browserslist"
+    "webhint.vscode-webhint",
+    "webben.browserslist",
+    "kwesinavilot.baseline-lens",
+    "benandrew.browser-compatibility-checker",
+    "ms-playwright.playwright"
   ]
 }

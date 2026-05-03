@@ -9,6 +9,7 @@ import { renderSparkline } from "./sparkline";
 import { instrumentTypeBadge } from "./instrument-filter";
 import { groupBySector, renderSectorGroup, bindSectorHeaders } from "./sector-groups";
 import { createReorderState, startDrag, dragOver as reorderDragOver, endDrag } from "./reorder";
+import { getFreshness, renderFreshnessBadge } from "../core/data-freshness";
 
 export interface WatchlistQuote {
   ticker: string;
@@ -158,9 +159,10 @@ function renderRow(ticker: string, quote: WatchlistQuote | null): string {
   const sparkline = quote && quote.closes30d.length >= 2 ? renderSparkline(quote.closes30d) : "--";
   const range52w = quote ? render52wRange(quote.price, quote.low52w, quote.high52w) : "--";
   const volumeBar = quote ? renderVolumeBar(quote.volume, quote.avgVolume) : "";
+  const freshness = renderFreshnessBadge(getFreshness(ticker));
 
   return `<tr data-ticker="${ticker}" draggable="true">
-    <td><strong>${ticker}</strong>${quote?.name ? `<br><span class="ticker-name">${quote.name}</span>` : ""}${instrumentTypeBadge(quote?.instrumentType)}</td>
+    <td><strong>${ticker}</strong>${quote?.name ? `<br><span class="ticker-name">${quote.name}</span>` : ""}${instrumentTypeBadge(quote?.instrumentType)} ${freshness}</td>
     <td class="font-mono">${price}</td>
     <td class="${changeClass} font-mono">${change}</td>
     <td>${consensus}</td>

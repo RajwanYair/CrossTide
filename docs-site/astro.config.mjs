@@ -37,6 +37,10 @@ export default defineConfig({
             { label: "Screener", slug: "screener" },
             { label: "Backtest", slug: "backtest" },
             { label: "Alerts", slug: "alerts" },
+            { label: "Consensus", slug: "consensus" },
+            { label: "Heatmap", slug: "heatmap" },
+            { label: "Settings", slug: "settings" },
+            { label: "Shortcuts", slug: "shortcuts" },
           ],
         },
         {

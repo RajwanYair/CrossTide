@@ -9,6 +9,7 @@ import {
   removeTicker,
   reorderWatchlist,
   updateWatchlistNames,
+  updateWatchlistInstrumentTypes,
 } from "../../../src/core/config";
 
 function createMockStorage(): Storage {
@@ -209,6 +210,56 @@ describe("config", () => {
       // Same name again → same reference
       const result = updateWatchlistNames(config, new Map([["AAPL", "Apple Inc."]]));
       expect(result).toBe(config);
+    });
+  });
+
+  // Instrument type persistence (filter fix) ──────────────────────────────
+  describe("updateWatchlistInstrumentTypes", () => {
+    it("updates entry instrumentType from the provided map", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      const updated = updateWatchlistInstrumentTypes(config, new Map([["AAPL", "stock"]]));
+      expect(updated.watchlist[0]?.instrumentType).toBe("stock");
+    });
+
+    it("sets etf type correctly", () => {
+      let config = loadConfig();
+      config = addTicker(config, "SPY");
+      const updated = updateWatchlistInstrumentTypes(config, new Map([["SPY", "etf"]]));
+      expect(updated.watchlist[0]?.instrumentType).toBe("etf");
+    });
+
+    it("sets crypto type correctly", () => {
+      let config = loadConfig();
+      config = addTicker(config, "BTC-USD");
+      const updated = updateWatchlistInstrumentTypes(config, new Map([["BTC-USD", "crypto"]]));
+      expect(updated.watchlist[0]?.instrumentType).toBe("crypto");
+    });
+
+    it("does not change entries not present in the map", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = addTicker(config, "MSFT");
+      const updated = updateWatchlistInstrumentTypes(config, new Map([["AAPL", "stock"]]));
+      expect(updated.watchlist[0]?.instrumentType).toBe("stock");
+      expect(updated.watchlist[1]?.instrumentType).toBeUndefined();
+    });
+
+    it("returns same reference when nothing changed", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = updateWatchlistInstrumentTypes(config, new Map([["AAPL", "stock"]]));
+      const result = updateWatchlistInstrumentTypes(config, new Map([["AAPL", "stock"]]));
+      expect(result).toBe(config);
+    });
+
+    it("updates type when classification changes", () => {
+      let config = loadConfig();
+      config = addTicker(config, "AAPL");
+      config = updateWatchlistInstrumentTypes(config, new Map([["AAPL", "other"]]));
+      const updated = updateWatchlistInstrumentTypes(config, new Map([["AAPL", "stock"]]));
+      expect(updated.watchlist[0]?.instrumentType).toBe("stock");
+      expect(updated).not.toBe(config);
     });
   });
 

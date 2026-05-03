@@ -42,8 +42,29 @@ export default defineConfig({
       use: { ...devices["iPhone 14"] },
     },
     {
+      name: "mobile-safari-mini",
+      use: { ...devices["iPhone SE"] },
+    },
+    {
+      name: "android-galaxy",
+      use: { ...devices["Galaxy S9+"] },
+    },
+    // ── Tablets ───────────────────────────────────────────────────
+    {
       name: "tablet",
       use: { ...devices["iPad (gen 7)"] },
+    },
+    {
+      name: "tablet-landscape",
+      use: { ...devices["iPad (gen 7) landscape"] },
+    },
+    {
+      name: "tablet-pro",
+      use: { ...devices["iPad Pro 11"] },
+    },
+    {
+      name: "android-tablet",
+      use: { ...devices["Galaxy Tab S4"] },
     },
   ],
   webServer: {

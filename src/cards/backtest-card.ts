@@ -25,7 +25,7 @@ import { cagr } from "../domain/risk-ratios";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
-import type { CardModule } from "./registry";
+import type { CardContext, CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
 
 // ── Synthetic price generator ─────────────────────────────────────────────────
@@ -141,10 +141,10 @@ type Candle = {
   volume: number;
 };
 
-function renderBacktestCard(container: HTMLElement): void {
+function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): void {
   let fastPeriod = 10;
   let slowPeriod = 30;
-  let ticker = "AAPL";
+  let ticker = initialTicker;
   const initialCapital = 10_000;
 
   let CANDLES: Candle[] = syntheticCandles(500);
@@ -378,9 +378,15 @@ function renderBacktestCard(container: HTMLElement): void {
 }
 
 const backtestCard: CardModule = {
-  mount(container, _ctx) {
-    renderBacktestCard(container);
-    return {};
+  mount(container, ctx) {
+    const ticker = ctx.params["symbol"] ?? "AAPL";
+    renderBacktestCard(container, ticker);
+    return {
+      update(newCtx: CardContext): void {
+        const t = newCtx.params["symbol"] ?? "AAPL";
+        renderBacktestCard(container, t);
+      },
+    };
   },
 };
 

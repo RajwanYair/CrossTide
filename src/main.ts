@@ -12,12 +12,13 @@ import {
   removeTicker,
   reorderWatchlist,
   updateWatchlistNames,
+  updateWatchlistInstrumentTypes,
 } from "./core/config";
 import { createCrossTabSync } from "./core/broadcast-channel";
 import { registerServiceWorker } from "./core/sw-register";
 import { watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
-import { initRouter, navigateTo, onRouteChange, type RouteName } from "./ui/router";
+import { initRouter, navigateTo, navigateToPath, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
 import { initLocale } from "./core/i18n";
 import {
@@ -33,6 +34,7 @@ import { showToast } from "./ui/toast";
 import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
 import type { PaletteCommand } from "./ui/command-palette";
 import { fetchAllTickers, fetchTickerData, type TickerData } from "./core/data-service";
+import { selectedTickerStore } from "./core/app-store";
 
 import { TieredCache } from "./core/tiered-cache";
 import { createStoragePressureMonitor, requestPersistentStorage } from "./core/storage-pressure";
@@ -40,6 +42,7 @@ import { setScreenerData } from "./cards/screener-data";
 import { setBreadthData } from "./cards/market-breadth-data";
 import { computeRsiSeries } from "./domain/rsi-calculator";
 import { computeSma } from "./domain/sma-calculator";
+import type { InstrumentType } from "./types/domain";
 import type { ScreenerInput } from "./cards/screener";
 import { buildShareUrl, readShareUrl, encodeWatchlistUrl } from "./core/share-state";
 import {
@@ -60,6 +63,8 @@ import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
+import { createAutocomplete } from "./ui/ticker-autocomplete";
+import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const prefetchedCards = new Set<RouteName>();
@@ -116,7 +121,14 @@ async function activateCard(
     el.setAttribute("aria-atomic", "false");
   }
 
-  const ctx: CardContext = { route, params };
+  // Inject selected ticker as symbol fallback when not already in route params
+  const enrichedParams: Record<string, string> = { ...params };
+  if (!enrichedParams["symbol"]) {
+    const selected = selectedTickerStore.peek();
+    if (selected) enrichedParams["symbol"] = selected;
+  }
+
+  const ctx: CardContext = { route, params: enrichedParams };
   const existing = cardHandles.get(route);
   if (existing) {
     existing.update?.(ctx);
@@ -194,6 +206,7 @@ function main(): void {
   /** Render watchlist + wire keyboard sort activation + aria-sort for accessibility (B14). */
   function refreshWatchlist(cfg: typeof config, quotes: Map<string, WatchlistQuote>): void {
     renderWatchlistCore(cfg, quotes);
+    setHoverQuotes(quotes); // L11: keep hover-zoom popup up-to-date
     const thead = document.getElementById("watchlist-head");
     const liveRegion = document.getElementById("sort-live");
     const sortCol = (col: "ticker" | "price" | "change" | "consensus" | "volume"): void => {
@@ -247,6 +260,19 @@ function main(): void {
     }
     if (nameMap.size > 0) {
       const updated = updateWatchlistNames(config, nameMap);
+      if (updated !== config) {
+        config = updated;
+        saveAndBroadcast(config);
+      }
+    }
+
+    // Persist instrument type classifications so filters work after reload.
+    const typeMap = new Map<string, InstrumentType>();
+    for (const [t, data] of results) {
+      if (data.instrumentType && !data.error) typeMap.set(t, data.instrumentType);
+    }
+    if (typeMap.size > 0) {
+      const updated = updateWatchlistInstrumentTypes(config, typeMap);
       if (updated !== config) {
         config = updated;
         saveAndBroadcast(config);
@@ -396,33 +422,42 @@ function main(): void {
     });
   }
 
-  // Add ticker on Enter
+  // Add ticker via autocomplete widget (enhanced search-as-you-type)
   const addInput = document.getElementById("add-ticker") as HTMLInputElement | null;
-  addInput?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      const ticker = addInput.value.trim().toUpperCase();
-      if (!ticker) return;
-      if (!/^[A-Z][A-Z0-9.-]{0,9}$/.test(ticker)) {
-        showToast({ message: `Invalid ticker: ${ticker}`, type: "error" });
-        return;
-      }
-      if (config.watchlist.some((e) => e.ticker === ticker)) {
-        showToast({ message: `${ticker} already in watchlist`, type: "warning" });
-        return;
-      }
-      config = addTicker(config, ticker);
-      saveAndBroadcast(config);
-      refreshWatchlist(config, new Map());
-      addInput.value = "";
-      showToast({ message: `Added ${ticker} — fetching data…`, type: "success" });
-      maybeRequestPersist();
-      // Fetch data for the new ticker
-      void fetchTickerData(ticker).then((data) => {
-        tickerDataCache.set(ticker, data);
-        void refreshData();
-      });
+  let autocompleteHandle: ReturnType<typeof createAutocomplete> | null = null;
+
+  function handleAddTicker(ticker: string): void {
+    const t = ticker.trim().toUpperCase();
+    if (!t) return;
+    if (!/^[A-Z][A-Z0-9.-]{0,9}$/.test(t)) {
+      showToast({ message: `Invalid ticker: ${t}`, type: "error" });
+      return;
     }
-  });
+    if (config.watchlist.some((e) => e.ticker === t)) {
+      showToast({ message: `${t} already in watchlist`, type: "warning" });
+      return;
+    }
+    config = addTicker(config, t);
+    saveAndBroadcast(config);
+    refreshWatchlist(config, new Map());
+    showToast({ message: `Added ${t} — fetching data…`, type: "success" });
+    maybeRequestPersist();
+    void fetchTickerData(t).then((data) => {
+      tickerDataCache.set(t, data);
+      void refreshData();
+    });
+  }
+
+  if (addInput) {
+    void import("./providers/provider-registry").then(({ getChain }) => {
+      autocompleteHandle = createAutocomplete({
+        onSearch: (query) => getChain().search(query),
+        onSelect: handleAddTicker,
+        placeholder: "Search ticker (e.g. AAPL)…",
+      });
+      addInput.replaceWith(autocompleteHandle.element);
+    });
+  }
 
   // D5: Share watchlist button — encode tickers into a deep-link URL
   const shareWlBtn = document.getElementById("btn-share-watchlist") as HTMLButtonElement | null;
@@ -451,8 +486,23 @@ function main(): void {
         refreshWatchlist(config, new Map());
         showToast({ message: `Removed ${ticker}`, type: "info" });
       }
+      return;
+    }
+    // Clicking a row (not the remove button) selects ticker and opens chart
+    const row = target.closest<HTMLElement>("tr[data-ticker]");
+    if (row) {
+      const ticker = row.dataset["ticker"];
+      if (ticker) {
+        selectedTickerStore.set(ticker);
+        navigateToPath("chart", { symbol: ticker });
+      }
     }
   });
+
+  // ── L11: Hover zoom on watchlist rows ──────────────────────────────────────
+  if (tbody) {
+    bindHoverZoom(tbody);
+  }
 
   // Column sorting via header click
   const watchlistTable = document.getElementById("watchlist-table");
@@ -731,7 +781,7 @@ function main(): void {
       label: "Add Ticker",
       hint: "A",
       section: "Actions",
-      run: () => addInput?.focus(),
+      run: () => autocompleteHandle?.focus(),
     },
     {
       id: "refresh-data",
@@ -745,7 +795,7 @@ function main(): void {
       label: "Focus Search",
       hint: "/",
       section: "Actions",
-      run: () => addInput?.focus(),
+      run: () => autocompleteHandle?.focus(),
     },
     {
       id: "copy-share-link",
@@ -842,7 +892,7 @@ function main(): void {
   shortcuts.register({
     key: "/",
     description: "Focus ticker search",
-    handler: () => addInput?.focus(),
+    handler: () => autocompleteHandle?.focus(),
   });
 
   // "r" → refresh data

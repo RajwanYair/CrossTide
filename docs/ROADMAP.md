@@ -716,18 +716,19 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 
 **Theme:** Close the biggest remaining feature gap — fundamental data.
 
-| #   | Task                                                                        | Priority | Effort |
-| --- | --------------------------------------------------------------------------- | -------- | ------ |
-| L1  | **Fundamental data overlay**: P/E, EPS, revenue, market cap, dividend yield | P0       | 3d     |
-| L2  | **Seasonal charts**: Monthly historical return bars (Jan–Dec)               | P1       | 2d     |
-| L3  | **Multi-condition alerts**: Combine price + indicator + DSL in one rule     | P1       | 2d     |
-| L4  | **Strategy comparison**: Backtest two strategies side-by-side               | P1       | 2d     |
-| L5  | **Additional drawing tools**: Rectangle, channel, pitchfork, ray, text      | P2       | 3d     |
-| L6  | **Screener column customization**: User-selected visible columns            | P2       | 1d     |
-| L7  | **Watchlist groups**: Named collapsible sections                            | P2       | 1d     |
-| L8  | **Chart comparison mode**: 2–4 tickers on normalized % scale                | P1       | 1d     |
-| L9  | **Export to image**: Screenshot card to PNG/SVG                             | P2       | 1d     |
-| L10 | **Plugin API for custom indicators**: External ESM at runtime               | P3       | 3d     |
+| #   | Task                                                                                                                                                                                | Priority | Effort |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
+| L1  | **Fundamental data overlay**: P/E, EPS, revenue, market cap, dividend yield                                                                                                         | P0       | 3d     |
+| L2  | **Seasonal charts**: Monthly historical return bars (Jan–Dec)                                                                                                                       | P1       | 2d     |
+| L3  | **Multi-condition alerts**: Combine price + indicator + DSL in one rule                                                                                                             | P1       | 2d     |
+| L4  | **Strategy comparison**: Backtest two strategies side-by-side                                                                                                                       | P1       | 2d     |
+| L5  | **Additional drawing tools**: Rectangle, channel, pitchfork, ray, text                                                                                                              | P2       | 3d     |
+| L6  | **Screener column customization**: User-selected visible columns                                                                                                                    | P2       | 1d     |
+| L7  | **Watchlist groups**: Named collapsible sections                                                                                                                                    | P2       | 1d     |
+| L8  | **Chart comparison mode**: 2–4 tickers on normalized % scale                                                                                                                        | P1       | 1d     |
+| L9  | **Export to image**: Screenshot card to PNG/SVG                                                                                                                                     | P2       | 1d     |
+| L10 | **Plugin API for custom indicators**: External ESM at runtime                                                                                                                       | P3       | 3d     |
+| L11 | **Watchlist hover zoom**: Hovering a stock row shows a popup with mini-chart, key stats (price, change, volume, consensus), and sparkline — instant preview without navigating away | P1       | 2d     |
 
 ---
 

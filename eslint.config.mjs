@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import importX from "eslint-plugin-import-x";
+import compat from "eslint-plugin-compat";
 
 const browserGlobals = {
   window: "readonly",
@@ -105,6 +106,7 @@ export default tseslint.config(
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     plugins: {
       "import-x": importX,
+      compat,
     },
     languageOptions: {
       globals: browserGlobals,
@@ -145,6 +147,8 @@ export default tseslint.config(
       "@typescript-eslint/no-import-type-side-effects": "error",
       "@typescript-eslint/explicit-function-return-type": "error",
       "no-console": ["error", { allow: ["warn", "error"] }],
+      // Browser compat — flags APIs unsupported in our browserslist targets
+      "compat/compat": "warn",
     },
   },
   {

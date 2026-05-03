@@ -8,6 +8,7 @@ import type { DailyCandle, ConsensusResult, InstrumentType, MethodWeights } from
 import { aggregateConsensus } from "../domain/signal-aggregator";
 import { fetchWithTimeout } from "./fetch";
 import { safeParse, YahooChartSchema } from "../types/valibot-schemas";
+import { markFetched } from "./data-freshness";
 
 /**
  * Base URL for Yahoo Finance requests.
@@ -179,6 +180,9 @@ export async function fetchTickerData(
 
     // Run consensus engine (all 12 methods, optional per-method weights)
     const consensus = candles.length >= 151 ? aggregateConsensus(ticker, candles, weights) : null;
+
+    // Track data freshness for staleness indicators
+    markFetched(ticker);
 
     return {
       ticker,

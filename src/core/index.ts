@@ -473,3 +473,19 @@ export {
   nextWeekday,
   tradingDaysBetween,
 } from "./date-format";
+
+export {
+  isAlertSoundEnabled,
+  setAlertSoundEnabled,
+  playAlertSound,
+  disposeAlertSound,
+} from "./alert-sound";
+
+export {
+  markFetched,
+  getFreshness,
+  getAllFreshness,
+  resetFreshness,
+  renderFreshnessBadge,
+} from "./data-freshness";
+export type { FreshnessLevel, FreshnessStatus } from "./data-freshness";
