@@ -186,7 +186,7 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
 
   const run = async (): Promise<void> => {
     const resultEl = container.querySelector<HTMLElement>("#backtest-result");
-    if (resultEl) resultEl.innerHTML = `<p class="empty-state">Computing…</p>`;
+    if (resultEl) patchDOM(resultEl, `<p class="empty-state">Computing…</p>`);
 
     const result = await runBacktestAsync(
       { ticker: "SYNTH", initialCapital, methods: [], windowSize: slowPeriod },
@@ -295,8 +295,9 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
     }
   };
 
-  container.innerHTML = `
-    <div class="backtest-layout">
+  patchDOM(
+    container,
+    `<div class="backtest-layout">
 
       <!-- Controls -->
       <form class="backtest-controls" id="backtest-form" onsubmit="return false">
@@ -324,7 +325,8 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
       <!-- Result area -->
       <div id="backtest-result"></div>
 
-    </div>`;
+    </div>`,
+  );
 
   // Wire controls
   const form = container.querySelector<HTMLFormElement>("#backtest-form")!;
@@ -335,9 +337,15 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
 
   const updateSourceHint = (): void => {
     if (dataSource === "real") {
-      sourceHint.innerHTML = `<strong>${ticker}</strong> · ${CANDLES.length} real candles · MA crossover · $${initialCapital.toLocaleString()} capital`;
+      patchDOM(
+        sourceHint,
+        `<strong>${ticker}</strong> · ${CANDLES.length} real candles · MA crossover · $${initialCapital.toLocaleString()} capital`,
+      );
     } else {
-      sourceHint.innerHTML = `Synthetic 500-day series (fetch failed) · MA crossover · $${initialCapital.toLocaleString()} capital`;
+      patchDOM(
+        sourceHint,
+        `Synthetic 500-day series (fetch failed) · MA crossover · $${initialCapital.toLocaleString()} capital`,
+      );
     }
   };
 
@@ -360,7 +368,7 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
     // Fetch fresh candles if ticker changed
     if (newTicker !== ticker || dataSource === "synthetic") {
       ticker = newTicker;
-      sourceHint.innerHTML = `Loading real data for <strong>${ticker}</strong>…`;
+      patchDOM(sourceHint, `Loading real data for <strong>${ticker}</strong>…`);
       await loadCandles();
       updateSourceHint();
     }
