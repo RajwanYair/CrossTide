@@ -5,6 +5,7 @@
  * Actual brokerage integration is out of scope.
  */
 import type { Holding } from "../types/domain";
+import { patchDOM } from "../core/patch-dom";
 
 export type { Holding };
 
@@ -53,7 +54,10 @@ export function renderPortfolio(container: HTMLElement, holdings: readonly Holdi
   const summary = computePortfolioSummary(holdings);
 
   if (holdings.length === 0) {
-    container.innerHTML = `<p class="empty-state">No holdings. Add positions to track your portfolio.</p>`;
+    patchDOM(
+      container,
+      `<p class="empty-state">No holdings. Add positions to track your portfolio.</p>`,
+    );
     return;
   }
 
@@ -85,7 +89,9 @@ export function renderPortfolio(container: HTMLElement, holdings: readonly Holdi
   const totalCls = summary.totalGain >= 0 ? "signal-buy" : "signal-sell";
   const totalSign = summary.totalGain >= 0 ? "+" : "";
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="portfolio-summary">
       <span class="text-secondary">Total Value:</span>
       <span class="font-mono">$${summary.totalValue.toFixed(2)}</span>
@@ -104,7 +110,8 @@ export function renderPortfolio(container: HTMLElement, holdings: readonly Holdi
       </thead>
       <tbody>${rows}</tbody>
     </table>
-  `;
+  `,
+  );
 }
 
 function escapeHtml(str: string): string {

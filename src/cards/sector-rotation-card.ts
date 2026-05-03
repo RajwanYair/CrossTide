@@ -7,6 +7,7 @@ import { fetchAllTickers } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import type { DailyCandle } from "../types/domain";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 const SECTOR_ETFS = [
   "XLC",
@@ -62,7 +63,9 @@ export function renderSectorRotation(
     return `<tr><th class="font-mono">${etf}</th>${cols}</tr>`;
   }).join("");
 
-  container.innerHTML = `<div class="card">
+  patchDOM(
+    container,
+    `<div class="card">
     <div class="card-header"><h2>Sector Rotation</h2></div>
     <div class="card-body">
       <table class="rotation-table">
@@ -70,7 +73,8 @@ export function renderSectorRotation(
         <tbody>${rows}</tbody>
       </table>
     </div>
-  </div>`;
+  </div>`,
+  );
 }
 
 const sectorRotationCard: CardModule = {

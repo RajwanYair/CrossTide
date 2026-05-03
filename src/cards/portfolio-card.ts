@@ -12,6 +12,7 @@ import {
 } from "../domain/portfolio-analytics";
 import { loadHoldings } from "./portfolio-store";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 // ── Demo holdings (shown when IDB is empty / first visit) ────────────────────
 const DEMO_HOLDINGS: readonly Holding[] = [
@@ -57,7 +58,9 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
   const totalCost = holdings.reduce((s, h) => s + h.quantity * h.avgCost, 0);
   const totalReturnPct = totalCost === 0 ? 0 : totalPnl / totalCost;
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="portfolio-layout">
 
       <!-- ── Summary row ── -->
@@ -154,7 +157,8 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
       </p>
 
     </div><!-- /portfolio-layout -->
-  `;
+  `,
+  );
 }
 
 const portfolioCard: CardModule = {

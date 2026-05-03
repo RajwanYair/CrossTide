@@ -7,6 +7,7 @@
  */
 import { loadConfig } from "../core/config";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 export interface EarningsEvent {
   ticker: string;
@@ -66,7 +67,10 @@ export function renderEarningsCalendar(
   events: readonly EarningsEvent[],
 ): void {
   if (events.length === 0) {
-    container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">No watchlist tickers to schedule.</p></div></div>`;
+    patchDOM(
+      container,
+      `<div class="card"><div class="card-body"><p class="empty-state">No watchlist tickers to schedule.</p></div></div>`,
+    );
     return;
   }
 
@@ -84,7 +88,9 @@ export function renderEarningsCalendar(
     })
     .join("");
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="card">
       <div class="card-header">
         <h2>Earnings Calendar</h2>
@@ -98,7 +104,8 @@ export function renderEarningsCalendar(
           <tbody>${rows}</tbody>
         </table>
       </div>
-    </div>`;
+    </div>`,
+  );
 }
 
 function escapeHtml(s: string): string {

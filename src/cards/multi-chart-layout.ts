@@ -11,6 +11,7 @@
 import type { CardModule, CardHandle } from "./registry";
 import { getGlobalChartSyncBus } from "../ui/chart-sync";
 import { loadConfig } from "../core/config";
+import { patchDOM } from "../core/patch-dom";
 
 const STORAGE_KEY = "crosstide-multi-chart";
 const PANEL_COUNT = 4;
@@ -302,7 +303,7 @@ function mount(container: HTMLElement): CardHandle {
   function render(): void {
     // Unsubscribe previous panel registrations before re-render
     panelIds.forEach((id) => bus.unsubscribe(id));
-    container.innerHTML = buildLayoutHtml(state, availableTickers);
+    patchDOM(container, buildLayoutHtml(state, availableTickers));
     wirePanelEvents();
     wireLayoutButtons();
   }

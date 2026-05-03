@@ -5,6 +5,7 @@
  * Persisted via IndexedDB (consumer responsibility).
  */
 import type { SignalDirection, AlertRecord } from "../types/domain";
+import { patchDOM } from "../core/patch-dom";
 
 export type { AlertRecord };
 
@@ -35,7 +36,7 @@ export function renderAlertHistory(
   filtered.sort((a, b) => b.firedAt.localeCompare(a.firedAt)); // newest first
 
   if (filtered.length === 0) {
-    container.innerHTML = `<p class="empty-state">No alerts match the current filter.</p>`;
+    patchDOM(container, `<p class="empty-state">No alerts match the current filter.</p>`);
     return;
   }
 
@@ -51,7 +52,9 @@ export function renderAlertHistory(
     )
     .join("");
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <table class="alert-history-table" role="table" aria-label="Alert History">
       <thead>
         <tr>
@@ -65,7 +68,8 @@ export function renderAlertHistory(
       <tbody>${rows}</tbody>
     </table>
     <p class="text-secondary">${filtered.length} alert${filtered.length !== 1 ? "s" : ""}</p>
-  `;
+  `,
+  );
 }
 
 function escapeHtml(str: string): string {

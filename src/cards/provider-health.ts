@@ -4,6 +4,7 @@
  * Shows availability, latency, and error counts for each provider in the chain.
  */
 import type { ProviderHealth } from "../providers/types";
+import { patchDOM } from "../core/patch-dom";
 
 export interface ProviderHealthSnapshot {
   readonly providers: readonly ProviderHealth[];
@@ -52,7 +53,7 @@ export function renderProviderHealth(
   const now = snapshot.lastRefreshAt;
 
   if (snapshot.providers.length === 0) {
-    container.innerHTML = `<p class="empty-state">No providers configured.</p>`;
+    patchDOM(container, `<p class="empty-state">No providers configured.</p>`);
     return;
   }
 
@@ -76,7 +77,9 @@ export function renderProviderHealth(
     })
     .join("");
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="provider-health-header">
       <h3>Provider Health</h3>
       ${statusBadge}
@@ -88,7 +91,8 @@ export function renderProviderHealth(
       </thead>
       <tbody>${rows}</tbody>
     </table>
-  `;
+  `,
+  );
 }
 
 function escapeHtml(s: string): string {

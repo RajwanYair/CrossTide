@@ -4,6 +4,7 @@
  * Stores snapshots and renders a visual timeline of BUY/SELL/NEUTRAL transitions.
  */
 import type { SignalDirection } from "../types/domain";
+import { patchDOM } from "../core/patch-dom";
 
 export interface ConsensusSnapshot {
   readonly ticker: string;
@@ -60,14 +61,20 @@ export function renderConsensusTimeline(
   snapshots: readonly ConsensusSnapshot[],
 ): void {
   if (snapshots.length === 0) {
-    container.innerHTML = `<p class="empty-state">No consensus history for ${escapeHtml(ticker)}.</p>`;
+    patchDOM(
+      container,
+      `<p class="empty-state">No consensus history for ${escapeHtml(ticker)}.</p>`,
+    );
     return;
   }
 
   const streak = currentStreak(snapshots);
   const latest = snapshots[snapshots.length - 1];
   if (!latest) {
-    container.innerHTML = `<p class="empty-state">No consensus history for ${escapeHtml(ticker)}.</p>`;
+    patchDOM(
+      container,
+      `<p class="empty-state">No consensus history for ${escapeHtml(ticker)}.</p>`,
+    );
     return;
   }
   const transitions = detectTransitions(snapshots);
@@ -81,7 +88,9 @@ export function renderConsensusTimeline(
     })
     .join("");
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="consensus-timeline" aria-label="Consensus timeline for ${escapeAttr(ticker)}">
       <div class="timeline-header">
         <h4>${escapeHtml(ticker)}</h4>
@@ -91,7 +100,8 @@ export function renderConsensusTimeline(
       <div class="timeline-track">${dots}</div>
       <p class="text-secondary">${transitions.length} transition${transitions.length !== 1 ? "s" : ""} over ${snapshots.length} snapshots</p>
     </div>
-  `;
+  `,
+  );
 }
 
 function escapeHtml(s: string): string {

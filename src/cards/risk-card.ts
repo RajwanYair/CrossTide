@@ -8,6 +8,7 @@
  */
 import { sortinoRatio, maxDrawdown, cagr, calmarRatio } from "../domain/risk-ratios";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 // ── Demo equity curve: 5-year daily data (simulated) ─────────────────────────
 function generateEquityCurve(seed = 42): number[] {
@@ -77,7 +78,9 @@ function renderRiskCard(container: HTMLElement): void {
     annualizedReturn >= 0.1 ? "text-positive" : annualizedReturn >= 0 ? "" : "text-negative";
   const calmarClass = calmar >= 1 ? "text-positive" : calmar >= 0.5 ? "" : "text-negative";
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="risk-layout">
 
       <!-- Equity curve sparkline -->
@@ -127,7 +130,8 @@ function renderRiskCard(container: HTMLElement): void {
       </p>
 
     </div>
-  `;
+  `,
+  );
 }
 
 const riskCard: CardModule = {

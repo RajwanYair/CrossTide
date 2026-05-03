@@ -26,6 +26,7 @@ import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 // ── Synthetic price generator ─────────────────────────────────────────────────
 function syntheticCandles(
@@ -280,13 +281,16 @@ function renderBacktestCard(container: HTMLElement): void {
 
     // Update result area only (controls are static)
     if (resultEl) {
-      resultEl.innerHTML = `
+      patchDOM(
+        resultEl,
+        `
         <div class="backtest-equity-wrap">${renderEquitySVG(equityPoints)}</div>
         ${statsHtml}
         <div class="backtest-tradelog-wrap">
           <h3 class="section-subtitle">Recent Trades (last 10)</h3>
           ${renderTradeLog(trades, CANDLES)}
-        </div>`;
+        </div>`,
+      );
     }
   };
 

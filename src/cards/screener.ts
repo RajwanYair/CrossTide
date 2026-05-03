@@ -2,6 +2,7 @@
  * Screener card — filters tickers by technical criteria.
  */
 import type { SignalDirection } from "../types/domain";
+import { patchDOM } from "../core/patch-dom";
 
 export type ScreenerFilter =
   | { type: "consensus"; direction: SignalDirection }
@@ -82,7 +83,7 @@ function filterLabel(f: ScreenerFilter): string {
 
 export function renderScreenerResults(container: HTMLElement, rows: readonly ScreenerRow[]): void {
   if (rows.length === 0) {
-    container.innerHTML = `<p class="empty-state">No tickers match the current filters.</p>`;
+    patchDOM(container, `<p class="empty-state">No tickers match the current filters.</p>`);
     return;
   }
 
@@ -98,8 +99,11 @@ export function renderScreenerResults(container: HTMLElement, rows: readonly Scr
     )
     .join("");
 
-  container.innerHTML = `<table class="screener-table">
+  patchDOM(
+    container,
+    `<table class="screener-table">
     <thead><tr><th>Symbol</th><th>Price</th><th>Signal</th><th>Matched</th></tr></thead>
     <tbody>${html}</tbody>
-  </table>`;
+  </table>`,
+  );
 }

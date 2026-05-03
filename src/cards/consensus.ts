@@ -2,6 +2,7 @@
  * Consensus dashboard card — renders per-ticker 12-method breakdown.
  */
 import type { ConsensusResult, MethodSignal, SignalDirection } from "../types/domain";
+import { patchDOM } from "../core/patch-dom";
 
 export function renderConsensus(
   container: HTMLElement,
@@ -9,7 +10,7 @@ export function renderConsensus(
   result: ConsensusResult | null,
 ): void {
   if (!result) {
-    container.innerHTML = `<p class="empty-state">No consensus data for ${escapeHtml(ticker)}.</p>`;
+    patchDOM(container, `<p class="empty-state">No consensus data for ${escapeHtml(ticker)}.</p>`);
     return;
   }
 
@@ -31,7 +32,7 @@ export function renderConsensus(
   const allMethods: readonly MethodSignal[] = [...result.buyMethods, ...result.sellMethods];
   const grid = renderMethodGrid(allMethods, result.direction);
 
-  container.innerHTML = header + grid;
+  patchDOM(container, header + grid);
 }
 
 function renderMethodGrid(methods: readonly MethodSignal[], overall: SignalDirection): string {

@@ -3,6 +3,7 @@
  *
  * Displays Sharpe, Sortino, MaxDrawdown, total return, win rate in a summary card.
  */
+import { patchDOM } from "../core/patch-dom";
 
 export interface PerformanceMetrics {
   readonly totalReturn: number; // e.g. 0.15 = 15%
@@ -75,7 +76,9 @@ export function renderPerformanceMetrics(
     )
     .join("");
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="perf-metrics-card">
       <div class="perf-header">
         <h3>${escapeHtml(label)}</h3>
@@ -85,7 +88,8 @@ export function renderPerformanceMetrics(
         <tbody>${html}</tbody>
       </table>
     </div>
-  `;
+  `,
+  );
 }
 
 function escapeHtml(s: string): string {

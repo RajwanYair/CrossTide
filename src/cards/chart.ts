@@ -7,6 +7,7 @@
  */
 import type { DailyCandle } from "../types/domain";
 import { formatCompact } from "../ui/number-format";
+import { patchDOM } from "../core/patch-dom";
 
 export interface ChartOptions {
   ticker: string;
@@ -19,7 +20,7 @@ export function renderChart(container: HTMLElement, options: ChartOptions): void
   const { ticker, candles, width = 800, height = 400 } = options;
 
   if (candles.length === 0) {
-    container.innerHTML = `<p class="empty-state">No chart data for ${escapeHtml(ticker)}.</p>`;
+    patchDOM(container, `<p class="empty-state">No chart data for ${escapeHtml(ticker)}.</p>`);
     return;
   }
 
@@ -29,7 +30,9 @@ export function renderChart(container: HTMLElement, options: ChartOptions): void
   const changeClass = changePct >= 0 ? "signal-buy" : "signal-sell";
   const sign = changePct >= 0 ? "+" : "";
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="chart-header">
       <h3>${escapeHtml(ticker)}</h3>
       <span class="chart-price font-mono">${latest.close.toFixed(2)}</span>
@@ -39,7 +42,8 @@ export function renderChart(container: HTMLElement, options: ChartOptions): void
     <div class="chart-canvas" data-ticker="${escapeHtml(ticker)}" style="width:${width}px;height:${height}px;">
       ${renderOhlcTable(candles.slice(-10))}
     </div>
-  `;
+  `,
+  );
 }
 
 function renderOhlcTable(candles: readonly DailyCandle[]): string {

@@ -12,6 +12,8 @@ export interface SectorData {
   readonly tickerCount: number;
 }
 
+import { patchDOM } from "../core/patch-dom";
+
 /** G21: A single constituent stock within a sector. */
 export interface ConstituentStock {
   readonly ticker: string;
@@ -74,7 +76,7 @@ export function renderHeatmap(
   options?: HeatmapOptions,
 ): void {
   if (sectors.length === 0) {
-    container.innerHTML = `<p class="empty-state">No sector data available.</p>`;
+    patchDOM(container, `<p class="empty-state">No sector data available.</p>`);
     return;
   }
 
@@ -96,13 +98,16 @@ export function renderHeatmap(
     </div>`;
   });
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="heatmap-grid" role="img" aria-label="Sector Heatmap"
          style="display:flex;width:${width}px;height:${height}px;overflow:hidden">
       ${tiles.join("")}
     </div>
     <p class="text-secondary">${sectors.length} sectors</p>
-  `;
+  `,
+  );
 }
 
 function escapeHtml(s: string): string {
@@ -156,13 +161,16 @@ export function renderSectorDrillDown(
   const stocks = sector.constituents ?? [];
 
   if (stocks.length === 0) {
-    container.innerHTML = `
+    patchDOM(
+      container,
+      `
       <div class="heatmap-breadcrumb">
         <button class="btn-link" id="heatmap-back">← All Sectors</button>
         <span class="breadcrumb-sep">›</span>
         <span>${escapeHtml(sector.sector)}</span>
       </div>
-      <p class="empty-state">No constituent data available for ${escapeHtml(sector.sector)}.</p>`;
+      <p class="empty-state">No constituent data available for ${escapeHtml(sector.sector)}.</p>`,
+    );
     container.querySelector("#heatmap-back")?.addEventListener("click", onBack);
     return;
   }
@@ -191,7 +199,9 @@ export function renderSectorDrillDown(
 
   const activeSortClass = (k: SortKey): string => (k === sortKey ? " sort-active" : "");
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
     <div class="heatmap-breadcrumb">
       <button class="btn-link" id="heatmap-back">← All Sectors</button>
       <span class="breadcrumb-sep">›</span>
@@ -214,7 +224,8 @@ export function renderSectorDrillDown(
         </thead>
         <tbody>${rows}</tbody>
       </table>
-    </div>`;
+    </div>`,
+  );
 
   container.querySelector("#heatmap-back")?.addEventListener("click", onBack);
   container.querySelectorAll<HTMLElement>(".btn-sort").forEach((btn) => {

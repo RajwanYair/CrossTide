@@ -7,6 +7,7 @@
 import { fetchAllTickers, type TickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 interface MacroMetric {
   key: string;
@@ -71,13 +72,16 @@ export function renderMacroDashboard(
   const dxyChange = rows.get("DX-Y.NYB")?.changePercent ?? 0;
   const regime = deriveRiskRegime(vix, dxyChange);
 
-  container.innerHTML = `<div class="card macro-card">
+  patchDOM(
+    container,
+    `<div class="card macro-card">
     <div class="card-header">
       <h2>Macro Dashboard</h2>
       <span class="badge badge-${regime}">${regime}</span>
     </div>
     <div class="macro-grid">${cards}</div>
-  </div>`;
+  </div>`,
+  );
 }
 
 const macroDashboardCard: CardModule = {

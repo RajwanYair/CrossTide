@@ -5,6 +5,7 @@ import { loadConfig } from "../core/config";
 import { fetchAllTickers } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 type WindowKey = "1m" | "3m" | "6m" | "1y" | "ytd";
 
@@ -77,13 +78,16 @@ export function renderRelativeStrength(
     })
     .join("");
 
-  container.innerHTML = `<div class="card">
+  patchDOM(
+    container,
+    `<div class="card">
     <div class="card-header"><h2>Relative Strength</h2></div>
     <div class="card-body">
       <svg class="rs-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${lines}</svg>
       <div class="rs-legend">${legend}</div>
     </div>
-  </div>`;
+  </div>`,
+  );
 }
 
 const relativeStrengthCard: CardModule = {

@@ -12,6 +12,7 @@
  */
 import { getBreadthData, type BreadthEntry } from "./market-breadth-data";
 import type { CardModule } from "./registry";
+import { patchDOM } from "../core/patch-dom";
 
 // ── Pure computation helpers ───────────────────────────────────────────────
 
@@ -160,7 +161,10 @@ export function renderMarketBreadth(
   entries: readonly BreadthEntry[],
 ): void {
   if (entries.length === 0) {
-    container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">No data yet — wait for the watchlist to load.</p></div></div>`;
+    patchDOM(
+      container,
+      `<div class="card"><div class="card-body"><p class="empty-state">No data yet — wait for the watchlist to load.</p></div></div>`,
+    );
     return;
   }
 
@@ -190,7 +194,9 @@ export function renderMarketBreadth(
   const moversTable = [...s.topMovers].map(renderMoverRow).join("");
   const laggardsTable = [...s.topLaggards].map(renderMoverRow).join("");
 
-  container.innerHTML = `
+  patchDOM(
+    container,
+    `
   <div class="card">
     <div class="card-header"><h2>Market Breadth</h2></div>
     <div class="card-body">
@@ -242,7 +248,8 @@ export function renderMarketBreadth(
       </div>
 
     </div>
-  </div>`;
+  </div>`,
+  );
 }
 
 // ── Card module ─────────────────────────────────────────────────────────────
