@@ -1,0 +1,23 @@
+# gitleaks configuration — CrossTide (F10)
+# https://github.com/gitleaks/gitleaks
+
+title = "CrossTide gitleaks config"
+
+[extend]
+# Use the default gitleaks ruleset
+useDefault = true
+
+# Paths to ignore (generated / non-sensitive)
+[allowlist]
+  paths = [
+    '''node_modules/''',
+    '''dist/''',
+    '''coverage/''',
+    '''build/''',
+    '''playwright-report/''',
+    '''test-results/''',
+    '''\.lock$''',
+    '''package-lock\.json$''',
+    '''\.snap$''',
+  ]
+  description = "Non-sensitive generated files"
