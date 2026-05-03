@@ -500,8 +500,8 @@ export const TiingoSearchItemSchema = object({
 export const TiingoSearchSchema = array(TiingoSearchItemSchema);
 
 // ---------------------------------------------------------------------------
-// Twelve Data schema (legacy — Twelve Data is being retired from provider chain;
-// kept for schema-version migration compatibility)
+// Twelve Data schema (DEPRECATED — Twelve Data provider removed in R23;
+// schema kept only for IDB migration & snapshot validation of legacy data)
 // ---------------------------------------------------------------------------
 
 export const TwelveDataTimeSeriesSchema = object({

@@ -21,7 +21,7 @@ const PROVIDERS: ProviderHealth[] = [
     consecutiveErrors: 0,
   },
   {
-    name: "Twelve Data",
+    name: "Stooq",
     available: true,
     lastSuccessAt: NOW - 120_000,
     lastErrorAt: NOW - 600_000,
