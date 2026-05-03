@@ -6,6 +6,28 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.4.0] - 2025-07-05
+
+### Highlights
+
+Architecture quality sprint completing K4 (event delegation) and K1
+(patchDOM migration) across remaining card files.
+
+### Changed
+
+- **K4 — Event delegation**: Migrated `settings.ts`, `multi-chart-layout.ts`,
+  and `screener-columns.ts` from direct `addEventListener` to `createDelegate`
+  with `data-action` attributes. Only 5 legitimate direct listeners remain
+  (canvas mouse tracking, SVG crosshair sync, keyboard shortcuts).
+- **K1 — patchDOM migration**: Replaced `innerHTML` with `patchDOM()` in
+  `macro-dashboard-card.ts`, `sector-rotation-card.ts`,
+  `relative-strength-card.ts`, `strategy-comparison-card.ts`,
+  `signal-dsl-card.ts` (9 instances), and `backtest-card.ts` (5 instances).
+  Only 8 trivial `innerHTML` usages remain (empty clears, toast, alert row).
+- Updated ROADMAP.md refactor backlog: R14 and R15 marked near-complete.
+
+---
+
 ## [11.3.0] - 2025-07-04
 
 ### Highlights
