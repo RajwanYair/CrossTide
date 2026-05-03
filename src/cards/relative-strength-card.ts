@@ -102,7 +102,10 @@ const relativeStrengthCard: CardModule = {
       const watch = cfg.watchlist.map((w) => w.ticker).slice(0, 6);
       const tickers = Array.from(new Set([...watch, benchmark]));
       if (tickers.length === 0) {
-        container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">No watchlist tickers for comparison.</p></div></div>`;
+        patchDOM(
+          container,
+          `<div class="card"><div class="card-body"><p class="empty-state">No watchlist tickers for comparison.</p></div></div>`,
+        );
         return;
       }
       const rows = await fetchAllTickers(tickers, undefined, getNavigationSignal());
@@ -116,8 +119,9 @@ const relativeStrengthCard: CardModule = {
         series.push({ ticker, values: normalizeReturns(clipped) });
       }
 
-      container.innerHTML = `
-        <div class="rs-controls">
+      patchDOM(
+        container,
+        `<div class="rs-controls">
           <label>Window
             <select id="rs-window">
               <option value="1m"${windowKey === "1m" ? " selected" : ""}>1M</option>
@@ -132,13 +136,17 @@ const relativeStrengthCard: CardModule = {
           </label>
           <button id="rs-apply" type="button" data-action="apply-rs">Apply</button>
         </div>
-        <div id="rs-body"></div>`;
+        <div id="rs-body"></div>`,
+      );
 
       const body = container.querySelector<HTMLElement>("#rs-body");
       if (body) renderRelativeStrength(body, series, benchmark);
     }
 
-    container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">Loading relative strength…</p></div></div>`;
+    patchDOM(
+      container,
+      `<div class="card"><div class="card-body"><p class="empty-state">Loading relative strength…</p></div></div>`,
+    );
 
     const delegate = createDelegate(container, {
       "apply-rs": () => {
