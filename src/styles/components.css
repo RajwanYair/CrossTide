@@ -1962,3 +1962,27 @@
   border-radius: 2px;
   padding: 0 1px;
 }
+
+/* ── Data freshness badge ── */
+.freshness-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.freshness-fresh {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--green, #22c55e);
+}
+
+.freshness-stale {
+  background: rgba(234, 179, 8, 0.15);
+  color: var(--yellow, #eab308);
+}
+
+.freshness-expired {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--red, #ef4444);
+}
