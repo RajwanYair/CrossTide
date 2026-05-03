@@ -359,3 +359,13 @@ export {
   payloadToClipboardText,
 } from "./signal-strategy-io";
 export type { StrategyPayload, StrategyBundle, ImportResult } from "./signal-strategy-io";
+
+export {
+  createWatchlistSnapshot,
+  encodeWatchlistUrl,
+  decodeWatchlistUrl,
+  decodeWatchlistPayload,
+  mergeWatchlists,
+  snapshotToText,
+} from "./watchlist-share";
+export type { WatchlistSnapshot, WatchlistImportResult, MergeResult } from "./watchlist-share";
