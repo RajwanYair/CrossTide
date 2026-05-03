@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { normalizeReturns, renderRelativeStrength } from "../../../src/cards/relative-strength-card";
+import {
+  normalizeReturns,
+  renderRelativeStrength,
+} from "../../../src/cards/relative-strength-card";
 
 describe("relative-strength-card", () => {
   it("normalizeReturns starts at 0", () => {
@@ -19,10 +22,14 @@ describe("relative-strength-card", () => {
 
   it("renderRelativeStrength renders svg and legend", () => {
     const el = document.createElement("div");
-    renderRelativeStrength(el, [
-      { ticker: "AAPL", values: [0, 1, 2] },
-      { ticker: "SPY", values: [0, 0.5, 1] },
-    ], "SPY");
+    renderRelativeStrength(
+      el,
+      [
+        { ticker: "AAPL", values: [0, 1, 2] },
+        { ticker: "SPY", values: [0, 0.5, 1] },
+      ],
+      "SPY",
+    );
     expect(el.innerHTML).toContain("rs-chart");
     expect(el.innerHTML).toContain("AAPL");
     expect(el.innerHTML).toContain("SPY");

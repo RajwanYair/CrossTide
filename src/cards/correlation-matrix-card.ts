@@ -55,20 +55,25 @@ export function renderCorrelationTable(
   const n = ids.length;
   if (n === 0) return `<p class="empty-state">No tickers to compare.</p>`;
 
-  const header = `<th class="corr-cell corr-label"></th>` +
+  const header =
+    `<th class="corr-cell corr-label"></th>` +
     ids.map((id) => `<th class="corr-cell corr-label">${esc(id)}</th>`).join("");
 
-  const rows = ids.map((rowId, i) => {
-    const cells = ids.map((_colId, j) => {
-      const r = matrix[i]![j]!;
-      const bg = correlationToColor(r);
-      const bold = i === j ? " corr-diagonal" : "";
-      const warn = i !== j && Math.abs(r) > 0.85 ? " corr-warn" : "";
-      const display = i === j ? "—" : r.toFixed(2);
-      return `<td class="corr-cell${bold}${warn}" style="background:${bg}" title="${esc(rowId)} / ${esc(ids[j]!)}: r = ${r.toFixed(4)}">${display}</td>`;
-    }).join("");
-    return `<tr><th class="corr-cell corr-label">${esc(rowId)}</th>${cells}</tr>`;
-  }).join("");
+  const rows = ids
+    .map((rowId, i) => {
+      const cells = ids
+        .map((_colId, j) => {
+          const r = matrix[i]![j]!;
+          const bg = correlationToColor(r);
+          const bold = i === j ? " corr-diagonal" : "";
+          const warn = i !== j && Math.abs(r) > 0.85 ? " corr-warn" : "";
+          const display = i === j ? "—" : r.toFixed(2);
+          return `<td class="corr-cell${bold}${warn}" style="background:${bg}" title="${esc(rowId)} / ${esc(ids[j]!)}: r = ${r.toFixed(4)}">${display}</td>`;
+        })
+        .join("");
+      return `<tr><th class="corr-cell corr-label">${esc(rowId)}</th>${cells}</tr>`;
+    })
+    .join("");
 
   return `<div class="corr-scroll"><table class="corr-table" aria-label="Correlation matrix">
     <thead><tr>${header}</tr></thead>
@@ -132,9 +137,7 @@ function renderContent(
   } else if (!series || series.length === 0) {
     body = `<p class="empty-state">Add tickers to your watchlist to see correlations.</p>`;
   } else {
-    const filtered = excludeCrypto
-      ? series.filter((s) => s.instrumentType !== "crypto")
-      : series;
+    const filtered = excludeCrypto ? series.filter((s) => s.instrumentType !== "crypto") : series;
 
     if (filtered.length < 2) {
       body = `<p class="empty-state">Need at least 2 non-crypto tickers to compute correlations.</p>`;
@@ -146,12 +149,13 @@ function renderContent(
       const { ids, matrix } = correlationMatrix(inputs);
       const warnings = findOverConcentration(ids, matrix);
 
-      const warningHtml = warnings.length > 0
-        ? `<div class="corr-warnings">
+      const warningHtml =
+        warnings.length > 0
+          ? `<div class="corr-warnings">
             <strong>⚠ Over-concentration (|r| > 0.85):</strong>
             <ul>${warnings.map((w) => `<li>${esc(w.a)} / ${esc(w.b)}: r = ${w.r.toFixed(3)}</li>`).join("")}</ul>
           </div>`
-        : "";
+          : "";
 
       body = warningHtml + renderCorrelationTable(ids, matrix);
     }
@@ -193,8 +197,14 @@ const correlationMatrixCard: CardModule = {
       renderContent(
         container,
         { period, excludeCrypto, series, loading: false, error: null },
-        (p) => { period = p; rerender(); },
-        (v) => { excludeCrypto = v; rerender(); },
+        (p) => {
+          period = p;
+          rerender();
+        },
+        (v) => {
+          excludeCrypto = v;
+          rerender();
+        },
       );
     }
 
@@ -206,8 +216,12 @@ const correlationMatrixCard: CardModule = {
       renderContent(
         container,
         { period, excludeCrypto, series: null, loading: true, error: null },
-        (p) => { period = p; },
-        (v) => { excludeCrypto = v; },
+        (p) => {
+          period = p;
+        },
+        (v) => {
+          excludeCrypto = v;
+        },
       );
 
       const config = loadConfig();
@@ -220,9 +234,7 @@ const correlationMatrixCard: CardModule = {
       }
 
       try {
-        const results = await Promise.allSettled(
-          tickers.map((t) => fetchTickerData(t, ac.signal)),
-        );
+        const results = await Promise.allSettled(tickers.map((t) => fetchTickerData(t, ac.signal)));
 
         const loaded: TickerSeries[] = [];
         for (const result of results) {
@@ -245,8 +257,14 @@ const correlationMatrixCard: CardModule = {
           renderContent(
             container,
             { period, excludeCrypto, series: null, loading: false, error: "Failed to load data." },
-            (p) => { period = p; rerender(); },
-            (v) => { excludeCrypto = v; rerender(); },
+            (p) => {
+              period = p;
+              rerender();
+            },
+            (v) => {
+              excludeCrypto = v;
+              rerender();
+            },
           );
         }
       }

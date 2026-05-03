@@ -40,9 +40,9 @@ describe("computeBreadthSummary", () => {
 
   it("counts advancers / decliners by changePercent threshold 0.05", () => {
     const entries = [
-      makeEntry({ changePercent: 1.5 }),    // advancer
-      makeEntry({ changePercent: -2.0 }),   // decliner
-      makeEntry({ changePercent: 0.02 }),   // unchanged
+      makeEntry({ changePercent: 1.5 }), // advancer
+      makeEntry({ changePercent: -2.0 }), // decliner
+      makeEntry({ changePercent: 0.02 }), // unchanged
     ];
     const s = computeBreadthSummary(entries);
     expect(s.advancers).toBe(1);
@@ -55,7 +55,7 @@ describe("computeBreadthSummary", () => {
       makeEntry({ aboveSma50: true }),
       makeEntry({ aboveSma50: true }),
       makeEntry({ aboveSma50: false }),
-      makeEntry({ aboveSma50: null }),  // excluded from calc
+      makeEntry({ aboveSma50: null }), // excluded from calc
     ];
     const s = computeBreadthSummary(entries);
     expect(s.aboveSma50Pct).toBeCloseTo(2 / 3);
@@ -155,8 +155,22 @@ describe("renderMarketBreadth", () => {
 
   it("renders all four panels when data present", () => {
     const entries = [
-      makeEntry({ ticker: "AAPL", price: 150, changePercent: 1.2, consensus: "BUY", aboveSma50: true, aboveSma200: true }),
-      makeEntry({ ticker: "MSFT", price: 300, changePercent: -0.5, consensus: "SELL", aboveSma50: false, aboveSma200: false }),
+      makeEntry({
+        ticker: "AAPL",
+        price: 150,
+        changePercent: 1.2,
+        consensus: "BUY",
+        aboveSma50: true,
+        aboveSma200: true,
+      }),
+      makeEntry({
+        ticker: "MSFT",
+        price: 300,
+        changePercent: -0.5,
+        consensus: "SELL",
+        aboveSma50: false,
+        aboveSma200: false,
+      }),
     ];
     renderMarketBreadth(container, entries);
     expect(container.innerHTML).toContain("Signal Distribution");

@@ -49,7 +49,8 @@ function parseCsv(csv: string, ticker: string): DailyCandle[] {
   if (lines.length < 2) throw new FetchError(`Stooq: no data returned for ${ticker}`);
 
   const header = lines[0]?.toLowerCase().trim() ?? "";
-  if (!header.startsWith("date")) throw new FetchError(`Stooq: unexpected CSV header for ${ticker}`);
+  if (!header.startsWith("date"))
+    throw new FetchError(`Stooq: unexpected CSV header for ${ticker}`);
 
   const candles: DailyCandle[] = [];
   for (let i = 1; i < lines.length; i++) {

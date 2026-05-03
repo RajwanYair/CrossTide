@@ -9,7 +9,12 @@
  * the strength score by default. Per-method weights (G20) allow users to
  * override this — a weight of 0 disables a method from the tally.
  */
-import type { ConsensusResult, MethodSignal, MethodWeights, SignalDirection } from "../types/domain";
+import type {
+  ConsensusResult,
+  MethodSignal,
+  MethodWeights,
+  SignalDirection,
+} from "../types/domain";
 import { DEFAULT_METHOD_WEIGHTS } from "../types/domain";
 
 const BUY_METHODS = new Set([
@@ -66,10 +71,7 @@ export function evaluateConsensus(
     .reduce((sum, s) => sum + resolveWeight(s.method, weights), 0);
 
   // Total theoretical denominator = sum of all active method weights
-  const totalWeighted = [...BUY_METHODS].reduce(
-    (sum, m) => sum + resolveWeight(m, weights),
-    0,
-  );
+  const totalWeighted = [...BUY_METHODS].reduce((sum, m) => sum + resolveWeight(m, weights), 0);
 
   let direction: SignalDirection;
   let strength: number;

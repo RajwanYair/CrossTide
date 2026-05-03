@@ -114,8 +114,18 @@ describe("evaluateConsensus — per-method weights (G20)", () => {
   it("equal weights (all=1) still requires Micho BUY for BUY consensus", () => {
     const signals = [makeSignal("Micho", "BUY"), makeSignal("RSI", "BUY")];
     const result = evaluateConsensus("AAPL", signals, {
-      Micho: 1, RSI: 1, MACD: 1, Bollinger: 1, Stochastic: 1, OBV: 1,
-      ADX: 1, CCI: 1, SAR: 1, WilliamsR: 1, MFI: 1, SuperTrend: 1,
+      Micho: 1,
+      RSI: 1,
+      MACD: 1,
+      Bollinger: 1,
+      Stochastic: 1,
+      OBV: 1,
+      ADX: 1,
+      CCI: 1,
+      SAR: 1,
+      WilliamsR: 1,
+      MFI: 1,
+      SuperTrend: 1,
     });
     expect(result.direction).toBe("BUY");
     // 1 (Micho) + 1 (RSI) = 2 / 12 = 1/6

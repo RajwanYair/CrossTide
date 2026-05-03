@@ -1,0 +1,11 @@
+{
+  "version": 1.1,
+  "globalAttributes": [
+    {
+      "name": "fetchpriority",
+      "description": "Provides a hint of the relative priority to use when fetching the resource.",
+      "values": [{ "name": "high" }, { "name": "low" }, { "name": "auto" }]
+    }
+  ],
+  "tags": []
+}

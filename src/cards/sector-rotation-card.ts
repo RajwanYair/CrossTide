@@ -9,7 +9,17 @@ import type { DailyCandle } from "../types/domain";
 import type { CardModule } from "./registry";
 
 const SECTOR_ETFS = [
-  "XLC", "XLY", "XLP", "XLE", "XLF", "XLV", "XLI", "XLB", "XLRE", "XLK", "XLU",
+  "XLC",
+  "XLY",
+  "XLP",
+  "XLE",
+  "XLF",
+  "XLV",
+  "XLI",
+  "XLB",
+  "XLRE",
+  "XLK",
+  "XLU",
 ] as const;
 
 const WINDOWS: Array<{ key: string; label: string; days: number }> = [

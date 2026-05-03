@@ -109,20 +109,23 @@ describe("renderHeatmap", () => {
 // ── G21: Drill-down helpers ────────────────────────────────────────────────
 
 const STOCKS: ConstituentStock[] = [
-  { ticker: "AAPL", name: "Apple Inc.", price: 200, changePercent: 2.5, weight: 0.30 },
+  { ticker: "AAPL", name: "Apple Inc.", price: 200, changePercent: 2.5, weight: 0.3 },
   { ticker: "MSFT", name: "Microsoft", price: 400, changePercent: 1.0, weight: 0.25 },
   { ticker: "NVDA", name: "NVIDIA", price: 900, changePercent: 4.0, weight: 0.15 },
 ];
 
 const SECTOR_WITH_STOCKS: SectorDataWithConstituents = {
-  sector: "Technology", marketCap: 14_200, changePercent: 1.2, tickerCount: 3,
+  sector: "Technology",
+  marketCap: 14_200,
+  changePercent: 1.2,
+  tickerCount: 3,
   constituents: STOCKS,
 };
 
 describe("absoluteMove", () => {
   it("computes |changePercent * price * weight|", () => {
     const stock = STOCKS[0]!;
-    expect(absoluteMove(stock)).toBeCloseTo(2.5 * 200 * 0.30);
+    expect(absoluteMove(stock)).toBeCloseTo(2.5 * 200 * 0.3);
   });
 });
 
@@ -195,7 +198,11 @@ describe("renderSectorDrillDown", () => {
 
   it("shows empty state when no constituents", () => {
     const emptySector: SectorDataWithConstituents = {
-      sector: "Energy", marketCap: 3500, changePercent: -2.3, tickerCount: 0, constituents: [],
+      sector: "Energy",
+      marketCap: 3500,
+      changePercent: -2.3,
+      tickerCount: 0,
+      constituents: [],
     };
     renderSectorDrillDown(container, emptySector, mockBack);
     expect(container.innerHTML).toContain("empty-state");
@@ -203,7 +210,10 @@ describe("renderSectorDrillDown", () => {
 
   it("escapes XSS in ticker names", () => {
     const xssSector: SectorDataWithConstituents = {
-      sector: "Test", marketCap: 100, changePercent: 0, tickerCount: 1,
+      sector: "Test",
+      marketCap: 100,
+      changePercent: 0,
+      tickerCount: 1,
       constituents: [{ ticker: "<xss>", price: 10, changePercent: 0, weight: 1 }],
     };
     renderSectorDrillDown(container, xssSector, mockBack);

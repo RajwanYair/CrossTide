@@ -15,7 +15,12 @@
  * A5: Computation is offloaded to a Web Worker via worker-rpc, keeping
  *     the main thread responsive during long backtests.
  */
-import { summarizeTrades, type ClosedTrade, type EquityPoint, type buildEquityCurve } from "../domain/equity-curve";
+import {
+  summarizeTrades,
+  type ClosedTrade,
+  type EquityPoint,
+  type buildEquityCurve,
+} from "../domain/equity-curve";
 import { cagr } from "../domain/risk-ratios";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";

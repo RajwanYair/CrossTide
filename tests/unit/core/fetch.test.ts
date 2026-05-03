@@ -100,7 +100,9 @@ describe("fetchWithTimeout — parent signal (F7)", () => {
     );
     const parent = new AbortController();
     parent.abort();
-    await expect(fetchWithTimeout("https://example.com", {}, 10000, parent.signal)).rejects.toThrow();
+    await expect(
+      fetchWithTimeout("https://example.com", {}, 10000, parent.signal),
+    ).rejects.toThrow();
   });
 
   it("aborts when parent signal fires mid-flight", async () => {
@@ -116,7 +118,9 @@ describe("fetchWithTimeout — parent signal (F7)", () => {
       }),
     );
     setTimeout(() => parent.abort(), 10);
-    await expect(fetchWithTimeout("https://example.com", {}, 10000, parent.signal)).rejects.toThrow();
+    await expect(
+      fetchWithTimeout("https://example.com", {}, 10000, parent.signal),
+    ).rejects.toThrow();
   });
 });
 
@@ -126,9 +130,9 @@ describe("fetchWithRetry — abort on parent signal (F7)", () => {
   });
 
   it("does not retry on AbortError", async () => {
-    const fetchMock = vi.fn().mockRejectedValue(
-      Object.assign(new Error("aborted"), { name: "AbortError" }),
-    );
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValue(Object.assign(new Error("aborted"), { name: "AbortError" }));
     vi.stubGlobal("fetch", fetchMock);
     const parent = new AbortController();
     parent.abort();

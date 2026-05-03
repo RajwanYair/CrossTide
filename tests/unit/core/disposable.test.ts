@@ -2,7 +2,11 @@
  * Disposable helpers (G12) — explicit resource management primitives.
  */
 import { describe, it, expect, vi } from "vitest";
-import { toDisposable, abortOnDispose, onRouteChangeDisposable } from "../../../src/core/disposable";
+import {
+  toDisposable,
+  abortOnDispose,
+  onRouteChangeDisposable,
+} from "../../../src/core/disposable";
 
 describe("toDisposable", () => {
   it("calls teardown on dispose", () => {

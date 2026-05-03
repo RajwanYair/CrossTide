@@ -170,12 +170,13 @@ export function renderSectorDrillDown(
   const sorted = sortConstituents(stocks, sortKey);
   const maxMove = Math.max(...sorted.map(absoluteMove), 0.001);
 
-  const rows = sorted.map((s) => {
-    const move = absoluteMove(s);
-    const barPct = ((move / maxMove) * 100).toFixed(1);
-    const sign = s.changePercent >= 0 ? "+" : "";
-    const cls = s.changePercent >= 0 ? "up" : "dn";
-    return `<tr>
+  const rows = sorted
+    .map((s) => {
+      const move = absoluteMove(s);
+      const barPct = ((move / maxMove) * 100).toFixed(1);
+      const sign = s.changePercent >= 0 ? "+" : "";
+      const cls = s.changePercent >= 0 ? "up" : "dn";
+      return `<tr>
       <td class="font-mono">${escapeHtml(s.ticker)}</td>
       <td>${s.name ? escapeHtml(s.name) : ""}</td>
       <td class="font-mono">$${s.price.toFixed(2)}</td>
@@ -185,10 +186,10 @@ export function renderSectorDrillDown(
         <div class="heatmap-attr-bar" style="width:${barPct}%"></div>
       </td>
     </tr>`;
-  }).join("");
+    })
+    .join("");
 
-  const activeSortClass = (k: SortKey): string =>
-    k === sortKey ? " sort-active" : "";
+  const activeSortClass = (k: SortKey): string => (k === sortKey ? " sort-active" : "");
 
   container.innerHTML = `
     <div class="heatmap-breadcrumb">

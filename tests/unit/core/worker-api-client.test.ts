@@ -172,7 +172,9 @@ describe("WorkerApiClient", () => {
     });
 
     it("returns ok:false on endpoint failure", async () => {
-      const client = createApiClient(BASE, { fetchFn: mockFetch(400, { error: "bad expression" }) });
+      const client = createApiClient(BASE, {
+        fetchFn: mockFetch(400, { error: "bad expression" }),
+      });
       const result = await client.signalDslExecute({ expression: "(" });
       expect(result.ok).toBe(false);
     });

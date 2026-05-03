@@ -25,7 +25,13 @@ export function normalizeReturns(closes: readonly number[]): number[] {
   return closes.map((c) => ((c - base) / base) * 100);
 }
 
-function linePath(values: readonly number[], w: number, h: number, min: number, max: number): string {
+function linePath(
+  values: readonly number[],
+  w: number,
+  h: number,
+  min: number,
+  max: number,
+): string {
   if (values.length < 2) return "";
   const range = max - min || 1;
   return values
@@ -53,19 +59,23 @@ export function renderRelativeStrength(
   const w = 760;
   const h = 300;
 
-  const lines = series.map((s, idx) => {
-    const isBenchmark = s.ticker === benchmark;
-    const path = linePath(s.values, w, h, min, max);
-    const stroke = isBenchmark ? "#94a3b8" : COLORS[idx % COLORS.length];
-    const dash = isBenchmark ? ' stroke-dasharray="4 4"' : "";
-    return `<path d="${path}" fill="none" stroke="${stroke}" stroke-width="2"${dash} />`;
-  }).join("");
+  const lines = series
+    .map((s, idx) => {
+      const isBenchmark = s.ticker === benchmark;
+      const path = linePath(s.values, w, h, min, max);
+      const stroke = isBenchmark ? "#94a3b8" : COLORS[idx % COLORS.length];
+      const dash = isBenchmark ? ' stroke-dasharray="4 4"' : "";
+      return `<path d="${path}" fill="none" stroke="${stroke}" stroke-width="2"${dash} />`;
+    })
+    .join("");
 
-  const legend = series.map((s, idx) => {
-    const color = s.ticker === benchmark ? "#94a3b8" : COLORS[idx % COLORS.length];
-    const last = s.values[s.values.length - 1] ?? 0;
-    return `<span class="rs-legend-item"><span class="rs-dot" style="background:${color}"></span>${s.ticker} ${last >= 0 ? "+" : ""}${last.toFixed(2)}%</span>`;
-  }).join("");
+  const legend = series
+    .map((s, idx) => {
+      const color = s.ticker === benchmark ? "#94a3b8" : COLORS[idx % COLORS.length];
+      const last = s.values[s.values.length - 1] ?? 0;
+      return `<span class="rs-legend-item"><span class="rs-dot" style="background:${color}"></span>${s.ticker} ${last >= 0 ? "+" : ""}${last.toFixed(2)}%</span>`;
+    })
+    .join("");
 
   container.innerHTML = `<div class="card">
     <div class="card-header"><h2>Relative Strength</h2></div>
@@ -123,7 +133,10 @@ const relativeStrengthCard: CardModule = {
       if (body) renderRelativeStrength(body, series, benchmark);
       container.querySelector("#rs-apply")?.addEventListener("click", () => {
         const nextW = container.querySelector<HTMLSelectElement>("#rs-window")?.value as WindowKey;
-        const nextB = container.querySelector<HTMLInputElement>("#rs-benchmark")?.value.trim().toUpperCase();
+        const nextB = container
+          .querySelector<HTMLInputElement>("#rs-benchmark")
+          ?.value.trim()
+          .toUpperCase();
         if (nextW) windowKey = nextW;
         if (nextB) benchmark = nextB;
         void loadAndRender();

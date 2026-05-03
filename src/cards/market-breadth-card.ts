@@ -19,13 +19,13 @@ export interface BreadthSummary {
   buyCount: number;
   neutralCount: number;
   sellCount: number;
-  aboveSma50Pct: number | null;   // 0-1
-  aboveSma200Pct: number | null;  // 0-1
+  aboveSma50Pct: number | null; // 0-1
+  aboveSma200Pct: number | null; // 0-1
   advancers: number;
   decliners: number;
   unchanged: number;
-  topMovers: readonly BreadthEntry[];    // sorted desc by changePercent
-  topLaggards: readonly BreadthEntry[];  // sorted asc by changePercent
+  topMovers: readonly BreadthEntry[]; // sorted desc by changePercent
+  topLaggards: readonly BreadthEntry[]; // sorted asc by changePercent
 }
 
 export function computeBreadthSummary(entries: readonly BreadthEntry[]): BreadthSummary {
@@ -92,7 +92,8 @@ function signedPct(n: number): string {
 /** Render an SVG donut chart (radius 48, viewBox 100×100). */
 export function renderDonut(buy: number, neutral: number, sell: number): string {
   const total = buy + neutral + sell;
-  if (total === 0) return `<svg class="breadth-donut" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="38" fill="none" stroke="var(--border)" stroke-width="14"/></svg>`;
+  if (total === 0)
+    return `<svg class="breadth-donut" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="38" fill="none" stroke="var(--border)" stroke-width="14"/></svg>`;
 
   const cx = 50;
   const cy = 50;
@@ -123,7 +124,8 @@ export function renderDonut(buy: number, neutral: number, sell: number): string 
 /** Render a horizontal bar showing advance/decline ratio. */
 export function renderADBar(advancers: number, unchanged: number, decliners: number): string {
   const total = advancers + unchanged + decliners;
-  if (total === 0) return `<div class="breadth-ad-bar"><span class="empty-state">No data</span></div>`;
+  if (total === 0)
+    return `<div class="breadth-ad-bar"><span class="empty-state">No data</span></div>`;
 
   const aPct = ((advancers / total) * 100).toFixed(1);
   const uPct = ((unchanged / total) * 100).toFixed(1);
@@ -153,7 +155,10 @@ function renderMoverRow(e: BreadthEntry): string {
 
 // ── Main render ────────────────────────────────────────────────────────────
 
-export function renderMarketBreadth(container: HTMLElement, entries: readonly BreadthEntry[]): void {
+export function renderMarketBreadth(
+  container: HTMLElement,
+  entries: readonly BreadthEntry[],
+): void {
   if (entries.length === 0) {
     container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">No data yet — wait for the watchlist to load.</p></div></div>`;
     return;

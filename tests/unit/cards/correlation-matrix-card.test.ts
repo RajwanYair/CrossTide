@@ -95,7 +95,10 @@ describe("renderCorrelationTable", () => {
 describe("findOverConcentration", () => {
   it("returns empty array when no pairs above threshold", () => {
     const ids = ["A", "B"];
-    const matrix = [[1, 0.5], [0.5, 1]];
+    const matrix = [
+      [1, 0.5],
+      [0.5, 1],
+    ];
     expect(findOverConcentration(ids, matrix)).toEqual([]);
   });
 

@@ -38,11 +38,12 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "css.lint.validProperties": [],
-  "css.lint.compatibleVendorPrefixes": "warning",
-  "css.lint.unknownAtRules": "warning",
+  "css.lint.compatibleVendorPrefixes": "ignore",
+  "css.lint.unknownAtRules": "ignore",
   "css.validate": true,
   "css.customData": ["./config/css-custom-data.json"],
   "html.validate.scripts": true,
   "html.format.wrapLineLength": 120,
+  "html.customData": ["./config/html-custom-data.json"],
   "github-actions.workflows.pinned.ignoredActionsAuthors": ["actions", "cloudflare", "softprops"]
 }
