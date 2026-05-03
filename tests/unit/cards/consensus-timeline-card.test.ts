@@ -78,7 +78,7 @@ describe("consensus-timeline-card (CardModule)", () => {
     const before = container.querySelector("#timeline-single-view")?.innerHTML;
     // Switch to MSFT
     select.value = "MSFT";
-    select.dispatchEvent(new Event("change"));
+    select.dispatchEvent(new Event("change", { bubbles: true }));
     const after = container.querySelector("#timeline-single-view")?.innerHTML;
     // Content should change when switching tickers
     expect(after?.length).toBeGreaterThan(0);
