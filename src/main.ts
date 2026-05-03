@@ -42,7 +42,7 @@ import { setScreenerData } from "./cards/screener-data";
 import { setBreadthData } from "./cards/market-breadth-data";
 import { computeRsiSeries } from "./domain/rsi-calculator";
 import { computeSma } from "./domain/sma-calculator";
-import type { InstrumentType } from "./types/domain";
+import type { InstrumentType, ConsensusResult } from "./types/domain";
 import type { ScreenerInput } from "./cards/screener";
 import { buildShareUrl, readShareUrl, encodeWatchlistUrl } from "./core/share-state";
 import {
@@ -65,6 +65,7 @@ import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
 import { createAutocomplete } from "./ui/ticker-autocomplete";
 import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
+import { evaluateAlertRules } from "./core/alert-rules-evaluator";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const prefetchedCards = new Set<RouteName>();
@@ -326,6 +327,13 @@ function main(): void {
           : null,
     }));
     setBreadthData(breadthInputs);
+
+    // L3: Evaluate multi-condition alert rules against latest signals
+    const consensusMap = new Map<string, ConsensusResult>();
+    for (const [t, data] of results) {
+      if (data.consensus && !data.error) consensusMap.set(t, data.consensus);
+    }
+    evaluateAlertRules(consensusMap);
 
     const errors = [...results.values()].filter((d) => d.error);
     if (errors.length > 0 && errors.length < tickers.length) {
