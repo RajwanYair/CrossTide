@@ -1811,3 +1811,35 @@
 .column-toggle input[type="checkbox"] {
   accent-color: var(--primary);
 }
+
+/* ── Timeframe selector bar ── */
+.timeframe-bar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 0;
+  margin-bottom: 8px;
+}
+
+.timeframe-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.timeframe-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.timeframe-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}

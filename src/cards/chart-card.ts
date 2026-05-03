@@ -11,6 +11,7 @@ import { renderFundamentalsOverlay } from "./fundamental-overlay";
 import { attachLwChart, type LwChartHandle } from "./lw-chart";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
+import { TIMEFRAME_PRESETS, DEFAULT_TIMEFRAME, type TimeframePreset } from "../core/data-service";
 import { fetchFundamentals } from "../domain/fundamental-data";
 import { showToast } from "../ui/toast";
 import { getNavigationSignal } from "../ui/router";
@@ -90,6 +91,7 @@ async function renderChartWithData(
   container: HTMLElement,
   ticker: string,
   lwHandle: { current: LwChartHandle | null },
+  timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
 ): Promise<void> {
   // Dispose previous LWC instance before re-rendering
   lwHandle.current?.dispose();
@@ -104,7 +106,7 @@ async function renderChartWithData(
   renderChart(container, { ticker, candles: [] });
 
   try {
-    const data = await fetchTickerData(ticker, getNavigationSignal());
+    const data = await fetchTickerData(ticker, getNavigationSignal(), undefined, timeframe);
     const candles = data.candles ?? [];
 
     // Re-render the HTML header with real data
@@ -144,14 +146,35 @@ const chartCard: CardModule = {
   mount(container, ctx) {
     const ticker = ctx.params["symbol"] ?? "";
     const lwHandle: { current: LwChartHandle | null } = { current: null };
+    let activeTimeframe: TimeframePreset = DEFAULT_TIMEFRAME;
 
-    void renderChartWithData(container, ticker, lwHandle);
+    // ── Timeframe selector bar ──
+    const tfBar = document.createElement("div");
+    tfBar.className = "timeframe-bar";
+    tfBar.setAttribute("role", "toolbar");
+    tfBar.setAttribute("aria-label", "Chart timeframe");
+    for (const preset of TIMEFRAME_PRESETS) {
+      const btn = document.createElement("button");
+      btn.className = `btn btn-sm timeframe-btn${preset.label === activeTimeframe.label ? " active" : ""}`;
+      btn.textContent = preset.label;
+      btn.dataset["range"] = preset.range;
+      btn.addEventListener("click", () => {
+        activeTimeframe = preset;
+        tfBar.querySelectorAll(".timeframe-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        void renderChartWithData(container, ticker, lwHandle, preset);
+      });
+      tfBar.appendChild(btn);
+    }
+    container.prepend(tfBar);
+
+    void renderChartWithData(container, ticker, lwHandle, activeTimeframe);
     renderBacktestUI(container, ticker);
 
     return {
       update(newCtx: CardContext): void {
         const t = newCtx.params["symbol"] ?? "";
-        void renderChartWithData(container, t, lwHandle);
+        void renderChartWithData(container, t, lwHandle, activeTimeframe);
         renderBacktestUI(container, t);
       },
       dispose(): void {

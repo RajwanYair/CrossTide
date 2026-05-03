@@ -62,11 +62,35 @@ interface CandleResult {
 }
 
 /**
- * Fetch history candles from Yahoo Finance for a single ticker.
- * Uses 1-year range to have enough data for all indicators (SMA150 needs 151+ candles).
+ * Chart timeframe presets — range + interval combinations.
  */
-async function fetchCandles(ticker: string, signal?: AbortSignal): Promise<CandleResult> {
-  const url = `${YAHOO_BASE}/v8/finance/chart/${encodeURIComponent(ticker)}?range=1y&interval=1d`;
+export interface TimeframePreset {
+  label: string;
+  range: string;
+  interval: string;
+}
+
+export const TIMEFRAME_PRESETS: TimeframePreset[] = [
+  { label: "1D", range: "1d", interval: "5m" },
+  { label: "5D", range: "5d", interval: "15m" },
+  { label: "1M", range: "1mo", interval: "1h" },
+  { label: "3M", range: "3mo", interval: "1d" },
+  { label: "1Y", range: "1y", interval: "1d" },
+  { label: "5Y", range: "5y", interval: "1wk" },
+];
+
+export const DEFAULT_TIMEFRAME: TimeframePreset = TIMEFRAME_PRESETS[4]!; // 1Y
+
+/**
+ * Fetch history candles from Yahoo Finance for a single ticker.
+ * Uses 1-year range by default to have enough data for all indicators (SMA150 needs 151+ candles).
+ */
+async function fetchCandles(
+  ticker: string,
+  signal?: AbortSignal,
+  timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
+): Promise<CandleResult> {
+  const url = `${YAHOO_BASE}/v8/finance/chart/${encodeURIComponent(ticker)}?range=${timeframe.range}&interval=${timeframe.interval}`;
   const res = await fetchWithTimeout(url, {}, 15000, signal);
   const raw: unknown = await res.json();
 
@@ -119,9 +143,10 @@ export async function fetchTickerData(
   ticker: string,
   signal?: AbortSignal,
   weights?: MethodWeights,
+  timeframe?: TimeframePreset,
 ): Promise<TickerData> {
   try {
-    const { candles, instrumentType, sector, name } = await fetchCandles(ticker, signal);
+    const { candles, instrumentType, sector, name } = await fetchCandles(ticker, signal, timeframe);
 
     if (candles.length === 0) {
       return emptyData(ticker, "No candle data available");
