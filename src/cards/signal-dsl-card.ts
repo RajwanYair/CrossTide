@@ -119,14 +119,17 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
   function evaluate(): void {
     const expr = exprInput.value.trim();
     if (!expr) {
-      resultArea.innerHTML = `<span class="text-secondary">Enter an expression above.</span>`;
+      patchDOM(resultArea, `<span class="text-secondary">Enter an expression above.</span>`);
       return;
     }
 
     const rawVars = varsInput.value.trim();
     const vars = parseVars(rawVars);
     if (vars === null) {
-      resultArea.innerHTML = `<span class="signal-sell">Variables must be a JSON object with numeric values, e.g. {"rsi": 28}</span>`;
+      patchDOM(
+        resultArea,
+        `<span class="signal-sell">Variables must be a JSON object with numeric values, e.g. {"rsi": 28}</span>`,
+      );
       return;
     }
 
@@ -135,10 +138,13 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
       const compiled = compileSignal(expr);
       const ctx: EvalContext = { vars, funcs: BUILTIN_FUNCS };
       const result = compiled(ctx);
-      resultArea.innerHTML = `<span class="text-secondary">Result (Local): </span>${renderResult(result)}`;
+      patchDOM(
+        resultArea,
+        `<span class="text-secondary">Result (Local): </span>${renderResult(result)}`,
+      );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      resultArea.innerHTML = `<span class="signal-sell">Error: ${escapeHtml(msg)}</span>`;
+      patchDOM(resultArea, `<span class="signal-sell">Error: ${escapeHtml(msg)}</span>`);
       return;
     }
 
@@ -151,7 +157,10 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
       void (async (): Promise<void> => {
         const remote = await getApiClient().signalDslExecute({ expression: expr, vars });
         if (remote.ok) {
-          resultArea.innerHTML = `<span class="text-secondary">Result (Worker): </span>${renderResult(remote.value.result)}`;
+          patchDOM(
+            resultArea,
+            `<span class="text-secondary">Result (Worker): </span>${renderResult(remote.value.result)}`,
+          );
         }
       })();
     }
@@ -169,7 +178,7 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
     clear: () => {
       exprInput.value = "";
       varsInput.value = "";
-      resultArea.innerHTML = "";
+      patchDOM(resultArea, "");
     },
     save: () => {
       void (async (): Promise<void> => {
@@ -181,7 +190,7 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
         };
         const saved = await saveStrategyToDisk(payload);
         if (saved) {
-          resultArea.innerHTML = `<span class="text-secondary">Strategy saved.</span>`;
+          patchDOM(resultArea, `<span class="text-secondary">Strategy saved.</span>`);
         }
       })();
     },
@@ -189,12 +198,15 @@ export function mount(container: HTMLElement, _ctx: CardContext): CardHandle {
       void (async (): Promise<void> => {
         const payload = await openStrategyFromDisk();
         if (!payload) {
-          resultArea.innerHTML = `<span class="text-secondary">No strategy loaded.</span>`;
+          patchDOM(resultArea, `<span class="text-secondary">No strategy loaded.</span>`);
           return;
         }
         exprInput.value = payload.expression;
         varsInput.value = payload.varsJson;
-        resultArea.innerHTML = `<span class="text-secondary">Strategy loaded (${new Date(payload.savedAt).toLocaleString()}).</span>`;
+        patchDOM(
+          resultArea,
+          `<span class="text-secondary">Strategy loaded (${new Date(payload.savedAt).toLocaleString()}).</span>`,
+        );
       })();
     },
   });
