@@ -16,18 +16,20 @@ import "../../../src/locales/en";
 import "../../../src/locales/es";
 import "../../../src/locales/de";
 import "../../../src/locales/zh";
+import "../../../src/locales/he";
 
 describe("i18n locale expansion", () => {
   beforeEach(() => {
     setLocale("en");
   });
 
-  it("registers all 4 locales", () => {
+  it("registers all 5 locales", () => {
     const locales = getRegisteredLocales();
     expect(locales).toContain("en");
     expect(locales).toContain("es");
     expect(locales).toContain("de");
     expect(locales).toContain("zh");
+    expect(locales).toContain("he");
   });
 
   describe("English (en)", () => {
@@ -107,6 +109,33 @@ describe("i18n locale expansion", () => {
     it("formats plural messages (Chinese has no plural form)", () => {
       setLocale("zh");
       expect(t("portfolio.shares", { count: 100 })).toBe("100股");
+    });
+  });
+
+  describe("Hebrew (he) — RTL", () => {
+    it("resolves navigation keys", () => {
+      setLocale("he");
+      expect(t("nav.watchlist")).toBe("רשימת מעקב");
+      expect(t("nav.settings")).toBe("הגדרות");
+    });
+
+    it("resolves consensus signals", () => {
+      setLocale("he");
+      expect(t("consensus.buy")).toBe("קנייה");
+      expect(t("consensus.sell")).toBe("מכירה");
+      expect(t("consensus.hold")).toBe("החזקה");
+    });
+
+    it("formats plural messages", () => {
+      setLocale("he");
+      expect(t("backtest.trades", { count: 0 })).toBe("ללא עסקאות");
+      expect(t("backtest.trades", { count: 1 })).toBe("עסקה אחת");
+      expect(t("backtest.trades", { count: 5 })).toBe("5 עסקאות");
+    });
+
+    it("translates error messages", () => {
+      setLocale("he");
+      expect(t("error.network")).toBe("שגיאת רשת. בדוק את החיבור שלך.");
     });
   });
 

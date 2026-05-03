@@ -8,6 +8,7 @@ import "./en";
 import "./es";
 import "./de";
 import "./zh";
+import "./he";
 
 /** Supported locale codes. */
 export const SUPPORTED_LOCALES = ["en", "es", "de", "zh", "he"] as const;
