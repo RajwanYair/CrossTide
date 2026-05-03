@@ -14,6 +14,7 @@ import {
   requestNotificationPermission,
   showNotification,
 } from "../core/notifications";
+import { playAlertSound } from "../core/alert-sound";
 import type { CardModule } from "./registry";
 
 const STORAGE_KEY = "crosstide-alerts";
@@ -48,6 +49,9 @@ export function pushAlert(alert: AlertRecord): void {
       tag: `alert-${alert.ticker}-${alert.firedAt}`,
     });
   }
+
+  // Play audible chime
+  playAlertSound();
 }
 
 function renderPermissionUI(container: HTMLElement): void {
