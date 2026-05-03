@@ -74,7 +74,7 @@ describe("chart-card (CardModule)", () => {
   it("renders backtest section with run button", async () => {
     const { default: chartCard } = await import("../../../src/cards/chart-card");
     chartCard.mount(container, { route: "chart", params: { symbol: "AAPL" } });
-    const btn = container.querySelector<HTMLButtonElement>("#btn-run-backtest");
+    const btn = container.querySelector<HTMLButtonElement>("[data-action='run-backtest']");
     expect(btn).not.toBeNull();
     expect(btn?.textContent).toContain("Run Backtest");
   });
@@ -82,7 +82,7 @@ describe("chart-card (CardModule)", () => {
   it("disables backtest button when no ticker", async () => {
     const { default: chartCard } = await import("../../../src/cards/chart-card");
     chartCard.mount(container, { route: "chart", params: {} });
-    const btn = container.querySelector<HTMLButtonElement>("#btn-run-backtest");
+    const btn = container.querySelector<HTMLButtonElement>("[data-action='run-backtest']");
     expect(btn?.disabled).toBe(true);
   });
 
