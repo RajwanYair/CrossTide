@@ -6,6 +6,7 @@
  */
 import { renderHeatmap, renderSectorDrillDown, type SectorDataWithConstituents } from "./heatmap";
 import type { CardModule } from "./registry";
+import { createDelegate, type DelegateHandle } from "../ui/delegate";
 
 // Default sector data with constituent stocks (G21)
 const MOCK_SECTORS: readonly SectorDataWithConstituents[] = [
@@ -102,27 +103,39 @@ const MOCK_SECTORS: readonly SectorDataWithConstituents[] = [
 
 const heatmapCard: CardModule = {
   mount(container) {
+    let delegate: DelegateHandle | null = null;
+
     function showOverview(): void {
+      delegate?.dispose();
       renderHeatmap(container, MOCK_SECTORS, {
         width: container.clientWidth || 600,
         height: 320,
       });
 
-      // Wire click handlers for sector drill-down (G21)
+      // Add data-action to each sector tile for delegation
       container.querySelectorAll<HTMLElement>("[data-sector]").forEach((tile) => {
         tile.style.cursor = "pointer";
-        tile.addEventListener("click", () => {
-          const sectorName = tile.dataset["sector"];
-          const sectorData = MOCK_SECTORS.find((s) => s.sector === sectorName);
-          if (sectorData) {
-            renderSectorDrillDown(container, sectorData, showOverview);
-          }
-        });
+        tile.setAttribute("data-action", "drill-sector");
       });
+
+      delegate = createDelegate(
+        container,
+        {
+          "drill-sector": (target) => {
+            const sectorName = target.dataset["sector"];
+            const sectorData = MOCK_SECTORS.find((s) => s.sector === sectorName);
+            if (sectorData) {
+              delegate?.dispose();
+              renderSectorDrillDown(container, sectorData, showOverview);
+            }
+          },
+        },
+        { eventTypes: ["click"] },
+      );
     }
 
     showOverview();
-    return {};
+    return { dispose: () => delegate?.dispose() };
   },
 };
 
