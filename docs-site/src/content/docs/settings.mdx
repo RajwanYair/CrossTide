@@ -1,0 +1,81 @@
+---
+title: Settings & Configuration
+description: Configure CrossTide — theme, language, data providers, and method weights.
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+The **Settings** card centralizes all application preferences. Open it via the
+sidebar gear icon or the keyboard shortcut **,** (comma).
+
+## Theme
+
+CrossTide supports three theme modes:
+
+- **Dark** — default; reduces eye strain for extended market-watching sessions.
+- **Light** — high-contrast mode for well-lit environments.
+- **System** — automatically matches your OS preference and responds to changes in real-time.
+
+## Language
+
+Select from the available locales:
+
+| Code | Language |
+|------|----------|
+| `en` | English |
+| `es` | Español |
+| `de` | Deutsch |
+| `zh` | 中文 |
+| `he` | עברית (RTL) |
+
+Changing the language immediately updates all UI text. RTL languages (Hebrew) also
+flip the layout direction.
+
+## Data Provider
+
+Configure which market data provider to use:
+
+- **Yahoo Finance** (default) — free, covers stocks, ETFs, crypto, indices.
+- **Alpha Vantage** — requires an API key; lower rate limits.
+
+<Steps>
+
+1. Open **Settings → Data Provider**.
+2. Select your provider from the dropdown.
+3. If required, paste your API key in the key field.
+4. Click **Save**. Data will reload from the new provider.
+
+</Steps>
+
+## Method Weights
+
+Customize how the consensus engine weighs each technical method:
+
+<Steps>
+
+1. Open **Settings → Method Weights**.
+2. Drag the slider for each method (RSI, MACD, Bollinger, etc.) between 0 and 2.
+3. A weight of **0** disables the method; **1** is default; **2** doubles its influence.
+4. Changes apply immediately to all consensus calculations.
+
+</Steps>
+
+<Aside type="tip">
+  Presets are available: "Momentum-focused", "Mean-reversion", and "Balanced" — click
+  the preset name to apply a curated weight configuration.
+</Aside>
+
+## Notifications
+
+- **Browser notifications**: enable to receive alerts even when the tab is in the background.
+- **Sound**: toggle audible alert sounds (requires Sprint 6 feature).
+
+## Data Management
+
+- **Export All Data** — downloads your watchlist, portfolio, and alerts as a JSON file.
+- **Import Data** — restore from a previously exported JSON file.
+- **Clear All Data** — resets CrossTide to factory defaults (requires confirmation).
+
+<Aside type="caution">
+  "Clear All Data" is irreversible. Export a backup first.
+</Aside>

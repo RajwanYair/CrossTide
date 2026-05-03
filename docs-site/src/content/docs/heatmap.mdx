@@ -1,0 +1,52 @@
+---
+title: Heatmap
+description: Visualize sector performance and market breadth with the CrossTide heatmap.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The **Heatmap** card provides a treemap-style visualization of your watchlist or a
+market index, color-coded by daily performance (green = up, red = down).
+
+## Overview
+
+Navigate to the Heatmap via the sidebar or keyboard shortcut **H**. The heatmap groups
+tickers by sector and sizes each cell proportionally to market capitalization (or equal
+weight if market cap is unavailable).
+
+## Color Scale
+
+| Color | Meaning |
+|-------|---------|
+| Deep green | ≥ +3% daily change |
+| Light green | +0.1% to +3% |
+| Gray | ~0% (unchanged) |
+| Light red | −0.1% to −3% |
+| Deep red | ≤ −3% daily change |
+
+## Interaction
+
+- **Hover** any cell to see the full ticker name, price, and percentage change.
+- **Click** a cell to navigate to that ticker's Chart card.
+- **Drill-down**: click a sector label to expand that sector into individual tickers.
+
+## Layout Modes
+
+CrossTide supports two layout algorithms:
+
+1. **Squarified** (default) — produces cells with aspect ratios close to 1:1 for
+   easier visual comparison.
+2. **Slice-and-dice** — alternating horizontal/vertical splits; useful for showing
+   order/ranking.
+
+Toggle between them using the layout button in the card header.
+
+<Aside type="tip">
+  Combine the heatmap with the Market Breadth card to see both visual and numeric
+  breadth indicators simultaneously.
+</Aside>
+
+## Data Source
+
+The heatmap reuses the same data from the watchlist ticker store. Adding or removing
+tickers from the watchlist automatically updates the heatmap.
