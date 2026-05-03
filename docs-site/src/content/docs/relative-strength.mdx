@@ -1,0 +1,72 @@
+---
+title: Relative Strength
+description: Compare normalized returns across multiple tickers to identify outperformers and underperformers.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Relative Strength** card normalizes the return of all your watchlist tickers
+to a common starting point (0%) and displays them on a single chart. This makes it
+easy to visually identify which stocks are outperforming or underperforming over a
+given time window.
+
+<Aside type="note">
+  Unlike absolute price charts, relative strength normalization removes the influence
+  of share price magnitude — a $500 stock and a $20 stock are compared purely on
+  percentage returns.
+</Aside>
+
+## How It Works
+
+1. Fetches daily close prices for all watchlist tickers
+2. Selects the specified lookback window (1M, 3M, 6M, 1Y, YTD)
+3. Normalizes each series: `return% = (close - firstClose) / firstClose × 100`
+4. Plots all series on a shared SVG chart with color-coded lines
+
+## Time Windows
+
+| Window | Trading Days | Use Case                      |
+| ------ | ------------ | ----------------------------- |
+| 1M     | 21           | Short-term momentum           |
+| 3M     | 63           | Quarterly comparison          |
+| 6M     | 126          | Medium-term trend             |
+| 1Y     | 252          | Annual performance            |
+| YTD    | Variable     | Year-to-date performance      |
+
+## Reading the Chart
+
+- **Lines above 0%** — outperforming their starting price
+- **Lines below 0%** — underperforming
+- **Steeper slope** — stronger momentum
+- **Diverging lines** — increasing relative strength dispersion
+
+## Practical Applications
+
+### Rotation Strategy
+1. Set window to 3M
+2. Identify the top 3 performers (highest lines)
+3. Rotate capital toward leaders — they tend to continue outperforming
+
+### Pair Trading
+1. Find two stocks that normally move together
+2. When their relative strength lines diverge, go long the laggard / short the leader
+3. Exit when lines converge again
+
+### Benchmark Comparison
+Add SPY or QQQ to your watchlist alongside individual stocks to see which
+positions are beating the market.
+
+## Color Coding
+
+Each ticker is assigned a distinct color from a 6-color palette:
+- Green, Blue, Orange, Red, Purple, Teal
+
+The legend at the bottom maps each color to its ticker symbol.
+
+## Keyboard Shortcuts
+
+| Key   | Action                                |
+| ----- | ------------------------------------- |
+| `⌘K`  | Open command palette → "relative"     |
