@@ -1,0 +1,90 @@
+---
+title: Backtest Engine
+description: How to run historical strategy backtests in CrossTide and interpret results.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Backtest** card lets you test a moving-average crossover strategy against historical
+data for any watchlist ticker. The entire computation runs **off the main thread** in a
+Web Worker, so the UI stays responsive even with multi-year datasets.
+
+Navigate to the Backtest card via the nav bar or press `g` then `b`.
+
+## How It Works
+
+1. Select a ticker from the dropdown (defaults to the currently selected ticker).
+2. Choose a **fast MA** period and a **slow MA** period.
+3. Click **Run Backtest**.
+4. The engine replays every bar in the historical dataset and simulates trades:
+   - **BUY** when fast MA crosses above slow MA.
+   - **SELL** when fast MA crosses below slow MA.
+
+## Strategy Parameters
+
+| Parameter       | Default | Range   | Notes                            |
+| --------------- | ------- | ------- | -------------------------------- |
+| Fast MA period  | 10      | 2–200   | Shorter-term moving average      |
+| Slow MA period  | 50      | 5–500   | Longer-term moving average       |
+| Initial capital | 10 000  | —       | Starting portfolio value         |
+
+<Aside type="tip">
+  Classic MA crossover pairs: **10/50** (swing), **20/200** (position), **5/20** (day).
+  Experiment with different periods to match your trading style.
+</Aside>
+
+## Results Panel
+
+After the backtest completes, the results panel shows:
+
+| Metric               | Description                                              |
+| -------------------- | -------------------------------------------------------- |
+| **Total Return**     | Net % gain or loss over the test period                  |
+| **CAGR**             | Compound annual growth rate                              |
+| **Max Drawdown**     | Largest peak-to-trough decline                           |
+| **Sharpe Ratio**     | Risk-adjusted return (excess return / std dev)           |
+| **Win Rate**         | Percentage of profitable trades                          |
+| **Total Trades**     | Number of round-trip (buy → sell) trades                 |
+| **Avg Trade Return** | Mean return per trade                                    |
+
+## Equity Curve
+
+Below the metrics table, an interactive equity curve chart shows your portfolio value
+over time. The curve is overlaid with:
+- **Drawdown shading** — highlights periods where the strategy was underwater.
+- **Trade markers** — green triangles for buys, red triangles for sells.
+
+## Trade Log
+
+Expand the **Trade Log** section to see every individual trade:
+
+| Column     | Description                        |
+| ---------- | ---------------------------------- |
+| Date       | Entry date of the trade            |
+| Direction  | BUY or SELL                        |
+| Price      | Entry price                        |
+| Exit Price | Exit price                         |
+| Return %   | Percentage gain or loss            |
+| Duration   | Number of bars held                |
+
+<Aside type="caution">
+  Backtests use historical data and assume perfect fills at the close price.
+  Real-world slippage, commissions, and market impact are not modeled.
+  Past performance does not predict future results.
+</Aside>
+
+## Signal DSL Integration
+
+For more complex strategies beyond MA crossover, use the **Signal DSL** card (`g` then `d`).
+DSL strategies can be backtested by exporting the signal expression and running it
+through the same backtest engine.
+
+## Keyboard Shortcuts
+
+| Key     | Action                    |
+| ------- | ------------------------- |
+| `g b`   | Navigate to Backtest      |
+| `Enter` | Run backtest              |
+| `Esc`   | Close trade log           |
