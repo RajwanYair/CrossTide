@@ -88,3 +88,45 @@ The **Consensus Badge** in the top-right of the chart shows the aggregate score 
 - A live WebSocket tick arrives (if enabled)
 
 Scores are colour-coded: **green** = BUY, **red** = SELL, **amber** = HOLD/NEUTRAL.
+
+## Custom Indicators (Plugin API)
+
+Starting with v7.19.0, external ESM modules can register custom indicators at runtime
+via the **Plugin API**:
+
+```ts
+import { registerIndicator } from "./src/core/plugin-api";
+
+registerIndicator({
+  id: "custom-rsi",
+  name: "Custom RSI (21)",
+  defaultParams: { period: 21 },
+  compute: (candles, params) => ({
+    values: myRsiCalc(candles, params.period),
+    overlay: false,
+  }),
+});
+```
+
+Custom indicators appear in the indicator picker alongside the built-ins. See
+[Plugin API](/plugin-api) for the full specification (registration, lifecycle,
+and dynamic ESM loading).
+
+## Exporting Chart Data
+
+- **Screenshot** — click the camera icon (📷) to save a PNG of the current view.
+- **CSV** — click **Export → CSV** to download the visible OHLCV data as a `.csv` file.
+
+## Responsive Behaviour
+
+The chart card uses CSS container queries to adapt its layout:
+
+| Width         | Layout                                              |
+| ------------- | --------------------------------------------------- |
+| > 700 px      | Full toolbar with all controls visible               |
+| 500–700 px    | Toolbar wraps to two rows; smaller buttons           |
+| < 500 px      | Compact controls; drawing tools behind overflow menu |
+| < 375 px      | Chart controls stack vertically                      |
+
+On touch devices, tap-and-hold activates the crosshair, and pinch gestures zoom
+the time axis.
