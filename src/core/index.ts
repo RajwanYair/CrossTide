@@ -26,6 +26,7 @@ export {
   getCardSetting,
 } from "./config";
 export { fetchWithTimeout, fetchWithRetry, fetchConditional, FetchError } from "./fetch";
+export { fetchOnce, inflightCount, clearInflight } from "./fetch-dedup";
 export {
   getValidators,
   setValidators,
