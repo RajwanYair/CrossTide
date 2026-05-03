@@ -1,13 +1,19 @@
 /**
  * Screener card adapter — CardModule wrapper with preset filter support.
  *
- * Renders preset buttons and a results table.
+ * Renders preset buttons, column toggles, and a results table.
  * Screener inputs are populated from live watchlist data via screener-data bridge.
  */
 import type { CardModule } from "./registry";
 import { PRESET_FILTERS, type PresetFilter } from "./preset-filters";
 import { applyFilters, renderScreenerResults } from "./screener";
 import { getScreenerData } from "./screener-data";
+import {
+  loadVisibleColumns,
+  saveVisibleColumns,
+  renderColumnToggles,
+  type ScreenerColumn,
+} from "./screener-columns";
 
 function renderPresetButtons(
   container: HTMLElement,
@@ -34,12 +40,38 @@ const screenerCard: CardModule = {
     presetSection.className = "screener-controls";
     container.appendChild(presetSection);
 
+    // Column toggle section
+    const visibleCols = loadVisibleColumns();
+    let activePreset: PresetFilter | null = null;
+
+    const rerender = (): void => {
+      if (!activePreset) return;
+      const inputs = getScreenerData();
+      const rows = applyFilters(inputs, activePreset.filters);
+      renderScreenerResults(resultsSection, rows, visibleCols, inputs);
+    };
+
+    const togglePanel = renderColumnToggles(
+      visibleCols,
+      (col: ScreenerColumn, checked: boolean) => {
+        if (checked) {
+          visibleCols.add(col);
+        } else {
+          visibleCols.delete(col);
+        }
+        saveVisibleColumns(visibleCols);
+        rerender();
+      },
+    );
+    container.appendChild(togglePanel);
+
     const resultsSection = document.createElement("div");
     resultsSection.className = "screener-results";
     container.appendChild(resultsSection);
 
     // Render preset buttons
     renderPresetButtons(presetSection, (preset) => {
+      activePreset = preset;
       // Highlight active button
       presetSection.querySelectorAll(".preset-btn").forEach((b) => b.classList.remove("active"));
       const idx = PRESET_FILTERS.indexOf(preset);
@@ -49,7 +81,7 @@ const screenerCard: CardModule = {
       // Apply filter against live data and render
       const inputs = getScreenerData();
       const rows = applyFilters(inputs, preset.filters);
-      renderScreenerResults(resultsSection, rows);
+      renderScreenerResults(resultsSection, rows, visibleCols, inputs);
     });
 
     // Show initial empty state

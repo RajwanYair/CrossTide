@@ -4,6 +4,8 @@
 import type { SignalDirection } from "../types/domain";
 import { patchDOM } from "../core/patch-dom";
 import { VirtualScroller, shouldVirtualize } from "../ui/virtual-scroller";
+import type { ScreenerColumn } from "./screener-columns";
+import { ALL_COLUMNS } from "./screener-columns";
 
 export type ScreenerFilter =
   | { type: "consensus"; direction: SignalDirection }
@@ -82,22 +84,54 @@ function filterLabel(f: ScreenerFilter): string {
   }
 }
 
-export function renderScreenerResults(container: HTMLElement, rows: readonly ScreenerRow[]): void {
+export function renderScreenerResults(
+  container: HTMLElement,
+  rows: readonly ScreenerRow[],
+  visibleColumns?: ReadonlySet<ScreenerColumn>,
+  inputData?: readonly ScreenerInput[],
+): void {
   if (rows.length === 0) {
     patchDOM(container, `<p class="empty-state">No tickers match the current filters.</p>`);
     return;
   }
 
-  const headerHtml = `<tr><th>Symbol</th><th>Price</th><th>Signal</th><th>Matched</th></tr>`;
+  const cols =
+    visibleColumns ??
+    new Set<ScreenerColumn>(ALL_COLUMNS.filter((c) => c.defaultVisible).map((c) => c.id));
+
+  // Build a lookup for extra data (RSI, volume) if columns need it
+  const inputMap = new Map<string, ScreenerInput>();
+  if (inputData) {
+    for (const inp of inputData) inputMap.set(inp.ticker, inp);
+  }
+
+  const headerCells: string[] = [];
+  if (cols.has("ticker")) headerCells.push("<th>Symbol</th>");
+  if (cols.has("price")) headerCells.push("<th>Price</th>");
+  if (cols.has("consensus")) headerCells.push("<th>Signal</th>");
+  if (cols.has("matched")) headerCells.push("<th>Matched</th>");
+  if (cols.has("rsi")) headerCells.push("<th>RSI</th>");
+  if (cols.has("volume")) headerCells.push("<th>Vol Ratio</th>");
+  const headerHtml = `<tr>${headerCells.join("")}</tr>`;
 
   const renderRow = (i: number): string => {
     const r = rows[i]!;
-    return `<tr>
-      <td><strong>${r.ticker}</strong></td>
-      <td class="font-mono">${r.price.toFixed(2)}</td>
-      <td><span class="badge badge-${r.consensus.toLowerCase()}">${r.consensus}</span></td>
-      <td>${r.matchedFilters.join(", ")}</td>
-    </tr>`;
+    const inp = inputMap.get(r.ticker);
+    const cells: string[] = [];
+    if (cols.has("ticker")) cells.push(`<td><strong>${r.ticker}</strong></td>`);
+    if (cols.has("price")) cells.push(`<td class="font-mono">${r.price.toFixed(2)}</td>`);
+    if (cols.has("consensus"))
+      cells.push(
+        `<td><span class="badge badge-${r.consensus.toLowerCase()}">${r.consensus}</span></td>`,
+      );
+    if (cols.has("matched")) cells.push(`<td>${r.matchedFilters.join(", ")}</td>`);
+    if (cols.has("rsi"))
+      cells.push(`<td class="font-mono">${inp?.rsi != null ? inp.rsi.toFixed(1) : "—"}</td>`);
+    if (cols.has("volume"))
+      cells.push(
+        `<td class="font-mono">${inp?.volumeRatio != null ? inp.volumeRatio.toFixed(2) + "x" : "—"}</td>`,
+      );
+    return `<tr>${cells.join("")}</tr>`;
   };
 
   if (shouldVirtualize(rows.length)) {

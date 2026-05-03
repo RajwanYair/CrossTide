@@ -1785,3 +1785,29 @@
   color: var(--text-secondary);
   text-align: right;
 }
+
+/* ---------------------------------------------------------------------------
+   Screener column toggles
+   --------------------------------------------------------------------------- */
+
+.screener-column-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm) var(--sp-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.column-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.column-toggle input[type="checkbox"] {
+  accent-color: var(--primary);
+}
