@@ -52,7 +52,7 @@ npm run dev        # http://localhost:5173
 
 ### Card Gallery
 
-CrossTide ships with **22 route cards**, each accessible from the sidebar navigation:
+CrossTide ships with **23 route cards**, each accessible from the sidebar navigation:
 
 | Card                | Description                                                    |
 | ------------------- | -------------------------------------------------------------- |
@@ -77,6 +77,7 @@ CrossTide ships with **22 route cards**, each accessible from the sidebar naviga
 | Alerts              | Multi-condition alert rules (AND/OR), history log              |
 | Signal DSL          | Custom indicator expressions with live evaluation              |
 | Comparison          | Multi-ticker normalized price overlay                          |
+| Provider Health     | Data provider latency, error rates, and uptime monitor         |
 | Settings            | Theme, API keys, export/import, locale, a11y                   |
 
 ## Why CrossTide?
