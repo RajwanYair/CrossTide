@@ -300,6 +300,8 @@ function mount(container: HTMLElement): CardHandle {
   );
 
   function render(): void {
+    // Unsubscribe previous panel registrations before re-render
+    panelIds.forEach((id) => bus.unsubscribe(id));
     container.innerHTML = buildLayoutHtml(state, availableTickers);
     wirePanelEvents();
     wireLayoutButtons();
