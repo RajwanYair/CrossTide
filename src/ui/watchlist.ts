@@ -10,6 +10,12 @@ import { instrumentTypeBadge } from "./instrument-filter";
 import { groupBySector, renderSectorGroup, bindSectorHeaders } from "./sector-groups";
 import { createReorderState, startDrag, dragOver as reorderDragOver, endDrag } from "./reorder";
 import { getFreshness, renderFreshnessBadge } from "../core/data-freshness";
+import {
+  loadWatchlistGroups,
+  isGroupCollapsed,
+  toggleGroupCollapsed,
+  renderGroupHeader,
+} from "./watchlist-groups";
 
 export interface WatchlistQuote {
   ticker: string;
@@ -141,10 +147,54 @@ export function renderWatchlist(config: AppConfig, quotes: Map<string, Watchlist
       .join("");
     bindSectorHeaders(tbody, () => renderWatchlist(config, quotes));
   } else {
-    const sorted = sortEntries(config.watchlist, quotes);
-    tbody.innerHTML = sorted
-      .map((entry) => renderRow(entry.ticker, quotes.get(entry.ticker) ?? null))
-      .join("");
+    // User-defined watchlist groups (L7)
+    const userGroups = loadWatchlistGroups();
+    if (userGroups.length > 0) {
+      const grouped = new Set<string>();
+      let html = "";
+      for (const group of userGroups) {
+        const collapsed = isGroupCollapsed(group.id);
+        html += renderGroupHeader(group, collapsed);
+        if (!collapsed) {
+          for (const t of group.tickers) {
+            if (config.watchlist.some((e) => e.ticker === t)) {
+              html += renderRow(t, quotes.get(t) ?? null);
+              grouped.add(t);
+            }
+          }
+        } else {
+          for (const t of group.tickers) grouped.add(t);
+        }
+      }
+      // Ungrouped tickers
+      const ungrouped = config.watchlist.filter((e) => !grouped.has(e.ticker));
+      if (ungrouped.length > 0) {
+        const sorted = sortEntries(ungrouped, quotes);
+        html += sorted
+          .map((entry) => renderRow(entry.ticker, quotes.get(entry.ticker) ?? null))
+          .join("");
+      }
+      tbody.innerHTML = html;
+      bindGroupHeaders(tbody, () => renderWatchlist(config, quotes));
+    } else {
+      const sorted = sortEntries(config.watchlist, quotes);
+      tbody.innerHTML = sorted
+        .map((entry) => renderRow(entry.ticker, quotes.get(entry.ticker) ?? null))
+        .join("");
+    }
+  }
+}
+
+/** Bind click handlers on watchlist group headers to toggle collapse. */
+function bindGroupHeaders(tbody: HTMLElement, rerender: () => void): void {
+  const headers = tbody.querySelectorAll<HTMLElement>(".group-header");
+  for (const header of headers) {
+    const groupId = header.dataset["groupId"];
+    if (!groupId) continue;
+    header.addEventListener("click", () => {
+      toggleGroupCollapsed(groupId);
+      rerender();
+    });
   }
 }
 
