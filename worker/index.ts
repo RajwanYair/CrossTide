@@ -29,6 +29,7 @@ import { handleScreener } from "./routes/screener.js";
 import { handleOgImage } from "./routes/og.js";
 import { handleSignalDslExecute } from "./routes/signal-dsl.js";
 import { handleOpenApiSpec } from "./routes/openapi.js";
+import { handleCspReport } from "./routes/csp-report.js";
 
 export interface Env {
   ENVIRONMENT?: string;
@@ -103,6 +104,9 @@ app.get("/api/og/:symbol", (c) => Promise.resolve(handleOgImage(new URL(c.req.ur
 app.get("/api/og", (c) => Promise.resolve(handleOgImage(new URL(c.req.url))));
 
 app.post("/api/signal-dsl/execute", async (c) => handleSignalDslExecute(c.req.raw));
+
+// ── CSP violation reports (K11) ───────────────────────────────────────────────
+app.post("/api/csp-report", async (c) => handleCspReport(c.req.raw));
 
 // ── OpenAPI spec (G10) ────────────────────────────────────────────────────────
 app.get("/openapi.json", () => handleOpenApiSpec());
