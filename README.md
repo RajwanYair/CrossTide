@@ -12,12 +12,55 @@ interactive charting, and offline-first PWA support.
 
 > **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
 
+---
+
+## Features
+
+| Category                | Highlights                                                                                                                                          |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Consensus Engine**    | 12 technical methods (SMA, EMA, MACD, RSI, Bollinger, Stochastic, ADX, OBV, VWAP, Ichimoku, Williams %R, CCI) with aggregated BUY/SELL/HOLD signals |
+| **Interactive Charts**  | Candlestick + overlay indicators, drawing tools (trendline, fib, rectangle, channel, ray, hline, text), multi-chart layouts                         |
+| **Backtesting**         | Strategy comparison engine, performance metrics (Sharpe, Sortino, max drawdown), equity curve visualization                                         |
+| **Screening**           | Custom filters with preset strategies, real-time sorting, virtual-scrolled 10K+ row tables                                                          |
+| **Portfolio Tracking**  | Holdings management, allocation pie chart, P&L tracking, sector exposure analysis                                                                   |
+| **Market Intelligence** | Heatmap, sector rotation, relative strength, market breadth, correlation matrix, seasonality patterns                                               |
+| **Alerts**              | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions                                                  |
+| **Data Providers**      | Yahoo Finance, Finnhub, CoinGecko, Polygon.io — automatic failover with provider health monitoring                                                  |
+| **PWA / Offline**       | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile                                                              |
+| **Accessibility**       | WCAG 2.1 AA, keyboard navigation, screen reader support, color-blind palettes, skip links                                                           |
+| **Performance**         | < 200 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP                                                                  |
+| **i18n**                | English, Hebrew (RTL), with expansion to ES/DE/ZH                                                                                                   |
+
+---
+
 ## Quick Start
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
 ```
+
+## Screenshots
+
+|            Watchlist & Consensus             |          Interactive Chart           |                 Heatmap                  |
+| :------------------------------------------: | :----------------------------------: | :--------------------------------------: |
+| ![Watchlist](docs/screenshots/watchlist.png) | ![Chart](docs/screenshots/chart.png) | ![Heatmap](docs/screenshots/heatmap.png) |
+
+> Screenshots are from the latest release. Run locally with `npm run dev` to explore all 22 card views.
+
+## Why CrossTide?
+
+|                         | CrossTide | TradingView | Yahoo Finance | Finviz  |
+| ----------------------- | :-------: | :---------: | :-----------: | :-----: |
+| Free & open source      |    ✅     |     ❌      |      ❌       | Partial |
+| Self-hostable / offline |    ✅     |     ❌      |      ❌       |   ❌    |
+| No account required     |    ✅     |     ❌      |      ❌       |   ✅    |
+| 12-method consensus     |    ✅     |     ❌      |      ❌       |   ❌    |
+| Custom signal DSL       |    ✅     | Pine Script |      ❌       |   ❌    |
+| < 200 KB bundle         |    ✅     |     ❌      |      ❌       |   ❌    |
+| PWA installable         |    ✅     |     ❌      |      ❌       |   ❌    |
+| Strategy backtesting    |    ✅     |     ✅      |      ❌       |   ❌    |
+| Accessibility (WCAG AA) |    ✅     |   Partial   |    Partial    |   ❌    |
 
 ## Scripts
 
