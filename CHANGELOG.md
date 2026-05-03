@@ -6,6 +6,94 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.16.0] - 2026-05-03
+
+### Added — 10-sprint delivery (F2, F5, F6, R4, R21)
+
+- **F6 — Indicator MDX Reference (batches 1–4)**: 44 new MDX indicator reference pages
+  in `docs-site/src/content/docs/indicators/`, bringing the total to **48 pages**.
+  Covers oscillators (stochastic-rsi, connors-rsi, cmo, momentum, roc, tsi, trix, ppo,
+  kst, fisher-transform, ultimate-oscillator), trend/MA (supertrend, parabolic-sar,
+  ichimoku, dema-tema, hull-ma, kama, wma, dpo, ma-crossover, linear-regression,
+  coppock-curve, vortex), volume/volatility (force-index, chaikin-money-flow,
+  chaikin-oscillator, klinger-oscillator, ease-of-movement, ad-line, choppiness-index,
+  keltner, donchian, envelope, mass-index, ulcer-index, elder-ray, elder-impulse),
+  and advanced (anchored-vwap, volume-profile, pivots, zigzag, fractals, heikin-ashi, mfi).
+- **F5 — Telemetry env vars**: `.env.example` documenting `VITE_GLITCHTIP_DSN`,
+  `VITE_PLAUSIBLE_URL`, `VITE_PLAUSIBLE_SITE`, `VITE_WORKER_BASE_URL`.
+- **F2 — Docs deploy workflow**: `.github/workflows/docs.yml` for Astro Starlight
+  docs-site deployment to GitHub Pages. Docs badge added to README.
+- **R4 — Subpath exports**: `package.json` `exports` field with `./core`, `./domain`,
+  `./cards`, `./ui` subpaths.
+- **R21 — ARCHITECTURE.md update**: comprehensive rewrite from v7.5 to v7.15 — now
+  reflects 112 domain modules, 20 routes, Hono Worker, 3884 tests, 48 MDX pages.
+
+### Changed
+
+- `.gitignore`: added `.env.local` entry.
+- Roadmap: comprehensive status sync marking all completed F/G/H/I/R items.
+
+---
+
+## [7.15.0] - 2026-04-26
+
+### Added — 10-sprint delivery (F3, F4, F10, R5, R6, R8, R16, G15)
+
+- **R16 — Unified Cache Manager** (`cache-manager.ts`): facade over memory/LRU/tiered
+  cache strategies with stats tracking (36 tests).
+- **Alpha Vantage Provider**: last-resort tertiary failover in provider chain (19 tests).
+- **R8 — Core date-format** (`date-format.ts`): `parseIsoDate`, `relativeTime`, trading
+  day helpers — unified from duplicate `ui/date-format` and `core/date-format` (31 tests).
+- **F4 — Structured Request Logger** (`request-logger.ts`): IP hashing, JSON log lines
+  for Logpush via Worker middleware (31 tests).
+- **F10 — gitleaks**: secret scanning config + CI job.
+- **Provider Mock Factory**: `makeQuote`, `makeCandles`, `createMockProvider` (19 tests).
+- **F3 — E2E Expansion**: keyboard shortcuts and settings view Playwright specs.
+- **R5 — Cast cleanup**: removed 10 unnecessary `as` casts; replaced with non-null
+  assertions and `instanceof` guards.
+- **G15 — JSDoc sweep**: section headers and one-line descriptions for all domain barrel
+  exports.
+- Roadmap status sync marking F3/F4/F10/R5/R6/R8/R16/G15 as Done.
+
+### Stats
+
+- **166 new tests** across new modules
+- Test total: **3819 tests** across **311 test files**
+
+---
+
+## [7.14.0] - 2026-04-19
+
+### Added — 10-sprint delivery (G4, I5, H10, I3, I8, I7, I4, R24, H17, R23)
+
+- **G4 — Transferable OHLCV** (`transferable-ohlc.ts`): zero-copy `Float64Array` helpers
+  for compute Worker backtest + screener (19 tests).
+- **I5 — Public REST API Helpers**: rate-limit, pagination, and validation utilities for
+  read-only Hono Worker routes (43 tests).
+- **H10 — Durable Objects WS Fan-out** (`ws-fanout.ts`): channel manager for real-time
+  tick distribution per symbol (23 tests).
+- **I3 — Pattern Backtesting**: historical win-rate validation of ONNX-detected candlestick
+  patterns (19 tests).
+- **I8 — Collaborative Watchlist Sharing** (`watchlist-share.ts`): share-by-URL read-only
+  snapshots with TTL and merge logic (25 tests).
+- **I7 — CRDT Config Merge** (`crdt-sync.ts`): LWW registers, G-Set, OR-Set for
+  multi-device cloud sync conflict resolution (28 tests).
+- **I4 — ONNX Model Pipeline** (`onnx-pipeline.ts`): metadata, tensor validation, and
+  normalization utilities (28 tests).
+- **R24 — Market-hours Detection**: WS connection gating for 6 exchanges with timezone
+  awareness (19 tests).
+- **H17 — Tauri 2.0 Bridge** (`tauri-bridge.ts`): IPC, window management, deep links,
+  tray integration (23 tests).
+- **R23 — Remove Twelve Data Provider**: cleaned up imports, failover chain, and
+  schema (6 tests).
+
+### Stats
+
+- **233 new tests** across 10 new / refactored modules
+- Test total: **3604+ tests** across **302+ test files**
+
+---
+
 ## [7.13.0] - 2025-07-17
 
 ### Added — 10-sprint delivery (H8, H16, I1, I2, H4, H13, I9, I10, I11, I6)
