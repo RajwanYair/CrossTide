@@ -1885,3 +1885,80 @@
   gap: 3px;
   font-size: 0.75rem;
 }
+
+/* ── Ticker autocomplete ── */
+.autocomplete-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.autocomplete-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--font-size-base);
+}
+
+.autocomplete-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.autocomplete-listbox {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  z-index: 100;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+  background: var(--surface-hover);
+}
+
+.autocomplete-symbol {
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.autocomplete-name {
+  color: var(--text-secondary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.autocomplete-exchange {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.autocomplete-item mark {
+  background: var(--accent-bg, rgba(99, 102, 241, 0.15));
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
