@@ -3,6 +3,7 @@
  */
 import type { SignalDirection } from "../types/domain";
 import { patchDOM } from "../core/patch-dom";
+import { VirtualScroller, shouldVirtualize } from "../ui/virtual-scroller";
 
 export type ScreenerFilter =
   | { type: "consensus"; direction: SignalDirection }
@@ -87,23 +88,36 @@ export function renderScreenerResults(container: HTMLElement, rows: readonly Scr
     return;
   }
 
-  const html = rows
-    .map(
-      (r) =>
-        `<tr>
+  const headerHtml = `<tr><th>Symbol</th><th>Price</th><th>Signal</th><th>Matched</th></tr>`;
+
+  const renderRow = (i: number): string => {
+    const r = rows[i]!;
+    return `<tr>
       <td><strong>${r.ticker}</strong></td>
       <td class="font-mono">${r.price.toFixed(2)}</td>
       <td><span class="badge badge-${r.consensus.toLowerCase()}">${r.consensus}</span></td>
       <td>${r.matchedFilters.join(", ")}</td>
-    </tr>`,
-    )
-    .join("");
+    </tr>`;
+  };
 
-  patchDOM(
-    container,
-    `<table class="screener-table">
-    <thead><tr><th>Symbol</th><th>Price</th><th>Signal</th><th>Matched</th></tr></thead>
-    <tbody>${html}</tbody>
-  </table>`,
-  );
+  if (shouldVirtualize(rows.length)) {
+    container.innerHTML = "";
+    new VirtualScroller({
+      container,
+      rowHeight: 36,
+      totalRows: rows.length,
+      renderRow,
+      headerHtml,
+      ariaLabel: "Screener Results",
+    }).setViewportHeight(400);
+  } else {
+    const html = rows.map((_, i) => renderRow(i)).join("");
+    patchDOM(
+      container,
+      `<table class="screener-table">
+      <thead>${headerHtml}</thead>
+      <tbody>${html}</tbody>
+    </table>`,
+    );
+  }
 }
