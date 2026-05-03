@@ -6,6 +6,45 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.3.0] - 2025-07-04
+
+### Highlights
+
+Feature sprint delivering multi-condition alert rules, strategy comparison,
+watchlist groups integration, and continued event delegation migration.
+
+### Added
+
+- **L3 — Multi-condition alert rules**: Full CRUD rule builder UI with AND/OR
+  operators and per-condition types (method, consensus). Rules persist to
+  localStorage and evaluate live against incoming signals during data refresh,
+  firing browser notifications + sound on match.
+- **L4 — Strategy comparison card**: Side-by-side SMA crossover backtest
+  comparison with overlaid equity curves (SVG), stats table (return, CAGR,
+  drawdown, win rate, profit factor, trades), and winner declaration.
+- **L7 — Watchlist groups integration**: User-defined collapsible groups now
+  render in the watchlist when present, with ungrouped tickers shown below.
+- **K17 — Uptime Kuma config**: Fly.io deployment config (`monitoring/fly.toml`)
+  for Uptime Kuma monitoring of CrossTide API health endpoints.
+- **Nav links**: Added sidebar navigation entries for Strategy Comparison and
+  Provider Health cards.
+- **Provider Health**: Added to README card gallery (23 total cards).
+
+### Changed
+
+- **K4 — Event delegation expansion**: Migrated `backtest-card`, `signal-dsl-card`,
+  `heatmap`, `preset-filters`, and `relative-strength-card` from direct
+  `addEventListener` to `createDelegate` with `data-action` attributes.
+- **M9 — README enhancement**: Added TypeScript 5.9 and Bundle <200 KB badges,
+  full 23-card gallery table with descriptions.
+
+### Fixed
+
+- Registry test card count updated (22 → 23) for strategy-comparison card.
+- Backtest and heatmap test selectors updated for delegation migration.
+
+---
+
 ## [11.2.0] - 2025-07-03
 
 ### Highlights
