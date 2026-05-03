@@ -25,6 +25,15 @@ vi.mock("../../../src/core/backtest-worker", () => ({
 
 vi.mock("../../../src/core/data-service", () => ({
   fetchTickerData: vi.fn().mockResolvedValue({ candles: [] }),
+  TIMEFRAME_PRESETS: [
+    { label: "1D", range: "1d", interval: "5m" },
+    { label: "5D", range: "5d", interval: "15m" },
+    { label: "1M", range: "1mo", interval: "1h" },
+    { label: "3M", range: "3mo", interval: "1d" },
+    { label: "1Y", range: "1y", interval: "1d" },
+    { label: "5Y", range: "5y", interval: "1wk" },
+  ],
+  DEFAULT_TIMEFRAME: { label: "1Y", range: "1y", interval: "1d" },
 }));
 
 vi.mock("../../../src/ui/toast", () => ({
