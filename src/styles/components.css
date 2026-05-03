@@ -1825,6 +1825,56 @@
   margin-bottom: var(--space-sm);
 }
 
+/* ── L4: Strategy Comparison ───────────────────────────────────────────────── */
+.strategy-comparison-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.strategy-fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.strategy-fieldset legend {
+  font-weight: 600;
+  padding: 0 var(--space-xs);
+}
+
+.comparison-chart-wrap {
+  margin: var(--space-md) 0;
+}
+
+.comparison-legend {
+  display: flex;
+  gap: var(--space-lg);
+  font-size: var(--font-sm);
+  margin-top: var(--space-xs);
+}
+
+.legend-a {
+  color: var(--accent, #58a6ff);
+}
+.legend-b {
+  color: var(--signal-sell, #f85149);
+}
+
+.comparison-winner {
+  text-align: center;
+  font-size: var(--font-md);
+  margin: var(--space-sm) 0;
+}
+
+.comparison-stats-table th:first-child,
+.comparison-stats-table td:first-child {
+  font-weight: 600;
+}
+
 .seasonal-return {
   font-size: var(--fs-xs);
   font-weight: 600;

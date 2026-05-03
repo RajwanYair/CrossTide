@@ -103,6 +103,12 @@ const REGISTRY: readonly CardEntry[] = [
     load: () => import("./backtest-card").then((m) => m.default),
   },
   {
+    route: "strategy-comparison",
+    title: "Strategy Comparison",
+    viewId: "view-strategy-comparison",
+    load: () => import("./strategy-comparison-card").then((m) => m.default),
+  },
+  {
     route: "consensus-timeline",
     title: "Consensus Timeline",
     viewId: "view-consensus-timeline",
