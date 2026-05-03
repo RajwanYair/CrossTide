@@ -78,102 +78,102 @@ beyond the open-source comparison set.
 
 ### 2.1 What is done (confirmed from source code)
 
-| Area                                                    | Status     | Evidence                                           |
-| ------------------------------------------------------- | ---------- | -------------------------------------------------- |
-| 50+ technical indicators, consensus engine              | ✅ Done    | `src/domain/` (93 files)                           |
-| Hand-written reactive signals (zero-dep)                | ✅ Done    | `src/core/signals.ts` (298 lines); `state.ts` deleted |
-| History API router                                      | ✅ Done    | `src/ui/router.ts`                                 |
-| Lightweight Charts v5 (multi-pane, drawing tools)       | ✅ Done    | `src/cards/lw-chart.ts`, `drawing-tools.ts`        |
-| Multi-chart layout (2×2 / 1+3 synced crosshair)         | ✅ Done    | `src/cards/multi-chart-layout.ts`                  |
-| All 14 route cards wired via registry                   | ✅ Done    | `src/cards/registry.ts` + `src/main.ts`            |
-| Signal DSL card                                         | ✅ Done    | `src/cards/signal-dsl-card.ts` + `domain/signal-dsl.ts` |
-| Workbox SW (precache + NetworkFirst + SWR + NavPreload) | ✅ Done    | `src/sw.ts` + `scripts/workbox-inject.mjs`         |
-| Finnhub + Polygon + CoinGecko + Twelve Data + Yahoo     | ✅ Done    | `src/providers/` (11 files)                        |
-| Circuit-breaker per provider                            | ✅ Done    | `src/providers/circuit-breaker.ts`                 |
-| Real-time WS via Finnhub (`reconnecting-ws.ts`)         | ✅ Done    | `src/core/reconnecting-ws.ts` + architecture doc   |
-| Tiered cache (L1 Map → L2 LS → L3 IDB)                  | ✅ Done    | `src/core/tiered-cache.ts`, `lru-cache.ts`         |
-| Storage pressure monitor + LRU eviction                 | ✅ Done    | `src/core/storage-pressure.ts` (wired in main.ts)  |
-| CSP + security headers via Worker                       | ✅ Done    | `worker/security.ts`                               |
-| Command palette (⌘K) + keyboard nav                     | ✅ Done    | `src/ui/command-palette.ts`, `src/core/keyboard.ts` |
-| Watchlist (sparklines, 52W range, sort, drag-reorder)   | ✅ Done    | `src/cards/watchlist-card.ts`, `src/ui/sortable.ts` |
-| Sector grouping + instrument-type views                 | ✅ Done    | `src/ui/watchlist.ts`                              |
-| Heatmap (Canvas treemap)                                | ✅ Done    | `src/cards/heatmap-card.ts`                        |
-| Screener (preset + custom)                              | ✅ Done    | `src/cards/screener-card.ts`                       |
-| Alerts card + browser Notifications                     | ✅ Done    | `src/cards/alerts-card.ts`                         |
-| Portfolio (P/L, sector allocation, benchmark vs SPY)    | ✅ Done    | `src/cards/portfolio-card.ts`                      |
-| Risk metrics (Sharpe, Sortino, max DD, Beta, CAGR)      | ✅ Done    | `src/cards/risk-card.ts`                           |
-| Backtest UI (equity curve + perf table, Web Worker)     | ✅ Done    | `src/cards/backtest-card.ts`                       |
-| Consensus timeline + Provider Health card               | ✅ Done    | respective card files                              |
-| Valibot validation at all provider boundaries           | ✅ Done    | `src/providers/types.ts` + schemas                 |
-| i18n (EN + HE RTL)                                      | ✅ Done    | `src/core/i18n.ts`, `src/core/messages.ts`         |
-| Color-blind palettes (4 modes)                          | ✅ Done    | `src/ui/palette-switcher.ts`                       |
-| View Transitions API (route animations)                 | ✅ Done    | `src/styles/layout.css` (`@supports`)              |
-| URL state sharing (base64-encoded watchlist)            | ✅ Done    | `src/core/share-state.ts`                          |
-| BroadcastChannel cross-tab sync                         | ✅ Done    | `src/core/broadcast-channel.ts`                    |
-| CSV/JSON export with schema versioning                  | ✅ Done    | `src/core/data-export.ts`                          |
-| Onboarding tour (3-step, dismissible)                   | ✅ Done    | `src/ui/onboarding-tour.ts`                        |
-| PWA install prompt (iOS + Android)                      | ✅ Done    | `src/ui/pwa-install.ts`                            |
-| OG image endpoint                                       | ✅ Done    | `worker/og.ts`                                     |
-| Worker API (5 routes: quote, history, search, health, OG)| ✅ Done   | `worker/index.ts`, `chart.ts`, `health.ts`, etc.   |
-| Playwright E2E (app + components flows)                 | ✅ Done    | `tests/e2e/app.spec.ts`, `components.spec.ts`      |
-| Lighthouse CI (all assertions → error)                  | ✅ Done    | `config/lighthouserc.json`                         |
-| Changesets + commitlint + lint-staged                   | ✅ Done    | `.changeset/`, `config/commitlint.config.mjs`      |
-| Component preview (`dev/components.html`)               | ✅ Done    | `vite.config.ts` dev/components entry              |
-| Config `config/` subdirectory (5 linter configs)        | ✅ Done    | v7.7.0 production-readiness sprint                 |
-| CSS webkit prefixes + `@supports` compat guards         | ✅ Done    | v7.7.0 production-readiness sprint                 |
+| Area                                                      | Status  | Evidence                                                |
+| --------------------------------------------------------- | ------- | ------------------------------------------------------- |
+| 50+ technical indicators, consensus engine                | ✅ Done | `src/domain/` (93 files)                                |
+| Hand-written reactive signals (zero-dep)                  | ✅ Done | `src/core/signals.ts` (298 lines); `state.ts` deleted   |
+| History API router                                        | ✅ Done | `src/ui/router.ts`                                      |
+| Lightweight Charts v5 (multi-pane, drawing tools)         | ✅ Done | `src/cards/lw-chart.ts`, `drawing-tools.ts`             |
+| Multi-chart layout (2×2 / 1+3 synced crosshair)           | ✅ Done | `src/cards/multi-chart-layout.ts`                       |
+| All 14 route cards wired via registry                     | ✅ Done | `src/cards/registry.ts` + `src/main.ts`                 |
+| Signal DSL card                                           | ✅ Done | `src/cards/signal-dsl-card.ts` + `domain/signal-dsl.ts` |
+| Workbox SW (precache + NetworkFirst + SWR + NavPreload)   | ✅ Done | `src/sw.ts` + `scripts/workbox-inject.mjs`              |
+| Finnhub + Polygon + CoinGecko + Twelve Data + Yahoo       | ✅ Done | `src/providers/` (11 files)                             |
+| Circuit-breaker per provider                              | ✅ Done | `src/providers/circuit-breaker.ts`                      |
+| Real-time WS via Finnhub (`reconnecting-ws.ts`)           | ✅ Done | `src/core/reconnecting-ws.ts` + architecture doc        |
+| Tiered cache (L1 Map → L2 LS → L3 IDB)                    | ✅ Done | `src/core/tiered-cache.ts`, `lru-cache.ts`              |
+| Storage pressure monitor + LRU eviction                   | ✅ Done | `src/core/storage-pressure.ts` (wired in main.ts)       |
+| CSP + security headers via Worker                         | ✅ Done | `worker/security.ts`                                    |
+| Command palette (⌘K) + keyboard nav                       | ✅ Done | `src/ui/command-palette.ts`, `src/core/keyboard.ts`     |
+| Watchlist (sparklines, 52W range, sort, drag-reorder)     | ✅ Done | `src/cards/watchlist-card.ts`, `src/ui/sortable.ts`     |
+| Sector grouping + instrument-type views                   | ✅ Done | `src/ui/watchlist.ts`                                   |
+| Heatmap (Canvas treemap)                                  | ✅ Done | `src/cards/heatmap-card.ts`                             |
+| Screener (preset + custom)                                | ✅ Done | `src/cards/screener-card.ts`                            |
+| Alerts card + browser Notifications                       | ✅ Done | `src/cards/alerts-card.ts`                              |
+| Portfolio (P/L, sector allocation, benchmark vs SPY)      | ✅ Done | `src/cards/portfolio-card.ts`                           |
+| Risk metrics (Sharpe, Sortino, max DD, Beta, CAGR)        | ✅ Done | `src/cards/risk-card.ts`                                |
+| Backtest UI (equity curve + perf table, Web Worker)       | ✅ Done | `src/cards/backtest-card.ts`                            |
+| Consensus timeline + Provider Health card                 | ✅ Done | respective card files                                   |
+| Valibot validation at all provider boundaries             | ✅ Done | `src/providers/types.ts` + schemas                      |
+| i18n (EN + HE RTL)                                        | ✅ Done | `src/core/i18n.ts`, `src/core/messages.ts`              |
+| Color-blind palettes (4 modes)                            | ✅ Done | `src/ui/palette-switcher.ts`                            |
+| View Transitions API (route animations)                   | ✅ Done | `src/styles/layout.css` (`@supports`)                   |
+| URL state sharing (base64-encoded watchlist)              | ✅ Done | `src/core/share-state.ts`                               |
+| BroadcastChannel cross-tab sync                           | ✅ Done | `src/core/broadcast-channel.ts`                         |
+| CSV/JSON export with schema versioning                    | ✅ Done | `src/core/data-export.ts`                               |
+| Onboarding tour (3-step, dismissible)                     | ✅ Done | `src/ui/onboarding-tour.ts`                             |
+| PWA install prompt (iOS + Android)                        | ✅ Done | `src/ui/pwa-install.ts`                                 |
+| OG image endpoint                                         | ✅ Done | `worker/og.ts`                                          |
+| Worker API (5 routes: quote, history, search, health, OG) | ✅ Done | `worker/index.ts`, `chart.ts`, `health.ts`, etc.        |
+| Playwright E2E (app + components flows)                   | ✅ Done | `tests/e2e/app.spec.ts`, `components.spec.ts`           |
+| Lighthouse CI (all assertions → error)                    | ✅ Done | `config/lighthouserc.json`                              |
+| Changesets + commitlint + lint-staged                     | ✅ Done | `.changeset/`, `config/commitlint.config.mjs`           |
+| Component preview (`dev/components.html`)                 | ✅ Done | `vite.config.ts` dev/components entry                   |
+| Config `config/` subdirectory (5 linter configs)          | ✅ Done | v7.7.0 production-readiness sprint                      |
+| CSS webkit prefixes + `@supports` compat guards           | ✅ Done | v7.7.0 production-readiness sprint                      |
 
 ### 2.2 What is genuinely incomplete
 
-| Area                                                          | Gap Detail                                        | Target |
-| ------------------------------------------------------------- | ------------------------------------------------- | ------ |
-| **TypeScript version mismatch**                               | `CrossTide: 5.9`, `MyScripts: 6.0.3` — diverged  | G3     |
-| **`zod` + `valibot` both in prod deps**                       | Redundant validators; 2× runtime cost             | F1     |
-| **E2E test coverage: 2 files for 14 routes**                  | No protection on chart, screener, backtest routes | F3     |
-| **Structured Worker logs**                                    | `console.log` strings; no Logpush integration     | F4     |
-| **GlitchTip + Plausible not deployed**                        | Error / analytics sinks designed but unhosted     | F5     |
-| **Astro Starlight docs-site not deployed**                    | Lives in `docs-site/`, npm-installed, not public  | F2     |
-| **Worker Hono refactor**                                      | Bare `addEventListener`; ad-hoc route matching    | G1     |
-| **`src/` → `app/` + npm workspaces**                          | R3 pending; `worker/`, `docs-site/` are siblings  | G2     |
-| **Stooq bulk-EOD provider**                                   | Listed since v6.x roadmap, still absent           | F12    |
-| **SharedArrayBuffer OHLC transfer**                           | COOP/COEP set but SAB path not used               | G4     |
-| **Passkey auth + cloud sync**                                 | D1 deferred; no multi-device story                | H12    |
-| **Web Push (VAPID)**                                          | D6 deferred; only in-tab notifications exist      | H11    |
-| **Per-indicator MDX reference (docs-site)**                   | 13 done; ~40 indicators have no reference page    | F6     |
-| **`tsd` public-API type tests**                               | R13 pending; no type-level regression net         | G5     |
-| **`eslint-plugin-import-x`**                                  | R10 pending; import lint is weaker than needed    | G6     |
-| **Tauri 2.0 desktop wrapper**                                 | E1 stretch; PWA is the primary mobile path        | I-E1   |
+| Area                                         | Gap Detail                                        | Target |
+| -------------------------------------------- | ------------------------------------------------- | ------ |
+| **TypeScript version mismatch**              | `CrossTide: 5.9`, `MyScripts: 6.0.3` — diverged   | G3     |
+| **`zod` + `valibot` both in prod deps**      | Redundant validators; 2× runtime cost             | F1     |
+| **E2E test coverage: 2 files for 14 routes** | No protection on chart, screener, backtest routes | F3     |
+| **Structured Worker logs**                   | `console.log` strings; no Logpush integration     | F4     |
+| **GlitchTip + Plausible not deployed**       | Error / analytics sinks designed but unhosted     | F5     |
+| **Astro Starlight docs-site not deployed**   | Lives in `docs-site/`, npm-installed, not public  | F2     |
+| **Worker Hono refactor**                     | Bare `addEventListener`; ad-hoc route matching    | G1     |
+| **`src/` → `app/` + npm workspaces**         | R3 pending; `worker/`, `docs-site/` are siblings  | G2     |
+| **Stooq bulk-EOD provider**                  | Listed since v6.x roadmap, still absent           | F12    |
+| **SharedArrayBuffer OHLC transfer**          | COOP/COEP set but SAB path not used               | G4     |
+| **Passkey auth + cloud sync**                | D1 deferred; no multi-device story                | H12    |
+| **Web Push (VAPID)**                         | D6 deferred; only in-tab notifications exist      | H11    |
+| **Per-indicator MDX reference (docs-site)**  | 13 done; ~40 indicators have no reference page    | F6     |
+| **`tsd` public-API type tests**              | R13 pending; no type-level regression net         | G5     |
+| **`eslint-plugin-import-x`**                 | R10 pending; import lint is weaker than needed    | G6     |
+| **Tauri 2.0 desktop wrapper**                | E1 stretch; PWA is the primary mobile path        | I-E1   |
 
 ### 2.3 New gaps identified in the v3 rethink (not in prior roadmaps)
 
-| Area                                           | Why it matters                                          | Target |
-| ---------------------------------------------- | ------------------------------------------------------- | ------ |
-| **Company name display under ticker**          | Ticker-only rows require users to remember names; one secondary line eliminates that friction across all views | G19 |
-| **Per-method consensus weights**               | All 12 methods carry equal weight today; users who trust certain methods more have no way to express that preference; a simple weight map makes the consensus engine genuinely personalizable | G20 |
-| **Heatmap sector drill-down**                  | Current heatmap shows all tickers flat; clicking a sector cell should zoom into that sector and reveal which individual stock drove the move, with index-attribution bars | G21 |
-| **Correlation Matrix card**                    | `domain/correlation-matrix.ts` is complete but has no UI; a dedicated card shows pairwise correlation heatmap for watchlist tickers, highlights dangerous over-concentration | G22 |
-| **Market Breadth card**                        | No single view shows watchlist-wide signal distribution, % above 50/200 MA, or advance/decline ratio; easy to build on existing quote + SMA data | G23 |
-| **Earnings Calendar card**                     | Upcoming earnings dates, consensus EPS estimate, and historical surprise % for watchlist tickers; turns the dashboard into a forward-looking event tracker | H18 |
-| **Macro Dashboard card**                       | Missing market-context layer: VIX, 10Y yield, DXY, gold, crude oil — the five numbers every equity trader checks first every morning | H19 |
-| **Sector Rotation card**                       | No view shows 11-sector relative performance over rolling 1M/3M/6M windows; important for regime-aware trading decisions | H20 |
-| **Relative Strength Comparison card**          | No multi-ticker % return overlay vs a benchmark (SPY/QQQ); fundamental tool for deciding which ticker in a sector to own | H21 |
-| **Economic Calendar card**                     | Fed decisions, CPI, NFP, GDP releases create predictable volatility; a calendar card with FRED/public macro feed would close this gap | I10 |
-| **News Digest card**                           | Earnings, analyst upgrades, and macro news move prices; a curated RSS/Atom feed per ticker with no auth required adds context the indicators cannot | I11 |
-| **Per-card settings**                          | The Settings card today holds only global options (theme, export, clear); every card has tunable parameters (indicator periods, column visibility, refresh rates, display density) but no way to persist user preferences per card; a card-scoped settings system would make the dashboard genuinely configurable without cluttering the global settings page | G24 |
-| **Temporal API** (Stage 4, JS 2025)            | `Date` has DST and timezone traps in financial dates    | G7     |
-| **Navigation API**                             | Cleaner SPA nav than History pushState + popstate       | G8     |
-| **Popover API** (Baseline 2024)                | Replace custom modal/dropdown with native behaviour     | G9     |
-| **Speculation Rules API**                      | Prefetch/prerender card chunks on hover                 | H3     |
-| **Compression Streams API**                    | gzip data exports in-browser before download            | G11    |
-| **File System Access API**                     | Save/load strategy configs to local files               | H6     |
-| **`using` / `Symbol.dispose`** (TS 5.2+)       | Deterministic cleanup for effects, listeners, workers   | G12    |
-| **Local-AI pattern recognition (ONNX Web)**    | On-device candlestick pattern classifier, no LLM        | I1     |
-| **OpenAPI spec for Worker routes**             | Machine-readable contract; enables SDK + tests          | G10    |
-| **CSS `@scope`** (Baseline 2024)               | Component-scoped styles; replaces BEM-style prefixes    | H5     |
-| **Transferable OHLC arrays to Worker**         | Zero-copy `Float64Array` for backtest perf              | G4     |
-| **Scroll-driven animations** (CSS)             | Chart time-axis scroll indicators without JS            | H4     |
-| **`@starting-style`** (CSS entry animations)   | Card mount transitions without JS                       | H2     |
-| **AbortController on route change**            | All in-flight fetches cancelled cleanly on navigate     | F7     |
-| **Tiingo provider**                            | Cheaper paid alternative to Polygon ($10/mo)            | G — ongoing |
+| Area                                         | Why it matters                                                                                                                                                                                                                                                                                                                                                | Target      |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Company name display under ticker**        | Ticker-only rows require users to remember names; one secondary line eliminates that friction across all views                                                                                                                                                                                                                                                | G19         |
+| **Per-method consensus weights**             | All 12 methods carry equal weight today; users who trust certain methods more have no way to express that preference; a simple weight map makes the consensus engine genuinely personalizable                                                                                                                                                                 | G20         |
+| **Heatmap sector drill-down**                | Current heatmap shows all tickers flat; clicking a sector cell should zoom into that sector and reveal which individual stock drove the move, with index-attribution bars                                                                                                                                                                                     | G21         |
+| **Correlation Matrix card**                  | `domain/correlation-matrix.ts` is complete but has no UI; a dedicated card shows pairwise correlation heatmap for watchlist tickers, highlights dangerous over-concentration                                                                                                                                                                                  | G22         |
+| **Market Breadth card**                      | No single view shows watchlist-wide signal distribution, % above 50/200 MA, or advance/decline ratio; easy to build on existing quote + SMA data                                                                                                                                                                                                              | G23         |
+| **Earnings Calendar card**                   | Upcoming earnings dates, consensus EPS estimate, and historical surprise % for watchlist tickers; turns the dashboard into a forward-looking event tracker                                                                                                                                                                                                    | H18         |
+| **Macro Dashboard card**                     | Missing market-context layer: VIX, 10Y yield, DXY, gold, crude oil — the five numbers every equity trader checks first every morning                                                                                                                                                                                                                          | H19         |
+| **Sector Rotation card**                     | No view shows 11-sector relative performance over rolling 1M/3M/6M windows; important for regime-aware trading decisions                                                                                                                                                                                                                                      | H20         |
+| **Relative Strength Comparison card**        | No multi-ticker % return overlay vs a benchmark (SPY/QQQ); fundamental tool for deciding which ticker in a sector to own                                                                                                                                                                                                                                      | H21         |
+| **Economic Calendar card**                   | Fed decisions, CPI, NFP, GDP releases create predictable volatility; a calendar card with FRED/public macro feed would close this gap                                                                                                                                                                                                                         | I10         |
+| **News Digest card**                         | Earnings, analyst upgrades, and macro news move prices; a curated RSS/Atom feed per ticker with no auth required adds context the indicators cannot                                                                                                                                                                                                           | I11         |
+| **Per-card settings**                        | The Settings card today holds only global options (theme, export, clear); every card has tunable parameters (indicator periods, column visibility, refresh rates, display density) but no way to persist user preferences per card; a card-scoped settings system would make the dashboard genuinely configurable without cluttering the global settings page | G24         |
+| **Temporal API** (Stage 4, JS 2025)          | `Date` has DST and timezone traps in financial dates                                                                                                                                                                                                                                                                                                          | G7          |
+| **Navigation API**                           | Cleaner SPA nav than History pushState + popstate                                                                                                                                                                                                                                                                                                             | G8          |
+| **Popover API** (Baseline 2024)              | Replace custom modal/dropdown with native behaviour                                                                                                                                                                                                                                                                                                           | G9          |
+| **Speculation Rules API**                    | Prefetch/prerender card chunks on hover                                                                                                                                                                                                                                                                                                                       | H3          |
+| **Compression Streams API**                  | gzip data exports in-browser before download                                                                                                                                                                                                                                                                                                                  | G11         |
+| **File System Access API**                   | Save/load strategy configs to local files                                                                                                                                                                                                                                                                                                                     | H6          |
+| **`using` / `Symbol.dispose`** (TS 5.2+)     | Deterministic cleanup for effects, listeners, workers                                                                                                                                                                                                                                                                                                         | G12         |
+| **Local-AI pattern recognition (ONNX Web)**  | On-device candlestick pattern classifier, no LLM                                                                                                                                                                                                                                                                                                              | I1          |
+| **OpenAPI spec for Worker routes**           | Machine-readable contract; enables SDK + tests                                                                                                                                                                                                                                                                                                                | G10         |
+| **CSS `@scope`** (Baseline 2024)             | Component-scoped styles; replaces BEM-style prefixes                                                                                                                                                                                                                                                                                                          | H5          |
+| **Transferable OHLC arrays to Worker**       | Zero-copy `Float64Array` for backtest perf                                                                                                                                                                                                                                                                                                                    | G4          |
+| **Scroll-driven animations** (CSS)           | Chart time-axis scroll indicators without JS                                                                                                                                                                                                                                                                                                                  | H4          |
+| **`@starting-style`** (CSS entry animations) | Card mount transitions without JS                                                                                                                                                                                                                                                                                                                             | H2          |
+| **AbortController on route change**          | All in-flight fetches cancelled cleanly on navigate                                                                                                                                                                                                                                                                                                           | F7          |
+| **Tiingo provider**                          | Cheaper paid alternative to Polygon ($10/mo)                                                                                                                                                                                                                                                                                                                  | G — ongoing |
 
 ---
 
@@ -182,74 +182,74 @@ beyond the open-source comparison set.
 Every prior and new decision evaluated as of May 2026.
 Verdict: `Keep` / `Refine` / `Replace` / `Defer` / `NEW`.
 
-| #       | Topic                         | Prior decision                             | v3 verdict                 | Action                                                                                                              |
-| ------- | ----------------------------- | ------------------------------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| D1      | UI framework                  | Vanilla TS + hand-written signals          | **Keep — confirmed right** | Signals (298 lines, zero-dep) outperform Preact Signals ergonomically. Reject all frameworks.                       |
-| D2      | Routing                       | History API (done)                         | **Refine**                 | Add Navigation API shim as progressive enhancement: `navigateEvent.intercept()` + scroll restoration.              |
-| D3      | State store                   | Signals-only (done; `state.ts` deleted)    | **Keep**                   | Add `batch()` for atomic multi-signal updates.                                                                      |
-| D4      | Styling                       | Tokens + `@layer`                          | **Extend**                 | Add CSS `@scope` (Baseline 2024) for card-level containment; `@starting-style` for entry animations.               |
-| D5      | Charts                        | Lightweight Charts v5 (done)               | **Keep + extend**          | Add `uPlot` (~10 KB gz) as a lightweight fallback for static/inline chart views. Keep LWC for interactive.         |
-| D6      | Edge runtime                  | Cloudflare Workers                         | **Refine → Hono**          | Migrate Worker from bare `addEventListener` to **Hono**. Typed routes; middleware; auto-OpenAPI.                    |
-| D7      | Data providers                | Yahoo / Finnhub / Twelve / CoinGecko / Polygon | **Refine**             | **Add Stooq** (free bulk EOD). **Add Tiingo** (affordable paid tier). **Remove Twelve Data** (25/day unusable).     |
-| D8      | Auth                          | None / Passkey (v8)                        | **Defer to v8.0**          | Passkey WebAuthn + AES-GCM encrypted D1 blob. No email/password ever.                                              |
-| D9      | Hosting                       | Cloudflare Pages primary (done)            | **Keep**                   | CF Pages + Workers in production. GitHub Pages mirror. No change.                                                   |
-| D10     | Service Worker                | Workbox (done)                             | **Extend**                 | Add Background Fetch API for large OHLC dataset downloads (Phase H).                                               |
-| D11     | Live data                     | Finnhub WS (done)                          | **Extend**                 | Add market-hours detection (avoid WS outside 9:30–16:00 ET). Polygon WSS as paid fallback.                         |
-| D12     | Compute offload               | Web Worker (done)                          | **Extend**                 | Pass OHLC series as `Transferable` `Float64Array` to eliminate JSON serialization for >1y datasets.                 |
-| D13     | Persistent cache              | Tiered cache + LRU (done)                  | **Extend**                 | Add ETag/Last-Modified support; add OPFS tier for large OHLC archives (Phase H).                                    |
-| D14     | Runtime validation            | Valibot (done) + zod (redundant)           | **Fix (P0)**               | **Remove `zod` from prod deps** (F1). Valibot is the sole validator.                                                |
-| D15     | Error tracking                | GlitchTip (designed, not deployed)         | **Deploy now (F5)**        | Self-host on Fly.io free tier. Configure `VITE_GLITCHTIP_DSN`.                                                     |
-| D16     | Analytics                     | Plausible (designed, not deployed)         | **Deploy now (F5)**        | Self-host on Fly.io. Configure `VITE_PLAUSIBLE_URL` + `VITE_PLAUSIBLE_SITE`.                                        |
-| D17     | Lighthouse CI                 | Done (all assertions `"error"`)            | **Keep**                   | Budgets confirmed in v7.7.0. No change.                                                                             |
-| D18     | E2E tests                     | 2 Playwright spec files                    | **Expand to ≥15 (P0)**     | 2 files for 14 routes is dangerously thin. Phase F target.                                                          |
-| D19     | A11y tests                    | `@axe-core/playwright` wired               | **Extend**                 | Add `vitest-axe` for unit-level a11y assertions on card render output.                                              |
-| D20     | Versioning                    | Changesets (done)                          | **Keep**                   | No change.                                                                                                          |
-| D21     | Toolchain location            | `MyScripts/tooling/`                       | **Keep**                   | Confirmed DX win.                                                                                                   |
-| D22     | Component catalog             | `dev/components.html` (done)               | **Keep**                   | No Storybook needed.                                                                                                |
-| D23     | Supply chain                  | Dependabot + `npm audit signatures`        | **Extend**                 | Add `socket.dev` PR check (F9) and `gitleaks` pre-commit + CI (F10).                                               |
-| D24     | i18n                          | EN + HE RTL (done)                         | **Keep**                   | ICU-lite sufficient for current message catalog (~80 keys).                                                         |
-| D25     | Docs site                     | Astro Starlight (local, not deployed)      | **Deploy now (F2)**        | Link from README; deploy to CF Pages.                                                                               |
-| D26     | Multi-tenancy                 | None                                       | **Keep**                   | Single-user device-local.                                                                                           |
-| D27     | TS strictness                 | Strict + extras                            | **Migrate to TS 6.0 (G3)** | MyScripts runs 6.0.3; CrossTide lags at 5.9. Align.                                                                |
-| D28     | Test runner                   | Vitest 4.1                                 | **Keep + add browser mode (G17)** | Add `@vitest/browser` for 3–5 DOM-heavy tests.                                                               |
-| D29     | Provider health               | Circuit-breaker + Provider Health card (done) | **Keep**                | Extend with structured Worker logs (F4).                                                                            |
-| D30     | Indicator docs                | 13 MDX pages done                          | **Complete (P1)**          | 50+ indicators, 13 documented. Add remaining ~37 (Phase F).                                                         |
-| **D31** | **Code language**             | TypeScript                                 | **Keep**                   | TS 6.0 migration. Revisit WASM only if a compute path exceeds 16 ms p95 on real hardware.                          |
-| **D32** | **Bundler**                   | Vite 8 + oxc minifier                      | **Keep**                   | Watch Rolldown; migrate when Vite ships it as default.                                                              |
-| **D33** | **Test runner**               | Vitest 4.1                                 | **Keep**                   | No change.                                                                                                          |
-| **D34** | **Linter**                    | ESLint 10 + typescript-eslint v8           | **Extend**                 | Add `eslint-plugin-import-x` (G6); `no-innerhtml-without-escape` custom rule.                                       |
-| **D35** | **Formatter**                 | Prettier                                   | **Keep**                   | Biome still doesn't match our markdown table formatting.                                                            |
-| **D36** | **Database (client)**         | IndexedDB                                  | **Keep + OPFS for large**  | IDB for structured data; OPFS for large sequential byte arrays (OHLC archives).                                     |
-| **D37** | **Database (server)**         | CF KV + R2                                 | **Add D1 for v8**          | Cloudflare D1 (SQLite-on-edge) for cloud-sync user data in v8.0.                                                    |
-| **D38** | **CSS architecture**          | Tokens + `@layer`                          | **Add `@scope` + `@property`** | `@scope` for card containment; `@property` for typed animated custom properties.                              |
-| **D39** | **Animation**                 | View Transitions (done)                    | **Extend**                 | Add scroll-driven animations for chart axis; `@starting-style` for card mount.                                      |
-| **D40** | **Icons**                     | Inline SVG sprite                          | **Keep**                   | No change.                                                                                                          |
-| **D41** | **Fonts**                     | System stack                               | **Add Inter Variable (G16)** | Self-hosted `woff2` subset, `font-display: optional`, ~18 KB gz.                                                  |
-| **D42** | **Docs rendering**            | Astro Starlight                            | **Deploy now (F2)**        | See D25.                                                                                                            |
-| **D43** | **Push notifications**        | In-tab Notification API (done)             | **VAPID in v8 (H11)**      | Real Web Push deferred to v8.0.                                                                                     |
-| **D44** | **Mobile**                    | PWA only                                   | **Keep + polish**          | `@starting-style` for splash screen transitions.                                                                    |
-| **D45** | **Theming**                   | dark/light/auto + palettes (done)          | **Keep**                   | Add Inter Variable font (G16).                                                                                      |
-| **D46** | **Compute hot paths**         | TypeScript                                 | **Add Transferable path (G4)** | `Float64Array` + `Transferable` for backtest/screener. No WASM at current scale.                               |
-| **D47** | **Data export**               | CSV + JSON (done)                          | **Extend**                 | Compression Streams for gzip (G11); optional XLSX via `exceljs` lazy-loaded (H13).                                 |
-| **D48** | **License**                   | MIT                                        | **Keep**                   | No change.                                                                                                          |
-| **D49** | **Distribution**              | Web + Tauri 2.0 stretch                    | **Keep defer**             | Tauri 2.0 is a v9.0 stretch goal.                                                                                   |
-| **D50** | **Repo structure**            | Single repo, `src/` layout                 | **Refine → workspaces (G2)** | npm workspaces: `app/`, `worker/`, `docs-site/`. Same repo, same `npm ci`.                                       |
-| **NEW** | **Temporal API**              | `Date` everywhere                          | **Adopt (G7)**             | Temporal polyfill for financial-date math in `core/timezone.ts` and domain.                                         |
-| **NEW** | **Navigation API**            | History API + popstate                     | **PE adoption (G8)**       | Progressive enhancement: `if ('navigation' in window)` guard.                                                       |
-| **NEW** | **Popover API**               | Custom modal/toast/dropdown                | **Adopt (G9)**             | Baseline 2024. Replace custom focus-trap in most overlay patterns.                                                  |
-| **NEW** | **CSS Anchor Positioning**    | JS-measured tooltips                       | **Adopt (H1)**             | Chrome 125+/Baseline 2025. Chart crosshair tooltip without `getBoundingClientRect`.                                 |
-| **NEW** | **Speculation Rules API**     | `<link rel=preload>` only                  | **Adopt (H3)**             | Declare `"prefetch"` rules for adjacent card chunks on hover/focus.                                                 |
-| **NEW** | **Compression Streams**       | Raw JSON/CSV download                      | **Adopt (G11)**            | `CompressionStream('gzip')` before download. 3–10× smaller exports.                                                 |
-| **NEW** | **File System Access API**    | None                                       | **Adopt (H6)**             | "Save strategy to desktop" with graceful degradation.                                                               |
-| **NEW** | **`using` / Symbol.dispose**  | Manual cleanup                             | **Adopt now (G12)**        | TS 5.2+ native. Effect / WS / Worker handles.                                                                       |
-| **NEW** | **Local-AI (ONNX Runtime Web)** | None                                     | **Add (Phase I, I1)**      | On-device candlestick pattern classifier. No cloud LLM. Privacy-preserving.                                         |
-| **NEW** | **OpenAPI spec**              | None                                       | **Auto-generate (G10)**    | Hono `@hono/zod-openapi`. Enables typed SDK + Playwright API tests.                                                 |
-| **NEW** | **CSS `@scope`**              | BEM-style card prefixes                    | **Adopt (H5)**             | Baseline 2024. Scope card styles to card root.                                                                      |
-| **NEW** | **Transferable Float64Array** | JSON serialization in Worker RPC           | **Adopt (G4)**             | Zero-copy OHLC array for backtest/screener compute.                                                                  |
-| **NEW** | **OPFS tier**                 | IDB for all storage                        | **Add (H8)**               | Origin Private File System for large OHLC archives (>5y); avoids IDB fragmentation.                                 |
-| **NEW** | **ETag/Last-Modified cache**  | No HTTP cache validators                   | **Adopt (G14)**            | 304 Not Modified handling; reduces data transfer.                                                                    |
-| **NEW** | **Background Fetch API**      | Regular fetch for large datasets           | **Adopt (H7)**             | Large OHLC downloads with progress UI; survives browser closure.                                                    |
-| **NEW** | **Cloudflare Rate Limiting API** | In-memory token bucket only             | **Adopt (G13)**            | Distributed; survives Worker restarts; free tier available.                                                         |
+| #       | Topic                            | Prior decision                                 | v3 verdict                        | Action                                                                                                          |
+| ------- | -------------------------------- | ---------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| D1      | UI framework                     | Vanilla TS + hand-written signals              | **Keep — confirmed right**        | Signals (298 lines, zero-dep) outperform Preact Signals ergonomically. Reject all frameworks.                   |
+| D2      | Routing                          | History API (done)                             | **Refine**                        | Add Navigation API shim as progressive enhancement: `navigateEvent.intercept()` + scroll restoration.           |
+| D3      | State store                      | Signals-only (done; `state.ts` deleted)        | **Keep**                          | Add `batch()` for atomic multi-signal updates.                                                                  |
+| D4      | Styling                          | Tokens + `@layer`                              | **Extend**                        | Add CSS `@scope` (Baseline 2024) for card-level containment; `@starting-style` for entry animations.            |
+| D5      | Charts                           | Lightweight Charts v5 (done)                   | **Keep + extend**                 | Add `uPlot` (~10 KB gz) as a lightweight fallback for static/inline chart views. Keep LWC for interactive.      |
+| D6      | Edge runtime                     | Cloudflare Workers                             | **Refine → Hono**                 | Migrate Worker from bare `addEventListener` to **Hono**. Typed routes; middleware; auto-OpenAPI.                |
+| D7      | Data providers                   | Yahoo / Finnhub / Twelve / CoinGecko / Polygon | **Refine**                        | **Add Stooq** (free bulk EOD). **Add Tiingo** (affordable paid tier). **Remove Twelve Data** (25/day unusable). |
+| D8      | Auth                             | None / Passkey (v8)                            | **Defer to v8.0**                 | Passkey WebAuthn + AES-GCM encrypted D1 blob. No email/password ever.                                           |
+| D9      | Hosting                          | Cloudflare Pages primary (done)                | **Keep**                          | CF Pages + Workers in production. GitHub Pages mirror. No change.                                               |
+| D10     | Service Worker                   | Workbox (done)                                 | **Extend**                        | Add Background Fetch API for large OHLC dataset downloads (Phase H).                                            |
+| D11     | Live data                        | Finnhub WS (done)                              | **Extend**                        | Add market-hours detection (avoid WS outside 9:30–16:00 ET). Polygon WSS as paid fallback.                      |
+| D12     | Compute offload                  | Web Worker (done)                              | **Extend**                        | Pass OHLC series as `Transferable` `Float64Array` to eliminate JSON serialization for >1y datasets.             |
+| D13     | Persistent cache                 | Tiered cache + LRU (done)                      | **Extend**                        | Add ETag/Last-Modified support; add OPFS tier for large OHLC archives (Phase H).                                |
+| D14     | Runtime validation               | Valibot (done) + zod (redundant)               | **Fix (P0)**                      | **Remove `zod` from prod deps** (F1). Valibot is the sole validator.                                            |
+| D15     | Error tracking                   | GlitchTip (designed, not deployed)             | **Deploy now (F5)**               | Self-host on Fly.io free tier. Configure `VITE_GLITCHTIP_DSN`.                                                  |
+| D16     | Analytics                        | Plausible (designed, not deployed)             | **Deploy now (F5)**               | Self-host on Fly.io. Configure `VITE_PLAUSIBLE_URL` + `VITE_PLAUSIBLE_SITE`.                                    |
+| D17     | Lighthouse CI                    | Done (all assertions `"error"`)                | **Keep**                          | Budgets confirmed in v7.7.0. No change.                                                                         |
+| D18     | E2E tests                        | 2 Playwright spec files                        | **Expand to ≥15 (P0)**            | 2 files for 14 routes is dangerously thin. Phase F target.                                                      |
+| D19     | A11y tests                       | `@axe-core/playwright` wired                   | **Extend**                        | Add `vitest-axe` for unit-level a11y assertions on card render output.                                          |
+| D20     | Versioning                       | Changesets (done)                              | **Keep**                          | No change.                                                                                                      |
+| D21     | Toolchain location               | `MyScripts/tooling/`                           | **Keep**                          | Confirmed DX win.                                                                                               |
+| D22     | Component catalog                | `dev/components.html` (done)                   | **Keep**                          | No Storybook needed.                                                                                            |
+| D23     | Supply chain                     | Dependabot + `npm audit signatures`            | **Extend**                        | Add `socket.dev` PR check (F9) and `gitleaks` pre-commit + CI (F10).                                            |
+| D24     | i18n                             | EN + HE RTL (done)                             | **Keep**                          | ICU-lite sufficient for current message catalog (~80 keys).                                                     |
+| D25     | Docs site                        | Astro Starlight (local, not deployed)          | **Deploy now (F2)**               | Link from README; deploy to CF Pages.                                                                           |
+| D26     | Multi-tenancy                    | None                                           | **Keep**                          | Single-user device-local.                                                                                       |
+| D27     | TS strictness                    | Strict + extras                                | **Migrate to TS 6.0 (G3)**        | MyScripts runs 6.0.3; CrossTide lags at 5.9. Align.                                                             |
+| D28     | Test runner                      | Vitest 4.1                                     | **Keep + add browser mode (G17)** | Add `@vitest/browser` for 3–5 DOM-heavy tests.                                                                  |
+| D29     | Provider health                  | Circuit-breaker + Provider Health card (done)  | **Keep**                          | Extend with structured Worker logs (F4).                                                                        |
+| D30     | Indicator docs                   | 13 MDX pages done                              | **Complete (P1)**                 | 50+ indicators, 13 documented. Add remaining ~37 (Phase F).                                                     |
+| **D31** | **Code language**                | TypeScript                                     | **Keep**                          | TS 6.0 migration. Revisit WASM only if a compute path exceeds 16 ms p95 on real hardware.                       |
+| **D32** | **Bundler**                      | Vite 8 + oxc minifier                          | **Keep**                          | Watch Rolldown; migrate when Vite ships it as default.                                                          |
+| **D33** | **Test runner**                  | Vitest 4.1                                     | **Keep**                          | No change.                                                                                                      |
+| **D34** | **Linter**                       | ESLint 10 + typescript-eslint v8               | **Extend**                        | Add `eslint-plugin-import-x` (G6); `no-innerhtml-without-escape` custom rule.                                   |
+| **D35** | **Formatter**                    | Prettier                                       | **Keep**                          | Biome still doesn't match our markdown table formatting.                                                        |
+| **D36** | **Database (client)**            | IndexedDB                                      | **Keep + OPFS for large**         | IDB for structured data; OPFS for large sequential byte arrays (OHLC archives).                                 |
+| **D37** | **Database (server)**            | CF KV + R2                                     | **Add D1 for v8**                 | Cloudflare D1 (SQLite-on-edge) for cloud-sync user data in v8.0.                                                |
+| **D38** | **CSS architecture**             | Tokens + `@layer`                              | **Add `@scope` + `@property`**    | `@scope` for card containment; `@property` for typed animated custom properties.                                |
+| **D39** | **Animation**                    | View Transitions (done)                        | **Extend**                        | Add scroll-driven animations for chart axis; `@starting-style` for card mount.                                  |
+| **D40** | **Icons**                        | Inline SVG sprite                              | **Keep**                          | No change.                                                                                                      |
+| **D41** | **Fonts**                        | System stack                                   | **Add Inter Variable (G16)**      | Self-hosted `woff2` subset, `font-display: optional`, ~18 KB gz.                                                |
+| **D42** | **Docs rendering**               | Astro Starlight                                | **Deploy now (F2)**               | See D25.                                                                                                        |
+| **D43** | **Push notifications**           | In-tab Notification API (done)                 | **VAPID in v8 (H11)**             | Real Web Push deferred to v8.0.                                                                                 |
+| **D44** | **Mobile**                       | PWA only                                       | **Keep + polish**                 | `@starting-style` for splash screen transitions.                                                                |
+| **D45** | **Theming**                      | dark/light/auto + palettes (done)              | **Keep**                          | Add Inter Variable font (G16).                                                                                  |
+| **D46** | **Compute hot paths**            | TypeScript                                     | **Add Transferable path (G4)**    | `Float64Array` + `Transferable` for backtest/screener. No WASM at current scale.                                |
+| **D47** | **Data export**                  | CSV + JSON (done)                              | **Extend**                        | Compression Streams for gzip (G11); optional XLSX via `exceljs` lazy-loaded (H13).                              |
+| **D48** | **License**                      | MIT                                            | **Keep**                          | No change.                                                                                                      |
+| **D49** | **Distribution**                 | Web + Tauri 2.0 stretch                        | **Keep defer**                    | Tauri 2.0 is a v9.0 stretch goal.                                                                               |
+| **D50** | **Repo structure**               | Single repo, `src/` layout                     | **Refine → workspaces (G2)**      | npm workspaces: `app/`, `worker/`, `docs-site/`. Same repo, same `npm ci`.                                      |
+| **NEW** | **Temporal API**                 | `Date` everywhere                              | **Adopt (G7)**                    | Temporal polyfill for financial-date math in `core/timezone.ts` and domain.                                     |
+| **NEW** | **Navigation API**               | History API + popstate                         | **PE adoption (G8)**              | Progressive enhancement: `if ('navigation' in window)` guard.                                                   |
+| **NEW** | **Popover API**                  | Custom modal/toast/dropdown                    | **Adopt (G9)**                    | Baseline 2024. Replace custom focus-trap in most overlay patterns.                                              |
+| **NEW** | **CSS Anchor Positioning**       | JS-measured tooltips                           | **Adopt (H1)**                    | Chrome 125+/Baseline 2025. Chart crosshair tooltip without `getBoundingClientRect`.                             |
+| **NEW** | **Speculation Rules API**        | `<link rel=preload>` only                      | **Adopt (H3)**                    | Declare `"prefetch"` rules for adjacent card chunks on hover/focus.                                             |
+| **NEW** | **Compression Streams**          | Raw JSON/CSV download                          | **Adopt (G11)**                   | `CompressionStream('gzip')` before download. 3–10× smaller exports.                                             |
+| **NEW** | **File System Access API**       | None                                           | **Adopt (H6)**                    | "Save strategy to desktop" with graceful degradation.                                                           |
+| **NEW** | **`using` / Symbol.dispose**     | Manual cleanup                                 | **Adopt now (G12)**               | TS 5.2+ native. Effect / WS / Worker handles.                                                                   |
+| **NEW** | **Local-AI (ONNX Runtime Web)**  | None                                           | **Add (Phase I, I1)**             | On-device candlestick pattern classifier. No cloud LLM. Privacy-preserving.                                     |
+| **NEW** | **OpenAPI spec**                 | None                                           | **Auto-generate (G10)**           | Hono `@hono/zod-openapi`. Enables typed SDK + Playwright API tests.                                             |
+| **NEW** | **CSS `@scope`**                 | BEM-style card prefixes                        | **Adopt (H5)**                    | Baseline 2024. Scope card styles to card root.                                                                  |
+| **NEW** | **Transferable Float64Array**    | JSON serialization in Worker RPC               | **Adopt (G4)**                    | Zero-copy OHLC array for backtest/screener compute.                                                             |
+| **NEW** | **OPFS tier**                    | IDB for all storage                            | **Add (H8)**                      | Origin Private File System for large OHLC archives (>5y); avoids IDB fragmentation.                             |
+| **NEW** | **ETag/Last-Modified cache**     | No HTTP cache validators                       | **Adopt (G14)**                   | 304 Not Modified handling; reduces data transfer.                                                               |
+| **NEW** | **Background Fetch API**         | Regular fetch for large datasets               | **Adopt (H7)**                    | Large OHLC downloads with progress UI; survives browser closure.                                                |
+| **NEW** | **Cloudflare Rate Limiting API** | In-memory token bucket only                    | **Adopt (G13)**                   | Distributed; survives Worker restarts; free tier available.                                                     |
 
 ---
 
@@ -259,36 +259,36 @@ Expanded comparison including newer competitors and honest v7.7.0 assessment.
 
 `★★★` = best-in-class · `★★` = strong · `★` = adequate · `△` = partial · `✗` = absent
 
-| Capability                              | CrossTide v7.7 | v8.0 target  | TradingView | FinViz    | StockAnalysis | Koyfin  | thinkorswim | TrendSpider | GhostFolio | Simply Wall St |
-| --------------------------------------- | :------------: | :----------: | :---------: | :-------: | :-----------: | :-----: | :---------: | :---------: | :--------: | :------------: |
-| **Cost**                                | Free / OSS     | Free / OSS   | Freemium    | Freemium  | Freemium      | Paid    | Free (TD)   | Paid        | OSS/SaaS   | Freemium       |
-| **Open source**                         | ★★★ MIT        | ★★★ MIT      | ✗           | ✗         | ✗             | ✗       | ✗           | ✗           | ★ AGPL     | ✗              |
-| **Self-hostable**                       | ★★★            | ★★★          | ✗           | ✗         | ✗             | ✗       | ✗           | ✗           | ★★ Docker  | ✗              |
-| **No-account default**                  | ★★★            | ★★★          | △           | ★★★       | ★★★           | ✗       | ✗           | ✗           | ✗          | ✗              |
-| **Privacy (cookieless, no tracking)**   | ★★★            | ★★★          | ✗           | Ads       | Ads           | ✗       | Broker      | Partial     | ★★★        | ✗              |
-| **Bundle size (initial JS, gz)**        | ★★★ ~120 KB    | ★★★ <180 KB  | ✗ ~5 MB     | SSR       | ~2 MB         | ~3 MB   | Desktop     | ~2 MB       | ~500 KB    | ~2 MB          |
-| **Lighthouse perf score**               | ★★★ ≥90        | ★★★ ≥90      | ~50         | ~70       | ~75           | ~60     | n/a         | ~55         | ~65        | ~60            |
-| **Real-time streaming**                 | ★★ WS live     | ★★★ WS+DO    | ★★★         | Paid      | ★★            | ★★      | ★★★         | ★★★         | EOD        | EOD            |
-| **Candlestick + multi-pane indicators** | ★★ LWC v5      | ★★★ LWC+uPlot| ★★★         | Static    | ★★            | ★★      | ★★★         | ★★★ AI      | ✗          | ✗              |
-| **Drawing tools**                       | ★★ Trend+Fib   | ★★★ full     | ★★★         | ✗         | ✗             | ★       | ★★          | ★★★ AI      | ✗          | ✗              |
-| **Indicator count**                     | ★★★ 50+        | ★★★ 55+      | ★★★ 100+   | 50+       | 30+           | 80+     | ★★★ 400+   | ★★★ 100+   | ✗          | ✗              |
-| **Multi-method consensus engine**       | ★★★ unique     | ★★★ unique   | ✗           | ✗         | Analyst only  | ✗       | ✗           | △           | ✗          | ★ grades       |
-| **Screener (filters, presets)**         | ★★ preset+cust | ★★★          | ★★          | ★★★ best  | ★★            | ★★      | ★★          | ★★★ scan    | ✗          | ★★ filter      |
-| **Sector heatmap**                      | ★★ Canvas      | ★★★          | ★★          | ★★★ iconic| ★★            | ★★      | ✗           | ✗           | ✗          | ✗              |
-| **AI-powered pattern recognition**      | ✗              | ★★ on-device | ★ basic     | ✗         | ✗             | ✗       | ✗           | ★★★ server  | ✗          | ✗              |
-| **Backtest engine**                     | ★★★ WW in-browser| ★★★ DSL+WW | Pine Script | ✗         | ✗             | ★       | thinkScript | ★★★ auto    | ✗          | ✗              |
-| **Portfolio + risk metrics**            | ★★★ Sharpe etc | ★★★          | ✗           | ✗         | ★★            | ★★★     | Brokerage   | ✗           | ★★★ best   | ★★             |
-| **Offline / PWA**                       | ★★★ Workbox+SWR| ★★★ BackFetch| ✗           | ✗         | ✗             | ✗       | Desktop     | ✗           | ★★         | ✗              |
-| **Keyboard-first nav (`j/k`, `⌘K`)**   | ★★★            | ★★★          | ★★          | ✗         | ✗             | ★★      | ★★          | ✗           | ✗          | ✗              |
-| **Accessible (WCAG 2.2 AA + axe CI)**  | ★★ axe in CI   | ★★★ +vitest  | Partial     | ✗         | Partial       | Partial | ✗           | ✗           | ★★         | Partial        |
-| **Multi-provider failover**             | ★★★ circuit-bk | ★★★          | Proprietary | Prop.     | Prop.         | Prop.   | Broker      | Proprietary | Varies     | Prop.          |
-| **Per-asset deep-link / OG image**      | ★★ History+OG  | ★★★          | ★★★         | ★★★       | ★★★           | ★★★     | ✗           | ★★          | ★★         | ★★★            |
-| **Cloud sync (E2E encrypted)**          | ✗              | △ v8.0       | Account     | Account   | Account       | Account | Broker      | Account     | Account    | Account        |
-| **Crypto coverage**                     | ★★             | ★★★          | ★★★         | ✗         | △             | ★★      | ✗           | △           | ★★★        | ✗              |
-| **Local-AI pattern recognition**        | ✗              | ★★★ Phase I  | ✗           | ✗         | ✗             | ✗       | ✗           | ★★★ server  | ✗          | ✗              |
-| **Signal scripting / custom indicators**| ★★ DSL card    | ★★★ Worker   | ★★★ Pine    | ✗         | ✗             | ✗       | ★★ thinkScript| ✗         | ✗          | ✗              |
-| **Structured logs + OpenAPI contract**  | ✗              | ★★★          | Prop.       | Prop.     | Prop.         | Prop.   | Prop.       | Prop.       | ★★★        | Prop.          |
-| **Mobile installable (PWA)**            | ★★★            | ★★★          | ★★★         | ✗         | △             | ★★      | ★★          | ✗           | △          | ★★ PWA         |
+| Capability                               |  CrossTide v7.7   |  v8.0 target  | TradingView |   FinViz   | StockAnalysis | Koyfin  |  thinkorswim   | TrendSpider | GhostFolio | Simply Wall St |
+| ---------------------------------------- | :---------------: | :-----------: | :---------: | :--------: | :-----------: | :-----: | :------------: | :---------: | :--------: | :------------: |
+| **Cost**                                 |    Free / OSS     |  Free / OSS   |  Freemium   |  Freemium  |   Freemium    |  Paid   |   Free (TD)    |    Paid     |  OSS/SaaS  |    Freemium    |
+| **Open source**                          |      ★★★ MIT      |    ★★★ MIT    |      ✗      |     ✗      |       ✗       |    ✗    |       ✗        |      ✗      |   ★ AGPL   |       ✗        |
+| **Self-hostable**                        |        ★★★        |      ★★★      |      ✗      |     ✗      |       ✗       |    ✗    |       ✗        |      ✗      | ★★ Docker  |       ✗        |
+| **No-account default**                   |        ★★★        |      ★★★      |      △      |    ★★★     |      ★★★      |    ✗    |       ✗        |      ✗      |     ✗      |       ✗        |
+| **Privacy (cookieless, no tracking)**    |        ★★★        |      ★★★      |      ✗      |    Ads     |      Ads      |    ✗    |     Broker     |   Partial   |    ★★★     |       ✗        |
+| **Bundle size (initial JS, gz)**         |    ★★★ ~120 KB    |  ★★★ <180 KB  |   ✗ ~5 MB   |    SSR     |     ~2 MB     |  ~3 MB  |    Desktop     |    ~2 MB    |  ~500 KB   |     ~2 MB      |
+| **Lighthouse perf score**                |      ★★★ ≥90      |    ★★★ ≥90    |     ~50     |    ~70     |      ~75      |   ~60   |      n/a       |     ~55     |    ~65     |      ~60       |
+| **Real-time streaming**                  |    ★★ WS live     |   ★★★ WS+DO   |     ★★★     |    Paid    |      ★★       |   ★★    |      ★★★       |     ★★★     |    EOD     |      EOD       |
+| **Candlestick + multi-pane indicators**  |     ★★ LWC v5     | ★★★ LWC+uPlot |     ★★★     |   Static   |      ★★       |   ★★    |      ★★★       |   ★★★ AI    |     ✗      |       ✗        |
+| **Drawing tools**                        |   ★★ Trend+Fib    |   ★★★ full    |     ★★★     |     ✗      |       ✗       |    ★    |       ★★       |   ★★★ AI    |     ✗      |       ✗        |
+| **Indicator count**                      |      ★★★ 50+      |    ★★★ 55+    |  ★★★ 100+   |    50+     |      30+      |   80+   |    ★★★ 400+    |  ★★★ 100+   |     ✗      |       ✗        |
+| **Multi-method consensus engine**        |    ★★★ unique     |  ★★★ unique   |      ✗      |     ✗      | Analyst only  |    ✗    |       ✗        |      △      |     ✗      |    ★ grades    |
+| **Screener (filters, presets)**          |  ★★ preset+cust   |      ★★★      |     ★★      |  ★★★ best  |      ★★       |   ★★    |       ★★       |  ★★★ scan   |     ✗      |   ★★ filter    |
+| **Sector heatmap**                       |     ★★ Canvas     |      ★★★      |     ★★      | ★★★ iconic |      ★★       |   ★★    |       ✗        |      ✗      |     ✗      |       ✗        |
+| **AI-powered pattern recognition**       |         ✗         | ★★ on-device  |   ★ basic   |     ✗      |       ✗       |    ✗    |       ✗        | ★★★ server  |     ✗      |       ✗        |
+| **Backtest engine**                      | ★★★ WW in-browser |  ★★★ DSL+WW   | Pine Script |     ✗      |       ✗       |    ★    |  thinkScript   |  ★★★ auto   |     ✗      |       ✗        |
+| **Portfolio + risk metrics**             |  ★★★ Sharpe etc   |      ★★★      |      ✗      |     ✗      |      ★★       |   ★★★   |   Brokerage    |      ✗      |  ★★★ best  |       ★★       |
+| **Offline / PWA**                        |  ★★★ Workbox+SWR  | ★★★ BackFetch |      ✗      |     ✗      |       ✗       |    ✗    |    Desktop     |      ✗      |     ★★     |       ✗        |
+| **Keyboard-first nav (`j/k`, `⌘K`)**     |        ★★★        |      ★★★      |     ★★      |     ✗      |       ✗       |   ★★    |       ★★       |      ✗      |     ✗      |       ✗        |
+| **Accessible (WCAG 2.2 AA + axe CI)**    |   ★★ axe in CI    |  ★★★ +vitest  |   Partial   |     ✗      |    Partial    | Partial |       ✗        |      ✗      |     ★★     |    Partial     |
+| **Multi-provider failover**              |  ★★★ circuit-bk   |      ★★★      | Proprietary |   Prop.    |     Prop.     |  Prop.  |     Broker     | Proprietary |   Varies   |     Prop.      |
+| **Per-asset deep-link / OG image**       |   ★★ History+OG   |      ★★★      |     ★★★     |    ★★★     |      ★★★      |   ★★★   |       ✗        |     ★★      |     ★★     |      ★★★       |
+| **Cloud sync (E2E encrypted)**           |         ✗         |    △ v8.0     |   Account   |  Account   |    Account    | Account |     Broker     |   Account   |  Account   |    Account     |
+| **Crypto coverage**                      |        ★★         |      ★★★      |     ★★★     |     ✗      |       △       |   ★★    |       ✗        |      △      |    ★★★     |       ✗        |
+| **Local-AI pattern recognition**         |         ✗         |  ★★★ Phase I  |      ✗      |     ✗      |       ✗       |    ✗    |       ✗        | ★★★ server  |     ✗      |       ✗        |
+| **Signal scripting / custom indicators** |    ★★ DSL card    |  ★★★ Worker   |  ★★★ Pine   |     ✗      |       ✗       |    ✗    | ★★ thinkScript |      ✗      |     ✗      |       ✗        |
+| **Structured logs + OpenAPI contract**   |         ✗         |      ★★★      |    Prop.    |   Prop.    |     Prop.     |  Prop.  |     Prop.      |    Prop.    |    ★★★     |     Prop.      |
+| **Mobile installable (PWA)**             |        ★★★        |      ★★★      |     ★★★     |     ✗      |       △       |   ★★    |       ★★       |      ✗      |     △      |     ★★ PWA     |
 
 ### Where we win and where to close the gap
 
@@ -303,13 +303,13 @@ Expanded comparison including newer competitors and honest v7.7.0 assessment.
 
 **Gaps to close (ordered by user impact):**
 
-| Competitor best-of            | Competitor    | CrossTide action                                         |
-| ----------------------------- | ------------- | -------------------------------------------------------- |
-| AI-powered pattern recognition | TrendSpider  | On-device ONNX (Phase I) — unique privacy-preserving angle |
-| Structured logs + OpenAPI     | GhostFolio    | Hono + Logpush + `@hono/zod-openapi` (Phase G)           |
-| Per-indicator docs             | thinkorswim   | Docs-site deploy + remaining MDX pages (Phase F)         |
-| E2E confidence (≥15 flows)    | Linear, Vercel| Playwright expansion (Phase F)                           |
-| Cloud sync (private)          | Any           | Passkey + AES-GCM + D1 (Phase H)                         |
+| Competitor best-of             | Competitor     | CrossTide action                                           |
+| ------------------------------ | -------------- | ---------------------------------------------------------- |
+| AI-powered pattern recognition | TrendSpider    | On-device ONNX (Phase I) — unique privacy-preserving angle |
+| Structured logs + OpenAPI      | GhostFolio     | Hono + Logpush + `@hono/zod-openapi` (Phase G)             |
+| Per-indicator docs             | thinkorswim    | Docs-site deploy + remaining MDX pages (Phase F)           |
+| E2E confidence (≥15 flows)     | Linear, Vercel | Playwright expansion (Phase F)                             |
+| Cloud sync (private)           | Any            | Passkey + AES-GCM + D1 (Phase H)                           |
 
 ---
 
@@ -317,32 +317,32 @@ Expanded comparison including newer competitors and honest v7.7.0 assessment.
 
 New practices identified in the v3 rethink (practices from v1/v2 now implemented are omitted):
 
-| Practice                                              | Source                         | CrossTide application                                          |
-| ----------------------------------------------------- | ------------------------------ | -------------------------------------------------------------- |
-| `Temporal.PlainDate` for financial dates              | TC39 / Bloomberg               | Replace `Date` in domain date math with Temporal (G7)          |
-| Navigation API intercept for SPA                      | Chrome 102+ / web.dev          | Progressive enhancement over History API (G8)                 |
-| `popover` attribute for non-modal UI                  | Web spec / Chrome 114+         | Toast, tooltip, context menu replacement (G9)                  |
-| CSS Anchor Positioning for chart overlays             | Chrome 125+ / Lea Verou        | Crosshair tooltip without `getBoundingClientRect` (H1)         |
-| Speculation Rules `"prefetch"` declarations           | Google / Chrome blog           | Adjacent card chunk prefetch on hover/focus (H3)               |
-| `CompressionStream('gzip')` before download           | MDN / browser APIs             | Export file size 3–10× smaller (G11)                          |
-| `using` for deterministic cleanup                     | TC39 / TS 5.2                  | Effect / WS / Worker handles (G12)                             |
-| ONNX Runtime Web for local ML                         | Microsoft / onnxruntime.ai     | Candlestick pattern classifier, privacy-preserving (Phase I)   |
-| Hono for edge Worker                                  | Cloudflare / Hono docs         | Typed routing + middleware + auto-OpenAPI (G1)                 |
-| Transferable `Float64Array` for Worker RPC            | MDN / Chromium perf docs       | Backtest OHLC transfer — zero serialization overhead (G4)      |
-| `tsd` / `expect-type` for public API types            | Open-source norm               | Domain type regression net (G5)                                |
-| CSS `@scope` for card containment                     | CSS Working Group              | Scope card styles to card root (H5)                            |
-| `@starting-style` for entry animations                | CSS Working Group              | Card mount transitions without JS (H2)                         |
-| Scroll-driven animations for chart axis               | Chrome 115+ / CSS Houdini      | Time-axis scroll indicators (H4)                               |
-| ETag + Last-Modified in cache layer                   | HTTP/1.1 / RFC 7232            | 304 Not Modified reduces data transfer (G14)                   |
-| `exceljs` XLSX export (lazy)                          | FinViz / Koyfin pattern        | Optional XLSX export of screener/backtest results (H13)        |
-| Inter Variable font (self-hosted, woff2)              | Rasmus Andersson / inter.style | Better reading experience; ~18 KB gz (G16)                     |
-| `font-display: optional` for self-hosted fonts        | web.dev                        | Avoids FOUT / CLS from font swap (G16)                         |
-| Market-hours detection before WS connect              | Algorithmic trading norm       | Avoid wasting Finnhub quota outside 9:30–16:00 ET (D11)       |
-| OPFS for large sequential byte arrays                 | MDN / WHATWG                   | OHLC archive >5y; avoids IDB fragmentation (H8)                |
-| Background Fetch API for offline downloads            | Workbox / Chrome docs          | Multi-year OHLC dataset fetch with progress UI (H7)            |
-| Cloudflare native Rate Limiting API                   | Cloudflare blog (May 2025)     | Distributed rate limiting across Worker restarts (G13)         |
-| Satori for edge OG image rendering                    | Vercel / Satori docs           | Richer, more reliable share cards at CF edge (H14)             |
-| `gitleaks` pre-commit secret scanning                 | OSS security                   | Prevent API keys from reaching remote (F10)                    |
+| Practice                                       | Source                         | CrossTide application                                        |
+| ---------------------------------------------- | ------------------------------ | ------------------------------------------------------------ |
+| `Temporal.PlainDate` for financial dates       | TC39 / Bloomberg               | Replace `Date` in domain date math with Temporal (G7)        |
+| Navigation API intercept for SPA               | Chrome 102+ / web.dev          | Progressive enhancement over History API (G8)                |
+| `popover` attribute for non-modal UI           | Web spec / Chrome 114+         | Toast, tooltip, context menu replacement (G9)                |
+| CSS Anchor Positioning for chart overlays      | Chrome 125+ / Lea Verou        | Crosshair tooltip without `getBoundingClientRect` (H1)       |
+| Speculation Rules `"prefetch"` declarations    | Google / Chrome blog           | Adjacent card chunk prefetch on hover/focus (H3)             |
+| `CompressionStream('gzip')` before download    | MDN / browser APIs             | Export file size 3–10× smaller (G11)                         |
+| `using` for deterministic cleanup              | TC39 / TS 5.2                  | Effect / WS / Worker handles (G12)                           |
+| ONNX Runtime Web for local ML                  | Microsoft / onnxruntime.ai     | Candlestick pattern classifier, privacy-preserving (Phase I) |
+| Hono for edge Worker                           | Cloudflare / Hono docs         | Typed routing + middleware + auto-OpenAPI (G1)               |
+| Transferable `Float64Array` for Worker RPC     | MDN / Chromium perf docs       | Backtest OHLC transfer — zero serialization overhead (G4)    |
+| `tsd` / `expect-type` for public API types     | Open-source norm               | Domain type regression net (G5)                              |
+| CSS `@scope` for card containment              | CSS Working Group              | Scope card styles to card root (H5)                          |
+| `@starting-style` for entry animations         | CSS Working Group              | Card mount transitions without JS (H2)                       |
+| Scroll-driven animations for chart axis        | Chrome 115+ / CSS Houdini      | Time-axis scroll indicators (H4)                             |
+| ETag + Last-Modified in cache layer            | HTTP/1.1 / RFC 7232            | 304 Not Modified reduces data transfer (G14)                 |
+| `exceljs` XLSX export (lazy)                   | FinViz / Koyfin pattern        | Optional XLSX export of screener/backtest results (H13)      |
+| Inter Variable font (self-hosted, woff2)       | Rasmus Andersson / inter.style | Better reading experience; ~18 KB gz (G16)                   |
+| `font-display: optional` for self-hosted fonts | web.dev                        | Avoids FOUT / CLS from font swap (G16)                       |
+| Market-hours detection before WS connect       | Algorithmic trading norm       | Avoid wasting Finnhub quota outside 9:30–16:00 ET (D11)      |
+| OPFS for large sequential byte arrays          | MDN / WHATWG                   | OHLC archive >5y; avoids IDB fragmentation (H8)              |
+| Background Fetch API for offline downloads     | Workbox / Chrome docs          | Multi-year OHLC dataset fetch with progress UI (H7)          |
+| Cloudflare native Rate Limiting API            | Cloudflare blog (May 2025)     | Distributed rate limiting across Worker restarts (G13)       |
+| Satori for edge OG image rendering             | Vercel / Satori docs           | Richer, more reliable share cards at CF edge (H14)           |
+| `gitleaks` pre-commit secret scanning          | OSS security                   | Prevent API keys from reaching remote (F10)                  |
 
 ---
 
@@ -439,10 +439,14 @@ deterministic and removes the manual `dispose()` call obligation.
 History API is the production implementation. Add progressive enhancement:
 
 ```ts
-if ('navigation' in window) {
-  navigation.addEventListener('navigate', (e: NavigateEvent) => {
+if ("navigation" in window) {
+  navigation.addEventListener("navigate", (e: NavigateEvent) => {
     if (!shouldHandleNavigation(e)) return;
-    e.intercept({ async handler() { await loadCard(e.destination.url); } });
+    e.intercept({
+      async handler() {
+        await loadCard(e.destination.url);
+      },
+    });
   });
 }
 ```
@@ -460,21 +464,21 @@ Add Speculation Rules declaration in `index.html`:
 
 ### 7.3 New Web Platform APIs adoption plan
 
-| API                       | Browser support        | CrossTide plan (Phase)                          |
-| ------------------------- | ---------------------- | ----------------------------------------------- |
-| Navigation API            | Chrome 102+ / FF 127+  | Progressive enhancement over History API (G8)   |
-| Popover API               | Baseline 2024 (all)    | Replace custom modal/dropdown focus-traps (G9)  |
-| CSS Anchor Positioning    | Chrome 125+ / FF 130+  | Chart crosshair tooltip without JS (H1)         |
-| Speculation Rules API     | Chrome 109+            | Card chunk prefetch declarations (H3)           |
-| Compression Streams       | Baseline 2023 (all)    | gzip data exports in-browser (G11)              |
-| File System Access API    | Chrome 86+ / Edge 86+  | Save strategy to local file (H6)                |
-| Temporal API              | Polyfill now; native coming | Financial date math in domain (G7)         |
-| `using` / Symbol.dispose  | TS 5.2+ native (all)   | Effect/Worker/WS cleanup (G12)                  |
-| Background Fetch API      | Chrome 74+             | Large OHLC downloads offline (H7)               |
-| OPFS                      | Baseline 2023 (all)    | Large OHLC archive storage tier (H8)            |
-| Scroll-driven animations  | Chrome 115+ / FF 110+  | Chart time-axis indicator (H4)                  |
-| `@starting-style` CSS     | Baseline 2024 (all)    | Card mount entry animations (H2)                |
-| CSS `@scope`              | Baseline 2024 (all)    | Card-level style containment (H5)               |
+| API                      | Browser support             | CrossTide plan (Phase)                         |
+| ------------------------ | --------------------------- | ---------------------------------------------- |
+| Navigation API           | Chrome 102+ / FF 127+       | Progressive enhancement over History API (G8)  |
+| Popover API              | Baseline 2024 (all)         | Replace custom modal/dropdown focus-traps (G9) |
+| CSS Anchor Positioning   | Chrome 125+ / FF 130+       | Chart crosshair tooltip without JS (H1)        |
+| Speculation Rules API    | Chrome 109+                 | Card chunk prefetch declarations (H3)          |
+| Compression Streams      | Baseline 2023 (all)         | gzip data exports in-browser (G11)             |
+| File System Access API   | Chrome 86+ / Edge 86+       | Save strategy to local file (H6)               |
+| Temporal API             | Polyfill now; native coming | Financial date math in domain (G7)             |
+| `using` / Symbol.dispose | TS 5.2+ native (all)        | Effect/Worker/WS cleanup (G12)                 |
+| Background Fetch API     | Chrome 74+                  | Large OHLC downloads offline (H7)              |
+| OPFS                     | Baseline 2023 (all)         | Large OHLC archive storage tier (H8)           |
+| Scroll-driven animations | Chrome 115+ / FF 110+       | Chart time-axis indicator (H4)                 |
+| `@starting-style` CSS    | Baseline 2024 (all)         | Card mount entry animations (H2)               |
+| CSS `@scope`             | Baseline 2024 (all)         | Card-level style containment (H5)              |
 
 ### 7.4 Charts (extend)
 
@@ -541,9 +545,13 @@ Cloudflare Logpush → R2 bucket for retention and analysis:
 
 ```json
 {
-  "ts": "2026-05-02T10:00:00Z", "route": "/api/quote/AAPL",
-  "provider": "yahoo", "status": 200, "latencyMs": 142,
-  "cached": false, "requestId": "ray-abc123"
+  "ts": "2026-05-02T10:00:00Z",
+  "route": "/api/quote/AAPL",
+  "provider": "yahoo",
+  "status": 200,
+  "latencyMs": 142,
+  "cached": false,
+  "requestId": "ray-abc123"
 }
 ```
 
@@ -556,21 +564,21 @@ Cloudflare Logpush → R2 bucket for retention and analysis:
 
 ### 8.5 Infrastructure summary
 
-| Layer             | Tech                                      | Why                                            |
-| ----------------- | ----------------------------------------- | ---------------------------------------------- |
-| Static hosting    | Cloudflare Pages                          | Free, SPA fallback, preview deploys, edge POPs |
-| Edge runtime      | Cloudflare Workers (Hono)                 | Typed routes; auto-OpenAPI; same vendor        |
-| Cold storage      | Cloudflare R2                             | $0 egress; free 10 GB; Worker log archive      |
-| Hot KV            | Cloudflare KV                             | Free 100K ops/day; quote + search cache        |
-| Rate limiting     | Cloudflare Rate Limiting API              | Distributed; no state loss on restart          |
-| Streaming         | Cloudflare Durable Objects                | Per-symbol WS fan-out (Phase H)                |
-| Cloud sync DB     | Cloudflare D1 (SQLite-on-edge)            | v8.0 only if Passkey sync lands                |
-| DNS / TLS         | Cloudflare free tier                      | Same vendor                                    |
-| Mirror            | GitHub Pages                              | Redundancy if Cloudflare degrades              |
-| Error tracking    | Self-hosted GlitchTip (Fly.io free)       | $0/mo; Sentry-compatible                       |
-| Analytics         | Self-hosted Plausible (Fly.io free)       | Cookieless; $0/mo                              |
-| Status page       | Self-hosted Uptime Kuma                   | Probes `/api/health`; free                     |
-| CI                | GitHub Actions                            | Free for public repos                          |
+| Layer          | Tech                                | Why                                            |
+| -------------- | ----------------------------------- | ---------------------------------------------- |
+| Static hosting | Cloudflare Pages                    | Free, SPA fallback, preview deploys, edge POPs |
+| Edge runtime   | Cloudflare Workers (Hono)           | Typed routes; auto-OpenAPI; same vendor        |
+| Cold storage   | Cloudflare R2                       | $0 egress; free 10 GB; Worker log archive      |
+| Hot KV         | Cloudflare KV                       | Free 100K ops/day; quote + search cache        |
+| Rate limiting  | Cloudflare Rate Limiting API        | Distributed; no state loss on restart          |
+| Streaming      | Cloudflare Durable Objects          | Per-symbol WS fan-out (Phase H)                |
+| Cloud sync DB  | Cloudflare D1 (SQLite-on-edge)      | v8.0 only if Passkey sync lands                |
+| DNS / TLS      | Cloudflare free tier                | Same vendor                                    |
+| Mirror         | GitHub Pages                        | Redundancy if Cloudflare degrades              |
+| Error tracking | Self-hosted GlitchTip (Fly.io free) | $0/mo; Sentry-compatible                       |
+| Analytics      | Self-hosted Plausible (Fly.io free) | Cookieless; $0/mo                              |
+| Status page    | Self-hosted Uptime Kuma             | Probes `/api/health`; free                     |
+| CI             | GitHub Actions                      | Free for public repos                          |
 
 **Total infra cost target: $0/mo for personal use.** First paid upgrade:
 Tiingo starter at $10/mo if Yahoo API reliability degrades.
@@ -581,15 +589,15 @@ Tiingo starter at $10/mo if Yahoo API reliability degrades.
 
 ### 9.1 Storage tiers (v3 — adds OPFS)
 
-| Tier         | Tech                               | Use                                   | TTL / Cap          |
-| ------------ | ---------------------------------- | ------------------------------------- | ------------------ |
-| L1           | `Map` in-memory                    | Hot quotes, computed series           | Session             |
-| L2           | `localStorage`                     | Config, theme, sort prefs, last route | Persistent ~5 MB   |
-| L3           | IndexedDB (`core/idb.ts`)          | Candles, alerts, portfolio, watchlist | LRU 50 MB          |
-| L4           | Service Worker Cache API           | App shell (precache) + SWR            | Per-strategy        |
-| L5 (Phase H) | OPFS (`FileSystemSyncAccessHandle`)| OHLC archives >5y; large byte arrays  | Persistent, unbounded |
-| Edge         | Cloudflare KV / R2                 | Hot quotes / cold OHLCV              | TTL / cold          |
-| Cloud (v8)   | Worker + D1                        | Passkey-user encrypted blobs          | Per-user            |
+| Tier         | Tech                                | Use                                   | TTL / Cap             |
+| ------------ | ----------------------------------- | ------------------------------------- | --------------------- |
+| L1           | `Map` in-memory                     | Hot quotes, computed series           | Session               |
+| L2           | `localStorage`                      | Config, theme, sort prefs, last route | Persistent ~5 MB      |
+| L3           | IndexedDB (`core/idb.ts`)           | Candles, alerts, portfolio, watchlist | LRU 50 MB             |
+| L4           | Service Worker Cache API            | App shell (precache) + SWR            | Per-strategy          |
+| L5 (Phase H) | OPFS (`FileSystemSyncAccessHandle`) | OHLC archives >5y; large byte arrays  | Persistent, unbounded |
+| Edge         | Cloudflare KV / R2                  | Hot quotes / cold OHLCV               | TTL / cold            |
+| Cloud (v8)   | Worker + D1                         | Passkey-user encrypted blobs          | Per-user              |
 
 ### 9.2 OPFS rationale
 
@@ -607,9 +615,9 @@ const reg = await navigator.serviceWorker.ready;
 const bgFetch = await reg.backgroundFetch.fetch(
   `history-${symbol}-5y`,
   [`/api/history/${symbol}?range=5y&interval=1d`],
-  { title: `Downloading ${symbol} history`, icons: [] }
+  { title: `Downloading ${symbol} history`, icons: [] },
 );
-bgFetch.addEventListener('progress', updateProgressUI);
+bgFetch.addEventListener("progress", updateProgressUI);
 ```
 
 ### 9.4 Cloud sync (v8.0, optional)
@@ -666,45 +674,45 @@ openapi           hono openapi validate (Phase G)
 
 ## 11. Performance Budget
 
-| Asset                           | Budget          | Gate                         |
-| ------------------------------- | --------------- | ---------------------------- |
-| HTML                            | < 8 KB          | LH CI                        |
-| CSS                             | < 30 KB gz      | bundle check                 |
-| JS initial                      | < 180 KB gz     | `check:bundle`               |
-| Lazy card chunk                 | < 50 KB gz each | per-route                    |
-| Lightweight Charts chunk        | ~40 KB gz       | dynamic import only          |
-| uPlot chunk (Phase G)           | ~10 KB gz       | dynamic import only          |
-| ONNX model (Phase I)            | ~2 MB           | background fetch / Cache API |
-| Web Worker bundle               | < 60 KB gz      | per file                     |
-| Fonts (Inter Variable, woff2)   | < 25 KB gz      | self-hosted, `font-display: optional` |
-| **Initial total**               | **< 200 KB gz** | CI                           |
-| LCP (4G, mid Android)           | < 1.8 s         | LH CI                        |
-| INP (p75)                       | < 200 ms        | LH CI                        |
-| CLS                             | < 0.05          | LH CI                        |
-| Lighthouse perf score           | ≥ 90            | LH CI                        |
-| Lighthouse a11y                 | ≥ 95            | LH CI                        |
-| Lighthouse best practices       | ≥ 95            | LH CI                        |
-| Lighthouse SEO                  | ≥ 90            | LH CI                        |
+| Asset                         | Budget          | Gate                                  |
+| ----------------------------- | --------------- | ------------------------------------- |
+| HTML                          | < 8 KB          | LH CI                                 |
+| CSS                           | < 30 KB gz      | bundle check                          |
+| JS initial                    | < 180 KB gz     | `check:bundle`                        |
+| Lazy card chunk               | < 50 KB gz each | per-route                             |
+| Lightweight Charts chunk      | ~40 KB gz       | dynamic import only                   |
+| uPlot chunk (Phase G)         | ~10 KB gz       | dynamic import only                   |
+| ONNX model (Phase I)          | ~2 MB           | background fetch / Cache API          |
+| Web Worker bundle             | < 60 KB gz      | per file                              |
+| Fonts (Inter Variable, woff2) | < 25 KB gz      | self-hosted, `font-display: optional` |
+| **Initial total**             | **< 200 KB gz** | CI                                    |
+| LCP (4G, mid Android)         | < 1.8 s         | LH CI                                 |
+| INP (p75)                     | < 200 ms        | LH CI                                 |
+| CLS                           | < 0.05          | LH CI                                 |
+| Lighthouse perf score         | ≥ 90            | LH CI                                 |
+| Lighthouse a11y               | ≥ 95            | LH CI                                 |
+| Lighthouse best practices     | ≥ 95            | LH CI                                 |
+| Lighthouse SEO                | ≥ 90            | LH CI                                 |
 
 ---
 
 ## 12. Documentation Strategy
 
-| Doc                                     | Status               | Target action                                   |
-| --------------------------------------- | -------------------- | ----------------------------------------------- |
-| `README.md`                             | ✅ Good              | Refresh badges; add docs-site link (Phase F)    |
-| `CHANGELOG.md`                          | ✅ Per-RC            | Keep; Changesets automated                      |
-| `ARCHITECTURE.md`                       | ✅ v7.5              | Update for npm workspaces layout (Phase G)      |
-| `CONTRIBUTING.md`                       | ✅ Good              | Add "new Web API adoption" guide                |
-| `CODE_OF_CONDUCT.md`, `SECURITY.md`     | ✅ Standard          | Keep                                            |
-| `docs/COPILOT_GUIDE.md`                 | ✅ Unique            | Refresh quarterly; add Phase F/G context        |
-| `docs/ROADMAP.md`                       | ✅ This document     | Refresh per phase                               |
-| **Astro Starlight docs-site**           | ⚠️ Local only        | **Deploy now (Phase F, F2)**                    |
-| **Per-indicator MDX reference**         | ⚠️ 13/50+ done       | Complete remaining ~37 (Phases F–G)             |
-| **OpenAPI spec for Worker**             | ❌ Missing           | Auto-generated by Hono (Phase G, G10)           |
-| **User guide**                          | ⚠️ 3 pages done      | Add chart, screener, backtest, alerts guides    |
-| **Architecture diagrams**               | ✅ Mermaid in docs/  | Extend with npm workspaces layout (G2)          |
-| **JSDoc on all public exports**         | ⚠️ Partial           | Sweep in Phase G (G15)                          |
+| Doc                                 | Status              | Target action                                |
+| ----------------------------------- | ------------------- | -------------------------------------------- |
+| `README.md`                         | ✅ Good             | Refresh badges; add docs-site link (Phase F) |
+| `CHANGELOG.md`                      | ✅ Per-RC           | Keep; Changesets automated                   |
+| `ARCHITECTURE.md`                   | ✅ v7.5             | Update for npm workspaces layout (Phase G)   |
+| `CONTRIBUTING.md`                   | ✅ Good             | Add "new Web API adoption" guide             |
+| `CODE_OF_CONDUCT.md`, `SECURITY.md` | ✅ Standard         | Keep                                         |
+| `docs/COPILOT_GUIDE.md`             | ✅ Unique           | Refresh quarterly; add Phase F/G context     |
+| `docs/ROADMAP.md`                   | ✅ This document    | Refresh per phase                            |
+| **Astro Starlight docs-site**       | ⚠️ Local only       | **Deploy now (Phase F, F2)**                 |
+| **Per-indicator MDX reference**     | ⚠️ 13/50+ done      | Complete remaining ~37 (Phases F–G)          |
+| **OpenAPI spec for Worker**         | ❌ Missing          | Auto-generated by Hono (Phase G, G10)        |
+| **User guide**                      | ⚠️ 3 pages done     | Add chart, screener, backtest, alerts guides |
+| **Architecture diagrams**           | ✅ Mermaid in docs/ | Extend with npm workspaces layout (G2)       |
+| **JSDoc on all public exports**     | ⚠️ Partial          | Sweep in Phase G (G15)                       |
 
 **Doc rules (unchanged):**
 
@@ -718,20 +726,20 @@ openapi           hono openapi validate (Phase G)
 
 ## 13. Developer Experience
 
-| Area              | Current state                           | Target (Phase G)                                 |
-| ----------------- | --------------------------------------- | ------------------------------------------------ |
-| Package manager   | npm (shared `MyScripts/node_modules`)   | npm workspaces: `app/`, `worker/`, `docs-site/`  |
-| TypeScript        | 5.9                                     | 6.0 — align with `MyScripts/` (G3)              |
-| Validators        | Both `zod` + `valibot` in prod deps     | Remove `zod`; Valibot-only (F1)                  |
-| Git hooks         | `simple-git-hooks` + `lint-staged`      | Add `gitleaks` pre-commit (F10)                  |
-| Commit style      | Conventional Commits (commitlint)       | Keep                                             |
-| Releases          | Changesets auto-changelog               | Keep                                             |
-| Worker local dev  | `wrangler dev` + Vite proxy             | Add `wrangler types` for generated type bindings |
-| E2E local         | `vite preview` on port 4173             | Add `--ui` flag for Playwright debug runs        |
-| Component preview | `dev/components.html`                   | Keep; extend with new APIs as they land          |
-| Docs preview      | `npm -w docs-site run dev`              | Alias to `npm run dev:docs` at workspace root    |
-| CI secrets        | GitHub Actions secrets                  | Add `SOCKET_DEV_API_KEY` for supply-chain check  |
-| PR previews       | Cloudflare Pages auto-preview           | Add preview URL to PR description template       |
+| Area              | Current state                         | Target (Phase G)                                 |
+| ----------------- | ------------------------------------- | ------------------------------------------------ |
+| Package manager   | npm (shared `MyScripts/node_modules`) | npm workspaces: `app/`, `worker/`, `docs-site/`  |
+| TypeScript        | 5.9                                   | 6.0 — align with `MyScripts/` (G3)               |
+| Validators        | Both `zod` + `valibot` in prod deps   | Remove `zod`; Valibot-only (F1)                  |
+| Git hooks         | `simple-git-hooks` + `lint-staged`    | Add `gitleaks` pre-commit (F10)                  |
+| Commit style      | Conventional Commits (commitlint)     | Keep                                             |
+| Releases          | Changesets auto-changelog             | Keep                                             |
+| Worker local dev  | `wrangler dev` + Vite proxy           | Add `wrangler types` for generated type bindings |
+| E2E local         | `vite preview` on port 4173           | Add `--ui` flag for Playwright debug runs        |
+| Component preview | `dev/components.html`                 | Keep; extend with new APIs as they land          |
+| Docs preview      | `npm -w docs-site run dev`            | Alias to `npm run dev:docs` at workspace root    |
+| CI secrets        | GitHub Actions secrets                | Add `SOCKET_DEV_API_KEY` for supply-chain check  |
+| PR previews       | Cloudflare Pages auto-preview         | Add preview URL to PR description template       |
 
 ---
 
@@ -739,15 +747,15 @@ openapi           hono openapi validate (Phase G)
 
 ### 14.1 Data providers (updated)
 
-| Provider                      | Free tier              | Use                            | Risk                  | Mitigation                          |
-| ----------------------------- | ---------------------- | ------------------------------ | --------------------- | ----------------------------------- |
-| Yahoo Finance v8 (unofficial) | Unlimited best-effort  | Primary quote/history          | Can break unannounced | Circuit breaker → Stooq fallback    |
-| Finnhub                       | 60/min + WSS           | Secondary; streaming           | Free tier limits      | Market-hours guard; token bucket    |
-| Stooq                         | Unlimited EOD CSV      | Bulk >1y history fallback      | EOD only; no API key  | Use for historical bulk only        |
-| CoinGecko                     | 50/min free            | Crypto only                    | Schema changes        | Valibot validation; aggressive cache|
-| Tiingo                        | 500/hour; $10/mo+      | Affordable paid escape hatch   | Cost                  | Only if user provides key           |
-| Polygon                       | $29/mo basic           | Premium paid escape hatch      | Cost                  | Only if user provides key           |
-| Alpha Vantage                 | 25/day                 | Last-resort tertiary failover  | Very slow / 25 limit  | Last failover position only         |
+| Provider                      | Free tier             | Use                           | Risk                  | Mitigation                           |
+| ----------------------------- | --------------------- | ----------------------------- | --------------------- | ------------------------------------ |
+| Yahoo Finance v8 (unofficial) | Unlimited best-effort | Primary quote/history         | Can break unannounced | Circuit breaker → Stooq fallback     |
+| Finnhub                       | 60/min + WSS          | Secondary; streaming          | Free tier limits      | Market-hours guard; token bucket     |
+| Stooq                         | Unlimited EOD CSV     | Bulk >1y history fallback     | EOD only; no API key  | Use for historical bulk only         |
+| CoinGecko                     | 50/min free           | Crypto only                   | Schema changes        | Valibot validation; aggressive cache |
+| Tiingo                        | 500/hour; $10/mo+     | Affordable paid escape hatch  | Cost                  | Only if user provides key            |
+| Polygon                       | $29/mo basic          | Premium paid escape hatch     | Cost                  | Only if user provides key            |
+| Alpha Vantage                 | 25/day                | Last-resort tertiary failover | Very slow / 25 limit  | Last failover position only          |
 
 ### 14.2 Removed from prior roadmap
 
@@ -756,13 +764,13 @@ openapi           hono openapi validate (Phase G)
 
 ### 14.3 Vendor lock-in risk
 
-| Vendor                  | Risk      | Mitigation                                              |
-| ----------------------- | --------- | ------------------------------------------------------- |
-| Cloudflare (full stack) | High      | Hono is portable to Deno Deploy / Bun with adapters     |
-| GitHub (repo + Actions) | Medium    | Mirror to GitLab on tag push; Actions are standard YAML |
-| Lightweight Charts      | Low       | MIT; replaceable with `uPlot` or D3 at chart layer      |
-| Fly.io (observability)  | Low       | GlitchTip + Plausible are Dockerized; portable in 1 day |
-| ONNX Runtime Web        | Low       | MIT; open model format; browser-native inference        |
+| Vendor                  | Risk   | Mitigation                                              |
+| ----------------------- | ------ | ------------------------------------------------------- |
+| Cloudflare (full stack) | High   | Hono is portable to Deno Deploy / Bun with adapters     |
+| GitHub (repo + Actions) | Medium | Mirror to GitLab on tag push; Actions are standard YAML |
+| Lightweight Charts      | Low    | MIT; replaceable with `uPlot` or D3 at chart layer      |
+| Fly.io (observability)  | Low    | GlitchTip + Plausible are Dockerized; portable in 1 day |
+| ONNX Runtime Web        | Low    | MIT; open model format; browser-native inference        |
 
 ---
 
@@ -774,20 +782,20 @@ Phases F–I continue from v7.8.0. Phases A–E are complete or archived.
 
 **Theme:** Deploy what's built; expand E2E coverage; remove validator duplication.
 
-| #   | Task                                                                                        | Priority |
-| --- | ------------------------------------------------------------------------------------------- | :------: |
-| F1  | Remove `zod` from prod deps; audit all imports; replace with Valibot equivalents           |    P0    |
-| F2  | Deploy Astro Starlight docs-site; link from README                                          |    P0    |
-| F3  | Expand E2E to ≥15 flows (chart, screener, backtest, portfolio, risk, alerts, heatmap, offline, share URL, keyboard nav, import/export, PWA install, consensus-timeline, provider-health, settings) |    P0    |
-| F4  | Hono request-log middleware in Worker; wire Logpush → R2 structured logs                   |    P1    |
-| F5  | Deploy GlitchTip + Plausible on Fly.io; set DSN + Plausible secrets in Vite/Worker         |    P1    |
-| F6  | Complete per-indicator MDX reference for remaining ~37 indicators                           |    P1    |
-| F7  | Add `AbortController` to all fetch paths; cancel in-flight requests on route change         |    P1    |
-| F8  | Deploy Uptime Kuma on Fly.io; add `/api/health` badge to README                            |    P2    |
-| F9  | Add `socket.dev` GitHub App to repo for PR supply-chain checks                             |    P2    |
-| F10 | Add `gitleaks` to pre-commit hook and CI                                                   |    P2    |
-| F11 | Confirm Worker production deploy; verify all 5 routes respond in staging + production      |    P0    |
-| F12 | Implement Stooq provider (free bulk EOD CSV); add to history failover chain                |    P1    |
+| #   | Task                                                                                                                                                                                               | Priority |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| F1  | Remove `zod` from prod deps; audit all imports; replace with Valibot equivalents                                                                                                                   |    P0    |
+| F2  | Deploy Astro Starlight docs-site; link from README                                                                                                                                                 |    P0    |
+| F3  | Expand E2E to ≥15 flows (chart, screener, backtest, portfolio, risk, alerts, heatmap, offline, share URL, keyboard nav, import/export, PWA install, consensus-timeline, provider-health, settings) | ✅ Done  |
+| F4  | Hono request-log middleware in Worker; wire Logpush → R2 structured logs                                                                                                                           | ✅ Done  |
+| F5  | Deploy GlitchTip + Plausible on Fly.io; set DSN + Plausible secrets in Vite/Worker                                                                                                                 |    P1    |
+| F6  | Complete per-indicator MDX reference for remaining ~37 indicators                                                                                                                                  |    P1    |
+| F7  | Add `AbortController` to all fetch paths; cancel in-flight requests on route change                                                                                                                |    P1    |
+| F8  | Deploy Uptime Kuma on Fly.io; add `/api/health` badge to README                                                                                                                                    |    P2    |
+| F9  | Add `socket.dev` GitHub App to repo for PR supply-chain checks                                                                                                                                     |    P2    |
+| F10 | Add `gitleaks` to pre-commit hook and CI                                                                                                                                                           | ✅ Done  |
+| F11 | Confirm Worker production deploy; verify all 5 routes respond in staging + production                                                                                                              |    P0    |
+| F12 | Implement Stooq provider (free bulk EOD CSV); add to history failover chain                                                                                                                        |    P1    |
 
 **Exit criteria:** `zod` absent from prod deps; ≥15 Playwright flows passing; docs-site
 live; GlitchTip receiving errors; Plausible receiving page-views; Worker confirmed live.
@@ -798,31 +806,31 @@ live; GlitchTip receiving errors; Plausible receiving page-views; Worker confirm
 
 **Theme:** TypeScript 6.0, Hono Worker, modern Web APIs, structural cleanup.
 
-| #   | Task                                                                                              | Priority |
-| --- | ------------------------------------------------------------------------------------------------- | :------: |
-| G1  | Worker Hono refactor: rewrite `worker/index.ts` with Hono typed routing + middleware              |    P0    |
-| G2  | npm workspaces: `app/` (was `src/`), `worker/`, `docs-site/`; update CI + all import paths       |    P1    |
-| G3  | TypeScript 6.0 migration: bump `typescript` to `^6.0.3`; fix any breaking changes               |    P0    |
-| G4  | Transferable OHLC Float64Array: zero-copy pass to compute Worker for backtest + screener         |    P1    |
-| G5  | `tsd` type tests: add `expect-type` assertions for all `domain/index.ts` exports                 |    P1    |
-| G6  | `eslint-plugin-import-x`: replace ESLint import plugin; enforce no-cycle, no-unresolved          |    P1    |
-| G7  | Temporal API: `@js-temporal/polyfill`; replace `Date` in `core/timezone.ts` + domain date math  |    P2    |
-| G8  | Navigation API PE: detect + delegate to `navigation.navigate` in `ui/router.ts`                  |    P2    |
-| G9  | Popover API: replace custom focus-trap in command palette, toast, and context menus              |    P2    |
-| G10 | Auto-generate `GET /openapi.json` from Hono Worker routes (`@hono/zod-openapi`)                  |    P1    |
-| G11 | Compression Streams: wrap CSV/JSON export in `CompressionStream('gzip')` before download         |    P2    |
-| G12 | `using` keyword sweep: apply to effect handles, WS connections, Worker handles                   |    P2    |
-| G13 | Cloudflare native Rate Limiting API: replace in-memory-only token bucket                         |    P1    |
-| G14 | ETag / Last-Modified in cache layer: store and replay validators for HTTP 304 responses          |    P2    |
-| G15 | JSDoc sweep: one-sentence JSDoc on every public export in `domain/` and `core/`                  |    P2    |
-| G16 | Inter Variable font: self-hosted `woff2` subset with `font-display: optional`                    |    P2    |
-| G17 | `@vitest/browser` mode: migrate 3–5 DOM-intensive tests to browser mode                          |    P2    |
-| G18 | **ETF constituent drill-down**: collapsible ETF rows in Watchlist, Screener, and Heatmap; expand to show each constituent ticker with live quote, 52W range bar, consensus badge, and % weight in the ETF; collapse state persisted in `localStorage` |    P2    |
-| G19 | **Company name below ticker**: display the instrument's full company/fund name as a secondary line under the ticker symbol in the Watchlist table, Screener rows, Heatmap cells, Consensus card, and Chart card header. Populate `name` from the first successful quote response (Yahoo `shortName`); persist in `WatchlistEntry` and IDB so no extra fetch is needed. Add optional `name?: string` field to `WatchlistEntry` in `domain.ts`; update card render templates. |    P1    |
-| G20 | **Per-method consensus weights**: add a `methodWeights: Record<MethodName, number>` map (range 0.0 = disabled → 3.0 = triple-weighted, default 1.0) to `AppConfig`. Add a "Consensus Weights" section to the Settings card with a labeled slider/input per method and a "Reset to defaults" button. Update `consensus-engine.ts` to apply per-method weights when tallying directional votes and computing `strength`. Weights are included in config export/import. Micho method retains its anchor-role logic; its weight scales the strength contribution. |    P1    |
-| G21 | **Heatmap sector drill-down**: clicking a sector cell in the heatmap zooms into that sector and renders its individual constituent stocks. Shows: (a) each stock as a treemap cell sized by absolute price move contribution (`Δprice × shares_proxy`), (b) a "sector attribution" bar showing which stock drove the most of the sector's net move, (c) a breadcrumb row (`All Sectors › Technology`) for navigating back, (d) sort toggles for % change / market-cap proxy / absolute move. Drill depth is one level only (sector → stocks). All data comes from existing quote responses; no new API endpoint required. |    P1    |
-| G22 | **Correlation Matrix card**: expose `domain/correlation-matrix.ts` (already implemented, tested, but UI-less) as a full card. Renders a `n×n` color-coded grid (red = strong positive, blue = negative) for all watchlist tickers using the last 60 trading days of close prices cached in IDB. Tooltip shows exact `r` value and period. Highlights pairs with `|r| > 0.85` as over-concentration warnings. Controls: period selector (20/60/120 days), exclude-crypto toggle. |    P1    |
-| G23 | **Market Breadth card**: displays watchlist-aggregate signal health in a single glance. Panels: (a) BUY / NEUTRAL / SELL donut (count from latest consensus results), (b) % of watchlist with close above 50-day SMA and above 200-day SMA (uses `computeSma` already wired), (c) advance/decline bar for the current session (gainers vs losers from quote cache), (d) top 3 movers + laggards. No new API calls; reads data already fetched for the Watchlist card. |    P2    |
+| #   | Task                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Priority |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: | ---------------------------------------------------------------------------------------------------------- | --- |
+| G1  | Worker Hono refactor: rewrite `worker/index.ts` with Hono typed routing + middleware                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |    P0    |
+| G2  | npm workspaces: `app/` (was `src/`), `worker/`, `docs-site/`; update CI + all import paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |    P1    |
+| G3  | TypeScript 6.0 migration: bump `typescript` to `^6.0.3`; fix any breaking changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |    P0    |
+| G4  | Transferable OHLC Float64Array: zero-copy pass to compute Worker for backtest + screener                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |    P1    |
+| G5  | `tsd` type tests: add `expect-type` assertions for all `domain/index.ts` exports                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |    P1    |
+| G6  | `eslint-plugin-import-x`: replace ESLint import plugin; enforce no-cycle, no-unresolved                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |    P1    |
+| G7  | Temporal API: `@js-temporal/polyfill`; replace `Date` in `core/timezone.ts` + domain date math                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |    P2    |
+| G8  | Navigation API PE: detect + delegate to `navigation.navigate` in `ui/router.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |    P2    |
+| G9  | Popover API: replace custom focus-trap in command palette, toast, and context menus                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |    P2    |
+| G10 | Auto-generate `GET /openapi.json` from Hono Worker routes (`@hono/zod-openapi`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |    P1    |
+| G11 | Compression Streams: wrap CSV/JSON export in `CompressionStream('gzip')` before download                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |    P2    |
+| G12 | `using` keyword sweep: apply to effect handles, WS connections, Worker handles                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |    P2    |
+| G13 | Cloudflare native Rate Limiting API: replace in-memory-only token bucket                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |    P1    |
+| G14 | ETag / Last-Modified in cache layer: store and replay validators for HTTP 304 responses                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |    P2    |
+| G15 | JSDoc sweep: one-sentence JSDoc on every public export in `domain/` and `core/`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | ✅ Done  |
+| G16 | Inter Variable font: self-hosted `woff2` subset with `font-display: optional`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |    P2    |
+| G17 | `@vitest/browser` mode: migrate 3–5 DOM-intensive tests to browser mode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |    P2    |
+| G18 | **ETF constituent drill-down**: collapsible ETF rows in Watchlist, Screener, and Heatmap; expand to show each constituent ticker with live quote, 52W range bar, consensus badge, and % weight in the ETF; collapse state persisted in `localStorage`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |    P2    |
+| G19 | **Company name below ticker**: display the instrument's full company/fund name as a secondary line under the ticker symbol in the Watchlist table, Screener rows, Heatmap cells, Consensus card, and Chart card header. Populate `name` from the first successful quote response (Yahoo `shortName`); persist in `WatchlistEntry` and IDB so no extra fetch is needed. Add optional `name?: string` field to `WatchlistEntry` in `domain.ts`; update card render templates.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |    P1    |
+| G20 | **Per-method consensus weights**: add a `methodWeights: Record<MethodName, number>` map (range 0.0 = disabled → 3.0 = triple-weighted, default 1.0) to `AppConfig`. Add a "Consensus Weights" section to the Settings card with a labeled slider/input per method and a "Reset to defaults" button. Update `consensus-engine.ts` to apply per-method weights when tallying directional votes and computing `strength`. Weights are included in config export/import. Micho method retains its anchor-role logic; its weight scales the strength contribution.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |    P1    |
+| G21 | **Heatmap sector drill-down**: clicking a sector cell in the heatmap zooms into that sector and renders its individual constituent stocks. Shows: (a) each stock as a treemap cell sized by absolute price move contribution (`Δprice × shares_proxy`), (b) a "sector attribution" bar showing which stock drove the most of the sector's net move, (c) a breadcrumb row (`All Sectors › Technology`) for navigating back, (d) sort toggles for % change / market-cap proxy / absolute move. Drill depth is one level only (sector → stocks). All data comes from existing quote responses; no new API endpoint required.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |    P1    |
+| G22 | **Correlation Matrix card**: expose `domain/correlation-matrix.ts` (already implemented, tested, but UI-less) as a full card. Renders a `n×n` color-coded grid (red = strong positive, blue = negative) for all watchlist tickers using the last 60 trading days of close prices cached in IDB. Tooltip shows exact `r` value and period. Highlights pairs with `                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |    r     | > 0.85` as over-concentration warnings. Controls: period selector (20/60/120 days), exclude-crypto toggle. | P1  |
+| G23 | **Market Breadth card**: displays watchlist-aggregate signal health in a single glance. Panels: (a) BUY / NEUTRAL / SELL donut (count from latest consensus results), (b) % of watchlist with close above 50-day SMA and above 200-day SMA (uses `computeSma` already wired), (c) advance/decline bar for the current session (gainers vs losers from quote cache), (d) top 3 movers + laggards. No new API calls; reads data already fetched for the Watchlist card.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |    P2    |
 | G24 | **Per-card settings**: introduce a `cardSettings: Record<CardId, Record<string, unknown>>` namespace in `AppConfig` so each card can store and retrieve its own configuration independently from global settings. Each card declares a typed `CardSettings` schema (Valibot) and a default value; the Settings card gains a "Card Settings" section with a card picker and a rendered form for the selected card's options. Example settings exposed per card: Watchlist (visible columns, auto-refresh interval, density), Chart (default interval, sub-pane indicator set, crosshair snap), Consensus (methods to display, signal history depth), Screener (default preset, max results, sort column), Heatmap (color scale, cell label format), Backtest (default strategy, lookback window, benchmark), Alerts (default threshold type, notification channel), Portfolio (benchmark ticker, display currency), Risk (confidence level for VaR, benchmark). Settings round-trip through export/import. Changing a card's settings triggers a reactive re-render via the signals layer with no page reload. |    P1    |
 
 **Exit criteria:** Worker on Hono; TS 6.0; `openapi.json` auto-generated; Temporal
@@ -834,29 +842,29 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 
 **Theme:** Adopt 2024–2025 Web platform APIs; complete the power-user toolset.
 
-| #   | Task                                                                                         | Priority |
-| --- | -------------------------------------------------------------------------------------------- | :------: |
-| H1  | CSS Anchor Positioning: chart crosshair tooltip without `getBoundingClientRect`              |    P2    |
-| H2  | `@starting-style` CSS entry animations for card mounts                                       |    P2    |
-| H3  | Speculation Rules API declarations for adjacent card chunk prefetch on hover/focus           |    P2    |
-| H4  | Scroll-driven animations for chart time-axis scroll indicator                                |    P3    |
-| H5  | CSS `@scope` adoption: scope card styles to card root element (replaces BEM prefixes)        |    P2    |
-| H6  | File System Access API: "Save strategy to desktop" / "Open from file"                        |    P2    |
-| H7  | Background Fetch API: large OHLC archive downloads with progress UI                         |    P2    |
-| H8  | OPFS tier: `FileSystemSyncAccessHandle` storage worker for OHLC archives >5y                |    P2    |
-| H9  | Signal DSL Worker execution: run `signal-dsl.ts` scripts in compute Worker via Hono route   |    P1    |
-| H10 | Durable Objects WS fan-out: one DO per symbol; live ticks to browser (B1 backlog item)      |    P2    |
-| H11 | Web Push VAPID: price + indicator alerts via Push API; `vapid-send.ts` in Worker            |    P2    |
-| H12 | Passkey auth + encrypted cloud sync: WebAuthn → AES-GCM → Cloudflare D1                    |    P3    |
-| H13 | Optional XLSX export: lazy-load `exceljs` for screener/portfolio results                     |    P3    |
-| H14 | OG image via Satori: SVG-from-template at Worker edge for richer share cards                |    P2    |
-| H15 | Tiingo provider implementation                                                               |    P2    |
-| H16 | `uPlot` integration for static inline charts (screener rows, consensus timeline)             |    P2    |
-| H17 | Tauri 2.0 desktop wrapper: Win/Mac/Linux app wrapping the PWA build                         |    P4    |
-| H18 | **Earnings Calendar card**: shows upcoming earnings dates for all watchlist tickers in a scrollable calendar / list view. Columns: ticker, company name, earnings date, EPS estimate (consensus), prior quarter EPS, historical surprise %. Source: Finnhub `/calendar/earnings` (free tier). Highlights tickers with earnings within 7 days. Integrates with the Alerts card to optionally fire a pre-earnings reminder notification. |    P2    |
+| #   | Task                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Priority |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| H1  | CSS Anchor Positioning: chart crosshair tooltip without `getBoundingClientRect`                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |    P2    |
+| H2  | `@starting-style` CSS entry animations for card mounts                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |    P2    |
+| H3  | Speculation Rules API declarations for adjacent card chunk prefetch on hover/focus                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |    P2    |
+| H4  | Scroll-driven animations for chart time-axis scroll indicator                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |    P3    |
+| H5  | CSS `@scope` adoption: scope card styles to card root element (replaces BEM prefixes)                                                                                                                                                                                                                                                                                                                                                                                                                                                               |    P2    |
+| H6  | File System Access API: "Save strategy to desktop" / "Open from file"                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |    P2    |
+| H7  | Background Fetch API: large OHLC archive downloads with progress UI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |    P2    |
+| H8  | OPFS tier: `FileSystemSyncAccessHandle` storage worker for OHLC archives >5y                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |    P2    |
+| H9  | Signal DSL Worker execution: run `signal-dsl.ts` scripts in compute Worker via Hono route                                                                                                                                                                                                                                                                                                                                                                                                                                                           |    P1    |
+| H10 | Durable Objects WS fan-out: one DO per symbol; live ticks to browser (B1 backlog item)                                                                                                                                                                                                                                                                                                                                                                                                                                                              |    P2    |
+| H11 | Web Push VAPID: price + indicator alerts via Push API; `vapid-send.ts` in Worker                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |    P2    |
+| H12 | Passkey auth + encrypted cloud sync: WebAuthn → AES-GCM → Cloudflare D1                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |    P3    |
+| H13 | Optional XLSX export: lazy-load `exceljs` for screener/portfolio results                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |    P3    |
+| H14 | OG image via Satori: SVG-from-template at Worker edge for richer share cards                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |    P2    |
+| H15 | Tiingo provider implementation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |    P2    |
+| H16 | `uPlot` integration for static inline charts (screener rows, consensus timeline)                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |    P2    |
+| H17 | Tauri 2.0 desktop wrapper: Win/Mac/Linux app wrapping the PWA build                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |    P4    |
+| H18 | **Earnings Calendar card**: shows upcoming earnings dates for all watchlist tickers in a scrollable calendar / list view. Columns: ticker, company name, earnings date, EPS estimate (consensus), prior quarter EPS, historical surprise %. Source: Finnhub `/calendar/earnings` (free tier). Highlights tickers with earnings within 7 days. Integrates with the Alerts card to optionally fire a pre-earnings reminder notification.                                                                                                              |    P2    |
 | H19 | **Macro Dashboard card**: displays the five numbers every equity trader checks at market open — VIX, US 10Y yield, DXY (US Dollar Index), gold spot (XAU/USD), and WTI crude (CL=F). Each metric shows: current value, daily % change, 30-day sparkline, and a color-coded regime badge (risk-on / risk-off / neutral derived from VIX threshold and DXY trend). Data sourced from existing Yahoo provider (all five are Yahoo-queryable tickers). Renders as a horizontal summary bar that can dock above the Watchlist as a global context strip. |    P2    |
-| H20 | **Sector Rotation card**: renders an `11 × N` table (11 GICS sectors, N timeframes: 1W / 1M / 3M / 6M / 1Y) showing sector ETF (XLC, XLY, XLP, XLE, XLF, XLV, XLI, XLB, XLRE, XLK, XLU) relative performance vs SPY. Color-codes each cell by relative strength (green outperform, red underperform). Side panel shows a line chart of the top and bottom ranked sectors over the selected window. Identifies rotation opportunities. Uses existing Yahoo history provider; all 11 sector ETFs + SPY are standard tickers. |    P2    |
-| H21 | **Relative Strength Comparison card**: overlays multiple tickers' % return from a common base date on a single time-series chart, normalized to 0% at the start of the chosen window (1M / 3M / 6M / 1Y / YTD). Benchmark (SPY, QQQ, or custom ticker) rendered as a dashed reference line. Answers "which ticker in this sector should I own?" Controls: add/remove tickers from watchlist, window selector, benchmark picker. Uses existing LWC LineSeries; data from IDB candle cache. |    P2    |
+| H20 | **Sector Rotation card**: renders an `11 × N` table (11 GICS sectors, N timeframes: 1W / 1M / 3M / 6M / 1Y) showing sector ETF (XLC, XLY, XLP, XLE, XLF, XLV, XLI, XLB, XLRE, XLK, XLU) relative performance vs SPY. Color-codes each cell by relative strength (green outperform, red underperform). Side panel shows a line chart of the top and bottom ranked sectors over the selected window. Identifies rotation opportunities. Uses existing Yahoo history provider; all 11 sector ETFs + SPY are standard tickers.                          |    P2    |
+| H21 | **Relative Strength Comparison card**: overlays multiple tickers' % return from a common base date on a single time-series chart, normalized to 0% at the start of the chosen window (1M / 3M / 6M / 1Y / YTD). Benchmark (SPY, QQQ, or custom ticker) rendered as a dashed reference line. Answers "which ticker in this sector should I own?" Controls: add/remove tickers from watchlist, window selector, benchmark picker. Uses existing LWC LineSeries; data from IDB candle cache.                                                           |    P2    |
 
 ---
 
@@ -864,18 +872,18 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 
 **Theme:** On-device AI for pattern recognition; public API; shared signal strategies.
 
-| #   | Task                                                                                         | Priority |
-| --- | -------------------------------------------------------------------------------------------- | :------: |
-| I1  | ONNX Runtime Web: on-device candlestick pattern classifier (~2 MB model, lazy-loaded)        |    P2    |
-| I2  | Pattern recognition card: display detected patterns on chart (Head & Shoulders, etc.)        |    P2    |
-| I3  | Pattern backtesting: historical win-rate validation of ONNX-detected patterns                |    P3    |
-| I4  | ONNX model fine-tuning pipeline: offline Python → quantized ONNX → bundle                   |    P3    |
-| I5  | Read-only public REST API: rate-limited Hono Worker route for external consumers             |    P2    |
-| I6  | Shared signal strategies: import/export `signal-dsl.ts` strategies as portable JSON          |    P3    |
-| I7  | Multi-device cloud sync GA: Passkey-encrypted blobs with CRDT-ish conflict resolution        |    P3    |
-| I8  | Collaborative watchlists: share-by-URL read-only snapshots with TTL (no auth required)       |    P3    |
-| I9  | Market regime detection: macro-regime classifier (ONNX or rule-based) in consensus engine    |    P3    |
-| I10 | **Economic Calendar card**: lists scheduled macro events (Fed meetings, FOMC minutes, CPI, PPI, NFP, GDP, PCE) for the next 30 days with consensus forecast, prior value, and actual (populated after release). Source: FRED API (free, no auth for public series) + Finnhub `/calendar/economic`. Color-codes high/medium/low impact events. Crosslinks to the Macro Dashboard card to show post-release moves. |    P3    |
+| #   | Task                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Priority |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| I1  | ONNX Runtime Web: on-device candlestick pattern classifier (~2 MB model, lazy-loaded)                                                                                                                                                                                                                                                                                                                                                                       |    P2    |
+| I2  | Pattern recognition card: display detected patterns on chart (Head & Shoulders, etc.)                                                                                                                                                                                                                                                                                                                                                                       |    P2    |
+| I3  | Pattern backtesting: historical win-rate validation of ONNX-detected patterns                                                                                                                                                                                                                                                                                                                                                                               |    P3    |
+| I4  | ONNX model fine-tuning pipeline: offline Python → quantized ONNX → bundle                                                                                                                                                                                                                                                                                                                                                                                   |    P3    |
+| I5  | Read-only public REST API: rate-limited Hono Worker route for external consumers                                                                                                                                                                                                                                                                                                                                                                            |    P2    |
+| I6  | Shared signal strategies: import/export `signal-dsl.ts` strategies as portable JSON                                                                                                                                                                                                                                                                                                                                                                         |    P3    |
+| I7  | Multi-device cloud sync GA: Passkey-encrypted blobs with CRDT-ish conflict resolution                                                                                                                                                                                                                                                                                                                                                                       |    P3    |
+| I8  | Collaborative watchlists: share-by-URL read-only snapshots with TTL (no auth required)                                                                                                                                                                                                                                                                                                                                                                      |    P3    |
+| I9  | Market regime detection: macro-regime classifier (ONNX or rule-based) in consensus engine                                                                                                                                                                                                                                                                                                                                                                   |    P3    |
+| I10 | **Economic Calendar card**: lists scheduled macro events (Fed meetings, FOMC minutes, CPI, PPI, NFP, GDP, PCE) for the next 30 days with consensus forecast, prior value, and actual (populated after release). Source: FRED API (free, no auth for public series) + Finnhub `/calendar/economic`. Color-codes high/medium/low impact events. Crosslinks to the Macro Dashboard card to show post-release moves.                                            |    P3    |
 | I11 | **News Digest card**: curates recent headlines per watchlist ticker from public RSS/Atom feeds (Yahoo Finance RSS, Seeking Alpha public feed, Google News finance RSS). Groups headlines by ticker; shows publication time, source, and sentiment badge (rule-based keyword classifier, no LLM). Marks headlines within ±30 min of a significant price move on the chart timeline. No API key required; fetch via Worker CORS proxy to avoid mixed-content. |    P3    |
 
 ---
@@ -884,48 +892,48 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 
 ### Phase F items (v7.8.0)
 
-| #   | Item                              | Notes                                             |
-| --- | --------------------------------- | ------------------------------------------------- |
-| F1  | Remove `zod` from prod deps       | Replace with Valibot equivalents                  |
-| F2  | Deploy docs-site                  | Build + CF Pages deploy                           |
-| F3  | E2E expansion (2 → ≥15 flows)    | 13 new spec files needed                          |
-| F4  | Structured Worker logs            | Hono middleware → Logpush → R2                    |
-| F5  | GlitchTip + Plausible             | Fly.io Docker deploy + env secrets                |
-| F6  | ~37 missing indicator MDX pages   | All `domain/` indicators need a reference page    |
-| F7  | AbortController on route change   | Cancel all pending fetches on navigate            |
-| F8  | Uptime Kuma                       | Docker on Fly.io + README badge                   |
-| F9  | socket.dev supply-chain check     | Add as GitHub App to repo                         |
-| F10 | gitleaks                          | Pre-commit + CI pipeline                          |
-| F11 | Confirm Worker production deploy  | Verify all routes live on `*.crosstide.pages.dev` |
-| F12 | Stooq provider                    | Free EOD bulk CSV in history failover chain       |
-| F13 | ETF constituent drill-down        | Collapsible ETF rows showing constituent tickers; see G18 for full spec |
+| #   | Item                             | Notes                                                                   |
+| --- | -------------------------------- | ----------------------------------------------------------------------- |
+| F1  | Remove `zod` from prod deps      | Replace with Valibot equivalents                                        |
+| F2  | Deploy docs-site                 | Build + CF Pages deploy                                                 |
+| F3  | E2E expansion (2 → ≥15 flows)    | ✅ Done — keyboard.spec + settings.spec added                           |
+| F4  | Structured Worker logs           | ✅ Done — core/request-logger.ts (31 tests)                             |
+| F5  | GlitchTip + Plausible            | Fly.io Docker deploy + env secrets                                      |
+| F6  | ~37 missing indicator MDX pages  | All `domain/` indicators need a reference page                          |
+| F7  | AbortController on route change  | Cancel all pending fetches on navigate                                  |
+| F8  | Uptime Kuma                      | Docker on Fly.io + README badge                                         |
+| F9  | socket.dev supply-chain check    | Add as GitHub App to repo                                               |
+| F10 | gitleaks                         | ✅ Done — config/.gitleaks.toml + CI job                                |
+| F11 | Confirm Worker production deploy | Verify all routes live on `*.crosstide.pages.dev`                       |
+| F12 | Stooq provider                   | Free EOD bulk CSV in history failover chain                             |
+| F13 | ETF constituent drill-down       | Collapsible ETF rows showing constituent tickers; see G18 for full spec |
 
 ### Phase G items (v7.9.0) — see §15 Phase G table
 
-| #   | Item                                  | Notes                                                                   |
-| --- | ------------------------------------- | ----------------------------------------------------------------------- |
-| G19 | Company name below ticker             | `WatchlistEntry.name?`; populate from quote; show in Watchlist, Screener, Heatmap, Consensus, Chart |
-| G20 | Per-method consensus weights          | `AppConfig.methodWeights`; sliders in Settings; update consensus engine |
-| G21 | Heatmap sector drill-down             | Click sector → zoom to constituent stocks; attribution bar; breadcrumb nav |
-| G22 | Correlation Matrix card               | UI for existing `correlation-matrix.ts`; `n×n` color grid; over-concentration warnings |
-| G23 | Market Breadth card                   | BUY/SELL donut + % above 50/200 MA + advance/decline + top movers; no new API |
-| G24 | Per-card settings                     | `AppConfig.cardSettings[CardId]`; typed Valibot schema per card; Settings UI picker + rendered form; reactive re-render on change |
+| #   | Item                         | Notes                                                                                                                             |
+| --- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| G19 | Company name below ticker    | `WatchlistEntry.name?`; populate from quote; show in Watchlist, Screener, Heatmap, Consensus, Chart                               |
+| G20 | Per-method consensus weights | `AppConfig.methodWeights`; sliders in Settings; update consensus engine                                                           |
+| G21 | Heatmap sector drill-down    | Click sector → zoom to constituent stocks; attribution bar; breadcrumb nav                                                        |
+| G22 | Correlation Matrix card      | UI for existing `correlation-matrix.ts`; `n×n` color grid; over-concentration warnings                                            |
+| G23 | Market Breadth card          | BUY/SELL donut + % above 50/200 MA + advance/decline + top movers; no new API                                                     |
+| G24 | Per-card settings            | `AppConfig.cardSettings[CardId]`; typed Valibot schema per card; Settings UI picker + rendered form; reactive re-render on change |
 
 ### New cards — Phase H (v8.0.0)
 
-| #   | Item                                  | Notes                                                                   |
-| --- | ------------------------------------- | ----------------------------------------------------------------------- |
-| H18 | Earnings Calendar card                | Upcoming earnings dates, EPS estimates, surprise %; Finnhub `/calendar/earnings` |
-| H19 | Macro Dashboard card                  | VIX, 10Y yield, DXY, gold, crude; regime badge; dockable context strip |
-| H20 | Sector Rotation card                  | 11 GICS sector ETFs vs SPY, N timeframes; relative strength color table |
-| H21 | Relative Strength Comparison card     | Multi-ticker % return overlay vs benchmark; base-date normalized; LWC LineSeries |
+| #   | Item                              | Notes                                                                            |
+| --- | --------------------------------- | -------------------------------------------------------------------------------- |
+| H18 | Earnings Calendar card            | Upcoming earnings dates, EPS estimates, surprise %; Finnhub `/calendar/earnings` |
+| H19 | Macro Dashboard card              | VIX, 10Y yield, DXY, gold, crude; regime badge; dockable context strip           |
+| H20 | Sector Rotation card              | 11 GICS sector ETFs vs SPY, N timeframes; relative strength color table          |
+| H21 | Relative Strength Comparison card | Multi-ticker % return overlay vs benchmark; base-date normalized; LWC LineSeries |
 
 ### New cards — Phase I (v9.0.0)
 
-| #   | Item                                  | Notes                                                                   |
-| --- | ------------------------------------- | ----------------------------------------------------------------------- |
-| I10 | Economic Calendar card                | FRED + Finnhub macro events; forecast vs actual; crosslinks Macro Dashboard |
-| I11 | News Digest card                      | Yahoo/SA/Google RSS per ticker; keyword sentiment badge; annotates chart timeline |
+| #   | Item                   | Notes                                                                             |
+| --- | ---------------------- | --------------------------------------------------------------------------------- |
+| I10 | Economic Calendar card | FRED + Finnhub macro events; forecast vs actual; crosslinks Macro Dashboard       |
+| I11 | News Digest card       | Yahoo/SA/Google RSS per ticker; keyword sentiment badge; annotates chart timeline |
 
 ### Phase H items (v8.0.0) — see §15 Phase H table
 
@@ -933,51 +941,51 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 
 ### Carried over from v2 roadmap (pending)
 
-| Item                                | Status                         | Phase |
-| ----------------------------------- | ------------------------------ | ----- |
-| Worker → Hono                       | Still bare addEventListener    | G1    |
-| `src/` → `app/` npm workspaces      | R3 still pending               | G2    |
-| TypeScript 6.0                      | MyScripts aligned; CrossTide lags | G3 |
-| Stooq provider                      | Listed since v6.x; still absent | F12  |
-| GlitchTip + Plausible               | Designed; not deployed         | F5    |
-| Docs-site deployment                | Built; not deployed            | F2    |
-| Per-indicator MDX (full set)        | 13/50+ done                    | F6    |
-| `tsd` type tests                    | R13 pending                    | G5    |
-| `eslint-plugin-import-x`            | R10 pending                    | G6    |
-| Passkey + cloud sync                | D1 deferred to v8              | H12   |
-| VAPID push notifications            | D6 deferred to v8              | H11   |
-| Tauri 2.0 desktop                   | E1 stretch                     | H17   |
+| Item                           | Status                            | Phase |
+| ------------------------------ | --------------------------------- | ----- |
+| Worker → Hono                  | Still bare addEventListener       | G1    |
+| `src/` → `app/` npm workspaces | R3 still pending                  | G2    |
+| TypeScript 6.0                 | MyScripts aligned; CrossTide lags | G3    |
+| Stooq provider                 | Listed since v6.x; still absent   | F12   |
+| GlitchTip + Plausible          | Designed; not deployed            | F5    |
+| Docs-site deployment           | Built; not deployed               | F2    |
+| Per-indicator MDX (full set)   | 13/50+ done                       | F6    |
+| `tsd` type tests               | R13 pending                       | G5    |
+| `eslint-plugin-import-x`       | R10 pending                       | G6    |
+| Passkey + cloud sync           | D1 deferred to v8                 | H12   |
+| VAPID push notifications       | D6 deferred to v8                 | H11   |
+| Tauri 2.0 desktop              | E1 stretch                        | H17   |
 
 ---
 
 ## 17. Refactor & Rewrite Backlog
 
-| #   | Refactor                                                                                       | Status              | Target  |
-| --- | ---------------------------------------------------------------------------------------------- | ------------------- | ------- |
-| R1  | Delete `core/state.ts`                                                                         | ✅ Done             | —       |
-| R2  | Standardize `cards/` `mount()` signature to `CardHandle`                                       | ✅ Done             | —       |
-| R3  | **`src/` → `app/` + npm workspaces**                                                           | Pending             | G2      |
-| R4  | **Replace `core/index.ts` barrel** with subpath exports                                        | Pending             | G2      |
-| R5  | Remove remaining `as` casts (run `no-unnecessary-type-assertion`)                              | Ongoing             | G3      |
-| R6  | JSDoc sweep on all public exports                                                              | Partial             | G15     |
-| R7  | Replace `cards/index.ts` static imports with registry lazy imports                             | ✅ Done             | —       |
-| R8  | **Unify `ui/date-format` and `core/date-format`** under `core/`                               | Pending             | G7      |
-| R9  | Replace `EventTarget` callbacks with signals                                                   | ✅ Done             | —       |
-| R10 | **Migrate to `eslint-plugin-import-x`**                                                        | Pending             | G6      |
-| R11 | **Worker rewrite to Hono**                                                                     | Pending             | G1      |
-| R12 | Extract `makeCandles()` fixture to shared `tests/fixtures/candles.ts`                         | Ongoing             | G2      |
-| R13 | **`tsd` / `expect-type` type tests for `domain/index.ts`**                                    | Pending             | G5      |
-| R14 | CHANGELOG to Changesets-generated                                                              | ✅ Done             | —       |
-| R15 | Move inline `<script>` to module entry (CSP `'self'`)                                         | ✅ Done             | —       |
-| R16 | **Consolidate `core/cache.ts`, `tiered-cache.ts`, `lru-cache.ts`** into `core/cache/`         | Pending             | G2      |
-| R17 | Make `domain/heikin-ashi.ts` Candle the canonical type                                        | ✅ Done             | —       |
-| R18 | **`using` keyword sweep** for all effect/WS/Worker handles                                     | Pending             | G12     |
-| R19 | **Remove `zod` prod dep**; replace remaining usages with Valibot                              | Pending (P0)        | F1      |
-| R20 | **CSS `@scope`** for card style isolation                                                      | Pending             | H5      |
-| R21 | **Update `ARCHITECTURE.md`** for npm workspaces layout                                         | Pending             | G2      |
-| R22 | **`Date` → `Temporal.PlainDate`** in `core/timezone.ts` and domain date math                  | Pending             | G7      |
-| R23 | **Remove Twelve Data provider**; clean up imports and failover chain                           | Pending             | F12     |
-| R24 | **Market-hours detection** for WS connection gating                                            | Pending             | H — ongoing |
+| #   | Refactor                                                                              | Status             | Target      |
+| --- | ------------------------------------------------------------------------------------- | ------------------ | ----------- |
+| R1  | Delete `core/state.ts`                                                                | ✅ Done            | —           |
+| R2  | Standardize `cards/` `mount()` signature to `CardHandle`                              | ✅ Done            | —           |
+| R3  | **`src/` → `app/` + npm workspaces**                                                  | Pending            | G2          |
+| R4  | **Replace `core/index.ts` barrel** with subpath exports                               | Pending            | G2          |
+| R5  | Remove remaining `as` casts (run `no-unnecessary-type-assertion`)                     | **Done** (v7.15.0) | G3          |
+| R6  | JSDoc sweep on all public exports                                                     | **Done** (v7.15.0) | G15         |
+| R7  | Replace `cards/index.ts` static imports with registry lazy imports                    | ✅ Done            | —           |
+| R8  | **Unify `ui/date-format` and `core/date-format`** under `core/`                       | **Done** (v7.15.0) | G7          |
+| R9  | Replace `EventTarget` callbacks with signals                                          | ✅ Done            | —           |
+| R10 | **Migrate to `eslint-plugin-import-x`**                                               | Pending            | G6          |
+| R11 | **Worker rewrite to Hono**                                                            | Pending            | G1          |
+| R12 | Extract `makeCandles()` fixture to shared `tests/fixtures/candles.ts`                 | Ongoing            | G2          |
+| R13 | **`tsd` / `expect-type` type tests for `domain/index.ts`**                            | Pending            | G5          |
+| R14 | CHANGELOG to Changesets-generated                                                     | ✅ Done            | —           |
+| R15 | Move inline `<script>` to module entry (CSP `'self'`)                                 | ✅ Done            | —           |
+| R16 | **Consolidate `core/cache.ts`, `tiered-cache.ts`, `lru-cache.ts`** into `core/cache/` | **Done** (v7.15.0) | G2          |
+| R17 | Make `domain/heikin-ashi.ts` Candle the canonical type                                | ✅ Done            | —           |
+| R18 | **`using` keyword sweep** for all effect/WS/Worker handles                            | Pending            | G12         |
+| R19 | **Remove `zod` prod dep**; replace remaining usages with Valibot                      | Pending (P0)       | F1          |
+| R20 | **CSS `@scope`** for card style isolation                                             | Pending            | H5          |
+| R21 | **Update `ARCHITECTURE.md`** for npm workspaces layout                                | Pending            | G2          |
+| R22 | **`Date` → `Temporal.PlainDate`** in `core/timezone.ts` and domain date math          | Pending            | G7          |
+| R23 | **Remove Twelve Data provider**; clean up imports and failover chain                  | Pending            | F12         |
+| R24 | **Market-hours detection** for WS connection gating                                   | Pending            | H — ongoing |
 
 ---
 
@@ -1043,21 +1051,21 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 
 ## 19. Risks & Mitigations
 
-| Risk                                       | Likelihood | Impact | Mitigation                                                     |
-| ------------------------------------------ | ---------- | ------ | -------------------------------------------------------------- |
-| Yahoo unofficial API breaks                | Medium     | High   | Circuit breaker → Stooq → Finnhub → Tiingo fall-through       |
-| Cloudflare free-tier limits exceeded       | Low        | Medium | KV/R2 cache; CF Rate Limiting; daily budget alarm              |
-| TypeScript 6.0 breaking changes            | Medium     | Medium | Dedicated migration PR; `tsc --noEmit` against 6.0 first      |
-| `Temporal` polyfill size (~20 KB gz)       | Low        | Low    | Lazy-load polyfill; native support arriving in all browsers    |
-| ONNX model size (~2 MB)                    | Low        | Medium | Background Fetch + Cache API; never blocks initial load        |
-| Navigation API Safari support gaps         | Medium     | Low    | Progressive enhancement; graceful fallback to History API      |
-| Hono refactor breaks Worker routes         | Low        | Medium | Full E2E against Worker in staging before merge                |
-| Stooq CSV format changes                   | Medium     | Low    | Pinned parser with integration test against live endpoint      |
-| Lighthouse v13 assertion changes           | Low        | Low    | Review on update; adjust budgets if warranted                  |
-| Cloudflare Durable Object pricing change   | Low        | Medium | Defer DO WS fan-out until confirmed stable free tier           |
-| GlitchTip / Plausible Fly.io outage        | Low        | Low    | Errors degrade to console only; no data loss                   |
-| Single-maintainer bus factor               | High       | High   | Comprehensive docs (this roadmap); MIT enables forks           |
-| OneDrive sync conflicts on dev machine     | Low        | Low    | `.gitattributes` CRLF config; documented in CONTRIBUTING.md    |
+| Risk                                     | Likelihood | Impact | Mitigation                                                  |
+| ---------------------------------------- | ---------- | ------ | ----------------------------------------------------------- |
+| Yahoo unofficial API breaks              | Medium     | High   | Circuit breaker → Stooq → Finnhub → Tiingo fall-through     |
+| Cloudflare free-tier limits exceeded     | Low        | Medium | KV/R2 cache; CF Rate Limiting; daily budget alarm           |
+| TypeScript 6.0 breaking changes          | Medium     | Medium | Dedicated migration PR; `tsc --noEmit` against 6.0 first    |
+| `Temporal` polyfill size (~20 KB gz)     | Low        | Low    | Lazy-load polyfill; native support arriving in all browsers |
+| ONNX model size (~2 MB)                  | Low        | Medium | Background Fetch + Cache API; never blocks initial load     |
+| Navigation API Safari support gaps       | Medium     | Low    | Progressive enhancement; graceful fallback to History API   |
+| Hono refactor breaks Worker routes       | Low        | Medium | Full E2E against Worker in staging before merge             |
+| Stooq CSV format changes                 | Medium     | Low    | Pinned parser with integration test against live endpoint   |
+| Lighthouse v13 assertion changes         | Low        | Low    | Review on update; adjust budgets if warranted               |
+| Cloudflare Durable Object pricing change | Low        | Medium | Defer DO WS fan-out until confirmed stable free tier        |
+| GlitchTip / Plausible Fly.io outage      | Low        | Low    | Errors degrade to console only; no data loss                |
+| Single-maintainer bus factor             | High       | High   | Comprehensive docs (this roadmap); MIT enables forks        |
+| OneDrive sync conflicts on dev machine   | Low        | Low    | `.gitattributes` CRLF config; documented in CONTRIBUTING.md |
 
 ---
 
@@ -1095,32 +1103,32 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 
 ## 21. Glossary & Acronyms
 
-| Term          | Meaning                                                     |
-| ------------- | ----------------------------------------------------------- |
-| **CRDT**      | Conflict-free Replicated Data Type                          |
-| **CSP**       | Content Security Policy                                     |
-| **D1**        | Cloudflare's serverless SQLite (edge database)              |
-| **DO**        | Cloudflare Durable Object                                   |
-| **EOD**       | End-of-Day pricing                                          |
-| **INP**       | Interaction to Next Paint (Core Web Vital)                  |
-| **KV**        | Cloudflare Key-Value store                                  |
-| **LCP**       | Largest Contentful Paint (Core Web Vital)                   |
-| **LH CI**     | Lighthouse CI                                               |
-| **LWC**       | Lightweight Charts (TradingView OSS)                        |
-| **ONNX**      | Open Neural Network Exchange format                         |
-| **OPFS**      | Origin Private File System (browser storage API)            |
-| **OG image**  | Open Graph share image                                      |
-| **PE**        | Progressive Enhancement                                     |
-| **PWA**       | Progressive Web App                                         |
-| **R2**        | Cloudflare's S3-compatible object storage                   |
-| **RUM**       | Real User Monitoring                                        |
-| **SAB**       | SharedArrayBuffer                                           |
-| **SPA**       | Single-Page Application                                     |
-| **SRI**       | Subresource Integrity                                       |
-| **SWR**       | Stale-While-Revalidate caching                              |
-| **Temporal**  | TC39 Stage 4 date/time API (replaces `Date` for DST-safe financial math) |
-| **VAPID**     | Voluntary Application Server Identification (Web Push)      |
-| **WS / WSS**  | WebSocket / WebSocket Secure                                |
+| Term         | Meaning                                                                  |
+| ------------ | ------------------------------------------------------------------------ |
+| **CRDT**     | Conflict-free Replicated Data Type                                       |
+| **CSP**      | Content Security Policy                                                  |
+| **D1**       | Cloudflare's serverless SQLite (edge database)                           |
+| **DO**       | Cloudflare Durable Object                                                |
+| **EOD**      | End-of-Day pricing                                                       |
+| **INP**      | Interaction to Next Paint (Core Web Vital)                               |
+| **KV**       | Cloudflare Key-Value store                                               |
+| **LCP**      | Largest Contentful Paint (Core Web Vital)                                |
+| **LH CI**    | Lighthouse CI                                                            |
+| **LWC**      | Lightweight Charts (TradingView OSS)                                     |
+| **ONNX**     | Open Neural Network Exchange format                                      |
+| **OPFS**     | Origin Private File System (browser storage API)                         |
+| **OG image** | Open Graph share image                                                   |
+| **PE**       | Progressive Enhancement                                                  |
+| **PWA**      | Progressive Web App                                                      |
+| **R2**       | Cloudflare's S3-compatible object storage                                |
+| **RUM**      | Real User Monitoring                                                     |
+| **SAB**      | SharedArrayBuffer                                                        |
+| **SPA**      | Single-Page Application                                                  |
+| **SRI**      | Subresource Integrity                                                    |
+| **SWR**      | Stale-While-Revalidate caching                                           |
+| **Temporal** | TC39 Stage 4 date/time API (replaces `Date` for DST-safe financial math) |
+| **VAPID**    | Voluntary Application Server Identification (Web Push)                   |
+| **WS / WSS** | WebSocket / WebSocket Secure                                             |
 
 ---
 
