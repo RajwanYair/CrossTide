@@ -753,24 +753,24 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 
 ## 16. Refactor & Rewrite Backlog
 
-| #   | Refactor                                            | Status  | Target |
-| --- | --------------------------------------------------- | ------- | ------ |
-| R1  | Delete `core/state.ts`                              | ✅ Done | —      |
-| R2  | Standardize cards mount() to CardHandle             | ✅ Done | —      |
-| R3  | **`src/` → `packages/app/` + npm workspaces**       | Pending | K9     |
-| R4  | Replace `core/index.ts` barrel with subpath exports | ✅ Done | —      |
-| R5  | Remove remaining `as` casts                         | ✅ Done | —      |
-| R6  | JSDoc sweep on all public exports                   | ✅ Done | —      |
-| R7  | Replace cards/index.ts static → registry lazy       | ✅ Done | —      |
-| R8  | Unify date-format under core/                       | ✅ Done | —      |
-| R9  | Replace EventTarget → signals                       | ✅ Done | —      |
-| R10 | Migrate to eslint-plugin-import-x                   | ✅ Done | —      |
-| R11 | Worker rewrite to Hono                              | ✅ Done | —      |
-| R12 | Extract makeCandles() to fixtures                   | ✅ Done | —      |
-| R13 | tsd type tests for public API                       | ✅ Done | —      |
-| R14 | **innerHTML → patchDOM migration**                  | Pending | K1     |
-| R15 | **Event delegation migration**                      | Pending | K4     |
-| R16 | **Media queries → container queries**               | Pending | K8     |
+| #   | Refactor                                            | Status                                                                                        | Target |
+| --- | --------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------ |
+| R1  | Delete `core/state.ts`                              | ✅ Done                                                                                       | —      |
+| R2  | Standardize cards mount() to CardHandle             | ✅ Done                                                                                       | —      |
+| R3  | **`src/` → `packages/app/` + npm workspaces**       | Pending                                                                                       | K9     |
+| R4  | Replace `core/index.ts` barrel with subpath exports | ✅ Done                                                                                       | —      |
+| R5  | Remove remaining `as` casts                         | ✅ Done                                                                                       | —      |
+| R6  | JSDoc sweep on all public exports                   | ✅ Done                                                                                       | —      |
+| R7  | Replace cards/index.ts static → registry lazy       | ✅ Done                                                                                       | —      |
+| R8  | Unify date-format under core/                       | ✅ Done                                                                                       | —      |
+| R9  | Replace EventTarget → signals                       | ✅ Done                                                                                       | —      |
+| R10 | Migrate to eslint-plugin-import-x                   | ✅ Done                                                                                       | —      |
+| R11 | Worker rewrite to Hono                              | ✅ Done                                                                                       | —      |
+| R12 | Extract makeCandles() to fixtures                   | ✅ Done                                                                                       | —      |
+| R13 | tsd type tests for public API                       | ✅ Done                                                                                       | —      |
+| R14 | **innerHTML → patchDOM migration**                  | ✅ Near-complete (8 trivial uses remain: 4 `= ""` clears, toast, alert-row, preset-filters)   | K1     |
+| R15 | **Event delegation migration**                      | ✅ Near-complete (5 legitimate direct listeners remain: canvas/SVG mouse, keyboard shortcuts) | K4     |
+| R16 | **Media queries → container queries**               | Pending                                                                                       | K8     |
 
 ---
 
