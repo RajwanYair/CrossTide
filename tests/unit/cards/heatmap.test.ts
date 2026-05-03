@@ -183,7 +183,7 @@ describe("renderSectorDrillDown", () => {
 
   it("calls onBack when back button clicked", () => {
     renderSectorDrillDown(container, SECTOR_WITH_STOCKS, mockBack);
-    (container.querySelector("#heatmap-back") as HTMLButtonElement).click();
+    (container.querySelector('[data-action="heatmap-back"]') as HTMLButtonElement).click();
     expect(mockBack).toHaveBeenCalledOnce();
   });
 

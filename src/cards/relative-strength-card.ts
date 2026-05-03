@@ -6,6 +6,7 @@ import { fetchAllTickers } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import type { CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
+import { createDelegate } from "../ui/delegate";
 
 type WindowKey = "1m" | "3m" | "6m" | "1y" | "ytd";
 
@@ -129,13 +130,18 @@ const relativeStrengthCard: CardModule = {
           <label>Benchmark
             <input id="rs-benchmark" value="${benchmark}" />
           </label>
-          <button id="rs-apply" type="button">Apply</button>
+          <button id="rs-apply" type="button" data-action="apply-rs">Apply</button>
         </div>
         <div id="rs-body"></div>`;
 
       const body = container.querySelector<HTMLElement>("#rs-body");
       if (body) renderRelativeStrength(body, series, benchmark);
-      container.querySelector("#rs-apply")?.addEventListener("click", () => {
+    }
+
+    container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">Loading relative strength…</p></div></div>`;
+
+    const delegate = createDelegate(container, {
+      "apply-rs": () => {
         const nextW = container.querySelector<HTMLSelectElement>("#rs-window")?.value as WindowKey;
         const nextB = container
           .querySelector<HTMLInputElement>("#rs-benchmark")
@@ -144,15 +150,15 @@ const relativeStrengthCard: CardModule = {
         if (nextW) windowKey = nextW;
         if (nextB) benchmark = nextB;
         void loadAndRender();
-      });
-    }
+      },
+    });
 
-    container.innerHTML = `<div class="card"><div class="card-body"><p class="empty-state">Loading relative strength…</p></div></div>`;
     void loadAndRender();
 
     return {
       dispose(): void {
         disposed = true;
+        delegate.dispose();
       },
     };
   },

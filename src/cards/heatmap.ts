@@ -13,6 +13,7 @@ export interface SectorData {
 }
 
 import { patchDOM } from "../core/patch-dom";
+import { createDelegate, type DelegateHandle } from "../ui/delegate";
 
 /** G21: A single constituent stock within a sector. */
 export interface ConstituentStock {
@@ -157,7 +158,7 @@ export function renderSectorDrillDown(
   sector: SectorDataWithConstituents,
   onBack: () => void,
   sortKey: SortKey = "changePercent",
-): void {
+): DelegateHandle {
   const stocks = sector.constituents ?? [];
 
   if (stocks.length === 0) {
@@ -165,14 +166,13 @@ export function renderSectorDrillDown(
       container,
       `
       <div class="heatmap-breadcrumb">
-        <button class="btn-link" id="heatmap-back">← All Sectors</button>
+        <button class="btn-link" data-action="heatmap-back">← All Sectors</button>
         <span class="breadcrumb-sep">›</span>
         <span>${escapeHtml(sector.sector)}</span>
       </div>
       <p class="empty-state">No constituent data available for ${escapeHtml(sector.sector)}.</p>`,
     );
-    container.querySelector("#heatmap-back")?.addEventListener("click", onBack);
-    return;
+    return createDelegate(container, { "heatmap-back": onBack });
   }
 
   const sorted = sortConstituents(stocks, sortKey);
@@ -203,16 +203,16 @@ export function renderSectorDrillDown(
     container,
     `
     <div class="heatmap-breadcrumb">
-      <button class="btn-link" id="heatmap-back">← All Sectors</button>
+      <button class="btn-link" data-action="heatmap-back">← All Sectors</button>
       <span class="breadcrumb-sep">›</span>
       <span>${escapeHtml(sector.sector)}</span>
       <span class="text-secondary">(${stocks.length} stocks)</span>
     </div>
     <div class="heatmap-sort-bar">
       Sort:
-      <button class="btn-sort${activeSortClass("changePercent")}" data-sort="changePercent">% Change</button>
-      <button class="btn-sort${activeSortClass("weight")}" data-sort="weight">Weight</button>
-      <button class="btn-sort${activeSortClass("absoluteMove")}" data-sort="absoluteMove">Abs Move</button>
+      <button class="btn-sort${activeSortClass("changePercent")}" data-action="sort-drill" data-sort="changePercent">% Change</button>
+      <button class="btn-sort${activeSortClass("weight")}" data-action="sort-drill" data-sort="weight">Weight</button>
+      <button class="btn-sort${activeSortClass("absoluteMove")}" data-action="sort-drill" data-sort="absoluteMove">Abs Move</button>
     </div>
     <div class="card">
       <table class="heatmap-drill-table">
@@ -227,11 +227,11 @@ export function renderSectorDrillDown(
     </div>`,
   );
 
-  container.querySelector("#heatmap-back")?.addEventListener("click", onBack);
-  container.querySelectorAll<HTMLElement>(".btn-sort").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const key = btn.dataset["sort"] as SortKey;
+  return createDelegate(container, {
+    "heatmap-back": onBack,
+    "sort-drill": (target) => {
+      const key = target.dataset["sort"] as SortKey;
       renderSectorDrillDown(container, sector, onBack, key);
-    });
+    },
   });
 }

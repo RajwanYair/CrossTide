@@ -5,6 +5,7 @@
  * with the screener card's applyFilters function.
  */
 import type { ScreenerFilter } from "./screener";
+import { createDelegate, type DelegateHandle } from "../ui/delegate";
 
 export interface PresetFilter {
   readonly id: string;
@@ -84,10 +85,10 @@ export function getPresetById(id: string): PresetFilter | undefined {
 export function renderPresetPicker(
   container: HTMLElement,
   onSelect: (preset: PresetFilter) => void,
-): void {
+): DelegateHandle {
   const buttons = PRESET_FILTERS.map(
     (p) =>
-      `<button class="preset-btn" data-preset-id="${p.id}" type="button" title="${escapeAttr(p.description)}">
+      `<button class="preset-btn" data-action="select-preset" data-preset-id="${p.id}" type="button" title="${escapeAttr(p.description)}">
         ${escapeHtml(p.name)}
       </button>`,
   ).join("");
@@ -98,11 +99,11 @@ export function renderPresetPicker(
     </div>
   `;
 
-  container.querySelectorAll<HTMLButtonElement>(".preset-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const preset = getPresetById(btn.dataset.presetId ?? "");
+  return createDelegate(container, {
+    "select-preset": (target) => {
+      const preset = getPresetById(target.dataset["presetId"] ?? "");
       if (preset) onSelect(preset);
-    });
+    },
   });
 }
 
