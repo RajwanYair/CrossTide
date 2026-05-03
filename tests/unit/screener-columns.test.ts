@@ -109,7 +109,7 @@ describe("screener-columns", () => {
       // Find the "price" checkbox and toggle it
       const priceCheckbox = Array.from(checkboxes).find((cb) => cb.dataset["column"] === "price")!;
       priceCheckbox.checked = true;
-      priceCheckbox.dispatchEvent(new Event("change"));
+      priceCheckbox.dispatchEvent(new Event("change", { bubbles: true }));
       expect(onChange).toHaveBeenCalledWith("price", true);
     });
 

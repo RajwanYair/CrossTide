@@ -177,8 +177,9 @@ function mount(
   let candles: Candle[] = syntheticCandles(500);
   const capital = 10_000;
 
-  container.innerHTML = `
-    <div class="strategy-comparison-layout">
+  patchDOM(
+    container,
+    `<div class="strategy-comparison-layout">
       <form class="backtest-controls" id="cmp-form" onsubmit="return false">
         <div class="backtest-control-row">
           <label class="backtest-label">Ticker
@@ -199,7 +200,8 @@ function mount(
         <p class="risk-hint" id="cmp-source">Loading…</p>
       </form>
       <div id="cmp-result"></div>
-    </div>`;
+    </div>`,
+  );
 
   const resultEl = container.querySelector<HTMLElement>("#cmp-result")!;
   const sourceHint = container.querySelector<HTMLElement>("#cmp-source")!;
