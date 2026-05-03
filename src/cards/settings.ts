@@ -71,7 +71,7 @@ export function renderSettings(
     `
     <div class="setting-group">
       <label for="theme-select">Theme</label>
-      <select id="theme-select">
+      <select id="theme-select" data-action="theme-change">
         <option value="dark"${config.theme === "dark" ? " selected" : ""}>Dark</option>
         <option value="light"${config.theme === "light" ? " selected" : ""}>Light</option>
         <option value="high-contrast"${config.theme === "high-contrast" ? " selected" : ""}>High Contrast</option>
@@ -99,7 +99,7 @@ export function renderSettings(
     ${renderWeightsSection(config.methodWeights)}
     <div class="setting-group">
       <label for="card-settings-picker">Card Settings</label>
-      <select id="card-settings-picker">
+      <select id="card-settings-picker" data-action="card-picker-change">
         ${CARD_SETTINGS_OPTIONS.map((o) => `<option value="${o.id}">${o.label}</option>`).join("")}
       </select>
       <div id="card-settings-panel"></div>
@@ -130,9 +130,6 @@ export function renderSettings(
   );
 
   const themeSelect = container.querySelector<HTMLSelectElement>("#theme-select");
-  themeSelect?.addEventListener("change", () => {
-    callbacks.onThemeChange(themeSelect.value as AppConfig["theme"]);
-  });
 
   // Delegated button actions
   const keyInput = container.querySelector<HTMLInputElement>("#finnhub-key-input");
@@ -167,11 +164,22 @@ export function renderSettings(
         if (clearBtn) clearBtn.disabled = true;
         callbacks.onFinnhubKeyChange?.(null);
       },
+      "theme-change": () => {
+        if (themeSelect) {
+          callbacks.onThemeChange(themeSelect.value as AppConfig["theme"]);
+        }
+      },
+      "card-picker-change": () => {
+        const next = picker?.value as CardId;
+        if (!CARD_SETTINGS_OPTIONS.some((o) => o.id === next)) return;
+        selectedCard = next;
+        rerenderCardSettingsPanel();
+      },
     },
-    { eventTypes: ["click"] },
+    { eventTypes: ["click", "change"] },
   );
 
-  // G20: consensus weight sliders
+  // G20: consensus weight sliders — delegated via input event
   function readWeights(): MethodWeights {
     const w: MethodWeights = {};
     for (const method of METHOD_NAMES) {
@@ -184,14 +192,22 @@ export function renderSettings(
     return w;
   }
 
-  for (const method of METHOD_NAMES) {
-    container.querySelector(`#weight-${method}`)?.addEventListener("input", () => {
-      const val = container.querySelector<HTMLInputElement>(`#weight-${method}`)?.value ?? "1";
-      const label = container.querySelector<HTMLOutputElement>(`#weight-${method}-out`);
-      if (label) label.textContent = parseFloat(val).toFixed(1);
-      callbacks.onMethodWeightsChange?.(readWeights());
-    });
-  }
+  const inputDelegate = createDelegate(
+    container,
+    {
+      "weight-slide": (_target, e) => {
+        const slider = e.target as HTMLInputElement;
+        const method = slider.dataset["method"] ?? "";
+        const label = container.querySelector<HTMLOutputElement>(`#weight-${method}-out`);
+        if (label) label.textContent = parseFloat(slider.value).toFixed(1);
+        callbacks.onMethodWeightsChange?.(readWeights());
+      },
+      "card-setting-change": () => {
+        emitCardSettings();
+      },
+    },
+    { eventTypes: ["input", "change"] },
+  );
 
   // G24: Per-card settings picker + dynamic section
   const picker = container.querySelector<HTMLSelectElement>("#card-settings-picker");
@@ -205,27 +221,23 @@ export function renderSettings(
     }
   }
 
-  function bindCardSettingsEvents(): void {
-    panel
-      ?.querySelectorAll<HTMLInputElement | HTMLSelectElement>("input,select")
-      .forEach((el) => el.addEventListener("change", emitCardSettings));
-  }
-
   function rerenderCardSettingsPanel(): void {
     if (!panel) return;
     patchDOM(panel, renderCardSettingsPanel(selectedCard, config.cardSettings));
-    bindCardSettingsEvents();
+    // Mark all card-settings inputs/selects for delegation
+    panel.querySelectorAll<HTMLInputElement | HTMLSelectElement>("input,select").forEach((el) => {
+      el.dataset["action"] = "card-setting-change";
+    });
   }
 
-  picker?.addEventListener("change", () => {
-    const next = picker.value as CardId;
-    if (!CARD_SETTINGS_OPTIONS.some((o) => o.id === next)) return;
-    selectedCard = next;
-    rerenderCardSettingsPanel();
-  });
   rerenderCardSettingsPanel();
 
-  return delegate;
+  return {
+    dispose(): void {
+      delegate.dispose();
+      inputDelegate.dispose();
+    },
+  };
 }
 
 function renderWeightsSection(methodWeights?: MethodWeights): string {
@@ -241,6 +253,8 @@ function renderWeightsSection(methodWeights?: MethodWeights): string {
         value="${currentVal.toFixed(1)}"
         class="weight-slider"
         aria-label="${method} weight"
+        data-action="weight-slide"
+        data-method="${method}"
       />
       <output id="weight-${method}-out" class="weight-value">${currentVal.toFixed(1)}</output>
     </div>`;

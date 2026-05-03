@@ -49,7 +49,7 @@ describe("renderSettings", () => {
     renderSettings(container, makeConfig(), callbacks);
     const select = container.querySelector("#theme-select") as HTMLSelectElement;
     select.value = "light";
-    select.dispatchEvent(new Event("change"));
+    select.dispatchEvent(new Event("change", { bubbles: true }));
     expect(callbacks.onThemeChange).toHaveBeenCalledWith("light");
   });
 
@@ -129,7 +129,7 @@ describe("renderSettings", () => {
       renderSettings(container, makeConfig(), { ...callbacks, onCardSettingsChange });
       const input = container.querySelector("#card-settings-autoRefreshSec") as HTMLInputElement;
       input.value = "120";
-      input.dispatchEvent(new Event("change"));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
       expect(onCardSettingsChange).toHaveBeenCalled();
       const [cardId, payload] = onCardSettingsChange.mock.calls.at(-1)!;
       expect(cardId).toBe("watchlist");
@@ -140,7 +140,7 @@ describe("renderSettings", () => {
       renderSettings(container, makeConfig(), callbacks);
       const picker = container.querySelector("#card-settings-picker") as HTMLSelectElement;
       picker.value = "chart";
-      picker.dispatchEvent(new Event("change"));
+      picker.dispatchEvent(new Event("change", { bubbles: true }));
       expect(container.querySelector("#card-settings-defaultInterval")).not.toBeNull();
       expect(container.querySelector("#card-settings-indicatorSet")).not.toBeNull();
     });

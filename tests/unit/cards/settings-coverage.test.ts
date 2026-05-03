@@ -44,7 +44,7 @@ describe("settings — card settings panel branches", () => {
   function selectCard(cardId: string): void {
     const picker = container.querySelector("#card-settings-picker") as HTMLSelectElement;
     picker.value = cardId;
-    picker.dispatchEvent(new Event("change"));
+    picker.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   it("renders consensus card settings panel", () => {
@@ -115,7 +115,7 @@ describe("settings — card settings panel branches", () => {
     selectCard("consensus");
     const input = container.querySelector("#card-settings-historyDepth") as HTMLInputElement;
     input.value = "75";
-    input.dispatchEvent(new Event("change"));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
     expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
       "consensus",
       expect.objectContaining({ historyDepth: 75 }),
@@ -127,7 +127,7 @@ describe("settings — card settings panel branches", () => {
     selectCard("heatmap");
     const input = container.querySelector("#card-settings-colorScale") as HTMLInputElement;
     input.value = "sequential";
-    input.dispatchEvent(new Event("change"));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
     expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
       "heatmap",
       expect.objectContaining({ colorScale: "sequential" }),
@@ -139,7 +139,7 @@ describe("settings — card settings panel branches", () => {
     selectCard("backtest");
     const input = container.querySelector("#card-settings-lookbackWindow") as HTMLInputElement;
     input.value = "60";
-    input.dispatchEvent(new Event("change"));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
     expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
       "backtest",
       expect.objectContaining({ lookbackWindow: 60 }),
@@ -151,7 +151,7 @@ describe("settings — card settings panel branches", () => {
     selectCard("alerts");
     const input = container.querySelector("#card-settings-thresholdType") as HTMLInputElement;
     input.value = "absolute";
-    input.dispatchEvent(new Event("change"));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
     expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
       "alerts",
       expect.objectContaining({ thresholdType: "absolute" }),
@@ -163,7 +163,7 @@ describe("settings — card settings panel branches", () => {
     selectCard("portfolio");
     const input = container.querySelector("#card-settings-benchmarkTicker") as HTMLInputElement;
     input.value = "QQQ";
-    input.dispatchEvent(new Event("change"));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
     expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
       "portfolio",
       expect.objectContaining({ benchmarkTicker: "QQQ" }),
@@ -175,7 +175,7 @@ describe("settings — card settings panel branches", () => {
     selectCard("risk");
     const input = container.querySelector("#card-settings-varConfidence") as HTMLInputElement;
     input.value = "0.99";
-    input.dispatchEvent(new Event("change"));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
     expect(cbs.onCardSettingsChange).toHaveBeenCalledWith(
       "risk",
       expect.objectContaining({ varConfidence: 0.99 }),
@@ -286,7 +286,7 @@ describe("settings — method weights", () => {
     const slider = container.querySelector("#weight-RSI") as HTMLInputElement;
     if (!slider) return;
     slider.value = "2.5";
-    slider.dispatchEvent(new Event("input"));
+    slider.dispatchEvent(new Event("input", { bubbles: true }));
     expect(cbs.onMethodWeightsChange).toHaveBeenCalled();
   });
 
