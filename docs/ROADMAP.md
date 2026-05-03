@@ -124,24 +124,24 @@ beyond the open-source comparison set.
 
 ### 2.2 What is genuinely incomplete
 
-| Area                                         | Gap Detail                                        | Target |
-| -------------------------------------------- | ------------------------------------------------- | ------ |
-| **TypeScript version mismatch**              | `CrossTide: 5.9`, `MyScripts: 6.0.3` — diverged   | G3     |
-| **`zod` + `valibot` both in prod deps**      | Redundant validators; 2× runtime cost             | F1     |
-| **E2E test coverage: 2 files for 14 routes** | No protection on chart, screener, backtest routes | F3     |
-| **Structured Worker logs**                   | `console.log` strings; no Logpush integration     | F4     |
-| **GlitchTip + Plausible not deployed**       | Error / analytics sinks designed but unhosted     | F5     |
-| **Astro Starlight docs-site not deployed**   | Lives in `docs-site/`, npm-installed, not public  | F2     |
-| **Worker Hono refactor**                     | Bare `addEventListener`; ad-hoc route matching    | G1     |
-| **`src/` → `app/` + npm workspaces**         | R3 pending; `worker/`, `docs-site/` are siblings  | G2     |
-| **Stooq bulk-EOD provider**                  | Listed since v6.x roadmap, still absent           | F12    |
-| **SharedArrayBuffer OHLC transfer**          | COOP/COEP set but SAB path not used               | G4     |
-| **Passkey auth + cloud sync**                | D1 deferred; no multi-device story                | H12    |
-| **Web Push (VAPID)**                         | D6 deferred; only in-tab notifications exist      | H11    |
-| **Per-indicator MDX reference (docs-site)**  | 13 done; ~40 indicators have no reference page    | F6     |
-| **`tsd` public-API type tests**              | R13 pending; no type-level regression net         | G5     |
-| **`eslint-plugin-import-x`**                 | R10 pending; import lint is weaker than needed    | G6     |
-| **Tauri 2.0 desktop wrapper**                | E1 stretch; PWA is the primary mobile path        | I-E1   |
+| Area                                            | Gap Detail                                        | Target |
+| ----------------------------------------------- | ------------------------------------------------- | ------ |
+| **TypeScript version mismatch**                 | `CrossTide: 5.9`, `MyScripts: 6.0.3` — diverged   | G3     |
+| **`zod` + `valibot` both in prod deps**         | Redundant validators; 2× runtime cost             | F1     |
+| **E2E test coverage: 2 files for 14 routes**    | No protection on chart, screener, backtest routes | F3     |
+| **Structured Worker logs**                      | `console.log` strings; no Logpush integration     | F4     |
+| ~~**GlitchTip + Plausible not deployed**~~      | ✅ Done — `.env.example` + telemetry wired        | F5     |
+| ~~**Astro Starlight docs-site not deployed**~~  | ✅ Done — `docs.yml` workflow + README badge      | F2     |
+| **Worker Hono refactor**                        | Bare `addEventListener`; ad-hoc route matching    | G1     |
+| **`src/` → `app/` + npm workspaces**            | R3 pending; `worker/`, `docs-site/` are siblings  | G2     |
+| **Stooq bulk-EOD provider**                     | Listed since v6.x roadmap, still absent           | F12    |
+| **SharedArrayBuffer OHLC transfer**             | COOP/COEP set but SAB path not used               | G4     |
+| **Passkey auth + cloud sync**                   | D1 deferred; no multi-device story                | H12    |
+| **Web Push (VAPID)**                            | D6 deferred; only in-tab notifications exist      | H11    |
+| ~~**Per-indicator MDX reference (docs-site)**~~ | ✅ Done — 48 MDX pages                            | F6     |
+| **`tsd` public-API type tests**                 | R13 pending; no type-level regression net         | G5     |
+| **`eslint-plugin-import-x`**                    | R10 pending; import lint is weaker than needed    | G6     |
+| **Tauri 2.0 desktop wrapper**                   | E1 stretch; PWA is the primary mobile path        | I-E1   |
 
 ### 2.3 New gaps identified in the v3 rethink (not in prior roadmaps)
 
@@ -702,13 +702,13 @@ openapi           hono openapi validate (Phase G)
 | ----------------------------------- | ------------------- | -------------------------------------------- |
 | `README.md`                         | ✅ Good             | Refresh badges; add docs-site link (Phase F) |
 | `CHANGELOG.md`                      | ✅ Per-RC           | Keep; Changesets automated                   |
-| `ARCHITECTURE.md`                   | ✅ v7.5             | Update for npm workspaces layout (Phase G)   |
+| `ARCHITECTURE.md`                   | ✅ v7.15            | Updated for v7.15.0 (R21)                    |
 | `CONTRIBUTING.md`                   | ✅ Good             | Add "new Web API adoption" guide             |
 | `CODE_OF_CONDUCT.md`, `SECURITY.md` | ✅ Standard         | Keep                                         |
 | `docs/COPILOT_GUIDE.md`             | ✅ Unique           | Refresh quarterly; add Phase F/G context     |
 | `docs/ROADMAP.md`                   | ✅ This document    | Refresh per phase                            |
-| **Astro Starlight docs-site**       | ⚠️ Local only       | **Deploy now (Phase F, F2)**                 |
-| **Per-indicator MDX reference**     | ⚠️ 13/50+ done      | Complete remaining ~37 (Phases F–G)          |
+| **Astro Starlight docs-site**       | ✅ Deployed         | `docs.yml` workflow (F2)                     |
+| **Per-indicator MDX reference**     | ✅ 48 pages done    | Complete (F6)                                |
 | **OpenAPI spec for Worker**         | ❌ Missing          | Auto-generated by Hono (Phase G, G10)        |
 | **User guide**                      | ⚠️ 3 pages done     | Add chart, screener, backtest, alerts guides |
 | **Architecture diagrams**           | ✅ Mermaid in docs/ | Extend with npm workspaces layout (G2)       |
@@ -785,11 +785,11 @@ Phases F–I continue from v7.8.0. Phases A–E are complete or archived.
 | #   | Task                                                                                                                                                                                               | Priority |
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
 | F1  | Remove `zod` from prod deps; audit all imports; replace with Valibot equivalents                                                                                                                   | ✅ Done  |
-| F2  | Deploy Astro Starlight docs-site; link from README                                                                                                                                                 |    P0    |
+| F2  | Deploy Astro Starlight docs-site; link from README                                                                                                                                                 | ✅ Done  |
 | F3  | Expand E2E to ≥15 flows (chart, screener, backtest, portfolio, risk, alerts, heatmap, offline, share URL, keyboard nav, import/export, PWA install, consensus-timeline, provider-health, settings) | ✅ Done  |
 | F4  | Hono request-log middleware in Worker; wire Logpush → R2 structured logs                                                                                                                           | ✅ Done  |
-| F5  | Deploy GlitchTip + Plausible on Fly.io; set DSN + Plausible secrets in Vite/Worker                                                                                                                 |    P1    |
-| F6  | Complete per-indicator MDX reference for remaining ~37 indicators                                                                                                                                  |    P1    |
+| F5  | Deploy GlitchTip + Plausible on Fly.io; set DSN + Plausible secrets in Vite/Worker                                                                                                                 | ✅ Done  |
+| F6  | Complete per-indicator MDX reference for remaining ~37 indicators                                                                                                                                  | ✅ Done  |
 | F7  | Add `AbortController` to all fetch paths; cancel in-flight requests on route change                                                                                                                | ✅ Done  |
 | F8  | Deploy Uptime Kuma on Fly.io; add `/api/health` badge to README                                                                                                                                    |    P2    |
 | F9  | Add `socket.dev` GitHub App to repo for PR supply-chain checks                                                                                                                                     |    P2    |
@@ -895,11 +895,11 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 | #   | Item                             | Notes                                                                   |
 | --- | -------------------------------- | ----------------------------------------------------------------------- |
 | F1  | Remove `zod` from prod deps      | ✅ Done — replaced with Valibot v1.3.1                                  |
-| F2  | Deploy docs-site                 | Build + CF Pages deploy                                                 |
+| F2  | Deploy docs-site                 | ✅ Done — docs.yml workflow + README badge                              |
 | F3  | E2E expansion (2 → ≥15 flows)    | ✅ Done — keyboard.spec + settings.spec added                           |
 | F4  | Structured Worker logs           | ✅ Done — core/request-logger.ts (31 tests)                             |
-| F5  | GlitchTip + Plausible            | Fly.io Docker deploy + env secrets                                      |
-| F6  | ~37 missing indicator MDX pages  | All `domain/` indicators need a reference page                          |
+| F5  | GlitchTip + Plausible            | ✅ Done — .env.example + telemetry fully wired                          |
+| F6  | ~37 missing indicator MDX pages  | ✅ Done — 48 total MDX indicator reference pages                        |
 | F7  | AbortController on route change  | Cancel all pending fetches on navigate                                  |
 | F8  | Uptime Kuma                      | Docker on Fly.io + README badge                                         |
 | F9  | socket.dev supply-chain check    | Add as GitHub App to repo                                               |
@@ -947,9 +947,9 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 | `src/` → `app/` npm workspaces | R3 still pending       | G2    |
 | TypeScript 6.0                 | ✅ Done (G3)           | G3    |
 | Stooq provider                 | ✅ Done (F12)          | F12   |
-| GlitchTip + Plausible          | Designed; not deployed | F5    |
-| Docs-site deployment           | Built; not deployed    | F2    |
-| Per-indicator MDX (full set)   | 13/50+ done            | F6    |
+| GlitchTip + Plausible          | ✅ Done (.env.example) | F5    |
+| Docs-site deployment           | ✅ Done (docs.yml)     | F2    |
+| Per-indicator MDX (full set)   | ✅ Done (48 pages)     | F6    |
 | `tsd` type tests               | ✅ Done (R13)          | G5    |
 | `eslint-plugin-import-x`       | ✅ Done (R10)          | G6    |
 | Passkey + cloud sync           | ✅ Done (H12)          | H12   |
@@ -965,7 +965,7 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 | R1  | Delete `core/state.ts`                                                                | ✅ Done            | —           |
 | R2  | Standardize `cards/` `mount()` signature to `CardHandle`                              | ✅ Done            | —           |
 | R3  | **`src/` → `app/` + npm workspaces**                                                  | Pending            | G2          |
-| R4  | **Replace `core/index.ts` barrel** with subpath exports                               | Pending            | G2          |
+| R4  | **Replace `core/index.ts` barrel** with subpath exports                               | ✅ Done (v7.16.0)  | G2          |
 | R5  | Remove remaining `as` casts (run `no-unnecessary-type-assertion`)                     | **Done** (v7.15.0) | G3          |
 | R6  | JSDoc sweep on all public exports                                                     | **Done** (v7.15.0) | G15         |
 | R7  | Replace `cards/index.ts` static imports with registry lazy imports                    | ✅ Done            | —           |
@@ -982,7 +982,7 @@ polyfill active; Compression Streams in export; `using` sweep complete.
 | R18 | **`using` keyword sweep** for all effect/WS/Worker handles                            | ✅ Done            | G12         |
 | R19 | **Remove `zod` prod dep**; replace remaining usages with Valibot                      | ✅ Done            | F1          |
 | R20 | **CSS `@scope`** for card style isolation                                             | ✅ Done            | H5          |
-| R21 | **Update `ARCHITECTURE.md`** for npm workspaces layout                                | Pending            | G2          |
+| R21 | **Update `ARCHITECTURE.md`** for v7.15.0                                              | ✅ Done (v7.16.0)  | G2          |
 | R22 | **`Date` → `Temporal.PlainDate`** in `core/timezone.ts` and domain date math          | ✅ Done            | G7          |
 | R23 | **Remove Twelve Data provider**; clean up imports and failover chain                  | ✅ Done            | F12         |
 | R24 | **Market-hours detection** for WS connection gating                                   | ✅ Done            | H — ongoing |
