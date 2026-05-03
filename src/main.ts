@@ -385,6 +385,17 @@ function main(): void {
     versionEl.textContent = `v${__APP_VERSION__}`;
   }
 
+  // Market hours indicator
+  const footer = document.getElementById("app-footer");
+  if (footer) {
+    const marketEl = document.createElement("span");
+    marketEl.id = "market-status-indicator";
+    footer.appendChild(marketEl);
+    void import("./ui/market-indicator").then(({ mountMarketIndicator }) => {
+      mountMarketIndicator(marketEl);
+    });
+  }
+
   // Add ticker on Enter
   const addInput = document.getElementById("add-ticker") as HTMLInputElement | null;
   addInput?.addEventListener("keydown", (e) => {

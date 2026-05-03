@@ -1843,3 +1843,45 @@
   color: #fff;
   border-color: var(--accent);
 }
+
+/* ── Market hours indicator ── */
+.market-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.market-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.market-dot.market-open {
+  background: var(--green, #22c55e);
+  box-shadow: 0 0 4px var(--green, #22c55e);
+}
+
+.market-dot.market-closed {
+  background: var(--text-tertiary, #6b7280);
+}
+
+.market-label {
+  font-weight: 500;
+}
+
+.market-exchanges {
+  display: inline-flex;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+.market-exchange {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.75rem;
+}
