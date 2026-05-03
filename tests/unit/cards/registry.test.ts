@@ -53,6 +53,9 @@ vi.mock("../../../src/cards/consensus-timeline-card", () => ({
 vi.mock("../../../src/cards/signal-dsl-card", () => ({
   default: { mount: vi.fn(() => ({})) } satisfies CardModule,
 }));
+vi.mock("../../../src/cards/seasonality-card", () => ({
+  default: { mount: vi.fn(() => ({})) } satisfies CardModule,
+}));
 vi.mock("../../../src/cards/multi-chart-layout", () => ({
   default: { mount: vi.fn(() => ({})) } satisfies CardModule,
 }));
@@ -60,9 +63,9 @@ vi.mock("../../../src/cards/multi-chart-layout", () => ({
 const CTX: CardContext = { route: "watchlist", params: {} };
 
 describe("listCards", () => {
-  it("returns 20 entries covering all routes", () => {
+  it("returns 21 entries covering all routes", () => {
     const cards = listCards();
-    expect(cards).toHaveLength(20);
+    expect(cards).toHaveLength(21);
     const routes = cards.map((c) => c.route);
     expect(routes).toContain("watchlist");
     expect(routes).toContain("consensus");
@@ -84,6 +87,7 @@ describe("listCards", () => {
     expect(routes).toContain("macro-dashboard");
     expect(routes).toContain("sector-rotation");
     expect(routes).toContain("relative-strength");
+    expect(routes).toContain("seasonality");
   });
 
   it("each entry has a title and viewId", () => {

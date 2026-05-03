@@ -1694,3 +1694,94 @@
   font-weight: 600;
   color: var(--text-primary);
 }
+
+/* ---------------------------------------------------------------------------
+   Seasonality chart
+   --------------------------------------------------------------------------- */
+
+.seasonal-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-md);
+  padding: var(--sp-md);
+}
+
+.seasonal-header h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+.seasonal-period {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.seasonal-section {
+  padding: var(--sp-sm) var(--sp-md);
+}
+
+.seasonal-section-title {
+  margin: 0 0 var(--sp-sm);
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+}
+
+.seasonal-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+}
+
+.seasonal-row {
+  display: grid;
+  grid-template-columns: 3rem 1fr 4rem 3.5rem;
+  align-items: center;
+  gap: var(--sp-sm);
+  min-height: 28px;
+}
+
+.seasonal-label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.seasonal-bar-track {
+  position: relative;
+  height: 18px;
+  background: var(--bg-app);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.seasonal-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width 0.3s ease;
+}
+
+.seasonal-bar-positive {
+  background: var(--signal-buy);
+  opacity: 0.7;
+}
+
+.seasonal-bar-negative {
+  background: var(--signal-sell);
+  opacity: 0.7;
+}
+
+.seasonal-return {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-align: right;
+  color: var(--text-primary);
+}
+
+.seasonal-winrate {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  text-align: right;
+}

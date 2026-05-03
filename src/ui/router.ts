@@ -37,7 +37,8 @@ export type RouteName =
   | "earnings-calendar"
   | "macro-dashboard"
   | "sector-rotation"
-  | "relative-strength";
+  | "relative-strength"
+  | "seasonality";
 
 export interface RouteInfo {
   readonly name: RouteName;
@@ -68,6 +69,7 @@ const VALID_ROUTES = new Set<RouteName>([
   "macro-dashboard",
   "sector-rotation",
   "relative-strength",
+  "seasonality",
 ]);
 
 interface RoutePattern {
