@@ -66,6 +66,8 @@ for (const [label, size] of Object.entries(VIEWPORTS)) {
 test("tap navigation works on mobile viewport", async ({ page }) => {
   await page.setViewportSize(VIEWPORTS.mobile);
   await page.goto("/");
+  // Wait for JS to initialise
+  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
   const nav = page.locator("#app-nav");
   // If nav is visible, tap a link
   if (await nav.isVisible()) {

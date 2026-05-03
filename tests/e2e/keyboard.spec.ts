@@ -9,6 +9,8 @@ test.describe("Keyboard shortcuts", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
+    // Wait for JS to initialise (version text is set during init)
+    await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
   });
 
   test("pressing 1–7 navigates between views", async ({ page }) => {

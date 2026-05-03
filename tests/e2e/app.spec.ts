@@ -42,6 +42,8 @@ test("all navigation links are rendered", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("clicking nav links activates the correct view section", async ({ page }) => {
   await page.goto("/");
+  // Wait for JS to initialise (router registers click handlers)
+  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
   // Default view is watchlist
   await expect(page.locator("#view-watchlist")).toHaveClass(/active/);
 
@@ -187,7 +189,7 @@ test("footer with status indicators is present", async ({ page }) => {
   await page.goto("/");
   const footer = page.locator("#app-footer");
   await expect(footer).toBeVisible();
-  await expect(footer).toContainText(/CrossTide/i);
+  await expect(footer.locator("#sync-status")).toBeVisible();
 });
 
 // ---------------------------------------------------------------------------

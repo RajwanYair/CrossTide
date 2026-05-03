@@ -26,6 +26,7 @@
     display: flex;
     gap: var(--sp-sm);
     margin-left: auto;
+    overflow-x: auto;
   }
 
   .nav-link {

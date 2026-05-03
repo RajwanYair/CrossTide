@@ -7,7 +7,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 test.describe("Component Catalog (dev/components.html)", () => {
   test("renders all expected sections", async ({ page }) => {
-    await page.goto("/dev/components.html");
+    await page.goto("/docs/components-preview.html");
     await expect(page).toHaveTitle(/Component Preview/);
 
     // Verify key sections
@@ -23,7 +23,7 @@ test.describe("Component Catalog (dev/components.html)", () => {
   });
 
   test("theme toggle switches work", async ({ page }) => {
-    await page.goto("/dev/components.html");
+    await page.goto("/docs/components-preview.html");
 
     // Switch to light theme
     await page.locator("#btn-light").click();
@@ -39,7 +39,7 @@ test.describe("Component Catalog (dev/components.html)", () => {
   });
 
   test("no critical accessibility violations in catalog", async ({ page }) => {
-    await page.goto("/dev/components.html");
+    await page.goto("/docs/components-preview.html");
     await page.waitForLoadState("domcontentloaded");
 
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();

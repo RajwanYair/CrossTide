@@ -960,7 +960,7 @@
   .filter-chip.active {
     background: var(--accent);
     border-color: var(--accent);
-    color: #fff;
+    color: #000;
     font-weight: 600;
   }
 
