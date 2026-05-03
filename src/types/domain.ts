@@ -190,6 +190,27 @@ export interface AlertRecord {
   readonly firedAt: string; // ISO 8601
 }
 
+/** Logical operator for combining multiple alert conditions. */
+export type AlertOperator = "AND" | "OR";
+
+/** A single condition within a multi-condition alert rule. */
+export interface AlertCondition {
+  readonly type: "method" | "consensus";
+  readonly method?: MethodName;
+  readonly direction: SignalDirection;
+}
+
+/** A user-defined multi-condition alert rule. */
+export interface AlertRule {
+  readonly id: string;
+  readonly name: string;
+  readonly ticker: string;
+  readonly operator: AlertOperator;
+  readonly conditions: readonly AlertCondition[];
+  readonly enabled: boolean;
+  readonly createdAt: string; // ISO 8601
+}
+
 /** Fundamental financial data for a ticker (from quoteSummary). */
 export interface FundamentalData {
   readonly peRatio?: number;

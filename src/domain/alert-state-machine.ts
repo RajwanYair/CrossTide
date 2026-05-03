@@ -5,7 +5,13 @@
  * Tracks per-ticker alert state to enforce idempotent alerting:
  * a signal only fires once until the opposite condition resets it.
  */
-import type { ConsensusResult, MethodSignal, SignalDirection } from "../types/domain";
+import type {
+  ConsensusResult,
+  MethodSignal,
+  SignalDirection,
+  AlertCondition,
+  AlertRule,
+} from "../types/domain";
 
 /** All supported alert event types. */
 export type AlertType =
@@ -189,4 +195,88 @@ export function evaluateAlerts(
     alerts,
     nextState: { ticker: state.ticker, firedAlerts: newFired, lastEvaluatedAt: now },
   };
+}
+
+// ---------------------------------------------------------------------------
+// Multi-condition alert rules (L3)
+// ---------------------------------------------------------------------------
+
+/** Check whether a single condition is satisfied by the current signals. */
+function checkCondition(
+  condition: AlertCondition,
+  signals: readonly MethodSignal[],
+  consensus: ConsensusResult | null,
+): boolean {
+  if (condition.type === "consensus") {
+    return consensus?.direction === condition.direction;
+  }
+
+  // type === "method"
+  if (!condition.method) return false;
+  return signals.some((s) => s.method === condition.method && s.direction === condition.direction);
+}
+
+/** Fired result from a multi-condition rule. */
+export interface RuleFiredAlert {
+  readonly ruleId: string;
+  readonly ruleName: string;
+  readonly ticker: string;
+  readonly direction: SignalDirection;
+  readonly description: string;
+  readonly firedAt: string;
+}
+
+/**
+ * Evaluate a set of multi-condition alert rules against current signals.
+ * Returns fired alerts for rules whose conditions are met.
+ *
+ * @param rules — user-defined rules for this ticker
+ * @param signals — method signals computed for this evaluation cycle
+ * @param consensus — consensus result (may be null)
+ * @param firedRuleIds — rules that have already fired (idempotent)
+ * @param now — ISO timestamp for the fired alert
+ */
+export function evaluateMultiConditionRules(
+  rules: readonly AlertRule[],
+  signals: readonly MethodSignal[],
+  consensus: ConsensusResult | null,
+  firedRuleIds: ReadonlySet<string> = new Set(),
+  now: string = new Date().toISOString(),
+): { alerts: RuleFiredAlert[]; newFiredIds: Set<string> } {
+  const alerts: RuleFiredAlert[] = [];
+  const newFiredIds = new Set(firedRuleIds);
+
+  for (const rule of rules) {
+    if (!rule.enabled) continue;
+    if (firedRuleIds.has(rule.id)) continue;
+    if (rule.conditions.length === 0) continue;
+
+    const results = rule.conditions.map((c) => checkCondition(c, signals, consensus));
+    const met = rule.operator === "AND" ? results.every(Boolean) : results.some(Boolean);
+
+    if (met) {
+      // Derive direction from majority of conditions
+      const dirs = rule.conditions.map((c) => c.direction);
+      const buyCount = dirs.filter((d) => d === "BUY").length;
+      const direction: SignalDirection = buyCount >= dirs.length - buyCount ? "BUY" : "SELL";
+
+      const condDesc = rule.conditions
+        .map((c) =>
+          c.type === "consensus" ? `Consensus ${c.direction}` : `${c.method} ${c.direction}`,
+        )
+        .join(` ${rule.operator} `);
+
+      alerts.push({
+        ruleId: rule.id,
+        ruleName: rule.name,
+        ticker: rule.ticker,
+        direction,
+        description: `Rule "${rule.name}": ${condDesc}`,
+        firedAt: now,
+      });
+      newFiredIds.add(rule.id);
+    }
+  }
+
+  return { alerts, newFiredIds };
 }
