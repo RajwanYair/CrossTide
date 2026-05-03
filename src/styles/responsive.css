@@ -280,3 +280,192 @@
     font-size: 0.85em;
   }
 }
+
+/* ── J15: Mobile-responsive card layouts ─────────────────────────────────── */
+
+/* Card shell: stack header actions vertically on narrow cards */
+@container card (max-width: 480px) {
+  .card-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .card-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.25rem;
+  }
+
+  .card-title {
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+}
+
+/* Consensus card: stack analyst bars vertically */
+@container card (max-width: 500px) {
+  .consensus-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .consensus-summary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .consensus-bar-label {
+    font-size: 0.8rem;
+  }
+}
+
+/* Alerts card: compact alert list on narrow cards */
+@container card (max-width: 480px) {
+  .alert-list-item {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+
+  .alert-ticker {
+    flex: 1 1 100%;
+  }
+
+  .alert-form-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .alert-form-row input,
+  .alert-form-row select {
+    width: 100%;
+  }
+}
+
+/* Screener card: stack filter controls */
+@container card (max-width: 500px) {
+  .screener-filter-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .screener-filter-row select,
+  .screener-filter-row input {
+    width: 100%;
+  }
+
+  .screener-results-table {
+    font-size: 0.8rem;
+  }
+
+  /* Hide lower-priority screener columns on narrow cards */
+  .screener-col-sector,
+  .screener-col-volume {
+    display: none;
+  }
+}
+
+/* Chart card: full-width controls row */
+@container card (max-width: 500px) {
+  .chart-controls {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .chart-controls select,
+  .chart-controls button {
+    min-width: 0;
+    flex: 1 1 auto;
+    font-size: 0.8rem;
+  }
+
+  .chart-toolbar {
+    flex-wrap: wrap;
+  }
+}
+
+/* Settings card: stack form sections */
+@container card (max-width: 480px) {
+  .settings-section {
+    padding: 0.5rem;
+  }
+
+  .settings-form-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .settings-form-row label {
+    width: 100%;
+  }
+
+  .settings-form-row select,
+  .settings-form-row input {
+    width: 100%;
+  }
+
+  .settings-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .settings-actions .btn {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+/* Signal DSL card: stack editor and output */
+@container card (max-width: 500px) {
+  .signal-dsl-layout {
+    flex-direction: column;
+  }
+
+  .signal-dsl-editor,
+  .signal-dsl-output {
+    width: 100%;
+  }
+
+  .signal-dsl-toolbar {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
+/* Provider health card: stack health items */
+@container card (max-width: 400px) {
+  .provider-health-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provider-health-item {
+    padding: 0.5rem;
+  }
+}
+
+/* Multi-chart layout: single column on narrow viewport */
+@container card (max-width: 600px) {
+  .multi-chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Correlation matrix: smaller font for narrow cards */
+@container card (max-width: 400px) {
+  .correlation-matrix td,
+  .correlation-matrix th {
+    font-size: 0.7rem;
+    padding: 2px;
+  }
+}
+
+/* ── Safe area insets for notched devices ──────────────────────────────────── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  #app-footer {
+    padding-bottom: calc(var(--space-3, 0.75rem) + env(safe-area-inset-bottom));
+  }
+
+  #app-nav {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
