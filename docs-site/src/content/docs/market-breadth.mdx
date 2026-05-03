@@ -1,0 +1,76 @@
+---
+title: Market Breadth
+description: Gauge overall market health with breadth indicators — advance/decline, SMA participation, and signal distribution.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Market Breadth** card provides a bird's-eye view of your watchlist's aggregate
+health. Instead of analyzing individual tickers, it answers the question: *"Is the
+majority of my universe trending up or down?"*
+
+<Aside type="tip">
+  Market breadth is a leading indicator. Narrowing breadth (few stocks driving gains)
+  often precedes market corrections — even when headline indices look strong.
+</Aside>
+
+## Panels
+
+### (a) Consensus Distribution Donut
+
+A donut chart showing the count of BUY / NEUTRAL / SELL signals across all watchlist
+tickers from the CrossTide consensus engine.
+
+- **Healthy market:** 60%+ BUY signals
+- **Caution:** Roughly equal BUY and SELL counts
+- **Bearish:** 50%+ SELL signals
+
+### (b) SMA Participation
+
+Shows what percentage of your watchlist is trading **above** key moving averages:
+
+| Indicator       | Interpretation                                      |
+| --------------- | --------------------------------------------------- |
+| Above 50-day SMA  | Short-term bullish participation                  |
+| Above 200-day SMA | Long-term trend health                            |
+
+When both readings are > 70%, the market is broadly trending. When they diverge
+(50-day high, 200-day low), a short-term bounce may be fragile.
+
+### (c) Advance / Decline Bar
+
+A horizontal bar showing today's session:
+
+- **Green:** Advancing stocks (positive daily change)
+- **Red:** Declining stocks (negative daily change)
+- **Gray:** Unchanged
+
+A strong market day has 3:1 or better advance/decline ratio.
+
+### (d) Top Movers & Laggards
+
+Lists the top 3 gainers and top 3 losers from your watchlist by percentage change.
+Useful for quickly spotting outlier moves that warrant investigation.
+
+## Interpreting Breadth Divergence
+
+When a major index (e.g., S&P 500) makes new highs but breadth indicators weaken,
+this is called a **breadth divergence** — a classic warning signal:
+
+1. Fewer stocks participating in the rally
+2. Gains concentrated in a few mega-caps
+3. Increased risk of mean reversion
+
+## Data Source
+
+Market breadth is computed from your **active watchlist** data — no additional API
+calls are needed. Data refreshes automatically with each polling cycle.
+
+## Keyboard Shortcuts
+
+| Key   | Action                            |
+| ----- | --------------------------------- |
+| `b`   | Navigate to Market Breadth card   |
+| `⌘K`  | Open command palette              |
