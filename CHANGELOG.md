@@ -6,6 +6,43 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [7.18.0] - 2026-05-04
+
+### Added — 10-sprint delivery (coverage sweep + J11/J16)
+
+- **Coverage — export-import.ts**: 9 tests covering importConfigJSON edge cases
+  (null/primitive watchlist entries, missing addedAt, non-object root, high-contrast
+  theme, no-checksum path), downloadCompressedFile with CompressionStream, and
+  downloadFile URL revocation.
+- **Coverage — scroll-driven.ts**: 9 tests covering attachScrollProgress fallback
+  path (scroll ratio, clamping), native ScrollTimeline path (rAF loop, null
+  currentTime, progress clamping, playState handling), and createViewTimeline dispose.
+- **Coverage — router.ts**: 16 tests covering link click interception (modifier
+  keys, data-param extraction), spa-redirect restoration, View Transitions API,
+  navigation signal, hash fallback, and replace-mode navigation.
+- **Coverage — config.ts**: 11 tests covering all parseSingleCardSettings switch
+  branches (watchlist through risk), invalid settings graceful skip, and non-object
+  cardSettings handling.
+- **Coverage — telemetry.ts**: 5 tests covering analytics-only path (error boundary
+  without handler), web vitals callback forwarding, destroy teardown sequence,
+  pageview delegation, and setEnabled delegation.
+- **Coverage — settings.ts**: 15 tests covering card settings panel rendering for
+  all 9 card types, onCardSettingsChange emit, Finnhub API key save/clear, export-gz
+  button, and method weights slider + reset.
+- **Coverage — fetch.ts**: 10 tests covering fetchConditional (304 Not Modified,
+  200 with validators, 500 error, parent signal abort), fetchWithTimeout parentSignal
+  forwarding, and fetchWithRetry abort bail without retry.
+- **J16 — WebSocket reconnect stress tests**: 9 tests simulating rapid disconnect
+  flaps (20 cycles), max-attempt exhaustion, 100-message burst during reconnection,
+  interleaved open/close events, Symbol.dispose auto-close, error forwarding, and
+  readyState reporting.
+- **J11 — Accessibility ARIA sweep**: Added skip-to-main-content link, ARIA landmarks
+  (`role="banner"`, `role="navigation"`, `role="main"`), `aria-current="page"` on
+  active nav links, `aria-live="polite"` on market status badge, `prefers-contrast:
+more` support, and `focus-within` outline on card sections.
+
+---
+
 ## [7.17.0] - 2026-05-03
 
 ### Added — 10-sprint delivery (J1–J8, Phase J roadmap)
