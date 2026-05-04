@@ -690,14 +690,14 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 | K5  | **Chart sync cleanup**: Ensure all subscribers unsubscribe on dispose                           | P1       | 2h     |
 | K6  | **ARIA live regions**: Add to each card; announce price changes, signal flips                   | P0       | 1d     |
 | K7  | **Table keyboard navigation**: Arrow keys, Enter, Escape                                        | P1       | 1d     |
-| K8  | **Container queries**: Replace `@media` in card CSS with `@container`                           | P1       | 1d     |
+| K8  | **Container queries**: Replace `@media` in card CSS with `@container`                           | ✅ Done  | 1d     |
 | K9  | **npm workspaces**: `src/` → `packages/app/`, `worker/` → `packages/worker/`                    | P2       | 2d     |
 | K10 | **Worker health check in CI**: curl `/api/health` post-deploy                                   | P1       | 2h     |
 | K11 | **CSP report-uri**: `POST /api/csp-report` route                                                | P2       | 4h     |
 | K12 | **Request ID propagation**: `X-Request-ID` in Worker responses                                  | P2       | 2h     |
 | K13 | **Sparkline memoization**: Cache SVG path by data hash                                          | P1       | 4h     |
 | K14 | **Skip link**: Visible skip-to-content in index.html                                            | P1       | 1h     |
-| K15 | **WCAG 2.2 AA formal audit**: axe-core + WAVE + manual keyboard test all 19 routes              | P1       | 2d     |
+| K15 | **WCAG 2.2 AA formal audit**: axe-core + WAVE + manual keyboard test all 23 routes              | ✅ Done  | 2d     |
 | K16 | **socket.dev supply chain**: Add as GitHub App                                                  | P2       | 1h     |
 | K17 | **Uptime Kuma**: Deploy on Fly.io; README badge                                                 | P2       | 2h     |
 
@@ -738,14 +738,14 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 
 | #   | Task                                                                        | Priority | Effort |
 | --- | --------------------------------------------------------------------------- | -------- | ------ |
-| M1  | **Load testing**: 10K tickers; verify virtual scrolling holds               | P0       | 1d     |
-| M2  | **Mobile responsive audit**: All 19 cards on iOS Safari + Android Chrome    | P0       | 2d     |
+| M1  | **Load testing**: 10K tickers; verify virtual scrolling holds               | ✅ Done  | 1d     |
+| M2  | **Mobile responsive audit**: All 23 cards on mobile viewports               | ✅ Done  | 2d     |
 | M3  | **WebSocket reconnect stress tests**: Network flap simulation               | P1       | 1d     |
 | M4  | **Complete user guide suite**: Guide for every card                         | P1       | 3d     |
-| M5  | **Contributing guide update**: PR template, issue templates                 | P2       | 1d     |
+| M5  | **Contributing guide update**: PR template, issue templates                 | ✅ Done  | 1d     |
 | M6  | **i18n expansion**: Add ES, DE, ZH locales                                  | P2       | 3d     |
-| M7  | **Performance regression CI**: Track metrics over time; alert on regression | P1       | 1d     |
-| M8  | **Dependency audit automation**: Weekly npm audit + Dependabot              | P2       | 2h     |
+| M7  | **Performance regression CI**: Track metrics over time; alert on regression | ✅ Done  | 1d     |
+| M8  | **Dependency audit automation**: Weekly npm audit + Dependabot              | ✅ Done  | 2h     |
 | M9  | **README showcase**: Screenshots, GIF demos, feature comparison             | P1       | 1d     |
 | M10 | **v10 launch**: GitHub release + Product Hunt + Hacker News                 | P0       | 1d     |
 
@@ -768,9 +768,9 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 | R11 | Worker rewrite to Hono                              | ✅ Done                                                                                       | —      |
 | R12 | Extract makeCandles() to fixtures                   | ✅ Done                                                                                       | —      |
 | R13 | tsd type tests for public API                       | ✅ Done                                                                                       | —      |
-| R14 | **innerHTML → patchDOM migration**                  | ✅ Near-complete (8 trivial uses remain: 4 `= ""` clears, toast, alert-row, preset-filters)   | K1     |
+| R14 | **innerHTML → patchDOM migration**                  | ✅ Done — 0 violations remain in src/cards/                                                   | K1     |
 | R15 | **Event delegation migration**                      | ✅ Near-complete (5 legitimate direct listeners remain: canvas/SVG mouse, keyboard shortcuts) | K4     |
-| R16 | **Media queries → container queries**               | Pending                                                                                       | K8     |
+| R16 | **Media queries → container queries**               | ✅ Done — portfolio-columns + watchlist-table migrated to @container                          | K8     |
 
 ---
 
