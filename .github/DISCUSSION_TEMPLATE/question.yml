@@ -1,0 +1,38 @@
+title: "Question / Help"
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Need help with CrossTide? Ask here — the community and maintainers will assist.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What do you need help with?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Setup / Installation
+        - Configuration
+        - API / Worker
+        - Domain Logic / Indicators
+        - UI / Cards
+        - Performance
+        - Deployment
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Screenshots, error messages, or relevant config snippets.
