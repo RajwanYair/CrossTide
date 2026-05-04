@@ -1508,6 +1508,44 @@
     }
   }
 
+  /* ── Offline indicator banner ─────────────────────────────────────── */
+  .offline-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    padding: 0.5rem 1rem;
+    background: var(--color-warning, #e65100);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    animation: offline-slide-in 300ms ease-out;
+  }
+
+  .offline-banner--exit {
+    animation: offline-slide-out 300ms ease-in forwards;
+  }
+
+  @keyframes offline-slide-in {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes offline-slide-out {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+
   /* ── Live-price streaming (B1) ────────────────────────────────────── */
   @keyframes live-flash {
     0% {
