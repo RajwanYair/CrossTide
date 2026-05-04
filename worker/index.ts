@@ -39,6 +39,7 @@ import {
   getFixtureSearch,
 } from "./fixtures.js";
 import { createLogger } from "./logger.js";
+import { createTracer } from "./telemetry.js";
 
 export interface KVNamespace {
   get(key: string, type: "text"): Promise<string | null>;
@@ -86,9 +87,13 @@ export interface Env {
   QUOTE_CACHE?: KVNamespace;
   /** P3: D1 database for user data persistence. */
   DB?: D1Database;
+  /** R9: OTLP/HTTP JSON collector endpoint for OpenTelemetry distributed tracing. */
+  OTEL_EXPORTER_OTLP_ENDPOINT?: string;
 }
 
-const app = new Hono<{ Bindings: Env; Variables: { requestId: string } }>({ strict: false });
+const app = new Hono<{ Bindings: Env; Variables: { requestId: string; traceparent: string } }>({
+  strict: false,
+});
 
 // ── CORS preflight short-circuit (must come before rate-limit middleware) ─────
 app.options("*", (c) => handlePreflight(c.req.raw));
@@ -99,6 +104,20 @@ app.use("*", async (c, next) => {
   c.set("requestId", requestId);
   await next();
   c.res.headers.set("X-Request-ID", requestId);
+});
+
+// ── R9: OpenTelemetry distributed tracing ─────────────────────────────────────
+app.use("*", async (c, next) => {
+  const tracer = createTracer(
+    c.env.OTEL_EXPORTER_OTLP_ENDPOINT,
+    c.get("requestId"),
+    c.req.header("traceparent") ?? null,
+  );
+  c.set("traceparent", tracer.traceparent);
+  await next();
+  // Propagate traceparent to client so browser can correlate
+  c.res.headers.set("traceparent", tracer.traceparent);
+  tracer.finish(c.executionCtx);
 });
 
 // ── P13: Structured request logging ──────────────────────────────────────────
