@@ -10,6 +10,8 @@
  */
 import type { DailyCandle } from "../types/domain";
 import { computeSmaSeries } from "../domain/sma-calculator";
+import { computeVolumeProfile, type VolumeProfile } from "../domain/volume-profile";
+import type { Candle } from "../domain/heikin-ashi";
 import { wireCrosshairSync, getGlobalChartSyncBus } from "../ui/chart-sync";
 
 /** A consensus buy/sell signal to render as a marker on the chart. */
@@ -176,6 +178,45 @@ export async function attachLwChart(
         text: s.direction === "BUY" ? "B" : "S",
       })),
     );
+  }
+
+  // Q3: Volume Profile — POC + Value Area lines
+  if (candles.length >= 10) {
+    const vpCandles: Candle[] = candles.map((c) => ({
+      time: new Date(c.date).getTime() / 1000,
+      open: c.open,
+      high: c.high,
+      low: c.low,
+      close: c.close,
+      volume: c.volume,
+    }));
+    const vp: VolumeProfile = computeVolumeProfile(vpCandles);
+    if (vp.totalVolume > 0) {
+      candleSeries.createPriceLine({
+        price: vp.poc,
+        color: "#d29922",
+        lineWidth: 2,
+        lineStyle: 0, // Solid
+        axisLabelVisible: true,
+        title: "POC",
+      });
+      candleSeries.createPriceLine({
+        price: vp.valueAreaHigh,
+        color: "#d2992288",
+        lineWidth: 1,
+        lineStyle: 2, // Dashed
+        axisLabelVisible: false,
+        title: "VAH",
+      });
+      candleSeries.createPriceLine({
+        price: vp.valueAreaLow,
+        color: "#d2992288",
+        lineWidth: 1,
+        lineStyle: 2,
+        axisLabelVisible: false,
+        title: "VAL",
+      });
+    }
   }
 
   chart.timeScale().fitContent();
