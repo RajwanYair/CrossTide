@@ -6,6 +6,56 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.25.0] - 2026-05-27
+
+### Sprint: Phase Q/R — Worker Intelligence & Mobile (8-item sprint)
+
+#### Added
+
+- **Q8+Q9 — Backtest commission/slippage & position sizing**
+  (`src/domain/backtest-engine.ts`): `CommissionConfig` interface with
+  `fixedPerTrade`, `percentPerTrade`, and `slippage`; `computeTradeCost()`
+  helper; full integration of `computeBacktestShares()` from position-sizing
+  module into the backtest engine; 12 unit tests.
+
+- **R3 — Durable Object WebSocket fan-out** (`worker/ticker-fanout.ts`):
+  `TickerFanout` class using Cloudflare WebSocket Hibernation API; one DO
+  instance per ticker symbol normalised to uppercase; `/ws` upgrade endpoint
+  and `/broadcast` ingest; `getTickerStub()` helper; 9 unit tests.
+
+- **R5 — News sentiment NLP endpoint** (`worker/routes/news-sentiment.ts`):
+  VADER-inspired lexicon (80+ financial terms); negation handling (×-0.75),
+  intensity boosters (×1.3), sigmoid normalisation to [-1, 1]; POST
+  `/api/news/sentiment` with batch (max 50 texts); 14 unit tests.
+
+- **R7 — Alert server-side evaluation** (`worker/routes/alert-eval.ts`):
+  `evaluateCondition()` for price/changePercent/volume against above/below/
+  crosses operators; `evaluateAlerts()` batch evaluator reading D1
+  `alert_rules`; `handleScheduledAlertEval()` entry for Cloudflare Cron
+  Trigger (every 5 min); one-shot disable on fire; 13 unit tests.
+
+- **R4 — Capacitor native wrapper** (`capacitor.config.ts`):
+  App ID `com.crosstide.app`, splash screen (dark), status bar theming,
+  keyboard resize config; `@capacitor/core`, `@capacitor/preferences`,
+  `@capacitor/splash-screen`, `@capacitor/status-bar` dependencies;
+  `cap:sync`, `cap:android`, `cap:ios` npm scripts.
+
+- **R10 — README showcase** (`README.md`):
+  ASCII architecture diagram (Browser/Capacitor → CF Edge → Upstream);
+  Worker API endpoint table; Native Mobile (Capacitor) quick-start section.
+
+- **Webhook notification dispatch** (`worker/routes/webhook-dispatch.ts`):
+  `dispatchWebhooks()` groups fired alerts by user, loads webhook URLs from
+  D1 `user_settings`, sends parallel POST with 5s timeout and bounded
+  concurrency (max 5); SSRF protection (https/http only); wired into
+  scheduled handler via `ctx.waitUntil()`; 9 unit tests.
+
+#### Changed
+
+- Roadmap: marked Q8, Q9, R3, R4, R5, R7, R10, RF7-RF10 as complete.
+
+---
+
 ## [11.24.0] - 2026-05-27
 
 ### Sprint: Phase R — Resilience & Advanced Features (10-item sprint)
