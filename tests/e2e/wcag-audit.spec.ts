@@ -26,6 +26,10 @@ const ALL_ROUTES = [
   "/sector-rotation",
   "/relative-strength",
   "/settings",
+  "/provider-health",
+  "/seasonality",
+  "/comparison",
+  "/strategy-comparison",
 ];
 
 for (const route of ALL_ROUTES) {
