@@ -671,7 +671,7 @@
     gap: var(--sp-lg);
   }
 
-  @media (min-width: 900px) {
+  @container card (min-width: 900px) {
     .portfolio-columns {
       grid-template-columns: 3fr 2fr;
     }

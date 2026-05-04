@@ -105,7 +105,7 @@
   }
 
   /* ── Mobile: hide less-important watchlist columns (C5) ── */
-  @media (max-width: 639px) {
+  @container card (max-width: 639px) {
     /* Hide sparkline, 52W Range, volume bar on small screens */
     #watchlist-table th:nth-child(5),
     #watchlist-table td:nth-child(5),
