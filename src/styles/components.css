@@ -40,6 +40,28 @@
     border-bottom: 1px solid var(--border);
   }
 
+  .card-collapsed .card-header {
+    border-bottom: none;
+  }
+
+  .btn-collapse {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: var(--sp-xs) var(--sp-sm);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  .btn-collapse:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+  }
+
   .card-actions {
     display: flex;
     gap: var(--sp-sm);
