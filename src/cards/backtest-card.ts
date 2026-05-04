@@ -28,6 +28,7 @@ import { getNavigationSignal } from "../ui/router";
 import type { CardContext, CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate } from "../ui/delegate";
+import type { CtDataTable, DataTableColumn } from "../ui/data-table";
 
 // ── Synthetic price generator ─────────────────────────────────────────────────
 function syntheticCandles(
@@ -95,41 +96,56 @@ function renderEquitySVG(equityPoints: ReturnType<typeof buildEquityCurve>): str
 }
 
 // ── Trade log ─────────────────────────────────────────────────────────────────
+const TRADE_LOG_COLUMNS: DataTableColumn[] = [
+  { key: "entry", label: "Entry" },
+  { key: "exit", label: "Exit" },
+  { key: "entryPrice", label: "Entry $", align: "right" },
+  { key: "exitPrice", label: "Exit $", align: "right" },
+  {
+    key: "return",
+    label: "Return",
+    align: "right",
+    render: (value): string => {
+      const pct = value as number;
+      const cls = pct >= 0 ? "badge badge-positive" : "badge badge-negative";
+      const sign = pct >= 0 ? "+" : "";
+      return `<span class="${cls}">${sign}${pct.toFixed(1)}%</span>`;
+    },
+  },
+];
+
 function renderTradeLog(
   trades: ClosedTrade[],
   candles: ReturnType<typeof syntheticCandles>,
 ): string {
   if (trades.length === 0) return "<p class='empty-state'>No trades in this period.</p>";
   const recent = trades.slice(-10).reverse();
-  const rows = recent
-    .map((t) => {
-      const pnl = (t.exitPrice - t.entryPrice) * (t.quantity ?? 1);
-      const pct = ((t.exitPrice - t.entryPrice) / t.entryPrice) * 100;
-      const cls = pnl >= 0 ? "badge badge-positive" : "badge badge-negative";
-      const sign = pnl >= 0 ? "+" : "";
-      return `<tr>
-        <td>${candles[t.entryTime]?.date ?? "—"}</td>
-        <td>${candles[t.exitTime]?.date ?? "—"}</td>
-        <td class="num">$${t.entryPrice.toFixed(2)}</td>
-        <td class="num">$${t.exitPrice.toFixed(2)}</td>
-        <td class="num"><span class="${cls}">${sign}${pct.toFixed(1)}%</span></td>
-      </tr>`;
-    })
-    .join("");
-  return `
-    <div style="overflow-x:auto">
-      <table class="data-table backtest-trade-log">
-        <thead>
-          <tr>
-            <th>Entry</th><th>Exit</th>
-            <th class="num">Entry $</th><th class="num">Exit $</th>
-            <th class="num">Return</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-    ${trades.length > 10 ? `<p class="risk-hint">${trades.length - 10} earlier trades not shown.</p>` : ""}`;
+  const rows = recent.map((t) => {
+    const pct = ((t.exitPrice - t.entryPrice) / t.entryPrice) * 100;
+    return {
+      entry: candles[t.entryTime]?.date ?? "—",
+      exit: candles[t.exitTime]?.date ?? "—",
+      entryPrice: `$${t.entryPrice.toFixed(2)}`,
+      exitPrice: `$${t.exitPrice.toFixed(2)}`,
+      return: pct,
+    };
+  });
+
+  // Build a temporary container to create the element and serialize
+  const wrapper = document.createElement("div");
+  wrapper.style.overflowX = "auto";
+  const table = document.createElement("ct-data-table") as CtDataTable;
+  table.columns = TRADE_LOG_COLUMNS;
+  table.rows = rows;
+  table.options = { ariaLabel: "Backtest Trade Log" };
+  wrapper.appendChild(table);
+
+  const hint =
+    trades.length > 10
+      ? `<p class="risk-hint">${trades.length - 10} earlier trades not shown.</p>`
+      : "";
+
+  return wrapper.outerHTML + hint;
 }
 
 // ── Main render ───────────────────────────────────────────────────────────────
