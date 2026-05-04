@@ -46,6 +46,7 @@ export type RouteName =
 export interface RouteInfo {
   readonly name: RouteName;
   readonly params: Readonly<Record<string, string>>;
+  readonly searchParams: Readonly<Record<string, string>>;
   readonly path: string;
 }
 
@@ -224,13 +225,14 @@ function stripBase(pathname: string): string {
 function parsePath(pathname: string): RouteInfo {
   const path = stripBase(pathname);
   const segs = path.split("/").filter(Boolean);
+  const searchParams = parseSearchParams();
 
   // Legacy hash takes precedence for the root path so old `#settings` links
   // still resolve during migration.
   if (segs.length === 0 && typeof window !== "undefined" && window.location.hash) {
     const hash = window.location.hash.slice(1);
     if (VALID_ROUTES.has(hash as RouteName)) {
-      return { name: hash as RouteName, params: {}, path: `/${hash}` };
+      return { name: hash as RouteName, params: {}, searchParams, path: `/${hash}` };
     }
   }
 
@@ -248,14 +250,25 @@ function parsePath(pathname: string): RouteInfo {
         break;
       }
     }
-    if (matched) return { name: pat.name, params, path };
+    if (matched) return { name: pat.name, params, searchParams, path };
   }
 
-  return { name: "watchlist", params: {}, path: "/" };
+  return { name: "watchlist", params: {}, searchParams, path: "/" };
+}
+
+function parseSearchParams(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const result: Record<string, string> = {};
+  const sp = new URLSearchParams(window.location.search);
+  for (const [key, value] of sp) {
+    result[key] = value;
+  }
+  return result;
 }
 
 export function getCurrentRouteInfo(): RouteInfo {
-  if (typeof window === "undefined") return { name: "watchlist", params: {}, path: "/" };
+  if (typeof window === "undefined")
+    return { name: "watchlist", params: {}, searchParams: {}, path: "/" };
   return parsePath(window.location.pathname);
 }
 
@@ -289,9 +302,13 @@ export function buildPath(route: RouteName, params: Readonly<Record<string, stri
 export function navigateToPath(
   route: RouteName,
   params: Readonly<Record<string, string>> = {},
-  opts: { replace?: boolean } = {},
+  opts: { replace?: boolean; searchParams?: Readonly<Record<string, string>> } = {},
 ): void {
-  const url = buildPath(route, params);
+  let url = buildPath(route, params);
+  if (opts.searchParams && Object.keys(opts.searchParams).length > 0) {
+    const sp = new URLSearchParams(opts.searchParams);
+    url = `${url}?${sp.toString()}`;
+  }
   if (typeof window === "undefined") return;
   // G8: use Navigation API when available so `navigate` event fires
   if ("navigation" in window) {
