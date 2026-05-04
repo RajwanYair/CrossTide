@@ -22,7 +22,7 @@ export interface DashboardStats {
 
 export function gatherStats(): DashboardStats {
   const config = loadConfig();
-  const watchlistCount = config.tickers.length;
+  const watchlistCount = config.watchlist.length;
   const snapshot = getHealthSnapshot();
   const activeProviders = snapshot.entries.filter((e) => e.breakerState !== "open").length;
   const totalProviders = snapshot.entries.length;

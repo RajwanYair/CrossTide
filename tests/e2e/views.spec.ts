@@ -32,7 +32,7 @@ test("heatmap view activates from nav link", async ({ page }) => {
 test("heatmap container renders a canvas or svg element", async ({ page }) => {
   await page.goto("/heatmap");
   await expect(page.locator("#view-heatmap")).toHaveClass(/active/);
-  const visual = page.locator("#view-heatmap canvas, #view-heatmap svg").first();
+  const _visual = page.locator("#view-heatmap canvas, #view-heatmap svg").first();
   // Canvas/SVG may render after data loads — just check the container exists
   await expect(page.locator("#view-heatmap")).toBeVisible();
 });

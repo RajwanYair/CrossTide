@@ -5,10 +5,9 @@
  *   - Link click with data-param* attributes (param extraction branch)
  *   - Link click with modifier keys (early-return branch)
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   initRouter,
-  navigateTo,
   onRouteChange,
   _resetRouterForTests,
   type RouteName,

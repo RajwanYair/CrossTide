@@ -31,7 +31,8 @@ After first deploy, visit `https://crosstide-status.fly.dev` to:
 2. Add monitors for the endpoints above
 3. Create a public status page named `crosstide`
 4. The status page badge URL will be:
-   ```
+
+   ```text
    https://crosstide-status.fly.dev/api/badge/1/status
    ```
 

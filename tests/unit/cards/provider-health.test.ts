@@ -6,7 +6,6 @@ import {
   computeHealthSummary,
   formatRelativeTime,
   renderProviderHealth,
-  type ProviderHealthSnapshot,
 } from "../../../src/cards/provider-health";
 import type { ProviderHealth } from "../../../src/providers/types";
 

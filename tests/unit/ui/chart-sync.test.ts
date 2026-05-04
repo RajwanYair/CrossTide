@@ -2,11 +2,7 @@
  * Chart crosshair sync tests (B9).
  */
 import { describe, it, expect, vi } from "vitest";
-import {
-  createChartSyncBus,
-  wireCrosshairSync,
-  type ChartCrosshairEntry,
-} from "../../../src/ui/chart-sync";
+import { createChartSyncBus, wireCrosshairSync } from "../../../src/ui/chart-sync";
 
 describe("createChartSyncBus", () => {
   it("publish notifies other subscribers but not the sender", () => {

@@ -56,7 +56,7 @@ Use GitHub Issues. Include:
 
 We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 feat(scope): add new feature
 fix(scope): fix specific bug
 docs(scope): documentation only
@@ -70,7 +70,7 @@ Common scopes: `watchlist`, `chart`, `screener`, `portfolio`, `core`, `worker`, 
 
 ## Architecture Overview
 
-```
+```text
 src/
 ├── types/       ← shared interfaces (no imports from other layers)
 ├── domain/      ← pure functions (no DOM, no fetch, no side effects)

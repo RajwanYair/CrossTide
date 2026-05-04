@@ -95,7 +95,7 @@ describe("wavelet", () => {
   });
 });
 
-function variance(data: number[]): number {
+function _variance(data: number[]): number {
   const mean = data.reduce((s, v) => s + v, 0) / data.length;
   return data.reduce((s, v) => s + (v - mean) ** 2, 0) / data.length;
 }

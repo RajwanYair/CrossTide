@@ -64,6 +64,7 @@
   }
 
   /* ── Color-blind palettes (C2) — override signal / accent tokens ─────── */
+
   /* Deuteranopia (red-green, ~6% males): swap red→vermillion, green→blue  */
   [data-palette="deuteranopia"] {
     --signal-buy: #0072b2; /* blue */

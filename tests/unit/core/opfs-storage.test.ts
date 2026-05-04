@@ -4,7 +4,7 @@
  * OPFS is not available in Node / happy-dom so we mock
  * `navigator.storage.getDirectory()` and the FileSystem handles.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   opfsSupported,
   serializeCandles,

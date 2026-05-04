@@ -33,8 +33,6 @@ import {
 import type {
   RsiPoint,
   MacdPoint,
-  SmaPoint,
-  EmaPoint,
   AtrPoint,
   BollingerPoint,
   StochasticPoint,

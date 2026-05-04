@@ -5,7 +5,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createFinnhubStream } from "../../../src/core/finnhub-ws";
 
 // ── Mock WebSocket ────────────────────────────────────────────────────────────
-type WsEventName = "open" | "close" | "error" | "message";
 
 class MockWebSocket {
   static CONNECTING = 0;

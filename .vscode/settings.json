@@ -37,22 +37,11 @@
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-  "css.lint.validProperties": [],
-  "css.lint.compatibleVendorPrefixes": "ignore",
-  "css.lint.unknownAtRules": "ignore",
   "css.validate": false,
   "css.customData": ["./config/css-custom-data.json"],
+  "stylelint.validate": ["css"],
   "html.validate.scripts": true,
-  "html.validate.styles": false,
+  "html.validate.styles": true,
   "html.format.wrapLineLength": 120,
-  "html.customData": ["./config/html-custom-data.json"],
-  "github-actions.workflows.pinned.ignoredActionsAuthors": [
-    "actions",
-    "cloudflare",
-    "softprops",
-    "gitleaks"
-  ],
-  "github-actions.workflows.pinned.refresh.enabled": false,
-  "webhint.enableTelemetry": false,
-  "webhint.enabled": false
+  "html.customData": ["./config/html-custom-data.json"]
 }

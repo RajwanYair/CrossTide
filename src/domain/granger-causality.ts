@@ -136,9 +136,9 @@ function fitOLS_SSR(
     }
 
     for (let j = 0; j < k; j++) {
-      XtY[j] += row[j]! * yVal;
+      XtY[j] = (XtY[j] ?? 0) + row[j]! * yVal;
       for (let l = 0; l < k; l++) {
-        XtX[j]![l] += row[j]! * row[l]!;
+        XtX[j]![l] = (XtX[j]![l] ?? 0) + row[j]! * row[l]!;
       }
     }
   }
@@ -179,7 +179,7 @@ function solveSystem(A: number[][], b: number[]): number[] | null {
 
     for (let row = col + 1; row < n; row++) {
       const factor = aug[row]![col]! / aug[col]![col]!;
-      for (let j = col; j <= n; j++) aug[row]![j] -= factor * aug[col]![j]!;
+      for (let j = col; j <= n; j++) aug[row]![j] = (aug[row]![j] ?? 0) - factor * aug[col]![j]!;
     }
   }
 

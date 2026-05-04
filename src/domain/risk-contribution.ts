@@ -35,7 +35,7 @@ export function eulerDecomposition(
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
       const cov = covarianceMatrix[i]?.[j] ?? 0;
-      sigmaW[i] += cov * weights[j]!;
+      sigmaW[i] = (sigmaW[i] ?? 0) + cov * weights[j]!;
       portVariance += weights[i]! * cov * weights[j]!;
     }
   }

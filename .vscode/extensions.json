@@ -5,8 +5,6 @@
     "stylelint.vscode-stylelint",
     "DavidAnson.vscode-markdownlint",
     "vitest.explorer",
-    "ms-vscode.js-debug",
-    "webben.browserslist",
     "ms-playwright.playwright",
     "github.vscode-github-actions"
   ]

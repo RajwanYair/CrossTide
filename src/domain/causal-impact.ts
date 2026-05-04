@@ -116,9 +116,9 @@ function olsRegression(y: readonly number[], X: readonly (readonly number[])[]):
 
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < p; j++) {
-      Aty[j] += A[i]![j]! * y[i]!;
+      Aty[j] = (Aty[j] ?? 0) + A[i]![j]! * y[i]!;
       for (let k = 0; k < p; k++) {
-        AtA[j]![k] += A[i]![j]! * A[i]![k]!;
+        AtA[j]![k] = (AtA[j]![k] ?? 0) + A[i]![j]! * A[i]![k]!;
       }
     }
   }
@@ -144,7 +144,7 @@ function gaussianElimination(A: number[][], b: number[]): number[] {
 
     for (let row = col + 1; row < n; row++) {
       const factor = aug[row]![col]! / pivot;
-      for (let k = col; k <= n; k++) aug[row]![k] -= factor * aug[col]![k]!;
+      for (let k = col; k <= n; k++) aug[row]![k] = (aug[row]![k] ?? 0) - factor * aug[col]![k]!;
     }
   }
 

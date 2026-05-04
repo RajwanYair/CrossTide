@@ -78,7 +78,7 @@ describe("createStorageManager — eviction on pressure", () => {
 
   it("returns null check when estimate unavailable", async () => {
     const cache = makeCache(5);
-    const mgr = createStorageManager({
+    const _mgr = createStorageManager({
       cache,
       estimate: async () =>
         Promise.resolve(null as unknown as { usage: number; quota: number; ratio: number }),

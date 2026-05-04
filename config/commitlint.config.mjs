@@ -20,9 +20,9 @@ export default {
         "revert",
       ],
     ],
-    // Subject may start with capital (our sprint commit style)
-    "subject-case": [0],
-    // Allow long subject lines for sprint commits
-    "header-max-length": [1, "always", 120],
+    // Subject must be lowercase (conventional commits standard)
+    "subject-case": [2, "always", ["lower-case", "sentence-case"]],
+    // Enforce max header length
+    "header-max-length": [2, "always", 120],
   },
 };

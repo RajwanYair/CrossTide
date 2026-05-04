@@ -6,6 +6,39 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.19.0] - 2025-07-06
+
+### Production Readiness
+
+Strict linting enforcement and dead-code elimination pass.
+
+#### Changed
+
+- **ESLint**: promoted `import-x/no-cycle` from `warn` to `error`; enabled
+  `@typescript-eslint/no-unused-vars` (error) for test files
+- **Stylelint**: enabled 9 previously-disabled rules (no-descending-specificity,
+  no-duplicate-selectors, naming patterns, empty-line rules,
+  color-function-alias-notation, media-feature-range-notation)
+- **commitlint**: enforced `subject-case` (lower/sentence) and
+  `header-max-length` (120) as errors
+- **CSS**: merged duplicate selectors, replaced `rgba()` with `rgb()`,
+  eliminated descending-specificity issues via `:where()`
+
+#### Fixed
+
+- TypeScript 6 strict `noUncheckedIndexedAccess` errors in 7 domain modules
+- Unused imports/variables removed from 30+ test files
+- Markdown lint violations in CONTRIBUTING.md and monitoring/README.md
+- `dashboard-stats` referenced non-existent `config.tickers` → `config.watchlist`
+
+#### Removed
+
+- Stale VS Code workaround settings (webhint, github-actions, css.lint ignores)
+- Dead VS Code extension recommendations (js-debug, browserslist)
+- Empty `test-results/` and `coverage/.tmp/` artifacts
+
+---
+
 ## [11.12.0] - 2026-05-04
 
 ### Highlights

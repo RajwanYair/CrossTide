@@ -7,10 +7,7 @@ import {
   aggregatePatternStats,
   backtestPatterns,
 } from "../../../src/domain/pattern-backtest";
-import type {
-  PatternTradeResult,
-  PatternBacktestConfig,
-} from "../../../src/domain/pattern-backtest";
+import type { PatternTradeResult } from "../../../src/domain/pattern-backtest";
 import type { PatternCandle, DetectedPattern } from "../../../src/domain/pattern-recognition";
 
 // ── Fixture candles ──────────────────────────────────────────────────────
@@ -32,7 +29,7 @@ function fallingCandles(n: number, start = 200): PatternCandle[] {
 }
 
 /** Flat candles. */
-function flatCandles(n: number, price = 100): PatternCandle[] {
+function _flatCandles(n: number, price = 100): PatternCandle[] {
   return Array.from({ length: n }, () => ({
     open: price,
     high: price + 0.5,

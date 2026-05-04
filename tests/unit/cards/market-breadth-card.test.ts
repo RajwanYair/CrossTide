@@ -7,7 +7,6 @@ import {
   renderDonut,
   renderADBar,
   renderMarketBreadth,
-  type BreadthSummary,
 } from "../../../src/cards/market-breadth-card";
 import type { BreadthEntry } from "../../../src/cards/market-breadth-data";
 

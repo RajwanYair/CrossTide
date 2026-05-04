@@ -68,9 +68,7 @@ import {
   detectCrossUp,
   // Type re-exports (validate they exist)
   isTicker,
-  asTicker,
   isISODate,
-  asISODate,
 } from "../../../src/domain/index";
 import type {
   SmaPoint,
@@ -91,12 +89,11 @@ import type {
   BacktestConfig,
   BacktestResult,
   BacktestTrade,
-  FibonacciLevels,
   RiskBasedSizingInput,
   CrossUpResult,
 } from "../../../src/domain/index";
 import type { BacktestMetrics, EquityPoint } from "../../../src/domain/index";
-import type { TickerAlertState, FiredAlert, AlertType } from "../../../src/domain/index";
+import type { TickerAlertState, FiredAlert } from "../../../src/domain/index";
 
 const candles: DailyCandle[] = [];
 

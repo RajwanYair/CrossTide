@@ -171,7 +171,7 @@ describe("provider registry — breaker-aware wrapper", () => {
   it("breaker-aware provider throws when circuit breaker is open", async () => {
     const { configureFinnhub, getChain } = await import("../../../src/providers/provider-registry");
     configureFinnhub("key");
-    const chain = getChain();
+    const _chain = getChain();
 
     // Force the breaker open by triggering enough failures
     // The mock getHistory returns [] — we need to make it throw to trip the breaker

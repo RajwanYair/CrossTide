@@ -16,20 +16,41 @@
     "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }],
     "selector-pseudo-element-no-unknown": true,
     "unit-no-unknown": true,
-    "no-descending-specificity": null,
-    "no-duplicate-selectors": null,
-    "selector-class-pattern": null,
-    "keyframes-name-pattern": null,
-    "custom-property-pattern": null,
+    "no-descending-specificity": [true, { "ignore": ["selectors-within-list"] }],
+    "no-duplicate-selectors": true,
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9]*(-{1,2}[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?$",
+      { "message": "Use kebab-case or BEM for class names" }
+    ],
+    "keyframes-name-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      { "message": "Use kebab-case for keyframe names" }
+    ],
+    "custom-property-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      { "message": "Use kebab-case for custom properties" }
+    ],
     "value-keyword-case": ["lower", { "camelCaseSvgKeywords": true }],
     "alpha-value-notation": "number",
     "color-function-notation": "legacy",
     "import-notation": "string",
-    "rule-empty-line-before": null,
-    "at-rule-empty-line-before": null,
-    "comment-empty-line-before": null,
-    "declaration-block-single-line-max-declarations": null,
-    "color-function-alias-notation": null,
-    "media-feature-range-notation": null
+    "rule-empty-line-before": [
+      "always",
+      { "except": ["first-nested"], "ignore": ["after-comment"] }
+    ],
+    "at-rule-empty-line-before": [
+      "always",
+      {
+        "except": ["first-nested", "blockless-after-same-name-blockless"],
+        "ignore": ["after-comment"]
+      }
+    ],
+    "comment-empty-line-before": [
+      "always",
+      { "except": ["first-nested"], "ignore": ["stylelint-commands"] }
+    ],
+    "declaration-block-single-line-max-declarations": 1,
+    "color-function-alias-notation": "without-alpha",
+    "media-feature-range-notation": "prefix"
   }
 }

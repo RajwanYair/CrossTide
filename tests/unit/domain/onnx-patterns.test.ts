@@ -5,7 +5,7 @@
  * topK, buildInputTensor) and the model-loader orchestration logic.
  * The actual `onnxruntime-web` module is mocked since it requires WASM.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   onnxSupported,
   preprocessCandles,
@@ -15,7 +15,7 @@ import {
   buildInputTensor,
   createModelLoader,
 } from "../../../src/domain/onnx-patterns";
-import type { OnnxCandle, TensorSpec, TopKResult } from "../../../src/domain/onnx-patterns";
+import type { OnnxCandle } from "../../../src/domain/onnx-patterns";
 
 // ── Test data ─────────────────────────────────────────────────────────────
 

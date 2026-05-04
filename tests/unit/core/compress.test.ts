@@ -3,7 +3,7 @@
  *
  * happy-dom ships CompressionStream so all paths execute in unit tests.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   compressionStreamSupported,
   compressStringToGzip,

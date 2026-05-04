@@ -19,7 +19,7 @@ describe("toDisposable", () => {
   it("is usable with the using keyword", () => {
     const fn = vi.fn();
     {
-      using d = toDisposable(fn);
+      using _d = toDisposable(fn);
       expect(fn).not.toHaveBeenCalled();
     }
     expect(fn).toHaveBeenCalledOnce();
@@ -52,7 +52,7 @@ describe("abortOnDispose", () => {
   it("aborts via using keyword", () => {
     const ctl = new AbortController();
     {
-      using d = abortOnDispose(ctl);
+      using _d = abortOnDispose(ctl);
       expect(ctl.signal.aborted).toBe(false);
     }
     expect(ctl.signal.aborted).toBe(true);

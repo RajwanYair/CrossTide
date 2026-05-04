@@ -3,11 +3,6 @@
  * and renders content for the provided ticker.
  */
 import { describe, it, expect, beforeEach } from "vitest";
-import type { CardContext } from "../../src/cards/registry";
-
-function makeCtx(symbol: string): CardContext {
-  return { route: "chart", params: { symbol } };
-}
 
 describe("consensus-card reads symbol param", () => {
   let container: HTMLElement;
@@ -57,7 +52,7 @@ describe("backtest-card reads symbol param", () => {
     const card = mod.default;
     card.mount(container, { route: "backtest", params: { symbol: "INTC" } });
     // The ticker input/select should show INTC
-    const tickerInput = container.querySelector<HTMLInputElement>("#ticker-input, [id*=ticker]");
+    const _tickerInput = container.querySelector<HTMLInputElement>("#ticker-input, [id*=ticker]");
     // The ticker should appear somewhere in the rendered output
     expect(container.innerHTML).toContain("INTC");
   });

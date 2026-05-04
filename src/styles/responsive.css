@@ -137,12 +137,14 @@
 }
 
 /* ── View Transitions (C5) ─────────────────────────────────────────────────── */
+
 /* Fade + slight upward slide for route changes */
 @keyframes vt-fade-in {
   from {
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -154,6 +156,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+
   to {
     opacity: 0;
     transform: translateY(-4px);
@@ -177,6 +180,7 @@
 }
 
 /* ── Container-query responsive cards (C5) ─────────────────────────────────── */
+
 /* Cards use container-type: inline-size, allowing internal layouts to
    adapt based on card width rather than viewport width. */
 
@@ -258,6 +262,7 @@
 }
 
 /* ── Watchlist table container queries (C5) ─────────────────────────────────── */
+
 /* Hide low-priority columns when the card container is narrow */
 
 @container card (max-width: 480px) {
@@ -275,6 +280,7 @@
   .wl-col-change-pct {
     display: none;
   }
+
   /* Compact ticker cell font */
   .ticker-cell {
     font-size: 0.85em;

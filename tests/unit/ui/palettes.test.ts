@@ -202,7 +202,7 @@ describe("activatePaletteFromStorage", () => {
   });
 
   it("returns null when no palette is stored", () => {
-    const root = document.createElement("div");
+    const _root = document.createElement("div");
     const spy = vi.spyOn({ applyPalette }, "applyPalette");
     expect(activatePaletteFromStorage()).toBeNull();
     spy.mockRestore();

@@ -4,7 +4,7 @@
  * alerts, portfolio, risk) and invalid cardSettings input.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { loadConfig, saveConfig } from "../../../src/core/config";
+import { loadConfig } from "../../../src/core/config";
 
 const STORAGE_KEY = "crosstide-config";
 

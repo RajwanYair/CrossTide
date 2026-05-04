@@ -6,7 +6,6 @@ import {
   PRESET_FILTERS,
   getPresetById,
   renderPresetPicker,
-  type PresetFilter,
 } from "../../../src/cards/preset-filters";
 
 describe("PRESET_FILTERS", () => {

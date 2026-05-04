@@ -4,7 +4,6 @@ import {
   evaluateAlerts,
   DEFAULT_ENABLED_ALERTS,
   type AlertType,
-  type TickerAlertState,
 } from "../../../src/domain/alert-state-machine";
 import type { ConsensusResult, MethodSignal } from "../../../src/types/domain";
 

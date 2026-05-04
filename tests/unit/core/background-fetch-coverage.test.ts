@@ -6,10 +6,8 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
-  backgroundFetchSupported,
   getActiveFetches,
   fetchWithFallback,
-  onFetchProgress,
   type FetchProgress,
 } from "../../../src/core/background-fetch";
 

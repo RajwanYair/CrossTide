@@ -17,7 +17,7 @@ describe("patchDOM", () => {
 
   it("patches existing content without full re-render", () => {
     container.innerHTML = `<p class="test">Hello</p>`;
-    const p = container.querySelector("p")!;
+    const _p = container.querySelector("p")!;
 
     patchDOM(container, `<p class="test">World</p>`);
 

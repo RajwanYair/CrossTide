@@ -69,7 +69,7 @@ describe("screener-worker facade", () => {
   });
 
   it("ComputeApi type includes runScreener method", async () => {
-    const mod = await import("../../../src/core/compute-worker");
+    const _mod = await import("../../../src/core/compute-worker");
     // Type-level check — if ComputeApi doesn't have runScreener, compile fails
     type HasScreener = typeof mod.ComputeApi extends never ? never : true;
     const _check: HasScreener = true;

@@ -50,7 +50,7 @@ describe("notifications — extended branches", () => {
 
   it("showNotification passes icon option to Notification ctor", () => {
     const close = showNotification("Test", { icon: "/icon.png" });
-    const init = (FakeNotif as unknown as { lastInstance?: { options?: NotificationOptions } })
+    const _init = (FakeNotif as unknown as { lastInstance?: { options?: NotificationOptions } })
       .lastInstance?.options;
     // icon should be set in the options passed to ctor
     expect(typeof close).toBe("function");

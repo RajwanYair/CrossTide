@@ -99,7 +99,7 @@ export function welchSpectrum(
         re += windowed[t]! * Math.cos(angle);
         im -= windowed[t]! * Math.sin(angle);
       }
-      avgPower[k - 1] += (re * re + im * im) / windowPower;
+      avgPower[k - 1] = (avgPower[k - 1] ?? 0) + (re * re + im * im) / windowPower;
     }
     numSegments++;
   }

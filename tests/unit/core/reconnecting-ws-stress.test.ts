@@ -6,7 +6,7 @@
  * recovery behaviour in the reconnecting-ws module.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createReconnectingWS, type ReconnectingWS } from "../../../src/core/reconnecting-ws";
+import { createReconnectingWS } from "../../../src/core/reconnecting-ws";
 
 // ---------------------------------------------------------------------------
 // FakeWS — deterministic WebSocket mock
@@ -264,7 +264,7 @@ describe("reconnect stress — readyState reporting", () => {
 
 describe("reconnect stress — backoff ceiling", () => {
   it("never exceeds maxDelayMs regardless of attempt count", () => {
-    const ws = createReconnectingWS("wss://stress", {
+    const _ws = createReconnectingWS("wss://stress", {
       WebSocketImpl: Impl,
       random: () => 0, // no jitter
       minDelayMs: 100,

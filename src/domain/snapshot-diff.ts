@@ -55,8 +55,8 @@ export function diffSnapshots(
       priceDeltaPercent,
       volumeDelta: current.volume - prev.volume,
       signalChanged,
-      oldSignal: signalChanged ? prev.signal : undefined,
-      newSignal: signalChanged ? current.signal : undefined,
+      ...(signalChanged && prev.signal !== undefined && { oldSignal: prev.signal }),
+      ...(signalChanged && current.signal !== undefined && { newSignal: current.signal }),
     });
   }
 

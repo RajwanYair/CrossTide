@@ -7,6 +7,9 @@
   :focus-visible {
     outline: 3px solid var(--color-focus, #4d90fe);
     outline-offset: 2px;
+    scroll-margin: 1rem;
+    z-index: 1;
+    position: relative;
   }
 
   /* Remove default focus ring when not using keyboard */
@@ -95,13 +98,6 @@
   li a {
     min-width: unset;
     min-height: unset;
-  }
-
-  /* ── WCAG 2.2: Focus Not Obscured (2.4.11) ── */
-  :focus-visible {
-    scroll-margin: 1rem;
-    z-index: 1;
-    position: relative;
   }
 
   /* ── WCAG 2.2: Dragging Movements (2.5.7) — ensure drag has click alt ── */

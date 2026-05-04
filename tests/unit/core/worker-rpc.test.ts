@@ -2,7 +2,7 @@
  * Worker RPC unit tests — exercises the RPC protocol in-process using
  * fake Worker objects that echo messages synchronously.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   createWorkerClient,
   serveWorkerRpc,

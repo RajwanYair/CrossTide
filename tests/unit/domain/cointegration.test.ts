@@ -14,8 +14,8 @@ describe("cointegration", () => {
   const seriesB = seriesA.map((a) => 2 * a + 3 + Math.sin(a) * 0.5);
 
   // Non-cointegrated: independent random walks
-  const walkA = Array.from({ length: n }, (_, i) => 100 + i * 0.5);
-  const walkB = Array.from({ length: n }, (_, i) => 80 - i * 0.3 + Math.sin(i * 0.7) * 10);
+  const _walkA = Array.from({ length: n }, (_, i) => 100 + i * 0.5);
+  const _walkB = Array.from({ length: n }, (_, i) => 80 - i * 0.3 + Math.sin(i * 0.7) * 10);
 
   it("ols computes regression", () => {
     const result = ols(seriesA, seriesB);

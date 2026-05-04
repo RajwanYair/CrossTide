@@ -14,10 +14,12 @@
     content: " ↑";
     font-size: 0.75em;
   }
+
   .sortable[aria-sort="descending"]::after {
     content: " ↓";
     font-size: 0.75em;
   }
+
   .sortable:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -30,6 +32,14 @@
     overflow: hidden;
     container-type: inline-size;
     container-name: card;
+    transition:
+      opacity var(--transition-normal, 200ms) ease-out,
+      transform var(--transition-normal, 200ms) ease-out;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(8px);
+    }
   }
 
   .card-header {
@@ -342,7 +352,7 @@
     color: var(--danger);
   }
 
-  tr:hover td {
+  :where(tr):hover td {
     background: var(--bg-card-hover);
   }
 
@@ -410,7 +420,7 @@
     border-radius: var(--radius-lg);
     background: var(--bg-card);
     color: var(--text);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 16px 48px rgb(0, 0, 0, 0.4);
     padding: 0;
     width: min(560px, 90vw);
     max-height: min(420px, 70vh);
@@ -418,7 +428,7 @@
   }
 
   .palette-overlay::backdrop {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgb(0, 0, 0, 0.5);
   }
 
   .palette-content {
@@ -501,26 +511,30 @@
     font-size: var(--font-size-sm);
     font-weight: 600;
     color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 1px 2px rgb(0, 0, 0, 0.4);
   }
 
   .heatmap-pct {
     font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255, 255, 255, 0.9);
   }
 
   .heatmap-strong-up {
     background: #0f9d58;
   }
+
   .heatmap-up {
     background: #4caf50;
   }
+
   .heatmap-flat {
     background: #616161;
   }
+
   .heatmap-down {
     background: #e53935;
   }
+
   .heatmap-strong-down {
     background: #b71c1c;
   }
@@ -683,6 +697,7 @@
   .text-positive {
     color: var(--positive);
   }
+
   .text-negative {
     color: var(--negative);
   }
@@ -744,6 +759,7 @@
   .sector-name {
     font-size: var(--font-size-sm);
     font-weight: 500;
+    margin-right: var(--sp-xs);
   }
 
   .sector-tickers {
@@ -832,6 +848,7 @@
   .risk-gauge-fill.text-positive {
     background: var(--positive);
   }
+
   .risk-gauge-fill.text-negative {
     background: var(--negative);
   }
@@ -944,9 +961,11 @@
   .dot-buy {
     background: var(--positive, #3fb950);
   }
+
   .dot-sell {
     background: var(--negative, #f85149);
   }
+
   .dot-neutral {
     background: var(--text-secondary, #8b949e);
   }
@@ -1002,14 +1021,17 @@
     background: #1d3c6e;
     color: #58a6ff;
   }
+
   .instrument-badge-etf {
     background: #0f3b2b;
     color: #3fb950;
   }
+
   .instrument-badge-crypto {
     background: #3b2a00;
     color: #f0a400;
   }
+
   .instrument-badge-other {
     background: #2a2a2a;
     color: #8b949e;
@@ -1024,10 +1046,6 @@
     border-top: 1px solid var(--border);
   }
 
-  .sector-header:hover td {
-    color: var(--accent);
-  }
-
   .sector-header td {
     padding: var(--sp-xs) var(--sp-md);
     font-weight: 600;
@@ -1035,15 +1053,15 @@
     color: var(--text-secondary);
   }
 
+  .sector-header:where(:hover) td {
+    color: var(--accent);
+  }
+
   .sector-chevron {
     margin-right: var(--sp-sm);
     font-size: 0.65rem;
     display: inline-block;
     transition: transform var(--transition-fast);
-  }
-
-  .sector-name {
-    margin-right: var(--sp-xs);
   }
 
   /* ── G22: Correlation Matrix ─────────────────────────────────────────── */
@@ -1198,10 +1216,12 @@
   .breadth-ad-up {
     background: var(--success);
   }
+
   .breadth-ad-flat {
     background: var(--text-secondary);
     opacity: 0.4;
   }
+
   .breadth-ad-down {
     background: var(--danger);
   }
@@ -1232,9 +1252,11 @@
   .up {
     color: var(--success);
   }
+
   .dn {
     color: var(--danger);
   }
+
   .flat {
     color: var(--text-secondary);
   }
@@ -1389,7 +1411,7 @@
     background: var(--color-surface, #1e1e2e);
     border: 1px solid var(--color-border, #3a3a5c);
     border-radius: var(--radius, 8px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px rgb(0, 0, 0, 0.5);
     color: var(--color-text, #e2e8f0);
     max-width: 320px;
     min-width: 240px;
@@ -1439,6 +1461,7 @@
     gap: var(--sp-sm, 0.5rem);
     pointer-events: none;
     max-width: 360px;
+
     /* G9: reset default popover styles so our fixed positioning takes effect */
     border: none;
     padding: 0;
@@ -1468,7 +1491,15 @@
     gap: 0.25rem;
     pointer-events: auto;
     animation: toast-in 200ms ease-out;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.3);
+    transition:
+      opacity var(--transition-fast, 120ms) ease-out,
+      transform var(--transition-fast, 120ms) ease-out;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateX(20px);
+    }
   }
 
   .toast strong {
@@ -1497,7 +1528,7 @@
 
   .toast-dismiss:hover {
     color: var(--text-primary, #e2e8f0);
-    background: var(--bg-hover, rgba(255, 255, 255, 0.1));
+    background: var(--bg-hover, rgb(255, 255, 255, 0.1));
   }
 
   .toast-health {
@@ -1513,6 +1544,7 @@
       opacity: 0;
       transform: translateX(20px);
     }
+
     to {
       opacity: 1;
       transform: translateX(0);
@@ -1524,6 +1556,7 @@
       opacity: 1;
       transform: translateX(0);
     }
+
     to {
       opacity: 0;
       transform: translateX(20px);
@@ -1554,6 +1587,7 @@
     from {
       transform: translateY(-100%);
     }
+
     to {
       transform: translateY(0);
     }
@@ -1563,6 +1597,7 @@
     from {
       transform: translateY(0);
     }
+
     to {
       transform: translateY(-100%);
     }
@@ -1582,7 +1617,7 @@
     background: var(--color-surface, #1e293b);
     border: 1px solid var(--color-border, #334155);
     border-radius: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.3);
     font-size: 0.875rem;
     animation: offline-slide-in 300ms ease-out;
   }
@@ -1617,8 +1652,9 @@
   /* ── Live-price streaming (B1) ────────────────────────────────────── */
   @keyframes live-flash {
     0% {
-      background-color: rgba(var(--accent-rgb, 0, 120, 212), 0.3);
+      background-color: rgb(var(--accent-rgb, 0, 120, 212), 0.3);
     }
+
     100% {
       background-color: transparent;
     }
@@ -1629,6 +1665,7 @@
       0% {
         background-color: color-mix(in sRGB, var(--accent) 30%, transparent);
       }
+
       100% {
         background-color: transparent;
       }
@@ -1645,6 +1682,7 @@
   }
 
   /* ── H1: CSS Anchor Positioning — chart crosshair tooltip ─────────── */
+
   /*
    * CSS Anchor Positioning (Baseline 2025 — Chrome 125+, Firefox 130+).
    * The crosshair marker element gets `anchor-name` via JS (anchor-tooltip.ts).
@@ -1666,8 +1704,9 @@
     padding: 4px 8px;
     font-size: var(--font-size-sm);
     color: var(--text-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 8px rgb(0, 0, 0, 0.25);
     z-index: 10;
+
     /* Hide when no anchor is active */
     visibility: hidden;
   }
@@ -1695,6 +1734,7 @@
        */
       inset-block-start: anchor(top);
       inset-inline-start: calc(anchor(right) + 8px);
+
       /*
        * Flip to the left side when there is not enough space on the right
        * (position-try-fallbacks is part of the same spec).
@@ -1715,6 +1755,7 @@
   }
 
   /* ── H2: @starting-style — card + dialog + toast mount animations ─── */
+
   /*
    * @starting-style defines the FROM state of a CSS transition when the
    * element first appears in the rendered tree (Baseline 2024 — Chrome 117+,
@@ -1726,18 +1767,6 @@
    * No @supports guard needed — browsers that do not recognise @starting-style
    * simply skip the at-rule and render the element in its final state.
    */
-
-  /* Cards: fade + subtle upward slide on first paint */
-  .card {
-    transition:
-      opacity var(--transition-normal, 200ms) ease-out,
-      transform var(--transition-normal, 200ms) ease-out;
-
-    @starting-style {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-  }
 
   /* Modals / popover overlays: fade + scale-in from 96% */
   .modal,
@@ -1751,18 +1780,6 @@
     @starting-style {
       opacity: 0;
       transform: scale(0.96);
-    }
-  }
-
-  /* Toasts: fade + slide from the right on first insertion */
-  .toast {
-    transition:
-      opacity var(--transition-fast, 120ms) ease-out,
-      transform var(--transition-fast, 120ms) ease-out;
-
-    @starting-style {
-      opacity: 0;
-      transform: translateX(20px);
     }
   }
 
@@ -1987,6 +2004,7 @@
 .legend-a {
   color: var(--accent, #58a6ff);
 }
+
 .legend-b {
   color: var(--signal-sell, #f85149);
 }
@@ -2147,7 +2165,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.15);
   list-style: none;
   z-index: 100;
   max-height: 320px;
@@ -2186,7 +2204,7 @@
 }
 
 .autocomplete-item mark {
-  background: var(--accent-bg, rgba(99, 102, 241, 0.15));
+  background: var(--accent-bg, rgb(99, 102, 241, 0.15));
   color: inherit;
   border-radius: 2px;
   padding: 0 1px;
@@ -2202,17 +2220,17 @@
 }
 
 .freshness-fresh {
-  background: rgba(34, 197, 94, 0.15);
+  background: rgb(34, 197, 94, 0.15);
   color: var(--green, #22c55e);
 }
 
 .freshness-stale {
-  background: rgba(234, 179, 8, 0.15);
+  background: rgb(234, 179, 8, 0.15);
   color: var(--yellow, #eab308);
 }
 
 .freshness-expired {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgb(239, 68, 68, 0.15);
   color: var(--red, #ef4444);
 }
 
@@ -2225,7 +2243,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 24px rgb(0, 0, 0, 0.25);
   opacity: 0;
   pointer-events: none;
   transform: translateY(4px);
@@ -2382,15 +2400,15 @@
 }
 
 .rate-bar-ok {
-  background: rgba(34, 197, 94, 0.3);
+  background: rgb(34, 197, 94, 0.3);
 }
 
 .rate-bar-warning {
-  background: rgba(234, 179, 8, 0.3);
+  background: rgb(234, 179, 8, 0.3);
 }
 
 .rate-bar-critical {
-  background: rgba(239, 68, 68, 0.3);
+  background: rgb(239, 68, 68, 0.3);
 }
 
 .rate-label {

@@ -1,7 +1,7 @@
 /**
  * Unit tests for Tauri integration helpers (H17).
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   isTauriEnv,
   getTauriInvoke,

@@ -120,7 +120,7 @@ export default tseslint.config(
       // G6: import-x rules
       "import-x/no-duplicates": "error",
       "import-x/no-self-import": "error",
-      "import-x/no-cycle": ["warn", { maxDepth: 5 }],
+      "import-x/no-cycle": ["error", { maxDepth: 5 }],
       "import-x/no-useless-path-segments": ["error", { noUselessIndex: true }],
       "no-undef": "off",
       "no-unused-vars": "off",
@@ -169,7 +169,10 @@ export default tseslint.config(
       },
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^_", argsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-floating-promises": "off",
       "no-empty": ["error", { allowEmptyCatch: true }],

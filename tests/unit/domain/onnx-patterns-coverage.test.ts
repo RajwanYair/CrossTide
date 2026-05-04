@@ -4,7 +4,7 @@
  *   252-275  storeToIdb IDB put path + oversize skip + catch
  *   280-307  load() → fetch → session → run/dispose
  */
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { createModelLoader, type OrtLike } from "../../../src/domain/onnx-patterns";
 
 // ── Helpers ───────────────────────────────────────────────────────────────

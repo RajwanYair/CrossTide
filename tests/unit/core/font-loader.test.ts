@@ -1,7 +1,7 @@
 /**
  * Tests for G16 — Font loading helpers.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   fontLoadingSupported,
   isFontLoaded,

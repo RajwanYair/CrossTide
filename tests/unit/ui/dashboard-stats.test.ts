@@ -38,7 +38,7 @@ vi.mock("../../../src/core/data-freshness", () => ({
 
 vi.mock("../../../src/core/config", () => ({
   loadConfig: vi.fn(() => ({
-    tickers: ["AAPL", "MSFT", "GOOG"],
+    watchlist: [{ ticker: "AAPL" }, { ticker: "MSFT" }, { ticker: "GOOG" }],
     refreshIntervalMs: 30000,
   })),
 }));
