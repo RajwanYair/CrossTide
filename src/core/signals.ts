@@ -46,6 +46,8 @@ interface SignalNode<T> {
 }
 
 const stack: Subscriber[] = [];
+let batching = 0;
+const pendingNotifications = new Set<Subscriber>();
 
 function track<T>(node: SignalNode<T>): void {
   const sub = stack[stack.length - 1];
@@ -57,10 +59,16 @@ function track<T>(node: SignalNode<T>): void {
 function notify<T>(node: SignalNode<T>, value: T): void {
   // External listeners first (sync, in registration order).
   for (const fn of node.listeners) fn(value);
-  // Tracking subscribers — copy to avoid mutation during iteration.
+  // Tracking subscribers — if batching, defer notifications.
   if (node.subscribers.size === 0) return;
-  const subs = Array.from(node.subscribers.keys());
-  for (const sub of subs) sub.notify();
+  if (batching > 0) {
+    for (const sub of node.subscribers.keys()) {
+      pendingNotifications.add(sub);
+    }
+  } else {
+    const subs = Array.from(node.subscribers.keys());
+    for (const sub of subs) sub.notify();
+  }
 }
 
 export interface SignalOptions<T> {
@@ -306,29 +314,22 @@ export function persistedSignal<T>(
 }
 
 /**
- * Batch multiple writes — listeners fire once per signal at the end. The
- * implementation is intentionally simple: it defers `notify` calls until
- * the batch closes.
+ * Batch multiple signal writes — effects fire once at the end, deduplicating
+ * subscribers that were notified multiple times within the batch. Nested
+ * `batch()` calls are supported; only the outermost flush triggers effects.
+ *
+ * P5: Full implementation with deferred notify threading.
  */
-let batching = 0;
-const pending = new Set<() => void>();
-
 export function batch<T>(fn: () => T): T {
   batching += 1;
   try {
     return fn();
   } finally {
     batching -= 1;
-    if (batching === 0) {
-      const queue = Array.from(pending);
-      pending.clear();
-      for (const fn2 of queue) fn2();
+    if (batching === 0 && pendingNotifications.size > 0) {
+      const queue = Array.from(pendingNotifications);
+      pendingNotifications.clear();
+      for (const sub of queue) sub.notify();
     }
   }
 }
-
-// (The current implementation does not yet thread `batching` through `notify`.
-// `batch` is exported to lock in the public API; the queue plumbing will be
-// added when a real consumer needs it. For now `batch(fn)` is equivalent to
-// just calling `fn`.)
-void pending;
