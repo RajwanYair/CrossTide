@@ -24,12 +24,20 @@ import { checkRateLimit, rateLimitKey } from "./rate-limit.js";
 import { withSecurityHeaders } from "./security.js";
 import { handleHealth } from "./routes/health.js";
 import { handleChart } from "./routes/chart.js";
+import { handleQuote } from "./routes/quote.js";
 import { handleSearch } from "./routes/search.js";
 import { handleScreener } from "./routes/screener.js";
 import { handleOgImage } from "./routes/og.js";
 import { handleSignalDslExecute } from "./routes/signal-dsl.js";
 import { handleOpenApiSpec } from "./routes/openapi.js";
 import { handleCspReport } from "./routes/csp-report.js";
+
+export interface KVNamespace {
+  get(key: string, type: "text"): Promise<string | null>;
+  get(key: string, type: "json"): Promise<unknown>;
+  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+  delete(key: string): Promise<void>;
+}
 
 export interface Env {
   ENVIRONMENT?: string;
@@ -42,9 +50,8 @@ export interface Env {
   RATE_LIMITER?: {
     limit(options: { key: string }): Promise<{ success: boolean }>;
   };
-  // Optional KV + R2 bindings (declared in wrangler.toml)
-  // QUOTE_CACHE?: KVNamespace;
-  // OHLCV_STORE?: R2Bucket;
+  /** P2: KV namespace for caching chart/quote data with market-hours-aware TTL. */
+  QUOTE_CACHE?: KVNamespace;
 }
 
 const app = new Hono<{ Bindings: Env; Variables: { requestId: string } }>({ strict: false });
@@ -94,9 +101,11 @@ app.use("*", async (c, next) => {
 
 app.get("/api/health", (c) => Promise.resolve(handleHealth(c.env)));
 
-app.get("/api/chart", (c) => Promise.resolve(handleChart(new URL(c.req.url))));
+app.get("/api/chart", (c) => handleChart(new URL(c.req.url), c.env));
 
-app.get("/api/search", (c) => Promise.resolve(handleSearch(new URL(c.req.url))));
+app.get("/api/quote/:symbol", (c) => handleQuote(c.req.param("symbol"), c.env));
+
+app.get("/api/search", (c) => Promise.resolve(handleSearch(new URL(c.req.url), c.env)));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 

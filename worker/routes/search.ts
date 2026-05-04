@@ -1,21 +1,21 @@
 /**
  * GET /api/search?q=apple&limit=10
  *
- * Fuzzy-searches a built-in ticker catalogue and returns matching results.
+ * Fuzzy-searches tickers. In production (QUOTE_CACHE binding present), queries
+ * Yahoo Finance search API with fallback to built-in catalogue. Falls back to
+ * catalogue-only when no KV binding (local dev).
  *
- * Query params:
- *  q     — required search query (min 1 char, max 50 chars)
- *  limit — max results to return (1–50, default 10)
- *
- * The catalogue is a curated list of ~100 popular tickers. In production
- * this would be backed by a KV-stored full index or an external search API.
+ * P1: Wire real Yahoo Finance search.
  */
+
+import { fetchYahooSearch } from "../providers/yahoo.js";
+import type { Env } from "../index.js";
 
 export interface SearchHit {
   ticker: string;
   name: string;
   exchange: string;
-  type: "EQUITY" | "ETF" | "CRYPTO" | "INDEX";
+  type: "EQUITY" | "ETF" | "CRYPTO" | "INDEX" | "MUTUALFUND" | "FUTURES";
 }
 
 export interface SearchResponse {
@@ -111,7 +111,7 @@ function score(hit: SearchHit, q: string): number {
   return 0;
 }
 
-export function handleSearch(url: URL): Response {
+export function handleSearch(url: URL, env: Env): Response | Promise<Response> {
   const q = (url.searchParams.get("q") ?? "").trim();
   if (!q || q.length > 50) {
     return new Response(JSON.stringify({ error: "q must be 1–50 characters" }), {
@@ -123,6 +123,23 @@ export function handleSearch(url: URL): Response {
   const limitRaw = parseInt(url.searchParams.get("limit") ?? "10", 10);
   const limit = isNaN(limitRaw) || limitRaw < 1 ? 10 : Math.min(limitRaw, 50);
 
+  // Use Yahoo search in production, catalogue as fallback
+  if (env.QUOTE_CACHE) {
+    return fetchYahooSearch(q, limit)
+      .then((results) => {
+        const body: SearchResponse = { results, total: results.length };
+        return new Response(JSON.stringify(body), {
+          status: 200,
+          headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=3600" },
+        });
+      })
+      .catch(() => catalogueSearch(q, limit));
+  }
+
+  return catalogueSearch(q, limit);
+}
+
+function catalogueSearch(q: string, limit: number): Response {
   const scored = CATALOGUE.map((hit) => ({ hit, score: score(hit, q) }))
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score);

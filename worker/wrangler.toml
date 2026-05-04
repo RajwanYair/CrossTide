@@ -7,6 +7,13 @@ ENVIRONMENT = "production"
 # Bump this whenever you make a backwards-incompatible API change
 API_VERSION = "1"
 
+# P2: KV namespace for caching chart/quote/search data with market-hours-aware TTL.
+# Create with: wrangler kv namespace create QUOTE_CACHE
+[[kv_namespaces]]
+binding = "QUOTE_CACHE"
+id = "PLACEHOLDER_KV_NAMESPACE_ID"
+preview_id = "PLACEHOLDER_KV_PREVIEW_ID"
+
 # G13: Cloudflare native Rate Limiting API binding.
 # Provides global (cross-edge) rate limiting via CF's managed service.
 # Declared here so `wrangler deploy` wires up the binding automatically.
