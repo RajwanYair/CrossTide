@@ -68,7 +68,11 @@ function buildStats(data: FundamentalData): StatItem[] {
     {
       label: "Rev Growth",
       value: formatPercent(data.revenueGrowth),
-      trend: data.revenueGrowth > 0 ? "up" : data.revenueGrowth < 0 ? "down" : undefined,
+      ...(data.revenueGrowth > 0
+        ? { trend: "up" as const }
+        : data.revenueGrowth < 0
+          ? { trend: "down" as const }
+          : {}),
     },
     { label: "Gross Margin", value: formatPercent(data.grossMargin) },
     { label: "Op Margin", value: formatPercent(data.operatingMargin) },
@@ -76,7 +80,11 @@ function buildStats(data: FundamentalData): StatItem[] {
     {
       label: "ROE",
       value: formatPercent(data.returnOnEquity),
-      trend: data.returnOnEquity > 0.15 ? "up" : data.returnOnEquity < 0 ? "down" : undefined,
+      ...(data.returnOnEquity > 0.15
+        ? { trend: "up" as const }
+        : data.returnOnEquity < 0
+          ? { trend: "down" as const }
+          : {}),
     },
     { label: "D/E Ratio", value: formatRatio(data.debtToEquity) },
     { label: "Div Yield", value: data.dividendYield ? formatPercent(data.dividendYield) : "N/A" },

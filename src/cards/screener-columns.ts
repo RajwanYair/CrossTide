@@ -6,7 +6,17 @@
  */
 
 /** All available screener columns. */
-export type ScreenerColumn = "ticker" | "price" | "consensus" | "matched" | "rsi" | "volume";
+export type ScreenerColumn =
+  | "ticker"
+  | "price"
+  | "consensus"
+  | "matched"
+  | "rsi"
+  | "volume"
+  | "pe"
+  | "marketCap"
+  | "dividendYield"
+  | "sector";
 
 export interface ColumnDef {
   readonly id: ScreenerColumn;
@@ -21,6 +31,10 @@ export const ALL_COLUMNS: readonly ColumnDef[] = [
   { id: "matched", label: "Matched", defaultVisible: true },
   { id: "rsi", label: "RSI", defaultVisible: false },
   { id: "volume", label: "Vol Ratio", defaultVisible: false },
+  { id: "pe", label: "P/E", defaultVisible: false },
+  { id: "marketCap", label: "Mkt Cap", defaultVisible: false },
+  { id: "dividendYield", label: "Div Yield", defaultVisible: false },
+  { id: "sector", label: "Sector", defaultVisible: false },
 ];
 
 const STORAGE_KEY = "crosstide-screener-columns";

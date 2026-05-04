@@ -9,6 +9,10 @@ function makeInput(overrides: Partial<ScreenerInput> & { ticker: string }): Scre
     rsi: 50,
     volumeRatio: 1.0,
     smaValues: new Map([[200, 90]]),
+    pe: null,
+    marketCap: null,
+    dividendYield: null,
+    sector: null,
     ...overrides,
   };
 }

@@ -71,6 +71,39 @@ export const PRESET_FILTERS: readonly PresetFilter[] = [
       { type: "priceAboveSma", period: 50 },
     ],
   },
+  {
+    id: "value-stocks",
+    name: "Value Stocks",
+    description: "P/E below 15 with dividend yield above 2% — classic value",
+    filters: [
+      { type: "peBelow", threshold: 15 },
+      { type: "dividendYieldAbove", threshold: 2 },
+    ],
+  },
+  {
+    id: "large-cap-growth",
+    name: "Large Cap Growth",
+    description: "Market cap above $100B with P/E above 25 — growth leaders",
+    filters: [
+      { type: "marketCapAbove", threshold: 100e9 },
+      { type: "peAbove", threshold: 25 },
+    ],
+  },
+  {
+    id: "dividend-income",
+    name: "Dividend Income",
+    description: "Dividend yield above 3% — income-focused picks",
+    filters: [{ type: "dividendYieldAbove", threshold: 3 }],
+  },
+  {
+    id: "small-cap-value",
+    name: "Small Cap Value",
+    description: "Market cap below $10B with P/E below 20 — small cap bargains",
+    filters: [
+      { type: "marketCapBelow", threshold: 10e9 },
+      { type: "peBelow", threshold: 20 },
+    ],
+  },
 ];
 
 /**

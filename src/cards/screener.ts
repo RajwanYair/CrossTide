@@ -12,7 +12,13 @@ export type ScreenerFilter =
   | { type: "rsiBelow"; threshold: number }
   | { type: "rsiAbove"; threshold: number }
   | { type: "volumeSpike"; multiplier: number }
-  | { type: "priceAboveSma"; period: number };
+  | { type: "priceAboveSma"; period: number }
+  | { type: "peBelow"; threshold: number }
+  | { type: "peAbove"; threshold: number }
+  | { type: "marketCapAbove"; threshold: number }
+  | { type: "marketCapBelow"; threshold: number }
+  | { type: "dividendYieldAbove"; threshold: number }
+  | { type: "sector"; value: string };
 
 export interface ScreenerRow {
   ticker: string;
@@ -28,6 +34,10 @@ export interface ScreenerInput {
   rsi: number | null;
   volumeRatio: number;
   smaValues: ReadonlyMap<number, number | null>;
+  pe: number | null;
+  marketCap: number | null;
+  dividendYield: number | null;
+  sector: string | null;
 }
 
 export function applyFilters(
@@ -66,6 +76,18 @@ function matchesFilter(input: ScreenerInput, filter: ScreenerFilter): boolean {
       const sma = input.smaValues.get(filter.period);
       return sma !== null && sma !== undefined && input.price > sma;
     }
+    case "peBelow":
+      return input.pe !== null && input.pe < filter.threshold;
+    case "peAbove":
+      return input.pe !== null && input.pe > filter.threshold;
+    case "marketCapAbove":
+      return input.marketCap !== null && input.marketCap >= filter.threshold;
+    case "marketCapBelow":
+      return input.marketCap !== null && input.marketCap <= filter.threshold;
+    case "dividendYieldAbove":
+      return input.dividendYield !== null && input.dividendYield >= filter.threshold;
+    case "sector":
+      return input.sector !== null && input.sector.toLowerCase() === filter.value.toLowerCase();
   }
 }
 
@@ -81,7 +103,26 @@ function filterLabel(f: ScreenerFilter): string {
       return `Volume ≥ ${f.multiplier}x avg`;
     case "priceAboveSma":
       return `Price > SMA${f.period}`;
+    case "peBelow":
+      return `P/E < ${f.threshold}`;
+    case "peAbove":
+      return `P/E > ${f.threshold}`;
+    case "marketCapAbove":
+      return `MCap ≥ $${formatFilterCap(f.threshold)}`;
+    case "marketCapBelow":
+      return `MCap ≤ $${formatFilterCap(f.threshold)}`;
+    case "dividendYieldAbove":
+      return `Div ≥ ${f.threshold}%`;
+    case "sector":
+      return `Sector: ${f.value}`;
   }
+}
+
+function formatFilterCap(value: number): string {
+  if (value >= 1e12) return `${(value / 1e12).toFixed(1)}T`;
+  if (value >= 1e9) return `${(value / 1e9).toFixed(0)}B`;
+  if (value >= 1e6) return `${(value / 1e6).toFixed(0)}M`;
+  return String(value);
 }
 
 export function renderScreenerResults(
@@ -112,6 +153,10 @@ export function renderScreenerResults(
   if (cols.has("matched")) headerCells.push("<th>Matched</th>");
   if (cols.has("rsi")) headerCells.push("<th>RSI</th>");
   if (cols.has("volume")) headerCells.push("<th>Vol Ratio</th>");
+  if (cols.has("pe")) headerCells.push("<th>P/E</th>");
+  if (cols.has("marketCap")) headerCells.push("<th>Mkt Cap</th>");
+  if (cols.has("dividendYield")) headerCells.push("<th>Div Yield</th>");
+  if (cols.has("sector")) headerCells.push("<th>Sector</th>");
   const headerHtml = `<tr>${headerCells.join("")}</tr>`;
 
   const renderRow = (i: number): string => {
@@ -131,6 +176,17 @@ export function renderScreenerResults(
       cells.push(
         `<td class="font-mono">${inp?.volumeRatio != null ? inp.volumeRatio.toFixed(2) + "x" : "—"}</td>`,
       );
+    if (cols.has("pe"))
+      cells.push(`<td class="font-mono">${inp?.pe != null ? inp.pe.toFixed(1) : "—"}</td>`);
+    if (cols.has("marketCap"))
+      cells.push(
+        `<td class="font-mono">${inp?.marketCap != null ? formatFilterCap(inp.marketCap) : "—"}</td>`,
+      );
+    if (cols.has("dividendYield"))
+      cells.push(
+        `<td class="font-mono">${inp?.dividendYield != null ? inp.dividendYield.toFixed(2) + "%" : "—"}</td>`,
+      );
+    if (cols.has("sector")) cells.push(`<td>${inp?.sector ?? "—"}</td>`);
     return `<tr>${cells.join("")}</tr>`;
   };
 

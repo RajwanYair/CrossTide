@@ -310,6 +310,10 @@ function main(): void {
         rsi: lastRsi,
         volumeRatio,
         smaValues,
+        pe: null,
+        marketCap: null,
+        dividendYield: null,
+        sector: data.sector ?? null,
       });
     }
     setScreenerData(screenerInputs);
