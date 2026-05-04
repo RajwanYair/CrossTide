@@ -6,11 +6,13 @@ Browser-based stock monitoring dashboard with 12-method consensus signals,
 interactive charting, and offline-first PWA support.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/RajwanYair/CrossTide/ci.yml?label=CI&logo=github-actions)](https://github.com/RajwanYair/CrossTide/actions/workflows/ci.yml)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/RajwanYair/CrossTide/codeql.yml?label=CodeQL&logo=github)](https://github.com/RajwanYair/CrossTide/actions/workflows/codeql.yml)
 [![Release](https://img.shields.io/github/v/release/RajwanYair/CrossTide?logo=github)](https://github.com/RajwanYair/CrossTide/releases/latest)
 [![Uptime](https://img.shields.io/badge/Uptime-Monitored-brightgreen?logo=upptime)](https://crosstide-uptime.fly.dev/status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](tsconfig.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript)](tsconfig.json)
 [![Bundle](https://img.shields.io/badge/Bundle-%3C200KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
+[![SLSA 3](https://img.shields.io/badge/SLSA-Level_3-green?logo=sigstore)](https://github.com/RajwanYair/CrossTide/attestations)
 [![Docs](https://img.shields.io/badge/Docs-Indicator%20Reference-blue)](https://rajwanyair.github.io/CrossTide/docs/)
 
 > **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
