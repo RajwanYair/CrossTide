@@ -6,6 +6,43 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.8.0] - 2025-07-05
+
+### Highlights
+
+Production hardening release: removed dead infrastructure, fixed all TypeScript
+errors, eliminated false-positive VS Code extension warnings, and promoted
+ESLint browser-compat checking to error level.
+
+### Removed
+
+- **Changesets infrastructure**: Deleted `.changeset/` directory,
+  `changesets.yml` workflow, changeset/version scripts, and `@changesets/cli`
+  dependency. Releases are done manually via `gh release`.
+- **Redundant VS Code extensions**: Removed `webhint.vscode-webhint`,
+  `kwesinavilot.baseline-lens`, and `benandrew.browser-compatibility-checker`
+  from recommendations — ESLint `eslint-plugin-compat` already provides
+  accurate browser compatibility checking that respects our browserslist.
+
+### Changed
+
+- **Browser compat ESLint rule promoted to error**: `compat/compat` now
+  fails the build instead of warning, enforcing production-grade API usage.
+- **VS Code settings hardened**: Disabled webhint extension (redundant),
+  disabled GitHub Actions pinning refresh (fails behind corporate proxy).
+- **Parent MyScripts tooling synced**: Removed dead `@changesets/cli`,
+  added `eslint-plugin-compat` to shared devDependencies.
+
+### Fixed
+
+- **TypeScript strict error in `full-backup.ts`**: Fixed
+  `exactOptionalPropertyTypes` violation when `methodWeights` was `undefined`
+  or `Partial` — now properly filters and conditionally includes the field.
+- **Documentation references**: Updated `ARCHITECTURE.md` and `ROADMAP.md`
+  to reflect removal of changesets infrastructure.
+
+---
+
 ## [11.7.0] - 2025-07-05
 
 ### Highlights

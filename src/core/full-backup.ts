@@ -17,13 +17,26 @@ export function collectFullBackup(
 ): FullExportDomains {
   const config = loadConfig();
 
-  return {
+  const base: FullExportDomains = {
     watchlist: config.watchlist,
     theme: config.theme,
-    methodWeights: config.methodWeights,
-    cardSettings: config.cardSettings as Record<string, unknown> | undefined,
     drawings: exportAllDrawings(),
     alertRules: loadAlertRules(),
     ...runtimeDomains,
   };
+
+  if (config.methodWeights) {
+    const cleaned: Record<string, number> = {};
+    for (const [k, v] of Object.entries(config.methodWeights)) {
+      if (v !== undefined) cleaned[k] = v;
+    }
+    (base as { methodWeights?: Record<string, number> }).methodWeights = cleaned;
+  }
+
+  if (config.cardSettings) {
+    (base as { cardSettings?: Record<string, unknown> }).cardSettings =
+      config.cardSettings as Record<string, unknown>;
+  }
+
+  return base;
 }

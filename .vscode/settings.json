@@ -51,5 +51,8 @@
     "cloudflare",
     "softprops",
     "gitleaks"
-  ]
+  ],
+  "github-actions.workflows.pinned.refresh.enabled": false,
+  "webhint.enableTelemetry": false,
+  "webhint.enabled": false
 }

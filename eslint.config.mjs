@@ -148,7 +148,7 @@ export default tseslint.config(
       "@typescript-eslint/explicit-function-return-type": "error",
       "no-console": ["error", { allow: ["warn", "error"] }],
       // Browser compat — flags APIs unsupported in our browserslist targets
-      "compat/compat": "warn",
+      "compat/compat": "error",
     },
   },
   {

@@ -182,7 +182,6 @@ All other functionality is hand-written TypeScript — no framework runtime.
 | Format         | `.prettierrc`                   | repo-local; `npm run format:check` is the gate                      |
 | Bundle budget  | `scripts/check-bundle-size.mjs` | 200 KB gzipped JS                                                   |
 | Lighthouse     | `config/lighthouserc.json`      | Perf ≥ 85, A11y ≥ 90, Best ≥ 90                                     |
-| Changesets     | `.changeset/config.json`        | Auto version + release PR                                           |
 
 The repo is fully self-contained: `git clone` → `npm ci` → `npm run ci` works on any machine.
 
@@ -199,7 +198,6 @@ Git hooks are configured via `simple-git-hooks`:
 | `release.yml`    | tag `v*`  | gates + zip dist + SHA-256 + GitHub Release                 |
 | `pages.yml`      | push main | deploy to GitHub Pages (mirror)                             |
 | `cf-pages.yml`   | push + PR | Cloudflare Pages deploy (production + PR previews)          |
-| `changesets.yml` | push main | Version PR or tag via @changesets/action                    |
 | `lighthouse.yml` | push + PR | `lhci autorun` performance/a11y budgets                     |
 | `dependabot.yml` | weekly    | npm + github-actions grouped update PRs                     |
 

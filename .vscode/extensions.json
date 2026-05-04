@@ -6,10 +6,8 @@
     "DavidAnson.vscode-markdownlint",
     "vitest.explorer",
     "ms-vscode.js-debug",
-    "webhint.vscode-webhint",
     "webben.browserslist",
-    "kwesinavilot.baseline-lens",
-    "benandrew.browser-compatibility-checker",
-    "ms-playwright.playwright"
+    "ms-playwright.playwright",
+    "github.vscode-github-actions"
   ]
 }

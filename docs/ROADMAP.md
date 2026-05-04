@@ -619,7 +619,7 @@ worker-health     curl /api/health on staging post-deploy       ← Phase K
 | Doc                      | Status            | Action                  |
 | ------------------------ | ----------------- | ----------------------- |
 | `README.md`              | ✅                | Maintain                |
-| `CHANGELOG.md`           | ✅ Per-release    | Changesets automated    |
+| `CHANGELOG.md`           | ✅ Per-release    | Manual (gh release)     |
 | `ARCHITECTURE.md`        | ✅ v7.24.0        | Update per phase        |
 | `CONTRIBUTING.md`        | ✅                | No change               |
 | `COPILOT_GUIDE.md`       | ✅                | Refresh quarterly       |
@@ -638,7 +638,7 @@ worker-health     curl /api/health on staging post-deploy       ← Phase K
 | TypeScript        | 6.0.3                                     | Keep current             |
 | Git hooks         | simple-git-hooks + lint-staged + gitleaks | No change                |
 | Commit style      | Conventional Commits                      | No change                |
-| Releases          | Changesets                                | No change                |
+| Releases          | Manual (gh release + tag)                 | No change                |
 | Worker local dev  | wrangler dev + Vite proxy                 | No change                |
 | E2E local         | vite preview                              | No change                |
 | Component preview | dev/components.html                       | Extend                   |

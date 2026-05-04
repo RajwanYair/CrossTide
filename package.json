@@ -1,6 +1,6 @@
 {
   "name": "crosstide",
-  "version": "11.7.0",
+  "version": "11.8.0",
   "description": "CrossTide Web — browser-based stock monitoring dashboard with 12-method consensus signals, interactive charting, and offline-first PWA.",
   "type": "module",
   "private": true,
@@ -40,8 +40,6 @@
     "check:supply-chain": "npm audit --omit=dev --audit-level=high && npm audit signatures",
     "ci": "npm run typecheck && npm run lint:all && npm run test:coverage && npm run build && npm run check:bundle",
     "clean": "node scripts/clean.mjs",
-    "changeset": "changeset",
-    "version": "changeset version",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {
@@ -81,7 +79,6 @@
   ],
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
-    "@changesets/cli": "^2.31.0",
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
     "@eslint/js": "^10.0.1",
