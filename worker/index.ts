@@ -39,6 +39,30 @@ export interface KVNamespace {
   delete(key: string): Promise<void>;
 }
 
+export interface D1Database {
+  prepare(query: string): D1PreparedStatement;
+  batch<T = unknown>(statements: D1PreparedStatement[]): Promise<D1Result<T>[]>;
+  exec(query: string): Promise<D1ExecResult>;
+}
+
+export interface D1PreparedStatement {
+  bind(...values: unknown[]): D1PreparedStatement;
+  first<T = unknown>(colName?: string): Promise<T | null>;
+  run<T = unknown>(): Promise<D1Result<T>>;
+  all<T = unknown>(): Promise<D1Result<T>>;
+}
+
+export interface D1Result<T = unknown> {
+  results: T[];
+  success: boolean;
+  meta: Record<string, unknown>;
+}
+
+export interface D1ExecResult {
+  count: number;
+  duration: number;
+}
+
 export interface Env {
   ENVIRONMENT?: string;
   API_VERSION?: string;
@@ -52,6 +76,8 @@ export interface Env {
   };
   /** P2: KV namespace for caching chart/quote data with market-hours-aware TTL. */
   QUOTE_CACHE?: KVNamespace;
+  /** P3: D1 database for user data persistence. */
+  DB?: D1Database;
 }
 
 const app = new Hono<{ Bindings: Env; Variables: { requestId: string } }>({ strict: false });

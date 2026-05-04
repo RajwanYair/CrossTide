@@ -14,6 +14,15 @@ binding = "QUOTE_CACHE"
 id = "PLACEHOLDER_KV_NAMESPACE_ID"
 preview_id = "PLACEHOLDER_KV_PREVIEW_ID"
 
+# P3: D1 database for user data persistence (watchlists, portfolios, alerts, settings).
+# Create with: wrangler d1 create crosstide-db
+# Apply migrations: wrangler d1 migrations apply crosstide-db
+[[d1_databases]]
+binding = "DB"
+database_name = "crosstide-db"
+database_id = "PLACEHOLDER_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
 # G13: Cloudflare native Rate Limiting API binding.
 # Provides global (cross-edge) rate limiting via CF's managed service.
 # Declared here so `wrangler deploy` wires up the binding automatically.
