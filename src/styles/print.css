@@ -1,0 +1,91 @@
+/**
+ * Print-friendly styles — optimizes the page for printing.
+ *
+ * Hides navigation, toolbar, footer. Forces light background.
+ * Ensures card content is visible and readable on paper.
+ */
+
+@media print {
+  /* Force light colors for readability on white paper */
+  :root {
+    --bg-app: #fff !important;
+    --bg-card: #fff !important;
+    --bg-card-hover: #fff !important;
+    --text-primary: #111 !important;
+    --text-secondary: #444 !important;
+    --border: #ddd !important;
+  }
+
+  /* Hide non-essential UI */
+  #app-header,
+  #app-footer,
+  nav,
+  .nav-rail,
+  .toolbar,
+  .pwa-install-group,
+  .offline-indicator,
+  .toast-container,
+  .modal-overlay,
+  .shortcuts-dialog,
+  .btn-danger,
+  button[data-action],
+  .command-palette {
+    display: none !important;
+  }
+
+  /* Full width, no sidebar */
+  body {
+    display: block !important;
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 11pt !important;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Cards: no shadow, add border for separation */
+  .card,
+  [class*="card"] {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 16pt !important;
+  }
+
+  /* Tables: ensure borders print */
+  table {
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd !important;
+    padding: 4pt 8pt !important;
+  }
+
+  /* Charts: let them scale properly */
+  canvas,
+  svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Links: show URL for reference */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")" !important;
+    font-size: 0.8em !important;
+    color: #666 !important;
+  }
+
+  /* Page settings */
+  @page {
+    margin: 1.5cm;
+    size: a4 portrait;
+  }
+}
