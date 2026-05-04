@@ -2277,3 +2277,64 @@
   font-weight: 600;
   color: var(--text-primary);
 }
+
+/* Keyboard shortcuts dialog */
+.shortcuts-dialog {
+  display: grid;
+  gap: var(--sp-lg);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.shortcuts-section {
+  display: grid;
+  gap: var(--sp-sm);
+}
+
+.shortcuts-category {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.shortcuts-list {
+  display: grid;
+  gap: var(--sp-xs);
+}
+
+.shortcuts-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-xs) var(--sp-sm);
+  border-radius: var(--radius-sm);
+}
+
+.shortcuts-row:hover {
+  background-color: var(--bg-card-hover);
+}
+
+.shortcuts-desc {
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.shortcuts-keys {
+  display: flex;
+  gap: 4px;
+}
+
+.shortcuts-keys kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  min-width: 22px;
+  text-align: center;
+}
