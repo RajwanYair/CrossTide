@@ -6,6 +6,39 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.10.0] - 2025-07-05
+
+### Highlights
+
+Phase P feature sprint: 10 power-user utilities — performance diagnostics,
+correlation analysis, watchlist history, ticker pinning, notification
+preferences, and advanced session management.
+
+### Added
+
+- **Auto-theme system sync (P1)**: Listen for OS prefers-color-scheme and
+  prefers-contrast changes, auto-apply theme with manual override support.
+- **Provider failover event log (P2)**: In-memory circular buffer (50 events)
+  tracking provider fallback events with subscriber notifications.
+- **Multi-ticker batch selection (P3)**: Ephemeral in-memory selection state
+  for batch operations with select/deselect/toggle/selectAll/clear APIs.
+- **Session state persistence (P4)**: Save/restore navigation state across
+  page reloads via sessionStorage with 30-min expiry.
+- **Data cache statistics (P5)**: Track cache hit/miss rates, entry counts,
+  and estimated localStorage usage for diagnostics.
+- **Ticker pinning (P6)**: Pin tickers to top of watchlist regardless of sort
+  order with generic sortWithPinnedFirst utility.
+- **Notification preferences (P7)**: Granular per-category enable/disable for
+  price alerts, signal flips, provider failovers, data stale, and earnings.
+- **Performance metrics collector (P8)**: Web Vitals observation (LCP, FCP,
+  CLS, INP, TTFB) plus custom fetch latency and render time tracking.
+- **Ticker correlation quick-check (P9)**: Pearson correlation on returns for
+  any two price series with interpretation labels.
+- **Watchlist change history (P10)**: Timestamped add/remove log with
+  circular buffer (200 entries), ticker filtering, and undo candidates.
+
+---
+
 ## [11.9.0] - 2025-07-05
 
 ### Highlights
