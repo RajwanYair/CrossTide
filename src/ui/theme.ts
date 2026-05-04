@@ -4,8 +4,19 @@
 
 export type Theme = "dark" | "light" | "high-contrast";
 
+const TRANSITION_CLASS = "theme-transitioning";
+const TRANSITION_DURATION = 300;
+
 export function applyTheme(theme: Theme): void {
-  document.documentElement.dataset["theme"] = theme;
+  const root = document.documentElement;
+
+  // Enable smooth transition (skipped on initial load when no theme is set yet)
+  if (root.dataset["theme"]) {
+    root.classList.add(TRANSITION_CLASS);
+    setTimeout(() => root.classList.remove(TRANSITION_CLASS), TRANSITION_DURATION);
+  }
+
+  root.dataset["theme"] = theme;
 }
 
 /** Detect system preference for high-contrast. */

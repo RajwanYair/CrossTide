@@ -74,3 +74,32 @@ describe("detectPreferredTheme", () => {
     expect(valid).toContain(detectPreferredTheme());
   });
 });
+
+describe("theme transition animation", () => {
+  beforeEach(() => {
+    document.documentElement.classList.remove("theme-transitioning");
+    delete document.documentElement.dataset["theme"];
+  });
+
+  it("does not add transition class on first apply (no prior theme)", () => {
+    applyTheme("dark");
+    expect(document.documentElement.classList.contains("theme-transitioning")).toBe(false);
+  });
+
+  it("adds theme-transitioning class when switching themes", () => {
+    applyTheme("dark"); // initial
+    applyTheme("light"); // switch
+    expect(document.documentElement.classList.contains("theme-transitioning")).toBe(true);
+  });
+
+  it("removes theme-transitioning class after timeout", async () => {
+    const { vi } = await import("vitest");
+    vi.useFakeTimers();
+    applyTheme("dark");
+    applyTheme("light");
+    expect(document.documentElement.classList.contains("theme-transitioning")).toBe(true);
+    vi.advanceTimersByTime(300);
+    expect(document.documentElement.classList.contains("theme-transitioning")).toBe(false);
+    vi.useRealTimers();
+  });
+});
