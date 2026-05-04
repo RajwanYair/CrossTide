@@ -1,10 +1,10 @@
 # CrossTide — Strategic Roadmap v4 (Deep Rethink, May 2026)
 
-> **Last updated:** May 3, 2026
-> **Declared version:** v7.24.0
-> **Codebase scale:** 264 source modules · 4,308 unit tests · 367 test files · 19 route cards
+> **Last updated:** May 4, 2026
+> **Declared version:** v11.20.0
+> **Codebase scale:** 424 source modules · 5,718 unit tests · 506 test files · 20 route cards
 > **Test coverage:** 90 % statements · 80 % branches · 90 % functions
-> **Bundle:** 129.1 KB gzip JS (budget 200 KB) · 44 SW precache entries
+> **Bundle:** 158.3 KB gzip JS (budget 200 KB) · 49 SW precache entries
 > **Previous roadmaps archived at:** `docs/ROADMAP.archive-2026-05-v3.md`
 
 ---
@@ -12,7 +12,7 @@
 ## Table of Contents
 
 1. [Executive Summary](#1-executive-summary)
-2. [Honest Status Audit — v7.24.0](#2-honest-status-audit--v7240)
+2. [Honest Status Audit — v11.20.0](#2-honest-status-audit--v11200)
 3. [Decision Rethink Matrix v4](#3-decision-rethink-matrix-v4)
 4. [Best-in-Class Comparison Table](#4-best-in-class-comparison-table)
 5. [Best Practices Harvested from Competitors](#5-best-practices-harvested-from-competitors)
@@ -34,17 +34,46 @@
 
 ---
 
+## Sprint: Production Hardening (v11.19.0 → v11.20.0)
+
+20-task sprint validating production readiness across tooling, docs, and structure.
+
+| #   | Task                         | Status | Notes                                                                |
+| --- | ---------------------------- | ------ | -------------------------------------------------------------------- |
+| 1   | Remove non-web code paths    | ✅     | No native scaffolding; Tauri bridge is intentional forward stub      |
+| 2   | Remove Python scripts        | ✅     | None existed; all scripts are `.mjs`                                 |
+| 3   | ARCHITECTURE.md current      | ✅     | Updated to v11.20.0 with actual module counts                        |
+| 4   | Single package manager       | ✅     | npm only, `package-lock.json`, documented in README                  |
+| 5   | Clean project structure      | ✅     | `src/`, `public/`, `tests/`, `docs/`, `.github/` — no stale dirs     |
+| 6   | Deduplicate utilities        | ✅     | `formatPercent` consolidated into `ui/number-format.ts`              |
+| 7   | Warnings as errors           | ✅     | TS strict, ESLint `--max-warnings 0`, CI fails on any warning        |
+| 8   | Fix all warnings             | ✅     | v11.19.0 eliminated all suppressions                                 |
+| 9   | Formatting/linting standards | ✅     | Prettier + ESLint + Stylelint + HTMLHint + markdownlint              |
+| 10  | GitHub Actions CI            | ✅     | `ci.yml`: typecheck → lint:all → test:coverage → build → bundle      |
+| 11  | GitHub Actions Release       | ✅     | `release.yml`: tag-triggered, zipped `dist/` + SHA-256               |
+| 12  | VS Code workspace standards  | ✅     | settings + extensions + tasks + launch                               |
+| 13  | GitHub hygiene               | ✅     | CODEOWNERS, CONTRIBUTING, SECURITY, templates (bug/feature/PR)       |
+| 14  | Dependabot                   | ✅     | npm + GitHub Actions, weekly, grouped                                |
+| 15  | README completeness          | ✅     | Features, dev, build, deploy, troubleshooting                        |
+| 16  | CHANGELOG                    | ✅     | SemVer, Keep-a-Changelog format                                      |
+| 17  | Diagrams                     | ✅     | 3 Mermaid inline (arch, runtime, URL share) + 2 SVG                  |
+| 18  | Redundant configs            | ✅     | Each config justified (app TS, SW TS, worker TS, unit/browser tests) |
+| 19  | Documentation consolidation  | ✅     | Stale version refs updated, no broken links                          |
+| 20  | Final consolidation          | ✅     | Dead exports removed, screenshots section fixed                      |
+
+---
+
 ## 1. Executive Summary
 
 ### Where we stand
 
-CrossTide v7.24.0 is a **production-grade, offline-first, privacy-first financial
+CrossTide v11.20.0 is a **production-grade, offline-first, privacy-first financial
 dashboard** built entirely with vanilla TypeScript and Web Standards — zero framework
 runtime, zero tracking cookies, zero server-side user data. It is one of the most
 feature-complete open-source trading dashboards in existence:
 
 - **50+ technical indicators** with a **unique 12-method consensus engine**
-- **19 route cards** covering watchlist, charting (LWC v5), screening, backtesting,
+- **20 route cards** covering watchlist, charting (LWC v5), screening, backtesting,
   portfolio analytics, risk metrics, correlation, market breadth, sector rotation,
   macro dashboard, earnings calendar, alert history, signal DSL, and more
 - **6 data providers** (Yahoo, Finnhub, Stooq, CoinGecko, Tiingo, Polygon) with
@@ -55,8 +84,8 @@ feature-complete open-source trading dashboards in existence:
   Fetch, and Web Push (VAPID)
 - **Passkey-encrypted cloud sync** via Cloudflare D1
 - **On-device AI** pattern recognition via ONNX Runtime Web
-- **4,308 unit tests** + Playwright E2E + Lighthouse CI
-- **129 KB gzip initial bundle** — 10–30× smaller than any commercial competitor
+- **5,718 unit tests** + Playwright E2E + Lighthouse CI
+- **158 KB gzip initial bundle** — 10–30× smaller than any commercial competitor
 
 ### What this v4 rethink changes
 
@@ -84,7 +113,7 @@ have **bulletproof, accessible, and fast** — then prove it with numbers.
 
 ---
 
-## 2. Honest Status Audit — v7.24.0
+## 2. Honest Status Audit — v11.20.0
 
 ### 2.1 Completed work (confirmed from source code)
 

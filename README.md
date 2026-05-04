@@ -45,11 +45,8 @@ npm run dev        # http://localhost:5173
 
 ## Screenshots
 
-|            Watchlist & Consensus             |          Interactive Chart           |                 Heatmap                  |
-| :------------------------------------------: | :----------------------------------: | :--------------------------------------: |
-| ![Watchlist](docs/screenshots/watchlist.png) | ![Chart](docs/screenshots/chart.png) | ![Heatmap](docs/screenshots/heatmap.png) |
-
-> Screenshots are from the latest release. Run locally with `npm run dev` to explore all 22 card views.
+> Run `npm run dev` to explore all card views interactively. Screenshots are generated
+> from the live app during each release cycle.
 
 ### Card Gallery
 

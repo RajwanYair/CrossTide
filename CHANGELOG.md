@@ -6,6 +6,34 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.20.0] - 2026-05-04
+
+### Sprint: Production Hardening (20-task consolidation)
+
+Validated all 20 production-readiness tasks — tooling, docs, structure, and diagrams.
+
+#### Changed
+
+- **ARCHITECTURE.md**: updated version header to v11.20.0, corrected module counts
+  (189 domain, 48 cards, 61 ui, 126 core, 506 test files, 5718 tests)
+- **ROADMAP.md**: updated declared version, codebase metrics, and executive summary;
+  added Sprint checklist section documenting all 20 completed tasks
+- **README.md**: replaced broken screenshot image links with interactive dev note
+
+#### Fixed
+
+- **Utility deduplication**: consolidated `formatPercent` — removed local
+  implementation from `cards/performance-metrics.ts`, now imports from
+  `ui/number-format.ts` (single source of truth)
+- Markdown table style violations in ROADMAP.md (MD060)
+
+#### Removed
+
+- `docs/screenshots/` empty placeholder directory (images never existed)
+- Dead `formatPercent` export from `cards/performance-metrics.ts`
+
+---
+
 ## [11.19.0] - 2025-07-06
 
 ### Production Readiness

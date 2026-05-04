@@ -4,6 +4,7 @@
  * Displays Sharpe, Sortino, MaxDrawdown, total return, win rate in a summary card.
  */
 import { patchDOM } from "../core/patch-dom";
+import { formatPercent } from "../ui/number-format";
 
 export interface PerformanceMetrics {
   readonly totalReturn: number; // e.g. 0.15 = 15%
@@ -24,12 +25,11 @@ export function formatRatio(value: number | null): string {
 }
 
 /**
- * Format a percentage from a fraction (0.15 → "+15.00%").
+ * Format a percentage from a fraction using the shared number-format utility.
  * Always shows + sign for non-negative values.
  */
-export function formatPercent(value: number): string {
-  const pct = (value * 100).toFixed(2);
-  return value >= 0 ? `+${pct}%` : `${pct}%`;
+function formatPercentSigned(value: number): string {
+  return formatPercent(value, { signed: true });
 }
 
 /**
@@ -59,12 +59,15 @@ export function renderPerformanceMetrics(
   const qualityBadge = `<span class="badge badge-${quality}">${quality}</span>`;
 
   const rows = [
-    { label: "Total Return", value: formatPercent(metrics.totalReturn) },
-    { label: "Annualized Return", value: formatPercent(metrics.annualizedReturn) },
+    { label: "Total Return", value: formatPercentSigned(metrics.totalReturn) },
+    { label: "Annualized Return", value: formatPercentSigned(metrics.annualizedReturn) },
     { label: "Sharpe Ratio", value: formatRatio(metrics.sharpeRatio) },
     { label: "Sortino Ratio", value: formatRatio(metrics.sortinoRatio) },
-    { label: "Max Drawdown", value: formatPercent(-metrics.maxDrawdown) },
-    { label: "Win Rate", value: metrics.winRate !== null ? formatPercent(metrics.winRate) : "N/A" },
+    { label: "Max Drawdown", value: formatPercentSigned(-metrics.maxDrawdown) },
+    {
+      label: "Win Rate",
+      value: metrics.winRate !== null ? formatPercentSigned(metrics.winRate) : "N/A",
+    },
     { label: "Trades", value: String(metrics.tradeCount) },
     { label: "Profit Factor", value: formatRatio(metrics.profitFactor) },
   ];

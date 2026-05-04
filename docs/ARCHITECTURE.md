@@ -1,6 +1,6 @@
 # Architecture
 
-> **Last updated:** v7.24.0 (May 2026)
+> **Last updated:** v11.20.0 (May 2026)
 
 CrossTide Web is a browser-based stock monitoring dashboard built with vanilla TypeScript and Vite.
 It follows a strict layered architecture, keeps the production bundle small, and ships as a
@@ -88,11 +88,11 @@ sequenceDiagram
   UI-->>Recipient: auto-import tickers + toast confirmation
 ```
 
-## Key product features (v7.15)
+## Key product features (v11.20)
 
 | Feature                    | Implementation                                                                |
 | -------------------------- | ----------------------------------------------------------------------------- |
-| 112 domain modules         | `src/domain/*` — pure TS, exhaustive tests                                    |
+| 189 domain modules         | `src/domain/*` — pure TS, exhaustive tests                                    |
 | 12-method consensus engine | `src/domain/consensus-engine.ts`                                              |
 | Signal DSL                 | `src/domain/signal-dsl.ts` + `cards/signal-dsl-card.ts`                       |
 | Interactive charting       | `lightweight-charts@^5` via `src/cards/lw-chart.ts`                           |
@@ -134,12 +134,12 @@ sequenceDiagram
 ```text
 CrossTide/
 ├── src/
-│   ├── domain/         pure calculators (112 modules — indicators, consensus, backtest, risk, …)
-│   ├── core/           signals, cache, config, fetch, idb, telemetry, passkey, i18n, …
+│   ├── domain/         pure calculators (189 modules — indicators, consensus, backtest, risk, …)
+│   ├── core/           signals, cache, config, fetch, idb, telemetry, passkey, i18n (126 modules)
 │   ├── providers/      market-data adapters (Yahoo, Finnhub, Alpha Vantage, Polygon, Tiingo,
 │   │                   Stooq, CoinGecko) + provider-chain failover + circuit breaker
-│   ├── cards/          composable UI cards — 39 card components, lazy-loaded via registry
-│   ├── ui/             DOM helpers, router, toast, modal, command palette, a11y (46 modules)
+│   ├── cards/          composable UI cards — 48 card components, lazy-loaded via registry
+│   ├── ui/             DOM helpers, router, toast, modal, command palette, a11y (61 modules)
 │   ├── types/          shared interfaces + Valibot schemas for all provider boundaries
 │   ├── styles/         design tokens, base, responsive, components, palettes
 │   └── main.ts         bootstrap: router, signals, keyboard, palette, cards, telemetry
@@ -151,7 +151,7 @@ CrossTide/
 │   └── routes/         chart, health, og, openapi, screener, search, signal-dsl
 ├── docs-site/          Astro Starlight documentation site (48 indicator MDX pages)
 ├── docs/               Roadmap, contributing guidelines, Copilot guide
-├── tests/unit/         Vitest unit tests (316 files, ~3 884 tests)
+├── tests/unit/         Vitest unit tests (506 files, 5 718 tests)
 └── public/             Static assets, PWA manifest, 404.html
 ```
 
@@ -211,7 +211,7 @@ Local and CI both enforce, with **zero waivers**:
 - 0 HTMLHint findings (`npm run lint:html`)
 - 0 markdownlint findings (`npm run lint:md`)
 - Prettier clean (`npm run format:check`)
-- 3884+ unit tests pass (`npm test`), v8 coverage thresholds met
+- 5718+ unit tests pass (`npm test`), v8 coverage thresholds met
 - 15+ Playwright E2E flows + axe a11y audit pass
 - Lighthouse CI budgets met
 - Production build under 200 KB gzipped JS (`npm run check:bundle`)

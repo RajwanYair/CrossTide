@@ -4,11 +4,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import {
   formatRatio,
-  formatPercent,
   classifyPerformance,
   renderPerformanceMetrics,
   type PerformanceMetrics,
 } from "../../../src/cards/performance-metrics";
+import { formatPercent } from "../../../src/ui/number-format";
 
 const GOOD_METRICS: PerformanceMetrics = {
   totalReturn: 0.25,
@@ -44,15 +44,15 @@ describe("formatRatio", () => {
 
 describe("formatPercent", () => {
   it("formats positive with +", () => {
-    expect(formatPercent(0.15)).toBe("+15.00%");
+    expect(formatPercent(0.15, { signed: true })).toBe("+15.00%");
   });
 
   it("formats negative", () => {
-    expect(formatPercent(-0.05)).toBe("-5.00%");
+    expect(formatPercent(-0.05, { signed: true })).toBe("-5.00%");
   });
 
   it("formats zero with +", () => {
-    expect(formatPercent(0)).toBe("+0.00%");
+    expect(formatPercent(0, { signed: true })).toBe("0.00%");
   });
 });
 
