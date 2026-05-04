@@ -117,6 +117,32 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 - **Stylelint 17**, **HTMLHint 1.9**, **markdownlint-cli2** for non-TS assets.
 - **Vanilla CSS** with custom properties (dark/light themes), no UI framework — pure TypeScript + DOM APIs.
 
+## Native Mobile (Capacitor)
+
+CrossTide can be packaged as a native iOS/Android app via Capacitor:
+
+```bash
+npm run build         # Build the web app
+npm run cap:sync      # Copy dist/ to native projects
+npm run cap:android   # Open in Android Studio
+npm run cap:ios       # Open in Xcode
+```
+
+Native features: splash screen, status bar theming, secure local storage via `@capacitor/preferences`.
+
+## Worker API
+
+The Cloudflare Worker (`worker/`) provides:
+
+| Endpoint               | Method | Description                                     |
+| ---------------------- | ------ | ----------------------------------------------- |
+| `/api/yahoo/quote`     | GET    | Proxied stock quotes with KV caching            |
+| `/api/yahoo/chart`     | GET    | Historical OHLCV data with TTL cache            |
+| `/api/ws/:symbol`      | GET    | WebSocket upgrade → Durable Object fan-out (R3) |
+| `/api/news/sentiment`  | POST   | NLP sentiment scoring for financial text (R5)   |
+| `/api/alerts/evaluate` | POST   | Manual trigger for server-side alert eval (R7)  |
+| `scheduled` (cron)     | —      | Auto-evaluates alert rules every 5 min (R7)     |
+
 ## Release & Deployment
 
 - Tag `vX.Y.Z` on `main` triggers `.github/workflows/release.yml`, which:
@@ -140,7 +166,36 @@ src/
 worker/     Cloudflare Worker API proxy + security headers
 ```
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the full layered diagram and CI/CD reference.
+### High-Level Architecture
+
+```text
+┌────────────────────────────────────────────────────────────────┐
+│  Browser (PWA)         Native (Capacitor)                      │
+│  ┌──────────┐          ┌──────────────┐                       │
+│  │ Vite SPA │          │ iOS/Android  │                       │
+│  └────┬─────┘          └──────┬───────┘                       │
+│       │  REST / WebSocket     │                                │
+└───────┼───────────────────────┼────────────────────────────────┘
+        ▼                       ▼
+┌────────────────────────────────────────────────────────────────┐
+│  Cloudflare Edge                                               │
+│  ┌──────────┐  ┌───────────────┐  ┌──────────────────────┐    │
+│  │  Worker  │  │ Durable Object│  │  Cron Trigger (R7)   │    │
+│  │  (Hono)  │  │ WebSocket(R3) │  │  Alert Evaluation    │    │
+│  └────┬─────┘  └───────────────┘  └──────────────────────┘    │
+│       │                                                        │
+│  ┌────┴────┐  ┌──────┐  ┌────────────────┐                    │
+│  │ KV Cache│  │  D1  │  │ Rate Limiter   │                    │
+│  └─────────┘  └──────┘  └────────────────┘                    │
+└────────────────────────────────────────────────────────────────┘
+        │
+        ▼  Upstream Data Providers
+┌─────────────────────────────────────────┐
+│ Yahoo · Finnhub · CoinGecko · Polygon   │
+└─────────────────────────────────────────┘
+```
+
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full layered diagram and CI/CD reference.
 
 ## Local Verification
 
