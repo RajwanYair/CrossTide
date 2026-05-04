@@ -263,6 +263,65 @@ export const OPENAPI_SPEC = {
         },
       },
     },
+    "/api/alerts/history": {
+      get: {
+        operationId: "getAlertHistory",
+        summary: "Query fired alert history",
+        description:
+          "Returns a chronological list of previously fired alerts from D1, filtered by user. Supports optional ticker and date-range filters.",
+        tags: ["Alerts"],
+        parameters: [
+          {
+            name: "user_id",
+            in: "query",
+            required: true,
+            description: "User ID to query history for",
+            schema: { type: "string", minLength: 1 },
+          },
+          {
+            name: "ticker",
+            in: "query",
+            required: false,
+            description: "Filter by ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+          {
+            name: "since",
+            in: "query",
+            required: false,
+            description: "ISO 8601 lower bound for fired_at",
+            schema: { type: "string", format: "date-time" },
+          },
+          {
+            name: "limit",
+            in: "query",
+            required: false,
+            description: "Maximum results (1–200, default 50)",
+            schema: { type: "integer", minimum: 1, maximum: 200, default: 50 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Alert history results",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/AlertHistoryResponse" },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "503": {
+            description: "Database not available",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     schemas: {
@@ -377,6 +436,30 @@ export const OPENAPI_SPEC = {
           meta: { type: "object" },
         },
       },
+      AlertHistoryResponse: {
+        type: "object",
+        required: ["history", "count"],
+        properties: {
+          history: {
+            type: "array",
+            items: { $ref: "#/components/schemas/AlertHistoryRow" },
+          },
+          count: { type: "integer" },
+        },
+      },
+      AlertHistoryRow: {
+        type: "object",
+        required: ["id", "rule_id", "user_id", "ticker", "condition", "value", "fired_at"],
+        properties: {
+          id: { type: "string" },
+          rule_id: { type: "string" },
+          user_id: { type: "string" },
+          ticker: { type: "string" },
+          condition: { type: "string", description: "JSON-encoded alert condition" },
+          value: { type: "number", description: "Actual value that triggered the alert" },
+          fired_at: { type: "string", format: "date-time" },
+        },
+      },
       ErrorResponse: {
         type: "object",
         required: ["error"],
@@ -414,6 +497,7 @@ export const OPENAPI_SPEC = {
     { name: "System", description: "Health and meta endpoints" },
     { name: "Market Data", description: "OHLCV candles and ticker search" },
     { name: "Signals", description: "Consensus, screener, and signal DSL execution" },
+    { name: "Alerts", description: "Alert rules and fired alert history" },
     { name: "UI", description: "Generated UI assets" },
   ],
 } as const;
