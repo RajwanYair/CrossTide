@@ -6,6 +6,38 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.6.0] - 2025-07-05
+
+### Highlights
+
+UX & documentation sprint: offline indicator, locale picker, drawing undo/redo,
+"What's New" modal, service worker update prompt, and comprehensive docs expansion.
+
+### Added
+
+- **Offline indicator**: Fixed banner at top of viewport when network connectivity
+  is lost, auto-dismisses on reconnection. ARIA `role="alert"` for screen readers.
+- **Language picker**: Settings card now includes a locale dropdown (EN, ES, DE, ZH, HE)
+  that calls `setLocale()` and persists the choice.
+- **Drawing undo/redo**: `attachDrawingHistory()` module with Ctrl+Z/Ctrl+Y (Cmd+Z/Cmd+Shift+Z)
+  keyboard support, 50-state history depth. 10 unit tests.
+- **"What's New" modal**: Detects version change via localStorage and shows a modal
+  with release highlights. Registry-based design for easy updates.
+- **Plugin API docs page**: Full MDX reference for the custom indicator plugin system,
+  fixing the dead link from charts.mdx.
+- **Card guide pages**: Added docs for seasonality, provider-health, consensus-timeline,
+  and strategy-comparison (M4 complete).
+- **Uptime Kuma badge**: Status badge added to README.md linking to monitoring dashboard.
+
+### Changed
+
+- **SW update UX**: Replaced auto-refresh toast with a persistent bottom banner
+  containing "Refresh" and "Later" buttons — user controls when to apply updates.
+- **vitest.config.ts**: Added `define: { __APP_VERSION__ }` for test compatibility.
+- Updated ROADMAP.md: marked K6–K17, L3–L11, M4, M6 as ✅ Done.
+
+---
+
 ## [11.5.0] - 2025-07-05
 
 ### Highlights
