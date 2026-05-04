@@ -103,6 +103,32 @@ export function addTicker(config: AppConfig, ticker: string): AppConfig {
   return { ...config, watchlist: [...config.watchlist, entry] };
 }
 
+/**
+ * Bulk-add multiple tickers at once. Skips duplicates and already-present tickers.
+ * Returns the new config and count of actually added tickers.
+ */
+export function addTickers(
+  config: AppConfig,
+  tickers: readonly string[],
+): { config: AppConfig; added: number } {
+  const existing = new Set(config.watchlist.map((w) => w.ticker));
+  const now = new Date().toISOString();
+  const newEntries: WatchlistEntry[] = [];
+
+  for (const raw of tickers) {
+    const normalized = raw.toUpperCase().trim();
+    if (!normalized || existing.has(normalized)) continue;
+    existing.add(normalized);
+    newEntries.push({ ticker: normalized, addedAt: now });
+  }
+
+  if (newEntries.length === 0) return { config, added: 0 };
+  return {
+    config: { ...config, watchlist: [...config.watchlist, ...newEntries] },
+    added: newEntries.length,
+  };
+}
+
 export function removeTicker(config: AppConfig, ticker: string): AppConfig {
   return {
     ...config,
