@@ -1,0 +1,46 @@
+# Label configuration for actions/labeler@v5
+# Maps file paths to PR labels
+
+domain:
+  - changed-files:
+      - any-glob-to-any-file: "src/domain/**"
+
+core:
+  - changed-files:
+      - any-glob-to-any-file: "src/core/**"
+
+cards:
+  - changed-files:
+      - any-glob-to-any-file: "src/cards/**"
+
+ui:
+  - changed-files:
+      - any-glob-to-any-file: "src/ui/**"
+
+worker:
+  - changed-files:
+      - any-glob-to-any-file: "worker/**"
+
+styles:
+  - changed-files:
+      - any-glob-to-any-file: "src/styles/**"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "*.md"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file: "tests/**"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "package.json"
+          - "package-lock.json"
