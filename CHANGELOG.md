@@ -6,6 +6,48 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.27.0] - 2025-07-09
+
+### Sprint: Infrastructure Hardening & Public Launch Prep (10-item sprint)
+
+#### Added
+
+- **CodeQL Analysis workflow** (`.github/workflows/codeql.yml`): scheduled and
+  on-push security scanning with security-extended queries.
+- **SLSA provenance + SBOM** (`.github/workflows/release.yml`): build
+  attestation via sigstore, SPDX SBOM generation via anchore/sbom-action.
+- **Auto-label workflow** (`.github/workflows/auto-label.yml`): automatic PR
+  labeling by changed file paths using actions/labeler.
+- **GitHub Discussions templates**: feature-request and question form templates
+  for structured community interaction.
+- **DEVELOPMENT.md**: comprehensive quick-start guide for contributors with
+  setup instructions, scripts reference, and architecture overview.
+- **Copilot prompts**: 5 reusable `.prompt.md` files for common tasks
+  (add-indicator, add-worker-route, add-card, write-domain-tests, fix-ci).
+- **AGENTS.md**: 4 custom Copilot agent definitions (@domain, @worker,
+  @quality, @card).
+- **FUNDING.yml**: GitHub Sponsors configuration.
+- **Stale workflow** (`.github/workflows/stale.yml`): auto-close stale
+  issues (60d) and PRs (30d).
+
+#### Fixed
+
+- **exactOptionalPropertyTypes** error in `error-boundary.ts`: use spread
+  with conditionals instead of assigning `undefined` to optional properties.
+- **Type cast** in `indicator-config.ts`: safe double cast via `unknown` for
+  readonly-to-mutable conversion.
+- **13 markdownlint violations** across docs and `.github/` files.
+
+#### Changed
+
+- **README badges**: added CodeQL and SLSA badges, updated TypeScript to 6.0.
+- **copilot-instructions.md**: enhanced with Signal Stores, Route Loaders,
+  Web Components, Error Boundaries patterns and Quality Gates table.
+- **ROADMAP.md**: consolidated governance content from ROADMAP.new.md into
+  Appendix A; removed superseded ROADMAP.new.md.
+
+---
+
 ## [11.26.0] - 2026-05-28
 
 ### Sprint: Web Component QA, Alert History & Refactors (10-item sprint)
