@@ -10,6 +10,7 @@ import {
   FINNHUB_KEY_STORAGE,
 } from "../core/finnhub-stream-manager";
 import { hydrateCardSettings, updateCardSettingsSignal } from "../core/card-settings-signal";
+import { initSettingsSearch } from "../ui/settings-search";
 import type { CardModule } from "./registry";
 
 const settingsCard: CardModule = {
@@ -63,7 +64,13 @@ const settingsCard: CardModule = {
         saveConfig({ ...latest, refreshIntervalMs: ms });
       },
     });
-    return { dispose: () => delegate.dispose() };
+    const cleanupSearch = initSettingsSearch(container);
+    return {
+      dispose: (): void => {
+        delegate.dispose();
+        cleanupSearch();
+      },
+    };
   },
 };
 
