@@ -67,12 +67,14 @@ export function renderProviderHealth(
     .map((p) => {
       const statusClass = p.available ? "status-ok" : "status-error";
       const icon = p.available ? "&#x2714;" : "&#x2718;";
+      const rateUsage = renderRateUsage(p.requestsInWindow, p.requestCapacity);
       return `<tr class="${statusClass}">
         <td>${escapeHtml(p.name)}</td>
         <td>${icon} ${p.available ? "Up" : "Down"}</td>
         <td>${formatRelativeTime(p.lastSuccessAt, now)}</td>
         <td>${formatRelativeTime(p.lastErrorAt, now)}</td>
         <td>${p.consecutiveErrors}</td>
+        <td>${rateUsage}</td>
       </tr>`;
     })
     .join("");
@@ -87,7 +89,7 @@ export function renderProviderHealth(
     </div>
     <table class="provider-health-table" role="table" aria-label="Provider Health">
       <thead>
-        <tr><th>Provider</th><th>Status</th><th>Last Success</th><th>Last Error</th><th>Errors</th></tr>
+        <tr><th>Provider</th><th>Status</th><th>Last Success</th><th>Last Error</th><th>Errors</th><th>Rate Usage</th></tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
@@ -97,4 +99,14 @@ export function renderProviderHealth(
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function renderRateUsage(requests?: number, capacity?: number): string {
+  if (requests == null || capacity == null || capacity === 0) return "—";
+  const pct = Math.min(100, Math.round((requests / capacity) * 100));
+  const level = pct >= 90 ? "critical" : pct >= 60 ? "warning" : "ok";
+  return `<div class="rate-usage" title="${requests}/${capacity} requests">
+    <div class="rate-bar rate-bar-${level}" style="width:${pct}%"></div>
+    <span class="rate-label">${pct}%</span>
+  </div>`;
 }

@@ -2338,3 +2338,45 @@
   min-width: 22px;
   text-align: center;
 }
+
+/* Rate limit usage bar */
+.rate-usage {
+  position: relative;
+  width: 60px;
+  height: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rate-bar {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-fast);
+}
+
+.rate-bar-ok {
+  background: rgba(34, 197, 94, 0.3);
+}
+
+.rate-bar-warning {
+  background: rgba(234, 179, 8, 0.3);
+}
+
+.rate-bar-critical {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.rate-label {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}

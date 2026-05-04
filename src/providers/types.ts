@@ -33,6 +33,10 @@ export interface ProviderHealth {
   readonly lastSuccessAt: number | null;
   readonly lastErrorAt: number | null;
   readonly consecutiveErrors: number;
+  /** Requests made in the current window (client-side tracking). */
+  readonly requestsInWindow?: number;
+  /** Maximum requests per window (configured capacity). */
+  readonly requestCapacity?: number;
 }
 
 /** Canonical data provider interface. */
