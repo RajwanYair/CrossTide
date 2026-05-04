@@ -21,6 +21,7 @@
     "dev": "vite",
     "dev:components": "vite docs/components-preview.html",
     "build": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit && vite build && node scripts/workbox-inject.mjs",
+    "build:sourcemaps": "npm run build && node scripts/upload-sourcemaps.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
