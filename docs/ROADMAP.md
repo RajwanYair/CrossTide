@@ -683,11 +683,11 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 
 | #   | Task                                                                                            | Priority | Effort |
 | --- | ----------------------------------------------------------------------------------------------- | -------- | ------ |
-| K1  | **Incremental DOM patching**: Add `morphdom`; create `patchDOM()` wrapper; migrate all 19 cards | P0       | 3d     |
-| K2  | **Virtual scrolling**: `VirtualScroller` class for tables > 50 rows                             | P0       | 2d     |
-| K3  | **Request deduplication**: In-flight promise cache in `core/fetch-dedup.ts`                     | P0       | 4h     |
-| K4  | **Event delegation**: Single listener per event type at card root; `data-action` dispatch       | P1       | 2d     |
-| K5  | **Chart sync cleanup**: Ensure all subscribers unsubscribe on dispose                           | P1       | 2h     |
+| K1  | **Incremental DOM patching**: Add `morphdom`; create `patchDOM()` wrapper; migrate all 19 cards | ✅ Done  | 3d     |
+| K2  | **Virtual scrolling**: `VirtualScroller` class for tables > 50 rows                             | ✅ Done  | 2d     |
+| K3  | **Request deduplication**: In-flight promise cache in `core/fetch-dedup.ts`                     | ✅ Done  | 4h     |
+| K4  | **Event delegation**: Single listener per event type at card root; `data-action` dispatch       | ✅ Done  | 2d     |
+| K5  | **Chart sync cleanup**: Ensure all subscribers unsubscribe on dispose                           | ✅ Done  | 2h     |
 | K6  | **ARIA live regions**: Add to each card; announce price changes, signal flips                   | ✅ Done  | 1d     |
 | K7  | **Table keyboard navigation**: Arrow keys, Enter, Escape                                        | ✅ Done  | 1d     |
 | K8  | **Container queries**: Replace `@media` in card CSS with `@container`                           | ✅ Done  | 1d     |
@@ -718,14 +718,14 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 
 | #   | Task                                                                                                                                                                                | Priority | Effort |
 | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| L1  | **Fundamental data overlay**: P/E, EPS, revenue, market cap, dividend yield                                                                                                         | P0       | 3d     |
-| L2  | **Seasonal charts**: Monthly historical return bars (Jan–Dec)                                                                                                                       | P1       | 2d     |
+| L1  | **Fundamental data overlay**: P/E, EPS, revenue, market cap, dividend yield                                                                                                         | ✅ Done  | 3d     |
+| L2  | **Seasonal charts**: Monthly historical return bars (Jan–Dec)                                                                                                                       | ✅ Done  | 2d     |
 | L3  | **Multi-condition alerts**: Combine price + indicator + DSL in one rule                                                                                                             | ✅ Done  | 2d     |
 | L4  | **Strategy comparison**: Backtest two strategies side-by-side                                                                                                                       | ✅ Done  | 2d     |
 | L5  | **Additional drawing tools**: Rectangle, channel, pitchfork, ray, text                                                                                                              | ✅ Done  | 3d     |
 | L6  | **Screener column customization**: User-selected visible columns                                                                                                                    | ✅ Done  | 1d     |
 | L7  | **Watchlist groups**: Named collapsible sections                                                                                                                                    | ✅ Done  | 1d     |
-| L8  | **Chart comparison mode**: 2–4 tickers on normalized % scale                                                                                                                        | P1       | 1d     |
+| L8  | **Chart comparison mode**: 2–4 tickers on normalized % scale                                                                                                                        | ✅ Done  | 1d     |
 | L9  | **Export to image**: Screenshot card to PNG/SVG                                                                                                                                     | ✅ Done  | 1d     |
 | L10 | **Plugin API for custom indicators**: External ESM at runtime                                                                                                                       | ✅ Done  | 3d     |
 | L11 | **Watchlist hover zoom**: Hovering a stock row shows a popup with mini-chart, key stats (price, change, volume, consensus), and sparkline — instant preview without navigating away | ✅ Done  | 2d     |
@@ -740,7 +740,7 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 | --- | --------------------------------------------------------------------------- | -------- | ------ |
 | M1  | **Load testing**: 10K tickers; verify virtual scrolling holds               | ✅ Done  | 1d     |
 | M2  | **Mobile responsive audit**: All 23 cards on mobile viewports               | ✅ Done  | 2d     |
-| M3  | **WebSocket reconnect stress tests**: Network flap simulation               | P1       | 1d     |
+| M3  | **WebSocket reconnect stress tests**: Network flap simulation               | N/A      | —      |
 | M4  | **Complete user guide suite**: Guide for every card                         | ✅ Done  | 3d     |
 | M5  | **Contributing guide update**: PR template, issue templates                 | ✅ Done  | 1d     |
 | M6  | **i18n expansion**: Add ES, DE, ZH locales                                  | ✅ Done  | 3d     |
@@ -748,6 +748,23 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 | M8  | **Dependency audit automation**: Weekly npm audit + Dependabot              | ✅ Done  | 2h     |
 | M9  | **README showcase**: Screenshots, GIF demos, feature comparison             | P1       | 1d     |
 | M10 | **v10 launch**: GitHub release + Product Hunt + Hacker News                 | P0       | 1d     |
+
+---
+
+### Phase N — v11.7.0 "UX Polish & Data Management"
+
+**Theme:** Small, high-impact UX improvements and data management features.
+
+| #   | Task                                                                             | Priority | Effort |
+| --- | -------------------------------------------------------------------------------- | -------- | ------ |
+| N1  | **Theme transition animation**: Smooth 300ms CSS transition on theme switch      | ✅ Done  | 2h     |
+| N2  | **Keyboard shortcuts modal**: Categorized dialog with kbd elements               | ✅ Done  | 3h     |
+| N3  | **Data freshness indicator**: Aggregate badge in footer (Live/stale/expired)     | ✅ Done  | 2h     |
+| N4  | **Auto-refresh interval setting**: User-configurable 1–60 min from Settings      | ✅ Done  | 3h     |
+| N5  | **Rate limit visualization**: Per-provider usage bar in health card              | ✅ Done  | 3h     |
+| N6  | **Full backup/restore**: Include drawings, alert rules, theme, card settings     | ✅ Done  | 3h     |
+| N7  | **Print-friendly styles**: @media print rules hiding nav, forcing light bg       | ✅ Done  | 2h     |
+| N8  | **Chart annotation URL sharing**: Encode drawings into shareable base64url links | ✅ Done  | 2h     |
 
 ---
 
