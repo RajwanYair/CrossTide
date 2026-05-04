@@ -15,12 +15,14 @@ import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
 import { TIMEFRAME_PRESETS, DEFAULT_TIMEFRAME, type TimeframePreset } from "../core/data-service";
 import { fetchFundamentals } from "../domain/fundamental-data";
+import { heikinAshi } from "../domain/heikin-ashi";
 import { showToast } from "../ui/toast";
 import { getNavigationSignal } from "../ui/router";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate } from "../ui/delegate";
 import type { CardModule, CardContext } from "./registry";
 import type { BacktestConfig } from "../domain/backtest-engine";
+import type { DailyCandle } from "../types/domain";
 
 function defaultBacktestConfig(ticker: string): BacktestConfig {
   return {
@@ -29,6 +31,27 @@ function defaultBacktestConfig(ticker: string): BacktestConfig {
     methods: ["RSI", "MACD", "Bollinger"],
     windowSize: 50,
   };
+}
+
+/** Q2: Apply Heikin-Ashi transform to DailyCandle array. */
+function applyHeikinAshi(candles: readonly DailyCandle[]): DailyCandle[] {
+  const input = candles.map((c) => ({
+    time: new Date(c.date).getTime() / 1000,
+    open: c.open,
+    high: c.high,
+    low: c.low,
+    close: c.close,
+    volume: c.volume,
+  }));
+  const ha = heikinAshi(input);
+  return ha.map((h, i) => ({
+    date: candles[i]!.date,
+    open: h.haOpen,
+    high: h.haHigh,
+    low: h.haLow,
+    close: h.haClose,
+    volume: h.volume ?? candles[i]!.volume,
+  }));
 }
 
 function renderBacktestUI(container: HTMLElement, ticker: string): void {
@@ -57,6 +80,7 @@ async function renderChartWithData(
   lwHandle: { current: LwChartHandle | null },
   timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
   drawingRef?: { current: DrawingToolHandle | null; ticker: string },
+  useHeikinAshi = false,
 ): Promise<void> {
   // Dispose previous LWC instance before re-rendering
   lwHandle.current?.dispose();
@@ -72,7 +96,10 @@ async function renderChartWithData(
 
   try {
     const data = await fetchTickerData(ticker, getNavigationSignal(), undefined, timeframe);
-    const candles = data.candles ?? [];
+    const rawCandles = data.candles ?? [];
+
+    // Q2: Heikin-Ashi transform
+    const candles = useHeikinAshi ? applyHeikinAshi(rawCandles) : rawCandles;
 
     // Re-render the HTML header with real data
     renderChart(container, { ticker, candles });
@@ -125,6 +152,7 @@ const chartCard: CardModule = {
       ticker,
     };
     let activeTimeframe: TimeframePreset = DEFAULT_TIMEFRAME;
+    let heikinAshiMode = false;
 
     // ── Timeframe selector bar ──
     const tfBar = document.createElement("div");
@@ -139,6 +167,15 @@ const chartCard: CardModule = {
       btn.dataset["range"] = preset.range;
       tfBar.appendChild(btn);
     }
+
+    // Q2: Heikin-Ashi toggle button
+    const haBtn = document.createElement("button");
+    haBtn.className = "btn btn-sm timeframe-btn";
+    haBtn.textContent = "HA";
+    haBtn.title = "Toggle Heikin-Ashi candles";
+    haBtn.dataset["action"] = "toggle-ha";
+    tfBar.appendChild(haBtn);
+
     container.prepend(tfBar);
 
     function runBacktest(): void {
@@ -197,12 +234,31 @@ const chartCard: CardModule = {
         if (drawingRef.current && drawingRef.ticker) {
           saveDrawings(drawingRef.ticker, drawingRef.current.getDrawings());
         }
-        void renderChartWithData(container, ticker, lwHandle, preset, drawingRef);
+        void renderChartWithData(container, ticker, lwHandle, preset, drawingRef, heikinAshiMode);
+      },
+      "toggle-ha": (el) => {
+        heikinAshiMode = !heikinAshiMode;
+        el.classList.toggle("active", heikinAshiMode);
+        void renderChartWithData(
+          container,
+          ticker,
+          lwHandle,
+          activeTimeframe,
+          drawingRef,
+          heikinAshiMode,
+        );
       },
       "run-backtest": () => runBacktest(),
     });
 
-    void renderChartWithData(container, ticker, lwHandle, activeTimeframe, drawingRef);
+    void renderChartWithData(
+      container,
+      ticker,
+      lwHandle,
+      activeTimeframe,
+      drawingRef,
+      heikinAshiMode,
+    );
     renderBacktestUI(container, ticker);
 
     return {
@@ -214,7 +270,14 @@ const chartCard: CardModule = {
         }
         ticker = t;
         drawingRef.ticker = t;
-        void renderChartWithData(container, t, lwHandle, activeTimeframe, drawingRef);
+        void renderChartWithData(
+          container,
+          t,
+          lwHandle,
+          activeTimeframe,
+          drawingRef,
+          heikinAshiMode,
+        );
         renderBacktestUI(container, t);
       },
       dispose(): void {
