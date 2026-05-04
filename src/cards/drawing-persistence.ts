@@ -80,3 +80,28 @@ export function clearAllSavedDrawings(): void {
   }
   localStorage.removeItem(INDEX_KEY);
 }
+
+/** Export all drawings as a ticker→drawings map. */
+export function exportAllDrawings(): Record<string, Drawing[]> {
+  const index = loadIndex();
+  const out: Record<string, Drawing[]> = {};
+  for (const ticker of index) {
+    const drawings = loadDrawings(ticker);
+    if (drawings.length > 0) out[ticker] = drawings;
+  }
+  return out;
+}
+
+/** Import drawings from a ticker→drawings map, merging with existing. */
+export function importAllDrawings(data: Record<string, unknown[]>): void {
+  for (const [ticker, arr] of Object.entries(data)) {
+    if (!Array.isArray(arr)) continue;
+    const valid = arr.filter(
+      (d): d is Drawing =>
+        typeof d === "object" &&
+        d !== null &&
+        typeof (d as Record<string, unknown>).kind === "string",
+    );
+    if (valid.length > 0) saveDrawings(ticker, valid);
+  }
+}

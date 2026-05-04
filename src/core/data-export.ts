@@ -14,7 +14,7 @@ import type { BacktestResult, BacktestTrade } from "../domain/backtest-engine";
  * Schema version for the full export format.
  * Increment when the shape of FullExportPayload changes.
  */
-export const EXPORT_SCHEMA_VERSION = 7;
+export const EXPORT_SCHEMA_VERSION = 8;
 
 /**
  * Optional data domains included in a full export.
@@ -24,6 +24,16 @@ export interface FullExportDomains {
   readonly alerts?: readonly AlertRecord[];
   readonly holdings?: readonly Holding[];
   readonly backtestResult?: BacktestResult;
+  /** Chart drawings per ticker. */
+  readonly drawings?: Record<string, unknown[]>;
+  /** Alert rules (user-configured). */
+  readonly alertRules?: unknown[];
+  /** App theme. */
+  readonly theme?: string;
+  /** Method weights. */
+  readonly methodWeights?: Record<string, number>;
+  /** Per-card settings. */
+  readonly cardSettings?: Record<string, unknown>;
 }
 
 /**
