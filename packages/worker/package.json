@@ -1,0 +1,13 @@
+{
+  "name": "@crosstide/worker",
+  "version": "0.1.0",
+  "description": "CrossTide Cloudflare Worker — API backend with KV caching and rate limiting.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
+  "dependencies": {
+    "@crosstide/domain": "*"
+  }
+}

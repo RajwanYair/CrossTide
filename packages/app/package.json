@@ -1,0 +1,13 @@
+{
+  "name": "@crosstide/app",
+  "version": "0.1.0",
+  "description": "CrossTide Web App — browser-based PWA frontend.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
+  "dependencies": {
+    "@crosstide/domain": "*"
+  }
+}
