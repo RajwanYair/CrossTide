@@ -10,6 +10,9 @@ import {
   getCurrentRoute,
   getCurrentRouteInfo,
   onRouteChange,
+  defineRoute,
+  getRouteLoadResult,
+  getNavigationSignal,
   _resetRouterForTests,
   type RouteName,
 } from "../../../src/ui/router";
@@ -243,5 +246,89 @@ describe("link interception", () => {
     expect(link).toBeTruthy();
     link!.click();
     expect(window.location.pathname).toBe("/settings");
+  });
+});
+
+describe("defineRoute / getRouteLoadResult (P7)", () => {
+  beforeEach(() => {
+    _resetRouterForTests();
+    setupDOM();
+    gotoPath("/");
+  });
+
+  it("loader is called on navigation to the registered route", async () => {
+    let called = false;
+    defineRoute({
+      name: "settings",
+      loader: async () => {
+        called = true;
+        return { ok: true };
+      },
+    });
+    initRouter();
+    navigateTo("settings");
+    const result = await getRouteLoadResult<{ ok: boolean }>("settings");
+    expect(called).toBe(true);
+    expect(result).toEqual({ ok: true });
+  });
+
+  it("loader receives route params", async () => {
+    let receivedSymbol = "";
+    defineRoute({
+      name: "chart",
+      loader: async ({ params }) => {
+        receivedSymbol = params["symbol"] ?? "";
+        return { symbol: params["symbol"] };
+      },
+    });
+    initRouter();
+    navigateToPath("chart", { symbol: "NVDA" });
+    await getRouteLoadResult("chart");
+    expect(receivedSymbol).toBe("NVDA");
+  });
+
+  it("loader receives an AbortSignal that is not aborted during the navigation", async () => {
+    let signalAborted = false;
+    defineRoute({
+      name: "alerts",
+      loader: async ({ signal }) => {
+        signalAborted = signal.aborted;
+        return {};
+      },
+    });
+    initRouter();
+    navigateTo("alerts");
+    await getRouteLoadResult("alerts");
+    expect(signalAborted).toBe(false);
+  });
+
+  it("getRouteLoadResult returns undefined for unregistered routes", () => {
+    initRouter();
+    expect(getRouteLoadResult("heatmap")).toBeUndefined();
+  });
+
+  it("getNavigationSignal is aborted on subsequent navigation", () => {
+    initRouter();
+    navigateTo("chart");
+    const signal = getNavigationSignal();
+    navigateTo("settings");
+    expect(signal.aborted).toBe(true);
+  });
+
+  it("promise is replaced on re-navigation to same route", async () => {
+    let count = 0;
+    defineRoute({
+      name: "screener",
+      loader: async () => {
+        count += 1;
+        return { count };
+      },
+    });
+    initRouter();
+    navigateTo("screener");
+    await getRouteLoadResult("screener");
+    navigateTo("screener");
+    const result = await getRouteLoadResult<{ count: number }>("screener");
+    expect(result?.count).toBe(2);
   });
 });

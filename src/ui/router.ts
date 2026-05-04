@@ -113,6 +113,74 @@ let initialized = false;
 /** Aborted whenever a new navigation begins. Cards thread this into their fetch calls. */
 let _navController = new AbortController();
 
+// ── P7: Route loaders ─────────────────────────────────────────────────────────
+
+/** Context passed to a route loader. */
+export interface RouteLoaderCtx {
+  /** Parsed URL params (e.g. `{ symbol: "AAPL" }` for `/chart/AAPL`). */
+  readonly params: Readonly<Record<string, string>>;
+  /** Aborted when navigation changes — thread into any fetch calls. */
+  readonly signal: AbortSignal;
+}
+
+/** Async function that pre-fetches data before the route renders. */
+export type RouteLoaderFn<TData> = (ctx: RouteLoaderCtx) => Promise<TData>;
+
+/** Route definition with an optional async data loader. */
+export interface RouteDefinition<TData = unknown> {
+  /** The route name this definition applies to. */
+  readonly name: RouteName;
+  /** Loader runs on every navigation to this route. */
+  readonly loader: RouteLoaderFn<TData>;
+}
+
+/** Registry of route loaders, keyed by route name. */
+const routeLoaders = new Map<RouteName, RouteLoaderFn<unknown>>();
+
+/**
+ * In-flight load promises, keyed by route name.
+ * Cards can `await getRouteLoadResult<T>(name)` to wait for pre-fetched data.
+ */
+const routeLoadPromises = new Map<RouteName, Promise<unknown>>();
+
+/**
+ * Register a route definition with an optional async data loader.
+ *
+ * The loader runs concurrently with view activation on every navigation to
+ * the route. The navigation `AbortSignal` is passed so loaders cancel
+ * automatically when the user navigates away before data resolves.
+ *
+ * @example
+ * ```ts
+ * defineRoute({
+ *   name: "chart",
+ *   loader: async ({ params, signal }) => {
+ *     const candles = await fetchCandles(params["symbol"] ?? "AAPL", { signal });
+ *     return { candles };
+ *   },
+ * });
+ * ```
+ */
+export function defineRoute<TData>(def: RouteDefinition<TData>): void {
+  routeLoaders.set(def.name, def.loader);
+}
+
+/**
+ * Returns the pending (or resolved) data promise for the most recent
+ * navigation to `name`, or `undefined` if no loader was registered / the
+ * route has never been visited.
+ *
+ * Cards should guard against stale promises by checking the navigation signal:
+ * ```ts
+ * const signal = getNavigationSignal();
+ * const data = await getRouteLoadResult<MyData>("chart");
+ * if (signal.aborted) return; // user navigated away
+ * ```
+ */
+export function getRouteLoadResult<TData>(name: RouteName): Promise<TData> | undefined {
+  return routeLoadPromises.get(name) as Promise<TData> | undefined;
+}
+
 /**
  * Returns a signal that will be aborted on the next navigation.
  * Create a new derived AbortController from this signal if you need a
@@ -245,9 +313,23 @@ export function onRouteChange(handler: RouteChangeHandler): () => void {
   };
 }
 
+function fireLoaders(info: RouteInfo, signal: AbortSignal): void {
+  const loader = routeLoaders.get(info.name);
+  if (!loader) return;
+  routeLoadPromises.set(
+    info.name,
+    loader({ params: info.params, signal }).catch((err: unknown) => {
+      // Suppress abort errors — they are expected when user navigates away.
+      if (signal.aborted) return undefined;
+      throw err;
+    }),
+  );
+}
+
 function handleRoute(): void {
   abortNavigation();
   const info = getCurrentRouteInfo();
+  fireLoaders(info, _navController.signal);
   activateViewWithTransition(info.name);
   for (const fn of listeners) fn(info.name, info);
 }
@@ -316,6 +398,7 @@ function onNavigateEvent(e: NavigateEvent): void {
   e.intercept({
     handler(): Promise<void> {
       abortNavigation();
+      fireLoaders(info, _navController.signal);
       activateViewWithTransition(info.name);
       for (const fn of listeners) fn(info.name, info);
       return Promise.resolve();
