@@ -1,0 +1,131 @@
+---
+title: Plugin API
+description: Extend CrossTide with custom indicators loaded at runtime via ESM modules.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+CrossTide provides a **Plugin API** that lets you register custom technical indicators
+at runtime. Plugins are standard ES modules that integrate seamlessly with the chart
+overlay system, indicator selector UI, and consensus engine.
+
+## Quick Start
+
+```ts
+import { registerIndicator } from "./core/plugin-api";
+
+registerIndicator({
+  id: "my-sma-cross",
+  name: "SMA Crossover",
+  version: "1.0.0",
+  defaultParams: { shortPeriod: 10, longPeriod: 50 },
+  overlay: true,
+  compute: (candles, params) => {
+    const shortSma = sma(candles.map((c) => c.close), params.shortPeriod);
+    const longSma = sma(candles.map((c) => c.close), params.longPeriod);
+    return { values: shortSma, overlay: true, extras: { long: longSma } };
+  },
+});
+```
+
+## Plugin Interface
+
+Each plugin must implement the `IndicatorPlugin` interface:
+
+| Property        | Type                              | Required | Description                                    |
+| --------------- | --------------------------------- | -------- | ---------------------------------------------- |
+| `id`            | `string`                          | ✅       | Unique kebab-case identifier                   |
+| `name`          | `string`                          | ✅       | Display name in the UI                         |
+| `compute`       | `ComputeFn`                       | ✅       | Pure function `(candles, params) → result`     |
+| `version`       | `string`                          | —        | Semver version string                          |
+| `defaultParams` | `Record<string, number>`          | —        | Default numeric parameters                     |
+| `overlay`       | `boolean`                         | —        | Render on price chart (true) or sub-panel      |
+
+## Compute Function
+
+```ts
+type ComputeFn = (
+  candles: readonly IndicatorCandle[],
+  params: Record<string, number>,
+) => IndicatorResult;
+```
+
+### Input: `IndicatorCandle`
+
+| Field    | Type     |
+| -------- | -------- |
+| `open`   | `number` |
+| `high`   | `number` |
+| `low`    | `number` |
+| `close`  | `number` |
+| `volume` | `number` |
+| `time`   | `number` |
+
+### Output: `IndicatorResult`
+
+| Field    | Type                       | Description                                   |
+| -------- | -------------------------- | --------------------------------------------- |
+| `values` | `number[]`                 | Main series (same length as input candles)     |
+| `overlay`| `boolean`                  | True = price overlay, false = separate panel   |
+| `extras` | `Record<string, number[]>` | Additional series (bands, signals, etc.)       |
+| `style`  | `object`                   | Rendering hints: color, lineWidth, type        |
+
+## Dynamic Loading from URL
+
+Load an indicator from any ESM-compatible CDN:
+
+```ts
+import { loadIndicatorModule } from "./core/plugin-api";
+
+await loadIndicatorModule("https://cdn.example.com/my-indicator.mjs");
+```
+
+The module should either:
+1. Call `registerIndicator()` as a side-effect, or
+2. Export a default `IndicatorPlugin` object that will be auto-registered.
+
+<Aside type="caution">
+  Only load modules from **trusted sources**. Plugins execute arbitrary JavaScript
+  in the browser context. CrossTide validates the plugin interface but cannot sandbox
+  untrusted code.
+</Aside>
+
+## Registry API
+
+| Function                | Description                                       |
+| ----------------------- | ------------------------------------------------- |
+| `registerIndicator(p)`  | Register a new plugin (throws if ID exists)       |
+| `unregisterIndicator(id)` | Remove a plugin by ID                          |
+| `getIndicator(id)`      | Get a registered plugin (or undefined)            |
+| `listIndicators()`      | Get all registered plugins as an array            |
+| `onPluginChange(cb)`    | Subscribe to add/remove events                    |
+
+## Example: Bollinger Band Plugin
+
+```ts
+registerIndicator({
+  id: "custom-bollinger",
+  name: "Custom Bollinger Bands",
+  version: "1.0.0",
+  defaultParams: { period: 20, stdDev: 2 },
+  overlay: true,
+  compute: (candles, params) => {
+    const closes = candles.map((c) => c.close);
+    const mid = sma(closes, params.period);
+    const std = stddev(closes, params.period);
+    const upper = mid.map((m, i) => m + params.stdDev * std[i]);
+    const lower = mid.map((m, i) => m - params.stdDev * std[i]);
+    return { values: mid, overlay: true, extras: { upper, lower } };
+  },
+});
+```
+
+## Constraints
+
+- **ID format:** Must be kebab-case (`/^[a-z0-9]+(?:-[a-z0-9]+)*$/`)
+- **No duplicate IDs:** Registration throws if the same ID is already registered
+- **Pure compute:** The `compute` function should be a pure function with no side effects
+- **Array length:** `values` must have the same length as the input `candles` array
+- **NaN for blanks:** Use `NaN` for periods where the indicator has insufficient data
