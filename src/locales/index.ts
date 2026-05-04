@@ -9,9 +9,10 @@ import "./es";
 import "./de";
 import "./zh";
 import "./he";
+import "./ja";
 
 /** Supported locale codes. */
-export const SUPPORTED_LOCALES = ["en", "es", "de", "zh", "he"] as const;
+export const SUPPORTED_LOCALES = ["en", "es", "de", "zh", "he", "ja"] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 /** Human-readable locale labels for settings UI. */
@@ -21,4 +22,5 @@ export const LOCALE_LABELS: Record<SupportedLocale, string> = {
   de: "Deutsch",
   zh: "中文",
   he: "עברית",
+  ja: "日本語",
 };
