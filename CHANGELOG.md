@@ -6,6 +6,41 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.7.0] - 2025-07-05
+
+### Highlights
+
+UX polish & data management sprint: smooth theme transitions, keyboard shortcuts
+modal, data freshness indicators, configurable refresh intervals, rate-limit
+visualization, comprehensive backup/restore, print styles, and drawing URL sharing.
+
+### Added
+
+- **Theme transition animation**: Smooth 300ms CSS transition on background-color,
+  color, border-color, and box-shadow when switching between dark/light/high-contrast
+  themes. Skipped on initial page load to avoid FOUC.
+- **Keyboard shortcuts modal**: Press `?` to open a categorized dialog displaying all
+  keyboard shortcuts with styled `<kbd>` elements grouped by category.
+- **Data freshness indicator**: Aggregate badge in footer showing "Live" / "Xm ago" /
+  "Xh ago" with color-coded freshness level (green/yellow/red).
+- **Auto-refresh interval setting**: Users can configure refresh intervals between
+  1–60 minutes from the Settings card. Persisted with validation (min 1m, max 60m).
+- **Rate limit visualization**: Provider health card now shows a color-coded usage bar
+  per provider tracking request count in a 60-second sliding window.
+- **Full backup/restore**: Export now includes drawings, alert rules, theme, method
+  weights, and card settings (schema version bumped to 8). Added `collectFullBackup()`
+  helper and `exportAllDrawings()`/`importAllDrawings()` utilities.
+- **Print-friendly stylesheet**: `@media print` rules that hide navigation/footer,
+  force light background, add table borders, and show external link URLs.
+- **Chart annotation URL sharing**: `encodeDrawingsUrl()` and `decodeDrawingsUrl()`
+  encode up to 50 chart drawings into a base64url shareable link.
+
+### Changed
+
+- ROADMAP updated: K1–K5, L1, L2, L8 marked as done. M3 marked N/A. Phase N added.
+
+---
+
 ## [11.6.0] - 2025-07-05
 
 ### Highlights
