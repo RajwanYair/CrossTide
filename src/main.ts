@@ -67,6 +67,7 @@ import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-
 import { createAutocomplete } from "./ui/ticker-autocomplete";
 import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
 import { evaluateAlertRules } from "./core/alert-rules-evaluator";
+import { checkWhatsNew } from "./core/whats-new";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const prefetchedCards = new Set<RouteName>();
@@ -363,6 +364,7 @@ function main(): void {
   loadPersistedPalette(); // C2: restore color-blind palette from localStorage
   initRouter();
   initOfflineIndicator();
+  checkWhatsNew();
   refreshWatchlist(config, new Map());
 
   // Mount instrument filter bar (B12)
