@@ -20,7 +20,7 @@
 
 import { Hono } from "hono";
 import { withCors, handlePreflight, corsHeaders } from "./cors.js";
-import { checkRateLimit, rateLimitKey } from "./rate-limit.js";
+import { checkRateLimit, checkRateLimitKV, rateLimitKey } from "./rate-limit.js";
 import { withSecurityHeaders } from "./security.js";
 import { handleHealth } from "./routes/health.js";
 import { handleChart } from "./routes/chart.js";
@@ -97,10 +97,17 @@ app.use("*", async (c, next) => {
 app.use("*", async (c, next) => {
   if (c.req.method !== "OPTIONS") {
     const key = rateLimitKey(c.req.raw);
-    const allowed =
-      c.env.RATE_LIMITER != null
-        ? (await c.env.RATE_LIMITER.limit({ key })).success // G13: CF native
-        : checkRateLimit(key); // fallback: in-memory
+    let allowed: boolean;
+    if (c.env.RATE_LIMITER != null) {
+      // G13: CF native global rate limiter (best option)
+      allowed = (await c.env.RATE_LIMITER.limit({ key })).success;
+    } else if (c.env.QUOTE_CACHE != null) {
+      // P4: KV-backed global rate limiting (cross-isolate)
+      allowed = await checkRateLimitKV(c.env.QUOTE_CACHE, key);
+    } else {
+      // Fallback: in-memory per-isolate (local dev)
+      allowed = checkRateLimit(key);
+    }
     if (!allowed) {
       const origin = c.req.header("Origin") ?? null;
       return new Response(JSON.stringify({ error: "Too many requests" }), {
