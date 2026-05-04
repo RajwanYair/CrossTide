@@ -170,6 +170,10 @@ export type { Candle, HeikinAshiCandle } from "./heikin-ashi";
 export { createBarReplay } from "./bar-replay";
 export type { ReplayOptions, ReplayState, ReplayTickHandler, BarReplay } from "./bar-replay";
 
+/** Point & Figure chart computation — X/O box columns (R8). */
+export { computePnf, autoBoxSize, floorBox } from "./point-and-figure";
+export type { PnfInput, PnfOptions, PnfBox, PnfColumn, PnfChart } from "./point-and-figure";
+
 /** Donchian Channels — high/low price envelope. */
 export { computeDonchian } from "./donchian";
 export type { DonchianPoint } from "./donchian";
