@@ -35,6 +35,7 @@ import { handleFundamentals } from "./routes/fundamentals.js";
 import { handleNewsSentiment } from "./routes/news-sentiment.js";
 import { handleScheduledAlertEval } from "./routes/alert-eval.js";
 import { dispatchWebhooks } from "./routes/webhook-dispatch.js";
+import { handleAlertHistory, insertAlertHistory } from "./routes/alert-history.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -230,6 +231,9 @@ app.get("/api/og", (c) => Promise.resolve(handleOgImage(new URL(c.req.url))));
 
 app.post("/api/signal-dsl/execute", async (c) => handleSignalDslExecute(c.req.raw));
 
+// ── Alert history query (R7 completion) ───────────────────────────────────────
+app.get("/api/alerts/history", (c) => handleAlertHistory(new URL(c.req.url), c.env));
+
 // ── R5: News sentiment NLP scoring ────────────────────────────────────────────
 app.post("/api/news/sentiment", async (c) => handleNewsSentiment(c.req.raw));
 
@@ -272,7 +276,22 @@ export default {
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     const fired = await handleScheduledAlertEval(env);
     if (fired.length > 0 && env.DB) {
-      ctx.waitUntil(dispatchWebhooks(env.DB, fired));
+      // Persist to alert_history table for queryable history
+      ctx.waitUntil(
+        Promise.all([
+          ...fired.map((f) =>
+            insertAlertHistory(env.DB!, {
+              ruleId: f.ruleId,
+              userId: f.userId,
+              ticker: f.ticker,
+              condition: JSON.stringify(f.condition),
+              value: f.currentValue,
+              firedAt: f.firedAt,
+            }),
+          ),
+          dispatchWebhooks(env.DB, fired),
+        ]),
+      );
     }
   },
 };
