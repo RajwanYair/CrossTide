@@ -174,6 +174,12 @@ const REGISTRY: readonly CardEntry[] = [
     viewId: "view-comparison",
     load: () => import("./comparison-card").then((m) => m.default),
   },
+  {
+    route: "rebalance",
+    title: "Rebalance",
+    viewId: "view-rebalance",
+    load: () => import("./rebalance-card").then((m) => m.default),
+  },
 ];
 
 const cache = new Map<RouteName, Promise<CardModule>>();

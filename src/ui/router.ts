@@ -40,7 +40,8 @@ export type RouteName =
   | "relative-strength"
   | "seasonality"
   | "comparison"
-  | "strategy-comparison";
+  | "strategy-comparison"
+  | "rebalance";
 
 export interface RouteInfo {
   readonly name: RouteName;
@@ -74,6 +75,7 @@ const VALID_ROUTES = new Set<RouteName>([
   "seasonality",
   "comparison",
   "strategy-comparison",
+  "rebalance",
 ]);
 
 interface RoutePattern {
