@@ -7,6 +7,7 @@ interactive charting, and offline-first PWA support.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/RajwanYair/CrossTide/ci.yml?label=CI&logo=github-actions)](https://github.com/RajwanYair/CrossTide/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/RajwanYair/CrossTide?logo=github)](https://github.com/RajwanYair/CrossTide/releases/latest)
+[![Uptime](https://img.shields.io/badge/Uptime-Monitored-brightgreen?logo=upptime)](https://crosstide-uptime.fly.dev/status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](tsconfig.json)
 [![Bundle](https://img.shields.io/badge/Bundle-%3C200KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
