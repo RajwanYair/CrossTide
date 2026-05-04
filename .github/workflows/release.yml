@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 jobs:
   release:
@@ -46,6 +48,18 @@ jobs:
           cd ..
           sha256sum crosstide-${{ github.ref_name }}.zip > crosstide-${{ github.ref_name }}.zip.sha256
 
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: dist/
+          output-file: crosstide-${{ github.ref_name }}.sbom.spdx.json
+          format: spdx-json
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: crosstide-${{ github.ref_name }}.zip
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -53,3 +67,4 @@ jobs:
           files: |
             crosstide-${{ github.ref_name }}.zip
             crosstide-${{ github.ref_name }}.zip.sha256
+            crosstide-${{ github.ref_name }}.sbom.spdx.json
