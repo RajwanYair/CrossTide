@@ -349,6 +349,18 @@ function activateView(route: RouteName): void {
   document.querySelectorAll<HTMLElement>(".view").forEach((view) => {
     view.classList.toggle("active", view.id === `view-${route}`);
   });
+  // WCAG 2.4.3: Move focus to new view's heading after route change
+  requestAnimationFrame(() => {
+    const viewEl = document.getElementById(`view-${route}`);
+    const heading = viewEl?.querySelector<HTMLElement>("h1, h2, [data-view-heading]");
+    if (heading) {
+      if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: false });
+    } else if (viewEl) {
+      if (!viewEl.hasAttribute("tabindex")) viewEl.setAttribute("tabindex", "-1");
+      viewEl.focus({ preventScroll: false });
+    }
+  });
 }
 
 /**
