@@ -31,6 +31,7 @@ import { handleOgImage } from "./routes/og.js";
 import { handleSignalDslExecute } from "./routes/signal-dsl.js";
 import { handleOpenApiSpec } from "./routes/openapi.js";
 import { handleCspReport } from "./routes/csp-report.js";
+import { handleFundamentals } from "./routes/fundamentals.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -181,6 +182,8 @@ app.get("/api/search", (c) => {
 });
 
 app.get("/api/health", (c) => Promise.resolve(handleHealth(c.env)));
+
+app.get("/api/fundamentals/:symbol", (c) => handleFundamentals(c.req.param("symbol"), c.env));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 

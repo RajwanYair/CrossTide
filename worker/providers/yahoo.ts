@@ -262,3 +262,91 @@ interface YahooSearchResponse {
     quoteType?: string;
   }>;
 }
+
+// ── Fundamentals (quoteSummary) ─────────────────────────────────────────────
+
+const QUOTE_SUMMARY_BASE = "https://query2.finance.yahoo.com/v10/finance/quoteSummary";
+
+export interface YahooFundamentals {
+  symbol: string;
+  shortName: string;
+  sector: string;
+  industry: string;
+  marketCap: number;
+  enterpriseValue: number;
+  trailingPE: number;
+  forwardPE: number;
+  pegRatio: number;
+  priceToBook: number;
+  eps: number;
+  revenue: number;
+  revenueGrowth: number;
+  grossMargin: number;
+  operatingMargin: number;
+  profitMargin: number;
+  returnOnEquity: number;
+  debtToEquity: number;
+  dividendYield: number;
+  beta: number;
+}
+
+/**
+ * Fetch fundamental data via Yahoo quoteSummary API.
+ * Modules: defaultKeyStatistics, financialData, summaryProfile, earnings
+ */
+export async function fetchYahooFundamentals(symbol: string): Promise<YahooFundamentals> {
+  const modules = "defaultKeyStatistics,financialData,summaryProfile";
+  const url = `${QUOTE_SUMMARY_BASE}/${encodeURIComponent(symbol)}?modules=${modules}`;
+
+  const res = await fetch(url, { headers: YAHOO_HEADERS });
+  if (!res.ok) {
+    throw new YahooApiError(`Yahoo quoteSummary API returned ${res.status}`, res.status);
+  }
+
+  const json = (await res.json()) as YahooQuoteSummaryResponse;
+  const result = json?.quoteSummary?.result?.[0];
+  if (!result) {
+    throw new YahooApiError("No fundamental data in Yahoo response", 404);
+  }
+
+  const stats = result.defaultKeyStatistics ?? {};
+  const fin = result.financialData ?? {};
+  const profile = result.summaryProfile ?? {};
+
+  return {
+    symbol: symbol.toUpperCase(),
+    shortName: profile.shortName ?? symbol,
+    sector: profile.sector ?? "",
+    industry: profile.industry ?? "",
+    marketCap: rawValue(fin.marketCap),
+    enterpriseValue: rawValue(stats.enterpriseValue),
+    trailingPE: rawValue(stats.trailingPE),
+    forwardPE: rawValue(stats.forwardPE),
+    pegRatio: rawValue(stats.pegRatio),
+    priceToBook: rawValue(stats.priceToBook),
+    eps: rawValue(fin.earningsPerShare ?? stats.trailingEps),
+    revenue: rawValue(fin.totalRevenue),
+    revenueGrowth: rawValue(fin.revenueGrowth),
+    grossMargin: rawValue(fin.grossMargins),
+    operatingMargin: rawValue(fin.operatingMargins),
+    profitMargin: rawValue(fin.profitMargins),
+    returnOnEquity: rawValue(fin.returnOnEquity),
+    debtToEquity: rawValue(fin.debtToEquity),
+    dividendYield: rawValue(stats.dividendYield),
+    beta: rawValue(stats.beta),
+  };
+}
+
+function rawValue(field: { raw?: number } | undefined): number {
+  return field?.raw ?? 0;
+}
+
+interface YahooQuoteSummaryResponse {
+  quoteSummary?: {
+    result?: Array<{
+      defaultKeyStatistics?: Record<string, { raw?: number }>;
+      financialData?: Record<string, { raw?: number }>;
+      summaryProfile?: { shortName?: string; sector?: string; industry?: string };
+    }>;
+  };
+}
