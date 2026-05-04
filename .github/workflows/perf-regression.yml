@@ -64,6 +64,31 @@ jobs:
           fi
         continue-on-error: true
 
+      - name: Run Lighthouse for Web Vitals
+        id: lighthouse
+        run: |
+          npm install -g @lhci/cli@0.14.x
+          npx vite preview --port 4173 &
+          sleep 3
+          lhci collect --url=http://localhost:4173/ --settings.preset=desktop --numberOfRuns=1 || true
+          if [ -f ".lighthouseci/lhr-0.json" ]; then
+            LCP=$(jq '.audits["largest-contentful-paint"].numericValue // 0' .lighthouseci/lhr-0.json)
+            TBT=$(jq '.audits["total-blocking-time"].numericValue // 0' .lighthouseci/lhr-0.json)
+            CLS=$(jq '.audits["cumulative-layout-shift"].numericValue // 0' .lighthouseci/lhr-0.json)
+            PERF=$(jq '.categories.performance.score // 0' .lighthouseci/lhr-0.json)
+            echo "lcp=$(echo "$LCP" | xargs printf '%.0f')" >> "$GITHUB_OUTPUT"
+            echo "tbt=$(echo "$TBT" | xargs printf '%.0f')" >> "$GITHUB_OUTPUT"
+            echo "cls=$CLS" >> "$GITHUB_OUTPUT"
+            echo "perf=$PERF" >> "$GITHUB_OUTPUT"
+          else
+            echo "lcp=0" >> "$GITHUB_OUTPUT"
+            echo "tbt=0" >> "$GITHUB_OUTPUT"
+            echo "cls=0" >> "$GITHUB_OUTPUT"
+            echo "perf=0" >> "$GITHUB_OUTPUT"
+          fi
+          kill %1 2>/dev/null || true
+        continue-on-error: true
+
       - name: Compare and comment
         uses: actions/github-script@v7
         with:
@@ -80,6 +105,12 @@ jobs:
             const prJsKb = (prJs / 1024).toFixed(1);
             const prCssKb = (prCss / 1024).toFixed(1);
 
+            const lcp = '${{ steps.lighthouse.outputs.lcp }}' || '—';
+            const tbt = '${{ steps.lighthouse.outputs.tbt }}' || '—';
+            const cls = '${{ steps.lighthouse.outputs.cls }}' || '—';
+            const perf = '${{ steps.lighthouse.outputs.perf }}' || '—';
+            const perfPct = perf !== '—' ? (parseFloat(perf) * 100).toFixed(0) + '%' : '—';
+
             const BUDGET_KB = 200;
             const WARNING_THRESHOLD = 5 * 1024; // 5 KB increase triggers warning
 
@@ -94,6 +125,15 @@ jobs:
               '|-------|------------|-----------|--------|',
               `| JS | ${prJsKb} KB | ${jsDiff >= 0 ? '+' : ''}${jsDiffKb} KB | ${BUDGET_KB} KB |`,
               `| CSS | ${prCssKb} KB | ${cssDiff >= 0 ? '+' : ''}${cssDiffKb} KB | — |`,
+              '',
+              '### ⚡ Web Vitals (Lighthouse)',
+              '',
+              '| Metric | Value | Budget |',
+              '|--------|-------|--------|',
+              `| LCP | ${lcp} ms | 2500 ms |`,
+              `| TBT | ${tbt} ms | 300 ms |`,
+              `| CLS | ${cls} | 0.1 |`,
+              `| Perf Score | ${perfPct} | 90% |`,
               '',
               `**Status:** ${status}`,
               '',
