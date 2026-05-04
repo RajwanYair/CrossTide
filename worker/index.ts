@@ -31,6 +31,12 @@ import { handleOgImage } from "./routes/og.js";
 import { handleSignalDslExecute } from "./routes/signal-dsl.js";
 import { handleOpenApiSpec } from "./routes/openapi.js";
 import { handleCspReport } from "./routes/csp-report.js";
+import {
+  isPreviewEnvironment,
+  getFixtureQuote,
+  getFixtureChart,
+  getFixtureSearch,
+} from "./fixtures.js";
 
 export interface KVNamespace {
   get(key: string, type: "text"): Promise<string | null>;
@@ -132,13 +138,36 @@ app.use("*", async (c, next) => {
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
+// P12: Preview deployments serve fixture data (no API keys required)
+app.get("/api/chart", (c) => {
+  if (isPreviewEnvironment(c.env)) {
+    const url = new URL(c.req.url);
+    const symbol = url.searchParams.get("symbol") ?? "AAPL";
+    const range = url.searchParams.get("range") ?? "1y";
+    const data = getFixtureChart(symbol, range);
+    return c.json({ ...data, source: "fixture", symbol, range });
+  }
+  return handleChart(new URL(c.req.url), c.env);
+});
+
+app.get("/api/quote/:symbol", (c) => {
+  if (isPreviewEnvironment(c.env)) {
+    const quote = getFixtureQuote(c.req.param("symbol"));
+    if (quote) return c.json({ ...quote, source: "fixture" });
+  }
+  return handleQuote(c.req.param("symbol"), c.env);
+});
+
+app.get("/api/search", (c) => {
+  if (isPreviewEnvironment(c.env)) {
+    const url = new URL(c.req.url);
+    const q = url.searchParams.get("q") ?? "";
+    return c.json({ results: getFixtureSearch(q), source: "fixture" });
+  }
+  return Promise.resolve(handleSearch(new URL(c.req.url), c.env));
+});
+
 app.get("/api/health", (c) => Promise.resolve(handleHealth(c.env)));
-
-app.get("/api/chart", (c) => handleChart(new URL(c.req.url), c.env));
-
-app.get("/api/quote/:symbol", (c) => handleQuote(c.req.param("symbol"), c.env));
-
-app.get("/api/search", (c) => Promise.resolve(handleSearch(new URL(c.req.url), c.env)));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 
