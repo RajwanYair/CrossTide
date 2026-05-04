@@ -69,6 +69,7 @@ import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
 import { evaluateAlertRules } from "./core/alert-rules-evaluator";
 import { checkWhatsNew } from "./core/whats-new";
 import { openShortcutsDialog } from "./ui/shortcuts-dialog";
+import { updateFreshnessIndicator } from "./ui/freshness-indicator";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const prefetchedCards = new Set<RouteName>();
@@ -352,6 +353,8 @@ function main(): void {
     } else {
       updateStatus(`Updated ${new Date().toLocaleTimeString()}`);
     }
+
+    updateFreshnessIndicator();
   }
 
   function scheduleRefresh(): void {
