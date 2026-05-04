@@ -6,6 +6,39 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.12.0] - 2026-05-04
+
+### Highlights
+
+Phase R feature sprint: 10 trading & portfolio analysis modules — price
+targets, sector allocation, risk/reward evaluation, correlation analysis,
+gap scanning, and portfolio rebalancing.
+
+### Added
+
+- **Price target tracker (R1)**: Set/track price targets with progress-to-target
+  calculations, hit detection for long/short directions.
+- **Sector allocation calculator (R2)**: Per-sector weightings, Herfindahl
+  concentration index, over/underweight detection.
+- **Intraday high/low distance (R3)**: Position-in-range (0–1) metric,
+  near-high/near-low filters, widest/narrowest range screens.
+- **Ticker comparison table (R4)**: Side-by-side metrics with best/worst
+  identification, 52-week distance, performance ranking.
+- **Risk/reward ratio calculator (R5)**: R:R analysis for long/short setups,
+  position sizing from risk budget, expected value calculation.
+- **Pair correlation calculator (R6)**: Pearson correlation between return
+  series, NxN matrix builder, most/least correlated pairs.
+- **Earnings surprise tracker (R7)**: Beat/miss analysis with revenue
+  surprise, beat rate, streak tracking, magnitude classification.
+- **Watchlist export formatter (R8)**: CSV, TSV, JSON, text export with
+  date-stamped filenames and flexible import parsing.
+- **Gap detection scanner (R9)**: Gap-up/down identification with same-day
+  fill detection, fill rate statistics, unfilled gap tracking.
+- **Portfolio rebalance calculator (R10)**: Drift-based rebalance plans with
+  buy/sell/hold actions, share count derivation, target validation.
+
+---
+
 ## [11.11.0] - 2025-07-05
 
 ### Highlights
