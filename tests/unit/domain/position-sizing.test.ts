@@ -5,6 +5,7 @@ import {
   fixedFractionalSize,
   kellyFraction,
   halfKellySize,
+  computeBacktestShares,
 } from "../../../src/domain/position-sizing";
 
 describe("position-sizing", () => {
@@ -92,5 +93,39 @@ describe("position-sizing", () => {
 
   it("halfKellySize handles bad inputs", () => {
     expect(halfKellySize({ winRate: 0.6, avgWin: 1, avgLoss: 1 }, 0, 100)).toBe(0);
+  });
+
+  describe("computeBacktestShares", () => {
+    it("fixed mode returns configured quantity", () => {
+      expect(computeBacktestShares({ mode: "fixed", fixedQuantity: 50 }, 10000, 100)).toBe(50);
+    });
+
+    it("percentage mode allocates fraction of equity", () => {
+      // 10% of 10k = 1000, at $100 = 10 shares
+      expect(computeBacktestShares({ mode: "percentage", percentOfEquity: 0.1 }, 10000, 100)).toBe(
+        10,
+      );
+    });
+
+    it("kelly mode uses stats and multiplier", () => {
+      const stats = { winRate: 0.6, avgWin: 2, avgLoss: 1 };
+      const shares = computeBacktestShares(
+        { mode: "kelly", kellyMultiplier: 0.5 },
+        10000,
+        100,
+        stats,
+      );
+      // Kelly fraction ≈ 0.4, half = 0.2 → ~20 shares (flooring may give 19-20)
+      expect(shares).toBeGreaterThanOrEqual(19);
+      expect(shares).toBeLessThanOrEqual(20);
+    });
+
+    it("kelly mode returns 1 when no stats provided", () => {
+      expect(computeBacktestShares({ mode: "kelly", kellyMultiplier: 0.5 }, 10000, 100)).toBe(1);
+    });
+
+    it("returns 0 for invalid price", () => {
+      expect(computeBacktestShares({ mode: "fixed", fixedQuantity: 10 }, 10000, 0)).toBe(0);
+    });
   });
 });

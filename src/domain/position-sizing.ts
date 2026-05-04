@@ -92,3 +92,50 @@ export function halfKellySize(input: KellyInput, accountEquity: number, price: n
   const f = kellyFraction(input) / 2;
   return (accountEquity * f) / price;
 }
+
+// ── Q9: Unified backtest position sizing config ───────────────────────────────
+
+export type BacktestSizingMode = "fixed" | "percentage" | "kelly";
+
+export interface BacktestSizingConfig {
+  readonly mode: BacktestSizingMode;
+  /** For "fixed" mode: number of shares per trade. */
+  readonly fixedQuantity?: number;
+  /** For "percentage" mode: fraction of equity (e.g. 0.1 = 10%). */
+  readonly percentOfEquity?: number;
+  /** For "kelly" mode: Kelly fraction multiplier (e.g. 0.5 = half Kelly). */
+  readonly kellyMultiplier?: number;
+}
+
+export const DEFAULT_BACKTEST_SIZING: BacktestSizingConfig = {
+  mode: "fixed",
+  fixedQuantity: 100,
+};
+
+/**
+ * Compute share count for a backtest trade using the configured sizing mode.
+ */
+export function computeBacktestShares(
+  config: BacktestSizingConfig,
+  equity: number,
+  price: number,
+  stats?: KellyInput,
+): number {
+  if (price <= 0 || equity <= 0) return 0;
+
+  switch (config.mode) {
+    case "fixed":
+      return config.fixedQuantity ?? 100;
+    case "percentage": {
+      const pct = config.percentOfEquity ?? 0.1;
+      return Math.max(1, Math.floor((equity * pct) / price));
+    }
+    case "kelly": {
+      const mult = config.kellyMultiplier ?? 0.5;
+      const kf = stats ? kellyFraction(stats) : 0;
+      const effectiveFraction = Math.min(kf * mult, 0.25); // Cap at 25%
+      if (effectiveFraction <= 0) return 1;
+      return Math.max(1, Math.floor((equity * effectiveFraction) / price));
+    }
+  }
+}
