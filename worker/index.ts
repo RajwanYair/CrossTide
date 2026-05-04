@@ -37,6 +37,7 @@ import {
   getFixtureChart,
   getFixtureSearch,
 } from "./fixtures.js";
+import { createLogger } from "./logger.js";
 
 export interface KVNamespace {
   get(key: string, type: "text"): Promise<string | null>;
@@ -97,6 +98,18 @@ app.use("*", async (c, next) => {
   c.set("requestId", requestId);
   await next();
   c.res.headers.set("X-Request-ID", requestId);
+});
+
+// ── P13: Structured request logging ──────────────────────────────────────────
+app.use("*", async (c, next) => {
+  const start = Date.now();
+  const logger = createLogger({
+    requestId: c.get("requestId"),
+    method: c.req.method,
+    route: new URL(c.req.url).pathname,
+  });
+  await next();
+  logger.info("request", { status: c.res.status, latencyMs: Date.now() - start });
 });
 
 // ── Rate limiting (exempt: OPTIONS handled above) ─────────────────────────────
