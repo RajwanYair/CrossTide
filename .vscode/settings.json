@@ -43,5 +43,12 @@
   "html.validate.scripts": true,
   "html.validate.styles": true,
   "html.format.wrapLineLength": 120,
-  "html.customData": ["./config/html-custom-data.json"]
+  "html.customData": ["./config/html-custom-data.json"],
+
+  // GitHub Copilot
+  "github.copilot.enable": {
+    "*": true
+  },
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "chat.instructionsFilesLocations": [".github/copilot-instructions.md"]
 }

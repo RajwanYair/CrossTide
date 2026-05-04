@@ -20,7 +20,7 @@ or to **share** pre-fetched data between a route change handler and the card.
 
 Add `defineRoute<TData>({ name, loader })` to the router module:
 
-- **`loader`** — `async (ctx: RouteLoaderCtx) => TData`  
+- **`loader`** — `async (ctx: RouteLoaderCtx) => TData`
   Receives `{ params, signal }` and runs concurrently with view activation.
 - **`fireLoaders(info, signal)`** — called inside `handleRoute()` and
   `onNavigateEvent` immediately after `abortNavigation()`.

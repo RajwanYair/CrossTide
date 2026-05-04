@@ -66,7 +66,10 @@ chore(scope): maintenance (deps, CI, config)
 perf(scope): performance improvement
 ```
 
-Common scopes: `watchlist`, `chart`, `screener`, `portfolio`, `core`, `worker`, `ci`, `docs`
+Common scopes: `watchlist` · `chart` · `screener` · `portfolio` · `rebalance` · `alerts` ·
+`consensus` · `core` · `worker` · `domain` · `ui` · `ci` · `docs`
+
+Subjects must be **fully lowercase** — `feat(worker): add earnings calendar api endpoint` ✅
 
 ## Architecture Overview
 
@@ -98,6 +101,23 @@ src/
 | E2E tests     | `tests/e2e/`     | Playwright       | `npm run test:e2e`     |
 
 **Rules:**
+
+- Domain tests are pure — no mocks needed
+- Use `makeCandles(prices)` from `tests/helpers/candle-factory.ts` for test data
+- Worker tests must mock `globalThis.fetch` — never make real network calls
+- Core/card tests mock `localStorage` via `vi.stubGlobal`
+- Coverage thresholds: 90% statements/lines/functions, 80% branches
+- Use `it.each` for parameterized tests over repeated `it` blocks
+
+## Non-Negotiable Rules
+
+- **No `eslint-disable`** — fix the root cause
+- **No `@ts-ignore`** — fix the type, not the error
+- **No `TODO` in code** — open a GitHub Issue instead
+- **No dead code** — every export must be used
+- **No `console.log`** — use `console.warn`/`console.error` only
+- **No floating promises** — use `void asyncFn()` or `await`
+- **No raw `innerHTML =`** — use `patchDOM()` from `core/patch-dom`
 
 - Domain logic: always add unit tests (aim for 100% branch coverage)
 - UI changes: add at least one integration test

@@ -36,11 +36,17 @@ body:
         - Screener
         - Alerts
         - Portfolio
+        - Rebalance
+        - Earnings Calendar
         - Consensus/Signals
+        - Signal DSL / Backtest
+        - Risk Metrics
+        - Worker API
         - Settings/Config
         - Performance
         - Accessibility
-        - Mobile
+        - Mobile / PWA
+        - Documentation
         - Other
     validations:
       required: true

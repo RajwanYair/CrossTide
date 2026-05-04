@@ -1,8 +1,8 @@
 # CrossTide — Strategic Roadmap v5 (Full Rethink)
 
 > **Date:** May 4, 2026
-> **Current version:** v11.20.0
-> **Codebase:** 424 modules · 5,718 tests · 506 test files · 24 route cards
+> **Current version:** v11.26.0
+> **Codebase:** 424+ modules · 5,718+ tests · 506+ test files · 25 route cards
 > **Bundle:** 158 KB gzip (budget 200 KB) · 49 SW precache entries
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
 > **Previous roadmaps:** `docs/ROADMAP.archive-2026-05-v4.md`
@@ -27,6 +27,7 @@
 14. [Decision Log — Reaffirmed / Reversed / New](#14-decision-log)
 15. [Risks & Mitigations](#15-risks--mitigations)
 16. [Scope Boundaries](#16-scope-boundaries)
+17. [Engineering Non-Negotiables](#17-engineering-non-negotiables)
 
 ---
 
@@ -915,6 +916,67 @@ All tasks from Phases A-N (v1.0 through v11.20.0) are **complete**. Key mileston
 - P: Make backend real, fix architectural foundations
 - Q: Close feature gaps vs commercial competitors
 - R: Public launch preparation
+
+---
+
+## 17. Engineering Non-Negotiables
+
+> Extracted governance rules that apply to every change in this repository.
+> No exceptions. No waivers. Fix root causes.
+
+### 17.1 Code Integrity
+
+1. **No suppressions** — no `eslint-disable`, no `@ts-ignore`, no `--force` flags
+2. **No dead artifacts** — every file, export, dep, and config entry must be referenced
+3. **No `TODO` in code** — open a GitHub Issue for every deferred item
+4. **No secrets in source** — `.env` for local keys; Cloudflare Secrets for production
+5. **Validation at boundaries** — sanitize all external input before processing
+
+### 17.2 Architecture Integrity
+
+6. **Layer imports are one-way** — domain never imports from core/cards/ui
+7. **Domain stays pure** — no DOM, no `fetch`, no `Date.now()`, no `Math.random()`
+8. **Worker imports use `.js`** — CF Workers ESM requires explicit extensions
+9. **patchDOM, not innerHTML** — raw innerHTML breaks morphdom diffing
+10. **Cards use `void asyncFn()`** — floating promises are a lint error
+
+### 17.3 Quality Gates (all required for merge)
+
+| Gate       | Command                 | Requirement             |
+| ---------- | ----------------------- | ----------------------- |
+| Type check | `npm run typecheck`     | Zero errors             |
+| ESLint     | `npm run lint`          | Zero warnings           |
+| Stylelint  | `npm run lint:css`      | Zero CSS warnings       |
+| HTMLHint   | `npm run lint:html`     | Zero issues             |
+| Prettier   | `npm run format:check`  | Exit 0                  |
+| Tests      | `npm run test:coverage` | All pass, ≥90% coverage |
+| Build      | `npm run build`         | Successful              |
+| Bundle     | `npm run check:bundle`  | Under 200 KB gzip       |
+
+Run all: `npm run ci`
+
+### 17.4 Roadmap Governance
+
+- **Roadmap as single source of truth** — all work maps to an existing item or a new item is added first
+- **Phased execution only** — work one phase at a time; no big-bang scope changes
+- **Each change records:** what was done, what was deferred, validation performed
+- **New discoveries go to backlog** — don't implement if it breaks phase scope
+
+### 17.5 Copilot Chat Control Prompt
+
+Paste at the start of each Copilot session to enforce governance:
+
+```
+Control Rules (Copilot Chat):
+- Treat ROADMAP.md as the single source of truth for scope, priorities, and sequencing.
+- Follow the layer rules in ARCHITECTURE.md and copilot-instructions.md at all times.
+- Domain layer must be pure: no DOM, no fetch, no Date.now(), no Math.random().
+- Worker tests must mock globalThis.fetch — no real network calls in tests.
+- Use patchDOM() not innerHTML. Use void asyncFn() not bare floating promises.
+- No eslint-disable, no @ts-ignore, no TODO in code.
+- Every response must state: 1) what is done, 2) what is deferred, 3) validation performed.
+- Git commit after each sprint with conventional commit format.
+```
 
 ---
 

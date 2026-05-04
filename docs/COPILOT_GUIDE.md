@@ -4,27 +4,32 @@ Coding conventions, prompt patterns, and guardrails for using GitHub Copilot in 
 
 ## Stack
 
-| Area     | Tool                 | Version |
-| -------- | -------------------- | ------- |
-| Language | TypeScript (strict)  | 5.8+    |
-| Build    | Vite                 | 6.3+    |
-| Test     | Vitest + happy-dom   | 3.1+    |
-| Lint     | ESLint flat config   | 9.25+   |
-| CSS      | Vanilla CSS + @layer | --      |
-| Format   | Prettier             | 3.5+    |
+| Area     | Tool                          | Version |
+| -------- | ----------------------------- | ------- |
+| Language | TypeScript (strict)           | 6.0     |
+| Build    | Vite                          | 8       |
+| Test     | Vitest + happy-dom            | 4       |
+| Lint     | ESLint flat config            | 9       |
+| CSS      | Vanilla CSS + @layer + @scope | —       |
+| Format   | Prettier                      | 3.5+    |
+| Worker   | Hono on Cloudflare Workers    | 4       |
 
 ## Architecture
 
 ```text
 src/
-  domain/   Pure calculators (SMA, EMA, RSI, MACD, consensus) -- zero side effects
-  core/     State, cache, config, fetch -- may have side effects
-  ui/       Router, theme, view renderers -- DOM access
-  types/    Shared interfaces and type aliases
-  styles/   CSS design tokens + components (@layer system)
+  types/      ← shared interfaces only — no imports from other layers
+  domain/     ← pure functions only — no DOM, no fetch, no storage, no Date.now()
+  core/       ← state, config, caching, fetch — no UI code
+  providers/  ← data provider adapters (Yahoo, Finnhub, etc.)
+  cards/      ← route cards (CardModule pattern: mount/update/dispose)
+  ui/         ← router, theme, toast, dialogs — DOM access allowed
+  styles/     ← CSS layers: tokens, base, components, responsive
+  locales/    ← i18n translation dictionaries
 ```
 
-**Dependency rule:** domain -> types only. core -> domain + types. ui -> core + domain + types.
+**Dependency rule:** domain → types only. core → domain + types. cards → core + domain + types. ui → all.
+ESLint enforces these import directions — no exceptions.
 
 ## Coding Conventions
 
@@ -82,6 +87,40 @@ CrossTide evaluates 12 trading methods combined through a consensus engine:
 
 **Consensus rule**: `BUY` = Micho BUY + >=1 other BUY. `SELL` = Micho SELL + >=1 other SELL.
 
+## Route Cards (25 cards)
+
+| Card                     | Route               | Key feature                           |
+| ------------------------ | ------------------- | ------------------------------------- |
+| `watchlist-card`         | `watchlist`         | Real-time quotes + consensus scores   |
+| `chart-card`             | `chart`             | OHLCV candles + LWC v5                |
+| `consensus-card`         | `consensus`         | 12-method signal aggregation          |
+| `screener-card`          | `screener`          | Signal DSL-based technical screener   |
+| `portfolio-card`         | `portfolio`         | Holdings P/L + sector allocation      |
+| `rebalance-card`         | `rebalance`         | Target allocation drift + trade plan  |
+| `alerts-card`            | `alerts`            | Price/indicator alert rules           |
+| `backtest-card`          | `backtest`          | Web Worker backtester + DSL           |
+| `earnings-calendar-card` | `earnings-calendar` | Earnings dates + EPS surprise history |
+| `risk-card`              | `risk`              | VaR, beta, Sharpe, drawdown           |
+| `signal-dsl-card`        | `signal-dsl`        | Interactive DSL expression editor     |
+| (+ 14 more)              | —                   | Heatmap, screener, macro, etc.        |
+
+## Route Cards (25 cards)
+
+| Card                     | Route               | Key feature                           |
+| ------------------------ | ------------------- | ------------------------------------- |
+| `watchlist-card`         | `watchlist`         | Real-time quotes + consensus scores   |
+| `chart-card`             | `chart`             | OHLCV candles + LWC v5                |
+| `consensus-card`         | `consensus`         | 12-method signal aggregation          |
+| `screener-card`          | `screener`          | Signal DSL-based technical screener   |
+| `portfolio-card`         | `portfolio`         | Holdings P/L + sector allocation      |
+| `rebalance-card`         | `rebalance`         | Target allocation drift + trade plan  |
+| `alerts-card`            | `alerts`            | Price/indicator alert rules           |
+| `backtest-card`          | `backtest`          | Web Worker backtester + DSL           |
+| `earnings-calendar-card` | `earnings-calendar` | Earnings dates + EPS surprise history |
+| `risk-card`              | `risk`              | VaR, beta, Sharpe, drawdown           |
+| `signal-dsl-card`        | `signal-dsl`        | Interactive DSL expression editor     |
+| (+ 14 more)              | —                   | Heatmap, screener, macro, etc.        |
+
 ## Quality Gates -- Zero Tolerance
 
 | Gate       | Command                 | Requirement              |
@@ -134,26 +173,36 @@ describe("computeSma", () => {
 ### Add a new technical indicator
 
 ```text
-Create a pure function in src/domain/ that computes [indicator name].
-Follow computeSma pattern: accept DailyCandle[] + config params, return series or null.
-Add unit tests in tests/unit/domain/ covering: exact values, insufficient data, edge cases.
-Import makeCandles from tests/helpers/candle-factory.ts.
+Create a pure function in src/domain/indicators/ computing [indicator name].
+Follow the computeSma/computeEma pattern: accept DailyCandle[] + params, return number[] | null.
+Add unit tests in tests/unit/domain/ using makeCandles from tests/helpers/candle-factory.ts.
+Cover: exact values, insufficient data, edge cases.
 ```
 
-### Add a new view
+### Add a new worker API route
 
 ```text
-Create a view renderer in src/ui/.
-Add route in router.ts.
-Add section in index.html with id="view-[name]".
-Follow the watchlist.ts pattern for DOM rendering.
+Create worker/routes/[name].ts following the fundamentals.ts pattern.
+Validate input, check KV cache, fetch from provider, cache result, return Response.json().
+Add the handler to worker/index.ts with app.get("/api/[path]", ...).
+Write tests in tests/unit/worker/[name].test.ts — mock globalThis.fetch.
+```
+
+### Add a new card
+
+```text
+Create src/cards/[name]-card.ts with a default CardModule export.
+Use patchDOM() for rendering. Use data-action for event delegation.
+Register it in src/cards/registry.ts and add the route to src/ui/router.ts RouteName.
+Add the view section to index.html: <section id="view-[name]" class="view">.
+Write tests in tests/unit/cards/[name]-card.test.ts.
 ```
 
 ### Write tests for domain logic
 
 ```text
-Write unit tests for [function name] in tests/unit/domain/.
+Write Vitest tests for [function] in tests/unit/domain/.
 Import makeCandles from tests/helpers/candle-factory.ts.
-Cover: normal operation, edge cases (empty input, insufficient data),
-boundary values, and parameterized tests with it.each where appropriate.
+Cover: normal operation, edge cases (empty/insufficient input), boundary values.
+Use it.each for parameterized cases.
 ```
