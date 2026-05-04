@@ -30,6 +30,7 @@ import {
   type WatchlistQuote,
 } from "./ui/watchlist";
 import { loadCard, type CardHandle, type CardContext } from "./cards/registry";
+import { mountWithBoundary } from "./ui/error-boundary";
 import { showToast } from "./ui/toast";
 import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
 import type { PaletteCommand } from "./ui/command-palette";
@@ -141,14 +142,10 @@ async function activateCard(
     existing.update?.(ctx);
     return;
   }
-  try {
-    const mod = await loadCard(route);
-    const handle = mod.mount(el, ctx);
-    if (handle) cardHandles.set(route, handle);
-  } catch (err) {
-    el.innerHTML = `<p class="empty-state">Failed to load ${route} card.</p>`;
-    console.error("Card load failed:", route, err);
-  }
+  const handle = await mountWithBoundary(el, ctx, () => loadCard(route), {
+    onError: (err) => console.error("Card error:", route, err),
+  });
+  cardHandles.set(route, handle);
 }
 
 function main(): void {
