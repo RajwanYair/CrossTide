@@ -33,6 +33,7 @@ import { handleOpenApiSpec } from "./routes/openapi.js";
 import { handleCspReport } from "./routes/csp-report.js";
 import { handleFundamentals } from "./routes/fundamentals.js";
 import { handleNewsSentiment } from "./routes/news-sentiment.js";
+import { handleScheduledAlertEval } from "./routes/alert-eval.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -94,6 +95,18 @@ export interface Env {
   OTEL_EXPORTER_OTLP_ENDPOINT?: string;
   /** R3: Durable Object namespace for WebSocket ticker fan-out. */
   TICKER_FANOUT?: DurableObjectNamespace;
+}
+
+/** Cloudflare Workers ScheduledEvent (Cron Trigger). */
+interface ScheduledEvent {
+  scheduledTime: number;
+  cron: string;
+}
+
+/** Cloudflare Workers ExecutionContext. */
+interface ExecutionContext {
+  waitUntil(promise: Promise<unknown>): void;
+  passThroughOnException(): void;
 }
 
 const app = new Hono<{ Bindings: Env; Variables: { requestId: string; traceparent: string } }>({
@@ -252,4 +265,14 @@ app.notFound((c) => {
   );
 });
 
-export default app;
+export default {
+  fetch: app.fetch,
+  /** R7: Cloudflare Cron Trigger — evaluate server-side alert rules. */
+  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    const fired = await handleScheduledAlertEval(env);
+    if (fired.length > 0) {
+      // Future: dispatch notifications (push, email, webhook)
+      ctx.waitUntil(Promise.resolve());
+    }
+  },
+};
