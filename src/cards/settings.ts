@@ -6,6 +6,8 @@ import { DEFAULT_METHOD_WEIGHTS } from "../types/domain";
 import { FINNHUB_KEY_STORAGE } from "../core/finnhub-stream-manager";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
+import { getLocale, setLocale } from "../core/i18n";
+import { SUPPORTED_LOCALES, LOCALE_LABELS } from "../locales";
 
 const METHOD_NAMES = [
   "Micho",
@@ -78,6 +80,12 @@ export function renderSettings(
       </select>
     </div>
     <div class="setting-group">
+      <label for="locale-select">Language</label>
+      <select id="locale-select" data-action="locale-change">
+        ${SUPPORTED_LOCALES.map((l) => `<option value="${l}"${l === getLocale() ? " selected" : ""}>${LOCALE_LABELS[l]}</option>`).join("")}
+      </select>
+    </div>
+    <div class="setting-group">
       <label>Watchlist</label>
       <span class="text-secondary">${config.watchlist.length} tickers</span>
     </div>
@@ -130,6 +138,7 @@ export function renderSettings(
   );
 
   const themeSelect = container.querySelector<HTMLSelectElement>("#theme-select");
+  const localeSelect = container.querySelector<HTMLSelectElement>("#locale-select");
 
   // Delegated button actions
   const keyInput = container.querySelector<HTMLInputElement>("#finnhub-key-input");
@@ -167,6 +176,11 @@ export function renderSettings(
       "theme-change": () => {
         if (themeSelect) {
           callbacks.onThemeChange(themeSelect.value as AppConfig["theme"]);
+        }
+      },
+      "locale-change": () => {
+        if (localeSelect) {
+          setLocale(localeSelect.value);
         }
       },
       "card-picker-change": () => {
