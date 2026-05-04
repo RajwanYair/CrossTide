@@ -63,6 +63,7 @@ import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initOfflineIndicator } from "./ui/offline-indicator";
 import { initCardCollapse } from "./ui/card-collapse";
+import { initDashboardStats } from "./ui/dashboard-stats";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
 import { createAutocomplete } from "./ui/ticker-autocomplete";
@@ -371,6 +372,7 @@ function main(): void {
   initRouter();
   initOfflineIndicator();
   initCardCollapse();
+  initDashboardStats();
   checkWhatsNew();
   refreshWatchlist(config, new Map());
 
