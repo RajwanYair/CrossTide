@@ -75,10 +75,12 @@ export function loadConfig(): AppConfig {
     const rawWeights = rawCfg["methodWeights"];
     const methodWeights: MethodWeights | undefined = parseMethodWeights(rawWeights);
     const cardSettings: CardSettingsMap | undefined = parseCardSettings(rawCfg["cardSettings"]);
+    const refreshIntervalMs: number | undefined = parseRefreshInterval(rawCfg["refreshIntervalMs"]);
 
     const baseConfig = watchlist === cfg.watchlist ? cfg : { ...cfg, watchlist };
     const withWeights = methodWeights !== undefined ? { ...baseConfig, methodWeights } : baseConfig;
-    return cardSettings !== undefined ? { ...withWeights, cardSettings } : withWeights;
+    const withCards = cardSettings !== undefined ? { ...withWeights, cardSettings } : withWeights;
+    return refreshIntervalMs !== undefined ? { ...withCards, refreshIntervalMs } : withCards;
   } catch {
     return DEFAULT_CONFIG;
   }
@@ -295,4 +297,14 @@ function parseSingleCardSettings(cardId: CardId, raw: unknown): unknown {
       return r.success ? r.output : undefined;
     }
   }
+}
+
+/** Valid refresh intervals: 1 min to 60 min. */
+const MIN_REFRESH_MS = 60_000;
+const MAX_REFRESH_MS = 3_600_000;
+
+function parseRefreshInterval(raw: unknown): number | undefined {
+  if (typeof raw !== "number" || !isFinite(raw)) return undefined;
+  if (raw < MIN_REFRESH_MS || raw > MAX_REFRESH_MS) return undefined;
+  return raw;
 }

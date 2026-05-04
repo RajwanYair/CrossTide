@@ -359,7 +359,8 @@ function main(): void {
 
   function scheduleRefresh(): void {
     if (refreshTimer) clearTimeout(refreshTimer);
-    refreshTimer = setTimeout(() => void refreshData(), 5 * 60 * 1000); // 5 min
+    const interval = config.refreshIntervalMs ?? 300_000; // default 5 min
+    refreshTimer = setTimeout(() => void refreshData(), interval);
   }
 
   // Initialize UI

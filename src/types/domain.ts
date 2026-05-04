@@ -105,6 +105,8 @@ export interface AppConfig {
   readonly methodWeights?: MethodWeights;
   /** Per-card isolated settings namespace (G24). */
   readonly cardSettings?: CardSettingsMap;
+  /** Auto-refresh interval in milliseconds (default 300000 = 5 min). */
+  readonly refreshIntervalMs?: number;
 }
 
 /** Cards that expose local, per-card settings in the global config. */

@@ -58,6 +58,10 @@ const settingsCard: CardModule = {
         saveConfig({ ...latest, cardSettings: nextCardSettings });
         updateCardSettingsSignal(cardId, settings);
       },
+      onRefreshIntervalChange(ms) {
+        const latest = loadConfig();
+        saveConfig({ ...latest, refreshIntervalMs: ms });
+      },
     });
     return { dispose: () => delegate.dispose() };
   },

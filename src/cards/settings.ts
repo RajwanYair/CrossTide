@@ -41,6 +41,8 @@ export interface SettingsCallbacks {
     cardId: K,
     settings: NonNullable<CardSettingsMap[K]>,
   ) => void;
+  /** Called when user changes auto-refresh interval. */
+  onRefreshIntervalChange?: (ms: number) => void;
 }
 
 const CARD_SETTINGS_OPTIONS: ReadonlyArray<{ id: CardId; label: string }> = [
@@ -83,6 +85,12 @@ export function renderSettings(
       <label for="locale-select">Language</label>
       <select id="locale-select" data-action="locale-change">
         ${SUPPORTED_LOCALES.map((l) => `<option value="${l}"${l === getLocale() ? " selected" : ""}>${LOCALE_LABELS[l]}</option>`).join("")}
+      </select>
+    </div>
+    <div class="setting-group">
+      <label for="refresh-interval-select">Auto-refresh interval</label>
+      <select id="refresh-interval-select" data-action="refresh-interval-change">
+        ${renderRefreshOptions(config.refreshIntervalMs ?? 300_000)}
       </select>
     </div>
     <div class="setting-group">
@@ -183,6 +191,13 @@ export function renderSettings(
           setLocale(localeSelect.value);
         }
       },
+      "refresh-interval-change": () => {
+        const select = container.querySelector<HTMLSelectElement>("#refresh-interval-select");
+        if (select) {
+          const ms = parseInt(select.value, 10);
+          if (!isNaN(ms)) callbacks.onRefreshIntervalChange?.(ms);
+        }
+      },
       "card-picker-change": () => {
         const next = picker?.value as CardId;
         if (!CARD_SETTINGS_OPTIONS.some((o) => o.id === next)) return;
@@ -252,6 +267,22 @@ export function renderSettings(
       inputDelegate.dispose();
     },
   };
+}
+
+const REFRESH_OPTIONS: ReadonlyArray<{ ms: number; label: string }> = [
+  { ms: 60_000, label: "1 minute" },
+  { ms: 120_000, label: "2 minutes" },
+  { ms: 300_000, label: "5 minutes" },
+  { ms: 600_000, label: "10 minutes" },
+  { ms: 900_000, label: "15 minutes" },
+  { ms: 1_800_000, label: "30 minutes" },
+  { ms: 3_600_000, label: "60 minutes" },
+];
+
+function renderRefreshOptions(currentMs: number): string {
+  return REFRESH_OPTIONS.map(
+    (o) => `<option value="${o.ms}"${o.ms === currentMs ? " selected" : ""}>${o.label}</option>`,
+  ).join("");
 }
 
 function renderWeightsSection(methodWeights?: MethodWeights): string {
