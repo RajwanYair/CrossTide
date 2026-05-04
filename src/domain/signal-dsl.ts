@@ -11,24 +11,49 @@
  *   mul    := unary (('*'|'/') unary)*
  *   unary  := '-' unary | call
  *   call   := IDENT '(' (expr (',' expr)*)? ')' | atom
- *   atom   := NUMBER | IDENT | '(' expr ')' | 'true' | 'false'
+ *   atom   := NUMBER | IDENT | '(' expr ')' | 'true' | 'false' | '[' (expr,*)? ']'
  *
  * Identifiers are looked up in the supplied context (variables) or
  * called as functions if followed by `(`. No string literals, no
  * property access, no member chains — designed to be safe for untrusted
  * input.
+ *
+ * R2 extensions:
+ *  - Value now includes `readonly number[]` for numeric series
+ *  - Array literal syntax: `[1, 2, 3]`
+ *  - Built-in array functions: range, len, at, sum, avg, map, filter, reduce
+ *  - plot(name, series) — registers a named series output via PlotSink
  */
 
-export type Value = number | boolean;
+/**
+ * A scalar or array value in the DSL.
+ * R2: arrays (`readonly number[]`) are first-class values.
+ */
+export type Value = number | boolean | readonly number[];
 
 export type FnImpl = (...args: Value[]) => Value;
+
+/** R2: Callback called by `plot(name, series)` to register a named output series. */
+export type PlotSink = (name: string, series: readonly number[]) => void;
 
 export interface EvalContext {
   readonly vars?: Readonly<Record<string, Value>>;
   readonly funcs?: Readonly<Record<string, FnImpl>>;
+  /** R2: Receives `plot(name, series)` calls. */
+  readonly onPlot?: PlotSink;
 }
 
-type TokKind = "num" | "ident" | "lparen" | "rparen" | "comma" | "op" | "kw" | "eof";
+type TokKind =
+  | "num"
+  | "ident"
+  | "lparen"
+  | "rparen"
+  | "lbracket"
+  | "rbracket"
+  | "comma"
+  | "op"
+  | "kw"
+  | "eof";
 
 interface Token {
   readonly kind: TokKind;
@@ -56,6 +81,16 @@ export function tokenize(src: string): Token[] {
     }
     if (ch === ")") {
       tokens.push({ kind: "rparen", value: ")", pos: i });
+      i++;
+      continue;
+    }
+    if (ch === "[") {
+      tokens.push({ kind: "lbracket", value: "[", pos: i });
+      i++;
+      continue;
+    }
+    if (ch === "]") {
+      tokens.push({ kind: "rbracket", value: "]", pos: i });
       i++;
       continue;
     }
@@ -101,6 +136,7 @@ export function tokenize(src: string): Token[] {
 export type Node =
   | { type: "num"; value: number }
   | { type: "bool"; value: boolean }
+  | { type: "arr"; elements: Node[] }
   | { type: "ident"; name: string }
   | { type: "call"; name: string; args: Node[] }
   | { type: "unary"; op: "-" | "not"; operand: Node }
@@ -237,6 +273,20 @@ class Parser {
       this.expect("rparen");
       return inner;
     }
+    // R2: Array literal [ expr, expr, ... ]
+    if (t.kind === "lbracket") {
+      const elements: Node[] = [];
+      if (this.peek().kind !== "rbracket") {
+        elements.push(this.parseOr());
+        while (this.peek().kind === "comma") {
+          this.eat();
+          if (this.peek().kind === "rbracket") break; // trailing comma
+          elements.push(this.parseOr());
+        }
+      }
+      this.expect("rbracket");
+      return { type: "arr", elements };
+    }
     throw new SyntaxError(`Unexpected token ${t.kind} '${t.value}' at ${t.pos}`);
   }
 }
@@ -247,16 +297,78 @@ export function parse(src: string): Node {
 
 function asNumber(v: Value): number {
   if (typeof v !== "number") {
-    throw new TypeError(`Expected number, got ${typeof v}`);
+    throw new TypeError(`Expected number, got ${Array.isArray(v) ? "array" : typeof v}`);
   }
   return v;
 }
 
+function asArray(v: Value): readonly number[] {
+  if (!Array.isArray(v)) {
+    throw new TypeError(`Expected array, got ${typeof v}`);
+  }
+  return v as readonly number[];
+}
+
 function asBool(v: Value): boolean {
   if (typeof v !== "boolean") {
-    throw new TypeError(`Expected boolean, got ${typeof v}`);
+    throw new TypeError(`Expected boolean, got ${Array.isArray(v) ? "array" : typeof v}`);
   }
   return v;
+}
+
+/**
+ * R2: Built-in array functions available in every EvalContext.
+ * These are merged with any user-supplied `funcs` (user funcs take precedence).
+ */
+function builtinFuncs(ctx: EvalContext): Record<string, FnImpl> {
+  return {
+    /** range(from, to) → array of integers [from .. to] (inclusive). */
+    range: (from: Value, to: Value): Value => {
+      const a = Math.ceil(asNumber(from));
+      const b = Math.floor(asNumber(to));
+      const result: number[] = [];
+      for (let i = a; i <= b; i++) result.push(i);
+      return result;
+    },
+    /** len(arr) → number of elements. */
+    len: (arr: Value): Value => asArray(arr).length,
+    /** at(arr, index) → element at index (0-based). Negative indexing supported. */
+    at: (arr: Value, idx: Value): Value => {
+      const a = asArray(arr);
+      let i = Math.trunc(asNumber(idx));
+      if (i < 0) i += a.length;
+      if (i < 0 || i >= a.length) throw new RangeError(`Array index ${i} out of bounds`);
+      return a[i]!;
+    },
+    /** sum(arr) → sum of all elements. */
+    sum: (arr: Value): Value => asArray(arr).reduce((acc, v) => acc + v, 0),
+    /** avg(arr) → arithmetic mean. Returns 0 for empty array. */
+    avg: (arr: Value): Value => {
+      const a = asArray(arr);
+      return a.length === 0 ? 0 : a.reduce((s, v) => s + v, 0) / a.length;
+    },
+    /** min(arr) → smallest element. Returns Infinity for empty array. */
+    min: (arr: Value): Value => {
+      const a = asArray(arr);
+      return a.length === 0 ? Infinity : Math.min(...a);
+    },
+    /** max(arr) → largest element. Returns -Infinity for empty array. */
+    max: (arr: Value): Value => {
+      const a = asArray(arr);
+      return a.length === 0 ? -Infinity : Math.max(...a);
+    },
+    /**
+     * plot(name, series) → registers the series via onPlot and returns the series.
+     * `name` must be a number (DSL has no strings) — treated as a numeric ID.
+     */
+    plot: (nameVal: Value, seriesVal: Value): Value => {
+      const name = String(asNumber(nameVal));
+      const series = asArray(seriesVal);
+      ctx.onPlot?.(name, series);
+      return series;
+    },
+    ...ctx.funcs,
+  };
 }
 
 export function evaluate(node: Node, ctx: EvalContext = {}): Value {
@@ -265,6 +377,9 @@ export function evaluate(node: Node, ctx: EvalContext = {}): Value {
       return node.value;
     case "bool":
       return node.value;
+    // R2: Array literal — evaluate each element as a number.
+    case "arr":
+      return node.elements.map((el) => asNumber(evaluate(el, ctx)));
     case "ident": {
       const v = ctx.vars?.[node.name];
       if (v === undefined) {
@@ -273,7 +388,8 @@ export function evaluate(node: Node, ctx: EvalContext = {}): Value {
       return v;
     }
     case "call": {
-      const fn = ctx.funcs?.[node.name];
+      const allFuncs = builtinFuncs(ctx);
+      const fn = allFuncs[node.name];
       if (!fn) throw new ReferenceError(`Unknown function '${node.name}'`);
       const args = node.args.map((a) => evaluate(a, ctx));
       return fn(...args);

@@ -83,3 +83,93 @@ describe("signal-dsl", () => {
     expect(fn({ vars: { x: 1 } })).toBe(false);
   });
 });
+
+describe("signal-dsl R2 — arrays and plot()", () => {
+  it("tokenizes [ and ] brackets", () => {
+    const t = tokenize("[1, 2]");
+    expect(t.map((x) => x.kind)).toEqual(["lbracket", "num", "comma", "num", "rbracket", "eof"]);
+  });
+
+  it("evaluates array literal", () => {
+    const val = evaluate(parse("[1, 2, 3]"));
+    expect(val).toEqual([1, 2, 3]);
+  });
+
+  it("evaluates empty array literal", () => {
+    expect(evaluate(parse("[]"))).toEqual([]);
+  });
+
+  it("trailing comma in array is accepted", () => {
+    expect(evaluate(parse("[1, 2,]"))).toEqual([1, 2]);
+  });
+
+  it("array elements can be expressions", () => {
+    expect(evaluate(parse("[1 + 1, 2 * 3]"))).toEqual([2, 6]);
+  });
+
+  it("range(1, 5) produces [1,2,3,4,5]", () => {
+    expect(evaluate(parse("range(1, 5)"))).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it("range(3, 3) produces single-element array", () => {
+    expect(evaluate(parse("range(3, 3)"))).toEqual([3]);
+  });
+
+  it("len([1,2,3]) returns 3", () => {
+    expect(evaluate(parse("len([1, 2, 3])"))).toBe(3);
+  });
+
+  it("at([10, 20, 30], 1) returns 20", () => {
+    expect(evaluate(parse("at([10, 20, 30], 1)"))).toBe(20);
+  });
+
+  it("at with negative index: at([1,2,3], -1) returns 3", () => {
+    expect(evaluate(parse("at([1, 2, 3], -1)"))).toBe(3);
+  });
+
+  it("sum([1, 2, 3]) returns 6", () => {
+    expect(evaluate(parse("sum([1, 2, 3])"))).toBe(6);
+  });
+
+  it("avg([2, 4, 6]) returns 4", () => {
+    expect(evaluate(parse("avg([2, 4, 6])"))).toBe(4);
+  });
+
+  it("min and max", () => {
+    expect(evaluate(parse("min([5, 1, 3])"))).toBe(1);
+    expect(evaluate(parse("max([5, 1, 3])"))).toBe(5);
+  });
+
+  it("plot() calls onPlot callback and returns the series", () => {
+    const plots: { name: string; series: readonly number[] }[] = [];
+    const result = evaluate(parse("plot(1, [1, 2, 3])"), {
+      onPlot: (name, series) => plots.push({ name, series }),
+    });
+    expect(plots).toHaveLength(1);
+    expect(plots[0]!.name).toBe("1");
+    expect(plots[0]!.series).toEqual([1, 2, 3]);
+    expect(result).toEqual([1, 2, 3]);
+  });
+
+  it("plot() without onPlot does not throw", () => {
+    expect(() => evaluate(parse("plot(1, [1, 2])"))).not.toThrow();
+  });
+
+  it("array variable resolved from context", () => {
+    const result = evaluate(parse("sum(prices)"), {
+      vars: { prices: [10, 20, 30] },
+    });
+    expect(result).toBe(60);
+  });
+
+  it("user func takes precedence over builtin", () => {
+    const result = evaluate(parse("len([1, 2])"), {
+      funcs: { len: () => 99 },
+    });
+    expect(result).toBe(99);
+  });
+
+  it("at() throws for out-of-bounds index", () => {
+    expect(() => evaluate(parse("at([1, 2], 5)"))).toThrow(RangeError);
+  });
+});
