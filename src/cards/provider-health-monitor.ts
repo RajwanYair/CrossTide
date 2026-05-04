@@ -6,6 +6,7 @@
  * Only fires once per state transition (not on every poll).
  */
 import { showNotification } from "../core/notifications";
+import { patchDOM } from "../core/patch-dom";
 import { computeHealthSummary, type ProviderHealthSnapshot } from "./provider-health";
 
 export type HealthStatus = "healthy" | "degraded" | "down" | "unknown";
@@ -80,7 +81,7 @@ function showToast(title: string, body: string): void {
   const toast = document.createElement("div");
   toast.className = "toast toast-health";
   toast.setAttribute("role", "alert");
-  toast.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span>`;
+  patchDOM(toast, `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span>`);
   container.appendChild(toast);
 
   // Auto-dismiss

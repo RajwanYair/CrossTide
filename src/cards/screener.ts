@@ -135,7 +135,7 @@ export function renderScreenerResults(
   };
 
   if (shouldVirtualize(rows.length)) {
-    container.innerHTML = "";
+    container.textContent = "";
     new VirtualScroller({
       container,
       rowHeight: 36,

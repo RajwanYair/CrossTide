@@ -97,7 +97,7 @@ async function renderChartWithData(
     // Replace the static OHLC table with a real interactive LWC chart
     const canvasEl = container.querySelector<HTMLElement>(".chart-canvas");
     if (canvasEl && candles.length > 0) {
-      canvasEl.innerHTML = "";
+      canvasEl.textContent = "";
       canvasEl.style.height = "400px";
       lwHandle.current = await attachLwChart(canvasEl, { ticker, candles });
 

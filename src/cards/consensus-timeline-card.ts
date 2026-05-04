@@ -94,7 +94,7 @@ function renderTimelineCard(container: HTMLElement, initialTicker?: string): Del
   };
 
   const renderMulti = (): void => {
-    multiView.innerHTML = "";
+    multiView.textContent = "";
     for (const t of DEMO_TICKERS) {
       const wrap = document.createElement("div");
       wrap.className = "timeline-multi-item";

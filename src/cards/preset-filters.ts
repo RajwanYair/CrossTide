@@ -6,6 +6,7 @@
  */
 import type { ScreenerFilter } from "./screener";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
+import { patchDOM } from "../core/patch-dom";
 
 export interface PresetFilter {
   readonly id: string;
@@ -93,11 +94,12 @@ export function renderPresetPicker(
       </button>`,
   ).join("");
 
-  container.innerHTML = `
-    <div class="preset-picker" role="group" aria-label="Screener Presets">
+  patchDOM(
+    container,
+    `<div class="preset-picker" role="group" aria-label="Screener Presets">
       ${buttons}
-    </div>
-  `;
+    </div>`,
+  );
 
   return createDelegate(container, {
     "select-preset": (target) => {

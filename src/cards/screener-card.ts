@@ -26,7 +26,7 @@ function renderPresetButtonsHtml(): string {
 
 const screenerCard: CardModule = {
   mount(container, _ctx) {
-    container.innerHTML = "";
+    container.textContent = "";
 
     const presetSection = document.createElement("div");
     presetSection.className = "screener-controls";

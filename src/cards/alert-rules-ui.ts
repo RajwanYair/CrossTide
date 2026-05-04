@@ -130,7 +130,7 @@ export function renderAlertRulesSection(container: HTMLElement): {
   refresh: () => void;
 } {
   // Create structure
-  container.innerHTML = "";
+  container.textContent = "";
   const rulesListEl = document.createElement("div");
   rulesListEl.className = "alert-rules-list";
   container.appendChild(rulesListEl);
@@ -177,8 +177,9 @@ export function renderAlertRulesSection(container: HTMLElement): {
         if (!condContainer) return;
         const row = document.createElement("div");
         row.className = "rule-condition-row";
-        row.innerHTML = `
-          <select class="cond-type">
+        patchDOM(
+          row,
+          `<select class="cond-type">
             <option value="method">Method</option>
             <option value="consensus">Consensus</option>
           </select>
@@ -187,7 +188,8 @@ export function renderAlertRulesSection(container: HTMLElement): {
             <option value="BUY">BUY</option>
             <option value="SELL">SELL</option>
           </select>
-          <button class="btn-icon btn-danger" data-action="remove-condition" type="button">✕</button>`;
+          <button class="btn-icon btn-danger" data-action="remove-condition" type="button">✕</button>`,
+        );
         condContainer.appendChild(row);
       },
       "remove-condition": (target) => {
