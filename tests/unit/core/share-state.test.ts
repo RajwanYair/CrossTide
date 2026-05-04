@@ -6,7 +6,10 @@ import {
   readShareUrl,
   encodeWatchlistUrl,
   decodeWatchlistUrl,
+  encodeDrawingsUrl,
+  decodeDrawingsUrl,
   WATCHLIST_MAX_TICKERS,
+  DRAWINGS_MAX,
   type ShareState,
 } from "../../../src/core/share-state";
 
@@ -120,5 +123,49 @@ describe("watchlist URL encoding (D5)", () => {
     const tickers = ["AAPL", "MSFT", "GOOG", "AMZN", "META", "TSLA", "NVDA", "AMD", "INTC", "NFLX"];
     const url = encodeWatchlistUrl(tickers, "http://localhost/");
     expect(decodeWatchlistUrl(url)).toEqual(tickers);
+  });
+});
+
+describe("drawing URL sharing", () => {
+  it("round-trips drawings for a ticker", () => {
+    const drawings = [
+      {
+        kind: "line",
+        points: [
+          { x: 0, y: 100 },
+          { x: 50, y: 200 },
+        ],
+      },
+      {
+        kind: "rect",
+        points: [
+          { x: 10, y: 10 },
+          { x: 50, y: 50 },
+        ],
+      },
+    ];
+    const url = encodeDrawingsUrl("AAPL", drawings, "http://localhost/");
+    const result = decodeDrawingsUrl(url);
+    expect(result).not.toBeNull();
+    expect(result!.symbol).toBe("AAPL");
+    expect(result!.drawings).toEqual(drawings);
+  });
+
+  it("normalizes ticker to uppercase", () => {
+    const url = encodeDrawingsUrl("aapl", [{ kind: "line" }], "http://localhost/");
+    const result = decodeDrawingsUrl(url);
+    expect(result!.symbol).toBe("AAPL");
+  });
+
+  it("caps drawings at DRAWINGS_MAX", () => {
+    const many = Array.from({ length: 100 }, (_, i) => ({ kind: "line", id: i }));
+    const url = encodeDrawingsUrl("MSFT", many, "http://localhost/");
+    const result = decodeDrawingsUrl(url);
+    expect(result!.drawings.length).toBe(DRAWINGS_MAX);
+  });
+
+  it("returns null for URL without drawings", () => {
+    const url = encodeWatchlistUrl(["AAPL"], "http://localhost/");
+    expect(decodeDrawingsUrl(url)).toBeNull();
   });
 });

@@ -23,6 +23,11 @@ export interface ShareState {
    * Maximum 200 tickers to cap URL length.
    */
   readonly watchlist?: readonly string[];
+  /**
+   * Chart drawings for a specific ticker, encoded for sharing.
+   * Each entry is a compact drawing object.
+   */
+  readonly drawings?: readonly unknown[];
 }
 
 interface Envelope {
@@ -115,4 +120,39 @@ export function decodeWatchlistUrl(url: string): readonly string[] {
     .map((t) => t.trim().toUpperCase())
     .filter((t) => t.length > 0)
     .slice(0, WATCHLIST_MAX_TICKERS);
+}
+
+/** Maximum number of drawings that can be shared in a URL. */
+export const DRAWINGS_MAX = 50;
+
+/**
+ * Encode chart drawings for a specific ticker into a shareable URL.
+ */
+export function encodeDrawingsUrl(
+  ticker: string,
+  drawings: readonly unknown[],
+  base?: string,
+): string {
+  const symbol = ticker.trim().toUpperCase();
+  const capped = drawings.slice(0, DRAWINGS_MAX);
+  const state: ShareState = { symbol, card: "chart", drawings: capped };
+  const resolvedBase =
+    base ?? (typeof location !== "undefined" ? location.href : "http://localhost/");
+  return buildShareUrl(resolvedBase, state);
+}
+
+/**
+ * Decode drawings from a shared URL.
+ * Returns null if no drawings found.
+ */
+export function decodeDrawingsUrl(url: string): {
+  symbol: string;
+  drawings: readonly unknown[];
+} | null {
+  const state = readShareUrl(url);
+  if (!state?.drawings || !Array.isArray(state.drawings)) return null;
+  return {
+    symbol: state.symbol ?? "",
+    drawings: state.drawings.slice(0, DRAWINGS_MAX),
+  };
 }
