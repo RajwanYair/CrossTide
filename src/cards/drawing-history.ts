@@ -51,7 +51,7 @@ export function attachDrawingHistory(handle: DrawingToolHandle): DrawingHistoryH
     if (undoStack.length <= 1) return false;
     const current = undoStack.pop()!;
     redoStack.push(current);
-    const prev = undoStack[undoStack.length - 1];
+    const prev = undoStack[undoStack.length - 1]!;
     handle.setDrawings(prev);
     return true;
   }

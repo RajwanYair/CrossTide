@@ -1107,8 +1107,32 @@ void registerServiceWorker().then((reg) => {
   if (reg) {
     watchServiceWorkerUpdates(reg, {
       onUpdateReady: (handle) => {
-        showToast({ message: "App update available — refreshing…", type: "info" });
-        setTimeout(() => handle.applyUpdate(), 3_000);
+        const banner = document.createElement("div");
+        banner.className = "sw-update-banner";
+        banner.setAttribute("role", "alert");
+        banner.setAttribute("aria-live", "assertive");
+
+        const msg = document.createElement("span");
+        msg.textContent = "A new version is available.";
+        banner.appendChild(msg);
+
+        const btn = document.createElement("button");
+        btn.textContent = "Refresh";
+        btn.className = "sw-update-btn";
+        btn.addEventListener("click", () => {
+          handle.applyUpdate();
+          window.location.reload();
+        });
+        banner.appendChild(btn);
+
+        const dismiss = document.createElement("button");
+        dismiss.textContent = "Later";
+        dismiss.className = "sw-update-dismiss";
+        dismiss.setAttribute("aria-label", "Dismiss update");
+        dismiss.addEventListener("click", () => banner.remove());
+        banner.appendChild(dismiss);
+
+        document.body.appendChild(banner);
       },
     });
   }
