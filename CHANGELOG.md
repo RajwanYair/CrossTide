@@ -6,6 +6,35 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.9.0] - 2025-07-05
+
+### Highlights
+
+Phase O feature sprint: 10 new features for power users — settings search,
+dashboard stats, color tags, card width preferences, recent tickers history,
+keyboard shortcut customization, and contextual ticker actions menu.
+
+### Added
+
+- **Settings search/filter (O4)**: Keyword input to filter settings groups in
+  real-time by label, option, or button text.
+- **Dashboard stats footer (O5)**: Live footer stats showing watchlist count,
+  active/total providers, and data freshness breakdown (fresh/stale/expired).
+- **Watchlist color tags (O6)**: Assign color labels (Bullish, Bearish,
+  Neutral, Watch, Earnings, Speculative) to tickers with localStorage
+  persistence. Six preset colors with CSS variable support.
+- **Card width preference (O7)**: Per-card half-width vs full-width toggle
+  with DOM class application and localStorage persistence.
+- **Recent tickers history (O8)**: Tracks last 10 viewed tickers for
+  quick-access navigation with deduplication and MRU ordering.
+- **Keyboard shortcut customization (O9)**: Rebind any shortcut via
+  localStorage. Includes formatBinding/parseBinding helpers for combo strings.
+- **Contextual ticker actions menu (O10)**: Custom right-click context menu
+  system with registered action buttons, viewport-aware positioning, Escape
+  dismiss, and click-outside close.
+
+---
+
 ## [11.8.0] - 2025-07-05
 
 ### Highlights
