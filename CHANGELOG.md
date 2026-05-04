@@ -6,6 +6,48 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.24.0] - 2026-05-27
+
+### Sprint: Phase R — Resilience & Advanced Features (10-item sprint)
+
+#### Added
+
+- **R8 — Point & Figure chart domain** (`src/domain/point-and-figure.ts`):
+  `computePnf()` builds traditional X/O column charts from closing prices or
+  high/low; `autoBoxSize()` picks a nice number near 1% of median price;
+  `floorBox()` snaps prices to box boundaries; 14 unit tests.
+
+- **R9 — OpenTelemetry OTLP/HTTP JSON tracing** (`worker/telemetry.ts`):
+  `createTracer()` creates per-request root spans with child `span()` wrappers;
+  exports to `OTEL_EXPORTER_OTLP_ENDPOINT` via `waitUntil()` so export never
+  blocks response; propagates W3C `traceparent` header for distributed tracing;
+  no-op when endpoint is unset; 12 unit tests.
+
+- **R13 — Japanese (ja) locale** (`src/locales/ja.ts`):
+  Complete translation dictionary (nav, actions, watchlist, chart, consensus,
+  alerts, portfolio, backtest, screener, settings, errors, time); registered in
+  locale barrel alongside ES, DE, ZH, HE.
+
+- **R1 — Bar replay domain module** (`src/domain/bar-replay.ts`): committed
+  earlier this session (`ba66a17`).
+
+- **R2 — Signal DSL array values + `plot()` + built-in array functions**
+  (`src/domain/signal-dsl.ts`): `Value` extended to `number | boolean |
+readonly number[]`; array literals `[…]`; `range`, `len`, `at`, `sum`,
+  `avg`, `min`, `max`, `plot` built-ins; committed (`3d1da8e`).
+
+- **R6 — Multi-timeframe chart sync** (`src/core/multi-chart-sync.ts`):
+  `createChartSync()` broadcasts crosshair time across participants snapped to
+  each chart's timeframe boundary; committed (`5c93b7e`).
+
+- **P7 — Route loaders** (`src/ui/router.ts`): `defineRoute({ loader })` with
+  `AbortController` cancellation on navigation; committed (`482109b`).
+
+- **P15 — ADRs 0007 & 0008**: route-loaders and error-boundaries decision
+  records; committed (`d50bd5a`).
+
+---
+
 ## [11.20.0] - 2026-05-04
 
 ### Sprint: Production Hardening (20-task consolidation)
