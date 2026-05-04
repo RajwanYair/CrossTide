@@ -6,6 +6,39 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.11.0] - 2025-07-05
+
+### Highlights
+
+Phase Q feature sprint: 10 power-user analytics and management utilities —
+layout presets, provider analytics, momentum/volatility ranking, trade journal,
+and smart staleness detection.
+
+### Added
+
+- **Dashboard layout presets (Q1)**: Save/restore named card arrangements with
+  up to 20 presets, rename, and active-on-reload tracking.
+- **Provider usage analytics (Q2)**: Track per-provider API call counts,
+  latency averages, error rates, and most-used provider identification.
+- **Price alert proximity check (Q3)**: Calculate distance from current prices
+  to alert levels with percentage thresholds and sorted nearest-first.
+- **Multi-ticker momentum rank (Q4)**: Rate-of-change ranking across portfolio
+  with composite multi-timeframe scoring (short/medium/long).
+- **Search history suggestions (Q5)**: Frequency-based autocomplete from past
+  searches with prefix matching and LRU eviction.
+- **Data snapshot diffing (Q6)**: Compare two point-in-time states to detect
+  price moves, volume changes, and consensus signal flips.
+- **Volatility rank calculator (Q7)**: Annualized volatility from daily returns
+  with standard deviation, classification labels, and least-volatile filter.
+- **Gain/loss streak tracker (Q8)**: Detect consecutive up/down days, find
+  longest historical streaks, and rank portfolio by streak length.
+- **Quote staleness detector (Q9)**: Classify quotes as fresh/stale/expired by
+  configurable thresholds with market-hours awareness heuristic.
+- **Trade journal log (Q10)**: Record buy/sell trades with price, quantity,
+  notes, tags, and P/L totals. localStorage-backed, 500-entry cap.
+
+---
+
 ## [11.10.0] - 2025-07-05
 
 ### Highlights
