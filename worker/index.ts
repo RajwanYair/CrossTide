@@ -34,6 +34,7 @@ import { handleCspReport } from "./routes/csp-report.js";
 import { handleFundamentals } from "./routes/fundamentals.js";
 import { handleNewsSentiment } from "./routes/news-sentiment.js";
 import { handleScheduledAlertEval } from "./routes/alert-eval.js";
+import { dispatchWebhooks } from "./routes/webhook-dispatch.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -270,9 +271,8 @@ export default {
   /** R7: Cloudflare Cron Trigger — evaluate server-side alert rules. */
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     const fired = await handleScheduledAlertEval(env);
-    if (fired.length > 0) {
-      // Future: dispatch notifications (push, email, webhook)
-      ctx.waitUntil(Promise.resolve());
+    if (fired.length > 0 && env.DB) {
+      ctx.waitUntil(dispatchWebhooks(env.DB, fired));
     }
   },
 };
