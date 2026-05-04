@@ -671,21 +671,21 @@ P through R. Phase O is intentionally skipped (reserved for hotfixes to v11.x).
 
 | #   | Task                                                                         | Priority | Effort | Status |
 | --- | ---------------------------------------------------------------------------- | -------- | ------ | ------ |
-| P1  | Wire real Yahoo/Finnhub calls in Worker `/api/quote` and `/api/chart`        | P0       | 3d     | ⬜     |
-| P2  | KV caching layer with market-hours-aware TTL                                 | P0       | 2d     | ⬜     |
-| P3  | D1 database: create schema, wire `wrangler.toml` bindings                    | P0       | 1d     | ⬜     |
-| P4  | KV-backed rate limiting (global, not per-isolate)                            | P1       | 1d     | ⬜     |
-| P5  | Signal batching: add `batch()` to signals.ts                                 | P1       | 4h     | ⬜     |
-| P6  | Signal stores: `createStore()` pattern for watchlist, portfolio, settings    | P1       | 3d     | ⬜     |
-| P7  | Route loaders: `defineRoute({ loader })` with AbortController                | P1       | 2d     | ⬜     |
-| P8  | Error boundaries: try-catch in card mount/update with fallback UI            | P1       | 4h     | ⬜     |
-| P9  | Extract `<ct-data-table>` Web Component (virtual scroll, sort, keyboard nav) | P1       | 3d     | ⬜     |
-| P10 | Extract `<ct-stat-grid>` Web Component (responsive metric cards)             | P1       | 1d     | ⬜     |
-| P11 | Extract `<ct-empty-state>` Web Component (loading/error/empty)               | P1       | 4h     | ⬜     |
-| P12 | Preview deployments serve fixtures; production serves real data              | P1       | 1d     | ⬜     |
-| P13 | Structured logging in Worker (JSON, request ID, latency, provider)           | P2       | 1d     | ⬜     |
-| P14 | GlitchTip source-map upload on deploy                                        | P2       | 4h     | ⬜     |
-| P15 | ADR directory: document P1-P14 decisions                                     | P2       | 4h     | ⬜     |
+| P1  | Wire real Yahoo/Finnhub calls in Worker `/api/quote` and `/api/chart`        | P0       | 3d     | ✅     |
+| P2  | KV caching layer with market-hours-aware TTL                                 | P0       | 2d     | ✅     |
+| P3  | D1 database: create schema, wire `wrangler.toml` bindings                    | P0       | 1d     | ✅     |
+| P4  | KV-backed rate limiting (global, not per-isolate)                            | P1       | 1d     | ✅     |
+| P5  | Signal batching: add `batch()` to signals.ts                                 | P1       | 4h     | ✅     |
+| P6  | Signal stores: `createStore()` pattern for watchlist, portfolio, settings    | P1       | 3d     | ✅     |
+| P7  | Route loaders: `defineRoute({ loader })` with AbortController                | P1       | 2d     | ✅     |
+| P8  | Error boundaries: try-catch in card mount/update with fallback UI            | P1       | 4h     | ✅     |
+| P9  | Extract `<ct-data-table>` Web Component (virtual scroll, sort, keyboard nav) | P1       | 3d     | ✅     |
+| P10 | Extract `<ct-stat-grid>` Web Component (responsive metric cards)             | P1       | 1d     | ✅     |
+| P11 | Extract `<ct-empty-state>` Web Component (loading/error/empty)               | P1       | 4h     | ✅     |
+| P12 | Preview deployments serve fixtures; production serves real data              | P1       | 1d     | ✅     |
+| P13 | Structured logging in Worker (JSON, request ID, latency, provider)           | P2       | 1d     | ✅     |
+| P14 | GlitchTip source-map upload on deploy                                        | P2       | 4h     | ✅     |
+| P15 | ADR directory: document P1-P14 decisions                                     | P2       | 4h     | ✅     |
 
 **Exit criteria:**
 
@@ -709,21 +709,21 @@ P through R. Phase O is intentionally skipped (reserved for hotfixes to v11.x).
 
 | #   | Task                                                                               | Priority | Effort | Status |
 | --- | ---------------------------------------------------------------------------------- | -------- | ------ | ------ |
-| Q1  | Fundamental data card: P/E, EPS, revenue, margins, market cap (Yahoo quoteSummary) | P0       | 3d     | ⬜     |
-| Q2  | Heikin-Ashi chart type (transform candles, render as candlestick)                  | P1       | 1d     | ⬜     |
-| Q3  | Volume Profile overlay (LWC custom series: horizontal volume histogram)            | P1       | 3d     | ⬜     |
-| Q4  | Screener: add fundamental filters (P/E, market cap, dividend yield, sector)        | P1       | 2d     | ⬜     |
-| Q5  | Indicator configuration UI: per-indicator period/threshold settings                | P1       | 2d     | ⬜     |
-| Q6  | Extract `<ct-chart-frame>` Web Component (LWC wrapper + loading/error)             | P1       | 2d     | ⬜     |
-| Q7  | Extract `<ct-filter-bar>` Web Component (preset buttons + inputs)                  | P1       | 1d     | ⬜     |
+| Q1  | Fundamental data card: P/E, EPS, revenue, margins, market cap (Yahoo quoteSummary) | P0       | 3d     | ✅     |
+| Q2  | Heikin-Ashi chart type (transform candles, render as candlestick)                  | P1       | 1d     | ✅     |
+| Q3  | Volume Profile overlay (LWC custom series: horizontal volume histogram)            | P1       | 3d     | ✅     |
+| Q4  | Screener: add fundamental filters (P/E, market cap, dividend yield, sector)        | P1       | 2d     | ✅     |
+| Q5  | Indicator configuration UI: per-indicator period/threshold settings                | P1       | 2d     | ✅     |
+| Q6  | Extract `<ct-chart-frame>` Web Component (LWC wrapper + loading/error)             | P1       | 2d     | ✅     |
+| Q7  | Extract `<ct-filter-bar>` Web Component (preset buttons + inputs)                  | P1       | 1d     | ✅     |
 | Q8  | Backtest: add commission model (fixed + percentage), slippage estimation           | P1       | 2d     | ✅     |
 | Q9  | Backtest: position sizing modes (fixed, percentage, Kelly criterion)               | P2       | 2d     | ✅     |
-| Q10 | Additional drawing tools: horizontal ray, price range, date range, XABCD           | P2       | 3d     | ⬜     |
-| Q11 | Renko chart type (LWC custom series)                                               | P2       | 2d     | ⬜     |
-| Q12 | Range bar chart type                                                               | P2       | 2d     | ⬜     |
-| Q13 | News feed card with sentiment indicators (Finnhub news API)                        | P2       | 2d     | ⬜     |
-| Q14 | fast-check property-based tests for all indicator calculators                      | P2       | 2d     | ⬜     |
-| Q15 | npm workspaces: `packages/app`, `packages/worker`, `packages/domain`               | P2       | 2d     | ⬜     |
+| Q10 | Additional drawing tools: horizontal ray, price range, date range, XABCD           | P2       | 3d     | ✅     |
+| Q11 | Renko chart type (LWC custom series)                                               | P2       | 2d     | ✅     |
+| Q12 | Range bar chart type                                                               | P2       | 2d     | ✅     |
+| Q13 | News feed card with sentiment indicators (Finnhub news API)                        | P2       | 2d     | ✅     |
+| Q14 | fast-check property-based tests for all indicator calculators                      | P2       | 2d     | ✅     |
+| Q15 | npm workspaces: `packages/app`, `packages/worker`, `packages/domain`               | P2       | 2d     | ✅     |
 
 **Exit criteria:**
 
@@ -745,21 +745,21 @@ P through R. Phase O is intentionally skipped (reserved for hotfixes to v11.x).
 
 | #   | Task                                                                        | Priority | Effort | Status |
 | --- | --------------------------------------------------------------------------- | -------- | ------ | ------ |
-| R1  | Bar Replay: historical playback with step/speed controls                    | P1       | 3d     | ⬜     |
-| R2  | DSL expansion: `for` loops, arrays, `plot()` function for custom indicators | P1       | 3d     | ⬜     |
+| R1  | Bar Replay: historical playback with step/speed controls                    | P1       | 3d     | ✅     |
+| R2  | DSL expansion: `for` loops, arrays, `plot()` function for custom indicators | P1       | 3d     | ✅     |
 | R3  | Durable Object WebSocket fan-out for production streaming                   | P1       | 3d     | ✅     |
 | R4  | Capacitor wrapper for iOS/Android App Store distribution                    | P2       | 2d     | ✅     |
 | R5  | Structured news with sentiment scoring (NLP in Worker)                      | P2       | 3d     | ✅     |
-| R6  | Multi-timeframe analysis: sync 2-4 charts at different intervals            | P2       | 2d     | ⬜     |
+| R6  | Multi-timeframe analysis: sync 2-4 charts at different intervals            | P2       | 2d     | ✅     |
 | R7  | Alert server-side evaluation via D1 + Durable Object cron                   | P2       | 3d     | ✅     |
-| R8  | Point & Figure chart type                                                   | P3       | 2d     | ⬜     |
-| R9  | OpenTelemetry traces in Worker (distributed tracing)                        | P2       | 2d     | ⬜     |
+| R8  | Point & Figure chart type                                                   | P3       | 2d     | ✅     |
+| R9  | OpenTelemetry traces in Worker (distributed tracing)                        | P2       | 2d     | ✅     |
 | R10 | README showcase: GIF demos, feature comparison, badges                      | P1       | 1d     | ✅     |
 | R11 | Public launch: GitHub Release + Product Hunt + Hacker News                  | P0       | 1d     | ⬜     |
-| R12 | Performance regression tracking: store metrics per commit                   | P2       | 1d     | ⬜     |
-| R13 | i18n: add ES, DE, ZH, JA locales                                            | P2       | 3d     | ⬜     |
-| R14 | WCAG 2.2 AA formal audit with manual testing report                         | P1       | 2d     | ⬜     |
-| R15 | Load testing: 10K tickers in screener, verify virtual scroll holds          | P1       | 1d     | ⬜     |
+| R12 | Performance regression tracking: store metrics per commit                   | P2       | 1d     | ✅     |
+| R13 | i18n: add ES, DE, ZH, JA locales                                            | P2       | 3d     | ✅     |
+| R14 | WCAG 2.2 AA formal audit with manual testing report                         | P1       | 2d     | ✅     |
+| R15 | Load testing: 10K tickers in screener, verify virtual scroll holds          | P1       | 1d     | ✅     |
 
 **Exit criteria:**
 
@@ -777,19 +777,19 @@ P through R. Phase O is intentionally skipped (reserved for hotfixes to v11.x).
 
 | #    | Refactor                                        | Why                                     | Target  | Status |
 | ---- | ----------------------------------------------- | --------------------------------------- | ------- | ------ |
-| RF1  | `src/` → `packages/app/` (npm workspaces)       | Scale CI, clear boundaries              | Q15     | ⬜     |
-| RF2  | `main.ts` → thin bootstrap (stores handle data) | Data flow traceability                  | P6      | ⬜     |
-| RF3  | Card data-binding → signal stores               | Eliminate scattered wiring              | P6      | ⬜     |
-| RF4  | Tables → `<ct-data-table>` Web Component        | Code dedup, consistency                 | P9      | ⬜     |
-| RF5  | Stat sections → `<ct-stat-grid>`                | 60% less card boilerplate               | P10     | ⬜     |
-| RF6  | Router: add loaders + query strings             | Eliminate data waterfalls               | P7      | ⬜     |
+| RF1  | `src/` → `packages/app/` (npm workspaces)       | Scale CI, clear boundaries              | Q15     | ✅     |
+| RF2  | `main.ts` → thin bootstrap (stores handle data) | Data flow traceability                  | P6      | ✅     |
+| RF3  | Card data-binding → signal stores               | Eliminate scattered wiring              | P6      | ✅     |
+| RF4  | Tables → `<ct-data-table>` Web Component        | Code dedup, consistency                 | P9      | ✅     |
+| RF5  | Stat sections → `<ct-stat-grid>`                | 60% less card boilerplate               | P10     | ✅     |
+| RF6  | Router: add loaders + query strings             | Eliminate data waterfalls               | P7      | ✅     |
 | RF7  | Signals: add `batch()` primitive                | WebSocket performance                   | P5      | ✅     |
 | RF8  | Worker: real data + KV cache                    | Existential gap                         | P1-P2   | ✅     |
 | RF9  | Rate limiting: KV-backed                        | Production-grade                        | P4      | ✅     |
 | RF10 | Backtest: add fees + position sizing            | Realistic results                       | Q8-Q9   | ✅     |
-| RF11 | Indicator config: JSON schema                   | User-tunable parameters                 | Q5      | ⬜     |
-| RF12 | Remove untested domain models                   | Dead code risk (ONNX, copula if unused) | P-audit | ⬜     |
-| RF13 | Unify card error handling                       | Error boundaries                        | P8      | ⬜     |
+| RF11 | Indicator config: JSON schema                   | User-tunable parameters                 | Q5      | ✅     |
+| RF12 | Remove untested domain models                   | Dead code risk (ONNX, copula if unused) | P-audit | ✅     |
+| RF13 | Unify card error handling                       | Error boundaries                        | P8      | ✅     |
 
 ---
 

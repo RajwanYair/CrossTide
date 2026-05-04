@@ -6,6 +6,40 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.26.0] - 2026-05-28
+
+### Sprint: Web Component QA, Alert History & Refactors (10-item sprint)
+
+#### Added
+
+- **P9/P10/P11/Q6/Q7 — Web Component unit tests**: comprehensive test suites
+  for all 5 base web components — `<ct-data-table>` (13 tests),
+  `<ct-stat-grid>` (11 tests), `<ct-empty-state>` (10 tests),
+  `<ct-chart-frame>` (12 tests), `<ct-filter-bar>` (11 tests). Covers
+  rendering, accessibility attributes, XSS escaping, property updates,
+  and disconnect cleanup.
+
+- **Alert History D1 endpoint** (`worker/routes/alert-history.ts`):
+  `GET /api/alerts/history` queries fired alerts from D1 with user, ticker,
+  date-range, and limit filters. New `0002_alert_history.sql` migration adds
+  `alert_history` table with indexes. Scheduled alert eval now persists fired
+  alerts to history. 8 unit tests.
+
+- **OpenAPI spec — alert history** (`worker/routes/openapi.ts`):
+  `AlertHistoryResponse` and `AlertHistoryRow` schemas; `/api/alerts/history`
+  path with full parameter documentation; new `Alerts` tag.
+
+#### Changed
+
+- **RF4 — Backtest trade log → `<ct-data-table>`** (`src/cards/backtest-card.ts`):
+  refactored trade log rendering from raw HTML string concatenation to the
+  `<ct-data-table>` Web Component with typed columns and custom return renderer.
+
+- **Roadmap audit** (`docs/ROADMAP.md`): marked all Phase P, Q, R, and
+  Refactor Backlog items as ✅ complete (all code verified to exist in tree).
+
+---
+
 ## [11.25.0] - 2026-05-27
 
 ### Sprint: Phase Q/R — Worker Intelligence & Mobile (8-item sprint)
