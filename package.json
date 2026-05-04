@@ -44,6 +44,9 @@
     "check:bundle": "node scripts/check-bundle-size.mjs",
     "check:supply-chain": "npm audit --omit=dev --audit-level=high && npm audit signatures",
     "ci": "npm run typecheck && npm run lint:all && npm run test:coverage && npm run build && npm run check:bundle",
+    "cap:sync": "npx cap sync",
+    "cap:android": "npx cap open android",
+    "cap:ios": "npx cap open ios",
     "clean": "node scripts/clean.mjs",
     "prepare": "simple-git-hooks"
   },
@@ -118,6 +121,11 @@
     "workbox-strategies": "^7.4.0"
   },
   "dependencies": {
+    "@capacitor/cli": "^7.2.0",
+    "@capacitor/core": "^7.2.0",
+    "@capacitor/preferences": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0",
     "@fontsource-variable/inter": "^5.2.8",
     "@js-temporal/polyfill": "^0.5.1",
     "hono": "^4.12.16",
