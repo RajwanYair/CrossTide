@@ -38,3 +38,15 @@ simple = { limit = 60, period = 60 }
 [dev]
 port = 8787
 local_protocol = "http"
+
+# R3: Durable Object for WebSocket fan-out (one instance per ticker symbol).
+# Provides efficient real-time streaming: single upstream per symbol,
+# fans out to all connected clients via WebSocket Hibernation API.
+[durable_objects]
+bindings = [
+  { name = "TICKER_FANOUT", class_name = "TickerFanout" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["TickerFanout"]

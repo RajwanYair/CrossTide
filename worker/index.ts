@@ -40,6 +40,8 @@ import {
 } from "./fixtures.js";
 import { createLogger } from "./logger.js";
 import { createTracer } from "./telemetry.js";
+import { getTickerStub } from "./ticker-fanout.js";
+import type { DurableObjectNamespace } from "./ticker-fanout.js";
 
 export interface KVNamespace {
   get(key: string, type: "text"): Promise<string | null>;
@@ -89,6 +91,8 @@ export interface Env {
   DB?: D1Database;
   /** R9: OTLP/HTTP JSON collector endpoint for OpenTelemetry distributed tracing. */
   OTEL_EXPORTER_OTLP_ENDPOINT?: string;
+  /** R3: Durable Object namespace for WebSocket ticker fan-out. */
+  TICKER_FANOUT?: DurableObjectNamespace;
 }
 
 const app = new Hono<{ Bindings: Env; Variables: { requestId: string; traceparent: string } }>({
@@ -216,6 +220,18 @@ app.post("/api/csp-report", async (c) => handleCspReport(c.req.raw));
 
 // ── OpenAPI spec (G10) ────────────────────────────────────────────────────────
 app.get("/openapi.json", () => handleOpenApiSpec());
+
+// ── R3: WebSocket streaming via Durable Object fan-out ────────────────────────
+app.get("/api/ws/:symbol", (c) => {
+  const symbol = c.req.param("symbol");
+  if (!c.env.TICKER_FANOUT) {
+    return c.json({ error: "WebSocket streaming not available" }, 503);
+  }
+  const stub = getTickerStub(c.env.TICKER_FANOUT, symbol);
+  const url = new URL(c.req.url);
+  url.pathname = "/ws";
+  return stub.fetch(new Request(url.toString(), c.req.raw));
+});
 
 // ── Favicon (no-op) ───────────────────────────────────────────────────────────
 app.get("/favicon.ico", (c) => c.newResponse(null, 204));
