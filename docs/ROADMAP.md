@@ -934,11 +934,11 @@ All tasks from Phases A-N (v1.0 through v11.20.0) are **complete**. Key mileston
 
 ### 17.2 Architecture Integrity
 
-6. **Layer imports are one-way** — domain never imports from core/cards/ui
-7. **Domain stays pure** — no DOM, no `fetch`, no `Date.now()`, no `Math.random()`
-8. **Worker imports use `.js`** — CF Workers ESM requires explicit extensions
-9. **patchDOM, not innerHTML** — raw innerHTML breaks morphdom diffing
-10. **Cards use `void asyncFn()`** — floating promises are a lint error
+1. **Layer imports are one-way** — domain never imports from core/cards/ui
+2. **Domain stays pure** — no DOM, no `fetch`, no `Date.now()`, no `Math.random()`
+3. **Worker imports use `.js`** — CF Workers ESM requires explicit extensions
+4. **patchDOM, not innerHTML** — raw innerHTML breaks morphdom diffing
+5. **Cards use `void asyncFn()`** — floating promises are a lint error
 
 ### 17.3 Quality Gates (all required for merge)
 
@@ -966,7 +966,7 @@ Run all: `npm run ci`
 
 Paste at the start of each Copilot session to enforce governance:
 
-```
+```text
 Control Rules (Copilot Chat):
 - Treat ROADMAP.md as the single source of truth for scope, priorities, and sequencing.
 - Follow the layer rules in ARCHITECTURE.md and copilot-instructions.md at all times.
@@ -980,5 +980,48 @@ Control Rules (Copilot Chat):
 
 ---
 
+## Appendix A: Daily Workflow & Templates
+
+### How to Use This Roadmap (Daily Workflow)
+
+1. Pick the highest priority open item in the current phase.
+2. Implement it in a small, reviewable change set.
+3. Run validation (`npm run ci`).
+4. Update the item's status and notes in this file.
+5. If new work is discovered:
+   - Add it to the relevant phase as a new item
+   - Assign a priority
+   - Do not implement immediately if it breaks phase scope
+
+### Reporting Standard (per completed step)
+
+Each executed change must record:
+
+- **Roadmap item(s) addressed** — ID and title
+- **What was done** — concrete deliverables
+- **What was deferred** — anything out of scope
+- **Validation performed** — commands run, results
+- **Follow-up items created/updated** — new backlog entries
+
+### Roadmap Item Template
+
+```markdown
+### RDM-XXX (Priority) — Title
+
+- **Status:** Not Started | In Progress | Blocked | Done | Deferred
+- **Scope:** What is included
+- **Deliverables:** Files/outputs produced
+- **Acceptance Criteria:**
+  - [ ] No new warnings/errors introduced
+  - [ ] Local validation passes (`npm run ci`)
+  - [ ] Docs updated (if behavior/paths changed)
+  - [ ] No dead code/config/docs introduced
+- **Dependencies:** Prerequisite items
+- **Notes / Risks:** Context for implementer
+```
+
+---
+
 _This roadmap is a living document. Updated on every phase completion._
 _Previous versions: `docs/ROADMAP.archive-2026-05-v4.md`, `docs/ROADMAP.archive-2026-05-v3.md`_
+_Consolidated from: `docs/ROADMAP.new.md` (generic governance template — fully subsumed by this document)_

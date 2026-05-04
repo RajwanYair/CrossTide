@@ -104,23 +104,6 @@ CrossTide evaluates 12 trading methods combined through a consensus engine:
 | `signal-dsl-card`        | `signal-dsl`        | Interactive DSL expression editor     |
 | (+ 14 more)              | —                   | Heatmap, screener, macro, etc.        |
 
-## Route Cards (25 cards)
-
-| Card                     | Route               | Key feature                           |
-| ------------------------ | ------------------- | ------------------------------------- |
-| `watchlist-card`         | `watchlist`         | Real-time quotes + consensus scores   |
-| `chart-card`             | `chart`             | OHLCV candles + LWC v5                |
-| `consensus-card`         | `consensus`         | 12-method signal aggregation          |
-| `screener-card`          | `screener`          | Signal DSL-based technical screener   |
-| `portfolio-card`         | `portfolio`         | Holdings P/L + sector allocation      |
-| `rebalance-card`         | `rebalance`         | Target allocation drift + trade plan  |
-| `alerts-card`            | `alerts`            | Price/indicator alert rules           |
-| `backtest-card`          | `backtest`          | Web Worker backtester + DSL           |
-| `earnings-calendar-card` | `earnings-calendar` | Earnings dates + EPS surprise history |
-| `risk-card`              | `risk`              | VaR, beta, Sharpe, drawdown           |
-| `signal-dsl-card`        | `signal-dsl`        | Interactive DSL expression editor     |
-| (+ 14 more)              | —                   | Heatmap, screener, macro, etc.        |
-
 ## Quality Gates -- Zero Tolerance
 
 | Gate       | Command                 | Requirement              |

@@ -35,20 +35,20 @@ export function withErrorBoundary(card: CardModule): CardModule {
         const handle = card.mount(container, ctx);
         if (!handle) return handle;
 
-        return {
-          update:
-            handle.update != null
-              ? (nextCtx: CardContext): void => {
-                  try {
-                    handle.update!(nextCtx);
-                  } catch (err) {
-                    console.error("[error-boundary] card update failed:", err);
-                    renderErrorFallback(container, err);
-                  }
-                }
-              : undefined,
-          dispose: handle.dispose,
+        const wrapped: CardHandle = {
+          ...(handle.update != null && {
+            update: (nextCtx: CardContext): void => {
+              try {
+                handle.update!(nextCtx);
+              } catch (err) {
+                console.error("[error-boundary] card update failed:", err);
+                renderErrorFallback(container, err);
+              }
+            },
+          }),
+          ...(handle.dispose != null && { dispose: handle.dispose }),
         };
+        return wrapped;
       } catch (err) {
         console.error("[error-boundary] card mount failed:", err);
         renderErrorFallback(container, err);

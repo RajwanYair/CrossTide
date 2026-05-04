@@ -27,7 +27,7 @@ zero-dependency reactive signal system.
 
 ## Architecture — Layer Rules (CRITICAL)
 
-```
+```text
 src/
   types/      ← shared interfaces only — no imports from other src/ layers
   domain/     ← pure functions only — no DOM, no fetch, no storage, no Date.now()
@@ -41,7 +41,7 @@ src/
 
 **Import direction (strict — ESLint enforced):**
 
-```
+```text
 types ← domain ← core ← providers ← cards ← ui
                                    ↑ cards also import domain + core
 ```
@@ -101,6 +101,88 @@ export default card;
 
 ---
 
+## Signal Stores Pattern (v12+)
+
+Cards use domain-specific signal stores instead of scattered `main.ts` wiring:
+
+```typescript
+// src/core/stores/watchlist.store.ts
+import { signal, computed, batch } from "../signals";
+
+export const watchlistStore = createStore({
+  tickers: signal<string[]>([]),
+  quotes: computed(() => /* derive from tickers + cache */),
+  loading: signal(false),
+  error: signal<string | null>(null),
+
+  async addTicker(symbol: string) { ... },
+  async refresh() { ... },
+});
+```
+
+- Cards subscribe to stores; stores manage fetching, caching, error handling
+- Use `batch(() => { ... })` to coalesce multiple signal updates into one render
+- Particularly critical for WebSocket streams firing 10+ updates/second
+
+---
+
+## Route Loaders Pattern (v12+)
+
+Routes declare a `loader()` that runs before mount — eliminates data waterfalls:
+
+```typescript
+defineRoute({
+  path: "/chart/:symbol",
+  loader: async ({ params, signal }) => {
+    const candles = await fetchCandles(params.symbol, { signal });
+    return { candles };
+  },
+  component: () => import("./cards/chart-card"),
+});
+```
+
+- Loaders run with AbortController — navigation aborts pending loaders
+- Data is available to the card immediately on mount (no loading waterfall)
+
+---
+
+## Web Components (Shared UI Primitives)
+
+Base Web Components extract repeated patterns across cards:
+
+| Component          | Purpose                                  |
+| ------------------ | ---------------------------------------- |
+| `<ct-data-table>`  | Virtual scroll, sort, keyboard nav, ARIA |
+| `<ct-stat-grid>`   | Responsive grid of key metrics           |
+| `<ct-chart-frame>` | LWC wrapper with loading/error states    |
+| `<ct-filter-bar>`  | Preset buttons + custom filter inputs    |
+| `<ct-empty-state>` | Consistent empty/error/loading fallback  |
+
+- Native browser API (zero runtime cost)
+- Shadow DOM for style encapsulation
+- Composable: `<ct-chart-frame><ct-filter-bar></ct-chart-frame>`
+- Cards should prefer these over reimplementing table/chart/grid patterns
+
+---
+
+## Error Boundaries
+
+All card mount/update calls are wrapped in try-catch:
+
+```typescript
+try {
+  card.mount(container, ctx);
+} catch (err) {
+  renderErrorFallback(container, err);
+}
+```
+
+- One card crash must never kill the entire app
+- Error fallback UI shows user-friendly message with retry action
+- Errors are reported to GlitchTip (source-mapped)
+
+---
+
 ## Worker Route Pattern (Hono on Cloudflare Workers)
 
 ```typescript
@@ -145,7 +227,7 @@ export async function handleMyRoute(param: string, env: Env): Promise<Response> 
 
 ## Commit Conventions (Conventional Commits — enforced by commitlint)
 
-```
+```text
 type(scope): lowercase subject, no period, ≤72 chars
 
 body lines ≤100 chars
@@ -191,6 +273,8 @@ Subject must be **fully lowercase** — `feat(worker): add earnings calendar api
 | ------------------------ | ------------------------------------------------ |
 | `core/config.ts`         | Loads/saves user config from localStorage        |
 | `core/signals.ts`        | Zero-dep reactive primitives with auto-tracking  |
+| `core/signals.ts#batch`  | Coalesce multiple signal updates into one render |
+| `core/stores/`           | Domain-specific signal stores (watchlist, etc.)  |
 | `core/patch-dom.ts`      | morphdom wrapper for incremental DOM updates     |
 | `core/worker-api-client` | Typed browser client for the Hono worker API     |
 | `core/route-guards.ts`   | Client-side navigation protection (auth guards)  |
@@ -229,6 +313,24 @@ Subject must be **fully lowercase** — `feat(worker): add earnings calendar api
 5. **Validation at boundaries** — sanitize all external input (API responses, user input, URL params).
 6. **Bundle discipline** — CI rejects builds >200 KB gzip. No fat dependencies.
 7. **Test before shipping** — new domain logic requires tests; new worker routes require tests.
+
+---
+
+## Quality Gates (all required for merge)
+
+| Gate       | Command                 | Requirement             |
+| ---------- | ----------------------- | ----------------------- |
+| Type check | `npm run typecheck`     | Zero errors             |
+| ESLint     | `npm run lint`          | Zero warnings           |
+| Stylelint  | `npm run lint:css`      | Zero CSS warnings       |
+| HTMLHint   | `npm run lint:html`     | Zero issues             |
+| Markdown   | `npm run lint:md`       | Zero violations         |
+| Prettier   | `npm run format:check`  | Exit 0                  |
+| Tests      | `npm run test:coverage` | All pass, ≥90% coverage |
+| Build      | `npm run build`         | Successful              |
+| Bundle     | `npm run check:bundle`  | Under 200 KB gzip       |
+
+Run all: `npm run ci`
 
 ---
 

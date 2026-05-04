@@ -1,0 +1,37 @@
+name: Manage Stale Issues
+
+on:
+  schedule:
+    # Run daily at 01:00 UTC
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Close stale issues & PRs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          stale-issue-message: >
+            This issue has been automatically marked as stale because it has not had
+            activity in 60 days. It will be closed in 14 days if no further activity occurs.
+            If this is still relevant, please comment to keep it open.
+          stale-pr-message: >
+            This PR has been automatically marked as stale because it has not had
+            activity in 30 days. It will be closed in 7 days if no further activity occurs.
+          close-issue-message: "Closed as stale. Reopen if still relevant."
+          close-pr-message: "Closed as stale. Reopen if still relevant."
+          days-before-issue-stale: 60
+          days-before-pr-stale: 30
+          days-before-issue-close: 14
+          days-before-pr-close: 7
+          stale-issue-label: stale
+          stale-pr-label: stale
+          exempt-issue-labels: "pinned,security,P0"
+          exempt-pr-labels: "pinned,security"
+          operations-per-run: 30

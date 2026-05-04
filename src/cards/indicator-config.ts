@@ -132,7 +132,7 @@ export function renderIndicatorConfigPanel(
 
   const renderHtml = (): string => {
     const sections = SECTIONS.map((section) => {
-      const sectionConfig = config[section.id] as Record<string, number>;
+      const sectionConfig = config[section.id] as unknown as Record<string, number>;
       const fields = section.fields
         .map(
           (f) =>
