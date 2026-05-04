@@ -1435,10 +1435,12 @@
   }
 
   .toast {
+    position: relative;
     background: var(--bg-card, #1e293b);
     border: 1px solid var(--border, #334155);
     border-radius: var(--radius-md, 8px);
     padding: var(--sp-md, 0.75rem) var(--sp-lg, 1rem);
+    padding-right: 2rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -1455,6 +1457,25 @@
   .toast span {
     font-size: var(--font-size-xs, 0.75rem);
     color: var(--text-secondary, #94a3b8);
+  }
+
+  .toast-dismiss {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: none;
+    border: none;
+    color: var(--text-secondary, #94a3b8);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    line-height: 1;
+    border-radius: var(--radius-sm, 2px);
+  }
+
+  .toast-dismiss:hover {
+    color: var(--text-primary, #e2e8f0);
+    background: var(--bg-hover, rgba(255, 255, 255, 0.1));
   }
 
   .toast-health {

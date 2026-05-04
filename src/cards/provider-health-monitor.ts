@@ -81,14 +81,22 @@ function showToast(title: string, body: string): void {
   const toast = document.createElement("div");
   toast.className = "toast toast-health";
   toast.setAttribute("role", "alert");
-  patchDOM(toast, `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span>`);
-  container.appendChild(toast);
+  patchDOM(
+    toast,
+    `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span><button class="toast-dismiss" aria-label="Dismiss notification" type="button">&times;</button>`,
+  );
 
-  // Auto-dismiss
-  setTimeout(() => {
+  const dismissBtn = toast.querySelector<HTMLButtonElement>(".toast-dismiss");
+  const dismiss = (): void => {
     toast.classList.add("toast-exit");
     setTimeout(() => toast.remove(), 300);
-  }, 5000);
+  };
+  dismissBtn?.addEventListener("click", dismiss);
+  container.appendChild(toast);
+
+  // Auto-dismiss after 5s
+  const timer = setTimeout(dismiss, 5000);
+  dismissBtn?.addEventListener("click", () => clearTimeout(timer));
 }
 
 function createToastContainer(): HTMLElement {
