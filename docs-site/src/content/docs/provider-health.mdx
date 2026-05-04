@@ -1,0 +1,56 @@
+---
+title: Provider Health
+description: Monitor the status and reliability of data providers in real time.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Provider Health** card displays real-time status of all configured data providers,
+showing response times, error rates, and circuit breaker state.
+
+## Monitored Providers
+
+| Provider       | Type              | Health Checks          |
+| -------------- | ----------------- | ---------------------- |
+| Yahoo Finance  | Primary quotes    | Latency, HTTP errors   |
+| Finnhub        | Streaming + REST  | WS connectivity, rate  |
+| Stooq          | Historical CSV    | Download success       |
+| CoinGecko      | Crypto            | API response time      |
+| Tiingo         | Premium           | Auth status, latency   |
+| Polygon        | Premium           | Auth status, latency   |
+| Alpha Vantage  | Fallback          | Rate limit tracking    |
+| FRED           | Economic data     | Availability           |
+
+## Status Indicators
+
+| Status  | Icon | Description                          |
+| ------- | ---- | ------------------------------------ |
+| Healthy | 🟢   | < 2s response, < 5% error rate       |
+| Degraded| 🟡   | > 2s response or > 5% error rate     |
+| Down    | 🔴   | Circuit breaker open or unreachable   |
+
+## Circuit Breaker
+
+Each provider has an independent circuit breaker:
+
+1. **Closed** (normal) → requests pass through
+2. **Open** (tripped) → requests short-circuit to fallback provider
+3. **Half-open** (testing) → single test request to check recovery
+
+<Aside type="note">
+  The circuit breaker automatically recovers. No manual intervention needed.
+  When a provider recovers, traffic shifts back within 30 seconds.
+</Aside>
+
+## Toast Notifications
+
+When a provider's status changes, a toast notification appears with:
+- Provider name and new status
+- Suggested action (if any)
+- Dismiss button (keyboard accessible)
+
+## Accessing
+
+Navigate to `/provider-health` from the route selector or sidebar.

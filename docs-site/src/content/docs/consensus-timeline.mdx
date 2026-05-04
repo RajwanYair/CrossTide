@@ -1,0 +1,52 @@
+---
+title: Consensus Timeline
+description: Visualize how consensus signals evolve over time for any ticker.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Consensus Timeline** card shows how the aggregated buy/sell/hold consensus
+signal has changed over a historical time window, revealing trend shifts and
+signal persistence.
+
+## How It Works
+
+1. For each historical data point, all 12 consensus methods are evaluated
+2. The weighted vote (Buy/Sell/Hold) is computed per time step
+3. Results are plotted as a timeline showing signal transitions
+
+## Timeline Visualization
+
+| Zone   | Color  | Meaning                      |
+| ------ | ------ | ---------------------------- |
+| Buy    | Green  | Majority of methods bullish  |
+| Hold   | Gray   | No clear directional bias    |
+| Sell   | Red    | Majority of methods bearish  |
+
+The timeline uses colored bands to show periods where each consensus state was active.
+
+## Signal Persistence
+
+The card also displays:
+- **Current streak**: How long the current signal has been active
+- **Average duration**: Typical length of each signal type
+- **Flip frequency**: How often the consensus changes direction
+
+<Aside type="tip">
+  Long streaks of consistent consensus signals tend to be more reliable than
+  rapid oscillations between Buy and Sell.
+</Aside>
+
+## Configuration
+
+- **Time range**: Adjustable from 1 month to 5 years
+- **Method weights**: Respects the weights configured in Settings
+- **Ticker**: Selected from your watchlist
+
+## Use Cases
+
+- Identify when the consensus shifted before major moves
+- Validate whether a current signal has historical persistence
+- Compare signal behavior across different market regimes

@@ -1,0 +1,49 @@
+---
+title: Seasonality
+description: Analyze monthly historical return patterns to identify seasonal trends.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Seasonality** card displays monthly historical return bars (January–December)
+for any ticker, revealing recurring seasonal patterns in price performance.
+
+## How It Works
+
+1. Historical daily candle data is grouped by calendar month
+2. Monthly returns are calculated as percentage change (close-to-close)
+3. Returns are averaged across all available years
+4. A bar chart displays average monthly performance
+
+## Reading the Chart
+
+| Color  | Meaning                    |
+| ------ | -------------------------- |
+| Green  | Positive average return    |
+| Red    | Negative average return    |
+| Taller | Stronger seasonal tendency |
+
+<Aside type="tip">
+  Seasonality works best with at least 5 years of data. Shorter histories may show
+  noise rather than genuine seasonal patterns.
+</Aside>
+
+## Use Cases
+
+- **Timing entries**: Identify historically strong months for a stock
+- **Avoiding drawdowns**: Recognize months that tend to underperform
+- **Sector rotation**: Compare seasonal patterns across sectors
+- **Options strategies**: Align expiration dates with seasonal tendencies
+
+## Configuration
+
+Access via the route selector or navigate to `/seasonality`. Select any ticker
+from your watchlist to view its seasonal profile.
+
+## Limitations
+
+- Past seasonality does not guarantee future performance
+- Major regime changes (e.g., pandemic, rate shifts) can invalidate historical patterns
+- Thinly traded stocks may show unreliable seasonal data

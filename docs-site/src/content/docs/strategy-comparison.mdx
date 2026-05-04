@@ -1,0 +1,61 @@
+---
+title: Strategy Comparison
+description: Compare two backtest strategies side-by-side to evaluate performance differences.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Overview
+
+The **Strategy Comparison** card lets you backtest two strategies simultaneously and
+compare their performance metrics head-to-head.
+
+## Setting Up a Comparison
+
+1. Navigate to `/strategy-comparison`
+2. Configure **Strategy A** (entry/exit rules, parameters)
+3. Configure **Strategy B** (different rules or parameters)
+4. Select ticker and time range
+5. Click **Run Comparison**
+
+## Comparison Metrics
+
+| Metric              | Description                              |
+| ------------------- | ---------------------------------------- |
+| Total Return        | Cumulative % gain/loss                   |
+| Sharpe Ratio        | Risk-adjusted return                     |
+| Max Drawdown        | Largest peak-to-trough decline           |
+| Win Rate            | % of profitable trades                   |
+| Profit Factor       | Gross profit / gross loss                |
+| Trade Count         | Total number of trades executed          |
+| Avg Trade Duration  | Mean holding period per trade            |
+
+## Equity Curves
+
+Both strategies are plotted on the same normalized chart, making it easy to see
+where one strategy outperforms the other over time.
+
+<Aside type="tip">
+  Use the same time period and ticker for both strategies to ensure a fair
+  apples-to-apples comparison.
+</Aside>
+
+## Strategy Rules
+
+Strategies can combine:
+- **Technical indicators**: RSI, MACD, Bollinger, SMA crossovers
+- **Signal DSL conditions**: Custom expressions from the DSL editor
+- **Price action**: Breakouts, support/resistance levels
+- **Volume filters**: Minimum volume thresholds
+
+## Use Cases
+
+- Compare parameter sensitivity (e.g., SMA 50/200 vs SMA 20/100)
+- Evaluate adding filters to an existing strategy
+- Test different exit strategies while keeping entries constant
+- Benchmark a custom strategy against a simple buy-and-hold
+
+## Exporting Results
+
+Both strategy results can be exported as JSON or CSV for further analysis
+in spreadsheets or quantitative tools.
