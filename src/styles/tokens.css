@@ -61,6 +61,8 @@
     --border-focus: #0969da;
     --accent: #0969da;
     --accent-hover: #0550ae;
+    --signal-buy: #1a7f37;
+    --signal-sell: #cf222e;
   }
 
   /* ── Color-blind palettes (C2) — override signal / accent tokens ─────── */
