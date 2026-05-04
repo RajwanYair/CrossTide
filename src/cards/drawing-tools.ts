@@ -20,7 +20,10 @@ export type DrawingToolMode =
   | "ray"
   | "hline"
   | "text"
-  | "pitchfork";
+  | "pitchfork"
+  | "priceRange"
+  | "dateRange"
+  | "xabcd";
 
 export interface Point {
   x: number;
@@ -87,6 +90,31 @@ export interface PitchforkDrawing {
   color: string;
 }
 
+export interface PriceRangeDrawing {
+  kind: "priceRange";
+  /** Top Y pixel. */
+  y1: number;
+  /** Bottom Y pixel. */
+  y2: number;
+  color: string;
+}
+
+export interface DateRangeDrawing {
+  kind: "dateRange";
+  /** Left X pixel. */
+  x1: number;
+  /** Right X pixel. */
+  x2: number;
+  color: string;
+}
+
+export interface XabcdDrawing {
+  kind: "xabcd";
+  /** Five points: X, A, B, C, D. */
+  points: [Point, Point, Point, Point, Point];
+  color: string;
+}
+
 export type Drawing =
   | TrendlineDrawing
   | FibDrawing
@@ -95,7 +123,10 @@ export type Drawing =
   | RayDrawing
   | HLineDrawing
   | TextDrawing
-  | PitchforkDrawing;
+  | PitchforkDrawing
+  | PriceRangeDrawing
+  | DateRangeDrawing
+  | XabcdDrawing;
 
 // Fibonacci retracement levels (standard)
 export const FIB_LEVELS: readonly { level: number; label: string }[] = [
@@ -116,6 +147,9 @@ const RAY_COLOR = "#f97316";
 const HLINE_COLOR = "#8b5cf6";
 const TEXT_COLOR = "#e2e8f0";
 const PITCHFORK_COLOR = "#14b8a6";
+const PRICE_RANGE_COLOR = "#a78bfa";
+const DATE_RANGE_COLOR = "#60a5fa";
+const XABCD_COLOR = "#fb923c";
 const CHANNEL_WIDTH = 30;
 const FIB_LINE_ALPHA = 0.7;
 const FONT_SIZE = 11;
@@ -354,6 +388,100 @@ export function drawPitchfork(
   ctx.restore();
 }
 
+/** Draw a horizontal price range (shaded band between two Y levels). */
+export function drawPriceRange(
+  ctx: CanvasRenderingContext2D,
+  d: PriceRangeDrawing,
+  canvasWidth: number,
+): void {
+  const y = Math.min(d.y1, d.y2);
+  const h = Math.abs(d.y2 - d.y1);
+  ctx.save();
+  ctx.globalAlpha = 0.15;
+  ctx.fillStyle = d.color;
+  ctx.fillRect(0, y, canvasWidth, h);
+  ctx.globalAlpha = 0.8;
+  ctx.strokeStyle = d.color;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(0, d.y1);
+  ctx.lineTo(canvasWidth, d.y1);
+  ctx.moveTo(0, d.y2);
+  ctx.lineTo(canvasWidth, d.y2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Draw a vertical date range (shaded band between two X positions). */
+export function drawDateRange(
+  ctx: CanvasRenderingContext2D,
+  d: DateRangeDrawing,
+  canvasHeight: number,
+): void {
+  const x = Math.min(d.x1, d.x2);
+  const w = Math.abs(d.x2 - d.x1);
+  ctx.save();
+  ctx.globalAlpha = 0.12;
+  ctx.fillStyle = d.color;
+  ctx.fillRect(x, 0, w, canvasHeight);
+  ctx.globalAlpha = 0.7;
+  ctx.strokeStyle = d.color;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(d.x1, 0);
+  ctx.lineTo(d.x1, canvasHeight);
+  ctx.moveTo(d.x2, 0);
+  ctx.lineTo(d.x2, canvasHeight);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Draw XABCD harmonic pattern — 5-point connected shape with labels. */
+export function drawXabcd(ctx: CanvasRenderingContext2D, d: XabcdDrawing): void {
+  const [X, A, B, C, D] = d.points;
+  const labels = ["X", "A", "B", "C", "D"];
+  ctx.save();
+  ctx.strokeStyle = d.color;
+  ctx.lineWidth = 1.5;
+
+  // Draw connecting lines: X→A→B→C→D
+  ctx.beginPath();
+  ctx.moveTo(X.x, X.y);
+  ctx.lineTo(A.x, A.y);
+  ctx.lineTo(B.x, B.y);
+  ctx.lineTo(C.x, C.y);
+  ctx.lineTo(D.x, D.y);
+  ctx.stroke();
+
+  // Dashed X→D and A→C
+  ctx.setLineDash([3, 3]);
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(X.x, X.y);
+  ctx.lineTo(D.x, D.y);
+  ctx.moveTo(A.x, A.y);
+  ctx.lineTo(C.x, C.y);
+  ctx.stroke();
+
+  // Label points
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+  ctx.font = `bold 11px Inter, sans-serif`;
+  ctx.fillStyle = d.color;
+  ctx.textBaseline = "bottom";
+  for (let i = 0; i < 5; i++) {
+    const p = d.points[i]!;
+    ctx.fillText(labels[i]!, p.x + 4, p.y - 4);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
 // ──────────────────────────────────────────────────────────────
 // Canvas overlay manager
 // ──────────────────────────────────────────────────────────────
@@ -445,6 +573,15 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
         case "pitchfork":
           drawPitchfork(ctx, d, canvas.width, canvas.height);
           break;
+        case "priceRange":
+          drawPriceRange(ctx, d, canvas.width);
+          break;
+        case "dateRange":
+          drawDateRange(ctx, d, canvas.height);
+          break;
+        case "xabcd":
+          drawXabcd(ctx, d);
+          break;
       }
     }
   }
@@ -476,6 +613,19 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
       if (state.pendingPoints.length === 3) {
         const [pivot, left, right] = state.pendingPoints as [Point, Point, Point];
         state.drawings.push({ kind: "pitchfork", pivot, left, right, color: PITCHFORK_COLOR });
+        state.pendingPoints = [];
+        canvas.style.cursor = "default";
+        render();
+      }
+      return;
+    }
+
+    // Five-click tool: XABCD harmonic pattern
+    if (state.mode === "xabcd") {
+      state.pendingPoints.push(pt);
+      if (state.pendingPoints.length === 5) {
+        const points = state.pendingPoints as unknown as [Point, Point, Point, Point, Point];
+        state.drawings.push({ kind: "xabcd", points, color: XABCD_COLOR });
         state.pendingPoints = [];
         canvas.style.cursor = "default";
         render();
@@ -517,6 +667,12 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
           break;
         case "ray":
           state.drawings.push({ kind: "ray", origin: p1, direction: pt, color: RAY_COLOR });
+          break;
+        case "priceRange":
+          state.drawings.push({ kind: "priceRange", y1: p1.y, y2: pt.y, color: PRICE_RANGE_COLOR });
+          break;
+        case "dateRange":
+          state.drawings.push({ kind: "dateRange", x1: p1.x, x2: pt.x, color: DATE_RANGE_COLOR });
           break;
       }
 
