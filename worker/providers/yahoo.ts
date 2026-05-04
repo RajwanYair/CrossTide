@@ -347,6 +347,89 @@ interface YahooQuoteSummaryResponse {
       defaultKeyStatistics?: Record<string, { raw?: number }>;
       financialData?: Record<string, { raw?: number }>;
       summaryProfile?: { shortName?: string; sector?: string; industry?: string };
+      calendarEvents?: {
+        earnings?: {
+          earningsDate?: Array<{ raw?: number; fmt?: string }>;
+          earningsAverage?: { raw?: number };
+          earningsHigh?: { raw?: number };
+          earningsLow?: { raw?: number };
+          revenueAverage?: { raw?: number };
+        };
+      };
+      earnings?: {
+        earningsChart?: {
+          quarterly?: Array<{
+            date?: string;
+            actual?: { raw?: number };
+            estimate?: { raw?: number };
+          }>;
+        };
+      };
     }>;
+  };
+}
+
+// ── Earnings Calendar ─────────────────────────────────────────────────────────
+
+export interface EarningsQuarter {
+  date: string;
+  actual: number;
+  estimate: number;
+  surprisePct: number;
+}
+
+export interface YahooEarningsCalendar {
+  symbol: string;
+  earningsDate: string | null;
+  epsEstimate: number;
+  epsHigh: number;
+  epsLow: number;
+  revenueEstimate: number;
+  history: EarningsQuarter[];
+}
+
+/**
+ * Fetch earnings calendar data via Yahoo quoteSummary API.
+ * Modules: calendarEvents, earnings
+ */
+export async function fetchYahooEarningsCalendar(symbol: string): Promise<YahooEarningsCalendar> {
+  const modules = "calendarEvents,earnings";
+  const url = `${QUOTE_SUMMARY_BASE}/${encodeURIComponent(symbol)}?modules=${modules}`;
+
+  const res = await fetch(url, { headers: YAHOO_HEADERS });
+  if (!res.ok) {
+    throw new YahooApiError(`Yahoo earnings API returned ${res.status}`, res.status);
+  }
+
+  const json = (await res.json()) as YahooQuoteSummaryResponse;
+  const result = json?.quoteSummary?.result?.[0];
+  if (!result) {
+    throw new YahooApiError("No earnings data in Yahoo response", 404);
+  }
+
+  const cal = result.calendarEvents?.earnings;
+  const earningsChart = result.earnings?.earningsChart?.quarterly ?? [];
+
+  const earningsDate = cal?.earningsDate?.[0]?.fmt ?? null;
+  const history: EarningsQuarter[] = earningsChart.map((q) => {
+    const actual = q.actual?.raw ?? 0;
+    const estimate = q.estimate?.raw ?? 0;
+    const surprisePct = estimate !== 0 ? ((actual - estimate) / Math.abs(estimate)) * 100 : 0;
+    return {
+      date: q.date ?? "",
+      actual,
+      estimate,
+      surprisePct: Math.round(surprisePct * 100) / 100,
+    };
+  });
+
+  return {
+    symbol: symbol.toUpperCase(),
+    earningsDate,
+    epsEstimate: cal?.earningsAverage?.raw ?? 0,
+    epsHigh: cal?.earningsHigh?.raw ?? 0,
+    epsLow: cal?.earningsLow?.raw ?? 0,
+    revenueEstimate: cal?.revenueAverage?.raw ?? 0,
+    history,
   };
 }

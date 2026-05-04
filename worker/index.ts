@@ -36,6 +36,7 @@ import { handleNewsSentiment } from "./routes/news-sentiment.js";
 import { handleScheduledAlertEval } from "./routes/alert-eval.js";
 import { dispatchWebhooks } from "./routes/webhook-dispatch.js";
 import { handleAlertHistory, insertAlertHistory } from "./routes/alert-history.js";
+import { handleEarningsCalendar } from "./routes/earnings-calendar.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -223,6 +224,8 @@ app.get("/api/search", (c) => {
 app.get("/api/health", (c) => Promise.resolve(handleHealth(c.env)));
 
 app.get("/api/fundamentals/:symbol", (c) => handleFundamentals(c.req.param("symbol"), c.env));
+
+app.get("/api/earnings/:symbol", (c) => handleEarningsCalendar(c.req.param("symbol"), c.env));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 
