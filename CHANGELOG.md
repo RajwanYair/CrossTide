@@ -6,6 +6,40 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.5.0] - 2025-07-05
+
+### Highlights
+
+Quality & testing sprint: eliminated all remaining innerHTML violations,
+migrated to container queries, expanded accessibility & mobile testing,
+enhanced CI with Lighthouse Web Vitals, and added GitHub issue templates.
+
+### Added
+
+- **M1 — Virtual scroller stress test**: 7 tests validating 10K-row performance
+  (O(visible) DOM, spacer height, rapid updates, scroll simulation, dispose safety).
+- **M2 — Mobile responsive e2e tests**: 6 Playwright tests across Pixel 7 / iPhone 14 /
+  iPhone SE / Galaxy S9+ / iPad viewports (overflow, touch targets, nav wrap, card stack).
+- **M7 — Lighthouse Web Vitals in CI**: `perf-regression.yml` now collects LCP, TBT,
+  CLS, and performance score via Lighthouse CI and includes them in PR comments.
+- **Toast dismiss button**: Notifications now include an accessible close button with
+  `aria-label="Dismiss"` and keyboard support.
+- **M5 — GitHub issue templates**: Bug report and feature request forms with structured
+  fields (severity, browser, area dropdowns).
+
+### Changed
+
+- **R14 — innerHTML elimination**: Completed migration to 0 violations in `src/cards/`.
+  Converted `alert-rules-ui.ts`, `chart-card.ts`, `consensus-timeline-card.ts`,
+  `preset-filters.ts`, `provider-health-monitor.ts`, `screener-card.ts`, `screener.ts`.
+- **K8/R16 — Container queries**: Migrated `.portfolio-columns` and `#watchlist-table`
+  from `@media` to `@container card` queries for proper component-level responsiveness.
+- **K15 — WCAG audit expanded**: `wcag-audit.spec.ts` now covers 23 routes (added
+  provider-health, seasonality, comparison, strategy-comparison).
+- Updated ROADMAP.md: R14, R16, K8, K15, M1, M2, M5, M7, M8 marked as ✅ Done.
+
+---
+
 ## [11.4.0] - 2025-07-05
 
 ### Highlights
