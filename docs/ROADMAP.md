@@ -688,18 +688,18 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 | K3  | **Request deduplication**: In-flight promise cache in `core/fetch-dedup.ts`                     | P0       | 4h     |
 | K4  | **Event delegation**: Single listener per event type at card root; `data-action` dispatch       | P1       | 2d     |
 | K5  | **Chart sync cleanup**: Ensure all subscribers unsubscribe on dispose                           | P1       | 2h     |
-| K6  | **ARIA live regions**: Add to each card; announce price changes, signal flips                   | P0       | 1d     |
-| K7  | **Table keyboard navigation**: Arrow keys, Enter, Escape                                        | P1       | 1d     |
+| K6  | **ARIA live regions**: Add to each card; announce price changes, signal flips                   | ✅ Done  | 1d     |
+| K7  | **Table keyboard navigation**: Arrow keys, Enter, Escape                                        | ✅ Done  | 1d     |
 | K8  | **Container queries**: Replace `@media` in card CSS with `@container`                           | ✅ Done  | 1d     |
 | K9  | **npm workspaces**: `src/` → `packages/app/`, `worker/` → `packages/worker/`                    | P2       | 2d     |
-| K10 | **Worker health check in CI**: curl `/api/health` post-deploy                                   | P1       | 2h     |
-| K11 | **CSP report-uri**: `POST /api/csp-report` route                                                | P2       | 4h     |
-| K12 | **Request ID propagation**: `X-Request-ID` in Worker responses                                  | P2       | 2h     |
-| K13 | **Sparkline memoization**: Cache SVG path by data hash                                          | P1       | 4h     |
-| K14 | **Skip link**: Visible skip-to-content in index.html                                            | P1       | 1h     |
+| K10 | **Worker health check in CI**: curl `/api/health` post-deploy                                   | ✅ Done  | 2h     |
+| K11 | **CSP report-uri**: `POST /api/csp-report` route                                                | ✅ Done  | 4h     |
+| K12 | **Request ID propagation**: `X-Request-ID` in Worker responses                                  | ✅ Done  | 2h     |
+| K13 | **Sparkline memoization**: Cache SVG path by data hash                                          | ✅ Done  | 4h     |
+| K14 | **Skip link**: Visible skip-to-content in index.html                                            | ✅ Done  | 1h     |
 | K15 | **WCAG 2.2 AA formal audit**: axe-core + WAVE + manual keyboard test all 23 routes              | ✅ Done  | 2d     |
-| K16 | **socket.dev supply chain**: Add as GitHub App                                                  | P2       | 1h     |
-| K17 | **Uptime Kuma**: Deploy on Fly.io; README badge                                                 | P2       | 2h     |
+| K16 | **socket.dev supply chain**: Add as GitHub App                                                  | ✅ Done  | 1h     |
+| K17 | **Uptime Kuma**: Deploy on Fly.io; README badge                                                 | ✅ Done  | 2h     |
 
 **Exit criteria:**
 
@@ -720,15 +720,15 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
 | L1  | **Fundamental data overlay**: P/E, EPS, revenue, market cap, dividend yield                                                                                                         | P0       | 3d     |
 | L2  | **Seasonal charts**: Monthly historical return bars (Jan–Dec)                                                                                                                       | P1       | 2d     |
-| L3  | **Multi-condition alerts**: Combine price + indicator + DSL in one rule                                                                                                             | P1       | 2d     |
-| L4  | **Strategy comparison**: Backtest two strategies side-by-side                                                                                                                       | P1       | 2d     |
-| L5  | **Additional drawing tools**: Rectangle, channel, pitchfork, ray, text                                                                                                              | P2       | 3d     |
-| L6  | **Screener column customization**: User-selected visible columns                                                                                                                    | P2       | 1d     |
-| L7  | **Watchlist groups**: Named collapsible sections                                                                                                                                    | P2       | 1d     |
+| L3  | **Multi-condition alerts**: Combine price + indicator + DSL in one rule                                                                                                             | ✅ Done  | 2d     |
+| L4  | **Strategy comparison**: Backtest two strategies side-by-side                                                                                                                       | ✅ Done  | 2d     |
+| L5  | **Additional drawing tools**: Rectangle, channel, pitchfork, ray, text                                                                                                              | ✅ Done  | 3d     |
+| L6  | **Screener column customization**: User-selected visible columns                                                                                                                    | ✅ Done  | 1d     |
+| L7  | **Watchlist groups**: Named collapsible sections                                                                                                                                    | ✅ Done  | 1d     |
 | L8  | **Chart comparison mode**: 2–4 tickers on normalized % scale                                                                                                                        | P1       | 1d     |
-| L9  | **Export to image**: Screenshot card to PNG/SVG                                                                                                                                     | P2       | 1d     |
-| L10 | **Plugin API for custom indicators**: External ESM at runtime                                                                                                                       | P3       | 3d     |
-| L11 | **Watchlist hover zoom**: Hovering a stock row shows a popup with mini-chart, key stats (price, change, volume, consensus), and sparkline — instant preview without navigating away | P1       | 2d     |
+| L9  | **Export to image**: Screenshot card to PNG/SVG                                                                                                                                     | ✅ Done  | 1d     |
+| L10 | **Plugin API for custom indicators**: External ESM at runtime                                                                                                                       | ✅ Done  | 3d     |
+| L11 | **Watchlist hover zoom**: Hovering a stock row shows a popup with mini-chart, key stats (price, change, volume, consensus), and sparkline — instant preview without navigating away | ✅ Done  | 2d     |
 
 ---
 
@@ -741,9 +741,9 @@ Phases A–I are **complete**. The v4 roadmap defines Phases K–M.
 | M1  | **Load testing**: 10K tickers; verify virtual scrolling holds               | ✅ Done  | 1d     |
 | M2  | **Mobile responsive audit**: All 23 cards on mobile viewports               | ✅ Done  | 2d     |
 | M3  | **WebSocket reconnect stress tests**: Network flap simulation               | P1       | 1d     |
-| M4  | **Complete user guide suite**: Guide for every card                         | P1       | 3d     |
+| M4  | **Complete user guide suite**: Guide for every card                         | ✅ Done  | 3d     |
 | M5  | **Contributing guide update**: PR template, issue templates                 | ✅ Done  | 1d     |
-| M6  | **i18n expansion**: Add ES, DE, ZH locales                                  | P2       | 3d     |
+| M6  | **i18n expansion**: Add ES, DE, ZH locales                                  | ✅ Done  | 3d     |
 | M7  | **Performance regression CI**: Track metrics over time; alert on regression | ✅ Done  | 1d     |
 | M8  | **Dependency audit automation**: Weekly npm audit + Dependabot              | ✅ Done  | 2h     |
 | M9  | **README showcase**: Screenshots, GIF demos, feature comparison             | P1       | 1d     |
