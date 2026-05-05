@@ -50,6 +50,8 @@ export {
   downloadCompressedFile,
 } from "./export-import";
 export type { ExportPayload } from "./export-import";
+export { tableToCsv, copyTableToClipboard, copyCellToClipboard } from "./table-export";
+export type { ExportColumn } from "./table-export";
 export { installErrorBoundary, getErrorLog, clearErrorLog } from "./error-boundary";
 export type { ErrorRecord, ErrorHandler } from "./error-boundary";
 export { initTelemetry, getTelemetry, _resetTelemetryForTests } from "./telemetry";
