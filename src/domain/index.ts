@@ -228,6 +228,10 @@ export type { RollingCorrelationPoint, RollingCorrelationOptions } from "./rolli
 export { computeOmega, omegaFromReturns } from "./omega-ratio";
 export type { OmegaResult, OmegaOptions } from "./omega-ratio";
 
+/** Volume-Price Trend (VPT) — cumulative volume-weighted price momentum. */
+export { computeVpt } from "./volume-price-trend";
+export type { VptPoint, VptOptions } from "./volume-price-trend";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
