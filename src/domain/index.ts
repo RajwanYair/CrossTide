@@ -200,6 +200,10 @@ export type { ZigZagPivot, ZigZagOptions, PivotDirection } from "./zigzag";
 export { detectDivergences } from "./divergence-detector";
 export type { Divergence, DivergenceType, DivergenceOptions } from "./divergence-detector";
 
+/** Rolling Sharpe ratio — risk-adjusted return over a sliding window. */
+export { computeRollingSharpe } from "./rolling-sharpe";
+export type { RollingSharpePoint, RollingSharpeOptions } from "./rolling-sharpe";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
