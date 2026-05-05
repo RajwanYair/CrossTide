@@ -112,6 +112,10 @@ export {
 } from "./analytics";
 export type { FibonacciLevels } from "./analytics";
 
+/** Drawdown recovery analysis — recovery patterns, speeds, and probabilities. */
+export { analyzeRecoveries, estimateRecoveryTime } from "./drawdown-recovery";
+export type { RecoveryEvent, RecoveryAnalysis } from "./drawdown-recovery";
+
 /** Extended backtest metrics (win rate, expectancy, etc.). */
 export { computeMetrics as computeBacktestMetrics } from "./backtest-metrics";
 export type { BacktestMetrics, EquityPoint, Trade } from "./backtest-metrics";
