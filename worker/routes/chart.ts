@@ -20,6 +20,10 @@ export interface CandleRecord {
   low: number;
   close: number;
   volume: number;
+  /** P4: Split factor on this date (e.g. 0.5 for a 2-for-1 forward split). */
+  readonly splitFactor?: number;
+  /** P4: Dividend per share paid on this date. */
+  readonly dividendAmount?: number;
 }
 
 export interface ChartResponse {

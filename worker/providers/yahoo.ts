@@ -6,6 +6,8 @@
  *  - Search: query2.finance.yahoo.com/v1/finance/search?q={query}
  *
  * P1: Initial real-data wiring for /api/chart and /api/quote routes.
+ * P4: Corporate action adjustment — split-adjusted OHLCV by default;
+ *     splitFactor and dividendAmount attached to the bar on the event date.
  */
 
 export interface YahooCandle {
@@ -15,6 +17,10 @@ export interface YahooCandle {
   low: number;
   close: number;
   volume: number;
+  /** Split factor applied on this date (e.g. 0.5 for a 2-for-1 split). Omitted when 1. */
+  readonly splitFactor?: number;
+  /** Dividend paid per share on this date (in the security's currency). Omitted when 0. */
+  readonly dividendAmount?: number;
 }
 
 export interface YahooChartResult {
@@ -66,7 +72,9 @@ export async function fetchYahooChart(
   range: string,
   interval: string,
 ): Promise<YahooChartResult> {
-  const url = `${CHART_BASE}/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&includePrePost=false`;
+  // P4: Request split and dividend events alongside OHLCV.
+  // Yahoo returns adjusted prices by default; events let us annotate candles.
+  const url = `${CHART_BASE}/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&includePrePost=false&events=div%2Csplit`;
 
   const res = await fetch(url, { headers: YAHOO_HEADERS });
   if (!res.ok) {
@@ -86,6 +94,29 @@ export async function fetchYahooChart(
     throw new YahooApiError("No quote indicators in Yahoo response", 502);
   }
 
+  // P4: Build lookup maps: ISO-date string → split factor / dividend amount.
+  // Yahoo returns events keyed by Unix timestamp strings.
+  const splitMap = new Map<string, number>();
+  const dividendMap = new Map<string, number>();
+
+  const splits = result.events?.splits ?? {};
+  for (const split of Object.values(splits)) {
+    if (split.date != null && split.splitRatio != null) {
+      const date = new Date(split.date * 1000).toISOString().slice(0, 10);
+      // splitRatio is "numerator:denominator" or a float already.
+      // Yahoo v8 returns it as a float (e.g. 0.5 for a 2-for-1 forward split).
+      splitMap.set(date, split.splitRatio);
+    }
+  }
+
+  const dividends = result.events?.dividends ?? {};
+  for (const div of Object.values(dividends)) {
+    if (div.date != null && div.amount != null) {
+      const date = new Date(div.date * 1000).toISOString().slice(0, 10);
+      dividendMap.set(date, div.amount);
+    }
+  }
+
   const candles: YahooCandle[] = [];
   for (let i = 0; i < timestamps.length; i++) {
     const ts = timestamps[i];
@@ -96,14 +127,20 @@ export async function fetchYahooChart(
     const v = quote.volume?.[i];
     // Skip nulls (market holidays, missing data)
     if (ts == null || o == null || h == null || l == null || c == null) continue;
-    candles.push({
-      date: new Date(ts * 1000).toISOString().slice(0, 10),
+    const date = new Date(ts * 1000).toISOString().slice(0, 10);
+    const splitFactor = splitMap.get(date);
+    const dividendAmount = dividendMap.get(date);
+    const candle: YahooCandle = {
+      date,
       open: round2(o),
       high: round2(h),
       low: round2(l),
       close: round2(c),
       volume: v ?? 0,
-    });
+      ...(splitFactor !== undefined ? { splitFactor } : {}),
+      ...(dividendAmount !== undefined ? { dividendAmount } : {}),
+    };
+    candles.push(candle);
   }
 
   return {
@@ -246,6 +283,11 @@ interface YahooChartResponse {
           close?: (number | null)[];
           volume?: (number | null)[];
         }>;
+      };
+      /** P4: Corporate action events keyed by Unix timestamp string. */
+      events?: {
+        splits?: Record<string, { date: number; splitRatio: number }>;
+        dividends?: Record<string, { date: number; amount: number }>;
       };
     }>;
     error?: { code: string; description: string };

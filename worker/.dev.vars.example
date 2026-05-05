@@ -1,0 +1,25 @@
+# CrossTide Worker — Local development variables
+#
+# Copy this file to `worker/.dev.vars` and fill in real values.
+# .dev.vars is gitignored; never commit real secrets.
+#
+# Usage: wrangler dev reads .dev.vars automatically from the worker/ directory.
+# Cloudflare Workers docs: https://developers.cloudflare.com/workers/testing/local-development/#local-only-secrets
+
+# ── Environment ──────────────────────────────────────────────────────────────
+# Overrides [vars] in wrangler.toml for local dev.
+# Set to "preview" to serve deterministic fixture data (no real API calls).
+ENVIRONMENT=development
+
+# ── Optional: Finnhub WebSocket streaming ─────────────────────────────────────
+# Free API key at https://finnhub.io/register
+# Only needed when testing /api/ws/:symbol (TickerFanout Durable Object)
+# FINNHUB_KEY=your_finnhub_api_key_here
+
+# ── Optional: GlitchTip error tracking DSN ────────────────────────────────────
+# Self-hosted GlitchTip or Sentry-compatible DSN.
+# GLITCH_TIP_DSN=https://xxx@app.glitchtip.com/1
+
+# ── Optional: OpenTelemetry collector endpoint ────────────────────────────────
+# Used by the R9 tracer; leave unset to disable distributed tracing in dev.
+# OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
