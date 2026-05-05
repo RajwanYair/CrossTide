@@ -39,6 +39,7 @@ import { handleAlertHistory, insertAlertHistory } from "./routes/alert-history.j
 import { handleEarningsCalendar } from "./routes/earnings-calendar.js";
 import { handleMigrationStatus } from "./routes/migrations.js";
 import { handleBatchQuotes } from "./routes/batch-quotes.js";
+import { handleCompare } from "./routes/compare.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -215,6 +216,8 @@ app.get("/api/quote/:symbol", (c) => {
 });
 
 app.get("/api/quotes", (c) => handleBatchQuotes(new URL(c.req.url), c.env));
+
+app.get("/api/compare", (c) => handleCompare(new URL(c.req.url), c.env));
 
 app.get("/api/search", (c) => {
   if (isPreviewEnvironment(c.env)) {
