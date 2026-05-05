@@ -232,6 +232,10 @@ export type { OmegaResult, OmegaOptions } from "./omega-ratio";
 export { computeVpt } from "./volume-price-trend";
 export type { VptPoint, VptOptions } from "./volume-price-trend";
 
+/** Time-Segmented Volume (TSV) — Worden-style accumulation/distribution. */
+export { computeTsv } from "./time-segmented-volume";
+export type { TsvPoint, TsvOptions } from "./time-segmented-volume";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
