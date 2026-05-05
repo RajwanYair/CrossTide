@@ -1,0 +1,152 @@
+# =============================================================================
+# PR Coverage Delta Bot — CrossTide
+#
+# Posts a sticky comment on every PR with absolute coverage values and a delta
+# vs the latest baseline from main. Zero SaaS dependency: GitHub API only.
+#
+# Baseline: ci.yml uploads `coverage-baseline` (coverage-summary.json) on every
+# push to main. This workflow downloads it for PRs, then diffs.
+# =============================================================================
+name: PR Coverage Delta
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  coverage:
+    name: Coverage Delta
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run coverage
+        run: npm run test:coverage
+
+      - name: Locate coverage-summary.json
+        id: locate
+        run: |
+          SUMMARY=$(find coverage -name coverage-summary.json 2>/dev/null | head -n 1)
+          if [ -z "$SUMMARY" ]; then
+            echo "::error::coverage-summary.json not found — ensure vitest.config.ts outputs coverage/coverage-summary.json"
+            exit 1
+          fi
+          echo "summary=$SUMMARY" >> "$GITHUB_OUTPUT"
+          cp "$SUMMARY" ./coverage-summary.json
+
+      - name: Upload baseline (push to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: coverage-baseline
+          path: coverage-summary.json
+          retention-days: 30
+
+      - name: Download baseline (PR only)
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN_ID=$(gh run list \
+            --workflow pr-coverage.yml \
+            --branch main \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId' || echo "")
+          if [ -z "$RUN_ID" ]; then
+            echo "No baseline run found on main yet — first PR after enabling the bot."
+            exit 0
+          fi
+          gh run download "$RUN_ID" -n coverage-baseline -D ./baseline || true
+
+      - name: Compute delta and post comment (PR only)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v8.0.0
+        with:
+          script: |
+            const fs = require("node:fs");
+            const path = require("node:path");
+            const head = JSON.parse(fs.readFileSync("coverage-summary.json", "utf8")).total;
+            let base = null;
+            const basePath = path.join("baseline", "coverage-summary.json");
+            if (fs.existsSync(basePath)) {
+              base = JSON.parse(fs.readFileSync(basePath, "utf8")).total;
+            }
+            const fmt = (n) => n.toFixed(2) + "%";
+            const delta = (h, b) => {
+              if (b == null) return "—";
+              const d = h - b;
+              const sign = d > 0 ? "+" : "";
+              const icon = d > 0.05 ? "🟢" : d < -0.05 ? "🔴" : "⚪";
+              return `${icon} ${sign}${d.toFixed(2)}%`;
+            };
+            const row = (label, key) => {
+              const h = head[key].pct;
+              const b = base ? base[key].pct : null;
+              return `| ${label} | ${fmt(h)} | ${b == null ? "—" : fmt(b)} | ${delta(h, b)} |`;
+            };
+            const body = [
+              "<!-- pr-coverage-delta -->",
+              "### 📊 Coverage Delta",
+              "",
+              "| Metric | PR | Base (main) | Δ |",
+              "| --- | --- | --- | --- |",
+              row("Statements", "statements"),
+              row("Branches", "branches"),
+              row("Functions", "functions"),
+              row("Lines", "lines"),
+              "",
+              base
+                ? "_Compared against the latest `coverage-baseline` artefact from `main`._"
+                : "_No baseline yet — first run after enabling the bot. Subsequent PRs will show Δ._",
+            ].join("\n");
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find((c) =>
+              c.user?.type === "Bot" && c.body?.startsWith("<!-- pr-coverage-delta -->"),
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

@@ -1,10 +1,13 @@
 version: 2
 updates:
+  # Root npm dependencies — weekly on Mondays
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
       day: monday
+      time: "09:00"
+      timezone: "America/New_York"
     open-pull-requests-limit: 10
     labels:
       - dependencies
@@ -13,22 +16,49 @@ updates:
         dependency-type: development
       production-dependencies:
         dependency-type: production
+    ignore:
+      # Only auto-bump minor/patch for the root — majors require manual review
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
+  # Docs site (Astro) — weekly on Mondays
   - package-ecosystem: npm
     directory: /docs-site
     schedule:
       interval: weekly
       day: monday
+      time: "09:00"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     labels:
       - dependencies
       - docs
 
+  # Worker npm deps — monthly (changes here require deploy + smoke-test)
+  - package-ecosystem: npm
+    directory: /worker
+    schedule:
+      interval: monthly
+      day: "1"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - worker
+
+  # GitHub Actions — weekly, ignore patch bumps (SHA pins handle exact versions)
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
       day: monday
+      time: "09:00"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     labels:
+      - dependencies
       - ci
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]

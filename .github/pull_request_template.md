@@ -23,6 +23,14 @@ Brief description of what this PR does and why.
 - [ ] Bundle size budget respected (`scripts/check-bundle-size.mjs`)
 - [ ] Manual smoke test in dev server
 
+## Security Checklist
+
+- [ ] No hardcoded API keys, tokens, or secrets
+- [ ] No `eval()` or `innerHTML` with unsanitized user data
+- [ ] No new `eslint-disable`, `@ts-ignore`, or `@ts-expect-error` lines
+- [ ] Worker routes validate all inputs at the boundary (Valibot schema)
+- [ ] No new `console.log` calls (use `worker/logger.ts` or `console.warn`/`console.error`)
+
 ## Architecture Checklist (if code changed)
 
 - [ ] Domain functions are pure (no DOM, no fetch, no `Date.now()`)
@@ -36,3 +44,7 @@ Brief description of what this PR does and why.
 - [ ] CHANGELOG updated under `[Unreleased]`
 - [ ] New public functions have explicit return types
 - [ ] New routes wired in `worker/index.ts` and added to worker API table
+
+---
+
+<!-- @github-copilot review -->

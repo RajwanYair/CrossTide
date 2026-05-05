@@ -1,0 +1,162 @@
+# =============================================================================
+# SBOM Diff Bot — CrossTide
+#
+# Generates a CycloneDX SBOM for the PR head, diffs against the main-branch
+# baseline (uploaded by ci.yml), and posts a sticky comment enumerating
+# added / upgraded / removed dependencies. Zero SaaS dependency.
+# =============================================================================
+name: PR SBOM Diff
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-sbom-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  sbom-diff:
+    name: SBOM Diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+
+      - name: Generate PR-head SBOM (CycloneDX JSON)
+        run: |
+          npm install --package-lock-only --ignore-scripts --silent
+          npx @cyclonedx/cyclonedx-npm \
+            --output-format JSON \
+            --output-file sbom.json \
+            --package-lock-only \
+            --ignore-npm-errors
+
+      - name: Download main-baseline SBOM
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN_ID=$(gh run list \
+            --workflow ci.yml \
+            --branch main \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId' || echo "")
+          if [ -z "$RUN_ID" ]; then
+            echo "No baseline SBOM run found on main yet — skipping diff."
+            mkdir -p baseline
+            echo '{"components":[]}' > baseline/sbom.json
+            exit 0
+          fi
+          gh run download "$RUN_ID" -n sbom-cyclonedx -D ./baseline || {
+            echo "Baseline artefact missing — skipping diff."
+            mkdir -p baseline
+            echo '{"components":[]}' > baseline/sbom.json
+          }
+
+      - name: Compute diff and post comment
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v8.0.0
+        with:
+          script: |
+            const fs = require("node:fs");
+            const head = JSON.parse(fs.readFileSync("sbom.json", "utf8"));
+            const base = JSON.parse(fs.readFileSync("baseline/sbom.json", "utf8"));
+            const indexBy = (sbom) => {
+              const map = new Map();
+              for (const c of sbom.components ?? []) {
+                if (!c.name) continue;
+                map.set(c.name, c.version ?? "?");
+              }
+              return map;
+            };
+            const headMap = indexBy(head);
+            const baseMap = indexBy(base);
+
+            const added = [];
+            const upgraded = [];
+            for (const [name, version] of headMap) {
+              const baseVersion = baseMap.get(name);
+              if (baseVersion === undefined) {
+                added.push({ name, version });
+              } else if (baseVersion !== version) {
+                upgraded.push({ name, from: baseVersion, to: version });
+              }
+            }
+            const removed = [];
+            for (const [name, version] of baseMap) {
+              if (!headMap.has(name)) removed.push({ name, version });
+            }
+
+            const sortByName = (a, b) => a.name.localeCompare(b.name);
+            added.sort(sortByName);
+            removed.sort(sortByName);
+            upgraded.sort(sortByName);
+            const total = added.length + removed.length + upgraded.length;
+
+            const renderList = (title, rows, fmt) => {
+              if (rows.length === 0) return "";
+              const lines = [`#### ${title} (${rows.length})`, ""];
+              for (const r of rows) lines.push(`- ${fmt(r)}`);
+              lines.push("");
+              return lines.join("\n");
+            };
+
+            let body;
+            if (total === 0) {
+              body = [
+                "<!-- pr-sbom-diff -->",
+                "### 📦 SBOM Diff",
+                "",
+                "_No dependency changes vs `main`._",
+              ].join("\n");
+            } else {
+              body = [
+                "<!-- pr-sbom-diff -->",
+                "### 📦 SBOM Diff",
+                "",
+                `**${total}** dependency change${total === 1 ? "" : "s"} vs \`main\` baseline.`,
+                "",
+                renderList("➕ Added", added, (r) => `\`${r.name}@${r.version}\``),
+                renderList("⬆️ Upgraded", upgraded, (r) => `\`${r.name}\`: \`${r.from}\` → \`${r.to}\``),
+                renderList("➖ Removed", removed, (r) => `\`${r.name}@${r.version}\``),
+              ].join("\n");
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(
+              (c) => c.user?.type === "Bot" && c.body?.startsWith("<!-- pr-sbom-diff -->"),
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

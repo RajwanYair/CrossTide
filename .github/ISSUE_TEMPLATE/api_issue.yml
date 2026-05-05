@@ -1,0 +1,97 @@
+name: API / Data Source Issue
+description: Report a broken or degraded upstream data source (Yahoo Finance, Finnhub, Cloudflare Worker, etc.)
+title: "[API]: "
+labels: ["api", "bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for issues related to external data providers or the Cloudflare Worker API proxy.
+        For general bugs (UI, charts, calculations), use the **Bug Report** template instead.
+
+  - type: dropdown
+    id: source
+    attributes:
+      label: Affected Data Source
+      options:
+        - Yahoo Finance (quote, chart, fundamentals, earnings)
+        - Finnhub (alternative quote / fundamentals)
+        - CoinGecko (crypto OHLCV)
+        - ECB / Yahoo Forex (forex pairs)
+        - FRED / VIX (market breadth)
+        - Cloudflare Worker (proxy / KV cache / D1)
+        - Other / Unknown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: endpoint
+    attributes:
+      label: Worker Endpoint (if applicable)
+      options:
+        - "GET /api/quote/:symbol"
+        - "GET /api/chart"
+        - "GET /api/fundamentals/:symbol"
+        - "GET /api/earnings/:symbol"
+        - "GET /api/crypto/:id"
+        - "GET /api/forex/:pair"
+        - "GET /api/seasonality/:symbol"
+        - "GET /api/market-breadth"
+        - "GET /api/search"
+        - "POST /api/screener"
+        - "POST /api/signal-dsl/execute"
+        - "POST /api/news/sentiment"
+        - "POST /api/portfolio/rebalance"
+        - "GET /api/alerts/history"
+        - "GET /api/health"
+        - Not applicable / client-side only
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What data is wrong, missing, or erroring? Include the symbol/pair if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Open Watchlist with symbol AAPL
+        2. Observe chart card shows "Failed to load"
+        3. DevTools → Network → GET /api/chart?symbol=AAPL → 502
+    validations:
+      required: true
+
+  - type: textarea
+    id: response
+    attributes:
+      label: Error Response or Console Output
+      description: Paste the raw HTTP response, error message, or console output here.
+      render: shell
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequency
+      options:
+        - Always (100%)
+        - Often (>50%)
+        - Sometimes (<50%)
+        - Rarely / once
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Impact
+      options:
+        - Critical (no data loads at all)
+        - High (major feature broken)
+        - Medium (partial data / stale cache)
+        - Low (cosmetic / minor inaccuracy)
+    validations:
+      required: true

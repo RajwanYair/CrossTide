@@ -1,2 +1,36 @@
-# Default owners for everything
+# CODEOWNERS — CrossTide
+# All paths must match from the repo root.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything not matched below
 * @RajwanYair
+
+# Layer-specific ownership (mirrors ESLint import direction enforcement)
+/src/domain/    @RajwanYair
+/src/core/      @RajwanYair
+/src/providers/ @RajwanYair
+/src/cards/     @RajwanYair
+/src/ui/        @RajwanYair
+/src/types/     @RajwanYair
+
+# Worker (Cloudflare) — review carefully; deploys to production
+/worker/        @RajwanYair
+
+# Infrastructure & CI
+/.github/       @RajwanYair
+/scripts/       @RajwanYair
+
+# Config files (changes here affect every build/test run)
+/vite.config.ts         @RajwanYair
+/vitest.config.ts       @RajwanYair
+/tsconfig.json          @RajwanYair
+/tsconfig.sw.json       @RajwanYair
+/eslint.config.mjs      @RajwanYair
+/package.json           @RajwanYair
+/package-lock.json      @RajwanYair
+/wrangler.toml          @RajwanYair
+
+# Documentation
+/docs/ @RajwanYair
+/README.md @RajwanYair
+/CHANGELOG.md @RajwanYair

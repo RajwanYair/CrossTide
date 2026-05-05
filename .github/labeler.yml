@@ -35,7 +35,22 @@ styles:
 
 ci:
   - changed-files:
-      - any-glob-to-any-file: ".github/**"
+      - any-glob-to-any-file: ".github/workflows/**"
+
+github-config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+          - "!.github/workflows/**"
+          - "!.github/ISSUE_TEMPLATE/**"
+
+copilot-config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/copilot-instructions.md"
+          - ".github/instructions/**"
+          - ".github/prompts/**"
+          - ".github/AGENTS.md"
 
 docs:
   - changed-files:
