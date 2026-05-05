@@ -43,6 +43,7 @@ import { handleCompare } from "./routes/compare.js";
 import { handleIndicators } from "./routes/indicators.js";
 import { handleEconomic } from "./routes/economic.js";
 import { handleSectorHeatmap } from "./routes/sector-heatmap.js";
+import { handlePortfolioAnalytics } from "./routes/portfolio-analytics.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -244,6 +245,8 @@ app.get("/api/migrations/status", (c) => handleMigrationStatus(c.env));
 app.get("/api/economic", (c) => handleEconomic(c.env));
 
 app.get("/api/sector-heatmap", (c) => handleSectorHeatmap(c.env));
+
+app.post("/api/portfolio/analytics", async (c) => handlePortfolioAnalytics(c.req.raw, c.env));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 
