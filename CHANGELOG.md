@@ -6,6 +6,47 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.29.0] - 2026-05-05
+
+### Sprint: Analytics, Export & Batch API (10-item sprint)
+
+#### Added
+
+- **Generic table CSV export** (`src/core/table-export.ts`): new core utility
+  exports `tableToCsv` (RFC 4180), `copyTableToClipboard` (tab-separated for
+  Excel paste), and `copyCellToClipboard` for single-cell clipboard writes.
+- **`<ct-data-table>` keyboard copy** (`src/ui/data-table.ts`): Ctrl+C / Cmd+C
+  on a focused cell copies the cell value to the clipboard via the new
+  `copyCellToClipboard` utility; `exportCsv()` public method added for
+  programmatic CSV generation from any card.
+- **Divergence detector** (`src/domain/divergence-detector.ts`): pure function
+  `detectDivergences(candles, oscillator, options?)` finds classic and hidden
+  bullish/bearish divergences between price and any oscillator series using
+  configurable pivot-strength and distance parameters.
+- **Rolling Sharpe ratio** (`src/domain/rolling-sharpe.ts`): sliding-window
+  annualized Sharpe ratio series `computeRollingSharpe(candles, options?)` for
+  visualizing risk-adjusted return momentum over time.
+- **Relative Volume (RVOL)** (`src/domain/relative-volume.ts`):
+  `computeRelativeVolume` and `detectVolumeSurges` — volume normalized by an
+  N-day average with configurable surge-threshold detection.
+- **MFE/MAE backtest analysis** (`src/domain/mfe-mae.ts`):
+  `computeExcursions(candles, trades)` calculates per-trade Max Favorable /
+  Adverse Excursion percentages, capture ratios, and median-based suggested
+  stop-loss and take-profit levels.
+- **Volatility-Adjusted Momentum** (`src/domain/volatility-adj-momentum.ts`):
+  `computeVam(candles, options?)` normalizes price rate-of-change by ATR for
+  cross-asset momentum comparison that accounts for volatility.
+- **Trend Strength Composite** (`src/domain/trend-strength.ts`):
+  `computeTrendStrength(candles, options?)` combines ADX, MA alignment, and
+  directional consistency into a unified 0-100 strength score with bullish /
+  bearish / neutral direction signal.
+- **Worker batch-quotes endpoint** (`worker/routes/batch-quotes.ts`):
+  `GET /api/quotes?symbols=AAPL,MSFT,GOOG` resolves up to 10 symbols in
+  parallel with individual KV cache hits/misses; partial errors are inlined
+  per symbol rather than failing the entire response.
+
+---
+
 ## [11.28.0] - 2025-07-10
 
 ### Sprint: Accessibility, Security CI & Launch Prep (10-item sprint)
