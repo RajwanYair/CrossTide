@@ -1,7 +1,7 @@
 # CrossTide — Strategic Roadmap v5 (Full Rethink)
 
 > **Date:** May 4, 2026
-> **Current version:** v11.26.0
+> **Current version:** v11.28.0
 > **Codebase:** 424+ modules · 5,718+ tests · 506+ test files · 25 route cards
 > **Bundle:** 158 KB gzip (budget 200 KB) · 49 SW precache entries
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
@@ -331,16 +331,16 @@ defineRoute({
 
 ### 5.6 Accessibility (WCAG 2.2 AA certified)
 
-| Requirement                      | Status    | Action                                     |
-| -------------------------------- | --------- | ------------------------------------------ |
-| Skip link                        | ✅ Done   | —                                          |
-| ARIA live regions                | ✅ Done   | —                                          |
-| Table keyboard nav               | ✅ Done   | —                                          |
-| Focus management on route change | △ Partial | Announce route, move focus to `<h1>`       |
-| Color contrast AAA               | △ Partial | Automated CI check via axe-core            |
-| Reduced motion                   | ✅ Done   | `prefers-reduced-motion` respected         |
-| Screen reader announcements      | ✅ Done   | Price changes, signal flips                |
-| Error identification             | △ Missing | Form errors must be announced (WCAG 3.3.1) |
+| Requirement                      | Status  | Action                                    |
+| -------------------------------- | ------- | ----------------------------------------- |
+| Skip link                        | ✅ Done | —                                         |
+| ARIA live regions                | ✅ Done | —                                         |
+| Table keyboard nav               | ✅ Done | —                                         |
+| Focus management on route change | ✅ Done | Focus moved to heading/view on navigation |
+| Color contrast AAA               | ✅ Done | CI check via `scripts/check-contrast.mjs` |
+| Reduced motion                   | ✅ Done | `prefers-reduced-motion` respected        |
+| Screen reader announcements      | ✅ Done | Price changes, signal flips               |
+| Error identification             | ✅ Done | `src/ui/form-errors.ts` — WCAG 3.3.1      |
 
 ---
 
@@ -756,7 +756,7 @@ P through R. Phase O is intentionally skipped (reserved for hotfixes to v11.x).
 | R8  | Point & Figure chart type                                                   | P3       | 2d     | ✅     |
 | R9  | OpenTelemetry traces in Worker (distributed tracing)                        | P2       | 2d     | ✅     |
 | R10 | README showcase: GIF demos, feature comparison, badges                      | P1       | 1d     | ✅     |
-| R11 | Public launch: GitHub Release + Product Hunt + Hacker News                  | P0       | 1d     | ⬜     |
+| R11 | Public launch: GitHub Release + Product Hunt + Hacker News                  | P0       | 1d     | 🔄     |
 | R12 | Performance regression tracking: store metrics per commit                   | P2       | 1d     | ✅     |
 | R13 | i18n: add ES, DE, ZH, JA locales                                            | P2       | 3d     | ✅     |
 | R14 | WCAG 2.2 AA formal audit with manual testing report                         | P1       | 2d     | ✅     |
