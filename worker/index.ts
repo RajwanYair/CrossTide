@@ -44,6 +44,7 @@ import { handleIndicators } from "./routes/indicators.js";
 import { handleEconomic } from "./routes/economic.js";
 import { handleSectorHeatmap } from "./routes/sector-heatmap.js";
 import { handlePortfolioAnalytics } from "./routes/portfolio-analytics.js";
+import { handleDividends } from "./routes/dividends.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -239,6 +240,8 @@ app.get("/api/health", (c) => Promise.resolve(handleHealth(c.env)));
 app.get("/api/fundamentals/:symbol", (c) => handleFundamentals(c.req.param("symbol"), c.env));
 
 app.get("/api/earnings/:symbol", (c) => handleEarningsCalendar(c.req.param("symbol"), c.env));
+
+app.get("/api/dividends/:symbol", (c) => handleDividends(c.req.param("symbol"), c.env));
 
 app.get("/api/migrations/status", (c) => handleMigrationStatus(c.env));
 
