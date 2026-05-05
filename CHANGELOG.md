@@ -6,6 +6,44 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.31.0] - 2026-05-06
+
+### Sprint: Attribution, Valuation & Analytics APIs (10-item sprint)
+
+#### Added
+
+- **Multi-timeframe confluence** (`src/domain/mtf-confluence.ts`):
+  `computeMtfConfluence(candles, options?)` evaluates consensus signals across
+  daily, weekly, and monthly timeframes with weighted confluence scoring
+  (monthly 50%, weekly 30%, daily 20%).
+- **Brinson-Fachler performance attribution** (`src/domain/performance-attribution.ts`):
+  `computeAttribution(sectors)` decomposes portfolio excess return into
+  allocation, selection, and interaction effects per sector.
+- **Dividend analytics** (`src/domain/dividend-analytics.ts`):
+  `computeDividendSummary(dividends, price)` for yield, CAGR, growth streak;
+  `simulateDrip(shares, dividends, prices, endPrice)` for DRIP simulation.
+- **Peer valuation comparison** (`src/domain/peer-valuation.ts`):
+  `computePeerValuation(target, peers)` compares P/E, P/S, P/B, EV/EBITDA,
+  PEG, and dividend yield with z-scores, percentile ranks, and undervaluation
+  detection.
+- **Economic indicators endpoint** (`worker/routes/economic.ts`):
+  `GET /api/economic` returns treasury yields, VIX, dollar index, oil, gold,
+  and S&P 500 with 30-minute KV caching.
+- **Sector heatmap endpoint** (`worker/routes/sector-heatmap.ts`):
+  `GET /api/sector-heatmap` returns 11 GICS sector ETF performance data sorted
+  by daily change with 15-minute KV caching.
+- **Trade journal analytics** (`src/domain/trade-journal.ts`):
+  `analyzeTradeJournal(trades)` computes win rate, profit factor, expectancy,
+  R-multiples, best/worst trades, and consecutive win/loss streaks.
+- **Risk-adjusted return comparison** (`src/domain/risk-adjusted-comparison.ts`):
+  `compareRiskAdjusted(assets, rfRate?)` compares multiple assets on Sharpe,
+  Sortino, Calmar ratios, max drawdown, and annualized volatility.
+- **Portfolio analytics endpoint** (`worker/routes/portfolio-analytics.ts`):
+  `POST /api/portfolio/analytics` accepts holdings, fetches live quotes, and
+  returns allocation weights, P&L, and Herfindahl concentration index.
+
+---
+
 ## [11.30.0] - 2026-05-05
 
 ### Sprint: Portfolio, Volume & Correlation Analytics (10-item sprint)
