@@ -244,6 +244,10 @@ export type { MaxDivResult } from "./max-diversification";
 export { computeAdaptiveRsi } from "./adaptive-rsi";
 export type { AdaptiveRsiPoint, AdaptiveRsiOptions } from "./adaptive-rsi";
 
+/** Kaufman Efficiency Ratio — trending vs choppy market measure (0–1). */
+export { computeEfficiencyRatio } from "./efficiency-ratio";
+export type { EfficiencyRatioPoint, EfficiencyRatioOptions } from "./efficiency-ratio";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
