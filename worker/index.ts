@@ -46,6 +46,7 @@ import { handleSectorHeatmap } from "./routes/sector-heatmap.js";
 import { handlePortfolioAnalytics } from "./routes/portfolio-analytics.js";
 import { handleDividends } from "./routes/dividends.js";
 import { handleInsiders } from "./routes/insiders.js";
+import { handleMovers } from "./routes/movers.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -251,6 +252,8 @@ app.get("/api/migrations/status", (c) => handleMigrationStatus(c.env));
 app.get("/api/economic", (c) => handleEconomic(c.env));
 
 app.get("/api/sector-heatmap", (c) => handleSectorHeatmap(c.env));
+
+app.get("/api/movers", (c) => handleMovers(new URL(c.req.url), c.env));
 
 app.post("/api/portfolio/analytics", async (c) => handlePortfolioAnalytics(c.req.raw, c.env));
 
