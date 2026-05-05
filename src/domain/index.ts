@@ -256,6 +256,10 @@ export type { MtfConfluenceResult, MtfSignal, MtfConfluenceOptions } from "./mtf
 export { computeAttribution } from "./performance-attribution";
 export type { AttributionResult, AttributionEffect, SectorWeight } from "./performance-attribution";
 
+/** Dividend Analytics — yield, CAGR, streak, DRIP simulation. */
+export { computeDividendSummary, simulateDrip } from "./dividend-analytics";
+export type { DividendPayment, DividendSummary, DripResult } from "./dividend-analytics";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
