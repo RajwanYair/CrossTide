@@ -1067,20 +1067,20 @@ The current 582-file test suite is strong but has gaps:
 
 ## 14. Documentation Strategy v6
 
-| Document                       | Purpose                               | Status     |
-| ------------------------------ | ------------------------------------- | ---------- |
-| `README.md`                    | Quick start, feature matrix, badges   | ✅ Current |
-| `CHANGELOG.md`                 | Per-release changes                   | ✅ Current |
-| `docs/ARCHITECTURE.md`         | System design, layers, data flow      | ✅ Current |
-| `docs/ROADMAP.md`              | Strategic direction (this document)   | ✅ v6      |
-| `docs/adr/` (11 ADRs)          | Decision rationale and consequences   | ✅ Current |
-| `CONTRIBUTING.md`              | PR process, code standards, ADR guide | ✅ Current |
-| `SECURITY.md`                  | Responsible disclosure policy         | ✅ Current |
-| `docs/COPILOT_GUIDE.md`        | AI assistant governance               | ✅ Current |
-| `docs-site/` (Astro Starlight) | User guides, indicator docs           | △ Stubs    |
-| `packages/plugin-api/README`   | Plugin SDK documentation              | ⬜ Phase T |
-| OpenAPI spec `/openapi.json`   | Auto-generated Worker API reference   | ✅ Current |
-| Tutorial series (Astro)        | "Build your first signal strategy"    | ⬜ Phase R |
+| Document                          | Purpose                               | Status     |
+| --------------------------------- | ------------------------------------- | ---------- |
+| `README.md`                       | Quick start, feature matrix, badges   | ✅ Current |
+| `CHANGELOG.md`                    | Per-release changes                   | ✅ Current |
+| `docs/ARCHITECTURE.md`            | System design, layers, data flow      | ✅ Current |
+| `docs/ROADMAP.md`                 | Strategic direction (this document)   | ✅ v6      |
+| `docs/adr/` (11 ADRs)             | Decision rationale and consequences   | ✅ Current |
+| `CONTRIBUTING.md`                 | PR process, code standards, ADR guide | ✅ Current |
+| `SECURITY.md`                     | Responsible disclosure policy         | ✅ Current |
+| `.github/copilot-instructions.md` | AI assistant conventions (canonical)  | ✅ Current |
+| `docs-site/` (Astro Starlight)    | User guides, indicator docs           | △ Stubs    |
+| `packages/plugin-api/README`      | Plugin SDK documentation              | ⬜ Phase T |
+| OpenAPI spec `/openapi.json`      | Auto-generated Worker API reference   | ✅ Current |
+| Tutorial series (Astro)           | "Build your first signal strategy"    | ⬜ Phase R |
 
 **Documentation principles:**
 
@@ -1092,7 +1092,6 @@ The current 582-file test suite is strong but has gaps:
 
 **Docs debt to clear:**
 
-- Remove `docs/COPILOT_GUIDE.md` duplicate content; ensure `.github/copilot-instructions.md` is canonical
 - Populate Astro docs-site stubs for all 80+ domain modules (automated from JSDoc)
 - Add architectural diagram for Worker middleware stack and data flow
 

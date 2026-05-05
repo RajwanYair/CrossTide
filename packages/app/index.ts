@@ -5,4 +5,4 @@
  * The actual app source lives in `src/` at the repo root until the
  * full migration is complete.
  */
-export {} from "../../src/main";
+export {};

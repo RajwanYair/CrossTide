@@ -135,5 +135,5 @@ src/
 ## Getting Help
 
 - Read `docs/ARCHITECTURE.md` for the full system design
-- Check `docs/COPILOT_GUIDE.md` for AI-assisted development tips
+- Read `.github/copilot-instructions.md` for AI-assisted development conventions
 - Browse the [Astro docs-site](https://crosstide.pages.dev/docs) for user guides

@@ -1,11 +1,10 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
+  # Primary deployment is Cloudflare Pages (cf-pages.yml).
+  # This workflow provides a manual GitHub Pages mirror of the SPA.
+  # docs.yml owns the automated push trigger for GitHub Pages (Astro docs site).
+  workflow_dispatch:
 
 permissions:
   pages: write
