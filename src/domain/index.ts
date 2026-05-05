@@ -808,3 +808,41 @@ export {
   indexVarianceFromConstituents,
 } from "./dispersion-trading";
 export type { DispersionMetrics, ConstituentData } from "./dispersion-trading";
+
+/** Regime-switching model — Markov-switching EM, Hamilton filter, Kim smoother. */
+export {
+  estimateRegimeParams,
+  hamiltonFilter,
+  kimSmoother,
+  regimeSwitching,
+} from "./regime-switching";
+export type { RegimeParams, RegimeResult } from "./regime-switching";
+
+/** Markov chain analysis — transition matrix estimation, stationary distribution, regime sequences. */
+export {
+  estimateTransitionMatrix,
+  stationaryDistribution,
+  meanRecurrenceTime,
+  classifyRegimes,
+  buildMarkovChain,
+  simulateMarkovChain,
+} from "./markov-chain";
+export type { MarkovChain, RegimeSequence } from "./markov-chain";
+
+/** Hurst exponent — R/S analysis, trend/mean-reversion classification. */
+export { hurstExponent, isTrending, isMeanReverting } from "./hurst-exponent";
+export type { HurstResult } from "./hurst-exponent";
+
+/** Risk parity allocation — inverse-vol weights, risk contributions, allocation comparison. */
+export {
+  inverseVolWeights,
+  riskContributions,
+  riskParityAllocate,
+  equalWeight,
+  compareAllocations,
+} from "./risk-parity";
+export type { RiskParityInput, RiskParityResult } from "./risk-parity";
+
+/** Risk contribution decomposition — Euler decomposition, incremental VaR, risk-parity weights. */
+export { eulerDecomposition, riskParityWeights, incrementalVaR } from "./risk-contribution";
+export type { RiskDecomposition } from "./risk-contribution";
