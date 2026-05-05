@@ -458,6 +458,9 @@ export type { PortfolioPosition, PortfolioState } from "./portfolio-store";
 /** Temporal initializer — conditional polyfill loading for P15. */
 export { ensureTemporal, isTemporalNative, getTemporalRuntime } from "./temporal-init";
 
+/** Generated Worker API types — run `npm run gen:api-types` to regenerate. */
+export type { ApiRoutes } from "./api-types";
+
 export { createCacheManager } from "./cache-manager";
 export type { CacheTier, CacheManagerOptions, CacheManager, CacheStats } from "./cache-manager";
 
