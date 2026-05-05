@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#161b22"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3fb950"/>
+      <stop offset="100%" style="stop-color:#58a6ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative chart lines -->
+  <polyline points="80,480 180,430 260,445 340,390 420,405 500,340 580,360 660,300 740,320 820,270 900,290 980,230 1060,250 1120,210"
+    fill="none" stroke="#3fb950" stroke-width="3" opacity="0.4"/>
+  <polyline points="80,520 180,500 260,510 340,480 420,495 500,450 580,465 660,420 740,438 820,400 900,415 980,370 1060,385 1120,345"
+    fill="none" stroke="#58a6ff" stroke-width="2" opacity="0.25"/>
+
+  <!-- Top accent bar -->
+  <rect x="80" y="100" width="120" height="4" rx="2" fill="url(#accent)"/>
+
+  <!-- Logo / title -->
+  <text x="80" y="200" font-family="system-ui,-apple-system,sans-serif" font-size="72"
+    font-weight="700" fill="#e6edf3" letter-spacing="-2">CrossTide</text>
+
+  <!-- Tagline -->
+  <text x="82" y="255" font-family="system-ui,-apple-system,sans-serif" font-size="28"
+    fill="#8b949e" letter-spacing="0.5">Privacy-First Stock Analysis Dashboard</text>
+
+  <!-- Feature pills -->
+  <rect x="80" y="310" width="200" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <text x="180" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
+    font-size="16" fill="#3fb950">✓ 12 Signal Methods</text>
+
+  <rect x="298" y="310" width="190" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <text x="393" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
+    font-size="16" fill="#58a6ff">✓ Offline-First PWA</text>
+
+  <rect x="506" y="310" width="170" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <text x="591" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
+    font-size="16" fill="#e6edf3">✓ No Account Needed</text>
+
+  <rect x="694" y="310" width="160" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <text x="774" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
+    font-size="16" fill="#e6edf3">✓ MIT Open Source</text>
+
+  <!-- URL badge -->
+  <text x="80" y="560" font-family="system-ui,-apple-system,sans-serif" font-size="22"
+    fill="#656d76">crosstide.pages.dev</text>
+
+  <!-- Right side stats -->
+  <text x="1100" y="200" text-anchor="end" font-family="system-ui,-apple-system,sans-serif"
+    font-size="20" fill="#8b949e">TypeScript 6.0 · 158 KB</text>
+  <text x="1100" y="230" text-anchor="end" font-family="system-ui,-apple-system,sans-serif"
+    font-size="20" fill="#8b949e">5,700+ tests · 50+ indicators</text>
+</svg>
