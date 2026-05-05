@@ -248,6 +248,10 @@ export type { AdaptiveRsiPoint, AdaptiveRsiOptions } from "./adaptive-rsi";
 export { computeEfficiencyRatio } from "./efficiency-ratio";
 export type { EfficiencyRatioPoint, EfficiencyRatioOptions } from "./efficiency-ratio";
 
+/** Multi-Timeframe Confluence — unified score from daily/weekly/monthly signals. */
+export { computeMtfConfluence } from "./mtf-confluence";
+export type { MtfConfluenceResult, MtfSignal, MtfConfluenceOptions } from "./mtf-confluence";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
