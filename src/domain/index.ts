@@ -240,6 +240,10 @@ export type { TsvPoint, TsvOptions } from "./time-segmented-volume";
 export { maxDiversification } from "./max-diversification";
 export type { MaxDivResult } from "./max-diversification";
 
+/** Adaptive RSI — volatility-adjusted RSI period using Kaufman efficiency ratio. */
+export { computeAdaptiveRsi } from "./adaptive-rsi";
+export type { AdaptiveRsiPoint, AdaptiveRsiOptions } from "./adaptive-rsi";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
