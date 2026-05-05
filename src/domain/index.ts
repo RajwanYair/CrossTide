@@ -216,6 +216,10 @@ export type { TradeExcursion, ExcursionTrade, ExcursionSummary } from "./mfe-mae
 export { computeVam } from "./volatility-adj-momentum";
 export type { VamPoint, VamOptions } from "./volatility-adj-momentum";
 
+/** Trend Strength Composite — unified 0-100 trend score from ADX + MA + consistency. */
+export { computeTrendStrength } from "./trend-strength";
+export type { TrendStrengthPoint, TrendStrengthOptions } from "./trend-strength";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
