@@ -132,6 +132,10 @@ export {
 } from "./position-sizing";
 export type { RiskBasedSizingInput, AtrSizingInput, KellyInput } from "./position-sizing";
 
+/** Position-level risk metrics — stop distance, R-multiple, portfolio heat. */
+export { computePositionRisk, computePortfolioHeat } from "./position-risk";
+export type { PositionInput, PositionRisk, PortfolioHeat } from "./position-risk";
+
 // ── Branded types ────────────────────────────────────────────────────────
 
 /** Nominal-typed wrappers for Ticker, ISODate, Price, Percent. */
