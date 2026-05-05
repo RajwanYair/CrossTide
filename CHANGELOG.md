@@ -6,6 +6,42 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.33.0] - 2026-05-08
+
+### Sprint: Crypto, Forex & Domain Exports (10-item sprint)
+
+#### Added
+
+- **Crypto quote endpoint** (`worker/routes/crypto.ts`):
+  `GET /api/crypto/:id` returns cryptocurrency quote data from CoinGecko API
+  (price, market cap, volume, ATH, supply), KV cached 2 min.
+- **Forex pair endpoint** (`worker/routes/forex.ts`):
+  `GET /api/forex/:pair` returns foreign exchange rate, bid/ask, and daily
+  change from Yahoo Finance, KV cached 2 min. Pairs use 6-letter format
+  (e.g. EURUSD).
+- **Seasonality endpoint** (`worker/routes/seasonality.ts`):
+  `GET /api/seasonality/:symbol` computes monthly and day-of-week seasonal
+  return patterns from 5-year historical data, KV cached 24h.
+- **Portfolio rebalance endpoint** (`worker/routes/portfolio-rebalance.ts`):
+  `POST /api/portfolio/rebalance` accepts holdings and target allocations,
+  returns rebalance trades with drift analysis and buy/sell amounts.
+- **Market breadth endpoint** (`worker/routes/market-breadth.ts`):
+  `POST /api/market-breadth` accepts symbol list, fetches quotes, and returns
+  advance/decline ratio, breadth statistics, and top movers/laggards.
+- **Gap scanner barrel export**: `detectGaps`, `unfilledGaps`, `gapUps`,
+  `gapDowns`, `gapFillRate`, `largestGaps`, `averageGapSize`, `hasRecentGap`
+  now exported from `src/domain/index.ts`.
+- **DCA simulator barrel export**: `simulateDca`, `generateDcaSchedule`,
+  `dcaVsLumpSum` now exported from `src/domain/index.ts`.
+- **Support/resistance barrel export**: `findSwingLows`, `findSwingHighs`,
+  `clusterLevels`, `findLevels`, `nearestSupport`, `nearestResistance` now
+  exported from `src/domain/index.ts`.
+- **Volatility cone barrel export**: `realizedVol`,
+  `historicalVolDistribution`, `buildVolatilityCone`, `volPercentileRank`
+  now exported from `src/domain/index.ts`.
+
+---
+
 ## [11.32.0] - 2026-05-07
 
 ### Sprint: Data Endpoints & Risk Analytics (10-item sprint)
