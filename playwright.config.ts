@@ -69,6 +69,23 @@ export default defineConfig({
       name: "android-galaxy-landscape",
       use: { ...devices["Galaxy S9+ landscape"] },
     },
+    {
+      name: "android-galaxy-a55",
+      use: { ...devices["Galaxy A55"] },
+    },
+    {
+      name: "android-galaxy-a55-landscape",
+      use: { ...devices["Galaxy A55 landscape"] },
+    },
+    // ── Firefox for Android (Gecko engine — different from Chromium) ──
+    {
+      name: "firefox-android",
+      use: { browserName: "firefox", ...devices["Pixel 7"] },
+    },
+    {
+      name: "firefox-android-landscape",
+      use: { browserName: "firefox", ...devices["Pixel 7 landscape"] },
+    },
     // ── Tablets ───────────────────────────────────────────────────
     {
       name: "tablet",

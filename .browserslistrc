@@ -1,6 +1,13 @@
-# CrossTide browser targets — kept in sync with package.json "browserslist"
-# Explicit file so tools (VSCode ESLint extension, PostCSS, etc.) resolve
-# targets reliably regardless of the working directory.
+# CrossTide browser targets — canonical source.
+# Tools that read this file: eslint-plugin-compat, @vitest/browser, Playwright,
+# VSCode Browser Compatibility Checker (ms-edgedevtools.vscode-browser-compatibility).
+#
+# Coverage rationale:
+#   Chrome / Edge / Opera / Samsung Internet — Chromium engine (last 2 major)
+#   Firefox / FirefoxAndroid              — Gecko engine (last 2 major)
+#   Safari / iOS                          — WebKit engine (last 2 major + iOS 16.4+)
+#   UCAndroid / QQAndroid                 — Chromium-based; kept for API baseline check
+#   not dead                              — removes browsers with <0.5% global share
 
 last 2 Chrome versions
 last 2 Edge versions
