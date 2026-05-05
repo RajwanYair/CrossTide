@@ -204,6 +204,10 @@ export type { Divergence, DivergenceType, DivergenceOptions } from "./divergence
 export { computeRollingSharpe } from "./rolling-sharpe";
 export type { RollingSharpePoint, RollingSharpeOptions } from "./rolling-sharpe";
 
+/** Relative Volume (RVOL) — current volume vs historical average. */
+export { computeRelativeVolume, detectVolumeSurges } from "./relative-volume";
+export type { RvolPoint, RvolOptions } from "./relative-volume";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
