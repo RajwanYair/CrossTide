@@ -50,5 +50,8 @@
     "*": true
   },
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-  "chat.instructionsFilesLocations": [".github/copilot-instructions.md"]
+  "chat.instructionsFilesLocations": {
+    ".github/copilot-instructions.md": true,
+    ".github/instructions": true
+  }
 }

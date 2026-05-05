@@ -1,0 +1,15 @@
+{
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "gallery": true
+    },
+    "cloudflare": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["mcp-remote", "https://mcp.cloudflare.com/sse"],
+      "gallery": true
+    }
+  }
+}
