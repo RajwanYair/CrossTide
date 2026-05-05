@@ -41,6 +41,7 @@ import { handleMigrationStatus } from "./routes/migrations.js";
 import { handleBatchQuotes } from "./routes/batch-quotes.js";
 import { handleCompare } from "./routes/compare.js";
 import { handleIndicators } from "./routes/indicators.js";
+import { handleEconomic } from "./routes/economic.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -238,6 +239,8 @@ app.get("/api/fundamentals/:symbol", (c) => handleFundamentals(c.req.param("symb
 app.get("/api/earnings/:symbol", (c) => handleEarningsCalendar(c.req.param("symbol"), c.env));
 
 app.get("/api/migrations/status", (c) => handleMigrationStatus(c.env));
+
+app.get("/api/economic", (c) => handleEconomic(c.env));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 
