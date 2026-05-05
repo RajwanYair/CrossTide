@@ -6,6 +6,44 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.32.0] - 2026-05-07
+
+### Sprint: Data Endpoints & Risk Analytics (10-item sprint)
+
+#### Added
+
+- **Dividends endpoint** (`worker/routes/dividends.ts`):
+  `GET /api/dividends/:symbol` returns 10-year dividend history from Yahoo
+  Finance v8 chart API events field, KV cached 24h.
+- **Insider transactions domain** (`src/domain/insider-transactions.ts`):
+  `analyzeInsiderTransactions(transactions)` computes buy/sell sentiment score
+  (-100 to +100), ratios, unique insiders, and largest/most recent transactions.
+- **Insiders endpoint** (`worker/routes/insiders.ts`):
+  `GET /api/insiders/:symbol` fetches insider trading activity from Yahoo
+  quoteSummary, classifies transaction types, KV cached 6h.
+- **Market movers endpoint** (`worker/routes/movers.ts`):
+  `GET /api/movers` returns top gainers, losers, and most active stocks from
+  Yahoo Finance screener API with configurable count, KV cached 5 min.
+- **ETF holdings endpoint** (`worker/routes/etf-holdings.ts`):
+  `GET /api/etf/:symbol/holdings` returns top holdings, sector weights, and
+  fund summary from Yahoo quoteSummary, KV cached 24h.
+- **Batch fundamentals endpoint** (`worker/routes/fundamentals-batch.ts`):
+  `POST /api/fundamentals/batch` fetches fundamentals for up to 20 symbols in
+  one request with per-symbol KV caching and partial failure tolerance.
+- **Correlation scanner** (`src/domain/correlation-scanner.ts`):
+  `scanCorrelations(priceData, config?)` scans all asset pairs for Pearson
+  correlation on daily returns with configurable overlap and threshold filters.
+- **Drawdown recovery analysis** (`src/domain/drawdown-recovery.ts`):
+  `analyzeRecoveries(values, threshold?)` computes recovery patterns, speeds,
+  median/average recovery durations, and recovery rates;
+  `estimateRecoveryTime(values, drawdown)` estimates bars to recover.
+- **Position risk metrics** (`src/domain/position-risk.ts`):
+  `computePositionRisk(position)` calculates stop distance, dollar risk,
+  R-multiple, and risk-reward ratio per position;
+  `computePortfolioHeat(positions, equity)` aggregates portfolio-level heat.
+
+---
+
 ## [11.31.0] - 2026-05-06
 
 ### Sprint: Attribution, Valuation & Analytics APIs (10-item sprint)
