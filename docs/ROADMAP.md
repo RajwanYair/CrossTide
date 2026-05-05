@@ -1130,21 +1130,21 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 
 | #   | Task                                                                          | Priority | Status |
 | --- | ----------------------------------------------------------------------------- | -------- | ------ |
-| P1  | Wire `wrangler.toml`: KV, D1, DO bindings (existential prerequisite)          | P0       | ⬜     |
-| P2  | Run D1 migrations in staging: `wrangler d1 migrations apply crosstide`        | P0       | ⬜     |
-| P3  | Worker `/api/quote` and `/api/chart`: real Yahoo calls + KV TTL cache         | P0       | ⬜     |
-| P4  | Corporate action adjustment: split-adjusted default, raw optional             | P0       | ⬜     |
-| P5  | KV-backed rate limiting (replace per-isolate; ADR-0004 already written)       | P1       | ⬜     |
+| P1  | Wire `wrangler.toml`: KV, D1, DO bindings (existential prerequisite)          | P0       | ✅     |
+| P2  | Run D1 migrations in staging: `wrangler d1 migrations apply crosstide`        | P0       | 🔄     |
+| P3  | Worker `/api/quote` and `/api/chart`: real Yahoo calls + KV TTL cache         | P0       | ✅     |
+| P4  | Corporate action adjustment: split-adjusted default, raw optional             | P0       | ✅     |
+| P5  | KV-backed rate limiting (replace per-isolate; ADR-0004 already written)       | P1       | ✅     |
 | P6  | Passkey auth wired to D1 `user_sync` table                                    | P1       | ⬜     |
-| P7  | Signal stores: `createWatchlistStore()`, `createPortfolioStore()`             | P1       | ⬜     |
-| P8  | Route loaders: `defineRoute({ loader })` with AbortController cancellation    | P1       | ⬜     |
-| P9  | Error boundaries: try-catch in all 54 card `mount()`/`update()` methods       | P1       | ⬜     |
-| P10 | Extract `<ct-data-table>` Web Component (virtual scroll, sort, ARIA)          | P1       | ⬜     |
-| P11 | Extract `<ct-stat-grid>`, `<ct-chart-frame>`, `<ct-empty-state>`              | P1       | ⬜     |
+| P7  | Signal stores: `createWatchlistStore()`, `createPortfolioStore()`             | P1       | ✅     |
+| P8  | Route loaders: `defineRoute({ loader })` with AbortController cancellation    | P1       | ✅     |
+| P9  | Error boundaries: try-catch in all 54 card `mount()`/`update()` methods       | P1       | ✅     |
+| P10 | Extract `<ct-data-table>` Web Component (virtual scroll, sort, ARIA)          | P1       | ✅     |
+| P11 | Extract `<ct-stat-grid>`, `<ct-chart-frame>`, `<ct-empty-state>`              | P1       | ✅     |
 | P12 | Gitignore `src/domain/debug.log` and `src/cards/debug.log` (artifact cleanup) | P2       | ✅     |
-| P13 | Structured logging in Worker (JSON, request ID, latency, provider choice)     | P2       | ⬜     |
+| P13 | Structured logging in Worker (JSON, request ID, latency, provider choice)     | P2       | ✅     |
 | P14 | GlitchTip source-map upload in CI deploy step                                 | P2       | ⬜     |
-| P15 | Conditional Temporal polyfill (detect native support first)                   | P2       | ⬜     |
+| P15 | Conditional Temporal polyfill (detect native support first)                   | P2       | ✅     |
 | P16 | OpenAPI → TypeScript client codegen for Worker API                            | P2       | ⬜     |
 | P17 | View Transitions API for route navigation (progressive enhancement)           | P2       | ⬜     |
 
