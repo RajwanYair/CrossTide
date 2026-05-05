@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "windows": "Write-Output '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"CrossTide post-edit checklist: (1) Layer direction — types←domain←core←providers←cards←ui; no imports upward. (2) Domain functions must be pure — no DOM, no fetch, no Date.now(), no Math.random(). (3) Worker imports must use .js extension. (4) No eslint-disable, @ts-ignore, or console.log. (5) New exported functions need barrel entries in index.ts. (6) patchDOM() not raw innerHTML in cards.\"}}'",
+        "fallback": "printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"CrossTide post-edit checklist: (1) Layer direction — types←domain←core←providers←cards←ui. (2) Domain functions must be pure. (3) Worker imports use .js extension. (4) No eslint-disable or @ts-ignore. (5) New exports need barrel entries. (6) patchDOM() not raw innerHTML in cards.\"}}'"
+      }
+    ]
+  }
+}

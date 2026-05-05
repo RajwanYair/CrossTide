@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "project": "CrossTide",
+  "copilot": {
+    "enabled": true,
+    "features": {
+      "custom_agents": true,
+      "inline_suggestions": true,
+      "documentation_generation": true,
+      "code_review": true,
+      "next_edit_suggestions": true
+    }
+  },
+  "modes": {
+    "domain-mode": {
+      "enabled": true,
+      "aliases": ["indicator", "domain", "pure", "analytics"],
+      "priority": "high",
+      "context_files": [
+        "src/domain/index.ts",
+        "src/types/domain.ts",
+        ".github/instructions/domain.instructions.md"
+      ],
+      "description": "Pure domain layer — indicators, analytics, consensus. No DOM, no fetch, no side effects."
+    },
+    "worker-mode": {
+      "enabled": true,
+      "aliases": ["worker", "route", "api", "hono", "kv"],
+      "priority": "high",
+      "context_files": [
+        "worker/index.ts",
+        "worker/kv-cache.ts",
+        "worker/rate-limit.ts",
+        ".github/instructions/worker.instructions.md"
+      ],
+      "description": "Cloudflare Worker routes — Hono, KV cache, D1, Valibot validation."
+    },
+    "card-mode": {
+      "enabled": true,
+      "aliases": ["card", "ui", "component", "route-card"],
+      "priority": "high",
+      "context_files": [
+        "src/cards/registry.ts",
+        "src/ui/router.ts",
+        ".github/instructions/cards.instructions.md"
+      ],
+      "description": "Route cards — CardModule pattern, patchDOM, signal stores, Web Components."
+    },
+    "quality-mode": {
+      "enabled": true,
+      "aliases": ["quality", "ci", "lint", "coverage", "release"],
+      "priority": "normal",
+      "context_files": [
+        ".github/workflows/ci.yml",
+        "vitest.config.ts",
+        "eslint.config.mjs",
+        ".github/instructions/pre-release.instructions.md"
+      ],
+      "description": "CI, lint, typecheck, coverage, bundle size, pre-release gates."
+    }
+  }
+}

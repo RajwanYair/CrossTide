@@ -231,3 +231,52 @@ tools:
   - runTests
   - get_errors
 ```
+
+---
+
+## Standalone Custom Agents (`.github/agents/`)
+
+The following agents are defined as standalone `.agent.md` files with full tool allowlists
+and handoff declarations. They supersede the inline-YAML `@quality` and `@card` entries above
+for production use — they expose richer context, persistent memory, and peer handoffs.
+
+| File                               | Invoke as           | Best For                                                               |
+| ---------------------------------- | ------------------- | ---------------------------------------------------------------------- |
+| `agents/quality-reviewer.agent.md` | `@quality-reviewer` | Pre-release gate, PR review, coverage audit, dead-code scan            |
+| `agents/api-integrator.agent.md`   | `@api-integrator`   | Worker routes, KV cache, provider chain, Valibot validation, D1 wiring |
+| `agents/card-designer.agent.md`    | `@card-designer`    | Card layout, Web Components, a11y, theme tokens, signal store UI       |
+
+### When To Use What
+
+| Need                                                  | Best Fit            |
+| ----------------------------------------------------- | ------------------- |
+| Sprint execution (any layer)                          | `@sprint`           |
+| Pre-release quality gate                              | `@quality-reviewer` |
+| New worker route / KV / D1 / provider integration     | `@api-integrator`   |
+| Card layout, Web Component, or CSS design-system work | `@card-designer`    |
+| Pure domain function / indicator                      | `@domain`           |
+| Browser compat / E2E                                  | `@compat`           |
+| Barrel export audit                                   | `@barrel`           |
+
+### Subagent Usage (in-chat)
+
+```ts
+// Use runSubagent to delegate a specialist task without cluttering main conversation:
+runSubagent({ agentName: "quality-reviewer", prompt: "Full pre-release review against pre-release.instructions.md" });
+runSubagent({ agentName: "api-integrator", prompt: "Add /api/sentiment route with KV cache and Valibot schema" });
+runSubagent({ agentName: "card-designer", prompt: "Refine ct-stat-grid layout for portfolio card" });
+```
+
+### AI Customization Map
+
+| Type                    | Location                                 | Scope                              |
+| ----------------------- | ---------------------------------------- | ---------------------------------- |
+| Repository instructions | `.github/copilot-instructions.md`        | All chats in this workspace        |
+| Agent-wide instructions | `AGENTS.md`                              | All chats in this workspace        |
+| File-scoped rules       | `.github/instructions/*.instructions.md` | Matching file patterns or tasks    |
+| Reusable slash prompts  | `.github/prompts/*.prompt.md`            | Manual invocation                  |
+| Standalone agents       | `.github/agents/*.agent.md`              | Specialist personas + tool scoping |
+| Skills / playbooks      | `.github/skills/*/SKILL.md`              | Repeatable engineering checklists  |
+| Copilot config          | `.github/copilot/config.json`            | Mode aliases and context files     |
+| MCP guidance            | `.github/copilot/MCP_SERVERS.md`         | Server placement and security      |
+| Post-edit reminders     | `.github/hooks/post-edit.json`           | Layer-direction and purity checks  |
