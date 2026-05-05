@@ -208,6 +208,10 @@ export type { RollingSharpePoint, RollingSharpeOptions } from "./rolling-sharpe"
 export { computeRelativeVolume, detectVolumeSurges } from "./relative-volume";
 export type { RvolPoint, RvolOptions } from "./relative-volume";
 
+/** MFE/MAE — max favorable/adverse excursion analysis for backtest trades. */
+export { computeExcursions } from "./mfe-mae";
+export type { TradeExcursion, ExcursionTrade, ExcursionSummary } from "./mfe-mae";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
