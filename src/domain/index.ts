@@ -383,6 +383,19 @@ export { rollingMean, rollingStdDev, rollingMin, rollingMax, rollingZScore } fro
 export { seasonalityByMonth, seasonalityByDayOfWeek } from "./seasonality";
 export type { SeasonalityBucket, DailyReturn } from "./seasonality";
 
+/** Gap scanner — detect price gaps and gap-fill patterns. */
+export {
+  detectGaps,
+  unfilledGaps,
+  gapUps,
+  gapDowns,
+  gapFillRate,
+  largestGaps,
+  averageGapSize,
+  hasRecentGap,
+} from "./gap-scanner";
+export type { DayData as GapDayData, Gap } from "./gap-scanner";
+
 /** Elder Ray — bull/bear power with EMA baseline. */
 export { computeElderRay } from "./elder-ray";
 export type { ElderRayPoint } from "./elder-ray";
