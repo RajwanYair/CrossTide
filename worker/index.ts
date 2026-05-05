@@ -47,6 +47,7 @@ import { handlePortfolioAnalytics } from "./routes/portfolio-analytics.js";
 import { handleDividends } from "./routes/dividends.js";
 import { handleInsiders } from "./routes/insiders.js";
 import { handleMovers } from "./routes/movers.js";
+import { handleEtfHoldings } from "./routes/etf-holdings.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -246,6 +247,8 @@ app.get("/api/earnings/:symbol", (c) => handleEarningsCalendar(c.req.param("symb
 app.get("/api/dividends/:symbol", (c) => handleDividends(c.req.param("symbol"), c.env));
 
 app.get("/api/insiders/:symbol", (c) => handleInsiders(c.req.param("symbol"), c.env));
+
+app.get("/api/etf/:symbol/holdings", (c) => handleEtfHoldings(c.req.param("symbol"), c.env));
 
 app.get("/api/migrations/status", (c) => handleMigrationStatus(c.env));
 
