@@ -161,12 +161,12 @@ function findPivotLows(series: readonly (number | null)[], strength: number): Pi
   const pivots: Pivot[] = [];
   for (let i = strength; i < series.length - strength; i++) {
     const val = series[i];
-    if (val === null) continue;
+    if (val == null) continue;
     let isPivot = true;
     for (let j = 1; j <= strength; j++) {
       const left = series[i - j];
       const right = series[i + j];
-      if (left === null || right === null || val > left || val > right) {
+      if (left == null || right == null || val > left || val > right) {
         isPivot = false;
         break;
       }
@@ -180,12 +180,12 @@ function findPivotHighs(series: readonly (number | null)[], strength: number): P
   const pivots: Pivot[] = [];
   for (let i = strength; i < series.length - strength; i++) {
     const val = series[i];
-    if (val === null) continue;
+    if (val == null) continue;
     let isPivot = true;
     for (let j = 1; j <= strength; j++) {
       const left = series[i - j];
       const right = series[i + j];
-      if (left === null || right === null || val < left || val < right) {
+      if (left == null || right == null || val < left || val < right) {
         isPivot = false;
         break;
       }

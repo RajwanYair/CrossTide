@@ -715,3 +715,25 @@ export {
   shouldConnectWs,
 } from "./market-hours";
 export type { MarketSchedule, ExchangeCode, MarketStatus } from "./market-hours";
+
+/** Black-Scholes option pricing — call/put prices and Greeks. */
+export { blackScholes, callGreeks, putGreeks, impliedVolatility } from "./black-scholes";
+export type { BlackScholesInput, OptionPrice, Greeks } from "./black-scholes";
+
+/** Monte Carlo portfolio simulation — path generation, percentile bands. */
+export { runSimulation, estimateParams } from "./monte-carlo";
+export type { MonteCarloConfig, MonteCarloResult } from "./monte-carlo";
+
+/** Walk-forward backtesting — rolling in/out-of-sample window analysis. */
+export { walkForward, anchoredWalkForward } from "./walk-forward";
+export type { WalkForwardWindow, WalkForwardResult } from "./walk-forward";
+
+/** Drawdown analysis — underwater equity curves, worst periods, recovery time. */
+export {
+  drawdownSeries,
+  findDrawdownPeriods,
+  drawdownSummary,
+  worstDrawdowns,
+  timeUnderwater,
+} from "./drawdown-analyzer";
+export type { DrawdownPeriod, DrawdownSummary } from "./drawdown-analyzer";
