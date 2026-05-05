@@ -6,6 +6,46 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.30.0] - 2026-05-05
+
+### Sprint: Portfolio, Volume & Correlation Analytics (10-item sprint)
+
+#### Added
+
+- **Rolling correlation** (`src/domain/rolling-correlation.ts`):
+  `computeRollingCorrelation(candlesA, candlesB, options?)` computes sliding-
+  window Pearson correlation between two daily return series with configurable
+  window size (default 60).
+- **Omega ratio** (`src/domain/omega-ratio.ts`): `computeOmega(candles,
+options?)` and `omegaFromReturns(returns, threshold?)` — probability-weighted
+  gain/loss ratio capturing the full return distribution above/below a
+  configurable threshold.
+- **Volume-Price Trend (VPT)** (`src/domain/volume-price-trend.ts`):
+  `computeVpt(candles, options?)` — cumulative volume-weighted price momentum
+  indicator with EMA signal line, more proportional than OBV.
+- **Time-Segmented Volume (TSV)** (`src/domain/time-segmented-volume.ts`):
+  `computeTsv(candles, options?)` — Worden-style accumulation/distribution
+  indicator measuring money flow with configurable lookback and signal period.
+- **Maximum Diversification Portfolio** (`src/domain/max-diversification.ts`):
+  `maxDiversification(returnSeries, tradingDays?)` — coordinate-descent
+  optimizer finding portfolio weights that maximize the diversification ratio
+  (weighted avg volatility / portfolio volatility).
+- **Worker compare endpoint** (`worker/routes/compare.ts`):
+  `GET /api/compare?symbols=AAPL,MSFT&range=1y` returns total return,
+  annualized return, volatility, Sharpe, and max drawdown for up to 8 symbols.
+- **Worker indicators endpoint** (`worker/routes/indicators.ts`):
+  `GET /api/indicators?symbol=AAPL&indicators=rsi,macd&range=1y` computes
+  technical indicators server-side for 10 supported indicator types.
+- **Adaptive RSI** (`src/domain/adaptive-rsi.ts`):
+  `computeAdaptiveRsi(candles, options?)` — RSI with dynamically adjusted
+  lookback period using Kaufman efficiency ratio; shortens in trending markets,
+  lengthens in choppy conditions.
+- **Efficiency Ratio** (`src/domain/efficiency-ratio.ts`):
+  `computeEfficiencyRatio(candles, options?)` — Kaufman's price efficiency
+  measure (0 = choppy, 1 = trending) used as input for adaptive indicators.
+
+---
+
 ## [11.29.0] - 2026-05-05
 
 ### Sprint: Analytics, Export & Batch API (10-item sprint)
