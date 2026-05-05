@@ -48,6 +48,7 @@ import { handleDividends } from "./routes/dividends.js";
 import { handleInsiders } from "./routes/insiders.js";
 import { handleMovers } from "./routes/movers.js";
 import { handleEtfHoldings } from "./routes/etf-holdings.js";
+import { handleFundamentalsBatch } from "./routes/fundamentals-batch.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -261,6 +262,8 @@ app.get("/api/movers", (c) => handleMovers(new URL(c.req.url), c.env));
 app.post("/api/portfolio/analytics", async (c) => handlePortfolioAnalytics(c.req.raw, c.env));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
+
+app.post("/api/fundamentals/batch", async (c) => handleFundamentalsBatch(c.req.raw, c.env));
 
 app.get("/api/og/:symbol", (c) => Promise.resolve(handleOgImage(new URL(c.req.url))));
 app.get("/api/og", (c) => Promise.resolve(handleOgImage(new URL(c.req.url))));
