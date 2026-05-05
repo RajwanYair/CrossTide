@@ -6,6 +6,51 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.28.0] - 2025-07-10
+
+### Sprint: Accessibility, Security CI & Launch Prep (10-item sprint)
+
+#### Added
+
+- **Focus management on route change** (`src/ui/router.ts`): `activateView()`
+  now uses `requestAnimationFrame` to focus the view heading (`h1`, `h2`,
+  `[data-view-heading]`) on every navigation — satisfies WCAG 2.4.3.
+- **Form error identification system** (`src/ui/form-errors.ts`): new utility
+  exports `showFieldError`, `clearFieldError`, `validateAndReport`, and
+  `clearAllErrors` for WCAG 3.3.1-compliant inline form errors with
+  `aria-invalid` + `role="alert"` live regions.
+- **Router query-string support** (`src/ui/router.ts`): `RouteInfo` now
+  includes `searchParams: Readonly<Record<string, string>>`; `navigateToPath()`
+  accepts `opts.searchParams` and serialises it to the URL.
+- **OSSF Scorecard workflow** (`.github/workflows/scorecard.yml`): weekly +
+  on-push security scoring via ossf/scorecard-action; results uploaded as SARIF.
+- **Color contrast CI check** (`scripts/check-contrast.mjs`): validates 15
+  design-token pairs against WCAG AA thresholds (4.5:1 text, 3:1 UI);
+  wired into CI as `npm run check:contrast`.
+- **npm audit gate** in CI pipeline: `npm audit --omit=dev --audit-level=high`
+  blocks merges on new high/critical dependency vulnerabilities.
+- **Open Graph / Twitter Card meta** (`index.html`): `og:title`,
+  `og:description`, `og:image`, `twitter:card` and related tags for rich
+  social previews on Product Hunt, Hacker News, and X.
+- **OG preview image** (`public/og-preview.svg`): 1200×630 branded SVG preview
+  with chart decorations, feature pills, and token-aligned palette.
+
+#### Fixed
+
+- **Light-theme signal tokens**: `--signal-buy` was `#3fb950` (2.54:1 on
+  white, fails WCAG AA 3:1 minimum); corrected to `#1a7f37` and
+  `--signal-sell` to `#cf222e` in `[data-theme="light"]`.
+- **Error boundary retry**: replaced full-page-reload button with proper
+  card re-mount logic; allows up to 3 retries before degrading to page reload.
+  Uses `data-action="retry"` event delegation — no inline `onclick`.
+
+#### Changed
+
+- `.field-error` and `[aria-invalid="true"]` component styles added to
+  `src/styles/components.css` for the form error system.
+
+---
+
 ## [11.27.0] - 2025-07-09
 
 ### Sprint: Infrastructure Hardening & Public Launch Prep (10-item sprint)
