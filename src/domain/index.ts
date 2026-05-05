@@ -236,6 +236,10 @@ export type { VptPoint, VptOptions } from "./volume-price-trend";
 export { computeTsv } from "./time-segmented-volume";
 export type { TsvPoint, TsvOptions } from "./time-segmented-volume";
 
+/** Maximum Diversification Portfolio — weights maximizing diversification ratio. */
+export { maxDiversification } from "./max-diversification";
+export type { MaxDivResult } from "./max-diversification";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
