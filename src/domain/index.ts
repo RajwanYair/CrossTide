@@ -252,6 +252,10 @@ export type { EfficiencyRatioPoint, EfficiencyRatioOptions } from "./efficiency-
 export { computeMtfConfluence } from "./mtf-confluence";
 export type { MtfConfluenceResult, MtfSignal, MtfConfluenceOptions } from "./mtf-confluence";
 
+/** Brinson-Fachler Performance Attribution — allocation/selection/interaction effects. */
+export { computeAttribution } from "./performance-attribution";
+export type { AttributionResult, AttributionEffect, SectorWeight } from "./performance-attribution";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
