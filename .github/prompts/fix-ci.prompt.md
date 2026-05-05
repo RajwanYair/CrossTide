@@ -24,17 +24,9 @@ Diagnose and fix the failing CI gate.
 - No reducing coverage thresholds
 - No increasing bundle size budget
 
-## Quality Gate Commands
+## Quality Gates
 
-| Gate       | Command                 | Requirement             |
-| ---------- | ----------------------- | ----------------------- |
-| Type check | `npm run typecheck`     | Zero errors             |
-| ESLint     | `npm run lint`          | Zero warnings           |
-| Stylelint  | `npm run lint:css`      | Zero CSS warnings       |
-| Prettier   | `npm run format:check`  | Exit 0                  |
-| Tests      | `npm run test:coverage` | All pass, ≥90% coverage |
-| Build      | `npm run build`         | Successful              |
-| Bundle     | `npm run check:bundle`  | Under 200 KB gzip       |
+See full table in `.github/copilot-instructions.md` → **Quality Gates** section.
 
 Run all: `npm run ci`
 

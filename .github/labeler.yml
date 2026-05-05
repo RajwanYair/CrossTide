@@ -5,9 +5,17 @@ domain:
   - changed-files:
       - any-glob-to-any-file: "src/domain/**"
 
+types:
+  - changed-files:
+      - any-glob-to-any-file: "src/types/**"
+
 core:
   - changed-files:
       - any-glob-to-any-file: "src/core/**"
+
+providers:
+  - changed-files:
+      - any-glob-to-any-file: "src/providers/**"
 
 cards:
   - changed-files:
@@ -38,6 +46,15 @@ docs:
 tests:
   - changed-files:
       - any-glob-to-any-file: "tests/**"
+
+compat:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tests/browser/**"
+          - "tests/e2e/**"
+          - ".browserslistrc"
+          - "playwright.config.ts"
+          - "vitest.browser.config.ts"
 
 dependencies:
   - changed-files:

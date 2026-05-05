@@ -42,13 +42,8 @@ Check current version: `grep '"version"' package.json`.
 ### 4. Quality Gates (run in order, fix before proceeding)
 
 ```bash
-npm run typecheck        # zero errors required
-npm run lint             # zero warnings required
-npm run test:coverage    # ≥90% coverage required
-npm run build            # must succeed
+npm run ci   # typecheck → lint → test:coverage → build — all must pass
 ```
-
-Run all: `npm run ci`
 
 ### 5. Commit
 
@@ -81,12 +76,4 @@ gh release create "v$(node -p "require('./package.json').version")" --generate-n
 - **Tests required** for all new domain functions and worker routes
 - **Don't reduce coverage thresholds** — add tests to meet them
 
-## Sprint Size Guide
-
-| Effort | Examples                                          |
-| ------ | ------------------------------------------------- |
-| Small  | New indicator, barrel export, add worker endpoint |
-| Medium | New card, new store, new worker route with tests  |
-| Large  | New feature area (multiple files, routes, cards)  |
-
-Large features should be split into multiple sprints.
+Large features (new feature area spanning multiple files, routes, and cards) should be split into multiple sprints.

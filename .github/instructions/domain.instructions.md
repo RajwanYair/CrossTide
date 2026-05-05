@@ -79,7 +79,6 @@ describe("computeMyIndicator", () => {
 - Use `it.each` — never repeat `it` blocks with only data differences
 - No mocks needed — functions are pure
 - Test: normal operation, null on insufficient data, boundary values, negative/zero inputs
-- Coverage threshold: ≥90% statements/lines/functions, ≥80% branches
 
 ## Common Pitfalls
 

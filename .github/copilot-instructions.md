@@ -2,12 +2,19 @@
 
 Privacy-first financial analysis PWA. Vanilla TypeScript, no framework, Vite 8, Vitest 4, Hono 4 on Cloudflare Workers, LWC v5 charts, morphdom DOM patching, Cloudflare D1 + KV.
 
-> **Scoped detail files** (loaded automatically per directory):
->
-> - `domain/` rules → `.github/instructions/domain.instructions.md`
-> - `worker/` rules → `.github/instructions/worker.instructions.md`
-> - `cards/ui/` rules → `.github/instructions/cards.instructions.md`
-> - `tests/` rules → `.github/instructions/tests.instructions.md`
+## Context Loading Strategy (token efficiency)
+
+Load **only** the instruction file that matches the layer you are modifying:
+
+| Layer                   | Instruction file                               | `applyTo` glob                     |
+| ----------------------- | ---------------------------------------------- | ---------------------------------- |
+| `src/domain/`           | `.github/instructions/domain.instructions.md`  | `src/domain/**`                    |
+| `worker/`               | `.github/instructions/worker.instructions.md`  | `worker/**`                        |
+| `src/cards/`, `src/ui/` | `.github/instructions/cards.instructions.md`   | `src/cards/**`                     |
+| `tests/`                | `.github/instructions/tests.instructions.md`   | `tests/**`                         |
+| Browser compat          | `.github/instructions/browser.instructions.md` | `tests/browser/**`, `tests/e2e/**` |
+
+**Do NOT speculatively load** `src/domain/indicators/` (218 files), `src/cards/` (54 files), or `tests/unit/` for unrelated tasks. Use `grep_search` or `semantic_search` to find specific files.
 
 ---
 
@@ -25,9 +32,8 @@ src/providers/ — Yahoo/Finnhub adapters
 src/cards/     — route cards (CardModule pattern)
 src/ui/        — router, theme, toast — DOM allowed
 worker/        — Hono on Cloudflare Workers; imports use .js extension
+docs-site/     — Astro Starlight documentation site; isolated from app code
 ```
-
----
 
 ---
 
