@@ -451,6 +451,10 @@ export {
 } from "./xlsx-export";
 export type { CellValue, SheetData, Workbook, CellType } from "./xlsx-export";
 
+/** Portfolio signal store — persisted position-level portfolio state. */
+export { portfolioStore } from "./portfolio-store";
+export type { PortfolioPosition, PortfolioState } from "./portfolio-store";
+
 export { createCacheManager } from "./cache-manager";
 export type { CacheTier, CacheManagerOptions, CacheManager, CacheStats } from "./cache-manager";
 
