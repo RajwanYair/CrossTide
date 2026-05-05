@@ -224,6 +224,10 @@ export type { TrendStrengthPoint, TrendStrengthOptions } from "./trend-strength"
 export { computeRollingCorrelation } from "./rolling-correlation";
 export type { RollingCorrelationPoint, RollingCorrelationOptions } from "./rolling-correlation";
 
+/** Omega Ratio — probability-weighted gain/loss ratio from full return distribution. */
+export { computeOmega, omegaFromReturns } from "./omega-ratio";
+export type { OmegaResult, OmegaOptions } from "./omega-ratio";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
