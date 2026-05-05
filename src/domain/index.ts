@@ -264,6 +264,10 @@ export type { DividendPayment, DividendSummary, DripResult } from "./dividend-an
 export { computePeerValuation } from "./peer-valuation";
 export type { CompanyMetrics, PeerMetricComparison, PeerValuationResult } from "./peer-valuation";
 
+/** Trade Journal Analytics — win rate, expectancy, R-multiples, streaks. */
+export { analyzeTradeJournal } from "./trade-journal";
+export type { TradeEntry, TradeStats, TradeResult } from "./trade-journal";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
