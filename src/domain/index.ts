@@ -220,6 +220,10 @@ export type { VamPoint, VamOptions } from "./volatility-adj-momentum";
 export { computeTrendStrength } from "./trend-strength";
 export type { TrendStrengthPoint, TrendStrengthOptions } from "./trend-strength";
 
+/** Rolling Correlation — sliding-window Pearson correlation between two assets. */
+export { computeRollingCorrelation } from "./rolling-correlation";
+export type { RollingCorrelationPoint, RollingCorrelationOptions } from "./rolling-correlation";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
