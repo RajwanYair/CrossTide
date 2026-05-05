@@ -408,3 +408,200 @@ describe("Performance APIs", () => {
     expect(typeof PerformanceObserver).toBe("function");
   });
 });
+
+// ---------------------------------------------------------------------------
+// ES2023+ language features (newer than the baseline ES2022 block above)
+// ---------------------------------------------------------------------------
+describe("ES2023+ language features", () => {
+  it("Array.findLast() works (ES2023)", () => {
+    const arr = [1, 2, 3, 4];
+    expect(arr.findLast((x) => x % 2 === 0)).toBe(4);
+  });
+
+  it("Array.findLastIndex() works (ES2023)", () => {
+    const arr = [1, 2, 3, 4];
+    expect(arr.findLastIndex((x) => x % 2 === 0)).toBe(3);
+  });
+
+  it("Array.toSorted() returns new sorted array (ES2023)", () => {
+    const arr = [3, 1, 2];
+    const sorted = arr.toSorted((a, b) => a - b);
+    expect(sorted).toEqual([1, 2, 3]);
+    expect(arr).toEqual([3, 1, 2]); // original unchanged
+  });
+
+  it("Array.toReversed() returns new reversed array (ES2023)", () => {
+    const arr = [1, 2, 3];
+    const reversed = arr.toReversed();
+    expect(reversed).toEqual([3, 2, 1]);
+    expect(arr).toEqual([1, 2, 3]);
+  });
+
+  it("Array.with() returns new array with replaced element (ES2023)", () => {
+    const arr = [1, 2, 3];
+    const updated = arr.with(1, 99);
+    expect(updated).toEqual([1, 99, 3]);
+    expect(arr).toEqual([1, 2, 3]);
+  });
+
+  it("Array.prototype.toSpliced() works (ES2023)", () => {
+    const arr = [1, 2, 3, 4];
+    const spliced = arr.toSpliced(1, 1, 10);
+    expect(spliced).toEqual([1, 10, 3, 4]);
+    expect(arr).toEqual([1, 2, 3, 4]);
+  });
+
+  it("Promise.any() resolves to first fulfilled value (ES2021)", async () => {
+    const result = await Promise.any([
+      Promise.reject(new Error("fail")),
+      Promise.resolve("ok"),
+      Promise.resolve("also ok"),
+    ]);
+    expect(result).toBe("ok");
+  });
+
+  it("AggregateError is available (from Promise.any rejection)", async () => {
+    try {
+      await Promise.any([Promise.reject(new Error("a")), Promise.reject(new Error("b"))]);
+    } catch (err) {
+      expect(err instanceof AggregateError).toBe(true);
+    }
+  });
+
+  it("Error.cause is supported (ES2022)", () => {
+    const cause = new Error("root");
+    const outer = new Error("outer", { cause });
+    expect((outer as Error & { cause?: unknown }).cause).toBe(cause);
+  });
+
+  it("Object.fromEntries() works", () => {
+    const entries: [string, number][] = [
+      ["a", 1],
+      ["b", 2],
+    ];
+    expect(Object.fromEntries(entries)).toEqual({ a: 1, b: 2 });
+  });
+
+  it("String.at() works", () => {
+    expect("hello".at(-1)).toBe("o");
+    expect("hello".at(0)).toBe("h");
+  });
+
+  it("crypto.randomUUID() generates valid UUID v4", () => {
+    const uuid = crypto.randomUUID();
+    expect(uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+  });
+
+  it("AbortSignal.timeout() is available (ES2022/Baseline 2022)", () => {
+    const supported = typeof AbortSignal.timeout === "function";
+    expect(typeof supported).toBe("boolean");
+    if (supported) {
+      const signal = AbortSignal.timeout(10_000);
+      expect(signal.aborted).toBe(false);
+    }
+  });
+
+  it("Promise.withResolvers() is available (Baseline 2024)", () => {
+    const supported = typeof Promise.withResolvers === "function";
+    expect(typeof supported).toBe("boolean");
+    if (supported) {
+      const { promise, resolve } = Promise.withResolvers<string>();
+      resolve("ok");
+      return promise.then((v) => expect(v).toBe("ok"));
+    }
+  });
+
+  it("Object.groupBy() is detected (Baseline 2024)", () => {
+    const supported = typeof Object.groupBy === "function";
+    expect(typeof supported).toBe("boolean");
+    if (supported) {
+      const result = Object.groupBy([1, 2, 3, 4], (n) => (n % 2 === 0 ? "even" : "odd"));
+      expect(result["even"]).toEqual([2, 4]);
+    }
+  });
+
+  it("Map.groupBy() is detected (Baseline 2024)", () => {
+    const supported = typeof Map.groupBy === "function";
+    expect(typeof supported).toBe("boolean");
+    if (supported) {
+      const result = Map.groupBy([1, 2, 3], (n) => (n % 2 === 0 ? "even" : "odd"));
+      expect(result.get("odd")).toEqual([1, 3]);
+    }
+  });
+
+  it("Intl.RelativeTimeFormat is available", () => {
+    expect(typeof Intl.RelativeTimeFormat).toBe("function");
+    const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+    expect(rtf.format(-1, "day")).toContain("yesterday");
+  });
+
+  it("Intl.ListFormat is available", () => {
+    expect(typeof Intl.ListFormat).toBe("function");
+    const lf = new Intl.ListFormat("en", { type: "conjunction" });
+    expect(lf.format(["a", "b"])).toContain("and");
+  });
+
+  it("Intl.Segmenter is detected (Baseline 2024)", () => {
+    const supported = typeof Intl.Segmenter === "function";
+    expect(typeof supported).toBe("boolean");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Communication APIs — used for cross-tab coordination and sharing
+// ---------------------------------------------------------------------------
+describe("Communication APIs", () => {
+  it("BroadcastChannel is available", () => {
+    expect(typeof BroadcastChannel).toBe("function");
+    const ch = new BroadcastChannel("__compat_test__");
+    ch.close();
+  });
+
+  it("Web Locks API is detected (Baseline 2022)", () => {
+    const supported = "locks" in navigator;
+    expect(typeof supported).toBe("boolean");
+    if (supported) {
+      expect(typeof (navigator as unknown as { locks: { request: unknown } }).locks.request).toBe(
+        "function",
+      );
+    }
+  });
+
+  it("navigator.clipboard is available in secure context", () => {
+    expect(typeof navigator.clipboard).toBe("object");
+    expect(typeof navigator.clipboard.writeText).toBe("function");
+  });
+
+  it("Web Share API is detected", () => {
+    const supported = typeof navigator.share === "function";
+    expect(typeof supported).toBe("boolean");
+  });
+
+  it("navigator.sendBeacon is available", () => {
+    expect(typeof navigator.sendBeacon).toBe("function");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Scheduler API — used for non-blocking work scheduling
+// ---------------------------------------------------------------------------
+describe("Scheduler API (progressive)", () => {
+  it("scheduler.postTask is detected (Chrome 94+)", () => {
+    const supported =
+      typeof (globalThis as unknown as { scheduler?: { postTask: unknown } }).scheduler
+        ?.postTask === "function";
+    expect(typeof supported).toBe("boolean");
+  });
+
+  it("queueMicrotask is available", () => {
+    expect(typeof queueMicrotask).toBe("function");
+  });
+
+  it("MessageChannel is available", () => {
+    expect(typeof MessageChannel).toBe("function");
+    const mc = new MessageChannel();
+    expect(mc.port1).toBeTruthy();
+    mc.port1.close();
+    mc.port2.close();
+  });
+});

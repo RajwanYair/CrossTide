@@ -57,7 +57,7 @@ worker/        — Hono on Cloudflare Workers; imports use .js extension
 type(scope): fully lowercase subject, no period, ≤72 chars
 ```
 
-Types: `feat` `fix` `docs` `refactor` `test` `chore` `perf` `ci`  
+Types: `feat` `fix` `docs` `refactor` `test` `chore` `perf` `ci`
 Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio` `alerts` `consensus` `watchlist` `chart`
 
 ## Quality Gates (all must pass before merge)

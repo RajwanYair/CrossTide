@@ -38,8 +38,20 @@ export default defineConfig({
       use: { ...devices["Pixel 7"] },
     },
     {
+      name: "mobile-chrome-landscape",
+      use: { ...devices["Pixel 7 landscape"] },
+    },
+    {
       name: "mobile-safari",
       use: { ...devices["iPhone 14"] },
+    },
+    {
+      name: "mobile-safari-pro",
+      use: { ...devices["iPhone 15 Pro"] },
+    },
+    {
+      name: "mobile-safari-landscape",
+      use: { ...devices["iPhone 15 landscape"] },
     },
     {
       name: "mobile-safari-mini",
@@ -48,6 +60,14 @@ export default defineConfig({
     {
       name: "android-galaxy",
       use: { ...devices["Galaxy S9+"] },
+    },
+    {
+      name: "android-galaxy-s24",
+      use: { ...devices["Galaxy S24"] },
+    },
+    {
+      name: "android-galaxy-landscape",
+      use: { ...devices["Galaxy S9+ landscape"] },
     },
     // ── Tablets ───────────────────────────────────────────────────
     {
@@ -63,8 +83,25 @@ export default defineConfig({
       use: { ...devices["iPad Pro 11"] },
     },
     {
+      name: "tablet-pro-landscape",
+      use: { ...devices["iPad Pro 11 landscape"] },
+    },
+    {
       name: "android-tablet",
       use: { ...devices["Galaxy Tab S4"] },
+    },
+    {
+      name: "android-tablet-s9",
+      use: { ...devices["Galaxy Tab S9"] },
+    },
+    {
+      name: "android-tablet-landscape",
+      use: { ...devices["Galaxy Tab S9 landscape"] },
+    },
+    // ── Windows tablet ────────────────────────────────────────────
+    {
+      name: "nexus-10",
+      use: { ...devices["Nexus 10"] },
     },
   ],
   webServer: {

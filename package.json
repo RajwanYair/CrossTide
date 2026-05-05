@@ -36,10 +36,10 @@
     "lint": "eslint . --max-warnings 0",
     "lint:css": "stylelint \"src/**/*.css\" --config config/.stylelintrc.json --max-warnings 0",
     "lint:html": "htmlhint index.html --config config/.htmlhintrc",
-    "lint:md": "markdownlint-cli2 --config config/.markdownlint.json \"**/*.md\" \"#**/node_modules/**\" \"#dist\" \"#coverage\" \"#build\" \"#test-results\" \"#playwright-report\" \"#docs/ROADMAP.archive*\"",
+    "lint:md": "markdownlint-cli2 --config config/.markdownlint.json \"**/*.md\" \"#**/node_modules/**\" \"#dist\" \"#coverage\" \"#build\" \"#test-results\" \"#playwright-report\"",
     "lint:all": "npm run lint && npm run lint:css && npm run lint:html && npm run lint:md && npm run format:check",
-    "format": "prettier --write \"**/*.{ts,md,json,css,html,mjs}\" \"!dist/**\" \"!coverage/**\" \"!build/**\" \"!node_modules/**\" \"!test-results/**\" \"!playwright-report/**\" \"!docs/ROADMAP.archive*\"",
-    "format:check": "prettier --check \"**/*.{ts,md,json,css,html,mjs}\" \"!dist/**\" \"!coverage/**\" \"!build/**\" \"!node_modules/**\" \"!test-results/**\" \"!playwright-report/**\" \"!docs/ROADMAP.archive*\"",
+    "format": "prettier --write \"**/*.{ts,md,json,css,html,mjs}\" \"!dist/**\" \"!coverage/**\" \"!build/**\" \"!node_modules/**\" \"!test-results/**\" \"!playwright-report/**\"",
+    "format:check": "prettier --check \"**/*.{ts,md,json,css,html,mjs}\" \"!dist/**\" \"!coverage/**\" \"!build/**\" \"!node_modules/**\" \"!test-results/**\" \"!playwright-report/**\"",
     "typecheck": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit",
     "check:bundle": "node scripts/check-bundle-size.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
@@ -71,21 +71,6 @@
   "engines": {
     "node": ">=20.19.0"
   },
-  "browserslist": [
-    "last 2 Chrome versions",
-    "last 2 Edge versions",
-    "last 2 Safari versions",
-    "last 2 Firefox versions",
-    "last 2 Opera versions",
-    "last 2 Samsung versions",
-    "last 2 ChromeAndroid versions",
-    "last 2 FirefoxAndroid versions",
-    "last 2 OperaMobile versions",
-    "last 2 UCAndroid versions",
-    "last 2 QQAndroid versions",
-    "iOS >= 16.4",
-    "not dead"
-  ],
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@commitlint/cli": "^20.5.3",

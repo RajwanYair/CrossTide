@@ -5,7 +5,7 @@
 > **Codebase:** 424+ modules · 5,718+ tests · 506+ test files · 25 route cards
 > **Bundle:** 158 KB gzip (budget 200 KB) · 49 SW precache entries
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
-> **Previous roadmaps:** `docs/ROADMAP.archive-2026-05-v4.md`
+> **Previous roadmaps:** archived in git history (tags v11.28.0 and earlier)
 
 ---
 
@@ -1023,5 +1023,5 @@ Each executed change must record:
 ---
 
 _This roadmap is a living document. Updated on every phase completion._
-_Previous versions: `docs/ROADMAP.archive-2026-05-v4.md`, `docs/ROADMAP.archive-2026-05-v3.md`_
+_Previous versions: archived in git history (see tags v11.28.0, v11.20.0 and earlier)_
 _Consolidated from: `docs/ROADMAP.new.md` (generic governance template — fully subsumed by this document)_

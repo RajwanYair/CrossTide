@@ -53,5 +53,33 @@
   "chat.instructionsFilesLocations": {
     ".github/copilot-instructions.md": true,
     ".github/instructions": true
-  }
+  },
+  // Browser Compatibility Checker — align with .browserslistrc targets; exclude non-browser code
+  "browser-compatibility-checker.browserList": [
+    "chrome",
+    "edge",
+    "firefox",
+    "opera",
+    "safari",
+    "chrome_android",
+    "firefox_android",
+    "opera_android",
+    "safari_ios",
+    "samsunginternet_android",
+    "webview_android"
+  ],
+  "browser-compatibility-checker.warnForOtherBrowsers": false,
+  "browser-compatibility-checker.foldersToIgnore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/build/**",
+    "**/config/**",
+    "**/.**/**",
+    "**/**.test.**",
+    "**/**.spec.**",
+    "eslint.config.mjs",
+    "**/worker/**",
+    "**/scripts/**"
+  ]
 }

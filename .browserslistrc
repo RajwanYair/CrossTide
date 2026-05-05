@@ -1,0 +1,17 @@
+# CrossTide browser targets — kept in sync with package.json "browserslist"
+# Explicit file so tools (VSCode ESLint extension, PostCSS, etc.) resolve
+# targets reliably regardless of the working directory.
+
+last 2 Chrome versions
+last 2 Edge versions
+last 2 Safari versions
+last 2 Firefox versions
+last 2 Opera versions
+last 2 Samsung versions
+last 2 ChromeAndroid versions
+last 2 FirefoxAndroid versions
+last 2 OperaMobile versions
+last 2 UCAndroid versions
+last 2 QQAndroid versions
+iOS >= 16.4
+not dead

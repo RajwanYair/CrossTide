@@ -102,6 +102,27 @@ export default tseslint.config(
     ],
   },
   {
+    // Global settings — compat plugin reads settings.browsers to avoid IE-era defaults
+    plugins: { compat },
+    settings: {
+      browsers: [
+        "last 2 Chrome versions",
+        "last 2 Edge versions",
+        "last 2 Safari versions",
+        "last 2 Firefox versions",
+        "last 2 Opera versions",
+        "last 2 Samsung versions",
+        "last 2 ChromeAndroid versions",
+        "last 2 FirefoxAndroid versions",
+        "last 2 OperaMobile versions",
+        "last 2 UCAndroid versions",
+        "last 2 QQAndroid versions",
+        "iOS >= 16.4",
+        "not dead",
+      ],
+    },
+  },
+  {
     files: ["src/**/*.ts"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     plugins: {
@@ -114,6 +135,24 @@ export default tseslint.config(
         project: ["./tsconfig.json", "./tsconfig.sw.json"],
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    // Explicit browser targets so eslint-plugin-compat never falls back to IE-era defaults
+    settings: {
+      browsers: [
+        "last 2 Chrome versions",
+        "last 2 Edge versions",
+        "last 2 Safari versions",
+        "last 2 Firefox versions",
+        "last 2 Opera versions",
+        "last 2 Samsung versions",
+        "last 2 ChromeAndroid versions",
+        "last 2 FirefoxAndroid versions",
+        "last 2 OperaMobile versions",
+        "last 2 UCAndroid versions",
+        "last 2 QQAndroid versions",
+        "iOS >= 16.4",
+        "not dead",
+      ],
     },
     rules: {
       ...sharedRules,
@@ -194,6 +233,9 @@ export default tseslint.config(
     // Cloudflare Worker — separate tsconfig, WebWorker globals
     files: ["worker/**/*.ts"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    plugins: {
+      compat,
+    },
     languageOptions: {
       globals: {
         crypto: "readonly",
@@ -221,6 +263,8 @@ export default tseslint.config(
       "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
       "@typescript-eslint/explicit-function-return-type": "error",
       "no-console": "off",
+      // Worker runs in Cloudflare V8 runtime, not a browser — skip browser-compat checks
+      "compat/compat": "off",
     },
   },
 );
