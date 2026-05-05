@@ -55,6 +55,7 @@ import { handleSeasonality } from "./routes/seasonality.js";
 import { handlePortfolioRebalance } from "./routes/portfolio-rebalance.js";
 import { handleMarketBreadth } from "./routes/market-breadth.js";
 import { handleMonteCarlo } from "./routes/monte-carlo.js";
+import { handlePairs } from "./routes/pairs.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -280,6 +281,8 @@ app.post("/api/market-breadth", async (c) => handleMarketBreadth(c.req.raw, c.en
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 
 app.post("/api/monte-carlo", async (c) => handleMonteCarlo(c.req.raw));
+
+app.post("/api/pairs", async (c) => handlePairs(c.req.raw));
 
 app.post("/api/fundamentals/batch", async (c) => handleFundamentalsBatch(c.req.raw, c.env));
 
