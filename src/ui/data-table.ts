@@ -18,6 +18,8 @@
 import { VirtualScroller } from "./virtual-scroller";
 import { sortRows, type SortConfig, type SortDirection } from "./sortable";
 import { enableTableKeyNav } from "./table-keyboard-nav";
+import { tableToCsv, copyCellToClipboard } from "../core/table-export";
+import type { ExportColumn } from "../core/table-export";
 
 export interface DataTableColumn<K extends string = string> {
   readonly key: K;
@@ -47,6 +49,7 @@ class CtDataTable extends HTMLElement {
   private _options: DataTableOptions = {};
   private _scroller: VirtualScroller | null = null;
   private _keyNavCleanup: (() => void) | null = null;
+  private _copyHandler: ((e: KeyboardEvent) => void) | null = null;
   private _connected = false;
 
   set columns(cols: DataTableColumn[]) {
@@ -87,12 +90,34 @@ class CtDataTable extends HTMLElement {
 
   connectedCallback(): void {
     this._connected = true;
+    this._copyHandler = (e: KeyboardEvent): void => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+        const focused = this.querySelector("td[tabindex='0'], td:focus");
+        if (focused) {
+          e.preventDefault();
+          void copyCellToClipboard(focused.textContent);
+        }
+      }
+    };
+    this.addEventListener("keydown", this._copyHandler);
     this.render();
   }
 
   disconnectedCallback(): void {
     this._connected = false;
+    if (this._copyHandler) {
+      this.removeEventListener("keydown", this._copyHandler);
+      this._copyHandler = null;
+    }
     this.cleanup();
+  }
+
+  /**
+   * Export the current (sorted) table data as a CSV string.
+   */
+  exportCsv(): string {
+    const exportCols: ExportColumn[] = this._columns.map((c) => ({ key: c.key, label: c.label }));
+    return tableToCsv(exportCols, this.getSortedRows());
   }
 
   private cleanup(): void {
