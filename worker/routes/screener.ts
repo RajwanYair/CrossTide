@@ -26,6 +26,18 @@ export interface ScreenerParams {
   maxRsi?: number;
   minAdx?: number;
   consensus?: "BUY" | "SELL" | "NEUTRAL";
+  /** Maximum trailing P/E ratio. */
+  maxPe?: number;
+  /** Minimum trailing P/E ratio. */
+  minPe?: number;
+  /** Minimum market cap in USD. */
+  minMarketCap?: number;
+  /** Maximum market cap in USD. */
+  maxMarketCap?: number;
+  /** Minimum trailing dividend yield as decimal (0.02 = 2%). */
+  minDividendYield?: number;
+  /** Minimum profit margin as decimal. */
+  minProfitMargin?: number;
 }
 
 export interface ScreenerRow {
@@ -34,6 +46,14 @@ export interface ScreenerRow {
   rsi: number;
   adx: number;
   score: number;
+  /** Synthetic trailing P/E (placeholder until real fundamentals wired). */
+  pe: number;
+  /** Synthetic market cap in USD billions. */
+  marketCapB: number;
+  /** Synthetic dividend yield as decimal. */
+  dividendYield: number;
+  /** Synthetic profit margin as decimal. */
+  profitMargin: number;
 }
 
 export interface ScreenerResponse {
@@ -58,7 +78,11 @@ function syntheticRow(ticker: string): ScreenerRow {
   const score = Math.round(pseudoRand(ticker, 3) * 100);
   const cIdx = Math.floor(pseudoRand(ticker, 4) * CONSENSUS_OPTIONS.length);
   const consensus = CONSENSUS_OPTIONS[cIdx] ?? "NEUTRAL";
-  return { ticker, consensus, rsi, adx, score };
+  const pe = Math.round(pseudoRand(ticker, 5) * 45 + 5); // 5–50
+  const marketCapB = Math.round(pseudoRand(ticker, 6) * 2000 + 1); // 1–2001 B
+  const dividendYield = Math.round(pseudoRand(ticker, 7) * 600) / 10000; // 0–0.06
+  const profitMargin = Math.round(pseudoRand(ticker, 8) * 400 - 50) / 1000; // -0.05–0.35
+  return { ticker, consensus, rsi, adx, score, pe, marketCapB, dividendYield, profitMargin };
 }
 
 export async function handleScreener(request: Request): Promise<Response> {
@@ -105,6 +129,17 @@ export async function handleScreener(request: Request): Promise<Response> {
       if (row.rsi < minRsi || row.rsi > maxRsi) return false;
       if (row.adx < minAdx) return false;
       if (params.consensus && row.consensus !== params.consensus) return false;
+      // Fundamental filters
+      if (params.maxPe !== undefined && row.pe > params.maxPe) return false;
+      if (params.minPe !== undefined && row.pe < params.minPe) return false;
+      if (params.minMarketCap !== undefined && row.marketCapB * 1e9 < params.minMarketCap)
+        return false;
+      if (params.maxMarketCap !== undefined && row.marketCapB * 1e9 > params.maxMarketCap)
+        return false;
+      if (params.minDividendYield !== undefined && row.dividendYield < params.minDividendYield)
+        return false;
+      if (params.minProfitMargin !== undefined && row.profitMargin < params.minProfitMargin)
+        return false;
       return true;
     });
 

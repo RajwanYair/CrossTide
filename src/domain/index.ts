@@ -899,3 +899,11 @@ export {
   cumulativeSplitFactor,
 } from "./corp-actions";
 export type { SplitEvent, DividendEvent, AdjustmentOptions } from "./corp-actions";
+
+// ── Fundamental screener filters (Q3) ────────────────────────────────────
+export {
+  matchesFundamentalFilters,
+  applyFundamentalFilters,
+  GICS_SECTORS,
+} from "./screener-fundamentals";
+export type { FundamentalFilterParams, GicsSector } from "./screener-fundamentals";
