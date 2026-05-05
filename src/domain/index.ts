@@ -396,6 +396,10 @@ export {
 } from "./gap-scanner";
 export type { DayData as GapDayData, Gap } from "./gap-scanner";
 
+/** DCA simulator — dollar-cost averaging strategy modelling. */
+export { simulateDca, generateDcaSchedule, dcaVsLumpSum } from "./dca-simulator";
+export type { DcaInvestment, DcaResult } from "./dca-simulator";
+
 /** Elder Ray — bull/bear power with EMA baseline. */
 export { computeElderRay } from "./elder-ray";
 export type { ElderRayPoint } from "./elder-ray";
