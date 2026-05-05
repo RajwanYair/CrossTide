@@ -400,6 +400,17 @@ export type { DayData as GapDayData, Gap } from "./gap-scanner";
 export { simulateDca, generateDcaSchedule, dcaVsLumpSum } from "./dca-simulator";
 export type { DcaInvestment, DcaResult } from "./dca-simulator";
 
+/** Support/resistance level finder — pivot points and price clustering. */
+export {
+  findSwingLows,
+  findSwingHighs,
+  clusterLevels,
+  findLevels,
+  nearestSupport,
+  nearestResistance,
+} from "./support-resistance";
+export type { PriceLevel } from "./support-resistance";
+
 /** Elder Ray — bull/bear power with EMA baseline. */
 export { computeElderRay } from "./elder-ray";
 export type { ElderRayPoint } from "./elder-ray";
