@@ -846,3 +846,47 @@ export type { RiskParityInput, RiskParityResult } from "./risk-parity";
 /** Risk contribution decomposition — Euler decomposition, incremental VaR, risk-parity weights. */
 export { eulerDecomposition, riskParityWeights, incrementalVaR } from "./risk-contribution";
 export type { RiskDecomposition } from "./risk-contribution";
+
+/** Entropy measures — Shannon, permutation, sample entropy; complexity classification. */
+export {
+  shannonEntropy,
+  normalizedEntropy,
+  permutationEntropy,
+  normalizedPermutationEntropy,
+  sampleEntropy,
+  interpretEntropy,
+} from "./entropy";
+
+/** Spectral density — periodogram, Welch PSD estimate, peak detection. */
+export { periodogram, welchSpectrum, detectPeaks } from "./spectral-density";
+export type { SpectralDensity } from "./spectral-density";
+
+/** Wavelet analysis — Haar transform, multi-level decomposition, denoising, energy. */
+export {
+  haarForward,
+  haarInverse,
+  waveletDecompose,
+  waveletDenoise,
+  waveletEnergy,
+} from "./wavelet";
+export type { WaveletLevel, WaveletDecomposition } from "./wavelet";
+
+/** Fourier cycle analysis — DFT, dominant cycles, signal reconstruction, phase estimate. */
+export {
+  dft,
+  dominantCycles,
+  spectralDensity,
+  reconstructSignal,
+  cyclePhaseEstimate,
+} from "./fourier-cycles";
+export type { FourierComponent } from "./fourier-cycles";
+
+/** Autocorrelation — ACF, PACF, Ljung-Box test, correlation analysis. */
+export {
+  autocorrelation,
+  acf,
+  partialAutocorrelation,
+  pacf,
+  ljungBox,
+  autocorrelationAnalysis,
+} from "./autocorrelation";
