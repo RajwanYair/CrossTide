@@ -194,6 +194,12 @@ export type { PivotInput, PivotLevels, PivotKind } from "./pivots";
 export { computeZigZag } from "./zigzag";
 export type { ZigZagPivot, ZigZagOptions, PivotDirection } from "./zigzag";
 
+// ── Divergence detection ─────────────────────────────────────────────────
+
+/** Detect bullish/bearish divergences between price and oscillators. */
+export { detectDivergences } from "./divergence-detector";
+export type { Divergence, DivergenceType, DivergenceOptions } from "./divergence-detector";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
