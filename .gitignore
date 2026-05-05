@@ -28,6 +28,9 @@ Desktop.ini
 # Logs
 *.log
 npm-debug.log*
+debug.log
+src/**/*.log
+worker/**/*.log
 
 # Misc
 *.swp

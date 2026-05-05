@@ -1141,7 +1141,7 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 | P9  | Error boundaries: try-catch in all 54 card `mount()`/`update()` methods       | P1       | ⬜     |
 | P10 | Extract `<ct-data-table>` Web Component (virtual scroll, sort, ARIA)          | P1       | ⬜     |
 | P11 | Extract `<ct-stat-grid>`, `<ct-chart-frame>`, `<ct-empty-state>`              | P1       | ⬜     |
-| P12 | Gitignore `src/domain/debug.log` and `src/cards/debug.log` (artifact cleanup) | P2       | ⬜     |
+| P12 | Gitignore `src/domain/debug.log` and `src/cards/debug.log` (artifact cleanup) | P2       | ✅     |
 | P13 | Structured logging in Worker (JSON, request ID, latency, provider choice)     | P2       | ⬜     |
 | P14 | GlitchTip source-map upload in CI deploy step                                 | P2       | ⬜     |
 | P15 | Conditional Temporal polyfill (detect native support first)                   | P2       | ⬜     |
@@ -1308,7 +1308,7 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 | RF8  | Backtest: commission + slippage + position sizing    | Realistic results; academic credibility       | Q7    | ⬜     |
 | RF9  | Indicator config: JSON schema per method             | User-tunable RSI period, BB multiplier, etc.  | Q4    | ⬜     |
 | RF10 | Temporal polyfill: conditional dynamic import        | Saves ~8 KB for modern browsers               | Q16   | ⬜     |
-| RF11 | `debug.log` removal + gitignore rules                | Artifact cleanup; no debug output in repo     | P12   | ⬜     |
+| RF11 | `debug.log` removal + gitignore rules                | Artifact cleanup; no debug output in repo     | P12   | ✅     |
 | RF12 | ONNX modules: wire real model or remove              | Dead code or living feature — decide          | P     | ⬜     |
 | RF13 | Card error handling: universal try-catch boundary    | Resilience; one card crash ≠ app crash        | P9    | ⬜     |
 | RF14 | `packages/` workspace populate or prune              | npm workspaces declared but empty stubs       | T5    | ⬜     |
