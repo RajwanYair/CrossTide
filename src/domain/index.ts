@@ -272,6 +272,10 @@ export type { TradeEntry, TradeStats, TradeResult } from "./trade-journal";
 export { compareRiskAdjusted } from "./risk-adjusted-comparison";
 export type { AssetRiskMetrics, RiskComparisonResult } from "./risk-adjusted-comparison";
 
+/** Insider Transactions — analyze insider buying/selling sentiment. */
+export { analyzeInsiderTransactions } from "./insider-transactions";
+export type { InsiderTransaction, InsiderSentiment } from "./insider-transactions";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
