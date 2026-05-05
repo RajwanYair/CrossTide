@@ -316,6 +316,14 @@ export type { VolumeProfile, VolumeProfileBin, VolumeProfileOptions } from "./vo
 export { pearson, correlationMatrix } from "./correlation-matrix";
 export type { CorrelationInput, CorrelationResult } from "./correlation-matrix";
 
+/** Correlation scanner — find highest/lowest correlated pairs across multiple assets. */
+export { scanCorrelations } from "./correlation-scanner";
+export type {
+  CorrelationScanConfig,
+  ScannedCorrelation,
+  CorrelationScanResult,
+} from "./correlation-scanner";
+
 // ── Returns ──────────────────────────────────────────────────────────────
 
 /** Simple, log, cumulative, and rolling return calculations. */
