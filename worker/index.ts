@@ -52,6 +52,7 @@ import { handleFundamentalsBatch } from "./routes/fundamentals-batch.js";
 import { handleCrypto } from "./routes/crypto.js";
 import { handleForex } from "./routes/forex.js";
 import { handleSeasonality } from "./routes/seasonality.js";
+import { handlePortfolioRebalance } from "./routes/portfolio-rebalance.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -269,6 +270,8 @@ app.get("/api/forex/:pair", (c) => handleForex(c.req.param("pair"), c.env));
 app.get("/api/seasonality/:symbol", (c) => handleSeasonality(c.req.param("symbol"), c.env));
 
 app.post("/api/portfolio/analytics", async (c) => handlePortfolioAnalytics(c.req.raw, c.env));
+
+app.post("/api/portfolio/rebalance", async (c) => handlePortfolioRebalance(c.req.raw, c.env));
 
 app.post("/api/screener", async (c) => handleScreener(c.req.raw));
 
