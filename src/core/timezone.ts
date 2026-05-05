@@ -16,7 +16,11 @@
 
 // G7: import Temporal from the polyfill. The polyfill re-exports the native
 // Temporal global when available, so there is no double-polyfill risk.
+// P15: temporal-init.ts provides ensureTemporal() for conditional loading in
+// the app entry point, allowing Vite to code-split the polyfill into a lazy
+// chunk that is skipped on Chrome 131+ / Firefox 139+.
 import { Temporal } from "@js-temporal/polyfill";
+export { isTemporalNative, ensureTemporal } from "./temporal-init";
 
 export { Temporal };
 

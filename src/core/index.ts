@@ -455,6 +455,9 @@ export type { CellValue, SheetData, Workbook, CellType } from "./xlsx-export";
 export { portfolioStore } from "./portfolio-store";
 export type { PortfolioPosition, PortfolioState } from "./portfolio-store";
 
+/** Temporal initializer — conditional polyfill loading for P15. */
+export { ensureTemporal, isTemporalNative, getTemporalRuntime } from "./temporal-init";
+
 export { createCacheManager } from "./cache-manager";
 export type { CacheTier, CacheManagerOptions, CacheManager, CacheStats } from "./cache-manager";
 

@@ -36,6 +36,7 @@ import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
 import type { PaletteCommand } from "./ui/command-palette";
 import { fetchAllTickers, fetchTickerData, type TickerData } from "./core/data-service";
 import { selectedTickerStore } from "./core/app-store";
+import { ensureTemporal } from "./core/temporal-init";
 
 import { TieredCache } from "./core/tiered-cache";
 import { createStoragePressureMonitor, requestPersistentStorage } from "./core/storage-pressure";
@@ -1103,6 +1104,9 @@ function main(): void {
   });
 }
 
+// P15: Kick off polyfill loading before the app mounts.
+// On Chrome 131+ the dynamic import is never fetched (native Temporal exists).
+void ensureTemporal();
 main();
 
 // ── A17: Telemetry — analytics + error tracking + web vitals ──────────────
