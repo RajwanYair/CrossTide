@@ -212,6 +212,10 @@ export type { RvolPoint, RvolOptions } from "./relative-volume";
 export { computeExcursions } from "./mfe-mae";
 export type { TradeExcursion, ExcursionTrade, ExcursionSummary } from "./mfe-mae";
 
+/** Volatility-Adjusted Momentum — momentum normalized by ATR. */
+export { computeVam } from "./volatility-adj-momentum";
+export type { VamPoint, VamOptions } from "./volatility-adj-momentum";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
