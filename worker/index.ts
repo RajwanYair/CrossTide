@@ -49,6 +49,7 @@ import { handleInsiders } from "./routes/insiders.js";
 import { handleMovers } from "./routes/movers.js";
 import { handleEtfHoldings } from "./routes/etf-holdings.js";
 import { handleFundamentalsBatch } from "./routes/fundamentals-batch.js";
+import { handleCrypto } from "./routes/crypto.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -258,6 +259,8 @@ app.get("/api/economic", (c) => handleEconomic(c.env));
 app.get("/api/sector-heatmap", (c) => handleSectorHeatmap(c.env));
 
 app.get("/api/movers", (c) => handleMovers(new URL(c.req.url), c.env));
+
+app.get("/api/crypto/:id", (c) => handleCrypto(c.req.param("id"), c.env));
 
 app.post("/api/portfolio/analytics", async (c) => handlePortfolioAnalytics(c.req.raw, c.env));
 
