@@ -737,3 +737,33 @@ export {
   timeUnderwater,
 } from "./drawdown-analyzer";
 export type { DrawdownPeriod, DrawdownSummary } from "./drawdown-analyzer";
+
+/** Fama-French factor model — three-factor regression, factor attribution, CAPM beta. */
+export { famaFrench3Factor, factorAttribution, capmBeta } from "./factor-model";
+export type { FactorExposures, FactorAttribution } from "./factor-model";
+
+/** GARCH volatility — parameter estimation, conditional variance forecast. */
+export { estimateGarch, garchVolatility, garchForecast, garchAnalysis } from "./garch";
+export type { GarchParams, GarchResult } from "./garch";
+
+/** Realized volatility estimators — Parkinson, Rogers-Satchell, Yang-Zhang, close-to-close. */
+export {
+  parkinsonVol,
+  rogersSatchellVol,
+  yangZhangVol,
+  closeToCloseVol,
+  allVolEstimates,
+} from "./realized-volatility";
+export type { OHLCBar, VolEstimates } from "./realized-volatility";
+
+/** Volatility ranking — annualized vol, daily vol, rank, classify, least-volatile screening.
+ *  Note: `dailyReturns` is already exported from `analytics`. */
+export {
+  standardDeviation,
+  annualizedVolatility,
+  dailyVolatility,
+  rankByVolatility,
+  classifyVolatility,
+  getLeastVolatile,
+} from "./volatility-rank";
+export type { VolatilityRank } from "./volatility-rank";
