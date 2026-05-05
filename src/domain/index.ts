@@ -767,3 +767,44 @@ export {
   getLeastVolatile,
 } from "./volatility-rank";
 export type { VolatilityRank } from "./volatility-rank";
+
+/** Cointegration tests — Engle-Granger, ADF statistic, OLS regression, half-life.
+ *  Note: `spreadZScore` exported as `cointegrationZScore` to avoid name collision. */
+export {
+  ols,
+  adfStatistic,
+  ADF_CRITICAL_VALUES,
+  engleGranger,
+  halfLife,
+  spreadZScore as cointegrationZScore,
+} from "./cointegration";
+
+/** Pairs trading signals — hedge ratio, spread construction, z-score windows, signal generation.
+ *  Note: `spreadZScore` exported as `pairsSpreadZScores` to avoid name collision. */
+export {
+  hedgeRatio,
+  pairsSpread,
+  spreadZScore as pairsSpreadZScores,
+  pairsSignals,
+} from "./pairs-trading";
+export type { PairsSignal, PairsTradeSignal, PairsConfig } from "./pairs-trading";
+
+/** Pair correlation — Pearson correlation, matrix building, most/least correlated pairs.
+ *  Note: `dailyReturns` already exported from `analytics`. */
+export {
+  pearsonCorrelation,
+  tickerCorrelation,
+  buildCorrelationMatrix,
+  mostCorrelatedPairs,
+  leastCorrelatedPairs,
+} from "./pair-correlation";
+export type { CorrelationPair, CorrelationMatrix } from "./pair-correlation";
+
+/** Dispersion trading — implied correlation, realized correlation, dispersion analysis. */
+export {
+  impliedCorrelation,
+  realizedCorrelation,
+  dispersionAnalysis,
+  indexVarianceFromConstituents,
+} from "./dispersion-trading";
+export type { DispersionMetrics, ConstituentData } from "./dispersion-trading";
