@@ -44,6 +44,7 @@ Run on every patch release (`vX.Y.Z` with `Z > 0`):
 - [ ] `Select-String -Pattern 'eval\(','new Function\(' -Path src,worker -Recurse` — **0 hits**
 - [ ] `Select-String -Pattern 'document\.write\(' -Path src,worker -Recurse` — **0 hits**
 - [ ] `npm audit --omit=dev --audit-level=high` — exits 0
+- [ ] `npm audit signatures` — registry integrity check, exits 0
 - [ ] `npm run check:contrast` — exits 0 (WCAG AA)
 - [ ] CSP `connect-src` allowlist reviewed: any wildcard tracked under a quarterly-narrow issue
 - [ ] No `eslint-disable`, `@ts-ignore`, or `@ts-nocheck` newly introduced

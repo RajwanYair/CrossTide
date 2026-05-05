@@ -1,7 +1,8 @@
 ---
 mode: "agent"
+model: "Claude Sonnet 4.5 (copilot)"
 description: "Perform a structured code review on a PR or feature branch: layer direction, purity, types, tests, security, and bundle impact."
-tools: ["read_file", "grep_search", "semantic_search", "get_errors", "run_in_terminal"]
+tools: ["read_file", "grep_search", "semantic_search", "get_errors", "run_in_terminal", "memory"]
 ---
 
 # Code Review — CrossTide

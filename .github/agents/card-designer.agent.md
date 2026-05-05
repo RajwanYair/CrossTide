@@ -13,6 +13,8 @@ tools:
   - create_file
   - manage_todo_list
   - vscode_askQuestions
+  - memory
+  - runSubagent
 user-invocable: true
 handoffs:
   - label: Wire data flow

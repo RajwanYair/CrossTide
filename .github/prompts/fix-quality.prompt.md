@@ -1,6 +1,8 @@
 ---
 mode: "agent"
+model: "Claude Sonnet 4.5 (copilot)"
 description: "Fix accessibility, performance, RTL/i18n, and non-lint quality issues in CrossTide. For lint/type errors use /fix-ci instead."
+tools: ["read_file", "grep_search", "replace_string_in_file", "run_in_terminal", "get_errors"]
 ---
 
 # Fix Quality Issues — CrossTide

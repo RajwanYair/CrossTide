@@ -2,6 +2,7 @@
 name: quality-reviewer
 description: "Review CrossTide source for test coverage, lint compliance, dead code, security issues, layer-direction violations, and pre-release readiness. Produces a structured PASS/FAIL/WARNING report and fixes blockers."
 argument-hint: "Specify a target ('all', 'src/cards/...', a PR diff) and review depth ('quick' lint+types, 'full' coverage+security)"
+model: "Claude Sonnet 4.5 (copilot)"
 tools:
   - read_file
   - grep_search
@@ -9,6 +10,9 @@ tools:
   - get_errors
   - run_in_terminal
   - file_search
+  - memory
+  - manage_todo_list
+  - runSubagent
 user-invocable: true
 handoffs:
   - label: Fix data flow / worker
@@ -65,19 +69,21 @@ Use this agent when:
 
 ## Quality Gates (Zero Tolerance)
 
-| Gate         | Command                                | Expected                    |
-| ------------ | -------------------------------------- | --------------------------- |
-| Type errors  | `npm run typecheck`                    | 0 errors                    |
-| ESLint       | `npm run lint`                         | 0 errors · 0 warnings       |
-| Stylelint    | `npm run lint:css`                     | 0 warnings                  |
-| HTMLHint     | `npm run lint:html`                    | 0 errors                    |
-| Markdownlint | `npm run lint:md`                      | 0 errors                    |
-| Prettier     | `npm run format:check`                 | exit 0                      |
-| Tests        | `npm run test:coverage`                | 0 failures + thresholds met |
-| Build        | `npm run build`                        | 0 errors                    |
-| Bundle       | `npm run check:bundle`                 | < 200 KB gzip               |
-| Contrast     | `npm run check:contrast`               | 0 violations                |
-| Architecture | `node scripts/arch-check.mjs --strict` | 0 violations                |
+| Gate          | Command                                   | Expected                    |
+| ------------- | ----------------------------------------- | --------------------------- |
+| Type errors   | `npm run typecheck`                       | 0 errors                    |
+| ESLint        | `npm run lint`                            | 0 errors · 0 warnings       |
+| Stylelint     | `npm run lint:css`                        | 0 warnings                  |
+| HTMLHint      | `npm run lint:html`                       | 0 errors                    |
+| Markdownlint  | `npm run lint:md`                         | 0 errors                    |
+| Prettier      | `npm run format:check`                    | exit 0                      |
+| Tests         | `npm run test:coverage`                   | 0 failures + thresholds met |
+| Build         | `npm run build`                           | 0 errors                    |
+| Bundle        | `npm run check:bundle`                    | < 200 KB gzip               |
+| Contrast      | `npm run check:contrast`                  | 0 violations                |
+| Architecture  | `node scripts/arch-check.mjs --strict`    | 0 violations                |
+| Supply chain  | `npm audit --omit=dev --audit-level=high` | 0 HIGH/CRITICAL CVEs        |
+| Registry sigs | `npm audit signatures`                    | Exit 0                      |
 
 ## Coverage Thresholds
 

@@ -1,6 +1,8 @@
 ---
 mode: "agent"
+model: "Claude Sonnet 4.5 (copilot)"
 description: "Run the full CrossTide pre-release checklist before tagging a version. All gates must be green."
+tools: ["read_file", "grep_search", "replace_string_in_file", "run_in_terminal", "get_errors", "memory"]
 ---
 
 # Release Check — CrossTide

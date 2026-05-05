@@ -1,5 +1,7 @@
 # CrossTide — Custom Copilot Agents
 
+> Version: v11.35.0 · Tests: 582 / files · Coverage: ≥90% stmt/line/fn · ≥80% branch
+
 Custom agent modes for VS Code GitHub Copilot. Each agent loads only the files it needs.
 Global rules (coding conventions, commit format, quality gates) are in `copilot-instructions.md`.
 Layer-specific rules are in `.github/instructions/` — agents reference them, not re-state them.
@@ -88,6 +90,8 @@ tools:
   - runTests
   - get_errors
   - grep_search
+  - memory
+  - manage_todo_list
 ```
 
 ---
@@ -230,6 +234,9 @@ tools:
   - run_in_terminal
   - runTests
   - get_errors
+  - memory
+  - manage_todo_list
+  - runSubagent
 ```
 
 ---
@@ -246,17 +253,20 @@ for production use — they expose richer context, persistent memory, and peer h
 | `agents/api-integrator.agent.md`   | `@api-integrator`   | Worker routes, KV cache, provider chain, Valibot validation, D1 wiring |
 | `agents/card-designer.agent.md`    | `@card-designer`    | Card layout, Web Components, a11y, theme tokens, signal store UI       |
 
+The **Explore** subagent is a built-in read-only codebase explorer — use it via `runSubagent` to investigate files without cluttering the main conversation.
+
 ### When To Use What
 
-| Need                                                  | Best Fit            |
-| ----------------------------------------------------- | ------------------- |
-| Sprint execution (any layer)                          | `@sprint`           |
-| Pre-release quality gate                              | `@quality-reviewer` |
-| New worker route / KV / D1 / provider integration     | `@api-integrator`   |
-| Card layout, Web Component, or CSS design-system work | `@card-designer`    |
-| Pure domain function / indicator                      | `@domain`           |
-| Browser compat / E2E                                  | `@compat`           |
-| Barrel export audit                                   | `@barrel`           |
+| Need                                                  | Best Fit             |
+| ----------------------------------------------------- | -------------------- |
+| Sprint execution (any layer)                          | `@sprint`            |
+| Pre-release quality gate                              | `@quality-reviewer`  |
+| New worker route / KV / D1 / provider integration     | `@api-integrator`    |
+| Card layout, Web Component, or CSS design-system work | `@card-designer`     |
+| Pure domain function / indicator                      | `@domain`            |
+| Browser compat / E2E                                  | `@compat`            |
+| Barrel export audit                                   | `@barrel`            |
+| Read-only codebase exploration / Q&A                  | `Explore` (subagent) |
 
 ### Subagent Usage (in-chat)
 
@@ -265,6 +275,7 @@ for production use — they expose richer context, persistent memory, and peer h
 runSubagent({ agentName: "quality-reviewer", prompt: "Full pre-release review against pre-release.instructions.md" });
 runSubagent({ agentName: "api-integrator", prompt: "Add /api/sentiment route with KV cache and Valibot schema" });
 runSubagent({ agentName: "card-designer", prompt: "Refine ct-stat-grid layout for portfolio card" });
+runSubagent({ agentName: "Explore", prompt: "Find all worker routes that don't have a Valibot schema — thorough" });
 ```
 
 ### AI Customization Map

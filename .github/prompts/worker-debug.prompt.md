@@ -1,5 +1,6 @@
 ---
 mode: "agent"
+model: "Claude Sonnet 4.5 (copilot)"
 description: "Debug a broken Cloudflare Worker route: fetch failures, Valibot validation errors, KV read/write, rate-limit issues, envelope shape mismatches."
 tools: ["read_file", "grep_search", "replace_string_in_file", "run_in_terminal"]
 ---

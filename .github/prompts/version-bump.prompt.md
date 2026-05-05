@@ -1,5 +1,6 @@
 ---
 mode: "agent"
+model: "Claude Sonnet 4.5 (copilot)"
 description: "Bump the project version consistently across all files: package.json, CHANGELOG.md, README.md, .github/AGENTS.md, copilot-instructions.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, worker/openapi.yaml."
 tools: ["read_file", "replace_string_in_file", "grep_search", "run_in_terminal"]
 ---

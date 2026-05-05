@@ -6,13 +6,16 @@ Privacy-first financial analysis PWA. Vanilla TypeScript, no framework, Vite 8, 
 
 Load **only** the instruction file that matches the layer you are modifying:
 
-| Layer                   | Instruction file                               | `applyTo` glob                     |
-| ----------------------- | ---------------------------------------------- | ---------------------------------- |
-| `src/domain/`           | `.github/instructions/domain.instructions.md`  | `src/domain/**`                    |
-| `worker/`               | `.github/instructions/worker.instructions.md`  | `worker/**`                        |
-| `src/cards/`, `src/ui/` | `.github/instructions/cards.instructions.md`   | `src/cards/**`                     |
-| `tests/`                | `.github/instructions/tests.instructions.md`   | `tests/**`                         |
-| Browser compat          | `.github/instructions/browser.instructions.md` | `tests/browser/**`, `tests/e2e/**` |
+| Layer                   | Instruction file                                      | `applyTo` glob                     |
+| ----------------------- | ----------------------------------------------------- | ---------------------------------- |
+| `src/domain/`           | `.github/instructions/domain.instructions.md`         | `src/domain/**`                    |
+| `worker/`               | `.github/instructions/worker.instructions.md`         | `worker/**`                        |
+| `src/cards/`, `src/ui/` | `.github/instructions/cards.instructions.md`          | `src/cards/**`                     |
+| `tests/`                | `.github/instructions/tests.instructions.md`          | `tests/**`                         |
+| Browser compat          | `.github/instructions/browser.instructions.md`        | `tests/browser/**`, `tests/e2e/**` |
+| CI / CD / workflows     | `.github/instructions/cicd.instructions.md`           | `.github/**`, `**/*.yml`           |
+| Pre-release gate        | `.github/instructions/pre-release.instructions.md`    | `CHANGELOG.md`, `package.json`     |
+| Security audit          | `.github/instructions/security-audit.instructions.md` | `worker/**`, `src/core/**`         |
 
 **Do NOT speculatively load** `src/domain/indicators/` (218 files), `src/cards/` (54 files), or `tests/unit/` for unrelated tasks. Use `grep_search` or `semantic_search` to find specific files.
 
@@ -46,6 +49,10 @@ docs-site/     — Astro Starlight documentation site; isolated from app code
 5. Validation at boundaries — sanitize all external input (API, user, URL params).
 6. Bundle discipline — CI rejects builds >200 KB gzip.
 7. Test before shipping — new domain logic and new worker routes require tests.
+8. Skills auto-discovery — before acting on any repeatable task (add route, bump version, run tests, debug fetch), read `.github/skills/*/SKILL.md` for the matching playbook.
+9. Custom agents — `.github/agents/*.agent.md` are specialist personas; `runSubagent` delegates stateless tasks without polluting the main conversation.
+10. Context economy — invoke a skill or agent rather than restating rules inline; use `memory` (three tiers: `/memories/` user, `/memories/session/` session, `/memories/repo/` repo) for cross-session persistence.
+11. Pre-release gate — before every `git tag vX.Y.Z`, load `.github/instructions/pre-release.instructions.md` and run every item; canonical version-bump file list is in `.github/skills/release/SKILL.md`.
 
 ## Coding Conventions
 
@@ -68,15 +75,18 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 
 ## Quality Gates (all must pass before merge)
 
-| Gate       | Command                 | Requirement                    |
-| ---------- | ----------------------- | ------------------------------ |
-| Type check | `npm run typecheck`     | Zero errors                    |
-| ESLint     | `npm run lint`          | Zero warnings                  |
-| Stylelint  | `npm run lint:css`      | Zero warnings                  |
-| Prettier   | `npm run format:check`  | Exit 0                         |
-| Tests      | `npm run test:coverage` | ≥90% stmt/line/fn, ≥80% branch |
-| Build      | `npm run build`         | Successful                     |
-| Bundle     | `npm run check:bundle`  | <200 KB gzip                   |
+| Gate          | Command                                   | Requirement                    |
+| ------------- | ----------------------------------------- | ------------------------------ |
+| Type check    | `npm run typecheck`                       | Zero errors                    |
+| ESLint        | `npm run lint`                            | Zero warnings                  |
+| Stylelint     | `npm run lint:css`                        | Zero warnings                  |
+| Prettier      | `npm run format:check`                    | Exit 0                         |
+| Tests         | `npm run test:coverage`                   | ≥90% stmt/line/fn, ≥80% branch |
+| Build         | `npm run build`                           | Successful                     |
+| Bundle        | `npm run check:bundle`                    | <200 KB gzip                   |
+| Supply chain  | `npm audit --omit=dev --audit-level=high` | Zero high/critical CVEs        |
+| Registry sigs | `npm audit signatures`                    | Exit 0                         |
+| Architecture  | `node scripts/arch-check.mjs --strict`    | Zero violations                |
 
 Run all: `npm run ci`
 

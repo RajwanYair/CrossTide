@@ -24,6 +24,8 @@ npm run test:coverage   # ≥90% stmt/line/fn, ≥80% branch
 npm run build           # Successful Vite + Workbox build
 npm run check:bundle    # <200 KB gzip
 npm run check:contrast  # 0 contrast violations
+npm audit --omit=dev --audit-level=high  # 0 HIGH/CRITICAL CVEs
+npm audit signatures    # registry integrity check
 ```
 
 Or run all in one shot:

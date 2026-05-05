@@ -14,6 +14,8 @@ tools:
   - file_search
   - manage_todo_list
   - vscode_askQuestions
+  - memory
+  - runSubagent
 user-invocable: true
 handoffs:
   - label: Polish card UX
@@ -38,6 +40,7 @@ Reference these files before making assumptions:
 - `.github/instructions/tests.instructions.md`
 - `.github/skills/add-worker-route/SKILL.md`
 - `.github/skills/debug-fetch/SKILL.md`
+- `.github/skills/update-tests/SKILL.md`
 - `worker/openapi.yaml`
 
 ## Mission
