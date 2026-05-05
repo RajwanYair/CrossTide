@@ -6,6 +6,46 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.36.0] — 2026-06-02
+
+> **Sprint: Phase P Foundation (10-sprint session)** (commit `ae7d98c`)
+
+### Added
+
+- **Cloudflare setup guide** (`docs/CLOUDFLARE_SETUP.md`): step-by-step provisioning
+  walkthrough for KV namespace, D1 database, Rate Limiter, and Durable Object bindings.
+  Covers local dev, staging, and production environment matrix.
+- **Worker dev vars template** (`worker/.dev.vars.example`): copy to `.dev.vars` for
+  local `wrangler dev` without real bindings; documents optional Finnhub, GlitchTip,
+  and OTEL endpoint vars.
+- **D1 migration script** (`scripts/apply-d1-migrations.ps1`): PowerShell script to
+  apply all `worker/migrations/*.sql` via `wrangler d1 migrations apply`. Supports
+  `-Env staging` flag for environment targeting.
+- **Corporate action data in OHLCV** (`worker/providers/yahoo.ts`): `fetchYahooChart`
+  now requests `events=div%2Csplit` from Yahoo Finance, attaches `splitFactor` and
+  `dividendAmount` to the matching candle date. Exposed in `CandleRecord` API type.
+- **Rate-limit unit tests** (`tests/unit/worker/rate-limit.test.ts`): 13 tests covering
+  in-memory token-bucket (checkRateLimit), KV-backed fixed-window (checkRateLimitKV),
+  and IP header extraction (rateLimitKey).
+- **Watchlist-store unit tests** (`tests/unit/core/watchlist-store.test.ts`): 14 tests
+  covering addTicker, removeTicker, reorder, setSort toggle logic, setNames merge, and
+  setInstrumentTypes.
+- **Route-loader unit tests** (`tests/unit/ui/route-loader.test.ts`): 11 tests covering
+  reactive loading state, data resolution, error capture, deduplication, AbortController
+  cancellation, and onRouteNavigated integration.
+- **Error-boundary unit tests** (`tests/unit/ui/error-boundary.test.ts`): 9 tests
+  verifying withErrorBoundary and mountWithBoundary isolate card mount/update crashes,
+  auto-retry, onError callback, fallback UI, and dynamic-import failure recovery.
+
+### Changed
+
+- **ROADMAP Phase P**: P1, P3, P4, P5, P7, P8, P9, P10, P11, P13, P15 marked ✅.
+  P2 (D1 migrations apply) marked 🔄 (provisioning docs added; apply requires CF account).
+- **YahooCandle interface**: added optional `splitFactor` and `dividendAmount` fields.
+- **CandleRecord route type**: added optional `splitFactor` and `dividendAmount` fields.
+
+---
+
 ## [11.33.0] - 2026-05-08
 
 ### Sprint: Crypto, Forex & Domain Exports (10-item sprint)

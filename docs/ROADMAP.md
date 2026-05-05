@@ -1,7 +1,7 @@
 # CrossTide — Strategic Roadmap v6 (Deep Rethink)
 
 > **Date:** May 5, 2026
-> **Current version:** v11.35.0
+> **Current version:** v11.36.0
 > **Codebase:** 218 domain modules · 54 cards · 36 Worker routes · 582+ test files
 > **Bundle:** 158 KB gzip (budget 200 KB) · 49 SW precache entries
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
