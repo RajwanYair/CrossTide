@@ -411,6 +411,15 @@ export {
 } from "./support-resistance";
 export type { PriceLevel } from "./support-resistance";
 
+/** Volatility cone — term structure of realized vol with percentile bands. */
+export {
+  realizedVol,
+  historicalVolDistribution,
+  buildVolatilityCone,
+  volPercentileRank,
+} from "./volatility-cone";
+export type { VolatilityConePoint, VolatilityConeResult } from "./volatility-cone";
+
 /** Elder Ray — bull/bear power with EMA baseline. */
 export { computeElderRay } from "./elder-ray";
 export type { ElderRayPoint } from "./elder-ray";
