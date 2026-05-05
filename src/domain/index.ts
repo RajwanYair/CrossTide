@@ -890,3 +890,12 @@ export {
   ljungBox,
   autocorrelationAnalysis,
 } from "./autocorrelation";
+
+/** Corporate action adjustment — split-adjust and dividend-adjust OHLCV series. */
+export {
+  applyCorpActions,
+  applySplits,
+  applyDividends,
+  cumulativeSplitFactor,
+} from "./corp-actions";
+export type { SplitEvent, DividendEvent, AdjustmentOptions } from "./corp-actions";
