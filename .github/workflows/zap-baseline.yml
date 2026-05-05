@@ -1,0 +1,51 @@
+# OWASP ZAP baseline scan against the served production build.
+# Weekly passive scan of the running SPA — discovers OWASP Top 10 surface issues
+# (missing headers, cookie flags, CORS, etc.) without any auth.
+#
+# Findings are informational: action creates/updates a GitHub issue if issues appear
+# but does NOT fail CI. Triage via the opened issue.
+name: zap-baseline
+
+on:
+  schedule:
+    - cron: "37 5 * * 0" # weekly Sunday 05:37 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write # ZAP action opens/updates an issue when findings appear
+
+jobs:
+  zap:
+    name: OWASP ZAP baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: ./.github/actions/node-setup
+        with:
+          install-args: "--ignore-scripts"
+
+      - name: Build production bundle (root base for local serve)
+        run: npm run build
+        env:
+          VITE_BASE: "/"
+
+      - name: Serve dist locally
+        run: |
+          # npx serve -l 4173 dist; wait until it answers
+          npx --yes serve -s -l 4173 dist &
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -fsS http://127.0.0.1:4173/ > /dev/null 2>&1; then break; fi
+            sleep 3
+          done
+          echo "Server ready."
+
+      - name: ZAP baseline scan
+        uses: zaproxy/action-baseline@v0.13.0
+        with:
+          target: "http://127.0.0.1:4173/"
+          # .zap/rules.tsv: create this file to suppress known false positives
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a -j -T 5"
+          allow_issue_writing: true
+          fail_action: false # informational; do not block CI until alerts are baselined

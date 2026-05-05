@@ -49,7 +49,7 @@ test("graceful degradation — page renders without JS", async ({ page }) => {
 });
 ```
 
-Run: `npm run test:e2e` (all projects)  
+Run: `npm run test:e2e` (all projects)
 Run specific: `npx playwright test --project=firefox tests/e2e/cross-browser.spec.ts`
 
 ## Feature Detection Rules

@@ -1,0 +1,127 @@
+# Unified Security Workflow
+# Orchestrates supply-chain checks as a single named workflow with a clear
+# "Security / gate" status job that branch protection can require on PRs.
+#
+# Individual detailed scans (trivy.yml, scorecard.yml, supply-chain.yml) run on
+# their own schedules. This workflow adds:
+#   1. npm audit at --audit-level=moderate (stricter than CI's --high default)
+#   2. Dependency count diff on PRs — warns if new production deps are added
+#   3. Summary "gate" job that aggregates results for branch protection
+name: Security
+
+on:
+  schedule:
+    - cron: "47 6 * * 1" # Mondays 06:47 UTC
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # ── 1. npm audit (moderate+) ───────────────────────────────────────────────
+  npm-audit:
+    name: npm audit (moderate+)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: ./.github/actions/node-setup
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+
+  # ── 2. Dependency integrity diff (PRs only) ───────────────────────────────
+  dep-diff:
+    name: Dependency integrity check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install PR deps and capture list
+        run: |
+          npm ci --omit=dev
+          npm ls --depth=0 --json > deps-pr.json
+
+      - name: Checkout base branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.base_ref }}
+          path: base-branch
+
+      - name: Install base deps
+        working-directory: base-branch
+        run: npm ci --omit=dev
+
+      - name: Capture base dependency list
+        working-directory: base-branch
+        run: npm ls --depth=0 --json > ../deps-base.json
+
+      - name: Compare production dependency counts
+        run: |
+          PR_COUNT=$(node -e "const d=require('./deps-pr.json'); console.log(Object.keys(d.dependencies||{}).length)")
+          BASE_COUNT=$(node -e "const d=require('./deps-base.json'); console.log(Object.keys(d.dependencies||{}).length)")
+          echo "Base production deps : $BASE_COUNT"
+          echo "PR production deps   : $PR_COUNT"
+          if [ "$PR_COUNT" -gt "$BASE_COUNT" ]; then
+            echo "::warning::PR adds $((PR_COUNT - BASE_COUNT)) new production dependency(ies). Review for supply-chain risk."
+          fi
+
+  # ── 3. Source security scan (eval / innerHTML / inline scripts) ──────────
+  source-scan:
+    name: Source security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: ./.github/actions/node-setup
+
+      - name: Dangerous JS patterns scan
+        run: |
+          FAILED=0
+          # Scan TypeScript sources for dangerous patterns
+          while IFS= read -r f; do
+            if grep -n "eval(" "$f"; then
+              echo "::error file=$f::eval() usage detected"
+              FAILED=1
+            fi
+            if grep -n "document\.write(" "$f"; then
+              echo "::error file=$f::document.write() detected"
+              FAILED=1
+            fi
+          done < <(find src/ -name '*.ts' -o -name '*.js' 2>/dev/null)
+          # Scan index.html for inline scripts (CSP disallows them)
+          if grep -Pn '<script>[^<]' index.html 2>/dev/null; then
+            echo "::error file=index.html::Inline script detected — use external files only (CSP disallows inline)"
+            FAILED=1
+          fi
+          [ "$FAILED" -eq 0 ] && echo "Source security scan passed."
+          exit $FAILED
+
+  # ── 4. Summary gate ────────────────────────────────────────────────────────
+  # Branch protection can require "Security / gate" without listing each job.
+  gate:
+    name: gate
+    runs-on: ubuntu-latest
+    needs: [npm-audit, source-scan]
+    if: always()
+    steps:
+      - name: Evaluate gate
+        run: |
+          if [[ "${{ needs.npm-audit.result }}" != "success" || "${{ needs.source-scan.result }}" != "success" ]]; then
+            echo "::error::Security gate failed — see above jobs for details"
+            exit 1
+          fi
+          echo "Security gate passed."

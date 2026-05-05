@@ -111,6 +111,19 @@ jobs:
       - name: Bundle size check
         run: npm run check:bundle
 
+      - name: No manualChunks guard
+        # manualChunks must not be set — use dynamic import() boundaries instead.
+        # CrossTide relies on Vite's automatic code-splitting.
+        run: |
+          if grep -q "manualChunks" vite.config.ts 2>/dev/null; then
+            echo "::error file=vite.config.ts::manualChunks must not be defined — use dynamic import() boundaries instead"
+            exit 1
+          fi
+          echo "manualChunks guard: OK"
+
+      - name: Architecture layer check
+        run: node scripts/arch-check.mjs --strict
+
       - name: Color contrast check
         run: npm run check:contrast
 
@@ -119,7 +132,7 @@ jobs:
 
       - name: Scan for hardcoded secrets
         run: |
-          echo "🔍 Scanning for potential secrets in src/ and worker/..."
+          echo "Scanning for potential secrets in src/ and worker/..."
           FOUND=0
           for PATTERN in 'api[_-]?key\s*[:=]' 'apiKey\s*[:=]' 'secret\s*[:=]' 'password\s*[:=]' 'Bearer\s+[A-Za-z0-9]{20,}'; do
             if grep -rEn "$PATTERN" src/ worker/ --include="*.ts" 2>/dev/null | grep -qv '//.*:'; then
@@ -128,7 +141,28 @@ jobs:
             fi
           done
           if [ "$FOUND" -eq 1 ]; then exit 1; fi
-          echo "✅ No hardcoded secrets detected."
+          echo "No hardcoded secrets detected."
+
+      - name: Dangerous JS patterns scan
+        # Catches eval(), document.write(), and inline scripts in index.html
+        run: |
+          FAILED=0
+          while IFS= read -r f; do
+            if grep -n "eval(" "$f" 2>/dev/null; then
+              echo "::error file=$f::eval() usage detected"
+              FAILED=1
+            fi
+            if grep -n "document\.write(" "$f" 2>/dev/null; then
+              echo "::error file=$f::document.write() detected"
+              FAILED=1
+            fi
+          done < <(find src/ worker/ -name '*.ts' -o -name '*.js' 2>/dev/null)
+          if grep -Pn '<script>[^<]' index.html 2>/dev/null; then
+            echo "::error file=index.html::Inline script detected — use external files only (CSP disallows inline)"
+            FAILED=1
+          fi
+          [ "$FAILED" -eq 0 ] && echo "Dangerous patterns scan: OK"
+          exit $FAILED
 
       - name: Generate SBOM (CycloneDX)
         run: |

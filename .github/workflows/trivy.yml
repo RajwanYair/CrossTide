@@ -1,0 +1,62 @@
+# Trivy filesystem & config scan.
+# Catches CVEs in transitive deps and misconfig in workflow / IaC files.
+# Runs weekly + on every PR and push to main.
+# Results uploaded as SARIF → GitHub Code Scanning (Security → Code Scanning Alerts).
+#
+# Docs: https://github.com/aquasecurity/trivy-action
+name: Trivy Scan
+
+on:
+  schedule:
+    - cron: "37 6 * * 1" # Mondays 06:37 UTC
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Trivy filesystem + config
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write # required to upload SARIF
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run Trivy (filesystem — CVE scan)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-fs.sarif
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          # exit-code 0: surface findings via SARIF/Code Scanning instead of hard-blocking CI
+          exit-code: "0"
+
+      - name: Run Trivy (config / IaC — workflow + wrangler misconfig)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: config
+          scan-ref: .
+          format: sarif
+          output: trivy-config.sarif
+          severity: HIGH,CRITICAL
+          exit-code: "0"
+
+      - name: Upload filesystem SARIF to Code Scanning
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+
+      - name: Upload config SARIF to Code Scanning
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-config.sarif
+          category: trivy-config
