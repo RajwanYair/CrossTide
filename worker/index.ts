@@ -38,6 +38,7 @@ import { dispatchWebhooks } from "./routes/webhook-dispatch.js";
 import { handleAlertHistory, insertAlertHistory } from "./routes/alert-history.js";
 import { handleEarningsCalendar } from "./routes/earnings-calendar.js";
 import { handleMigrationStatus } from "./routes/migrations.js";
+import { handleBatchQuotes } from "./routes/batch-quotes.js";
 import {
   isPreviewEnvironment,
   getFixtureQuote,
@@ -212,6 +213,8 @@ app.get("/api/quote/:symbol", (c) => {
   }
   return handleQuote(c.req.param("symbol"), c.env);
 });
+
+app.get("/api/quotes", (c) => handleBatchQuotes(new URL(c.req.url), c.env));
 
 app.get("/api/search", (c) => {
   if (isPreviewEnvironment(c.env)) {
