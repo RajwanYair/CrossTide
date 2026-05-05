@@ -907,3 +907,22 @@ export {
   GICS_SECTORS,
 } from "./screener-fundamentals";
 export type { FundamentalFilterParams, GicsSector } from "./screener-fundamentals";
+
+// ── Indicator configuration schema (Q4 / RF9) ─────────────────────────────
+export { DEFAULT_INDICATOR_CONFIGS, validateIndicatorConfig } from "./indicator-config";
+export type {
+  IndicatorConfig,
+  IndicatorType,
+  IndicatorConfigBase,
+  SmaConfig,
+  EmaConfig,
+  RsiConfig,
+  MacdConfig,
+  BollingerConfig,
+  StochasticConfig,
+  AdxConfig,
+  AtrConfig,
+  VwapConfig,
+  HexColor,
+  ConfigValidationResult,
+} from "./indicator-config";
