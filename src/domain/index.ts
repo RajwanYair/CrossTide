@@ -268,6 +268,10 @@ export type { CompanyMetrics, PeerMetricComparison, PeerValuationResult } from "
 export { analyzeTradeJournal } from "./trade-journal";
 export type { TradeEntry, TradeStats, TradeResult } from "./trade-journal";
 
+/** Risk-Adjusted Comparison — Sharpe/Sortino/Calmar side-by-side for multiple assets. */
+export { compareRiskAdjusted } from "./risk-adjusted-comparison";
+export type { AssetRiskMetrics, RiskComparisonResult } from "./risk-adjusted-comparison";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
