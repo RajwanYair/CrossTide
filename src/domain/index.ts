@@ -260,6 +260,10 @@ export type { AttributionResult, AttributionEffect, SectorWeight } from "./perfo
 export { computeDividendSummary, simulateDrip } from "./dividend-analytics";
 export type { DividendPayment, DividendSummary, DripResult } from "./dividend-analytics";
 
+/** Peer Valuation — relative valuation metrics vs peer group. */
+export { computePeerValuation } from "./peer-valuation";
+export type { CompanyMetrics, PeerMetricComparison, PeerValuationResult } from "./peer-valuation";
+
 // ── Resampling & time helpers ────────────────────────────────────────────
 
 /** Resample intraday candles to weekly/monthly timeframes. */
