@@ -1202,15 +1202,15 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 
 | #   | Task                                                                          | Priority | Status |
 | --- | ----------------------------------------------------------------------------- | -------- | ------ |
-| R1  | Bar Replay: historical playback, step/speed controls, indicator recalculation | P1       | ⬜     |
+| R1  | Bar Replay: historical playback, step/speed controls, indicator recalculation | P1       | ✅     |
 | R2  | DSL expansion: `for` loops, arrays, `plot()` for custom indicators            | P1       | ⬜     |
-| R3  | Durable Object WebSocket fan-out for production streaming                     | P1       | ⬜     |
-| R4  | Capacitor wrapper for iOS + Android App Store distribution                    | P2       | ⬜     |
-| R5  | News feed: structured NLP sentiment scoring in Worker (Finnhub + RSS)         | P2       | ⬜     |
+| R3  | Durable Object WebSocket fan-out for production streaming                     | P1       | ✅     |
+| R4  | Capacitor wrapper for iOS + Android App Store distribution                    | P2       | ✅     |
+| R5  | News feed: structured NLP sentiment scoring in Worker (Finnhub + RSS)         | P2       | ✅     |
 | R6  | Multi-timeframe analysis: sync 2-4 charts at different intervals              | P2       | ⬜     |
-| R7  | Alert server-side evaluation via D1 + Durable Object scheduled task           | P2       | ⬜     |
+| R7  | Alert server-side evaluation via D1 + Durable Object scheduled task           | P2       | ✅     |
 | R8  | WCAG 2.2 AAA for critical paths: contrast AAA, error suggestion, timing       | P1       | ⬜     |
-| R9  | OpenTelemetry traces in Worker (distributed tracing)                          | P2       | ⬜     |
+| R9  | OpenTelemetry traces in Worker (distributed tracing)                          | P2       | ✅     |
 | R10 | Performance regression tracking: store metrics per commit in R2               | P2       | ⬜     |
 | R11 | Certificate transparency monitoring (crt.sh API alerting)                     | P3       | ⬜     |
 | R12 | README showcase: GIF demos, comparison table, install-size badge              | P1       | ⬜     |
