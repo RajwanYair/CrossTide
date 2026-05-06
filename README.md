@@ -14,6 +14,8 @@ interactive charting, and offline-first PWA support.
 [![Bundle](https://img.shields.io/badge/Bundle-%3C200KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
 [![SLSA 3](https://img.shields.io/badge/SLSA-Level_3-green?logo=sigstore)](https://github.com/RajwanYair/CrossTide/attestations)
 [![Docs](https://img.shields.io/badge/Docs-Indicator%20Reference-blue)](https://rajwanyair.github.io/CrossTide/docs/)
+[![Architecture](https://img.shields.io/badge/Architecture-Diagram-orange)](docs/ARCHITECTURE.md)
+[![FRED API](https://img.shields.io/badge/FRED-Economic%20Overlay-informational)](worker/routes/fred.ts)
 
 > **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
 
@@ -54,31 +56,31 @@ npm run dev        # http://localhost:5173
 
 CrossTide ships with **23 route cards**, each accessible from the sidebar navigation:
 
-| Card                | Description                                                    |
-| ------------------- | -------------------------------------------------------------- |
-| Watchlist           | Real-time ticker table with sparklines, volume bars, 52W range |
-| Consensus           | 12-method signal aggregation with confidence meter             |
-| Chart               | Candlestick + 8 overlay indicators + drawing tools             |
-| Multi-Chart         | Side-by-side 2–4 chart grid layout                             |
-| Backtest            | SMA crossover backtest with equity curve + trade log           |
-| Strategy Comparison | Compare two backtest strategies side-by-side                   |
-| Screener            | Filter + sort 10K+ tickers with virtual scrolling              |
-| Portfolio           | Holdings, allocation chart, P&L, sector exposure               |
-| Risk Metrics        | VaR, Sharpe, Sortino, max drawdown analysis                    |
-| Heatmap             | Treemap by sector cap, drill-down to constituents              |
-| Sector Rotation     | RRG-style sector momentum quadrant chart                       |
-| Relative Strength   | Normalized multi-ticker performance comparison                 |
-| Market Breadth      | Advance/decline, new highs/lows, McClellan                     |
-| Correlation Matrix  | Cross-ticker correlation heatmap                               |
-| Seasonality         | Month-over-month historical return patterns                    |
-| Earnings Calendar   | Upcoming earnings dates for watchlist                          |
-| Macro Dashboard     | Economic indicators and Fed data                               |
-| Consensus Timeline  | Historical signal timeline per ticker                          |
-| Alerts              | Multi-condition alert rules (AND/OR), history log              |
-| Signal DSL          | Custom indicator expressions with live evaluation              |
-| Comparison          | Multi-ticker normalized price overlay                          |
-| Provider Health     | Data provider latency, error rates, and uptime monitor         |
-| Settings            | Theme, API keys, export/import, locale, a11y                   |
+| Card                | Description                                                             |
+| ------------------- | ----------------------------------------------------------------------- |
+| Watchlist           | Real-time ticker table with sparklines, volume bars, 52W range          |
+| Consensus           | 12-method signal aggregation with confidence meter                      |
+| Chart               | Candlestick + 8 overlay indicators + drawing tools                      |
+| Multi-Chart         | Side-by-side 2–4 chart grid layout                                      |
+| Backtest            | SMA crossover backtest with equity curve + trade log                    |
+| Strategy Comparison | Compare two backtest strategies side-by-side                            |
+| Screener            | Filter + sort 10K+ tickers with virtual scrolling                       |
+| Portfolio           | Holdings, allocation chart, P&L, sector exposure                        |
+| Risk Metrics        | VaR, Sharpe, Sortino, max drawdown analysis                             |
+| Heatmap             | Treemap by sector cap, drill-down to constituents                       |
+| Sector Rotation     | RRG-style sector momentum quadrant chart                                |
+| Relative Strength   | Normalized multi-ticker performance comparison                          |
+| Market Breadth      | Advance/decline, new highs/lows, McClellan                              |
+| Correlation Matrix  | Cross-ticker correlation heatmap                                        |
+| Seasonality         | Month-over-month historical return patterns                             |
+| Earnings Calendar   | Upcoming earnings dates for watchlist                                   |
+| Macro Dashboard     | Economic indicators and FRED macro overlay (VIX, yields, M2, Fed Funds) |
+| Consensus Timeline  | Historical signal timeline per ticker                                   |
+| Alerts              | Multi-condition alert rules (AND/OR), history log                       |
+| Signal DSL          | Custom indicator expressions with live evaluation                       |
+| Comparison          | Multi-ticker normalized price overlay                                   |
+| Provider Health     | Data provider latency, error rates, and uptime monitor                  |
+| Settings            | Theme, API keys, export/import, locale, a11y                            |
 
 ## Why CrossTide?
 
