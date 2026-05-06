@@ -12,7 +12,9 @@ interactive charting, and offline-first PWA support.
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript)](tsconfig.json)
 [![Bundle](https://img.shields.io/badge/Bundle-%3C200KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
+[![Install Size](https://img.shields.io/badge/Install%20Size-~4.2MB-informational)](package.json)
 [![SLSA 3](https://img.shields.io/badge/SLSA-Level_3-green?logo=sigstore)](https://github.com/RajwanYair/CrossTide/attestations)
+[![WCAG 2.2 AAA](https://img.shields.io/badge/WCAG-2.2%20AAA-blueviolet)](src/styles/a11y.css)
 [![Docs](https://img.shields.io/badge/Docs-Indicator%20Reference-blue)](https://rajwanyair.github.io/CrossTide/docs/)
 [![Architecture](https://img.shields.io/badge/Architecture-Diagram-orange)](docs/ARCHITECTURE.md)
 [![FRED API](https://img.shields.io/badge/FRED-Economic%20Overlay-informational)](worker/routes/fred.ts)
@@ -34,7 +36,7 @@ interactive charting, and offline-first PWA support.
 | **Alerts**              | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions                                                  |
 | **Data Providers**      | Yahoo Finance, Finnhub, CoinGecko, Polygon.io — automatic failover with provider health monitoring                                                  |
 | **PWA / Offline**       | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile                                                              |
-| **Accessibility**       | WCAG 2.1 AA, keyboard navigation, screen reader support, color-blind palettes, skip links                                                           |
+| **Accessibility**       | WCAG 2.2 AAA (contrast, focus, target size, error suggestion), keyboard nav, color-blind palettes, skip links, `[data-contrast="aaa"]` mode         |
 | **Performance**         | < 200 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP                                                                  |
 | **i18n**                | English, Hebrew (RTL), with expansion to ES/DE/ZH                                                                                                   |
 
@@ -46,6 +48,23 @@ interactive charting, and offline-first PWA support.
 npm install
 npm run dev        # http://localhost:5173
 ```
+
+## Demo
+
+<!-- R12: GIF demos — recorded from the live app, stored in docs/demos/ -->
+
+| Feature                              | Demo                                          |
+| ------------------------------------ | --------------------------------------------- |
+| **Consensus Signal Engine**          | ![Consensus demo](docs/demos/consensus.gif)   |
+| **Candlestick Chart + Indicators**   | ![Chart demo](docs/demos/chart.gif)           |
+| **Bar Replay (historical playback)** | ![Bar Replay demo](docs/demos/bar-replay.gif) |
+| **Screener — 10K tickers**           | ![Screener demo](docs/demos/screener.gif)     |
+| **Signal DSL with `plot()`**         | ![Signal DSL demo](docs/demos/signal-dsl.gif) |
+| **Macro Dashboard (FRED overlay)**   | ![Macro demo](docs/demos/macro-dashboard.gif) |
+
+> Demos are recorded at 1× speed against live Yahoo Finance data.
+> Run `npm run dev` to explore all cards interactively — no API key required for the
+> preview fixture mode.
 
 ## Screenshots
 
@@ -84,17 +103,23 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 
 ## Why CrossTide?
 
-|                         | CrossTide | TradingView | Yahoo Finance | Finviz  |
-| ----------------------- | :-------: | :---------: | :-----------: | :-----: |
-| Free & open source      |    ✅     |     ❌      |      ❌       | Partial |
-| Self-hostable / offline |    ✅     |     ❌      |      ❌       |   ❌    |
-| No account required     |    ✅     |     ❌      |      ❌       |   ✅    |
-| 12-method consensus     |    ✅     |     ❌      |      ❌       |   ❌    |
-| Custom signal DSL       |    ✅     | Pine Script |      ❌       |   ❌    |
-| < 200 KB bundle         |    ✅     |     ❌      |      ❌       |   ❌    |
-| PWA installable         |    ✅     |     ❌      |      ❌       |   ❌    |
-| Strategy backtesting    |    ✅     |     ✅      |      ❌       |   ❌    |
-| Accessibility (WCAG AA) |    ✅     |   Partial   |    Partial    |   ❌    |
+|                                  |    CrossTide    | TradingView | Yahoo Finance | Finviz  | StockCharts |
+| -------------------------------- | :-------------: | :---------: | :-----------: | :-----: | :---------: |
+| **Free & open source**           |       ✅        |     ❌      |      ❌       | Partial |     ❌      |
+| **Self-hostable / offline PWA**  |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
+| **No account required**          |       ✅        |     ❌      |      ❌       |   ✅    |     ❌      |
+| **12-method consensus signals**  |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
+| **Custom signal DSL + `plot()`** |       ✅        | Pine Script |      ❌       |   ❌    |     ❌      |
+| **Bar Replay (tick-by-tick)**    |       ✅        |  ✅ (paid)  |      ❌       |   ❌    |     ❌      |
+| **< 200 KB gzip bundle**         |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
+| **Native iOS / Android**         | ✅ (Capacitor)  |     ✅      |      ✅       |   ❌    |     ❌      |
+| **Strategy backtesting**         |       ✅        |     ✅      |      ❌       |   ❌    |  ✅ (paid)  |
+| **Accessibility WCAG 2.2 AAA**   |       ✅        |     ❌      |    Partial    |   ❌    |     ❌      |
+| **FRED macro overlay**           |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
+| **NLP news sentiment**           |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
+| **WebSocket live streaming**     | ✅ (DO fan-out) |     ✅      |      ❌       |   ❌    |     ❌      |
+| **OTel distributed tracing**     |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
+| **55+ technical indicators**     |       ✅        |     ✅      |      ❌       | Partial |     ✅      |
 
 ## Scripts
 
