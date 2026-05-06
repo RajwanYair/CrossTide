@@ -10,6 +10,12 @@ import type { DailyCandle } from "../../../src/types/domain";
 import { computeSma, computeSmaSeries } from "../../../src/domain/sma-calculator";
 import { computeRsiSeries } from "../../../src/domain/rsi-calculator";
 import { computeBollingerSeries } from "../../../src/domain/bollinger-calculator";
+import { computeAtrSeries } from "../../../src/domain/atr-calculator";
+import { computeMacdSeries } from "../../../src/domain/macd-calculator";
+import { computeStochasticSeries } from "../../../src/domain/stochastic-calculator";
+import { computeObvSeries } from "../../../src/domain/obv-calculator";
+import { computeVwapSeries } from "../../../src/domain/vwap-calculator";
+import { computeAdxSeries } from "../../../src/domain/adx-calculator";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -259,6 +265,326 @@ describe("computeBollingerSeries — property tests", () => {
           if (p.bandwidth !== null) {
             expect(p.bandwidth).toBeCloseTo(0, 6);
           }
+        }
+      }),
+    );
+  });
+});
+
+// ── ATR property tests ────────────────────────────────────────────────────────
+
+describe("computeAtrSeries — property tests", () => {
+  it("output length is non-negative and at most input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeAtrSeries(candles);
+        expect(series.length).toBeGreaterThanOrEqual(0);
+        expect(series.length).toBeLessThanOrEqual(candles.length);
+      }),
+    );
+  });
+
+  it("all ATR values are non-negative", () => {
+    fc.assert(
+      fc.property(priceArray(20, 200), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeAtrSeries(candles, 14);
+        for (const p of series) {
+          expect(p.atr).toBeGreaterThanOrEqual(0);
+        }
+      }),
+    );
+  });
+
+  it("flat candles (H=L=C) produce ATR of 0", () => {
+    fc.assert(
+      fc.property(positivePrice, fc.integer({ min: 20, max: 30 }), (price, len) => {
+        // Build truly flat candles so TR = 0 for every bar
+        const base = new Date(2020, 0, 1);
+        const flat = Array.from({ length: len }, (_, i) => {
+          const d = new Date(base);
+          d.setDate(base.getDate() + i);
+          return {
+            date: d.toISOString().split("T")[0]!,
+            open: price,
+            high: price,
+            low: price,
+            close: price,
+            volume: 1000,
+          };
+        });
+        const series = computeAtrSeries(flat, 14);
+        for (const p of series) {
+          expect(p.atr).toBeCloseTo(0, 6);
+        }
+      }),
+    );
+  });
+
+  it("ATR is finite for any positive price series", () => {
+    fc.assert(
+      fc.property(priceArray(20, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeAtrSeries(candles, 14);
+        for (const p of series) {
+          expect(Number.isFinite(p.atr)).toBe(true);
+        }
+      }),
+    );
+  });
+});
+
+// ── MACD property tests ───────────────────────────────────────────────────────
+
+describe("computeMacdSeries — property tests", () => {
+  it("output length equals input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        expect(computeMacdSeries(candles)).toHaveLength(candles.length);
+      }),
+    );
+  });
+
+  it("histogram = macd - signal for all non-null values", () => {
+    fc.assert(
+      fc.property(priceArray(40, 200), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeMacdSeries(candles, 12, 26, 9);
+        for (const p of series) {
+          if (p.macd !== null && p.signal !== null && p.histogram !== null) {
+            expect(p.histogram).toBeCloseTo(p.macd - p.signal, 6);
+          }
+        }
+      }),
+    );
+  });
+
+  it("all non-null values are finite numbers", () => {
+    fc.assert(
+      fc.property(priceArray(30, 150), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeMacdSeries(candles, 12, 26, 9);
+        for (const p of series) {
+          if (p.macd !== null) expect(Number.isFinite(p.macd)).toBe(true);
+          if (p.signal !== null) expect(Number.isFinite(p.signal)).toBe(true);
+          if (p.histogram !== null) expect(Number.isFinite(p.histogram)).toBe(true);
+        }
+      }),
+    );
+  });
+
+  it("MACD is null when fewer candles than slow period", () => {
+    fc.assert(
+      fc.property(fc.array(positivePrice, { minLength: 1, maxLength: 25 }), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeMacdSeries(candles, 12, 26, 9);
+        // All points should have null macd when < 26 candles
+        for (const p of series) {
+          expect(p.macd).toBeNull();
+        }
+      }),
+    );
+  });
+});
+
+// ── Stochastic property tests ─────────────────────────────────────────────────
+
+describe("computeStochasticSeries — property tests", () => {
+  it("output length is non-negative and at most input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeStochasticSeries(candles);
+        expect(series.length).toBeGreaterThanOrEqual(0);
+        expect(series.length).toBeLessThanOrEqual(candles.length);
+      }),
+    );
+  });
+
+  it("%K values are in [0, 100] for all entries", () => {
+    fc.assert(
+      fc.property(priceArray(25, 200), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeStochasticSeries(candles, 14, 3, 3);
+        for (const p of series) {
+          expect(p.percentK).toBeGreaterThanOrEqual(0 - 1e-9);
+          expect(p.percentK).toBeLessThanOrEqual(100 + 1e-9);
+        }
+      }),
+    );
+  });
+
+  it("%D values are in [0, 100] for all entries", () => {
+    fc.assert(
+      fc.property(priceArray(25, 200), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeStochasticSeries(candles, 14, 3, 3);
+        for (const p of series) {
+          expect(p.percentD).toBeGreaterThanOrEqual(0 - 1e-9);
+          expect(p.percentD).toBeLessThanOrEqual(100 + 1e-9);
+        }
+      }),
+    );
+  });
+
+  it("constant price series yields %K = 50 (degenerate range handled)", () => {
+    // When high = low for all bars in the window, range = 0 → implementation returns 50
+    fc.assert(
+      fc.property(positivePrice, fc.integer({ min: 25, max: 35 }), (price, len) => {
+        const base = new Date(2020, 0, 1);
+        const flat = Array.from({ length: len }, (_, i) => {
+          const d = new Date(base);
+          d.setDate(base.getDate() + i);
+          return {
+            date: d.toISOString().split("T")[0]!,
+            open: price,
+            high: price,
+            low: price,
+            close: price,
+            volume: 1000,
+          };
+        });
+        const series = computeStochasticSeries(flat, 14, 3, 3);
+        for (const p of series) {
+          expect(p.percentK).toBeCloseTo(50, 6);
+        }
+      }),
+    );
+  });
+});
+
+// ── OBV property tests ────────────────────────────────────────────────────────
+
+describe("computeObvSeries — property tests", () => {
+  it("output length equals input length for >= 2 candles", () => {
+    fc.assert(
+      fc.property(priceArray(2, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        expect(computeObvSeries(candles)).toHaveLength(candles.length);
+      }),
+    );
+  });
+
+  it("returns empty for fewer than 2 candles", () => {
+    const single = makeArbitraryCandles([100]);
+    expect(computeObvSeries(single)).toHaveLength(0);
+  });
+
+  it("all OBV values are finite", () => {
+    fc.assert(
+      fc.property(priceArray(2, 150), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeObvSeries(candles);
+        for (const p of series) {
+          expect(Number.isFinite(p.obv)).toBe(true);
+        }
+      }),
+    );
+  });
+
+  it("OBV is non-decreasing when price always rises", () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 5, max: 30 }), (len) => {
+        const closes = Array.from({ length: len }, (_, i) => 100 + i);
+        const candles = makeArbitraryCandles(closes);
+        const series = computeObvSeries(candles);
+        for (let i = 1; i < series.length; i++) {
+          expect(series[i]!.obv).toBeGreaterThanOrEqual(series[i - 1]!.obv - 1e-9);
+        }
+      }),
+    );
+  });
+});
+
+// ── VWAP property tests ───────────────────────────────────────────────────────
+
+describe("computeVwapSeries — property tests", () => {
+  it("output length equals input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        expect(computeVwapSeries(candles)).toHaveLength(candles.length);
+      }),
+    );
+  });
+
+  it("all VWAP values are positive and finite", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeVwapSeries(candles);
+        for (const p of series) {
+          expect(Number.isFinite(p.vwap)).toBe(true);
+          expect(p.vwap).toBeGreaterThan(0);
+        }
+      }),
+    );
+  });
+
+  it("VWAP of a single candle equals that candle's typical price", () => {
+    fc.assert(
+      fc.property(positivePrice, (price) => {
+        const candles = makeArbitraryCandles([price]);
+        const series = computeVwapSeries(candles);
+        // TP = (H + L + C) / 3 = (price*1.01 + price*0.99 + price) / 3 = price
+        expect(series).toHaveLength(1);
+        expect(series[0]!.vwap).toBeCloseTo(price, 4);
+      }),
+    );
+  });
+});
+
+// ── ADX property tests ────────────────────────────────────────────────────────
+
+describe("computeAdxSeries — property tests", () => {
+  it("output length is non-negative and at most input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeAdxSeries(candles);
+        expect(series.length).toBeGreaterThanOrEqual(0);
+        expect(series.length).toBeLessThanOrEqual(candles.length);
+      }),
+    );
+  });
+
+  it("all ADX values are in [0, 100]", () => {
+    fc.assert(
+      fc.property(priceArray(30, 200), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeAdxSeries(candles, 14);
+        for (const p of series) {
+          expect(p.adx).toBeGreaterThanOrEqual(0 - 1e-9);
+          expect(p.adx).toBeLessThanOrEqual(100 + 1e-9);
+        }
+      }),
+    );
+  });
+
+  it("all DI values are finite and non-negative", () => {
+    fc.assert(
+      fc.property(priceArray(30, 150), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeAdxSeries(candles, 14);
+        for (const p of series) {
+          expect(Number.isFinite(p.plusDi)).toBe(true);
+          expect(p.plusDi).toBeGreaterThanOrEqual(0 - 1e-9);
+          expect(Number.isFinite(p.minusDi)).toBe(true);
+          expect(p.minusDi).toBeGreaterThanOrEqual(0 - 1e-9);
+        }
+      }),
+    );
+  });
+
+  it("ADX is finite for any positive price series", () => {
+    fc.assert(
+      fc.property(priceArray(30, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeAdxSeries(candles, 14);
+        for (const p of series) {
+          expect(Number.isFinite(p.adx)).toBe(true);
         }
       }),
     );
