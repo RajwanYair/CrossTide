@@ -6,6 +6,46 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.37.0] — 2026-06-05
+
+> **Sprint: Phase Q Foundation (7-sprint session)** (commits `2bb2f20`–`4563716`)
+
+### Added
+
+- **FRED economic data overlay endpoint** (`worker/routes/fred.ts`, Q6):
+  `GET /api/fred?series=VIX` — serves CBOE VIX, 10Y/2Y Treasury rates, M2, Fed
+  Funds, unemployment, CPI, and yield spread from St. Louis Fed FRED API. Supports
+  both alias shortcuts (`vix`, `10y`, `2y`, `m2`, `fedfunds`) and canonical FRED IDs.
+  24-hour KV cache; 17 unit tests covering series resolution, CSV parsing, caching,
+  and error handling.
+- **Yahoo Finance v8 and Finnhub offline contract tests** (`tests/unit/worker/`, Q9):
+  49 Vitest tests using frozen fixture payloads to guard against upstream schema drift
+  for chart, quote, search, and Finnhub candle/quote/search shapes.
+- **Playwright visual regression baselines** (`tests/e2e/visual.spec.ts`, Q10):
+  19 `toHaveScreenshot()` tests spanning light/dark/mobile viewports, navigation
+  transitions, and Web Component snapshots. Threshold: 20% max pixel ratio.
+- **fast-check property test expansion** (`tests/unit/domain/indicator-properties.test.ts`, Q13):
+  Added 22 property tests across 6 new indicator suites: ATR (4 tests), MACD (4 tests),
+  Stochastic (4 tests), OBV (4 tests), VWAP (3 tests), ADX (4 tests). Tests cover
+  length invariants, range bounds ([0,100] for RSI/Stochastic/ADX), finite output,
+  and degenerate-input handling (flat candles, constant prices).
+- **Temporal polyfill skip-if-present branch tests** (`tests/unit/core/temporal-init.test.ts`, Q16):
+  Two new tests explicitly verify the conditional-loading path: native Temporal stub is
+  preserved unchanged (`ensureTemporal` is a no-op); polyfill loads and sets
+  `globalThis.Temporal` when absent.
+
+### Changed
+
+- **GlitchTip source-map upload** (`.github/workflows/release.yml`, P14): Added
+  `upload-sourcemaps.mjs` step between build and bundle-size check in the release
+  workflow. Uses `GLITCHTIP_DSN` secret with `continue-on-error: true`.
+- **README badges**: Added Architecture diagram and FRED API links; updated Macro
+  Dashboard card description to reference FRED overlay.
+- **ROADMAP Phase Q**: Marked Q6, Q9, Q10, Q13, Q16 ✅. Updated current version to
+  v11.37.0.
+
+---
+
 ## [11.36.0] — 2026-06-02
 
 > **Sprint: Phase P Foundation (10-sprint session)** (commit `ae7d98c`)
