@@ -38,6 +38,13 @@ jobs:
       - name: Build production
         run: npx vite build
 
+      - name: Upload source maps to GlitchTip (P14)
+        run: node scripts/upload-sourcemaps.mjs
+        env:
+          GLITCHTIP_DSN: ${{ secrets.GLITCHTIP_DSN }}
+          RELEASE_VERSION: ${{ github.ref_name }}
+        continue-on-error: true  # Non-fatal: missing secret = skip silently
+
       - name: Bundle size check
         run: npm run check:bundle
 

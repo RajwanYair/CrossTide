@@ -1135,7 +1135,7 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 | P3  | Worker `/api/quote` and `/api/chart`: real Yahoo calls + KV TTL cache         | P0       | ✅     |
 | P4  | Corporate action adjustment: split-adjusted default, raw optional             | P0       | ✅     |
 | P5  | KV-backed rate limiting (replace per-isolate; ADR-0004 already written)       | P1       | ✅     |
-| P6  | Passkey auth wired to D1 `user_sync` table                                    | P1       | ⬜     |
+| P6  | Passkey auth wired to D1 `user_sync` table                                    | P1       | ✅     |
 | P7  | Signal stores: `createWatchlistStore()`, `createPortfolioStore()`             | P1       | ✅     |
 | P8  | Route loaders: `defineRoute({ loader })` with AbortController cancellation    | P1       | ✅     |
 | P9  | Error boundaries: try-catch in all 54 card `mount()`/`update()` methods       | P1       | ✅     |
@@ -1143,10 +1143,10 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 | P11 | Extract `<ct-stat-grid>`, `<ct-chart-frame>`, `<ct-empty-state>`              | P1       | ✅     |
 | P12 | Gitignore `src/domain/debug.log` and `src/cards/debug.log` (artifact cleanup) | P2       | ✅     |
 | P13 | Structured logging in Worker (JSON, request ID, latency, provider choice)     | P2       | ✅     |
-| P14 | GlitchTip source-map upload in CI deploy step                                 | P2       | ⬜     |
+| P14 | GlitchTip source-map upload in CI deploy step                                 | P2       | ✅     |
 | P15 | Conditional Temporal polyfill (detect native support first)                   | P2       | ✅     |
-| P16 | OpenAPI → TypeScript client codegen for Worker API                            | P2       | ⬜     |
-| P17 | View Transitions API for route navigation (progressive enhancement)           | P2       | ⬜     |
+| P16 | OpenAPI → TypeScript client codegen for Worker API                            | P2       | ✅     |
+| P17 | View Transitions API for route navigation (progressive enhancement)           | P2       | ✅     |
 
 **Exit criteria:**
 
@@ -1167,18 +1167,18 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 
 | #   | Task                                                                                | Priority | Status |
 | --- | ----------------------------------------------------------------------------------- | -------- | ------ |
-| Q1  | Fundamental data card: real P/E, EPS, revenue, margins, market cap                  | P0       | ⬜     |
-| Q2  | Extract `<ct-filter-bar>` and `<ct-chart-frame>` Web Components                     | P1       | ⬜     |
-| Q3  | Screener: fundamental filters (P/E < x, market cap, dividend yield, sector)         | P1       | ⬜     |
-| Q4  | Indicator configuration UI: per-indicator period/threshold/color via Settings       | P1       | ⬜     |
-| Q5  | Volume Profile overlay (LWC custom series: horizontal histogram at price levels)    | P1       | ⬜     |
+| Q1  | Fundamental data card: real P/E, EPS, revenue, margins, market cap                  | P0       | ✅     |
+| Q2  | Extract `<ct-filter-bar>` and `<ct-chart-frame>` Web Components                     | P1       | ✅     |
+| Q3  | Screener: fundamental filters (P/E < x, market cap, dividend yield, sector)         | P1       | ✅     |
+| Q4  | Indicator configuration UI: per-indicator period/threshold/color via Settings       | P1       | ✅     |
+| Q5  | Volume Profile overlay (LWC custom series: horizontal histogram at price levels)    | P1       | ✅     |
 | Q6  | Economic data overlay: FRED VIX, yield curve, M2 on chart secondary axis            | P2       | ⬜     |
-| Q7  | Backtest: commission model (fixed + %) + slippage + Kelly criterion position sizing | P1       | ⬜     |
-| Q8  | Additional drawing tools: horizontal ray, price range, date range, XABCD            | P2       | ⬜     |
+| Q7  | Backtest: commission model (fixed + %) + slippage + Kelly criterion position sizing | P1       | ✅     |
+| Q8  | Additional drawing tools: horizontal ray, price range, date range, XABCD            | P2       | ✅     |
 | Q9  | Contract tests: offline Pact contracts for Yahoo v8 and Finnhub schemas             | P2       | ⬜     |
 | Q10 | Visual regression: Playwright screenshot baselines for all chart types              | P2       | ⬜     |
-| Q11 | CSS Anchor Positioning: replace JS tooltip positioning in charts/screener           | P2       | ⬜     |
-| Q12 | CSS `popover` attribute: replace JS-managed modals/overlays                         | P2       | ⬜     |
+| Q11 | CSS Anchor Positioning: replace JS tooltip positioning in charts/screener           | P2       | ✅     |
+| Q12 | CSS `popover` attribute: replace JS-managed modals/overlays                         | P2       | ✅     |
 | Q13 | fast-check property tests: all 80+ indicator calculators fuzzed                     | P2       | ⬜     |
 | Q14 | Stryker mutation testing: ≥75% mutation score for domain/                           | P3       | ⬜     |
 | Q15 | R2 cold OHLCV archival: 20-year daily history as Parquet (top 500 tickers)          | P3       | ⬜     |

@@ -58,6 +58,13 @@ import { handleMonteCarlo } from "./routes/monte-carlo.js";
 import { handlePairs } from "./routes/pairs.js";
 import { handleFactorModel } from "./routes/factor-model.js";
 import {
+  handleAuthChallenge,
+  handleAuthRegister,
+  handleAuthAuthenticate,
+  handleSyncGet,
+  handleSyncPut,
+} from "./routes/auth.js";
+import {
   isPreviewEnvironment,
   getFixtureQuote,
   getFixtureChart,
@@ -317,6 +324,13 @@ app.get("/api/ws/:symbol", (c) => {
   url.pathname = "/ws";
   return stub.fetch(new Request(url.toString(), c.req.raw));
 });
+
+// ── P6: Passkey auth + E2EE sync ─────────────────────────────────────────────
+app.get("/api/auth/challenge", (c) => handleAuthChallenge(c.env));
+app.post("/api/auth/register", async (c) => handleAuthRegister(c.req.raw, c.env));
+app.post("/api/auth/authenticate", async (c) => handleAuthAuthenticate(c.req.raw, c.env));
+app.get("/api/sync", (c) => handleSyncGet(new URL(c.req.url), c.env));
+app.put("/api/sync", async (c) => handleSyncPut(c.req.raw, c.env));
 
 // ── Favicon (no-op) ───────────────────────────────────────────────────────────
 app.get("/favicon.ico", (c) => c.newResponse(null, 204));
