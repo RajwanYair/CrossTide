@@ -1,7 +1,7 @@
 # CrossTide — Strategic Roadmap v6 (Deep Rethink)
 
 > **Date:** May 5, 2026
-> **Current version:** v11.36.0
+> **Current version:** v11.37.0
 > **Codebase:** 218 domain modules · 54 cards · 36 Worker routes · 582+ test files
 > **Bundle:** 158 KB gzip (budget 200 KB) · 49 SW precache entries
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
@@ -1172,17 +1172,17 @@ WASM modules are lazy-loaded on demand — they never block initial page render.
 | Q3  | Screener: fundamental filters (P/E < x, market cap, dividend yield, sector)         | P1       | ✅     |
 | Q4  | Indicator configuration UI: per-indicator period/threshold/color via Settings       | P1       | ✅     |
 | Q5  | Volume Profile overlay (LWC custom series: horizontal histogram at price levels)    | P1       | ✅     |
-| Q6  | Economic data overlay: FRED VIX, yield curve, M2 on chart secondary axis            | P2       | ⬜     |
+| Q6  | Economic data overlay: FRED VIX, yield curve, M2 on chart secondary axis            | P2       | ✅     |
 | Q7  | Backtest: commission model (fixed + %) + slippage + Kelly criterion position sizing | P1       | ✅     |
 | Q8  | Additional drawing tools: horizontal ray, price range, date range, XABCD            | P2       | ✅     |
-| Q9  | Contract tests: offline Pact contracts for Yahoo v8 and Finnhub schemas             | P2       | ⬜     |
-| Q10 | Visual regression: Playwright screenshot baselines for all chart types              | P2       | ⬜     |
+| Q9  | Contract tests: offline Pact contracts for Yahoo v8 and Finnhub schemas             | P2       | ✅     |
+| Q10 | Visual regression: Playwright screenshot baselines for all chart types              | P2       | ✅     |
 | Q11 | CSS Anchor Positioning: replace JS tooltip positioning in charts/screener           | P2       | ✅     |
 | Q12 | CSS `popover` attribute: replace JS-managed modals/overlays                         | P2       | ✅     |
-| Q13 | fast-check property tests: all 80+ indicator calculators fuzzed                     | P2       | ⬜     |
+| Q13 | fast-check property tests: all 80+ indicator calculators fuzzed                     | P2       | ✅     |
 | Q14 | Stryker mutation testing: ≥75% mutation score for domain/                           | P3       | ⬜     |
 | Q15 | R2 cold OHLCV archival: 20-year daily history as Parquet (top 500 tickers)          | P3       | ⬜     |
-| Q16 | Drop Temporal polyfill for Chrome/FF/Safari ≥ required versions                     | P2       | ⬜     |
+| Q16 | Drop Temporal polyfill for Chrome/FF/Safari ≥ required versions                     | P2       | ✅     |
 
 **Exit criteria:**
 
