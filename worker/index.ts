@@ -57,6 +57,7 @@ import { handleMarketBreadth } from "./routes/market-breadth.js";
 import { handleMonteCarlo } from "./routes/monte-carlo.js";
 import { handlePairs } from "./routes/pairs.js";
 import { handleFactorModel } from "./routes/factor-model.js";
+import { handleFred } from "./routes/fred.js";
 import {
   handleAuthChallenge,
   handleAuthRegister,
@@ -269,6 +270,8 @@ app.get("/api/etf/:symbol/holdings", (c) => handleEtfHoldings(c.req.param("symbo
 app.get("/api/migrations/status", (c) => handleMigrationStatus(c.env));
 
 app.get("/api/economic", (c) => handleEconomic(c.env));
+
+app.get("/api/fred", (c) => handleFred(new URL(c.req.url), c.env));
 
 app.get("/api/sector-heatmap", (c) => handleSectorHeatmap(c.env));
 
