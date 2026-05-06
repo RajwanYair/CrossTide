@@ -109,7 +109,7 @@
     "workbox-strategies": "^7.4.0"
   },
   "dependencies": {
-    "@capacitor/cli": "^7.2.0",
+    "@capacitor/cli": "^8.3.1",
     "@capacitor/core": "^7.2.0",
     "@capacitor/preferences": "^7.0.0",
     "@capacitor/splash-screen": "^7.0.0",
