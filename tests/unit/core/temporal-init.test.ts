@@ -67,3 +67,45 @@ describe("getTemporalRuntime", () => {
     (globalThis as { Temporal?: unknown }).Temporal = saved;
   });
 });
+
+// ── Q16: Skip-if-present branch — explicit polyfill-free path ─────────────────
+
+describe("ensureTemporal — skip polyfill when native Temporal is present (Q16)", () => {
+  it("does not overwrite a pre-existing globalThis.Temporal (native path)", async () => {
+    // Simulate a browser that already has native Temporal
+    const nativeStub = { __isNativeStub: true };
+    const g = globalThis as { Temporal?: unknown };
+    const saved = g.Temporal;
+    g.Temporal = nativeStub;
+
+    try {
+      vi.resetModules();
+      const { ensureTemporal: ensureFresh, isTemporalNative: isFresh } =
+        await import("../../../src/core/temporal-init");
+
+      // Native detection must return true
+      expect(isFresh()).toBe(true);
+
+      // ensureTemporal must resolve quickly and must NOT replace our stub
+      await ensureFresh();
+      expect(g.Temporal).toBe(nativeStub);
+    } finally {
+      g.Temporal = saved;
+    }
+  });
+
+  it("loads polyfill when Temporal is absent (polyfill path sets globalThis.Temporal)", async () => {
+    const g = globalThis as { Temporal?: unknown };
+    const saved = g.Temporal;
+    delete g.Temporal;
+
+    try {
+      vi.resetModules();
+      const { ensureTemporal: ensureFresh } = await import("../../../src/core/temporal-init");
+      await ensureFresh();
+      expect(g.Temporal).toBeDefined();
+    } finally {
+      g.Temporal = saved;
+    }
+  });
+});
