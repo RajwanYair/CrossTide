@@ -7,7 +7,8 @@
  *  GET  /api/search                  Ticker fuzzy search (q, limit params)
  *  POST /api/screener                Technical screener with consensus filter
  *  GET  /api/og/:symbol              Social preview SVG image
- *  POST /api/signal-dsl/execute      Execute a signal DSL expression
+ *  POST /api/signal-dsl/execute        Execute a signal DSL expression
+ *  POST /api/signal-dsl/execute-script  Execute a DSL script (R2: for/let/plot)
  *
  * Middleware (applied in order):
  *  1. CORS preflight — OPTIONS short-circuit via app.options()
@@ -28,7 +29,7 @@ import { handleQuote } from "./routes/quote.js";
 import { handleSearch } from "./routes/search.js";
 import { handleScreener } from "./routes/screener.js";
 import { handleOgImage } from "./routes/og.js";
-import { handleSignalDslExecute } from "./routes/signal-dsl.js";
+import { handleSignalDslExecute, handleSignalDslExecuteScript } from "./routes/signal-dsl.js";
 import { handleOpenApiSpec } from "./routes/openapi.js";
 import { handleCspReport } from "./routes/csp-report.js";
 import { handleFundamentals } from "./routes/fundamentals.js";
@@ -303,6 +304,7 @@ app.get("/api/og/:symbol", (c) => Promise.resolve(handleOgImage(new URL(c.req.ur
 app.get("/api/og", (c) => Promise.resolve(handleOgImage(new URL(c.req.url))));
 
 app.post("/api/signal-dsl/execute", async (c) => handleSignalDslExecute(c.req.raw));
+app.post("/api/signal-dsl/execute-script", async (c) => handleSignalDslExecuteScript(c.req.raw));
 
 // ── Alert history query (R7 completion) ───────────────────────────────────────
 app.get("/api/alerts/history", (c) => handleAlertHistory(new URL(c.req.url), c.env));

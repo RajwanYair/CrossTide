@@ -1,7 +1,7 @@
 /**
- * Tiny safe expression evaluator for user-authored signal rules.
+ * Safe expression + script evaluator for user-authored signal rules — R2.
  *
- * Grammar (BNF-ish):
+ * Expression grammar (BNF-ish):
  *   expr   := or
  *   or     := and ('or' and)*
  *   and    := not ('and' not)*
@@ -9,9 +9,19 @@
  *   cmp    := add (('<'|'<='|'>'|'>='|'=='|'!=') add)?
  *   add    := mul (('+'|'-') mul)*
  *   mul    := unary (('*'|'/') unary)*
- *   unary  := '-' unary | call
+ *   unary  := '-' unary | index
+ *   index  := call ('[' expr ']')*
  *   call   := IDENT '(' (expr (',' expr)*)? ')' | atom
- *   atom   := NUMBER | IDENT | '(' expr ')' | 'true' | 'false'
+ *   atom   := NUMBER | IDENT | '[' (expr (',' expr)*)? ']' | '(' expr ')' | 'true' | 'false'
+ *
+ * Script statements (R2 expansion):
+ *   stmt   := let_stmt | for_stmt | expr_stmt
+ *   let_stmt  := 'let' IDENT '=' expr
+ *   for_stmt  := 'for' IDENT '=' expr 'to' expr '{' stmt* '}'
+ *   expr_stmt := expr
+ *
+ * The `plot(name, value)` built-in accumulates series into `ScriptResult.plots`.
+ * Array values (`number[]`) are supported alongside `number` and `boolean`.
  *
  * Identifiers are looked up in the supplied context (variables) or
  * called as functions if followed by `(`. No string literals, no
@@ -19,7 +29,8 @@
  * input.
  */
 
-export type Value = number | boolean;
+/** Supported value types — scalars and numeric arrays. */
+export type Value = number | boolean | number[];
 
 export type FnImpl = (...args: Value[]) => Value;
 
@@ -28,7 +39,20 @@ export interface EvalContext {
   readonly funcs?: Readonly<Record<string, FnImpl>>;
 }
 
-type TokKind = "num" | "ident" | "lparen" | "rparen" | "comma" | "op" | "kw" | "eof";
+type TokKind =
+  | "num"
+  | "ident"
+  | "lparen"
+  | "rparen"
+  | "lbracket"
+  | "rbracket"
+  | "lbrace"
+  | "rbrace"
+  | "comma"
+  | "eq"
+  | "op"
+  | "kw"
+  | "eof";
 
 interface Token {
   readonly kind: TokKind;
@@ -36,7 +60,7 @@ interface Token {
   readonly pos: number;
 }
 
-const KEYWORDS = new Set(["and", "or", "not", "true", "false"]);
+const KEYWORDS = new Set(["and", "or", "not", "true", "false", "let", "for", "to"]);
 const TWO_CHAR_OPS = new Set(["<=", ">=", "==", "!="]);
 const ONE_CHAR_OPS = new Set(["<", ">", "+", "-", "*", "/"]);
 
@@ -59,8 +83,34 @@ export function tokenize(src: string): Token[] {
       i++;
       continue;
     }
+    if (ch === "[") {
+      tokens.push({ kind: "lbracket", value: "[", pos: i });
+      i++;
+      continue;
+    }
+    if (ch === "]") {
+      tokens.push({ kind: "rbracket", value: "]", pos: i });
+      i++;
+      continue;
+    }
+    if (ch === "{") {
+      tokens.push({ kind: "lbrace", value: "{", pos: i });
+      i++;
+      continue;
+    }
+    if (ch === "}") {
+      tokens.push({ kind: "rbrace", value: "}", pos: i });
+      i++;
+      continue;
+    }
     if (ch === ",") {
       tokens.push({ kind: "comma", value: ",", pos: i });
+      i++;
+      continue;
+    }
+    // '=' by itself is assignment; '==' is an operator
+    if (ch === "=" && src[i + 1] !== "=") {
+      tokens.push({ kind: "eq", value: "=", pos: i });
       i++;
       continue;
     }
@@ -101,10 +151,18 @@ export function tokenize(src: string): Token[] {
 export type Node =
   | { type: "num"; value: number }
   | { type: "bool"; value: boolean }
+  | { type: "array"; elements: Node[] }
+  | { type: "index"; array: Node; idx: Node }
   | { type: "ident"; name: string }
   | { type: "call"; name: string; args: Node[] }
   | { type: "unary"; op: "-" | "not"; operand: Node }
   | { type: "binary"; op: string; left: Node; right: Node };
+
+/** Statement node types (script mode only). */
+export type Stmt =
+  | { type: "let"; name: string; value: Node }
+  | { type: "for"; var: string; from: Node; to: Node; body: Stmt[] }
+  | { type: "expr_stmt"; expr: Node };
 
 class Parser {
   private pos = 0;
@@ -199,7 +257,18 @@ class Parser {
       this.eat();
       return { type: "unary", op: "-", operand: this.parseUnary() };
     }
-    return this.parseCall();
+    return this.parseIndex();
+  }
+
+  private parseIndex(): Node {
+    let base = this.parseCall();
+    while (this.peek().kind === "lbracket") {
+      this.eat();
+      const idx = this.parseOr();
+      this.expect("rbracket");
+      base = { type: "index", array: base, idx };
+    }
+    return base;
   }
 
   private parseCall(): Node {
@@ -232,6 +301,19 @@ class Parser {
     if (t.kind === "ident") {
       return { type: "ident", name: t.value };
     }
+    if (t.kind === "lbracket") {
+      // Array literal: [e1, e2, ...]
+      const elements: Node[] = [];
+      if (this.peek().kind !== "rbracket") {
+        elements.push(this.parseOr());
+        while (this.peek().kind === "comma") {
+          this.eat();
+          elements.push(this.parseOr());
+        }
+      }
+      this.expect("rbracket");
+      return { type: "array", elements };
+    }
     if (t.kind === "lparen") {
       const inner = this.parseOr();
       this.expect("rparen");
@@ -239,15 +321,69 @@ class Parser {
     }
     throw new SyntaxError(`Unexpected token ${t.kind} '${t.value}' at ${t.pos}`);
   }
+
+  // ── Script-level statement parser (R2) ─────────────────────────────────────
+
+  parseScript(): Stmt[] {
+    const stmts: Stmt[] = [];
+    while (this.peek().kind !== "eof" && this.peek().kind !== "rbrace") {
+      stmts.push(this.parseStmt());
+    }
+    return stmts;
+  }
+
+  private parseStmt(): Stmt {
+    const t = this.peek();
+    if (t.kind === "kw" && t.value === "let") {
+      return this.parseLetStmt();
+    }
+    if (t.kind === "kw" && t.value === "for") {
+      return this.parseForStmt();
+    }
+    return { type: "expr_stmt", expr: this.parseOr() };
+  }
+
+  private parseLetStmt(): Stmt {
+    this.expect("kw", "let");
+    const name = this.expect("ident").value;
+    this.expect("eq");
+    const value = this.parseOr();
+    return { type: "let", name, value };
+  }
+
+  private parseForStmt(): Stmt {
+    this.expect("kw", "for");
+    const varName = this.expect("ident").value;
+    this.expect("eq");
+    const from = this.parseOr();
+    this.expect("kw", "to");
+    const to = this.parseOr();
+    this.expect("lbrace");
+    const body = this.parseScript();
+    this.expect("rbrace");
+    return { type: "for", var: varName, from, to, body };
+  }
 }
 
 export function parse(src: string): Node {
   return new Parser(tokenize(src)).parse();
 }
 
+export function parseScript(src: string): Stmt[] {
+  const parser = new Parser(tokenize(src));
+  return parser.parseScript();
+}
+
 function asNumber(v: Value): number {
   if (typeof v !== "number") {
     throw new TypeError(`Expected number, got ${typeof v}`);
+  }
+  return v;
+}
+
+function asNumberArray(v: Value): number[] {
+  if (!Array.isArray(v)) {
+    throw new TypeError(`Expected array, got ${typeof v}`);
   }
   return v;
 }
@@ -265,6 +401,16 @@ export function evaluate(node: Node, ctx: EvalContext = {}): Value {
       return node.value;
     case "bool":
       return node.value;
+    case "array":
+      return node.elements.map((e) => asNumber(evaluate(e, ctx)));
+    case "index": {
+      const arr = asNumberArray(evaluate(node.array, ctx));
+      const idx = Math.trunc(asNumber(evaluate(node.idx, ctx)));
+      if (idx < 0 || idx >= arr.length) {
+        throw new RangeError(`Array index ${idx} out of bounds (length ${arr.length})`);
+      }
+      return arr[idx]!;
+    }
     case "ident": {
       const v = ctx.vars?.[node.name];
       if (v === undefined) {
@@ -321,6 +467,92 @@ export function evaluate(node: Node, ctx: EvalContext = {}): Value {
       throw new SyntaxError(`Unknown operator '${node.op}'`);
     }
   }
+}
+
+// ── Script execution (R2 — for loops, let, plot) ──────────────────────────────
+
+/** Per-series plot data accumulated by the `plot()` built-in. */
+export interface PlotSeries {
+  readonly name: string;
+  readonly values: number[];
+}
+
+/** Result returned by `executeScript()`. */
+export interface ScriptResult {
+  /** All plot series accumulated via `plot(name, value)` calls. */
+  readonly plots: PlotSeries[];
+  /** Final value of every `let` variable at script completion. */
+  readonly vars: Readonly<Record<string, Value>>;
+}
+
+/** Max iterations across all `for` loops in a single script execution. */
+const MAX_ITERATIONS = 10_000;
+
+/**
+ * Execute a multi-statement DSL script and return accumulated plots + vars.
+ *
+ * The `plot(name, value)` built-in is always available; you may also supply
+ * additional functions via `ctx.funcs` and seed variables via `ctx.vars`.
+ */
+export function executeScript(src: string, ctx: EvalContext = {}): ScriptResult {
+  const stmts = parseScript(src);
+  const plots = new Map<string, number[]>();
+  let totalIterations = 0;
+
+  // Mutable local scope inheriting from ctx.vars.
+  const scope: Record<string, Value> = { ...(ctx.vars ?? {}) };
+
+  const plotFn = (...args: Value[]): Value => {
+    const name = String(args[0]);
+    const v = args[1];
+    if (typeof v !== "number") throw new TypeError(`plot() second argument must be a number`);
+    let series = plots.get(name);
+    if (!series) {
+      series = [];
+      plots.set(name, series);
+    }
+    series.push(v);
+    return v;
+  };
+
+  const localCtx = (): EvalContext => ({
+    vars: scope as Readonly<Record<string, Value>>,
+    funcs: { ...ctx.funcs, plot: plotFn },
+  });
+
+  function execStmts(statements: Stmt[]): void {
+    for (const stmt of statements) {
+      if (stmt.type === "let") {
+        scope[stmt.name] = evaluate(stmt.value, localCtx());
+      } else if (stmt.type === "for") {
+        const from = Math.trunc(asNumber(evaluate(stmt.from, localCtx())));
+        const to = Math.trunc(asNumber(evaluate(stmt.to, localCtx())));
+        for (let i = from; i <= to; i++) {
+          totalIterations++;
+          if (totalIterations > MAX_ITERATIONS) {
+            throw new RangeError(`Script exceeded maximum of ${MAX_ITERATIONS} loop iterations`);
+          }
+          scope[stmt.var] = i;
+          execStmts(stmt.body);
+        }
+      } else {
+        // expr_stmt — evaluate for side effects (e.g. plot())
+        evaluate(stmt.expr, localCtx());
+      }
+    }
+  }
+
+  execStmts(stmts);
+
+  const plotsResult: PlotSeries[] = [];
+  for (const [name, values] of plots) {
+    plotsResult.push({ name, values });
+  }
+
+  return {
+    plots: plotsResult,
+    vars: { ...scope } as Readonly<Record<string, Value>>,
+  };
 }
 
 export function compileSignal(src: string): (ctx: EvalContext) => Value {
