@@ -111,6 +111,10 @@ export interface D1ExecResult {
 export interface Env {
   ENVIRONMENT?: string;
   API_VERSION?: string;
+  /** P8: Finnhub API key for alternative quote/candle data. */
+  FINNHUB_KEY?: string;
+  /** P8: FRED API key — enables JSON API; falls back to CSV without it. */
+  FRED_KEY?: string;
   /**
    * G13: Cloudflare native Rate Limiting API binding.
    * When present the worker delegates to CF's global rate limiter; when absent

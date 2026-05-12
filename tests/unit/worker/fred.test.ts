@@ -104,12 +104,15 @@ describe("handleFred — series resolution", () => {
     expect(json.series).toBe("FEDFUNDS");
   });
 
-  it("returns 400 for unknown series", async () => {
+  it("returns 502 for unknown series (upstream rejects it)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("Not Found", { status: 404 })),
+    );
     const res = await handleFred(makeUrl({ series: "UNKNOWN_XYZ" }), mockEnv);
-    expect(res.status).toBe(400);
-    const json = (await res.json()) as { error: string; supported: string[] };
-    expect(json.error).toContain("Unknown series");
-    expect(Array.isArray(json.supported)).toBe(true);
+    expect(res.status).toBe(502);
+    const json = (await res.json()) as { error: string };
+    expect(json.error).toContain("FRED");
   });
 
   it("returns 400 when 'series' param is missing", async () => {

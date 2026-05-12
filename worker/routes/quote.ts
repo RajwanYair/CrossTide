@@ -8,6 +8,7 @@
  */
 
 import { fetchYahooQuote, YahooApiError, type YahooQuoteResult } from "../providers/yahoo.js";
+import { fetchFinnhubQuote, FinnhubApiError } from "../providers/finnhub.js";
 import { kvGet, kvPut, quoteTtl } from "../kv-cache.js";
 import type { Env } from "../index.js";
 
@@ -39,6 +40,42 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
     } catch (err) {
       if (err instanceof YahooApiError && err.status === 404) {
         return json({ error: `Ticker not found: ${ticker}` }, 404);
+      }
+      // Yahoo failed — try Finnhub as fallback
+      if (env.FINNHUB_KEY) {
+        try {
+          const fhQuote = await fetchFinnhubQuote(ticker, env.FINNHUB_KEY);
+          const mapped: YahooQuoteResult = {
+            ticker: fhQuote.ticker,
+            shortName: fhQuote.ticker,
+            currency: "USD",
+            price: fhQuote.price,
+            change: fhQuote.change,
+            changePercent: fhQuote.changePercent,
+            previousClose: fhQuote.previousClose,
+            open: fhQuote.open,
+            dayHigh: fhQuote.high,
+            dayLow: fhQuote.low,
+            volume: 0,
+            marketCap: 0,
+            fiftyTwoWeekHigh: 0,
+            fiftyTwoWeekLow: 0,
+            exchange: "FINNHUB",
+            marketState: "REGULAR",
+            source: "finnhub",
+          };
+          const ttl = quoteTtl("REGULAR");
+          await kvPut(env.QUOTE_CACHE, cacheKey, mapped, ttl);
+          return json(
+            { ...mapped, source: "finnhub" },
+            200,
+            `public, max-age=${Math.min(ttl, 30)}`,
+          );
+        } catch (fhErr) {
+          if (fhErr instanceof FinnhubApiError && fhErr.status === 404) {
+            return json({ error: `Ticker not found: ${ticker}` }, 404);
+          }
+        }
       }
       return json({ error: "Upstream provider error" }, 502);
     }
