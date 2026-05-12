@@ -64,6 +64,7 @@ import { handleFactorModel } from "./routes/factor-model.js";
 import { handleFred } from "./routes/fred.js";
 import { handleRegime } from "./routes/market-regime.js";
 import { handleAnomaly } from "./routes/anomaly.js";
+import { handleArchive, handleArchiveList, archiveTopTickers } from "./routes/archive.js";
 import {
   handleAuthChallenge,
   handleAuthRegister,
@@ -136,6 +137,8 @@ export interface Env {
   OTEL_EXPORTER_OTLP_ENDPOINT?: string;
   /** R3: Durable Object namespace for WebSocket ticker fan-out. */
   TICKER_FANOUT?: DurableObjectNamespace;
+  /** Q15: R2 bucket for cold OHLCV archival (20-year daily candles). */
+  OHLCV_ARCHIVE?: unknown;
 }
 
 /** Cloudflare Workers ScheduledEvent (Cron Trigger). */
@@ -283,6 +286,12 @@ app.get("/api/economic", (c) => handleEconomic(c.env));
 
 app.get("/api/fred", (c) => handleFred(new URL(c.req.url), c.env));
 
+// ── Q15: R2 cold OHLCV archive ────────────────────────────────────────────────
+app.get("/api/archive", (c) => handleArchiveList(c.env));
+app.get("/api/archive/:ticker", (c) =>
+  handleArchive(c.req.param("ticker"), new URL(c.req.url), c.env),
+);
+
 // ── Q22: Market regime detection ──────────────────────────────────────────────
 app.get("/api/regime", (c) => handleRegime(new URL(c.req.url), c.env));
 
@@ -379,6 +388,11 @@ export default {
   fetch: app.fetch,
   /** R7: Cloudflare Cron Trigger — evaluate server-side alert rules. */
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    // Q15: Nightly R2 archival (runs on the 0:00 UTC cron, not every 5 min)
+    if (_event.cron === "0 0 * * *" || _event.cron === "0 0 * * 1-5") {
+      ctx.waitUntil(archiveTopTickers(env).then(() => {}));
+    }
+
     const fired = await handleScheduledAlertEval(env);
     if (fired.length > 0 && env.DB) {
       // Persist to alert_history table for queryable history

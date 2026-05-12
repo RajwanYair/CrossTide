@@ -45,6 +45,13 @@ simple = { limit = 60, period = 60 }
 port = 8787
 local_protocol = "http"
 
+# Q15: R2 bucket for cold OHLCV archival (20-year daily candles for top 100 tickers).
+# Create with: wrangler r2 bucket create crosstide-ohlcv
+[[r2_buckets]]
+binding = "OHLCV_ARCHIVE"
+bucket_name = "crosstide-ohlcv"
+preview_bucket_name = "crosstide-ohlcv-preview"
+
 # R3: Durable Object for WebSocket fan-out (one instance per ticker symbol).
 # Provides efficient real-time streaming: single upstream per symbol,
 # fans out to all connected clients via WebSocket Hibernation API.
