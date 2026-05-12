@@ -1,0 +1,129 @@
+# =============================================================================
+# Daily Smoke Test — CrossTide
+# Verifies production API endpoints respond correctly every weekday morning.
+# Catches upstream API schema changes, rate limit issues, and deployment
+# regressions before users encounter them.
+#
+# Roadmap: P12 — Daily smoke test CI workflow (5 endpoints, weekdays only)
+# =============================================================================
+name: Smoke Test
+
+on:
+  schedule:
+    # Runs at 07:00 UTC (before US market open) on weekdays only
+    - cron: "0 7 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Base URL to test against"
+        required: false
+        default: "https://crosstide.pages.dev"
+
+concurrency:
+  group: smoke-test
+  cancel-in-progress: true
+
+env:
+  BASE_URL: ${{ github.event.inputs.base_url || 'https://crosstide.pages.dev' }}
+  # Maximum acceptable response time in seconds
+  MAX_RESPONSE_TIME: 10
+
+jobs:
+  smoke:
+    name: Production Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Health endpoint
+        run: |
+          echo "Testing: $BASE_URL/api/health"
+          response=$(curl -sf -w "\n%{http_code}\n%{time_total}" "$BASE_URL/api/health")
+          http_code=$(echo "$response" | tail -2 | head -1)
+          time_total=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -2)
+          echo "Status: $http_code | Time: ${time_total}s"
+          echo "$body" | head -5
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Health endpoint returned $http_code"
+            exit 1
+          fi
+
+      - name: Quote endpoint (AAPL)
+        run: |
+          echo "Testing: $BASE_URL/api/quote/AAPL"
+          response=$(curl -sf -w "\n%{http_code}\n%{time_total}" "$BASE_URL/api/quote/AAPL")
+          http_code=$(echo "$response" | tail -2 | head -1)
+          time_total=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -2)
+          echo "Status: $http_code | Time: ${time_total}s"
+          # Verify response contains a price field
+          if echo "$body" | grep -q '"price"'; then
+            echo "✓ Quote contains price field"
+          else
+            echo "::warning::Quote response missing 'price' field"
+          fi
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Quote endpoint returned $http_code"
+            exit 1
+          fi
+
+      - name: Chart endpoint (AAPL, 1mo)
+        run: |
+          echo "Testing: $BASE_URL/api/chart?ticker=AAPL&range=1mo&interval=1d"
+          response=$(curl -sf -w "\n%{http_code}\n%{time_total}" \
+            "$BASE_URL/api/chart?ticker=AAPL&range=1mo&interval=1d")
+          http_code=$(echo "$response" | tail -2 | head -1)
+          time_total=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -2)
+          echo "Status: $http_code | Time: ${time_total}s"
+          # Verify response contains candles array
+          if echo "$body" | grep -q '"candles"'; then
+            echo "✓ Chart contains candles array"
+          else
+            echo "::warning::Chart response missing 'candles' field"
+          fi
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Chart endpoint returned $http_code"
+            exit 1
+          fi
+
+      - name: Search endpoint (Apple)
+        run: |
+          echo "Testing: $BASE_URL/api/search?q=Apple&limit=5"
+          response=$(curl -sf -w "\n%{http_code}\n%{time_total}" \
+            "$BASE_URL/api/search?q=Apple&limit=5")
+          http_code=$(echo "$response" | tail -2 | head -1)
+          time_total=$(echo "$response" | tail -1)
+          echo "Status: $http_code | Time: ${time_total}s"
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Search endpoint returned $http_code"
+            exit 1
+          fi
+
+      - name: FRED endpoint (VIX)
+        run: |
+          echo "Testing: $BASE_URL/api/fred?series=VIX"
+          response=$(curl -sf -w "\n%{http_code}\n%{time_total}" \
+            "$BASE_URL/api/fred?series=VIX")
+          http_code=$(echo "$response" | tail -2 | head -1)
+          time_total=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -2)
+          echo "Status: $http_code | Time: ${time_total}s"
+          if echo "$body" | grep -q '"observations"'; then
+            echo "✓ FRED contains observations array"
+          else
+            echo "::warning::FRED response missing 'observations' field"
+          fi
+          if [ "$http_code" != "200" ]; then
+            echo "::error::FRED endpoint returned $http_code"
+            exit 1
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "========================================="
+          echo "Smoke test completed against: $BASE_URL"
+          echo "Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "========================================="
