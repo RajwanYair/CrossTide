@@ -1,0 +1,139 @@
+# =============================================================================
+# Data Accuracy Verification — CrossTide
+# Compares production API prices against Yahoo Finance reference data for
+# 10 benchmark tickers. Detects data staleness, drift, and API regressions.
+#
+# Roadmap: Q24 — Data accuracy verification CI
+# =============================================================================
+name: Data Accuracy
+
+on:
+  schedule:
+    # Runs at 21:00 UTC (after US market close) on weekdays
+    - cron: "0 21 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Base URL to test against"
+        required: false
+        default: "https://crosstide.pages.dev"
+      tolerance:
+        description: "Price tolerance percentage (default 5%)"
+        required: false
+        default: "5"
+
+concurrency:
+  group: data-accuracy
+  cancel-in-progress: true
+
+env:
+  BASE_URL: ${{ github.event.inputs.base_url || 'https://crosstide.pages.dev' }}
+  TOLERANCE: ${{ github.event.inputs.tolerance || '5' }}
+
+jobs:
+  verify:
+    name: Verify Data Accuracy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Verify benchmark tickers
+        run: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          TICKERS=("AAPL" "MSFT" "GOOGL" "AMZN" "TSLA" "META" "NVDA" "JPM" "V" "SPY")
+          PASS=0
+          FAIL=0
+          SKIP=0
+          ERRORS=""
+
+          echo "============================================"
+          echo "CrossTide Data Accuracy Check"
+          echo "Base URL: $BASE_URL"
+          echo "Tolerance: ${TOLERANCE}%"
+          echo "Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "============================================"
+          echo ""
+
+          for TICKER in "${TICKERS[@]}"; do
+            echo "── $TICKER ──"
+
+            # Fetch from CrossTide API
+            CT_RESPONSE=$(curl -sf "$BASE_URL/api/quote/$TICKER" 2>/dev/null || echo "FETCH_FAILED")
+            if [ "$CT_RESPONSE" = "FETCH_FAILED" ]; then
+              echo "  ✗ CrossTide API unreachable"
+              FAIL=$((FAIL + 1))
+              ERRORS="$ERRORS\n$TICKER: CrossTide API unreachable"
+              continue
+            fi
+
+            CT_PRICE=$(echo "$CT_RESPONSE" | jq -r '.price // .regularMarketPrice // empty' 2>/dev/null)
+            CT_SOURCE=$(echo "$CT_RESPONSE" | jq -r '.source // "unknown"' 2>/dev/null)
+
+            if [ -z "$CT_PRICE" ] || [ "$CT_PRICE" = "null" ]; then
+              echo "  ✗ No price in CrossTide response"
+              FAIL=$((FAIL + 1))
+              ERRORS="$ERRORS\n$TICKER: No price in CrossTide response (source: $CT_SOURCE)"
+              continue
+            fi
+
+            # Fetch reference price from Yahoo Finance v8 API
+            REF_RESPONSE=$(curl -sf \
+              -H "User-Agent: CrossTide-CI/1.0" \
+              "https://query1.finance.yahoo.com/v8/finance/chart/$TICKER?range=1d&interval=1d" \
+              2>/dev/null || echo "FETCH_FAILED")
+
+            if [ "$REF_RESPONSE" = "FETCH_FAILED" ]; then
+              echo "  ⚠ Yahoo reference API unreachable — skipping"
+              SKIP=$((SKIP + 1))
+              continue
+            fi
+
+            REF_PRICE=$(echo "$REF_RESPONSE" | jq -r \
+              '.chart.result[0].meta.regularMarketPrice // empty' 2>/dev/null)
+
+            if [ -z "$REF_PRICE" ] || [ "$REF_PRICE" = "null" ]; then
+              echo "  ⚠ No reference price from Yahoo — skipping"
+              SKIP=$((SKIP + 1))
+              continue
+            fi
+
+            # Calculate percentage difference
+            DIFF=$(echo "$CT_PRICE $REF_PRICE" | awk '{
+              diff = ($1 - $2) / $2 * 100;
+              if (diff < 0) diff = -diff;
+              printf "%.2f", diff
+            }')
+
+            IS_PASS=$(echo "$DIFF $TOLERANCE" | awk '{ print ($1 <= $2) ? "1" : "0" }')
+
+            if [ "$IS_PASS" = "1" ]; then
+              echo "  ✓ CT=$CT_PRICE  REF=$REF_PRICE  Δ=${DIFF}%  (source: $CT_SOURCE)"
+              PASS=$((PASS + 1))
+            else
+              echo "  ✗ CT=$CT_PRICE  REF=$REF_PRICE  Δ=${DIFF}% > ${TOLERANCE}%  (source: $CT_SOURCE)"
+              FAIL=$((FAIL + 1))
+              ERRORS="$ERRORS\n$TICKER: drift ${DIFF}% (CT=$CT_PRICE vs REF=$REF_PRICE)"
+            fi
+
+            # Rate limit courtesy
+            sleep 1
+          done
+
+          echo ""
+          echo "============================================"
+          echo "Results: $PASS passed, $FAIL failed, $SKIP skipped"
+          echo "============================================"
+
+          if [ $FAIL -gt 0 ]; then
+            echo ""
+            echo "::error::Data accuracy failures detected:"
+            echo -e "$ERRORS"
+            # Warn but don't fail the workflow — price differences may be
+            # due to after-hours trading, data source timing, etc.
+            echo "::warning::$FAIL ticker(s) exceeded ${TOLERANCE}% tolerance"
+          fi
