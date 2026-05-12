@@ -5,7 +5,7 @@
  *   280-307  load() → fetch → session → run/dispose
  */
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { createModelLoader, type OrtLike } from "../../../src/domain/onnx-patterns";
+import { createModelLoader, type OrtLike } from "../../../src/domain/_experimental/onnx-patterns";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 

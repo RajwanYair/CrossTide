@@ -14,8 +14,8 @@ import {
   topK,
   buildInputTensor,
   createModelLoader,
-} from "../../../src/domain/onnx-patterns";
-import type { OnnxCandle } from "../../../src/domain/onnx-patterns";
+} from "../../../src/domain/_experimental/onnx-patterns";
+import type { OnnxCandle } from "../../../src/domain/_experimental/onnx-patterns";
 
 // ── Test data ─────────────────────────────────────────────────────────────
 

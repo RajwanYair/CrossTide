@@ -547,7 +547,7 @@ export {
   topK,
   buildInputTensor,
   createModelLoader,
-} from "./onnx-patterns";
+} from "./_experimental/onnx-patterns";
 export type {
   OnnxCandle,
   ModelLoaderOptions,
@@ -555,7 +555,7 @@ export type {
   TopKResult,
   TensorSpec,
   OrtLike,
-} from "./onnx-patterns";
+} from "./_experimental/onnx-patterns";
 
 /** ONNX pipeline — model versioning, normalization, metrics. */
 export {
@@ -571,7 +571,7 @@ export {
   normalizeMinMax,
   computeF1,
   computeAccuracy,
-} from "./onnx-pipeline";
+} from "./_experimental/onnx-pipeline";
 export type {
   ModelMeta,
   QuantizationConfig,
@@ -579,7 +579,7 @@ export type {
   TrainTestSplit,
   ShapeValidation,
   FeatureNormalization,
-} from "./onnx-pipeline";
+} from "./_experimental/onnx-pipeline";
 
 // ── Candlestick patterns ─────────────────────────────────────────────────
 

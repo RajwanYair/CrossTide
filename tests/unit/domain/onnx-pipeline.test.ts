@@ -15,7 +15,7 @@ import {
   normalizeMinMax,
   computeF1,
   computeAccuracy,
-} from "../../../src/domain/onnx-pipeline";
+} from "../../../src/domain/_experimental/onnx-pipeline";
 
 // ── createModelMeta ──────────────────────────────────────────────────────
 
