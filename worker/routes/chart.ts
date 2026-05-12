@@ -10,6 +10,8 @@
  */
 
 import { fetchYahooChart, YahooApiError } from "../providers/yahoo.js";
+import { fetchFinnhubCandles, FinnhubApiError } from "../providers/finnhub.js";
+import { fetchStooqHistory } from "../providers/stooq.js";
 import { kvGet, kvPut, chartTtl } from "../kv-cache.js";
 import type { Env } from "../index.js";
 
@@ -30,7 +32,7 @@ export interface ChartResponse {
   ticker: string;
   currency: string;
   candles: CandleRecord[];
-  source: "yahoo" | "cache" | "demo";
+  source: "yahoo" | "finnhub" | "stooq" | "cache" | "demo";
 }
 
 const RANGE_DAYS: Record<string, number> = {
@@ -74,26 +76,72 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
     }
   }
 
-  // Fetch from Yahoo Finance (production) or fall back to demo data
+  // Fetch from Yahoo → Finnhub → Stooq fallback chain, or demo data
   if (env.QUOTE_CACHE) {
+    // ── Yahoo Finance (primary) ────────────────────────────────────────────
     try {
       const result = await fetchYahooChart(ticker, range, interval);
       const body: ChartResponse = { ...result, source: "yahoo" };
 
-      // Cache with market-hours-aware TTL
       const ttl = chartTtl(range);
       await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
 
       return json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
-    } catch (err) {
-      if (err instanceof YahooApiError && err.status === 404) {
+    } catch (yahooErr) {
+      if (yahooErr instanceof YahooApiError && yahooErr.status === 404) {
         return json({ error: `Ticker not found: ${ticker}` }, 404);
       }
-      // On Yahoo failure, fall through to demo data with a warning header
-      const response = json(generateDemoResponse(ticker, range), 200, "public, max-age=60");
-      response.headers.set("X-Data-Source", "demo-fallback");
-      return response;
+      // Yahoo failed — try Finnhub
     }
+
+    // ── Finnhub candles (secondary) ────────────────────────────────────────
+    if (env.FINNHUB_KEY) {
+      try {
+        const result = await fetchFinnhubCandles(ticker, range, interval, env.FINNHUB_KEY);
+        const body: ChartResponse = {
+          ticker: result.ticker,
+          currency: "USD",
+          candles: result.candles.map((c) => ({ ...c })),
+          source: "finnhub",
+        };
+
+        const ttl = chartTtl(range);
+        await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
+
+        const response = json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
+        response.headers.set("X-Data-Source", "finnhub-fallback");
+        return response;
+      } catch (finnhubErr) {
+        if (finnhubErr instanceof FinnhubApiError && finnhubErr.status === 404) {
+          // Finnhub doesn't have this ticker — try Stooq
+        }
+        // Finnhub failed — try Stooq
+      }
+    }
+
+    // ── Stooq EOD history (tertiary, daily only) ───────────────────────────
+    try {
+      const result = await fetchStooqHistory(ticker, range);
+      const body: ChartResponse = {
+        ticker: result.ticker,
+        currency: "USD",
+        candles: result.candles.map((c) => ({ ...c })),
+        source: "stooq",
+      };
+
+      const ttl = chartTtl(range);
+      await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
+
+      const response = json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
+      response.headers.set("X-Data-Source", "stooq-fallback");
+      return response;
+    } catch {
+      // All providers failed — fall through to demo data
+    }
+
+    const response = json(generateDemoResponse(ticker, range), 200, "public, max-age=60");
+    response.headers.set("X-Data-Source", "demo-fallback");
+    return response;
   }
 
   // No KV binding — local dev / preview: serve demo data
