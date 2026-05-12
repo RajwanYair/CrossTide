@@ -67,6 +67,7 @@ import { initOfflineIndicator } from "./ui/offline-indicator";
 import { initCardCollapse } from "./ui/card-collapse";
 import { initDashboardStats } from "./ui/dashboard-stats";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
+import { initPlausible } from "./core/plausible";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
 import { createAutocomplete } from "./ui/ticker-autocomplete";
 import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
@@ -96,6 +97,58 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   "sector-rotation": "sector-rotation-container",
   "relative-strength": "relative-strength-container",
 };
+
+/** Wire hamburger button to collapse/expand the sidebar. Handles LTR and RTL. */
+function initSidebarToggle(): void {
+  const toggle = document.getElementById("sidebar-toggle") as HTMLButtonElement | null;
+  const nav = document.getElementById("app-nav");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  if (!toggle || !nav) return;
+
+  const isMobile = (): boolean => window.matchMedia("(max-width: 767px)").matches;
+
+  function closeSidebar(): void {
+    if (isMobile()) {
+      nav.classList.remove("sidebar-open");
+      backdrop?.classList.remove("visible");
+    } else {
+      nav.classList.add("sidebar-collapsed");
+    }
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openSidebar(): void {
+    if (isMobile()) {
+      nav.classList.add("sidebar-open");
+      backdrop?.classList.add("visible");
+    } else {
+      nav.classList.remove("sidebar-collapsed");
+    }
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  // On mobile, start collapsed
+  if (isMobile()) {
+    nav.classList.remove("sidebar-open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  toggle.addEventListener("click", () => {
+    const expanded = toggle.getAttribute("aria-expanded") === "true";
+    if (expanded) closeSidebar();
+    else openSidebar();
+  });
+
+  // Close on backdrop click
+  backdrop?.addEventListener("click", closeSidebar);
+
+  // Close sidebar on mobile after a nav-link is clicked
+  nav.addEventListener("click", (e: MouseEvent) => {
+    if (isMobile() && (e.target as HTMLElement).closest(".nav-link")) {
+      closeSidebar();
+    }
+  });
+}
 
 function initCardPrefetchOnIntent(): void {
   const links = document.querySelectorAll<HTMLAnchorElement>("#app-nav .nav-link[data-route]");
@@ -369,12 +422,14 @@ function main(): void {
 
   // Initialize UI
   initLocale(); // D7: apply persisted locale & <html dir>
+  initSidebarToggle();
   initTheme(config.theme);
   loadPersistedPalette(); // C2: restore color-blind palette from localStorage
   initRouter();
   initOfflineIndicator();
   initCardCollapse();
   initDashboardStats();
+  initPlausible(); // R14: privacy-respecting Plausible analytics
   checkWhatsNew();
   refreshWatchlist(config, new Map());
 
