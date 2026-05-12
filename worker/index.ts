@@ -61,6 +61,7 @@ import { handlePairs } from "./routes/pairs.js";
 import { handleFactorModel } from "./routes/factor-model.js";
 import { handleFred } from "./routes/fred.js";
 import { handleRegime } from "./routes/market-regime.js";
+import { handleAnomaly } from "./routes/anomaly.js";
 import {
   handleAuthChallenge,
   handleAuthRegister,
@@ -282,6 +283,9 @@ app.get("/api/fred", (c) => handleFred(new URL(c.req.url), c.env));
 
 // ── Q22: Market regime detection ──────────────────────────────────────────────
 app.get("/api/regime", (c) => handleRegime(new URL(c.req.url), c.env));
+
+// ── Q23: Anomaly detection ────────────────────────────────────────────────────
+app.get("/api/anomaly", (c) => handleAnomaly(new URL(c.req.url), c.env));
 
 app.get("/api/sector-heatmap", (c) => handleSectorHeatmap(c.env));
 
