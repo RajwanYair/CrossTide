@@ -1,0 +1,37 @@
+# CrossTide self-hosted deployment
+#
+# Usage:
+#   cp .env.docker .env          # edit with your API keys
+#   docker compose up --build    # build + start
+#   docker compose up -d         # detached mode
+#
+# The Worker API is available at http://localhost:8787
+# The frontend is served from the same port via miniflare asset serving.
+
+services:
+  crosstide:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crosstide
+    ports:
+      - "${PORT:-8787}:8787"
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=self-hosted
+      - API_VERSION=1
+    volumes:
+      # Persist D1 SQLite data across restarts
+      - crosstide-data:/app/.wrangler
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8787/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  crosstide-data:
+    driver: local

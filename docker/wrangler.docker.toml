@@ -1,0 +1,49 @@
+# CrossTide wrangler config for Docker self-hosting (miniflare).
+#
+# This file overrides production wrangler.toml bindings with local equivalents
+# that work in miniflare without a Cloudflare account.
+
+name = "crosstide-api"
+main = "index.ts"
+compatibility_date = "2024-12-01"
+
+# Serve the built frontend as static assets
+[assets]
+directory = "../dist"
+
+[vars]
+ENVIRONMENT = "self-hosted"
+API_VERSION = "1"
+
+# KV namespace — miniflare creates an in-process KV store automatically
+[[kv_namespaces]]
+binding = "QUOTE_CACHE"
+id = "crosstide-kv-local"
+
+# D1 database — miniflare creates a local SQLite file
+[[d1_databases]]
+binding = "DB"
+database_name = "crosstide-db"
+database_id = "crosstide-d1-local"
+migrations_dir = "migrations"
+
+# Rate limiting — not available in miniflare; worker falls back to in-memory
+# [[unsafe.bindings]] omitted intentionally
+
+[dev]
+port = 8787
+local_protocol = "http"
+
+# Durable Objects for WebSocket fan-out
+[durable_objects]
+bindings = [
+  { name = "TICKER_FANOUT", class_name = "TickerFanout" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["TickerFanout"]
+
+# Cron triggers (miniflare supports these in local mode)
+[triggers]
+crons = ["*/5 * * * *"]
