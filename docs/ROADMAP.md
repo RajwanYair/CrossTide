@@ -1061,9 +1061,9 @@ from the active task list.
 | P9  | ~~Port CoinGecko provider to `worker/providers/coingecko.ts`~~ (done v11.38) | P0       | ✅     | —      |
 | P10 | ~~Port FRED provider to `worker/providers/fred.ts`~~ (done v11.38)           | P1       | ✅     | —      |
 | P11 | Passkey auth end-to-end: registration → D1 → sync → verify                   | P1       | ⬜     | 1 day  |
-| P12 | Daily smoke test CI workflow (5 endpoints, weekdays only)                    | P1       | ⬜     | 2 hrs  |
-| P13 | Remove `packages/` workspace stubs (add complexity, zero value)              | P2       | ⬜     | 30 min |
-| P14 | Move ONNX modules to `domain/_experimental/`                                 | P2       | ⬜     | 30 min |
+| P12 | Daily smoke test CI workflow (5 endpoints, weekdays only)                    | P1       | ✅     | 2 hrs  |
+| P13 | Remove `packages/` workspace stubs (add complexity, zero value)              | P2       | ✅     | 30 min |
+| P14 | Move ONNX modules to `domain/_experimental/`                                 | P2       | ✅     | 30 min |
 | P15 | Commit visual regression baselines (stop regenerating each run)              | P2       | ⬜     | 1 hr   |
 
 **Completed in v11.38 (this sprint):**
@@ -1131,14 +1131,14 @@ card show real data. Add the data sources users expect.
 | Q15 | R2 cold OHLCV archival: 20-year Parquet (top 500 tickers)                | P1       | ⬜     |
 | Q16 | ~~Temporal polyfill conditional load~~ (done v11.37)                     | —        | ✅     |
 | Q17 | Fuzz testing for Signal DSL tokenizer/evaluator                          | P2       | ⬜     |
-| Q18 | Multi-asset: crypto (CoinGecko) + forex (ECB) end-to-end with real data  | P0       | ⬜     |
-| Q19 | **News card with Finnhub news API + sentiment scoring** (NEW in v8)      | P0       | ⬜     |
+| Q18 | Multi-asset: crypto (CoinGecko) + forex (ECB) end-to-end with real data  | P0       | ✅     |
+| Q19 | **News card with Finnhub news API + sentiment scoring** (NEW in v8)      | P0       | ✅     |
 | Q20 | **Stooq provider in Worker** (`worker/providers/stooq.ts`) (NEW in v8)   | P1       | ⬜     |
 | Q21 | **WebSocket fan-out via Durable Objects** (moved from Phase P)           | P1       | ⬜     |
-| Q22 | **Market regime indicator on chart** (wire existing domain module)       | P2       | ⬜     |
-| Q23 | **Anomaly detection annotations on chart** (wire existing domain module) | P2       | ⬜     |
-| Q24 | **Data accuracy verification** (compare vs reference source daily)       | P1       | ⬜     |
-| Q25 | **Contract tests for CoinGecko and FRED** (expand from Q9)               | P2       | ⬜     |
+| Q22 | **Market regime indicator on chart** (wire existing domain module)       | P2       | ✅     |
+| Q23 | **Anomaly detection annotations on chart** (wire existing domain module) | P2       | ✅     |
+| Q24 | **Data accuracy verification** (compare vs reference source daily)       | P1       | ✅     |
+| Q25 | **Contract tests for CoinGecko and FRED** (expand from Q9)               | P2       | ✅     |
 | Q26 | **Kagi chart type** (LWC custom series)                                  | P3       | ⬜     |
 | Q27 | **lit-html adoption for 5 most complex cards** (NEW in v8)               | P2       | ⬜     |
 
