@@ -34,6 +34,7 @@ import { handleOpenApiSpec } from "./routes/openapi.js";
 import { handleCspReport } from "./routes/csp-report.js";
 import { handleFundamentals } from "./routes/fundamentals.js";
 import { handleNewsSentiment } from "./routes/news-sentiment.js";
+import { handleNews } from "./routes/news.js";
 import { handleScheduledAlertEval } from "./routes/alert-eval.js";
 import { dispatchWebhooks } from "./routes/webhook-dispatch.js";
 import { handleAlertHistory, insertAlertHistory } from "./routes/alert-history.js";
@@ -315,6 +316,9 @@ app.get("/api/alerts/history", (c) => handleAlertHistory(new URL(c.req.url), c.e
 
 // ── R5: News sentiment NLP scoring ────────────────────────────────────────────
 app.post("/api/news/sentiment", async (c) => handleNewsSentiment(c.req.raw));
+
+// ── Q19: Finnhub company news ─────────────────────────────────────────────────
+app.get("/api/news", (c) => handleNews(new URL(c.req.url), c.env));
 
 // ── CSP violation reports (K11) ───────────────────────────────────────────────
 app.post("/api/csp-report", async (c) => handleCspReport(c.req.raw));

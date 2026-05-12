@@ -260,3 +260,80 @@ export async function fetchFinnhubSearch(
     displaySymbol: r.displaySymbol ?? r.symbol ?? "",
   }));
 }
+
+// ── News ──────────────────────────────────────────────────────────────────────
+
+export interface FinnhubNewsItem {
+  readonly id: number;
+  readonly headline: string;
+  readonly summary: string;
+  readonly source: string;
+  readonly url: string;
+  readonly datetime: number;
+  readonly category: string;
+  readonly related: string;
+  readonly image: string;
+}
+
+interface FinnhubNewsRaw {
+  id?: number;
+  headline?: string;
+  summary?: string;
+  source?: string;
+  url?: string;
+  datetime?: number;
+  category?: string;
+  related?: string;
+  image?: string;
+}
+
+/**
+ * Fetch company news from Finnhub.
+ * GET /api/v1/company-news?symbol=AAPL&from=YYYY-MM-DD&to=YYYY-MM-DD
+ */
+export async function fetchFinnhubNews(
+  symbol: string,
+  apiKey: string,
+  days: number = 7,
+  limit: number = 20,
+): Promise<FinnhubNewsItem[]> {
+  const to = new Date();
+  const from = new Date(to);
+  from.setDate(from.getDate() - days);
+
+  const fromStr = from.toISOString().slice(0, 10);
+  const toStr = to.toISOString().slice(0, 10);
+
+  const url =
+    `${FINNHUB_BASE}/company-news` +
+    `?symbol=${encodeURIComponent(symbol)}` +
+    `&from=${fromStr}` +
+    `&to=${toStr}` +
+    `&token=${encodeURIComponent(apiKey)}`;
+
+  const res = await fetch(url, {
+    headers: { "User-Agent": "CrossTide/1.0" },
+  });
+
+  if (!res.ok) {
+    throw new FinnhubApiError(`Finnhub news API returned ${res.status}`, res.status);
+  }
+
+  const raw = (await res.json()) as FinnhubNewsRaw[];
+
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+
+  return raw.slice(0, limit).map((item) => ({
+    id: item.id ?? 0,
+    headline: item.headline ?? "",
+    summary: item.summary ?? "",
+    source: item.source ?? "",
+    url: item.url ?? "",
+    datetime: item.datetime ?? 0,
+    category: item.category ?? "",
+    related: item.related ?? "",
+    image: item.image ?? "",
+  }));
+}
