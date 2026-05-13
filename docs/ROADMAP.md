@@ -1162,16 +1162,16 @@ card show real data. Add the data sources users expect.
 
 | #   | Task                                                                          | Priority | Status |
 | --- | ----------------------------------------------------------------------------- | -------- | ------ |
-| R1  | DSL expansion: `for` loops, arrays, `plot()` for custom indicators            | P1       | ⬜     |
-| R2  | Multi-timeframe analysis: sync 2–4 charts at different intervals              | P1       | ⬜     |
+| R1  | DSL expansion: `for` loops, arrays, `plot()` for custom indicators            | P1       | ✅     |
+| R2  | Multi-timeframe analysis: sync 2–4 charts at different intervals              | P1       | ✅     |
 | R3  | Docker Compose self-hosting with miniflare                                    | P0       | ✅     |
-| R4  | WCAG 2.2 AAA for critical paths                                               | P1       | ⬜     |
+| R4  | WCAG 2.2 AAA for critical paths                                               | P1       | ✅     |
 | R5  | Auto-generate indicator docs from JSDoc (80+ modules)                         | P1       | ✅     |
-| R6  | README showcase: GIF demos, comparison table, install-size badge              | P0       | ⬜     |
+| R6  | README showcase: GIF demos, comparison table, install-size badge              | P0       | ✅     |
 | R7  | Load testing: 10K tickers in screener, < 200ms INP                            | P1       | ✅     |
 | R8  | Performance regression tracking: INP/LCP per commit in CI                     | P2       | ✅     |
 | R9  | **SSG for top 500 ticker pages** (SEO — NEW in v8)                            | P1       | ⬜     |
-| R10 | **Mobile-first UX audit** (touch interactions, swipe nav — NEW in v8)         | P1       | ⬜     |
+| R10 | **Mobile-first UX audit** (touch interactions, swipe nav — NEW in v8)         | P1       | ✅     |
 | R11 | **Capacitor iOS + Android build** (app store submission — if warranted)       | P2       | ⬜     |
 | R12 | **GitHub Discussions + Discord server** (community bootstrapping — NEW in v8) | P0       | ⬜     |
 | R13 | Public launch: GitHub Release + Product Hunt + Hacker News + Reddit           | P0       | ⬜     |
@@ -1208,8 +1208,8 @@ card show real data. Add the data sources users expect.
 | S9  | ONNX pattern recognition on charts (wire `_experimental/` modules)      | P1       | ⬜     |
 | S10 | Anomaly detection overlay (enhance from Q23)                            | P2       | ⬜     |
 | S11 | SharedArrayBuffer zero-copy Worker transfer                             | P2       | ⬜     |
-| S12 | AI disclaimer framework                                                 | P0       | ⬜     |
-| S13 | WASM build in CI; size budget enforcement (< 200 KB)                    | P0       | ⬜     |
+| S12 | AI disclaimer framework                                                 | P0       | ✅     |
+| S13 | WASM build in CI; size budget enforcement (< 200 KB)                    | P0       | ✅     |
 | S14 | **Fourier cycle visualization on chart** (wire existing module)         | P2       | ⬜     |
 
 ---
@@ -1222,15 +1222,15 @@ card show real data. Add the data sources users expect.
 
 | #   | Task                                                                          | Priority | Status |
 | --- | ----------------------------------------------------------------------------- | -------- | ------ |
-| T1  | Plugin API: indicator, chart-type, data-source contracts                      | P0       | ⬜     |
+| T1  | Plugin API: indicator, chart-type, data-source contracts                      | P0       | ✅     |
 | T2  | Plugin sandbox: Worker-isolated execution                                     | P0       | ⬜     |
 | T3  | Plugin registry: `plugins.crosstide.dev`                                      | P1       | ⬜     |
-| T4  | Plugin integrity: SHA-256 manifest + SRI                                      | P0       | ⬜     |
+| T4  | Plugin integrity: SHA-256 manifest + SRI                                      | P0       | ✅     |
 | T5  | pnpm + Turborepo migration (reintroduce `packages/` properly)                 | P2       | ⬜     |
 | T6  | Publish `@crosstide/domain` to npm (MIT)                                      | P1       | ⬜     |
 | T7  | Publish `@crosstide/plugin-api` to npm                                        | P1       | ⬜     |
 | T8  | MCP server: CrossTide API for LLM agents                                      | P1       | ⬜     |
-| T9  | **Embeddable widget** (`<crosstide-chart>` for blogs/websites — NEW in v8)    | P0       | ⬜     |
+| T9  | **Embeddable widget** (`<crosstide-chart>` for blogs/websites — NEW in v8)    | P0       | ✅     |
 | T10 | Community tutorials: "Build a custom indicator"                               | P1       | ⬜     |
 | T11 | Contributor onboarding: dev container + issue templates                       | P1       | ⬜     |
 | T12 | i18n expansion: ES, DE, ZH, JA                                                | P2       | ⬜     |
