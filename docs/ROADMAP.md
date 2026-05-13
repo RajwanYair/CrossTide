@@ -1060,11 +1060,11 @@ from the active task list.
 | P8  | ~~Port Finnhub provider to `worker/providers/finnhub.ts`~~ (done v11.38)     | P0       | ✅     | —      |
 | P9  | ~~Port CoinGecko provider to `worker/providers/coingecko.ts`~~ (done v11.38) | P0       | ✅     | —      |
 | P10 | ~~Port FRED provider to `worker/providers/fred.ts`~~ (done v11.38)           | P1       | ✅     | —      |
-| P11 | Passkey auth end-to-end: registration → D1 → sync → verify                   | P1       | ⬜     | 1 day  |
+| P11 | Passkey auth end-to-end: registration → D1 → sync → verify                   | P1       | ✅     | 1 day  |
 | P12 | Daily smoke test CI workflow (5 endpoints, weekdays only)                    | P1       | ✅     | 2 hrs  |
 | P13 | Remove `packages/` workspace stubs (add complexity, zero value)              | P2       | ✅     | 30 min |
 | P14 | Move ONNX modules to `domain/_experimental/`                                 | P2       | ✅     | 30 min |
-| P15 | Commit visual regression baselines (stop regenerating each run)              | P2       | ⬜     | 1 hr   |
+| P15 | Commit visual regression baselines (stop regenerating each run)              | P2       | ✅     | 1 hr   |
 
 **Completed in v11.38 (this sprint):**
 P8✅ Finnhub Worker provider: quote, candle, search with typed errors,
@@ -1127,20 +1127,20 @@ card show real data. Add the data sources users expect.
 | Q11 | ~~CSS Anchor Positioning~~ (done v11.37)                                 | —        | ✅     |
 | Q12 | ~~CSS `popover` attribute~~ (done v11.37)                                | —        | ✅     |
 | Q13 | ~~fast-check property tests: 80+ indicators~~ (done v11.37)              | —        | ✅     |
-| Q14 | Stryker mutation testing: ≥75% mutation score for domain/                | P2       | ⬜     |
-| Q15 | R2 cold OHLCV archival: 20-year Parquet (top 500 tickers)                | P1       | ⬜     |
+| Q14 | Stryker mutation testing: ≥75% mutation score for domain/                | P2       | ✅     |
+| Q15 | R2 cold OHLCV archival: 20-year Parquet (top 500 tickers)                | P1       | ✅     |
 | Q16 | ~~Temporal polyfill conditional load~~ (done v11.37)                     | —        | ✅     |
 | Q17 | Fuzz testing for Signal DSL tokenizer/evaluator                          | P2       | ⬜     |
 | Q18 | Multi-asset: crypto (CoinGecko) + forex (ECB) end-to-end with real data  | P0       | ✅     |
 | Q19 | **News card with Finnhub news API + sentiment scoring** (NEW in v8)      | P0       | ✅     |
-| Q20 | **Stooq provider in Worker** (`worker/providers/stooq.ts`) (NEW in v8)   | P1       | ⬜     |
-| Q21 | **WebSocket fan-out via Durable Objects** (moved from Phase P)           | P1       | ⬜     |
+| Q20 | **Stooq provider in Worker** (`worker/providers/stooq.ts`) (NEW in v8)   | P1       | ✅     |
+| Q21 | **WebSocket fan-out via Durable Objects** (moved from Phase P)           | P1       | ✅     |
 | Q22 | **Market regime indicator on chart** (wire existing domain module)       | P2       | ✅     |
 | Q23 | **Anomaly detection annotations on chart** (wire existing domain module) | P2       | ✅     |
 | Q24 | **Data accuracy verification** (compare vs reference source daily)       | P1       | ✅     |
 | Q25 | **Contract tests for CoinGecko and FRED** (expand from Q9)               | P2       | ✅     |
-| Q26 | **Kagi chart type** (LWC custom series)                                  | P3       | ⬜     |
-| Q27 | **lit-html adoption for 5 most complex cards** (NEW in v8)               | P2       | ⬜     |
+| Q26 | **Kagi chart type** (LWC custom series)                                  | P3       | ✅     |
+| Q27 | **lit-html adoption for 5 most complex cards** (NEW in v8)               | P2       | ✅     |
 
 **Exit criteria:**
 
@@ -1164,18 +1164,18 @@ card show real data. Add the data sources users expect.
 | --- | ----------------------------------------------------------------------------- | -------- | ------ |
 | R1  | DSL expansion: `for` loops, arrays, `plot()` for custom indicators            | P1       | ⬜     |
 | R2  | Multi-timeframe analysis: sync 2–4 charts at different intervals              | P1       | ⬜     |
-| R3  | Docker Compose self-hosting with miniflare                                    | P0       | ⬜     |
+| R3  | Docker Compose self-hosting with miniflare                                    | P0       | ✅     |
 | R4  | WCAG 2.2 AAA for critical paths                                               | P1       | ⬜     |
-| R5  | Auto-generate indicator docs from JSDoc (80+ modules)                         | P1       | ⬜     |
+| R5  | Auto-generate indicator docs from JSDoc (80+ modules)                         | P1       | ✅     |
 | R6  | README showcase: GIF demos, comparison table, install-size badge              | P0       | ⬜     |
-| R7  | Load testing: 10K tickers in screener, < 200ms INP                            | P1       | ⬜     |
-| R8  | Performance regression tracking: INP/LCP per commit in CI                     | P2       | ⬜     |
+| R7  | Load testing: 10K tickers in screener, < 200ms INP                            | P1       | ✅     |
+| R8  | Performance regression tracking: INP/LCP per commit in CI                     | P2       | ✅     |
 | R9  | **SSG for top 500 ticker pages** (SEO — NEW in v8)                            | P1       | ⬜     |
 | R10 | **Mobile-first UX audit** (touch interactions, swipe nav — NEW in v8)         | P1       | ⬜     |
 | R11 | **Capacitor iOS + Android build** (app store submission — if warranted)       | P2       | ⬜     |
 | R12 | **GitHub Discussions + Discord server** (community bootstrapping — NEW in v8) | P0       | ⬜     |
 | R13 | Public launch: GitHub Release + Product Hunt + Hacker News + Reddit           | P0       | ⬜     |
-| R14 | **Plausible analytics dashboard** (track real usage patterns — NEW in v8)     | P1       | ⬜     |
+| R14 | **Plausible analytics dashboard** (track real usage patterns — NEW in v8)     | P1       | ✅     |
 
 **Exit criteria:**
 
