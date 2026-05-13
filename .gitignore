@@ -50,3 +50,8 @@ tests/browser/__screenshots__/
 # Temporary debug output
 test-out.txt
 *.tmp
+
+# Demo recordings (generated, not committed)
+docs/demos/*.mp4
+docs/demos/*.gif
+docs/demos/*-palette.png

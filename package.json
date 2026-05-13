@@ -49,6 +49,7 @@
     "cap:sync": "npx cap sync",
     "cap:android": "npx cap open android",
     "cap:ios": "npx cap open ios",
+    "record:demos": "tsx scripts/record-demos.ts",
     "clean": "node scripts/clean.mjs",
     "prepare": "simple-git-hooks"
   },
