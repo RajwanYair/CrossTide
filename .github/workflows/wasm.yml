@@ -1,0 +1,124 @@
+name: WASM Build & Size Budget
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/wasm/**'
+      - 'assembly/**'
+      - 'scripts/check-wasm-size.mjs'
+      - '.github/workflows/wasm.yml'
+  pull_request:
+    paths:
+      - 'src/wasm/**'
+      - 'assembly/**'
+      - 'scripts/check-wasm-size.mjs'
+      - '.github/workflows/wasm.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build:
+    name: Build & Enforce Size Budget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install AssemblyScript
+        run: npm install --save-dev assemblyscript@latest
+
+      - name: Compile WASM modules
+        run: |
+          npx asc assembly/correlation-matrix.ts \
+            --outFile dist/wasm/correlation-matrix.wasm \
+            --textFile dist/wasm/correlation-matrix.wat \
+            --optimize --optimizeLevel 3 --shrinkLevel 2 \
+            --runtime stub --exportStart _start \
+            --sourceMap
+          npx asc assembly/monte-carlo.ts \
+            --outFile dist/wasm/monte-carlo.wasm \
+            --textFile dist/wasm/monte-carlo.wat \
+            --optimize --optimizeLevel 3 --shrinkLevel 2 \
+            --runtime stub --exportStart _start \
+            --sourceMap
+          npx asc assembly/efficient-frontier.ts \
+            --outFile dist/wasm/efficient-frontier.wasm \
+            --textFile dist/wasm/efficient-frontier.wat \
+            --optimize --optimizeLevel 3 --shrinkLevel 2 \
+            --runtime stub --exportStart _start \
+            --sourceMap
+
+      - name: Enforce size budget (< 200 KB total)
+        run: node scripts/check-wasm-size.mjs
+
+      - name: Comment PR with WASM sizes
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const wasmDir = 'dist/wasm';
+            if (!fs.existsSync(wasmDir)) {
+              console.log('No WASM output directory found');
+              return;
+            }
+            const files = fs.readdirSync(wasmDir).filter(f => f.endsWith('.wasm'));
+            let total = 0;
+            const rows = files.map(f => {
+              const size = fs.statSync(path.join(wasmDir, f)).size;
+              total += size;
+              return `| \`${f}\` | ${(size / 1024).toFixed(1)} KB |`;
+            });
+            const budget = 200 * 1024;
+            const status = total <= budget ? '✅' : '❌';
+            const body = [
+              '### WASM Size Report',
+              '',
+              '| Module | Size |',
+              '| ------ | ---- |',
+              ...rows,
+              `| **Total** | **${(total / 1024).toFixed(1)} KB** ${status} |`,
+              '',
+              `Budget: < 200 KB total${total > budget ? ' — **OVER BUDGET**' : ''}`,
+            ].join('\n');
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user?.login === 'github-actions[bot]' &&
+              c.body?.includes('### WASM Size Report')
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Upload WASM artifacts
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-modules
+          path: dist/wasm/*.wasm
+          retention-days: 30

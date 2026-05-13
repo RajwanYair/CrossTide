@@ -41,6 +41,7 @@
     "format:check": "prettier --check \"**/*.{ts,md,json,css,html,mjs}\" \"!dist/**\" \"!coverage/**\" \"!build/**\" \"!node_modules/**\" \"!test-results/**\" \"!playwright-report/**\"",
     "typecheck": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit",
     "check:bundle": "node scripts/check-bundle-size.mjs",
+    "check:wasm": "node scripts/check-wasm-size.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:supply-chain": "npm audit --omit=dev --audit-level=high && npm audit signatures",
     "gen:csp": "node scripts/gen-csp.mjs",
