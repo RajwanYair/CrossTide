@@ -23,6 +23,11 @@
  *  - Array literal syntax: `[1, 2, 3]`
  *  - Built-in array functions: range, len, at, sum, avg, map, filter, reduce
  *  - plot(name, series) — registers a named series output via PlotSink
+ *
+ * R1 extensions:
+ *  - `for IDENT in EXPR do EXPR` — map over an iterable, producing an array
+ *  - `let IDENT = EXPR in EXPR` — temporary variable binding
+ *  - Loop iteration limit (10_000) prevents infinite loops in untrusted input
  */
 
 /**
@@ -61,10 +66,12 @@ interface Token {
   readonly pos: number;
 }
 
-const KEYWORDS = new Set(["and", "or", "not", "true", "false"]);
+const KEYWORDS = new Set(["and", "or", "not", "true", "false", "for", "in", "do", "let"]);
 const TWO_CHAR_OPS = new Set(["<=", ">=", "==", "!="]);
-const ONE_CHAR_OPS = new Set(["<", ">", "+", "-", "*", "/"]);
+const ONE_CHAR_OPS = new Set(["<", ">", "+", "-", "*", "/", "="]);
 
+/** R1: Safety limit for `for` loop iterations. */
+const MAX_LOOP_ITERATIONS = 10_000;
 export function tokenize(src: string): Token[] {
   const tokens: Token[] = [];
   let i = 0;
@@ -140,7 +147,9 @@ export type Node =
   | { type: "ident"; name: string }
   | { type: "call"; name: string; args: Node[] }
   | { type: "unary"; op: "-" | "not"; operand: Node }
-  | { type: "binary"; op: string; left: Node; right: Node };
+  | { type: "binary"; op: string; left: Node; right: Node }
+  | { type: "for"; varName: string; iterable: Node; body: Node }
+  | { type: "let"; varName: string; value: Node; body: Node };
 
 class Parser {
   private pos = 0;
@@ -240,6 +249,26 @@ class Parser {
 
   private parseCall(): Node {
     const t = this.peek();
+    // R1: for IDENT in EXPR do EXPR
+    if (t.kind === "kw" && t.value === "for") {
+      this.eat(); // consume 'for'
+      const ident = this.expect("ident");
+      this.expect("kw", "in");
+      const iterable = this.parseOr();
+      this.expect("kw", "do");
+      const body = this.parseOr();
+      return { type: "for", varName: ident.value, iterable, body };
+    }
+    // R1: let IDENT = EXPR in EXPR
+    if (t.kind === "kw" && t.value === "let") {
+      this.eat(); // consume 'let'
+      const ident = this.expect("ident");
+      this.expect("op", "=");
+      const value = this.parseOr();
+      this.expect("kw", "in");
+      const body = this.parseOr();
+      return { type: "let", varName: ident.value, value, body };
+    }
     if (t.kind === "ident" && this.tokens[this.pos + 1]?.kind === "lparen") {
       this.eat();
       this.expect("lparen");
@@ -380,6 +409,31 @@ export function evaluate(node: Node, ctx: EvalContext = {}): Value {
     // R2: Array literal — evaluate each element as a number.
     case "arr":
       return node.elements.map((el) => asNumber(evaluate(el, ctx)));
+    // R1: for IDENT in iterable do body → maps iterable, producing an array.
+    case "for": {
+      const iterable = asArray(evaluate(node.iterable, ctx));
+      if (iterable.length > MAX_LOOP_ITERATIONS) {
+        throw new RangeError(`for loop exceeds maximum iterations (${MAX_LOOP_ITERATIONS})`);
+      }
+      const result: number[] = [];
+      for (const item of iterable) {
+        const innerCtx: EvalContext = {
+          ...ctx,
+          vars: { ...ctx.vars, [node.varName]: item },
+        };
+        result.push(asNumber(evaluate(node.body, innerCtx)));
+      }
+      return result;
+    }
+    // R1: let IDENT = value in body → temporary variable binding.
+    case "let": {
+      const val = evaluate(node.value, ctx);
+      const innerCtx: EvalContext = {
+        ...ctx,
+        vars: { ...ctx.vars, [node.varName]: val },
+      };
+      return evaluate(node.body, innerCtx);
+    }
     case "ident": {
       const v = ctx.vars?.[node.name];
       if (v === undefined) {
