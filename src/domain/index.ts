@@ -181,6 +181,8 @@ export type { ReplayOptions, ReplayState, ReplayTickHandler, BarReplay } from ".
 /** Point & Figure chart computation — X/O box columns (R8). */
 export { computePnf, autoBoxSize, floorBox } from "./point-and-figure";
 export type { PnfInput, PnfOptions, PnfBox, PnfColumn, PnfChart } from "./point-and-figure";
+export { computeKagi, autoReversalThreshold } from "./kagi";
+export type { KagiInput, KagiOptions, KagiSegment, KagiChart, KagiWeight } from "./kagi";
 
 /** Donchian Channels — high/low price envelope. */
 export { computeDonchian } from "./donchian";
