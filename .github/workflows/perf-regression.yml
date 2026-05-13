@@ -1,10 +1,16 @@
 name: Performance Regression
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "worker/**"
   pull_request:
     branches: [main]
     paths:
       - "src/**"
+      - "worker/**"
       - "package-lock.json"
       - "vite.config.ts"
 
@@ -74,15 +80,18 @@ jobs:
           if [ -f ".lighthouseci/lhr-0.json" ]; then
             LCP=$(jq '.audits["largest-contentful-paint"].numericValue // 0' .lighthouseci/lhr-0.json)
             TBT=$(jq '.audits["total-blocking-time"].numericValue // 0' .lighthouseci/lhr-0.json)
+            INP=$(jq '.audits["interaction-to-next-paint"].numericValue // 0' .lighthouseci/lhr-0.json)
             CLS=$(jq '.audits["cumulative-layout-shift"].numericValue // 0' .lighthouseci/lhr-0.json)
             PERF=$(jq '.categories.performance.score // 0' .lighthouseci/lhr-0.json)
             echo "lcp=$(echo "$LCP" | xargs printf '%.0f')" >> "$GITHUB_OUTPUT"
             echo "tbt=$(echo "$TBT" | xargs printf '%.0f')" >> "$GITHUB_OUTPUT"
+            echo "inp=$(echo "$INP" | xargs printf '%.0f')" >> "$GITHUB_OUTPUT"
             echo "cls=$CLS" >> "$GITHUB_OUTPUT"
             echo "perf=$PERF" >> "$GITHUB_OUTPUT"
           else
             echo "lcp=0" >> "$GITHUB_OUTPUT"
             echo "tbt=0" >> "$GITHUB_OUTPUT"
+            echo "inp=0" >> "$GITHUB_OUTPUT"
             echo "cls=0" >> "$GITHUB_OUTPUT"
             echo "perf=0" >> "$GITHUB_OUTPUT"
           fi
@@ -107,6 +116,7 @@ jobs:
 
             const lcp = '${{ steps.lighthouse.outputs.lcp }}' || '—';
             const tbt = '${{ steps.lighthouse.outputs.tbt }}' || '—';
+            const inp = '${{ steps.lighthouse.outputs.inp }}' || '—';
             const cls = '${{ steps.lighthouse.outputs.cls }}' || '—';
             const perf = '${{ steps.lighthouse.outputs.perf }}' || '—';
             const perfPct = perf !== '—' ? (parseFloat(perf) * 100).toFixed(0) + '%' : '—';
@@ -131,6 +141,7 @@ jobs:
               '| Metric | Value | Budget |',
               '|--------|-------|--------|',
               `| LCP | ${lcp} ms | 2500 ms |`,
+              `| INP | ${inp} ms | 200 ms |`,
               `| TBT | ${tbt} ms | 300 ms |`,
               `| CLS | ${cls} | 0.1 |`,
               `| Perf Score | ${perfPct} | 90% |`,
