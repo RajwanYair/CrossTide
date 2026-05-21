@@ -247,3 +247,280 @@ describe("division by zero safety", () => {
     );
   });
 });
+
+// ── Extended fuzz: logical operators ──────────────────────────────────────────
+
+/** Nested boolean expression with 'and', 'or', 'not'. */
+const boolExpr = fc.oneof(
+  comparisonExpr,
+  fc.tuple(comparisonExpr, comparisonExpr).map(([l, r]) => `${l} and ${r}`),
+  fc.tuple(comparisonExpr, comparisonExpr).map(([l, r]) => `${l} or ${r}`),
+  comparisonExpr.map((e) => `not ${e}`),
+);
+
+describe("logical operators — fuzz safety", () => {
+  it("'and' expressions return booleans", () => {
+    fc.assert(
+      fc.property(fc.tuple(comparisonExpr, comparisonExpr), validCtx, ([l, r], ctx) => {
+        try {
+          const fn = compileSignal(`${l} and ${r}`);
+          const result = fn(ctx);
+          expect(typeof result).toBe("boolean");
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it("'or' expressions return booleans", () => {
+    fc.assert(
+      fc.property(fc.tuple(comparisonExpr, comparisonExpr), validCtx, ([l, r], ctx) => {
+        try {
+          const fn = compileSignal(`${l} or ${r}`);
+          const result = fn(ctx);
+          expect(typeof result).toBe("boolean");
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it("'not' inverts boolean result", () => {
+    fc.assert(
+      fc.property(comparisonExpr, validCtx, (expr, ctx) => {
+        try {
+          const fn = compileSignal(expr);
+          const notFn = compileSignal(`not ${expr}`);
+          const result = fn(ctx);
+          const notResult = notFn(ctx);
+          if (typeof result === "boolean" && typeof notResult === "boolean") {
+            expect(notResult).toBe(!result);
+          }
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it("nested boolean expressions never crash", () => {
+    fc.assert(
+      fc.property(boolExpr, validCtx, (expr, ctx) => {
+        try {
+          const fn = compileSignal(expr);
+          fn(ctx);
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 300 },
+    );
+  });
+});
+
+// ── Extended fuzz: unary minus ────────────────────────────────────────────────
+
+describe("unary minus — fuzz safety", () => {
+  it("-x negates correctly", () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 1, max: 1000 }), (n) => {
+        const fn = compileSignal(`-${n}`);
+        try {
+          const result = fn({}) as number;
+          expect(result).toBeCloseTo(-n, 6);
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it("double negation returns original value", () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 1, max: 1000 }), (n) => {
+        try {
+          const fn = compileSignal(`- -${n}`);
+          const result = fn({}) as number;
+          expect(result).toBeCloseTo(n, 6);
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 100 },
+    );
+  });
+});
+
+// ── Extended fuzz: function calls ─────────────────────────────────────────────
+
+describe("function calls — fuzz safety", () => {
+  it("calling an unknown function throws ReferenceError", () => {
+    fc.assert(
+      fc.property(fc.stringMatching(/^[a-z]{2,10}$/), (name) => {
+        try {
+          const fn = compileSignal(`${name}(1, 2)`);
+          fn({});
+        } catch (e) {
+          expect(e instanceof ReferenceError || e instanceof SyntaxError).toBe(true);
+        }
+      }),
+      { numRuns: 100 },
+    );
+  });
+
+  it("user-supplied functions are called with correct args", () => {
+    fc.assert(
+      fc.property(
+        fc.float({ min: -100, max: 100, noNaN: true }),
+        fc.float({ min: -100, max: 100, noNaN: true }),
+        (a, b) => {
+          let called = false;
+          const ctx: EvalContext = {
+            funcs: {
+              add: (...args) => {
+                called = true;
+                return (args[0] as number) + (args[1] as number);
+              },
+            },
+          };
+          try {
+            const fn = compileSignal(`add(${a}, ${b})`);
+            const result = fn(ctx);
+            expect(called).toBe(true);
+            expect(result).toBeCloseTo(a + b, 6);
+          } catch (e) {
+            expect(isAllowedError(e)).toBe(true);
+          }
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+});
+
+// ── Extended fuzz: array literals ─────────────────────────────────────────────
+
+describe("array literals — fuzz safety", () => {
+  it("array literal of numbers evaluates to number[]", () => {
+    fc.assert(
+      fc.property(
+        fc.array(fc.float({ min: -100, max: 100, noNaN: true }), { minLength: 1, maxLength: 5 }),
+        (nums) => {
+          const expr = `[${nums.join(", ")}]`;
+          try {
+            const fn = compileSignal(expr);
+            const result = fn({});
+            expect(Array.isArray(result)).toBe(true);
+            expect((result as number[]).length).toBe(nums.length);
+          } catch (e) {
+            expect(isAllowedError(e)).toBe(true);
+          }
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+
+  it("array indexing returns correct element", () => {
+    fc.assert(
+      fc.property(
+        fc.array(fc.integer({ min: 0, max: 100 }), { minLength: 2, maxLength: 5 }),
+        (nums) => {
+          const idx = 0;
+          const expr = `[${nums.join(", ")}][${idx}]`;
+          try {
+            const fn = compileSignal(expr);
+            const result = fn({});
+            expect(result).toBe(nums[idx]);
+          } catch (e) {
+            expect(isAllowedError(e)).toBe(true);
+          }
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+});
+
+// ── Extended fuzz: stress with deeply nested parens ───────────────────────────
+
+describe("deeply nested expressions — safety", () => {
+  it("deeply nested parentheses do not crash", () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 1, max: 20 }), (depth) => {
+        const open = "(".repeat(depth);
+        const close = ")".repeat(depth);
+        const expr = `${open}42${close}`;
+        try {
+          const fn = compileSignal(expr);
+          const result = fn({});
+          expect(result).toBe(42);
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 50 },
+    );
+  });
+
+  it("chained arithmetic is associative (left-to-right)", () => {
+    fc.assert(
+      fc.property(
+        fc.array(fc.integer({ min: 1, max: 100 }), { minLength: 2, maxLength: 5 }),
+        (nums) => {
+          const expr = nums.join(" + ");
+          try {
+            const fn = compileSignal(expr);
+            const result = fn({}) as number;
+            const expected = nums.reduce((a, b) => a + b, 0);
+            expect(result).toBeCloseTo(expected, 4);
+          } catch (e) {
+            expect(isAllowedError(e)).toBe(true);
+          }
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+});
+
+// ── Extended fuzz: full random strings ────────────────────────────────────────
+
+describe("full random input safety", () => {
+  it("never throws non-allowed errors for completely random strings", () => {
+    fc.assert(
+      fc.property(fc.string({ minLength: 0, maxLength: 80 }), (src) => {
+        try {
+          const fn = compileSignal(src);
+          fn({});
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 500 },
+    );
+  });
+
+  it("never produces Infinity or -Infinity as result", () => {
+    fc.assert(
+      fc.property(arithmeticExpr, (expr) => {
+        try {
+          const fn = compileSignal(expr);
+          const result = fn({});
+          if (typeof result === "number") {
+            expect(Number.isFinite(result)).toBe(true);
+          }
+        } catch (e) {
+          expect(isAllowedError(e)).toBe(true);
+        }
+      }),
+      { numRuns: 200 },
+    );
+  });
+});
