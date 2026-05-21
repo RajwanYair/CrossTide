@@ -6,6 +6,146 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.42.0] — 2025-07-22
+
+> **Sprint: Keyboard nav, contributor onboarding, biome, SSG infra
+> (5-sprint session)**
+
+### Added
+
+- **Roving tabindex utility** (Q13): WAI-ARIA keyboard arrow navigation for
+  grouped elements; integrated into the sidebar nav.
+- **Dev container** (R12): `.devcontainer/devcontainer.json` for GitHub
+  Codespaces with pre-configured extensions.
+- **Issue templates** (R12): bug report and feature request templates with
+  `good first issue` label.
+- **SSG ticker pages** (R1): Astro dynamic route generating static SEO landing
+  pages for top 500 S&P tickers with structured data.
+- **Mutation test script**: `npm run test:mutate` runs Stryker on domain layer.
+
+### Changed
+
+- **Biome formatter** (RF11): replaced Prettier with Biome 2.4 for formatting
+  (100× faster). ESLint retained for linting. lint-staged updated.
+- **README tech stack**: updated to reflect Biome replacing Prettier.
+- **CONTRIBUTING.md**: added dev container section, Codespaces badge, and good
+  first issues guide.
+
+---
+
+## [11.41.0] — 2026-05-13
+
+> **Sprint: DSL Loops, Multi-Timeframe Sync, AAA Accessibility, Mobile UX
+> (10-sprint session)** (commits `620a557`–`1a875b4`)
+
+### Added
+
+- **DSL expansion** (R1): `for..in..do` loops and `let` bindings for custom
+  indicators in the signal DSL runtime.
+- **Multi-timeframe analysis panel** (R2): range sync and confluence detection
+  across daily, weekly, and monthly timeframes.
+- **WCAG 2.2 AAA utilities** (R4): enhanced contrast (7:1), target size audit,
+  timing controls, error prevention dialogs, reading level estimator.
+- **Mobile-first UX** (R10): swipe detection, pull-to-refresh, edge-swipe
+  drawer, and orientation helpers.
+- **Embeddable `<crosstide-chart>` web component** (T9): standalone chart
+  element for third-party embedding.
+- **Plugin API** (T1): indicator, chart-type, and data-source plugin contracts.
+- **Plugin integrity** (T4): SHA-256 manifest verification for plugins.
+- **AI disclaimer framework** (S12): consent tracking for AI-powered features.
+- **WASM CI workflow** (S13): AssemblyScript build workflow with 200 KB budget.
+- **README showcase** (R6): Playwright demo recording infrastructure.
+
+---
+
+## [11.40.0] — 2026-05-13
+
+> **Sprint: Docker Self-Hosting, R2 Archival, Kagi Charts (10-sprint session)**
+> (commits `732e037`–`b94106c`)
+
+### Added
+
+- **Docker Compose self-hosting** (R3): run CrossTide locally with
+  `docker compose up` using miniflare.
+- **R2 cold OHLCV archival** (Q15): cron-driven archival of top 100 tickers to
+  Cloudflare R2.
+- **Plausible analytics** (R14): privacy-respecting, cookie-free usage tracking.
+- **Auto-generated indicator docs** (R5): 670 functions across 215 domain
+  modules documented in `docs/INDICATORS.md`.
+- **lit-html rendering adapter** (Q27): thin wrapper (`html`, `renderLit`,
+  `classMap`, `repeat`) for complex card templates.
+- **Screener load-testing benchmarks** (R7): 10K-ticker fundamental filter
+  ~0.9 ms, full pipeline ~23 ms — all under 200 ms target.
+- **Stryker mutation testing** (Q14): targeting `src/domain/`, 80/60/50
+  thresholds, Vitest runner.
+- **Playwright visual regression baselines** (P15): 6 screenshot baselines
+  across desktop/mobile/tablet × light/dark.
+- **Enhanced perf regression CI** (R8): push trigger, worker path triggers,
+  INP metric tracking in PR comments.
+- **Kagi chart computation** (Q26): yang/yin weight transitions,
+  percentage/absolute thresholds, shoulder/waist tracking (13 tests).
+
+---
+
+## [11.39.0] — 2026-05-12
+
+> **Sprint: Crypto, News, Regime, Anomaly & Fallback Chain (10-sprint session)**
+> (commits `6efb6be`–`53b290f`)
+
+### Added
+
+- **Crypto chart endpoint**: `GET /api/crypto/:id/chart?days=30` — CoinGecko
+  OHLC candles with 5-min KV cache.
+- **Crypto search endpoint**: `GET /api/crypto/search?q=bitcoin` — CoinGecko
+  coin search with 10-min cache.
+- **Company news endpoint**: `GET /api/news?ticker=AAPL&days=7` — Finnhub news
+  feed with 10-min cache.
+- **Market regime endpoint**: `GET /api/regime?ticker=AAPL` — VIX + trend +
+  volatility regime detection.
+- **Anomaly detection endpoint**: `GET /api/anomaly?ticker=AAPL&period=20` —
+  z-score price/volume/gap alerts.
+- **Chart data fallback chain**: Yahoo → Finnhub → Stooq → demo data (4-tier).
+- **Daily smoke tests** CI: 5 production endpoints, weekdays 07:00 UTC.
+- **Data accuracy verification** CI: 10 benchmark tickers vs Yahoo reference,
+  daily 21:00 UTC.
+- **Provider contract tests**: 24 tests for CoinGecko and FRED schemas.
+
+### Changed
+
+- Removed unused `packages/` workspace stubs.
+- Moved ONNX modules to `src/domain/_experimental/`.
+
+---
+
+## [11.38.0] — 2026-05-12
+
+> **Sprint: Multi-Provider Architecture (commits `0ac7bc9`–`1565165`)**
+
+### Added
+
+- **Finnhub provider** (`worker/providers/finnhub.ts`): quote, candle, and
+  search endpoints with API key binding.
+- **CoinGecko provider** (`worker/providers/coingecko.ts`): quote, OHLC, and
+  search endpoints.
+- **FRED provider** (`worker/providers/fred.ts`): JSON API with CSV fallback
+  for economic data series.
+- **Stooq provider** (`worker/providers/stooq.ts`): EOD CSV history for
+  international markets.
+- **Provider wiring**: all providers routed, env bindings added, FRED KV-put
+  bug fixed.
+- **Provider health endpoint** (`GET /api/providers/health`): binding status
+  for all configured providers.
+- **Provider health and quote fallback tests**: unit tests for health endpoint
+  and multi-provider quote chain.
+- **DSL expansion** (R2): for loops, arrays, index access, and `plot()` in
+  signal DSL runtime.
+- **WCAG 2.2 AAA utilities** (R8): contrast checking, focus management, target
+  size auditing, error suggestion.
+- **README showcase** (R12): GIF demo table, expanded comparison section, and
+  install-size badge.
+
+---
+
 ## [11.37.0] — 2026-06-05
 
 > **Sprint: Phase Q Foundation (7-sprint session)** (commits `2bb2f20`–`4563716`)
