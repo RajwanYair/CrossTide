@@ -18,6 +18,7 @@ interactive charting, and offline-first PWA support.
 [![Docs](https://img.shields.io/badge/Docs-Indicator%20Reference-blue)](https://rajwanyair.github.io/CrossTide/docs/)
 [![Architecture](https://img.shields.io/badge/Architecture-Diagram-orange)](docs/ARCHITECTURE.md)
 [![FRED API](https://img.shields.io/badge/FRED-Economic%20Overlay-informational)](worker/routes/fred.ts)
+[![Discussions](https://img.shields.io/github/discussions/RajwanYair/CrossTide?logo=github)](https://github.com/RajwanYair/CrossTide/discussions)
 
 > **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
 
@@ -270,6 +271,12 @@ Consensus:   Micho Method + >=1 confirming method = BUY
 | `@starting-style` / `@scope` shown as unknown in VS Code | CSS language service needs custom data | Verify `css.customData` points to `./config/css-custom-data.json` in `.vscode/settings.json` |
 | Tests timeout behind corporate firewall | npm registry unreachable | Configure `.npmrc` with `proxy` and `https-proxy` |
 | Build exceeds 200 KB budget | New dependency added | Check `npm run check:bundle` and tree-shake or lazy-load the addition |
+
+## Community
+
+- [GitHub Discussions](https://github.com/RajwanYair/CrossTide/discussions) — ask questions, share ideas, show what you've built
+- [Contributing Guide](.github/CONTRIBUTING.md) — how to set up, code standards, PR process
+- [Good First Issues](https://github.com/RajwanYair/CrossTide/labels/good%20first%20issue) — beginner-friendly tasks
 
 ## License
 

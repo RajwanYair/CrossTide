@@ -1,0 +1,18 @@
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for asking! Please check existing discussions first.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know about CrossTide?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to accomplish? Include screenshots or code if relevant.

@@ -1,0 +1,14 @@
+labels: [showcase]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Show off what you've built with CrossTide! Custom indicators, plugins,
+        trading setups, or integrations — we'd love to see them.
+  - type: textarea
+    id: showcase
+    attributes:
+      label: What did you build?
+      description: Describe your project or setup. Include screenshots, links, or code.
+    validations:
+      required: true

@@ -1,0 +1,26 @@
+labels: [enhancement, idea]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share your idea for CrossTide! Feature requests with clear use cases
+        are more likely to be implemented.
+  - type: textarea
+    id: idea
+    attributes:
+      label: Feature Idea
+      description: Describe the feature or improvement you'd like to see.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: How would you use this feature? What problem does it solve?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any workarounds or alternative approaches?
