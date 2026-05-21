@@ -4,6 +4,14 @@ Thank you for your interest in contributing!
 
 ## Development Setup
 
+### Option A: Dev Container (recommended)
+
+Open in GitHub Codespaces or VS Code Dev Containers — everything is pre-configured:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/RajwanYair/CrossTide)
+
+### Option B: Local
+
 ```bash
 node --version   # Must be >=20.0.0
 npm install
@@ -137,3 +145,13 @@ src/
 - Read `docs/ARCHITECTURE.md` for the full system design
 - Read `.github/copilot-instructions.md` for AI-assisted development conventions
 - Browse the [Astro docs-site](https://crosstide.pages.dev/docs) for user guides
+
+## Good First Issues
+
+Look for the `good first issue` label on GitHub Issues. These are scoped tasks suitable for
+newcomers:
+
+- Adding a new domain indicator (pure function + tests)
+- Improving CSS accessibility (contrast, focus rings)
+- Adding missing unit tests to reach coverage threshold
+- Documentation improvements and typo fixes
