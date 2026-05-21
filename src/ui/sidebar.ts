@@ -2,6 +2,7 @@
  * Sidebar toggle — hamburger button collapses/expands the navigation sidebar.
  * Handles both mobile (overlay) and desktop (collapsed rail) states.
  */
+import { enableRovingTabindex } from "./roving-tabindex";
 
 export function initSidebarToggle(): void {
   const toggle = document.getElementById("sidebar-toggle") as HTMLButtonElement | null;
@@ -54,5 +55,12 @@ export function initSidebarToggle(): void {
     if (isMobile() && (e.target as HTMLElement).closest(".nav-link")) {
       closeSidebar();
     }
+  });
+
+  // Enable roving tabindex: arrow keys navigate between nav links (Q13)
+  enableRovingTabindex(n, {
+    selector: ".nav-link",
+    orientation: "vertical",
+    wrap: true,
   });
 }
