@@ -1,0 +1,160 @@
+---
+import { TOP_TICKERS } from "../../data/tickers";
+
+export function getStaticPaths() {
+  return TOP_TICKERS.map((symbol) => ({
+    params: { symbol },
+    props: { symbol },
+  }));
+}
+
+interface Props {
+  symbol: string;
+}
+
+const { symbol } = Astro.props;
+const title = `${symbol} Stock Analysis — CrossTide`;
+const description = `Free ${symbol} technical analysis: 12-method consensus signal, interactive charts, backtesting, and 55+ indicators. No signup required.`;
+const canonical = `https://rajwanyair.github.io/CrossTide/docs/ticker/${symbol}`;
+const appUrl = `https://crosstide.pages.dev/chart?symbol=${symbol}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": `CrossTide — ${symbol}`,
+      "description": description,
+      "url": canonical,
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    })} />
+
+    <style>
+      :root {
+        --ct-bg: #0f1419;
+        --ct-surface: #1a2332;
+        --ct-text: #e8eaed;
+        --ct-accent: #4fc3f7;
+        --ct-muted: #8899a6;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background: var(--ct-bg);
+        color: var(--ct-text);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+      }
+      .container { max-width: 720px; width: 100%; }
+      h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+      .symbol-badge {
+        display: inline-block;
+        background: var(--ct-accent);
+        color: var(--ct-bg);
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+      p { color: var(--ct-muted); margin-bottom: 1rem; }
+      .cta {
+        display: inline-block;
+        margin-top: 1.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--ct-accent);
+        color: var(--ct-bg);
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: opacity 0.2s;
+      }
+      .cta:hover { opacity: 0.85; }
+      .features {
+        margin-top: 2rem;
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr 1fr;
+      }
+      .feature {
+        background: var(--ct-surface);
+        padding: 1rem;
+        border-radius: 8px;
+      }
+      .feature h3 { font-size: 0.9rem; margin-bottom: 0.25rem; }
+      .feature p { font-size: 0.85rem; margin: 0; }
+      footer {
+        margin-top: 3rem;
+        color: var(--ct-muted);
+        font-size: 0.8rem;
+        text-align: center;
+      }
+      footer a { color: var(--ct-accent); }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <span class="symbol-badge">{symbol}</span>
+      <h1>{symbol} Technical Analysis</h1>
+      <p>
+        Free real-time technical analysis for <strong>{symbol}</strong> with CrossTide's
+        12-method consensus engine, 55+ indicators, and interactive charting — all running
+        in your browser with zero signup.
+      </p>
+
+      <a href={appUrl} class="cta">Open {symbol} in CrossTide →</a>
+
+      <div class="features">
+        <div class="feature">
+          <h3>Consensus Signal</h3>
+          <p>12 indicators aggregated into a single BUY/SELL/HOLD with confidence score.</p>
+        </div>
+        <div class="feature">
+          <h3>Interactive Chart</h3>
+          <p>Candlestick charts with overlays, drawing tools, and multi-timeframe views.</p>
+        </div>
+        <div class="feature">
+          <h3>Backtesting</h3>
+          <p>Test strategies against historical data with Sharpe, Sortino, and drawdown metrics.</p>
+        </div>
+        <div class="feature">
+          <h3>Custom Alerts</h3>
+          <p>Set price and indicator alerts with AND/OR logic and browser notifications.</p>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          <a href="https://github.com/RajwanYair/CrossTide">CrossTide</a> is open-source
+          (MIT). For educational purposes only — not financial advice.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>

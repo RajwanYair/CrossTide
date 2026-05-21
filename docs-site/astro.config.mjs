@@ -4,6 +4,7 @@ import starlight from "@astrojs/starlight";
 export default defineConfig({
   site: "https://rajwanyair.github.io",
   base: "/CrossTide/docs",
+  output: "static",
   integrations: [
     starlight({
       title: "CrossTide",
