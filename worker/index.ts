@@ -78,6 +78,7 @@ import {
   getFixtureChart,
   getFixtureSearch,
 } from "./fixtures.js";
+import { handleAlpacaQuote, handleAlpacaBars } from "./routes/alpaca.js";
 import { createLogger } from "./logger.js";
 import { createTracer } from "./telemetry.js";
 import { getTickerStub } from "./ticker-fanout.js";
@@ -139,6 +140,10 @@ export interface Env {
   TICKER_FANOUT?: DurableObjectNamespace;
   /** Q15: R2 bucket for cold OHLCV archival (20-year daily candles). */
   OHLCV_ARCHIVE?: unknown;
+  /** Q1: Alpaca Markets API key (paper or live). */
+  ALPACA_KEY?: string;
+  /** Q1: Alpaca Markets API secret. */
+  ALPACA_SECRET?: string;
 }
 
 /** Cloudflare Workers ScheduledEvent (Cron Trigger). */
@@ -254,6 +259,11 @@ app.get("/api/quote/:symbol", (c) => {
 });
 
 app.get("/api/quotes", (c) => handleBatchQuotes(new URL(c.req.url), c.env));
+
+app.get("/api/alpaca/quote/:symbol", (c) => handleAlpacaQuote(c.req.param("symbol"), c.env));
+app.get("/api/alpaca/bars/:symbol", (c) =>
+  handleAlpacaBars(c.req.param("symbol"), new URL(c.req.url), c.env),
+);
 
 app.get("/api/compare", (c) => handleCompare(new URL(c.req.url), c.env));
 

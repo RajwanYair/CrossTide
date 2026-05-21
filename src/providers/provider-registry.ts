@@ -20,6 +20,7 @@ import { createFinnhubProvider } from "./finnhub-provider";
 import { createProviderChain } from "./provider-chain";
 import { createStooqProvider } from "./stooq-provider";
 import { createTiingoProvider } from "./tiingo-provider";
+import { createAlpacaProvider } from "./alpaca-provider";
 
 export interface ProviderRegistryEntry {
   readonly provider: MarketDataProvider;
@@ -102,6 +103,10 @@ function ensureChain(): MarketDataProvider {
   const stooqBase = import.meta.env.DEV ? "/api/stooq" : undefined;
   const stooqBreaker = createCircuitBreaker({ failureThreshold: 5, cooldownMs: 120_000 });
   registryEntries.push({ provider: createStooqProvider(stooqBase), breaker: stooqBreaker });
+
+  // Alpaca (Q1): US equity co-primary source — proxied through Worker
+  const alpacaBreaker = createCircuitBreaker({ failureThreshold: 3, cooldownMs: 60_000 });
+  registryEntries.push({ provider: createAlpacaProvider(), breaker: alpacaBreaker });
 })();
 
 /**
