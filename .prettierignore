@@ -5,4 +5,6 @@ build
 windows
 test-results
 LICENSE
+docs/INDICATORS.md
+docs/ROADMAP-v6-archive.md
 
