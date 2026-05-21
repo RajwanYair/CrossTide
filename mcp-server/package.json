@@ -1,0 +1,30 @@
+{
+  "name": "@crosstide/mcp-server",
+  "version": "0.1.0",
+  "description": "CrossTide MCP server — exposes financial analysis tools to AI agents",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "crosstide-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "finance",
+    "trading",
+    "ai-agent"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
