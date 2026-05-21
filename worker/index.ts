@@ -79,6 +79,7 @@ import {
   getFixtureSearch,
 } from "./fixtures.js";
 import { handleAlpacaQuote, handleAlpacaBars } from "./routes/alpaca.js";
+import { handleStoreKey, handleListKeys, handleDeleteKey, handleGetKey } from "./routes/byok.js";
 import { createLogger } from "./logger.js";
 import { createTracer } from "./telemetry.js";
 import { getTickerStub } from "./ticker-fanout.js";
@@ -264,6 +265,11 @@ app.get("/api/alpaca/quote/:symbol", (c) => handleAlpacaQuote(c.req.param("symbo
 app.get("/api/alpaca/bars/:symbol", (c) =>
   handleAlpacaBars(c.req.param("symbol"), new URL(c.req.url), c.env),
 );
+
+app.post("/api/keys", (c) => handleStoreKey(c.req.raw, c.env));
+app.get("/api/keys", (c) => handleListKeys(c.req.raw, c.env));
+app.get("/api/keys/get", (c) => handleGetKey(c.req.raw, c.env));
+app.delete("/api/keys/:id", (c) => handleDeleteKey(c.req.param("id"), c.req.raw, c.env));
 
 app.get("/api/compare", (c) => handleCompare(new URL(c.req.url), c.env));
 
