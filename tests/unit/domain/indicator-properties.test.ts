@@ -16,6 +16,13 @@ import { computeStochasticSeries } from "../../../src/domain/stochastic-calculat
 import { computeObvSeries } from "../../../src/domain/obv-calculator";
 import { computeVwapSeries } from "../../../src/domain/vwap-calculator";
 import { computeAdxSeries } from "../../../src/domain/adx-calculator";
+import { computeEmaSeries } from "../../../src/domain/ema-calculator";
+import { computeWilliamsRSeries } from "../../../src/domain/williams-r-calculator";
+import { computeCciSeries } from "../../../src/domain/cci-calculator";
+import { computeMfiSeries } from "../../../src/domain/mfi-calculator";
+import { computeDonchian } from "../../../src/domain/donchian";
+import { computeKeltner } from "../../../src/domain/keltner";
+import type { Candle } from "../../../src/domain/heikin-ashi";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -585,6 +592,352 @@ describe("computeAdxSeries — property tests", () => {
         const series = computeAdxSeries(candles, 14);
         for (const p of series) {
           expect(Number.isFinite(p.adx)).toBe(true);
+        }
+      }),
+    );
+  });
+});
+
+// ── EMA property tests ────────────────────────────────────────────────────────
+
+describe("computeEmaSeries — property tests", () => {
+  it("output length equals input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), fc.integer({ min: 1, max: 20 }), (closes, period) => {
+        const candles = makeArbitraryCandles(closes);
+        expect(computeEmaSeries(candles, period)).toHaveLength(candles.length);
+      }),
+    );
+  });
+
+  it("all non-null EMA values are between min and max close", () => {
+    fc.assert(
+      fc.property(priceArray(20, 150), fc.integer({ min: 2, max: 20 }), (closes, period) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeEmaSeries(candles, period);
+        const min = Math.min(...closes);
+        const max = Math.max(...closes);
+        for (const p of series) {
+          if (p.value !== null) {
+            expect(p.value).toBeGreaterThanOrEqual(min - 1e-6);
+            expect(p.value).toBeLessThanOrEqual(max + 1e-6);
+          }
+        }
+      }),
+    );
+  });
+
+  it("constant price series converges to that price", () => {
+    fc.assert(
+      fc.property(positivePrice, fc.integer({ min: 2, max: 20 }), (price, period) => {
+        const closes = Array.from({ length: period * 3 }, () => price);
+        const candles = makeArbitraryCandles(closes);
+        const series = computeEmaSeries(candles, period);
+        const last = series[series.length - 1];
+        if (last?.value !== null && last?.value !== undefined) {
+          expect(last.value).toBeCloseTo(price, 4);
+        }
+      }),
+    );
+  });
+
+  it("EMA reacts more quickly than SMA to price changes", () => {
+    // After an abrupt move, EMA should be closer to current price than SMA
+    fc.assert(
+      fc.property(fc.integer({ min: 5, max: 20 }), (period) => {
+        // flat then jump
+        const flat = Array.from({ length: period + 5 }, () => 100);
+        const jump = [...flat, 200];
+        const candles = makeArbitraryCandles(jump);
+        const emaSeries = computeEmaSeries(candles, period);
+        const smaSeries = computeSmaSeries(candles, period);
+        const lastEma = emaSeries[emaSeries.length - 1]?.value;
+        const lastSma = smaSeries[smaSeries.length - 1]?.value;
+        if (
+          lastEma !== null &&
+          lastSma !== null &&
+          lastEma !== undefined &&
+          lastSma !== undefined
+        ) {
+          // EMA should be closer to 200 than SMA
+          expect(Math.abs(200 - lastEma)).toBeLessThanOrEqual(Math.abs(200 - lastSma) + 1e-6);
+        }
+      }),
+    );
+  });
+});
+
+// ── Williams %R property tests ────────────────────────────────────────────────
+
+describe("computeWilliamsRSeries — property tests", () => {
+  it("output length equals input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), fc.integer({ min: 2, max: 20 }), (closes, period) => {
+        const candles = makeArbitraryCandles(closes);
+        expect(computeWilliamsRSeries(candles, period)).toHaveLength(candles.length);
+      }),
+    );
+  });
+
+  it("all non-null values are in [-100, 0]", () => {
+    fc.assert(
+      fc.property(priceArray(20, 150), fc.integer({ min: 2, max: 20 }), (closes, period) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeWilliamsRSeries(candles, period);
+        for (const p of series) {
+          if (p.value !== null) {
+            expect(p.value).toBeGreaterThanOrEqual(-100 - 1e-9);
+            expect(p.value).toBeLessThanOrEqual(0 + 1e-9);
+          }
+        }
+      }),
+    );
+  });
+
+  it("first period-1 entries are null", () => {
+    fc.assert(
+      fc.property(
+        fc
+          .integer({ min: 2, max: 20 })
+          .chain((period) =>
+            fc.tuple(
+              fc.constant(period),
+              fc.array(positivePrice, { minLength: period, maxLength: period + 20 }),
+            ),
+          ),
+        ([period, closes]) => {
+          const candles = makeArbitraryCandles(closes);
+          const series = computeWilliamsRSeries(candles, period);
+          for (let i = 0; i < period - 1; i++) {
+            expect(series[i]!.value).toBeNull();
+          }
+        },
+      ),
+    );
+  });
+
+  it("constant price yields -50 (degenerate range)", () => {
+    fc.assert(
+      fc.property(positivePrice, fc.integer({ min: 20, max: 30 }), (price, len) => {
+        const base = new Date(2020, 0, 1);
+        const flat = Array.from({ length: len }, (_, i) => {
+          const d = new Date(base);
+          d.setDate(base.getDate() + i);
+          return {
+            date: d.toISOString().split("T")[0]!,
+            open: price,
+            high: price,
+            low: price,
+            close: price,
+            volume: 1000,
+          };
+        });
+        const series = computeWilliamsRSeries(flat, 14);
+        for (const p of series) {
+          if (p.value !== null) expect(p.value).toBeCloseTo(-50, 6);
+        }
+      }),
+    );
+  });
+});
+
+// ── CCI property tests ────────────────────────────────────────────────────────
+
+describe("computeCciSeries — property tests", () => {
+  it("output length equals input length", () => {
+    fc.assert(
+      fc.property(priceArray(1, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        expect(computeCciSeries(candles, 20)).toHaveLength(candles.length);
+      }),
+    );
+  });
+
+  it("all non-null values are finite", () => {
+    fc.assert(
+      fc.property(priceArray(25, 150), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeCciSeries(candles, 20);
+        for (const p of series) {
+          if (p.value !== null) {
+            expect(Number.isFinite(p.value)).toBe(true);
+          }
+        }
+      }),
+    );
+  });
+
+  it("constant price series yields CCI = 0", () => {
+    fc.assert(
+      fc.property(positivePrice, fc.integer({ min: 25, max: 40 }), (price, len) => {
+        const base = new Date(2020, 0, 1);
+        const flat = Array.from({ length: len }, (_, i) => {
+          const d = new Date(base);
+          d.setDate(base.getDate() + i);
+          return {
+            date: d.toISOString().split("T")[0]!,
+            open: price,
+            high: price,
+            low: price,
+            close: price,
+            volume: 1000,
+          };
+        });
+        const series = computeCciSeries(flat, 20);
+        for (const p of series) {
+          if (p.value !== null) expect(p.value).toBeCloseTo(0, 6);
+        }
+      }),
+    );
+  });
+
+  it("first period-1 entries are null", () => {
+    fc.assert(
+      fc.property(priceArray(25, 60), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeCciSeries(candles, 20);
+        for (let i = 0; i < 19; i++) {
+          expect(series[i]!.value).toBeNull();
+        }
+      }),
+    );
+  });
+});
+
+// ── MFI property tests ────────────────────────────────────────────────────────
+
+describe("computeMfiSeries — property tests", () => {
+  it("all non-null MFI values are in [0, 100]", () => {
+    fc.assert(
+      fc.property(priceArray(20, 150), fc.integer({ min: 2, max: 20 }), (closes, period) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeMfiSeries(candles, period);
+        for (const p of series) {
+          if (p.value !== null) {
+            expect(p.value).toBeGreaterThanOrEqual(0 - 1e-9);
+            expect(p.value).toBeLessThanOrEqual(100 + 1e-9);
+          }
+        }
+      }),
+    );
+  });
+
+  it("all non-null values are finite", () => {
+    fc.assert(
+      fc.property(priceArray(20, 100), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeMfiSeries(candles, 14);
+        for (const p of series) {
+          if (p.value !== null) {
+            expect(Number.isFinite(p.value)).toBe(true);
+          }
+        }
+      }),
+    );
+  });
+
+  it("returns empty or short output for insufficient data", () => {
+    fc.assert(
+      fc.property(fc.array(positivePrice, { minLength: 1, maxLength: 5 }), (closes) => {
+        const candles = makeArbitraryCandles(closes);
+        const series = computeMfiSeries(candles, 14);
+        // With < 14 candles, no valid MFI points
+        for (const p of series) {
+          expect(p.value).toBeNull();
+        }
+      }),
+    );
+  });
+});
+
+// ── Donchian Channels property tests ──────────────────────────────────────────
+
+/** Build Candle[] (time-indexed) from close prices for Donchian/Keltner tests. */
+function makeTimedCandles(closes: number[]): Candle[] {
+  return closes.map((close, i) => {
+    const hi = Math.max(close, close * 1.01);
+    const lo = Math.min(close, close * 0.99);
+    return { time: i, open: close, high: hi, low: lo, close, volume: 1000 };
+  });
+}
+
+describe("computeDonchian — property tests", () => {
+  it("upper >= lower for all entries", () => {
+    fc.assert(
+      fc.property(priceArray(25, 100), (closes) => {
+        const candles = makeTimedCandles(closes);
+        const series = computeDonchian(candles, 20);
+        for (const p of series) {
+          expect(p.upper).toBeGreaterThanOrEqual(p.lower - 1e-9);
+        }
+      }),
+    );
+  });
+
+  it("middle = (upper + lower) / 2", () => {
+    fc.assert(
+      fc.property(priceArray(25, 100), (closes) => {
+        const candles = makeTimedCandles(closes);
+        const series = computeDonchian(candles, 20);
+        for (const p of series) {
+          expect(p.middle).toBeCloseTo((p.upper + p.lower) / 2, 6);
+        }
+      }),
+    );
+  });
+
+  it("output length = input length - period + 1", () => {
+    fc.assert(
+      fc.property(priceArray(25, 80), (closes) => {
+        const candles = makeTimedCandles(closes);
+        const series = computeDonchian(candles, 20);
+        expect(series.length).toBe(Math.max(0, candles.length - 20 + 1));
+      }),
+    );
+  });
+});
+
+// ── Keltner Channels property tests ──────────────────────────────────────────
+
+describe("computeKeltner — property tests", () => {
+  it("upper >= middle >= lower for all entries", () => {
+    fc.assert(
+      fc.property(priceArray(30, 100), (closes) => {
+        const candles = makeTimedCandles(closes);
+        const series = computeKeltner(candles);
+        for (const p of series) {
+          expect(p.upper).toBeGreaterThanOrEqual(p.middle - 1e-6);
+          expect(p.middle).toBeGreaterThanOrEqual(p.lower - 1e-6);
+        }
+      }),
+    );
+  });
+
+  it("bands are symmetric around middle", () => {
+    fc.assert(
+      fc.property(priceArray(30, 100), (closes) => {
+        const candles = makeTimedCandles(closes);
+        const series = computeKeltner(candles);
+        for (const p of series) {
+          const uDist = p.upper - p.middle;
+          const lDist = p.middle - p.lower;
+          expect(Math.abs(uDist - lDist)).toBeLessThan(1e-4);
+        }
+      }),
+    );
+  });
+
+  it("all values are positive and finite", () => {
+    fc.assert(
+      fc.property(priceArray(30, 100), (closes) => {
+        const candles = makeTimedCandles(closes);
+        const series = computeKeltner(candles);
+        for (const p of series) {
+          expect(Number.isFinite(p.upper)).toBe(true);
+          expect(p.upper).toBeGreaterThan(0);
+          expect(Number.isFinite(p.middle)).toBe(true);
+          expect(p.middle).toBeGreaterThan(0);
+          expect(Number.isFinite(p.lower)).toBe(true);
         }
       }),
     );
