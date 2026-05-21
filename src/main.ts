@@ -75,9 +75,10 @@ import { evaluateAlertRules } from "./core/alert-rules-evaluator";
 import { checkWhatsNew } from "./core/whats-new";
 import { openShortcutsDialog } from "./ui/shortcuts-dialog";
 import { updateFreshnessIndicator } from "./ui/freshness-indicator";
+import { initSidebarToggle } from "./ui/sidebar";
+import { initCardPrefetchOnIntent } from "./ui/card-prefetch";
 
 const cardHandles = new Map<RouteName, CardHandle>();
-const prefetchedCards = new Set<RouteName>();
 const cardContainers: Partial<Record<RouteName, string>> = {
   chart: "chart-container",
   alerts: "alerts-container",
@@ -97,75 +98,6 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   "sector-rotation": "sector-rotation-container",
   "relative-strength": "relative-strength-container",
 };
-
-/** Wire hamburger button to collapse/expand the sidebar. Handles LTR and RTL. */
-function initSidebarToggle(): void {
-  const toggle = document.getElementById("sidebar-toggle") as HTMLButtonElement | null;
-  const nav = document.getElementById("app-nav");
-  const backdrop = document.getElementById("sidebar-backdrop");
-  if (!toggle || !nav) return;
-
-  const isMobile = (): boolean => window.matchMedia("(max-width: 767px)").matches;
-
-  function closeSidebar(): void {
-    if (isMobile()) {
-      nav.classList.remove("sidebar-open");
-      backdrop?.classList.remove("visible");
-    } else {
-      nav.classList.add("sidebar-collapsed");
-    }
-    toggle.setAttribute("aria-expanded", "false");
-  }
-
-  function openSidebar(): void {
-    if (isMobile()) {
-      nav.classList.add("sidebar-open");
-      backdrop?.classList.add("visible");
-    } else {
-      nav.classList.remove("sidebar-collapsed");
-    }
-    toggle.setAttribute("aria-expanded", "true");
-  }
-
-  // On mobile, start collapsed
-  if (isMobile()) {
-    nav.classList.remove("sidebar-open");
-    toggle.setAttribute("aria-expanded", "false");
-  }
-
-  toggle.addEventListener("click", () => {
-    const expanded = toggle.getAttribute("aria-expanded") === "true";
-    if (expanded) closeSidebar();
-    else openSidebar();
-  });
-
-  // Close on backdrop click
-  backdrop?.addEventListener("click", closeSidebar);
-
-  // Close sidebar on mobile after a nav-link is clicked
-  nav.addEventListener("click", (e: MouseEvent) => {
-    if (isMobile() && (e.target as HTMLElement).closest(".nav-link")) {
-      closeSidebar();
-    }
-  });
-}
-
-function initCardPrefetchOnIntent(): void {
-  const links = document.querySelectorAll<HTMLAnchorElement>("#app-nav .nav-link[data-route]");
-  links.forEach((link) => {
-    const route = link.dataset["route"] as RouteName | undefined;
-    if (!route) return;
-    const prefetch = (): void => {
-      if (prefetchedCards.has(route)) return;
-      prefetchedCards.add(route);
-      void loadCard(route).catch(() => {
-        // Keep intent prefetch best-effort; navigation path handles real errors.
-      });
-    };
-    link.addEventListener("mouseenter", prefetch, { passive: true });
-    link.addEventListener("focus", prefetch, { passive: true });
-  });
-}
 
 async function activateCard(
   route: RouteName,
