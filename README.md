@@ -25,20 +25,20 @@ interactive charting, and offline-first PWA support.
 
 ## Features
 
-| Category                | Highlights                                                                                                                                          |
+| Category | Highlights |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Consensus Engine**    | 12 technical methods (SMA, EMA, MACD, RSI, Bollinger, Stochastic, ADX, OBV, VWAP, Ichimoku, Williams %R, CCI) with aggregated BUY/SELL/HOLD signals |
-| **Interactive Charts**  | Candlestick + overlay indicators, drawing tools (trendline, fib, rectangle, channel, ray, hline, text), multi-chart layouts                         |
-| **Backtesting**         | Strategy comparison engine, performance metrics (Sharpe, Sortino, max drawdown), equity curve visualization                                         |
-| **Screening**           | Custom filters with preset strategies, real-time sorting, virtual-scrolled 10K+ row tables                                                          |
-| **Portfolio Tracking**  | Holdings management, allocation pie chart, P&L tracking, sector exposure analysis                                                                   |
-| **Market Intelligence** | Heatmap, sector rotation, relative strength, market breadth, correlation matrix, seasonality patterns                                               |
-| **Alerts**              | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions                                                  |
-| **Data Providers**      | Yahoo Finance, Finnhub, CoinGecko, Polygon.io — automatic failover with provider health monitoring                                                  |
-| **PWA / Offline**       | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile                                                              |
-| **Accessibility**       | WCAG 2.2 AAA (contrast, focus, target size, error suggestion), keyboard nav, color-blind palettes, skip links, `[data-contrast="aaa"]` mode         |
-| **Performance**         | < 200 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP                                                                  |
-| **i18n**                | English, Hebrew (RTL), with expansion to ES/DE/ZH                                                                                                   |
+| **Consensus Engine** | 12 technical methods (SMA, EMA, MACD, RSI, Bollinger, Stochastic, ADX, OBV, VWAP, Ichimoku, Williams %R, CCI) with aggregated BUY/SELL/HOLD signals |
+| **Interactive Charts** | Candlestick + overlay indicators, drawing tools (trendline, fib, rectangle, channel, ray, hline, text), multi-chart layouts |
+| **Backtesting** | Strategy comparison engine, performance metrics (Sharpe, Sortino, max drawdown), equity curve visualization |
+| **Screening** | Custom filters with preset strategies, real-time sorting, virtual-scrolled 10K+ row tables |
+| **Portfolio Tracking** | Holdings management, allocation pie chart, P&L tracking, sector exposure analysis |
+| **Market Intelligence** | Heatmap, sector rotation, relative strength, market breadth, correlation matrix, seasonality patterns |
+| **Alerts** | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions |
+| **Data Providers** | Yahoo Finance, Finnhub, CoinGecko, Polygon.io — automatic failover with provider health monitoring |
+| **PWA / Offline** | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile |
+| **Accessibility** | WCAG 2.2 AAA (contrast, focus, target size, error suggestion), keyboard nav, color-blind palettes, skip links, `[data-contrast="aaa"]` mode |
+| **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP |
+| **i18n** | English, Hebrew (RTL), with expansion to ES/DE/ZH |
 
 ---
 
@@ -53,14 +53,14 @@ npm run dev        # http://localhost:5173
 
 <!-- R12: GIF demos — recorded from the live app, stored in docs/demos/ -->
 
-| Feature                              | Demo                                          |
+| Feature | Demo |
 | ------------------------------------ | --------------------------------------------- |
-| **Consensus Signal Engine**          | ![Consensus demo](docs/demos/consensus.gif)   |
-| **Candlestick Chart + Indicators**   | ![Chart demo](docs/demos/chart.gif)           |
+| **Consensus Signal Engine** | ![Consensus demo](docs/demos/consensus.gif) |
+| **Candlestick Chart + Indicators** | ![Chart demo](docs/demos/chart.gif) |
 | **Bar Replay (historical playback)** | ![Bar Replay demo](docs/demos/bar-replay.gif) |
-| **Screener — 10K tickers**           | ![Screener demo](docs/demos/screener.gif)     |
-| **Signal DSL with `plot()`**         | ![Signal DSL demo](docs/demos/signal-dsl.gif) |
-| **Macro Dashboard (FRED overlay)**   | ![Macro demo](docs/demos/macro-dashboard.gif) |
+| **Screener — 10K tickers** | ![Screener demo](docs/demos/screener.gif) |
+| **Signal DSL with `plot()`** | ![Signal DSL demo](docs/demos/signal-dsl.gif) |
+| **Macro Dashboard (FRED overlay)** | ![Macro demo](docs/demos/macro-dashboard.gif) |
 
 > Demos are recorded at 1× speed against live Yahoo Finance data.
 > Run `npm run dev` to explore all cards interactively — no API key required for the
@@ -75,65 +75,65 @@ npm run dev        # http://localhost:5173
 
 CrossTide ships with **23 route cards**, each accessible from the sidebar navigation:
 
-| Card                | Description                                                             |
+| Card | Description |
 | ------------------- | ----------------------------------------------------------------------- |
-| Watchlist           | Real-time ticker table with sparklines, volume bars, 52W range          |
-| Consensus           | 12-method signal aggregation with confidence meter                      |
-| Chart               | Candlestick + 8 overlay indicators + drawing tools                      |
-| Multi-Chart         | Side-by-side 2–4 chart grid layout                                      |
-| Backtest            | SMA crossover backtest with equity curve + trade log                    |
-| Strategy Comparison | Compare two backtest strategies side-by-side                            |
-| Screener            | Filter + sort 10K+ tickers with virtual scrolling                       |
-| Portfolio           | Holdings, allocation chart, P&L, sector exposure                        |
-| Risk Metrics        | VaR, Sharpe, Sortino, max drawdown analysis                             |
-| Heatmap             | Treemap by sector cap, drill-down to constituents                       |
-| Sector Rotation     | RRG-style sector momentum quadrant chart                                |
-| Relative Strength   | Normalized multi-ticker performance comparison                          |
-| Market Breadth      | Advance/decline, new highs/lows, McClellan                              |
-| Correlation Matrix  | Cross-ticker correlation heatmap                                        |
-| Seasonality         | Month-over-month historical return patterns                             |
-| Earnings Calendar   | Upcoming earnings dates for watchlist                                   |
-| Macro Dashboard     | Economic indicators and FRED macro overlay (VIX, yields, M2, Fed Funds) |
-| Consensus Timeline  | Historical signal timeline per ticker                                   |
-| Alerts              | Multi-condition alert rules (AND/OR), history log                       |
-| Signal DSL          | Custom indicator expressions with live evaluation                       |
-| Comparison          | Multi-ticker normalized price overlay                                   |
-| Provider Health     | Data provider latency, error rates, and uptime monitor                  |
-| Settings            | Theme, API keys, export/import, locale, a11y                            |
+| Watchlist | Real-time ticker table with sparklines, volume bars, 52W range |
+| Consensus | 12-method signal aggregation with confidence meter |
+| Chart | Candlestick + 8 overlay indicators + drawing tools |
+| Multi-Chart | Side-by-side 2–4 chart grid layout |
+| Backtest | SMA crossover backtest with equity curve + trade log |
+| Strategy Comparison | Compare two backtest strategies side-by-side |
+| Screener | Filter + sort 10K+ tickers with virtual scrolling |
+| Portfolio | Holdings, allocation chart, P&L, sector exposure |
+| Risk Metrics | VaR, Sharpe, Sortino, max drawdown analysis |
+| Heatmap | Treemap by sector cap, drill-down to constituents |
+| Sector Rotation | RRG-style sector momentum quadrant chart |
+| Relative Strength | Normalized multi-ticker performance comparison |
+| Market Breadth | Advance/decline, new highs/lows, McClellan |
+| Correlation Matrix | Cross-ticker correlation heatmap |
+| Seasonality | Month-over-month historical return patterns |
+| Earnings Calendar | Upcoming earnings dates for watchlist |
+| Macro Dashboard | Economic indicators and FRED macro overlay (VIX, yields, M2, Fed Funds) |
+| Consensus Timeline | Historical signal timeline per ticker |
+| Alerts | Multi-condition alert rules (AND/OR), history log |
+| Signal DSL | Custom indicator expressions with live evaluation |
+| Comparison | Multi-ticker normalized price overlay |
+| Provider Health | Data provider latency, error rates, and uptime monitor |
+| Settings | Theme, API keys, export/import, locale, a11y |
 
 ## Why CrossTide?
 
-|                                  |    CrossTide    | TradingView | Yahoo Finance | Finviz  | StockCharts |
+| | CrossTide | TradingView | Yahoo Finance | Finviz | StockCharts |
 | -------------------------------- | :-------------: | :---------: | :-----------: | :-----: | :---------: |
-| **Free & open source**           |       ✅        |     ❌      |      ❌       | Partial |     ❌      |
-| **Self-hostable / offline PWA**  |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
-| **No account required**          |       ✅        |     ❌      |      ❌       |   ✅    |     ❌      |
-| **12-method consensus signals**  |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
-| **Custom signal DSL + `plot()`** |       ✅        | Pine Script |      ❌       |   ❌    |     ❌      |
-| **Bar Replay (tick-by-tick)**    |       ✅        |  ✅ (paid)  |      ❌       |   ❌    |     ❌      |
-| **< 200 KB gzip bundle**         |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
-| **Native iOS / Android**         | ✅ (Capacitor)  |     ✅      |      ✅       |   ❌    |     ❌      |
-| **Strategy backtesting**         |       ✅        |     ✅      |      ❌       |   ❌    |  ✅ (paid)  |
-| **Accessibility WCAG 2.2 AAA**   |       ✅        |     ❌      |    Partial    |   ❌    |     ❌      |
-| **FRED macro overlay**           |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
-| **NLP news sentiment**           |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
-| **WebSocket live streaming**     | ✅ (DO fan-out) |     ✅      |      ❌       |   ❌    |     ❌      |
-| **OTel distributed tracing**     |       ✅        |     ❌      |      ❌       |   ❌    |     ❌      |
-| **55+ technical indicators**     |       ✅        |     ✅      |      ❌       | Partial |     ✅      |
+| **Free & open source** | ✅ | ❌ | ❌ | Partial | ❌ |
+| **Self-hostable / offline PWA** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **No account required** | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **12-method consensus signals** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Custom signal DSL + `plot()`** | ✅ | Pine Script | ❌ | ❌ | ❌ |
+| **Bar Replay (tick-by-tick)** | ✅ | ✅ (paid) | ❌ | ❌ | ❌ |
+| **< 250 KB gzip bundle** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Native iOS / Android** | ✅ (Capacitor) | ✅ | ✅ | ❌ | ❌ |
+| **Strategy backtesting** | ✅ | ✅ | ❌ | ❌ | ✅ (paid) |
+| **Accessibility WCAG 2.2 AAA** | ✅ | ❌ | Partial | ❌ | ❌ |
+| **FRED macro overlay** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **NLP news sentiment** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **WebSocket live streaming** | ✅ (DO fan-out) | ✅ | ❌ | ❌ | ❌ |
+| **OTel distributed tracing** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **55+ technical indicators** | ✅ | ✅ | ❌ | Partial | ✅ |
 
 ## Scripts
 
-| Command                  | Description                                                          |
+| Command | Description |
 | ------------------------ | -------------------------------------------------------------------- |
-| `npm run dev`            | Start dev server (<http://localhost:5173>)                           |
+| `npm run dev` | Start dev server (<http://localhost:5173>) |
 | `npm run dev:components` | Component preview grid (<http://localhost:5173/dev/components.html>) |
-| `npm run build`          | TypeScript check + production build                                  |
-| `npm test`               | Run unit tests                                                       |
-| `npm run test:coverage`  | Tests with v8 coverage                                               |
-| `npm run lint`           | ESLint                                                               |
-| `npm run lint:all`       | ESLint + Stylelint + HTMLHint + markdownlint                         |
-| `npm run format`         | Prettier auto-format                                                 |
-| `npm run ci`             | Full CI pipeline (typecheck + lint + test + build + bundle check)    |
+| `npm run build` | TypeScript check + production build |
+| `npm test` | Run unit tests |
+| `npm run test:coverage` | Tests with v8 coverage |
+| `npm run lint` | ESLint |
+| `npm run lint:all` | ESLint + Stylelint + HTMLHint + markdownlint |
+| `npm run format` | Biome auto-format |
+| `npm run ci` | Full CI pipeline (typecheck + lint + test + build + bundle check) |
 
 ## Tech Stack
 
@@ -142,7 +142,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 - **Vite 8** build tool (oxc minifier, ES2022 target).
 - **Vitest 4.1** testing — happy-dom environment, v8 coverage, 90% statement / 80% branch / 90% function / 90% line thresholds.
 - **ESLint 10** flat config + **typescript-eslint 8**.
-- **Prettier 3** code formatting (single source of truth in `.prettierrc`).
+- **Biome 2** code formatting (100× faster than Prettier).
 - **Stylelint 17**, **HTMLHint 1.9**, **markdownlint-cli2** for non-TS assets.
 - **Vanilla CSS** with custom properties (dark/light themes), no UI framework — pure TypeScript + DOM APIs.
 
@@ -163,14 +163,14 @@ Native features: splash screen, status bar theming, secure local storage via `@c
 
 The Cloudflare Worker (`worker/`) provides:
 
-| Endpoint               | Method | Description                                     |
+| Endpoint | Method | Description |
 | ---------------------- | ------ | ----------------------------------------------- |
-| `/api/yahoo/quote`     | GET    | Proxied stock quotes with KV caching            |
-| `/api/yahoo/chart`     | GET    | Historical OHLCV data with TTL cache            |
-| `/api/ws/:symbol`      | GET    | WebSocket upgrade → Durable Object fan-out (R3) |
-| `/api/news/sentiment`  | POST   | NLP sentiment scoring for financial text (R5)   |
-| `/api/alerts/evaluate` | POST   | Manual trigger for server-side alert eval (R7)  |
-| `scheduled` (cron)     | —      | Auto-evaluates alert rules every 5 min (R7)     |
+| `/api/yahoo/quote` | GET | Proxied stock quotes with KV caching |
+| `/api/yahoo/chart` | GET | Historical OHLCV data with TTL cache |
+| `/api/ws/:symbol` | GET | WebSocket upgrade → Durable Object fan-out (R3) |
+| `/api/news/sentiment` | POST | NLP sentiment scoring for financial text (R5) |
+| `/api/alerts/evaluate` | POST | Manual trigger for server-side alert eval (R7) |
+| `scheduled` (cron) | — | Auto-evaluates alert rules every 5 min (R7) |
 
 ## Release & Deployment
 
@@ -262,14 +262,14 @@ Consensus:   Micho Method + >=1 confirming method = BUY
 
 ## Troubleshooting
 
-| Problem                                                  | Cause                                        | Fix                                                                                          |
+| Problem | Cause | Fix |
 | -------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `ERR_CERT_AUTHORITY_INVALID` in dev                      | Corporate MITM proxy                         | Set `HTTPS_PROXY=http://proxy-dmz.intel.com:912` before `npm run dev`                        |
-| CSP blocks fetch requests in dev                         | Hitting Yahoo directly instead of Vite proxy | Ensure `import.meta.env.DEV` routes through `/api/yahoo` (already default)                   |
-| Firefox/WebKit Playwright tests fail to start            | Browser engines not installed                | Run `npx playwright install firefox webkit`                                                  |
-| `@starting-style` / `@scope` shown as unknown in VS Code | CSS language service needs custom data       | Verify `css.customData` points to `./config/css-custom-data.json` in `.vscode/settings.json` |
-| Tests timeout behind corporate firewall                  | npm registry unreachable                     | Configure `.npmrc` with `proxy` and `https-proxy`                                            |
-| Build exceeds 200 KB budget                              | New dependency added                         | Check `npm run check:bundle` and tree-shake or lazy-load the addition                        |
+| `ERR_CERT_AUTHORITY_INVALID` in dev | Corporate MITM proxy | Set `HTTPS_PROXY=http://proxy-dmz.intel.com:912` before `npm run dev` |
+| CSP blocks fetch requests in dev | Hitting Yahoo directly instead of Vite proxy | Ensure `import.meta.env.DEV` routes through `/api/yahoo` (already default) |
+| Firefox/WebKit Playwright tests fail to start | Browser engines not installed | Run `npx playwright install firefox webkit` |
+| `@starting-style` / `@scope` shown as unknown in VS Code | CSS language service needs custom data | Verify `css.customData` points to `./config/css-custom-data.json` in `.vscode/settings.json` |
+| Tests timeout behind corporate firewall | npm registry unreachable | Configure `.npmrc` with `proxy` and `https-proxy` |
+| Build exceeds 200 KB budget | New dependency added | Check `npm run check:bundle` and tree-shake or lazy-load the addition |
 
 ## License
 
