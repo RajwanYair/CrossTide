@@ -11,8 +11,9 @@ import { checkRateLimit } from "../../../worker/rate-limit";
 import { getAllowedOrigin } from "../../../worker/cors";
 import { withSecurityHeaders, _getSecurityHeaders } from "../../../worker/security";
 
-// Minimal Env object for tests
-const ENV = { ENVIRONMENT: "test", API_VERSION: "1" };
+// Minimal Env object for tests — use "production" so routes exercise real
+// validation logic instead of the fixture pass-through (isPreviewEnvironment).
+const ENV = { ENVIRONMENT: "production", API_VERSION: "1" };
 
 function makeRequest(
   method: string,
