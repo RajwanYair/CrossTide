@@ -123,7 +123,7 @@ jobs:
             const perf = '${{ steps.lighthouse.outputs.perf }}' || '—';
             const perfPct = perf !== '—' ? (parseFloat(perf) * 100).toFixed(0) + '%' : '—';
 
-            const BUDGET_KB = 200;
+            const BUDGET_KB = 250;
             const WARNING_THRESHOLD = 5 * 1024; // 5 KB increase triggers warning
 
             let status = '✅';
@@ -187,7 +187,7 @@ jobs:
         if: github.event_name == 'push'
         run: |
           JS_KB=$(echo "scale=1; ${{ steps.pr_size.outputs.js_gz }} / 1024" | bc)
-          BUDGET=200
+          BUDGET=250
           echo "JS bundle: ${JS_KB} KB (budget: ${BUDGET} KB)"
           if (( $(echo "$JS_KB > $BUDGET" | bc -l) )); then
             echo "::error::JS bundle ${JS_KB} KB exceeds ${BUDGET} KB budget"

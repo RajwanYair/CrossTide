@@ -185,7 +185,13 @@ app.use("*", async (c, next) => {
   await next();
   // Propagate traceparent to client so browser can correlate
   c.res.headers.set("traceparent", tracer.traceparent);
-  tracer.finish(c.executionCtx);
+  let ctx: { waitUntil(p: Promise<unknown>): void } | undefined;
+  try {
+    ctx = c.executionCtx;
+  } catch {
+    /* unavailable in unit tests */
+  }
+  tracer.finish(ctx);
 });
 
 // ── P13: Structured request logging ──────────────────────────────────────────
