@@ -17,8 +17,8 @@ import {
   regimeLabel,
   regimeColor,
   regimeScore,
-} from "../domain/market-regime.js";
-import type { RegimeSignal, Regime } from "../domain/market-regime.js";
+} from "../../src/domain/market-regime.js";
+import type { RegimeSignal, Regime } from "../../src/domain/market-regime.js";
 import { fetchYahooChart } from "../providers/yahoo.js";
 import { fetchFredSeries } from "../providers/fred.js";
 import { kvGet, kvPut } from "../kv-cache.js";

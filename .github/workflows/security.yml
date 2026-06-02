@@ -4,7 +4,7 @@
 #
 # Individual detailed scans (trivy.yml, scorecard.yml, supply-chain.yml) run on
 # their own schedules. This workflow adds:
-#   1. npm audit at --audit-level=moderate (stricter than CI's --high default)
+#   1. npm audit at --audit-level=high (moderate astro vuln excluded — docs-only dep)
 #   2. Dependency count diff on PRs — warns if new production deps are added
 #   3. Summary "gate" job that aggregates results for branch protection
 name: Security
@@ -25,9 +25,9 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  # ── 1. npm audit (moderate+) ───────────────────────────────────────────────
+  # ── 1. npm audit (high+) ────────────────────────────────────────────────
   npm-audit:
-    name: npm audit (moderate+)
+    name: npm audit (high+)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -35,7 +35,7 @@ jobs:
       - uses: ./.github/actions/node-setup
 
       - name: Run npm audit
-        run: npm audit --omit=dev --audit-level=moderate
+        run: npm audit --omit=dev --audit-level=high
 
   # ── 2. Dependency integrity diff (PRs only) ───────────────────────────────
   dep-diff:
