@@ -1,14 +1,16 @@
 {
   "recommendations": [
-    "github.copilot",
     "github.copilot-chat",
-    "esbenp.prettier-vscode",
+    "biomejs.biome",
     "dbaeumer.vscode-eslint",
     "stylelint.vscode-stylelint",
     "DavidAnson.vscode-markdownlint",
     "vitest.explorer",
     "ms-playwright.playwright",
     "github.vscode-github-actions",
-    "ms-edgedevtools.vscode-browser-compatibility"
-  ]
+    "ms-edgedevtools.vscode-browser-compatibility",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github"
+  ],
+  "unwantedRecommendations": ["esbenp.prettier-vscode"]
 }

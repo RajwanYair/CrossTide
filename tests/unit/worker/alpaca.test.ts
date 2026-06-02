@@ -3,11 +3,15 @@ import { handleAlpacaQuote, handleAlpacaBars } from "../../../worker/routes/alpa
 
 type KvStore = { get: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
 
-function makeEnv(kv?: KvStore, keys?: { ALPACA_KEY?: string; ALPACA_SECRET?: string }) {
+function makeEnv(
+  kv?: KvStore,
+  overrides?: Partial<{ ALPACA_KEY: string | undefined; ALPACA_SECRET: string | undefined }>,
+) {
   return {
     QUOTE_CACHE: kv,
-    ALPACA_KEY: keys?.ALPACA_KEY ?? "test-key",
-    ALPACA_SECRET: keys?.ALPACA_SECRET ?? "test-secret",
+    ALPACA_KEY: "test-key",
+    ALPACA_SECRET: "test-secret",
+    ...overrides,
   } as Parameters<typeof handleAlpacaQuote>[1];
 }
 

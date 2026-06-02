@@ -97,7 +97,7 @@ Each layer exposes its public API via an `index.ts`. Do not import from internal
 
 ## Commit Convention
 
-```
+```text
 type(scope): fully lowercase subject, no period, ≤72 chars
 ```
 

@@ -1,0 +1,53 @@
+{
+  "name": "@crosstide/domain",
+  "version": "0.1.0",
+  "description": "Pure TypeScript financial analysis functions — indicators, consensus, backtest, risk metrics",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./indicators": {
+      "types": "./dist/indicators/index.d.ts",
+      "import": "./dist/indicators/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "finance",
+    "trading",
+    "technical-analysis",
+    "indicators",
+    "sma",
+    "ema",
+    "rsi",
+    "macd",
+    "bollinger",
+    "consensus",
+    "backtest"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RajwanYair/CrossTide.git",
+    "directory": "packages/domain"
+  },
+  "homepage": "https://github.com/RajwanYair/CrossTide#readme",
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

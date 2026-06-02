@@ -38,7 +38,7 @@ Scan and fix quality issues that are **not** covered by ESLint or `tsc`. For lin
 ## Bundle / Code-Split
 
 - New heavy dependency? Verify it's behind a dynamic `import()` boundary
-- Run `npm run check:bundle` after the fix — must stay < 200 KB gzip
+- Run `npm run check:bundle` after the fix — must stay < 250 KB gzip
 - Confirm no `manualChunks` added to `vite.config.ts`
 
 ## Constraints

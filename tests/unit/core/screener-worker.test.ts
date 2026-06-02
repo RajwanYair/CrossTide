@@ -131,8 +131,9 @@ describe("screener-worker facade", () => {
     (globalThis as unknown as Record<string, unknown>).Worker = MockWorker;
 
     try {
-      const { runScreenerAsync, disposeScreenerWorker } =
-        await import("../../../src/core/screener-worker");
+      const { runScreenerAsync, disposeScreenerWorker } = await import(
+        "../../../src/core/screener-worker"
+      );
       // Trigger client creation
       await runScreenerAsync([], []);
       // Now dispose

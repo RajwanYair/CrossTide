@@ -126,7 +126,7 @@ function checkHeadingOrder(root: HTMLElement, issues: A11yIssue[]): void {
   const headings = root.querySelectorAll("h1, h2, h3, h4, h5, h6");
   let lastLevel = 0;
   for (const heading of headings) {
-    const level = parseInt(heading.tagName[1], 10);
+    const level = parseInt(heading.tagName.charAt(1), 10);
     if (lastLevel > 0 && level > lastLevel + 1) {
       issues.push({
         severity: "warning",

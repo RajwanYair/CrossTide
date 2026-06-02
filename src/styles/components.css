@@ -2052,6 +2052,7 @@
   font-size: var(--fs-sm);
   color: var(--text-secondary);
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
 }
 

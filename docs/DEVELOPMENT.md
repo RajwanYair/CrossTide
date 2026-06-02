@@ -42,7 +42,7 @@ Opens at `http://localhost:5173` with HMR.
 | `npm run format`        | Prettier format                       |
 | `npm run format:check`  | Prettier verify                       |
 | `npm run build`         | Production build                      |
-| `npm run check:bundle`  | Verify bundle < 200 KB gzip           |
+| `npm run check:bundle`  | Verify bundle < 250 KB gzip           |
 | `npm run ci`            | Full CI pipeline (all of the above)   |
 
 ## Project Structure
@@ -115,7 +115,7 @@ All must pass before merge:
 - Prettier: formatted
 - Tests: all pass, 90%+ coverage
 - Build: successful
-- Bundle: under 200 KB gzip
+- Bundle: under 250 KB gzip
 
 Run `npm run ci` to verify all gates locally.
 

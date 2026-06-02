@@ -63,7 +63,7 @@ export function trackEvent(name: string, props?: Record<string, string | number 
   // Plausible exposes window.plausible after script loads
   const plausible = (window as unknown as { plausible?: PlausibleFn }).plausible;
   if (typeof plausible === "function") {
-    plausible(name, { props });
+    plausible(name, props ? { props } : {});
   }
 }
 

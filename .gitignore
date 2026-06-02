@@ -12,6 +12,7 @@ build/
 .env
 .env.local
 *.env
+.env.ps1
 
 # OS
 .DS_Store
@@ -49,7 +50,9 @@ tests/browser/__screenshots__/
 
 # Temporary debug output
 test-out.txt
+vitest-out.txt
 *.tmp
+*.log.txt
 
 # Demo recordings (generated, not committed)
 docs/demos/*.mp4

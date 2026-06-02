@@ -47,7 +47,7 @@ npm run ci   # typecheck → lint → test:coverage → build — all must pass
 
 ### 5. Commit
 
-```
+```bash
 git add -A
 git commit -m "feat(scope): lowercase description of the feature"
 ```

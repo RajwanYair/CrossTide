@@ -4,8 +4,12 @@
  * Targets src/domain/ — the pure-logic hot path where mutations are most
  * meaningful. Uses the TypeScript checker and Vitest runner.
  *
- * Run:  npx stryker run
+ * Run:  npx stryker run --configFile config/stryker.config.mjs
  */
+import os from "os";
+import path from "path";
+
+const tmpDir = path.join(os.tmpdir(), "crosstide", "mutation");
 
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 export default {
@@ -43,12 +47,12 @@ export default {
   // ── Reporters ───────────────────────────────────────────────────────────────
   reporters: ["html", "clear-text", "progress"],
   htmlReporter: {
-    fileName: "reports/mutation/index.html",
+    fileName: path.join(tmpDir, "index.html"),
   },
 
-  // ── Incremental ─────────────────────────────────────────────────────────────
+  // ── Incremental ───────────────────────────────────────────────────────────────
   incremental: true,
-  incrementalFile: "reports/mutation/.stryker-incremental.json",
+  incrementalFile: path.join(tmpDir, ".stryker-incremental.json"),
 
   // ── Ignore patterns ─────────────────────────────────────────────────────────
   ignorers: ["string-literal", "regex-literal"],

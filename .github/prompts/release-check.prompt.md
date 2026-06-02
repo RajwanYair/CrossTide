@@ -35,7 +35,7 @@ npm run lint:md         # markdownlint 0 errors
 npm run format:check    # Prettier exit 0
 npm run test:coverage   # ≥90/80 thresholds
 npm run build           # Vite + Workbox build
-npm run check:bundle    # < 200 KB gzip
+npm run check:bundle    # < 250 KB gzip
 npm run check:contrast  # 0 violations
 node scripts/arch-check.mjs --strict
 ```

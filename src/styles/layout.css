@@ -1,40 +1,118 @@
 @layer layout {
+  /* ── Body: fixed-viewport dashboard container ──────────────────────────── */
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── Top header bar ────────────────────────────────────────────────────── */
   #app-header {
     display: flex;
     align-items: center;
-    gap: var(--sp-lg);
-    padding: var(--sp-md) var(--sp-lg);
+    gap: var(--sp-md);
+    padding: var(--sp-sm) var(--sp-lg);
     background: var(--bg-card);
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex-shrink: 0;
+    z-index: 200;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-xs);
   }
 
   .header-brand h1 {
     font-size: var(--font-size-xl);
-    display: inline;
   }
 
   .header-tagline {
     font-size: var(--font-size-sm);
     color: var(--text-secondary);
-    margin-left: var(--sp-sm);
   }
 
-  #app-nav {
+  /* Market status badge pushed to the end of the header */
+  #market-status {
+    margin-inline-start: auto;
+  }
+
+  /* ── Sidebar toggle (hamburger) ──────────────────────────────────────── */
+  .sidebar-toggle {
     display: flex;
-    gap: var(--sp-sm);
-    margin-left: auto;
-    overflow-x: auto;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast);
   }
 
+  .sidebar-toggle:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+  }
+
+  .sidebar-toggle:focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+  }
+
+  /* ── App body: sidebar + content (flex row) ─────────────────────────── */
+  #app-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* ── Sidebar nav ─────────────────────────────────────────────────────── */
+  #app-nav {
+    --sidebar-w: 200px;
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--sp-md) var(--sp-sm);
+    background: var(--bg-card);
+
+    /* Logical property: right border in LTR, left border in RTL (Hebrew) */
+    border-inline-end: 1px solid var(--border);
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition:
+      width 200ms ease,
+      padding-inline 200ms ease;
+    z-index: 100;
+  }
+
+  /* Desktop-collapsed sidebar (hamburger toggle) */
+  #app-nav.sidebar-collapsed {
+    width: 0;
+    padding-inline: 0;
+    overflow: hidden;
+    border-inline-end: none;
+  }
+
+  /* ── Nav links — vertical list ───────────────────────────────────────── */
   .nav-link {
+    display: block;
     padding: var(--sp-xs) var(--sp-md);
     border-radius: var(--radius-sm);
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
     font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
     transition:
       background var(--transition-fast),
       color var(--transition-fast);
@@ -50,22 +128,23 @@
     color: var(--accent);
   }
 
+  /* ── Main content area ──────────────────────────────────────────────── */
   #app-main {
     flex: 1;
     padding: var(--sp-lg);
+    overflow-y: auto;
+    min-width: 0;
     max-width: 1400px;
     width: 100%;
-    margin: 0 auto;
+    margin-inline: auto;
   }
 
-  /* C5: named view-transition so route-swap gets its own enter/leave animation.
-     Wrapped in @supports for progressive enhancement — no-op on unsupported browsers. */
+  /* C5: named view-transition so route-swap gets its own enter/leave animation. */
   @supports (view-transition-name: none) {
     #app-main {
       view-transition-name: route-content;
     }
 
-    /* C5: per-route enter / leave animations */
     ::view-transition-old(route-content) {
       animation: 100ms ease-in both vt-fade-out;
     }
@@ -91,10 +170,15 @@
     animation: route-enter 180ms var(--transition-medium, ease-out) both;
   }
 
-  @starting-style {
-    .view.active {
-      opacity: 0;
-      transform: translateY(6px) scale(0.995);
+  /* Progressive enhancement: @starting-style (Baseline 2024+). Browsers  */
+
+  /* without support skip this block; the element renders in its final state. */
+  @supports (transition-behavior: allow-discrete) {
+    @starting-style {
+      .view.active {
+        opacity: 0;
+        transform: translateY(6px) scale(0.995);
+      }
     }
   }
 
@@ -116,6 +200,20 @@
     }
   }
 
+  /* ── Mobile sidebar backdrop overlay ────────────────────────────────── */
+  #sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgb(0, 0, 0, 0.5);
+    z-index: 149;
+  }
+
+  #sidebar-backdrop.visible {
+    display: block;
+  }
+
+  /* ── Footer ──────────────────────────────────────────────────────────── */
   #app-footer {
     display: flex;
     justify-content: space-between;
@@ -124,6 +222,7 @@
     border-top: 1px solid var(--border);
     font-size: var(--font-size-sm);
     color: var(--text-muted);
+    flex-shrink: 0;
   }
 
   .status-badge {

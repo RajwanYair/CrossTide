@@ -8,6 +8,7 @@ wiring their IDs into `worker/wrangler.toml`.
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is sufficient)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
   installed and authenticated:
+
   ```powershell
   npx wrangler login
   ```

@@ -1,7 +1,7 @@
 # CrossTide self-hosted deployment
 #
 # Usage:
-#   cp .env.docker .env          # edit with your API keys
+#   cp docker/.env.example .env  # edit with your API keys
 #   docker compose up --build    # build + start
 #   docker compose up -d         # detached mode
 #

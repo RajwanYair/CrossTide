@@ -79,7 +79,7 @@ Use this agent when:
 | Prettier      | `npm run format:check`                    | exit 0                      |
 | Tests         | `npm run test:coverage`                   | 0 failures + thresholds met |
 | Build         | `npm run build`                           | 0 errors                    |
-| Bundle        | `npm run check:bundle`                    | < 200 KB gzip               |
+| Bundle        | `npm run check:bundle`                    | < 250 KB gzip               |
 | Contrast      | `npm run check:contrast`                  | 0 violations                |
 | Architecture  | `node scripts/arch-check.mjs --strict`    | 0 violations                |
 | Supply chain  | `npm audit --omit=dev --audit-level=high` | 0 HIGH/CRITICAL CVEs        |

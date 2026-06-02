@@ -93,8 +93,9 @@ describe("provider-registry coverage — configureTiingo (lines 127-136)", () =>
   });
 
   it("configureTiingo adds Tiingo provider to the registry", async () => {
-    const { configureTiingo, getHealthSnapshot } =
-      await import("../../../src/providers/provider-registry");
+    const { configureTiingo, getHealthSnapshot } = await import(
+      "../../../src/providers/provider-registry"
+    );
     configureTiingo("test-tiingo-key");
     const snap = getHealthSnapshot();
     const names = snap.entries.map((e) => e.name);
@@ -102,8 +103,9 @@ describe("provider-registry coverage — configureTiingo (lines 127-136)", () =>
   });
 
   it("configureTiingo replaces existing Tiingo entry on re-call", async () => {
-    const { configureTiingo, getHealthSnapshot } =
-      await import("../../../src/providers/provider-registry");
+    const { configureTiingo, getHealthSnapshot } = await import(
+      "../../../src/providers/provider-registry"
+    );
     configureTiingo("key-1");
     configureTiingo("key-2");
     const snap = getHealthSnapshot();

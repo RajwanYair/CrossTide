@@ -80,7 +80,7 @@ expect(CSS.supports("container-type", "size")).toBe(true);
 
 ## Browser Targets (from .browserslistrc)
 
-```
+```text
 last 2 Chrome versions
 last 2 Edge versions
 last 2 Safari versions (macOS + iOS 16.4+)

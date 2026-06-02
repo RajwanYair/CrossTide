@@ -10,6 +10,12 @@
       "command": "npx",
       "args": ["mcp-remote", "https://mcp.cloudflare.com/sse"],
       "gallery": true
+    },
+    "gitkraken": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["gitkraken-mcp-server"],
+      "gallery": true
     }
   }
 }

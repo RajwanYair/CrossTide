@@ -17,7 +17,7 @@ Export the function(s) specified by the user from `src/domain/index.ts`.
 
 1. **Audit current exports**
 
-   ```
+   ```text
    grep_search("export \{" in src/domain/index.ts)
    ```
 
@@ -34,12 +34,13 @@ Export the function(s) specified by the user from `src/domain/index.ts`.
 
 4. **Verify no circular imports**
 
-   ```
+   ```text
    get_errors(["src/domain/index.ts"])
    ```
 
 5. **Run domain tests to confirm nothing broke**
-   ```
+
+   ```text
    runTests(files: ["tests/unit/domain/"])
    ```
 

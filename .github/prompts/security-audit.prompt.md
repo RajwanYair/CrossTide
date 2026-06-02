@@ -11,7 +11,7 @@ Perform a security review of CrossTide against the OWASP Top 10:2021.
 
 > CrossTide is a **client-side PWA** with a thin **Cloudflare Worker** proxying public market data.
 > No login today. Threat surface: XSS, supply-chain, SSRF on worker upstreams, accidental secret leaks.
-
+>
 > **Canonical mapping**: load `.github/instructions/security-audit.instructions.md` — full A01–A10 mitigations table lives there.
 
 ## Automated Checks

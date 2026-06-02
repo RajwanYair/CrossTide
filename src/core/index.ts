@@ -65,12 +65,7 @@ export {
   arrayBufferToBase64,
 } from "./push-notifications";
 export type { PushSubscriptionPayload, LocalNotificationOptions } from "./push-notifications";
-export {
-  format as formatIcu,
-  formatMessage,
-  defineMessages,
-  getPluralCategory,
-} from "./icu-formatter";
+export { formatMessage, defineMessages, getPluralCategory } from "./icu-formatter";
 export type { MessageValues, MessageDict } from "./icu-formatter";
 export {
   isPasskeySupported,
@@ -135,7 +130,6 @@ export { computeIntegrity, integrityAttr, isValidSriValue, buildSriManifest } fr
 export type { SriAlgorithm } from "./sri";
 export { latestVersion, validateMigrations, applyMigrations } from "./idb-migrations";
 export type { SchemaMigration } from "./idb-migrations";
-export { decide as decideTierPolicy } from "./tier-policy";
 export type { Tier, AccessRecord, PolicyOptions, PolicyDecision } from "./tier-policy";
 export { createReconnectingWS, nextBackoff } from "./reconnecting-ws";
 export type { ReconnectingWS, ReconnectOptions, WSEventHandler } from "./reconnecting-ws";
@@ -285,7 +279,6 @@ export {
   err,
   isOk,
   isErr,
-  map as mapResult,
   mapErr,
   andThen,
   unwrap,
@@ -306,7 +299,7 @@ export type { SafeResult, SafeStringifyOptions } from "./safe-json";
 
 export { deepClone } from "./deep-clone";
 
-export { chunk, window as windowSlide, zip } from "./chunk-array";
+export { chunk, zip } from "./chunk-array";
 
 export { pick, omit, pickBy } from "./pick-omit";
 
@@ -474,7 +467,6 @@ export {
 export type { LogEntry, LogLevel, PendingLogEntry } from "./request-logger";
 
 export {
-  formatDate as formatDatePattern,
   isoDate,
   isoTime,
   isoDateTime,

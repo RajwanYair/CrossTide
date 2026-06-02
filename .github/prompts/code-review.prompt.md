@@ -53,7 +53,7 @@ Specify the review target on invocation:
 ### 5. Performance & Bundle
 
 - New heavy dep behind dynamic `import()` boundary
-- `npm run check:bundle` — < 200 KB gzip
+- `npm run check:bundle` — < 250 KB gzip
 - No `manualChunks` added to `vite.config.ts`
 - Card cleanup: timers and listeners removed in `unmount()`
 

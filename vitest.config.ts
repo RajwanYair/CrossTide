@@ -43,7 +43,7 @@ export default defineConfig({
         lines: 90,
       },
       reporter: ["text", "lcov", "json-summary"],
-      reportsDirectory: "coverage",
+      reportsDirectory: process.env["VITEST_COVERAGE_DIR"] ?? "coverage",
     },
   },
 });

@@ -6,6 +6,54 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.43.0] — 2026-06-02
+
+> **Sprint: Production Readiness Overhaul (ROADMAP v10, workspace cleanup,
+> agent infrastructure, quality gate fixes)**
+
+### Added
+
+- **Deploy ops agent** (`deploy-ops.agent.md`): Cloudflare deployment,
+  Docker, CI/CD specialist persona.
+- **Perf specialist agent** (`perf-specialist.agent.md`): Bundle, INP, LCP,
+  WASM, caching specialist persona.
+- **Deploy skill** (`.github/skills/deploy/SKILL.md`): Full CF deployment
+  playbook — provisioning, deploy, verify, rollback.
+- **Migrate-DB skill** (`.github/skills/migrate-db/SKILL.md`): D1 migration
+  workflow — create, apply, verify, conventions.
+- **Deploy prompt** (`deploy.prompt.md`): Quick deployment trigger.
+- **Perf-audit prompt** (`perf-audit.prompt.md`): Performance audit trigger.
+- **GitKraken MCP server** (`.vscode/mcp.json`): Added gitkraken stdio server.
+
+### Fixed
+
+- **Alpaca test timeout**: `makeEnv` helper used `??` which didn't distinguish
+  "not passed" from "explicitly undefined" — tests hit real network. Fixed with
+  object spread pattern.
+- **Biome format**: 7 files reformatted to pass `format:check`.
+- **Stylelint**: 2 `comment-empty-line-before` errors in layout/responsive CSS.
+
+### Changed
+
+- **ROADMAP v10** (`docs/ROADMAP.md`): Complete rewrite — "Production or Bust"
+  strategic plan with decision audit, phase breakdown (P–T), and VS Code
+  integration strategy.
+- **Prettier → Biome** (VS Code): `.vscode/settings.json` and
+  `extensions.json` now reference `biomejs.biome` formatter; removed
+  `.prettierrc` and `.prettierignore`.
+- **Extensions.json**: Added `biomejs.biome`, `eamodio.gitlens`,
+  `github.vscode-pull-request-github`; unwanted: `esbenp.prettier-vscode`.
+- **Copilot instructions**: Added Skills & Agents reference table.
+- **AGENTS.md**: Updated with full Agent Registry table (8 agents).
+- **Architecture doc**: Version bump and freshness update.
+
+### Removed
+
+- `.prettierrc`, `.prettierignore` (migrated to Biome).
+- `.github/debug.log`, `.github/copilot/debug.log` (should never be committed).
+
+---
+
 ## [11.42.0] — 2025-07-22
 
 > **Sprint: Keyboard nav, contributor onboarding, biome, SSG infra

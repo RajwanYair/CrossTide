@@ -173,6 +173,20 @@
         color: var(--color-text);
         min-width: 80px;
       }
+      /* ── Preview utilities ── */
+      .theme-label { font-size: 0.7rem; color: var(--color-text); }
+      .preview-card { width: 180px; padding: 1rem; }
+      .preview-card-body-lg { font-size: 1.25rem; }
+      .skeleton-line-60 { width: 60%; height: 12px; margin-bottom: 8px; }
+      .skeleton-line-90 { width: 90%; height: 12px; margin-bottom: 8px; }
+      .skeleton-line-40 { width: 40%; height: 12px; }
+      .preview-input { width: 140px; }
+      .table-scroll { overflow-x: auto; }
+      .preview-data-table { min-width: 480px; }
+      .palette-switcher { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+      .palette-swatches { display: flex; gap: 1rem; flex-wrap: wrap; }
+      .card-mount-summary { font-weight: 400; font-size: 0.65rem; margin-left: 0.5rem; color: var(--color-text); }
+      .card-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 1rem; }
     </style>
   </head>
 
@@ -180,7 +194,7 @@
     <header class="preview-header">
       <h1>CrossTide — Component Preview</h1>
       <div class="theme-toggle">
-        <span style="font-size: 0.7rem; color: var(--color-text)">Theme:</span>
+        <span class="theme-label">Theme:</span>
         <button id="btn-dark" class="active" type="button">dark</button>
         <button id="btn-light" type="button">light</button>
         <button id="btn-hc" type="button">HC</button>
@@ -267,14 +281,14 @@
       <div class="component-row">
         <div class="component-cell">
           <span class="component-label">default</span>
-          <div class="card" style="width: 180px; padding: 1rem">
+          <div class="card preview-card">
             <div class="card-header">AAPL</div>
-            <div class="card-body" style="font-size: 1.25rem">$189.30</div>
+            <div class="card-body preview-card-body-lg">$189.30</div>
           </div>
         </div>
         <div class="component-cell">
           <span class="component-label">elevated</span>
-          <div class="card card-elevated" style="width: 180px; padding: 1rem">
+          <div class="card card-elevated preview-card">
             <div class="card-header">Consensus</div>
             <div class="card-body">
               <span class="badge badge-bullish">BULLISH 8/12</span>
@@ -283,16 +297,14 @@
         </div>
         <div class="component-cell">
           <span class="component-label">loading skeleton</span>
-          <div class="card" style="width: 180px; padding: 1rem">
+          <div class="card preview-card">
             <div
-              class="skeleton skeleton-line"
-              style="width: 60%; height: 12px; margin-bottom: 8px"
+              class="skeleton skeleton-line skeleton-line-60"
             ></div>
             <div
-              class="skeleton skeleton-line"
-              style="width: 90%; height: 12px; margin-bottom: 8px"
+              class="skeleton skeleton-line skeleton-line-90"
             ></div>
-            <div class="skeleton skeleton-line" style="width: 40%; height: 12px"></div>
+            <div class="skeleton skeleton-line skeleton-line-40"></div>
           </div>
         </div>
       </div>
@@ -328,21 +340,20 @@
       <div class="component-row">
         <div class="component-cell">
           <span class="component-label">text</span>
-          <input class="input" type="text" placeholder="Enter ticker…" style="width: 140px" />
+          <input class="input preview-input" type="text" placeholder="Enter ticker…" />
         </div>
         <div class="component-cell">
           <span class="component-label">search</span>
           <input
-            class="input input-search"
+            class="input input-search preview-input"
             type="search"
             placeholder="Search…"
-            style="width: 140px"
           />
         </div>
         <div class="component-cell">
           <span class="component-label">select</span>
           <label for="theme-select" class="sr-only">Theme preset</label>
-          <select id="theme-select" class="input" style="width: 140px">
+          <select id="theme-select" class="input preview-input">
             <option>Dark</option>
             <option>Light</option>
             <option>High Contrast</option>
@@ -362,8 +373,8 @@
     <!-- ─────────────── TABLES ─────────────── -->
     <section class="section">
       <h2 class="section-title">Data Table</h2>
-      <div style="overflow-x: auto">
-        <table class="data-table" style="min-width: 480px">
+      <div class="table-scroll">
+        <table class="data-table preview-data-table">
           <thead>
             <tr>
               <th scope="col" aria-sort="ascending">Ticker <span class="sort-chevron">↑</span></th>
@@ -403,11 +414,8 @@
     <!-- ─────────────── COLOR PALETTES (C2) ─────────────────────────────── -->
     <section class="section">
       <h2 class="section-title">Color Palettes (C2 — Accessibility)</h2>
-      <div
-        id="palette-switcher"
-        style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem"
-      ></div>
-      <div id="palette-swatches" style="display: flex; gap: 1rem; flex-wrap: wrap"></div>
+      <div id="palette-switcher" class="palette-switcher"></div>
+      <div id="palette-swatches" class="palette-swatches"></div>
     </section>
 
     <!-- ─────────────── REGISTERED CARDS (A19) ──────────────────────────── -->
@@ -416,21 +424,12 @@
         Registered Cards (A19)
         <span
           id="card-mount-summary"
-          style="
-            font-weight: 400;
-            font-size: 0.65rem;
-            margin-left: 0.5rem;
-            color: var(--color-text);
-          "
+          class="card-mount-summary"
         ></span>
       </h2>
       <div
         id="card-preview-grid"
-        style="
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
-          gap: 1rem;
-        "
+        class="card-preview-grid"
       ></div>
     </section>
 

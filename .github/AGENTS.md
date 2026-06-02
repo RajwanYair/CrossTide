@@ -1,10 +1,23 @@
 # CrossTide — Custom Copilot Agents
 
-> Version: v11.36.0 · Tests: 595 / files · Coverage: ≥90% stmt/line/fn · ≥80% branch
+> Version: v11.43.0 · Tests: 620 files · Coverage: ≥90% stmt/line/fn · ≥80% branch
 
 Custom agent modes for VS Code GitHub Copilot. Each agent loads only the files it needs.
 Global rules (coding conventions, commit format, quality gates) are in `copilot-instructions.md`.
 Layer-specific rules are in `.github/instructions/` — agents reference them, not re-state them.
+
+## Agent Registry
+
+| Agent | File | Expertise |
+|---|---|---|
+| `@domain` | — (AGENTS.md inline) | Pure domain layer — indicators, consensus, analytics |
+| `@worker` | — (AGENTS.md inline) | Hono Worker — routes, KV, D1, WebSocket |
+| `@card` | — (AGENTS.md inline) | Route cards — CardModule, morphdom, Web Components |
+| `@api-integrator` | `agents/api-integrator.agent.md` | Data flows, provider chain, signal stores |
+| `@card-designer` | `agents/card-designer.agent.md` | Card layout, theme, accessibility |
+| `@quality-reviewer` | `agents/quality-reviewer.agent.md` | Lint, coverage, security, dead code |
+| `@deploy-ops` | `agents/deploy-ops.agent.md` | CF deployment, KV/D1, Docker, CI/CD |
+| `@perf-specialist` | `agents/perf-specialist.agent.md` | Bundle, INP, LCP, WASM, caching |
 
 ---
 
@@ -82,7 +95,7 @@ instructions: |
   - Full CI: npm run ci
   - Fix root causes — no eslint-disable, no @ts-ignore, no --force, no threshold reduction
   - Coverage: ≥90% stmt/line/fn, ≥80% branch (vitest.config.ts thresholds block)
-  - Bundle budget: <200 KB gzip (scripts/check-bundle-size.mjs)
+  - Bundle budget: <250 KB gzip (scripts/check-bundle-size.mjs)
 tools:
   - read_file
   - replace_string_in_file

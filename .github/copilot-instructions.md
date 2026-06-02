@@ -2,6 +2,25 @@
 
 Privacy-first financial analysis PWA. Vanilla TypeScript, no framework, Vite 8, Vitest 4, Hono 4 on Cloudflare Workers, LWC v5 charts, morphdom DOM patching, Cloudflare D1 + KV.
 
+## Skills & Agents
+
+| Skill | Path | Use when |
+|---|---|---|
+| `add-worker-route` | `.github/skills/add-worker-route/SKILL.md` | Adding a new API endpoint |
+| `debug-fetch` | `.github/skills/debug-fetch/SKILL.md` | Broken API calls, stale data |
+| `release` | `.github/skills/release/SKILL.md` | Version bump, git tag, GH release |
+| `update-tests` | `.github/skills/update-tests/SKILL.md` | Add/fix tests, coverage drops |
+| `deploy` | `.github/skills/deploy/SKILL.md` | CF deployment, provisioning |
+| `migrate-db` | `.github/skills/migrate-db/SKILL.md` | D1 schema changes |
+
+| Agent | Use when |
+|---|---|
+| `@api-integrator` | Worker routes, KV cache, provider chain |
+| `@card-designer` | Card layout, theme, accessibility |
+| `@quality-reviewer` | Lint, coverage, security, dead code |
+| `@deploy-ops` | CF deployment, Docker, CI/CD |
+| `@perf-specialist` | Bundle, INP, LCP, WASM, caching |
+
 ## Context Loading Strategy (token efficiency)
 
 Load **only** the instruction file that matches the layer you are modifying:
@@ -23,11 +42,11 @@ Load **only** the instruction file that matches the layer you are modifying:
 
 ## Layer Architecture (ESLint-enforced import direction)
 
-```
+```text
 types ← domain ← core ← providers ← cards ← ui
 ```
 
-```
+```text
 src/types/     — interfaces only, no imports from other src/ layers
 src/domain/    — pure functions only: no DOM, fetch, Date.now(), Math.random()
 src/core/      — state, config, caching, fetch — no UI
@@ -47,7 +66,7 @@ docs-site/     — Astro Starlight documentation site; isolated from app code
 3. No `TODO` in code — open a GitHub Issue instead.
 4. No secrets in code — use `.env` (gitignored) or Cloudflare secrets.
 5. Validation at boundaries — sanitize all external input (API, user, URL params).
-6. Bundle discipline — CI rejects builds >200 KB gzip.
+6. Bundle discipline — CI rejects builds >250 KB gzip.
 7. Test before shipping — new domain logic and new worker routes require tests.
 8. Skills auto-discovery — before acting on any repeatable task (add route, bump version, run tests, debug fetch), read `.github/skills/*/SKILL.md` for the matching playbook.
 9. Custom agents — `.github/agents/*.agent.md` are specialist personas; `runSubagent` delegates stateless tasks without polluting the main conversation.
@@ -66,7 +85,7 @@ docs-site/     — Astro Starlight documentation site; isolated from app code
 
 ## Commit Format (commitlint enforced)
 
-```
+```text
 type(scope): fully lowercase subject, no period, ≤72 chars
 ```
 
@@ -83,7 +102,7 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 | Prettier      | `npm run format:check`                    | Exit 0                         |
 | Tests         | `npm run test:coverage`                   | ≥90% stmt/line/fn, ≥80% branch |
 | Build         | `npm run build`                           | Successful                     |
-| Bundle        | `npm run check:bundle`                    | <200 KB gzip                   |
+| Bundle        | `npm run check:bundle`                    | <250 KB gzip                   |
 | Supply chain  | `npm audit --omit=dev --audit-level=high` | Zero high/critical CVEs        |
 | Registry sigs | `npm audit signatures`                    | Exit 0                         |
 | Architecture  | `node scripts/arch-check.mjs --strict`    | Zero violations                |

@@ -34,7 +34,8 @@
   }
 
   /* Full width, no sidebar */
-  body {
+  body,
+  #app-body {
     display: block !important;
     background: #fff !important;
     color: #111 !important;

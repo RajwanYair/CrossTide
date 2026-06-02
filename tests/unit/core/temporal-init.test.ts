@@ -80,8 +80,9 @@ describe("ensureTemporal — skip polyfill when native Temporal is present (Q16)
 
     try {
       vi.resetModules();
-      const { ensureTemporal: ensureFresh, isTemporalNative: isFresh } =
-        await import("../../../src/core/temporal-init");
+      const { ensureTemporal: ensureFresh, isTemporalNative: isFresh } = await import(
+        "../../../src/core/temporal-init"
+      );
 
       // Native detection must return true
       expect(isFresh()).toBe(true);

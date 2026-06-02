@@ -244,8 +244,9 @@ describe("registry configureFinnhub activation (A8)", () => {
       createFinnhubProvider: vi.fn((_key: string) => makeSucceedingProvider("finnhub")),
     }));
 
-    const { configureFinnhub, getHealthSnapshot } =
-      await import("../../../src/providers/provider-registry");
+    const { configureFinnhub, getHealthSnapshot } = await import(
+      "../../../src/providers/provider-registry"
+    );
     configureFinnhub("test-api-key-xyz");
     const snap = getHealthSnapshot();
     expect(snap.entries.some((e) => e.name === "finnhub")).toBe(true);
@@ -259,8 +260,9 @@ describe("registry configureFinnhub activation (A8)", () => {
       createFinnhubProvider: vi.fn((_key: string) => makeSucceedingProvider("finnhub")),
     }));
 
-    const { configureFinnhub, getHealthSnapshot } =
-      await import("../../../src/providers/provider-registry");
+    const { configureFinnhub, getHealthSnapshot } = await import(
+      "../../../src/providers/provider-registry"
+    );
     configureFinnhub("test-api-key");
     const snap = getHealthSnapshot();
     const finnhubEntry = snap.entries.find((e) => e.name === "finnhub");

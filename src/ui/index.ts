@@ -117,7 +117,7 @@ export type { TextSegment } from "./text-highlight";
 export { copyToClipboard, readClipboard } from "./clipboard";
 export type { ClipboardResult } from "./clipboard";
 
-export { announce as announceLive, clearAnnouncements } from "./aria-live";
+export { clearAnnouncements } from "./aria-live";
 export type { AriaLivePoliteness } from "./aria-live";
 
 export { createPwaInstallManager } from "./pwa-install";

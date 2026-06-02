@@ -7,6 +7,8 @@
       name="description"
       content="CrossTide — Stock monitoring dashboard with 12-method consensus signals"
     />
+    <!-- Progressive enhancement: theme-color supported by Chrome/Edge/Opera; -->
+    <!-- Firefox and Safari silently ignore it — no functional impact.        -->
     <meta name="theme-color" content="#0d1117" />
     <!-- Open Graph / Social preview -->
     <meta property="og:type" content="website" />
@@ -45,6 +47,8 @@
     <link rel="stylesheet" href="/src/styles/layout.css" />
     <link rel="stylesheet" href="/src/styles/components.css" />
     <link rel="stylesheet" href="/src/styles/print.css" media="print" />
+    <!-- Progressive enhancement: speculationrules for Chrome prefetch.     -->
+    <!-- Firefox and Safari silently ignore unknown script types.           -->
     <script type="speculationrules">
       {
         "prefetch": [
@@ -62,10 +66,35 @@
   <body>
     <a href="#app-main" class="skip-link">Skip to main content</a>
     <header id="app-header" role="banner">
+      <button
+        id="sidebar-toggle"
+        class="sidebar-toggle"
+        type="button"
+        aria-label="Toggle navigation"
+        aria-expanded="true"
+        aria-controls="app-nav"
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">
+          <rect y="2" width="18" height="2" rx="1" />
+          <rect y="8" width="18" height="2" rx="1" />
+          <rect y="14" width="18" height="2" rx="1" />
+        </svg>
+      </button>
       <div class="header-brand">
         <h1>CrossTide</h1>
         <span class="header-tagline">12-Method Consensus Dashboard</span>
       </div>
+      <div
+        id="market-status"
+        class="status-badge"
+        role="status"
+        aria-live="polite"
+        aria-label="Market status"
+      >
+        --
+      </div>
+    </header>
+    <div id="app-body">
       <nav id="app-nav" role="navigation" aria-label="Main navigation">
         <a href="/watchlist" class="nav-link active" data-route="watchlist">Watchlist</a>
         <a href="/consensus" class="nav-link" data-route="consensus">Consensus</a>
@@ -96,263 +125,256 @@
         <a href="/provider-health" class="nav-link" data-route="provider-health">Health</a>
         <a href="/settings" class="nav-link" data-route="settings">Settings</a>
       </nav>
-      <div
-        id="market-status"
-        class="status-badge"
-        role="status"
-        aria-live="polite"
-        aria-label="Market status"
-      >
-        --
-      </div>
-    </header>
 
-    <main id="app-main" role="main" aria-label="Dashboard content">
-      <section id="view-watchlist" class="view active">
-        <div class="card">
-          <div class="card-header">
-            <h2>Watchlist</h2>
-            <div class="card-actions">
-              <input
-                id="add-ticker"
-                type="text"
-                placeholder="Add ticker (e.g. AAPL)"
-                autocomplete="off"
-              />
-              <button
-                id="btn-share-watchlist"
-                type="button"
-                class="btn-secondary btn-sm"
-                title="Copy shareable watchlist URL"
-                aria-label="Copy shareable watchlist URL"
-              >
-                Share
-              </button>
+      <main id="app-main" role="main" aria-label="Dashboard content">
+        <section id="view-watchlist" class="view active">
+          <div class="card">
+            <div class="card-header">
+              <h2>Watchlist</h2>
+              <div class="card-actions">
+                <input
+                  id="add-ticker"
+                  type="text"
+                  placeholder="Add ticker (e.g. AAPL)"
+                  autocomplete="off"
+                />
+                <button
+                  id="btn-share-watchlist"
+                  type="button"
+                  class="btn-secondary btn-sm"
+                  title="Copy shareable watchlist URL"
+                  aria-label="Copy shareable watchlist URL"
+                >
+                  Share
+                </button>
+              </div>
+            </div>
+            <div id="watchlist-table-container">
+              <div
+                id="instrument-filter-bar"
+                class="instrument-filter-bar"
+                role="group"
+                aria-label="Filter by instrument type"
+              ></div>
+              <div
+                id="sort-live"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                class="sr-only"
+              ></div>
+              <table id="watchlist-table">
+                <thead id="watchlist-head">
+                  <tr>
+                    <th data-sort="ticker" class="sortable" tabindex="0" aria-sort="ascending">
+                      Ticker
+                    </th>
+                    <th data-sort="price" class="sortable" tabindex="0" aria-sort="none">Price</th>
+                    <th
+                      data-sort="change"
+                      class="sortable wl-col-change-pct"
+                      tabindex="0"
+                      aria-sort="none"
+                    >
+                      Change
+                    </th>
+                    <th data-sort="consensus" class="sortable" tabindex="0" aria-sort="none">
+                      Signal
+                    </th>
+                    <th>Sparkline</th>
+                    <th
+                      data-sort="volume"
+                      class="sortable wl-col-volume"
+                      tabindex="0"
+                      aria-sort="none"
+                    >
+                      Volume
+                    </th>
+                    <th class="wl-col-52w">52W Range</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="watchlist-body"></tbody>
+              </table>
+              <p id="watchlist-empty" class="empty-state">
+                No tickers added yet. Type a symbol above and press Enter.
+              </p>
             </div>
           </div>
-          <div id="watchlist-table-container">
-            <div
-              id="instrument-filter-bar"
-              class="instrument-filter-bar"
-              role="group"
-              aria-label="Filter by instrument type"
-            ></div>
-            <div
-              id="sort-live"
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-              class="sr-only"
-            ></div>
-            <table id="watchlist-table">
-              <thead id="watchlist-head">
-                <tr>
-                  <th data-sort="ticker" class="sortable" tabindex="0" aria-sort="ascending">
-                    Ticker
-                  </th>
-                  <th data-sort="price" class="sortable" tabindex="0" aria-sort="none">Price</th>
-                  <th
-                    data-sort="change"
-                    class="sortable wl-col-change-pct"
-                    tabindex="0"
-                    aria-sort="none"
-                  >
-                    Change
-                  </th>
-                  <th data-sort="consensus" class="sortable" tabindex="0" aria-sort="none">
-                    Signal
-                  </th>
-                  <th>Sparkline</th>
-                  <th
-                    data-sort="volume"
-                    class="sortable wl-col-volume"
-                    tabindex="0"
-                    aria-sort="none"
-                  >
-                    Volume
-                  </th>
-                  <th class="wl-col-52w">52W Range</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="watchlist-body"></tbody>
-            </table>
-            <p id="watchlist-empty" class="empty-state">
-              No tickers added yet. Type a symbol above and press Enter.
-            </p>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="view-consensus" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Consensus Dashboard</h2></div>
-          <div id="consensus-container">
-            <p class="empty-state">
-              Select a ticker from the watchlist to view its consensus breakdown.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="view-chart" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Chart</h2></div>
-          <div id="chart-container">
-            <p class="empty-state">Loading chart…</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="view-alerts" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Alerts</h2></div>
-          <div id="alerts-container">
-            <p class="empty-state">Loading alerts…</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="view-heatmap" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Sector Heatmap</h2></div>
-          <div id="heatmap-container"></div>
-        </div>
-      </section>
-
-      <section id="view-screener" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Screener</h2></div>
-          <div id="screener-container"></div>
-        </div>
-      </section>
-
-      <section id="view-provider-health" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Provider Health</h2></div>
-          <div id="provider-health-container"></div>
-        </div>
-      </section>
-
-      <section id="view-portfolio" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Portfolio</h2></div>
-          <div id="portfolio-container"></div>
-        </div>
-      </section>
-
-      <section id="view-risk" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Risk Metrics</h2></div>
-          <div id="risk-container"></div>
-        </div>
-      </section>
-
-      <section id="view-backtest" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Backtest</h2></div>
-          <div id="backtest-container"></div>
-        </div>
-      </section>
-
-      <section id="view-consensus-timeline" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Consensus Timeline</h2></div>
-          <div id="consensus-timeline-container"></div>
-        </div>
-      </section>
-
-      <section id="view-signal-dsl" class="view">
-        <div id="signal-dsl-container"></div>
-      </section>
-
-      <section id="view-multi-chart" class="view">
-        <div id="multi-chart-container"></div>
-      </section>
-
-      <section id="view-correlation" class="view">
-        <div id="correlation-container"></div>
-      </section>
-
-      <section id="view-market-breadth" class="view">
-        <div id="market-breadth-container"></div>
-      </section>
-
-      <section id="view-earnings-calendar" class="view">
-        <div id="earnings-calendar-container"></div>
-      </section>
-
-      <section id="view-macro-dashboard" class="view">
-        <div id="macro-dashboard-container"></div>
-      </section>
-
-      <section id="view-sector-rotation" class="view">
-        <div id="sector-rotation-container"></div>
-      </section>
-
-      <section id="view-relative-strength" class="view">
-        <div id="relative-strength-container"></div>
-      </section>
-
-      <section id="view-seasonality" class="view">
-        <div id="seasonality-container"></div>
-      </section>
-
-      <section id="view-comparison" class="view">
-        <div id="comparison-container"></div>
-      </section>
-
-      <section id="view-rebalance" class="view">
-        <div id="rebalance-container"></div>
-      </section>
-
-      <section id="view-settings" class="view">
-        <div class="card">
-          <div class="card-header"><h2>Settings</h2></div>
-          <div id="settings-container">
-            <div class="setting-group">
-              <label for="theme-select">Theme</label>
-              <select id="theme-select">
-                <option value="dark" selected>Dark</option>
-                <option value="light">Light</option>
-              </select>
-            </div>
-            <div class="setting-group">
-              <label for="palette-select">Color palette</label>
-              <select id="palette-select">
-                <option value="default" selected>Default</option>
-                <option value="deuteranopia">Deuteranopia (red-green safe)</option>
-                <option value="protanopia">Protanopia (red-blind safe)</option>
-                <option value="tritanopia">Tritanopia (blue-yellow safe)</option>
-                <option value="high-contrast">High contrast</option>
-              </select>
-            </div>
-            <div class="setting-group">
-              <label>Watchlist</label>
-              <button id="btn-export" type="button">Export JSON</button>
-              <button id="btn-import" type="button">Import JSON</button>
-              <button id="btn-clear" type="button" class="btn-danger">Clear All</button>
-            </div>
-            <div class="setting-group">
-              <label>Full data export (C7)</label>
-              <button id="btn-export-full-json" type="button">Export all (JSON)</button>
-              <button id="btn-export-full-csv" type="button">Export all (CSV)</button>
-            </div>
-            <div class="setting-group">
-              <label>Cache</label>
-              <button id="btn-clear-cache" type="button">Clear Cache</button>
-            </div>
-            <div class="setting-group hidden" id="pwa-install-group">
-              <label>Install App</label>
-              <button id="btn-install-pwa" type="button" class="btn-accent">
-                Install CrossTide
-              </button>
-              <button id="btn-dismiss-pwa" type="button" class="btn-ghost btn-sm">Not now</button>
+        <section id="view-consensus" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Consensus Dashboard</h2></div>
+            <div id="consensus-container">
+              <p class="empty-state">
+                Select a ticker from the watchlist to view its consensus breakdown.
+              </p>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+
+        <section id="view-chart" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Chart</h2></div>
+            <div id="chart-container">
+              <p class="empty-state">Loading chart…</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-alerts" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Alerts</h2></div>
+            <div id="alerts-container">
+              <p class="empty-state">Loading alerts…</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-heatmap" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Sector Heatmap</h2></div>
+            <div id="heatmap-container"></div>
+          </div>
+        </section>
+
+        <section id="view-screener" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Screener</h2></div>
+            <div id="screener-container"></div>
+          </div>
+        </section>
+
+        <section id="view-provider-health" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Provider Health</h2></div>
+            <div id="provider-health-container"></div>
+          </div>
+        </section>
+
+        <section id="view-portfolio" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Portfolio</h2></div>
+            <div id="portfolio-container"></div>
+          </div>
+        </section>
+
+        <section id="view-risk" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Risk Metrics</h2></div>
+            <div id="risk-container"></div>
+          </div>
+        </section>
+
+        <section id="view-backtest" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Backtest</h2></div>
+            <div id="backtest-container"></div>
+          </div>
+        </section>
+
+        <section id="view-consensus-timeline" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Consensus Timeline</h2></div>
+            <div id="consensus-timeline-container"></div>
+          </div>
+        </section>
+
+        <section id="view-signal-dsl" class="view">
+          <div id="signal-dsl-container"></div>
+        </section>
+
+        <section id="view-multi-chart" class="view">
+          <div id="multi-chart-container"></div>
+        </section>
+
+        <section id="view-correlation" class="view">
+          <div id="correlation-container"></div>
+        </section>
+
+        <section id="view-market-breadth" class="view">
+          <div id="market-breadth-container"></div>
+        </section>
+
+        <section id="view-earnings-calendar" class="view">
+          <div id="earnings-calendar-container"></div>
+        </section>
+
+        <section id="view-macro-dashboard" class="view">
+          <div id="macro-dashboard-container"></div>
+        </section>
+
+        <section id="view-sector-rotation" class="view">
+          <div id="sector-rotation-container"></div>
+        </section>
+
+        <section id="view-relative-strength" class="view">
+          <div id="relative-strength-container"></div>
+        </section>
+
+        <section id="view-seasonality" class="view">
+          <div id="seasonality-container"></div>
+        </section>
+
+        <section id="view-comparison" class="view">
+          <div id="comparison-container"></div>
+        </section>
+
+        <section id="view-rebalance" class="view">
+          <div id="rebalance-container"></div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <div class="card">
+            <div class="card-header"><h2>Settings</h2></div>
+            <div id="settings-container">
+              <div class="setting-group">
+                <label for="theme-select">Theme</label>
+                <select id="theme-select">
+                  <option value="dark" selected>Dark</option>
+                  <option value="light">Light</option>
+                </select>
+              </div>
+              <div class="setting-group">
+                <label for="palette-select">Color palette</label>
+                <select id="palette-select">
+                  <option value="default" selected>Default</option>
+                  <option value="deuteranopia">Deuteranopia (red-green safe)</option>
+                  <option value="protanopia">Protanopia (red-blind safe)</option>
+                  <option value="tritanopia">Tritanopia (blue-yellow safe)</option>
+                  <option value="high-contrast">High contrast</option>
+                </select>
+              </div>
+              <div class="setting-group">
+                <label>Watchlist</label>
+                <button id="btn-export" type="button">Export JSON</button>
+                <button id="btn-import" type="button">Import JSON</button>
+                <button id="btn-clear" type="button" class="btn-danger">Clear All</button>
+              </div>
+              <div class="setting-group">
+                <label>Full data export (C7)</label>
+                <button id="btn-export-full-json" type="button">Export all (JSON)</button>
+                <button id="btn-export-full-csv" type="button">Export all (CSV)</button>
+              </div>
+              <div class="setting-group">
+                <label>Cache</label>
+                <button id="btn-clear-cache" type="button">Clear Cache</button>
+              </div>
+              <div class="setting-group hidden" id="pwa-install-group">
+                <label>Install App</label>
+                <button id="btn-install-pwa" type="button" class="btn-accent">
+                  Install CrossTide
+                </button>
+                <button id="btn-dismiss-pwa" type="button" class="btn-ghost btn-sm">Not now</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <!-- /#app-body -->
+    <div id="sidebar-backdrop" aria-hidden="true"></div>
 
     <footer id="app-footer">
       <span id="app-version"></span>

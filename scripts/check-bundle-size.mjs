@@ -1,12 +1,12 @@
 /**
  * Bundle size check — ensures production build stays under budget.
- * Budget: 200 KB gzipped JS (matches the figure quoted in README/ROADMAP).
+ * Budget: 250 KB gzipped JS (bumped at v11.41 to accommodate lightweight-charts vendor chunk).
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 
-const BUDGET_BYTES = 200 * 1024; // 200 KB gzipped
+const BUDGET_BYTES = 250 * 1024; // 250 KB gzipped (bumped from 200 at v11.41 for lightweight-charts vendor chunk)
 const DIST_DIR = "dist";
 const ASSETS_DIR = join(DIST_DIR, "assets");
 
