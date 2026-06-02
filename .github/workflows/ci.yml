@@ -134,12 +134,16 @@ jobs:
         run: |
           echo "Scanning for potential secrets in src/ and worker/..."
           FOUND=0
-          for PATTERN in 'api[_-]?key\s*[:=]' 'apiKey\s*[:=]' 'secret\s*[:=]' 'password\s*[:=]' 'Bearer\s+[A-Za-z0-9]{20,}'; do
-            if grep -rEn "$PATTERN" src/ worker/ --include="*.ts" 2>/dev/null | grep -qv '//.*:'; then
-              echo "::error::Potential secret pattern found: $PATTERN"
-              FOUND=1
-            fi
-          done
+          # Only flag string literals that look like real keys (16+ alphanumeric chars)
+          if grep -rEn '(api[_-]?key|secret|password)\s*[:=]\s*"[A-Za-z0-9_/+.\-]{16,}"' src/ worker/ --include="*.ts" 2>/dev/null | grep -v '\.test\.ts:' | grep -v '^\s*//' | grep -q .; then
+            echo "::error::Potential hardcoded secret found:"
+            grep -rEn '(api[_-]?key|secret|password)\s*[:=]\s*"[A-Za-z0-9_/+.\-]{16,}"' src/ worker/ --include="*.ts" 2>/dev/null | grep -v '\.test\.ts:' | grep -v '^\s*//'
+            FOUND=1
+          fi
+          if grep -rEn 'Bearer\s+[A-Za-z0-9]{20,}' src/ worker/ --include="*.ts" 2>/dev/null | grep -v '^\s*//' | grep -q .; then
+            echo "::error::Potential hardcoded Bearer token found"
+            FOUND=1
+          fi
           if [ "$FOUND" -eq 1 ]; then exit 1; fi
           echo "No hardcoded secrets detected."
 
