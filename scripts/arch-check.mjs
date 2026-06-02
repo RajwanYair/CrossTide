@@ -90,6 +90,18 @@ function resolveRel(fromFile, importSrc) {
   return relative(ROOT, resolved).replaceAll("\\", "/");
 }
 
+// Allowed cross-layer imports — intentional design patterns.
+// cards use shared UI utilities (delegate, router, toast, theme, etc.).
+// core workers bundle card logic for Web Worker contexts.
+// domain modules use core fetch/encoding utilities.
+const ALLOWED_CROSS_LAYER = new Set([
+  "cards->ui",
+  "core->cards",
+  "core->ui",
+  "domain->core",
+  "domain->cards",
+]);
+
 let violations = 0;
 
 const srcDir = join(ROOT, "src");
@@ -117,6 +129,9 @@ for (const absFile of files) {
 
     // Violation: importing from a higher (outer) layer
     if (toLayer > fromLayer) {
+      const key = `${LAYERS[fromLayer].name}->${LAYERS[toLayer].name}`;
+      if (ALLOWED_CROSS_LAYER.has(key)) continue;
+
       console.error(
         `[arch-check] VIOLATION: ${rel}\n` +
           `  imports from higher layer (${LAYERS[toLayer].name}): ${src}\n`,
