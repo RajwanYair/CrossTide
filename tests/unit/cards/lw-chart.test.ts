@@ -7,6 +7,7 @@ import type { DailyCandle } from "../../../src/types/domain";
 vi.mock("lightweight-charts", () => {
   const series = {
     setData: vi.fn(),
+    createPriceLine: vi.fn(),
   };
   const chart = {
     addPane: vi.fn(),

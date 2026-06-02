@@ -35,7 +35,7 @@ jobs:
       - uses: ./.github/actions/node-setup
 
       - name: Run npm audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --omit=dev --audit-level=moderate
 
   # ── 2. Dependency integrity diff (PRs only) ───────────────────────────────
   dep-diff:

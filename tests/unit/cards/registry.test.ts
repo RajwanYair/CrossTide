@@ -63,9 +63,9 @@ vi.mock("../../../src/cards/multi-chart-layout", () => ({
 const CTX: CardContext = { route: "watchlist", params: {} };
 
 describe("listCards", () => {
-  it("returns 23 entries covering all routes", () => {
+  it("returns 24 entries covering all routes", () => {
     const cards = listCards();
-    expect(cards).toHaveLength(23);
+    expect(cards).toHaveLength(24);
     const routes = cards.map((c) => c.route);
     expect(routes).toContain("watchlist");
     expect(routes).toContain("consensus");
