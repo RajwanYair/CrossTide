@@ -11,6 +11,7 @@ npm run build && npm run check:bundle
 ```
 
 If over budget (250 KB gzip), analyze chunks:
+
 ```bash
 npx vite build --mode analyze
 ```
@@ -18,6 +19,7 @@ npx vite build --mode analyze
 ## Core Web Vitals
 
 Target budgets:
+
 - LCP < 1.8s (4G mid-Android)
 - INP < 200ms (p75)
 - CLS < 0.05

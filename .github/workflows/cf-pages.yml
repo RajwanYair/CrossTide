@@ -15,6 +15,9 @@ jobs:
     name: Build & Deploy (CF Pages)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    env:
+      HAS_CF_SECRETS: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,6 +35,7 @@ jobs:
           VITE_BASE: /
 
       - name: Deploy to Cloudflare Pages
+        if: env.HAS_CF_SECRETS == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

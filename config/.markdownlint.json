@@ -1,10 +1,23 @@
 {
   "default": true,
   "MD013": false,
-  "MD024": { "siblings_only": true },
+  "MD024": {
+    "siblings_only": true
+  },
   "MD033": {
-    "allowed_elements": ["details", "summary", "br", "kbd", "img", "picture", "source"]
+    "allowed_elements": [
+      "details",
+      "summary",
+      "br",
+      "kbd",
+      "img",
+      "picture",
+      "source"
+    ]
   },
   "MD041": true,
-  "MD046": { "style": "fenced" }
+  "MD046": {
+    "style": "fenced"
+  },
+  "MD060": false
 }

@@ -50,6 +50,7 @@ jobs:
           echo "css_kb=$(echo "scale=1; $CSS_GZ / 1024" | bc)" >> "$GITHUB_OUTPUT"
 
       - name: Build base branch for comparison
+        if: github.event_name == 'pull_request'
         run: |
           git checkout ${{ github.event.pull_request.base.sha }}
           npm ci
@@ -99,6 +100,7 @@ jobs:
         continue-on-error: true
 
       - name: Compare and comment
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
@@ -180,3 +182,14 @@ jobs:
             if (prJs / 1024 > BUDGET_KB) {
               core.setFailed(`JS bundle ${prJsKb} KB exceeds ${BUDGET_KB} KB budget`);
             }
+
+      - name: Budget check (push)
+        if: github.event_name == 'push'
+        run: |
+          JS_KB=$(echo "scale=1; ${{ steps.pr_size.outputs.js_gz }} / 1024" | bc)
+          BUDGET=200
+          echo "JS bundle: ${JS_KB} KB (budget: ${BUDGET} KB)"
+          if (( $(echo "$JS_KB > $BUDGET" | bc -l) )); then
+            echo "::error::JS bundle ${JS_KB} KB exceeds ${BUDGET} KB budget"
+            exit 1
+          fi

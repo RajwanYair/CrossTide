@@ -40,6 +40,7 @@ curl https://crosstide-api.workers.dev/api/health
 Push to `main` branch triggers CF Pages deployment automatically.
 
 Manual trigger:
+
 ```bash
 npx wrangler pages deploy dist --project-name crosstide
 ```
@@ -60,6 +61,7 @@ curl -sI https://crosstide.pages.dev | head -5
 ### 5. Rollback
 
 CF Pages has instant rollback via the dashboard or:
+
 ```bash
 npx wrangler pages deployment rollback --project-name crosstide
 ```

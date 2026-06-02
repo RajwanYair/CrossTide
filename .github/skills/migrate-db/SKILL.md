@@ -55,6 +55,7 @@ npx wrangler d1 migrations list crosstide-db --remote
 ```
 
 Or via the API:
+
 ```bash
 curl https://crosstide-api.workers.dev/api/migrations/status
 ```
