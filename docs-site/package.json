@@ -10,7 +10,7 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.33.0",
+    "@astrojs/starlight": "^0.40.0",
     "astro": "^5.7.13"
   },
   "devDependencies": {
