@@ -42,7 +42,7 @@ jobs:
           echo "Server ready."
 
       - name: ZAP baseline scan
-        uses: zaproxy/action-baseline@v0.13.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
           target: "http://127.0.0.1:4173/"
           # .zap/rules.tsv: create this file to suppress known false positives
