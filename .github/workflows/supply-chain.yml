@@ -43,7 +43,7 @@ jobs:
 
       - name: Create issue on scheduled audit failure
         if: failure() && github.event_name == 'schedule'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const title = `🔒 Dependency audit failure — ${new Date().toISOString().slice(0, 10)}`;
