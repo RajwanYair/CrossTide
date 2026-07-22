@@ -85,6 +85,11 @@ import { createTracer } from "./telemetry.js";
 import { getTickerStub } from "./ticker-fanout.js";
 import type { DurableObjectNamespace } from "./ticker-fanout.js";
 
+// wrangler.toml's [durable_objects] binding requires the Durable Object
+// class to be exported from the entrypoint module (this file) — a
+// re-export-only import doesn't satisfy that, so it must be re-exported here.
+export { TickerFanout } from "./ticker-fanout.js";
+
 export interface KVNamespace {
   get(key: string, type: "text"): Promise<string | null>;
   get(key: string, type: "json"): Promise<unknown>;
