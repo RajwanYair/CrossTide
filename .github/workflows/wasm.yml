@@ -32,10 +32,22 @@ jobs:
 
       - run: npm ci
 
+      - name: Check AssemblyScript sources exist
+        id: check
+        run: |
+          if [ -d assembly ] && [ -n "$(find assembly -name '*.ts' -print -quit)" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No AssemblyScript sources found under assembly/ yet — skipping WASM build."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install AssemblyScript
+        if: steps.check.outputs.found == 'true'
         run: npm install --save-dev assemblyscript@latest
 
       - name: Compile WASM modules
+        if: steps.check.outputs.found == 'true'
         run: |
           npx asc assembly/correlation-matrix.ts \
             --outFile dist/wasm/correlation-matrix.wasm \
@@ -57,6 +69,7 @@ jobs:
             --sourceMap
 
       - name: Enforce size budget (< 200 KB total)
+        if: steps.check.outputs.found == 'true'
         run: node scripts/check-wasm-size.mjs
 
       - name: Comment PR with WASM sizes

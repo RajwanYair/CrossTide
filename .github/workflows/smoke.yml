@@ -33,14 +33,18 @@ jobs:
     name: Production Smoke Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    # Skip scheduled runs until a real production deployment is configured
-    # (no CLOUDFLARE_API_TOKEN secret means crosstide.pages.dev was never
-    # deployed, so scheduled checks would just fail on DNS resolution).
-    # Manual dispatch always runs so a custom base_url can still be tested.
-    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' || github.event_name == 'workflow_dispatch' }}
+    env:
+      # Skip checks on scheduled runs until a real production deployment is
+      # configured (no CLOUDFLARE_API_TOKEN secret means crosstide.pages.dev
+      # was never deployed, so scheduled checks would just fail on DNS
+      # resolution). Manual dispatch always runs so a custom base_url can
+      # still be tested. `secrets` isn't a valid context for `jobs.*.if`, so
+      # the check is gated per-step via this env var instead.
+      HAS_PROD_DEPLOY: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
 
     steps:
       - name: Health endpoint
+        if: ${{ env.HAS_PROD_DEPLOY == 'true' || github.event_name == 'workflow_dispatch' }}
         run: |
           echo "Testing: $BASE_URL/api/health"
           response=$(curl -sf -w "\n%{http_code}\n%{time_total}" "$BASE_URL/api/health")
@@ -55,6 +59,7 @@ jobs:
           fi
 
       - name: Quote endpoint (AAPL)
+        if: ${{ env.HAS_PROD_DEPLOY == 'true' || github.event_name == 'workflow_dispatch' }}
         run: |
           echo "Testing: $BASE_URL/api/quote/AAPL"
           response=$(curl -sf -w "\n%{http_code}\n%{time_total}" "$BASE_URL/api/quote/AAPL")
@@ -74,6 +79,7 @@ jobs:
           fi
 
       - name: Chart endpoint (AAPL, 1mo)
+        if: ${{ env.HAS_PROD_DEPLOY == 'true' || github.event_name == 'workflow_dispatch' }}
         run: |
           echo "Testing: $BASE_URL/api/chart?ticker=AAPL&range=1mo&interval=1d"
           response=$(curl -sf -w "\n%{http_code}\n%{time_total}" \
@@ -94,6 +100,7 @@ jobs:
           fi
 
       - name: Search endpoint (Apple)
+        if: ${{ env.HAS_PROD_DEPLOY == 'true' || github.event_name == 'workflow_dispatch' }}
         run: |
           echo "Testing: $BASE_URL/api/search?q=Apple&limit=5"
           response=$(curl -sf -w "\n%{http_code}\n%{time_total}" \
@@ -107,6 +114,7 @@ jobs:
           fi
 
       - name: FRED endpoint (VIX)
+        if: ${{ env.HAS_PROD_DEPLOY == 'true' || github.event_name == 'workflow_dispatch' }}
         run: |
           echo "Testing: $BASE_URL/api/fred?series=VIX"
           response=$(curl -sf -w "\n%{http_code}\n%{time_total}" \
