@@ -1,5 +1,7 @@
 # CrossTide Web
 
+![CrossTide — Catch the cross. Ride the tide.](docs/assets/banner.svg)
+
 > **Catch the cross. Ride the tide.**
 
 Browser-based stock monitoring dashboard with 12-method consensus signals,
@@ -198,31 +200,40 @@ worker/     Cloudflare Worker API proxy + security headers
 
 ### High-Level Architecture
 
-```text
-┌────────────────────────────────────────────────────────────────┐
-│  Browser (PWA)         Native (Capacitor)                      │
-│  ┌──────────┐          ┌──────────────┐                       │
-│  │ Vite SPA │          │ iOS/Android  │                       │
-│  └────┬─────┘          └──────┬───────┘                       │
-│       │  REST / WebSocket     │                                │
-└───────┼───────────────────────┼────────────────────────────────┘
-        ▼                       ▼
-┌────────────────────────────────────────────────────────────────┐
-│  Cloudflare Edge                                               │
-│  ┌──────────┐  ┌───────────────┐  ┌──────────────────────┐    │
-│  │  Worker  │  │ Durable Object│  │  Cron Trigger (R7)   │    │
-│  │  (Hono)  │  │ WebSocket(R3) │  │  Alert Evaluation    │    │
-│  └────┬─────┘  └───────────────┘  └──────────────────────┘    │
-│       │                                                        │
-│  ┌────┴────┐  ┌──────┐  ┌────────────────┐                    │
-│  │ KV Cache│  │  D1  │  │ Rate Limiter   │                    │
-│  └─────────┘  └──────┘  └────────────────┘                    │
-└────────────────────────────────────────────────────────────────┘
-        │
-        ▼  Upstream Data Providers
-┌─────────────────────────────────────────┐
-│ Yahoo · Finnhub · CoinGecko · Polygon   │
-└─────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  subgraph Client["Browser (PWA) / Native (Capacitor)"]
+    SPA["Vite SPA"]
+    Native["iOS / Android"]
+  end
+
+  subgraph Edge["Cloudflare Edge"]
+    Worker["Worker (Hono)"]
+    DO["Durable Object — WebSocket fan-out (R3)"]
+    Cron["Cron Trigger (R7) — Alert Evaluation"]
+    KV["KV Cache"]
+    D1["D1 Database"]
+    RL["Rate Limiter"]
+  end
+
+  subgraph Upstream["Upstream Data Providers"]
+    Yahoo["Yahoo Finance"]
+    Finnhub["Finnhub"]
+    CoinGecko["CoinGecko"]
+    Polygon["Polygon"]
+  end
+
+  SPA -- "REST / WebSocket" --> Worker
+  Native -- "REST / WebSocket" --> Worker
+  Worker --> DO
+  Worker --> Cron
+  Worker --> KV
+  Worker --> D1
+  Worker --> RL
+  Worker --> Yahoo
+  Worker --> Finnhub
+  Worker --> CoinGecko
+  Worker --> Polygon
 ```
 
 See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full layered diagram and CI/CD reference.

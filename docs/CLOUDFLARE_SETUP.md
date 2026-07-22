@@ -3,6 +3,19 @@
 This document walks through creating all Cloudflare resources required by CrossTide and
 wiring their IDs into `worker/wrangler.toml`.
 
+## Provisioning workflow
+
+```mermaid
+flowchart TD
+  P0([wrangler login]) --> S1["Step 1 — KV Namespace\n(QUOTE_CACHE)"]
+  S1 --> S2["Step 2 — D1 Database\n(DB) + migrations"]
+  S2 --> S3["Step 3 — Rate Limiter\n(auto-provisioned)"]
+  S3 --> S4["Step 4 — Durable Object\n(TICKER_FANOUT, auto-provisioned)"]
+  S4 --> S5["Step 5 — Local dev\n(wrangler dev)"]
+  S5 --> S6["Step 6 — Deploy\n(worker + Pages)"]
+  S6 --> Verify([curl /api/health])
+```
+
 ## Prerequisites
 
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is sufficient)

@@ -3,6 +3,20 @@
 This directory contains Architecture Decision Records (ADRs) for CrossTide.
 Each ADR documents a significant technical decision, its context, and consequences.
 
+## Lifecycle
+
+```mermaid
+stateDiagram-v2
+  [*] --> Proposed
+  Proposed --> Accepted
+  Proposed --> Rejected
+  Accepted --> Superseded
+  Accepted --> Deprecated
+  Rejected --> [*]
+  Superseded --> [*]
+  Deprecated --> [*]
+```
+
 ## Index
 
 | #    | Title                                      | Status   | Date       |

@@ -201,6 +201,23 @@ Git hooks are configured via `simple-git-hooks`:
 | `lighthouse.yml` | push + PR | `lhci autorun` performance/a11y budgets                     |
 | `dependabot.yml` | weekly    | npm + github-actions grouped update PRs                     |
 
+```mermaid
+flowchart LR
+  subgraph Triggers
+    Push["push / PR"]
+    Tag["tag v*"]
+    Main["push main"]
+    Weekly["weekly"]
+  end
+
+  Push --> CI["ci.yml\ntypecheck → lint:all → test:coverage → build → bundle"]
+  Push --> CF["cf-pages.yml\nCloudflare Pages deploy"]
+  Push --> LH["lighthouse.yml\nperf / a11y budgets"]
+  Main --> Pages["pages.yml\nGitHub Pages mirror"]
+  Tag --> Release["release.yml\ngates → zip+SHA256 → GH Release"]
+  Weekly --> Dependabot["dependabot.yml\ngrouped update PRs"]
+```
+
 ## Quality gates
 
 Local and CI both enforce, with **zero waivers**:

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-labelledby="ctTitle ctDesc">
+  <title id="ctTitle">CrossTide</title>
+  <desc id="ctDesc">CrossTide — Catch the cross. Ride the tide. A privacy-first, offline-capable financial analysis dashboard.</desc>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050b16" />
+      <stop offset="55%" stop-color="#07202f" />
+      <stop offset="100%" stop-color="#082a3a" />
+    </linearGradient>
+    <linearGradient id="waveGradA" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0891b2" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#14b8a6" stop-opacity="0.35" />
+    </linearGradient>
+    <linearGradient id="waveGradB" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#14b8a6" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0.22" />
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e6fbff" />
+      <stop offset="100%" stop-color="#7dd3e8" />
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect x="0" y="0" width="1200" height="300" rx="12" fill="url(#bgGrad)" />
+
+  <!-- tide layers -->
+  <path d="M0,235 C150,195 300,275 450,225 C600,175 750,255 900,205 C1050,155 1150,215 1200,195 L1200,300 L0,300 Z" fill="url(#waveGradA)" />
+  <path d="M0,262 C200,222 400,292 600,252 C800,212 1000,282 1200,242 L1200,300 L0,300 Z" fill="url(#waveGradB)" />
+
+  <!-- golden-cross motif (fast MA crossing slow MA) -->
+  <g opacity="0.9">
+    <path d="M690,168 C740,148 790,128 840,132 C880,135 930,100 980,78" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" />
+    <path d="M690,100 C740,120 790,132 840,132 C880,132 930,150 980,166" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" />
+    <circle cx="840" cy="132" r="6" fill="#f59e0b" />
+    <circle cx="840" cy="132" r="11" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.5" />
+  </g>
+
+  <!-- candlestick cluster -->
+  <g stroke-linecap="round">
+    <line x1="1015" y1="205" x2="1015" y2="255" stroke="#3fae7a" stroke-width="2" />
+    <rect x="1008" y="220" width="14" height="22" fill="#3fae7a" rx="2" />
+
+    <line x1="1045" y1="185" x2="1045" y2="245" stroke="#e2665a" stroke-width="2" />
+    <rect x="1038" y="195" width="14" height="28" fill="#e2665a" rx="2" />
+
+    <line x1="1075" y1="170" x2="1075" y2="230" stroke="#3fae7a" stroke-width="2" />
+    <rect x="1068" y="178" width="14" height="30" fill="#3fae7a" rx="2" />
+
+    <line x1="1105" y1="150" x2="1105" y2="215" stroke="#3fae7a" stroke-width="2" />
+    <rect x="1098" y="158" width="14" height="34" fill="#3fae7a" rx="2" />
+
+    <line x1="1135" y1="130" x2="1135" y2="195" stroke="#e2665a" stroke-width="2" />
+    <rect x="1128" y="140" width="14" height="26" fill="#e2665a" rx="2" />
+  </g>
+
+  <!-- wordmark -->
+  <text x="70" y="150" font-family="'Segoe UI', 'Inter', Arial, sans-serif" font-size="72" font-weight="700" fill="url(#textGrad)" letter-spacing="1">CrossTide</text>
+  <text x="72" y="192" font-family="'Segoe UI', 'Inter', Arial, sans-serif" font-size="24" font-weight="400" fill="#9fd8e6" letter-spacing="0.5">Catch the cross. Ride the tide.</text>
+  <text x="72" y="228" font-family="'Segoe UI', 'Inter', Arial, sans-serif" font-size="16" font-weight="400" fill="#5f93a3">Privacy-first · Offline-first PWA · 12-method consensus signals</text>
+</svg>

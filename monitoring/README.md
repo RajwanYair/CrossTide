@@ -2,6 +2,17 @@
 
 Uptime Kuma instance deployed on Fly.io for monitoring CrossTide API health.
 
+## Pipeline
+
+```mermaid
+flowchart LR
+  Kuma["Uptime Kuma\n(Fly.io)"] -->|poll| H["/api/health\n60s"]
+  Kuma -->|poll| Q["/api/quote?ticker=AAPL\n120s"]
+  Kuma -->|poll| S["/ (SPA)\n300s"]
+  Kuma --> Status["Public status page\ncrosstide-status.fly.dev"]
+  Status --> Badge["README badge\n/api/badge/1/status"]
+```
+
 ## Monitored Endpoints
 
 | Endpoint                     | Interval | Expected                       |

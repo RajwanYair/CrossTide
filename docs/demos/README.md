@@ -2,6 +2,19 @@
 
 Animated GIF demos for the README, recorded via Playwright against the live dev server.
 
+## Pipeline
+
+```mermaid
+flowchart LR
+  Dev["npm run dev\n:5173"] --> PW["Playwright\n(record-demos.ts)"]
+  PW --> MP4[".mp4\n1280×720 lossless"]
+  MP4 --> FF{ffmpeg\non PATH?}
+  FF -->|yes| GIF[".gif\n800px, 10fps, palettegen"]
+  FF -->|no| Manual["ezgif.com\nmanual convert"]
+  GIF --> Readme["README.md demos"]
+  Manual --> Readme
+```
+
 ## Recording
 
 ```bash

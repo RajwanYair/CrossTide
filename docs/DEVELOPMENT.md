@@ -65,32 +65,40 @@ tests/        ← Unit, browser, and E2E tests
 
 Imports flow **downward only** (enforced by ESLint):
 
-```text
-types ← domain ← core ← providers ← cards ← ui
+```mermaid
+flowchart LR
+  types[types] --> domain[domain]
+  domain --> core[core]
+  core --> providers[providers]
+  providers --> cards[cards]
+  cards --> ui[ui]
 ```
 
 Never import upward. Domain must never import from core, cards, or ui.
 
 ## Adding Features
 
-### New Technical Indicator
+```mermaid
+flowchart TD
+  Start([New feature]) --> Choice{What kind?}
 
-1. Create `src/domain/indicators/<name>.ts` — pure function accepting `DailyCandle[]`
-2. Add tests in `tests/unit/domain/` using `makeCandles()` helper
-3. Export from `src/domain/indicators/index.ts`
+  Choice -->|Indicator| I1["src/domain/indicators/&lt;name&gt;.ts\n(pure fn, DailyCandle[] in)"]
+  I1 --> I2["tests/unit/domain/ + makeCandles()"]
+  I2 --> I3["Export from indicators/index.ts"]
 
-### New Card
+  Choice -->|Card| C1["src/cards/&lt;name&gt;-card.ts\n(CardModule export)"]
+  C1 --> C2["Register in cards/registry.ts"]
+  C2 --> C3["Add route in ui/router.ts"]
+  C3 --> C4["Add #view-&lt;name&gt; section in index.html"]
 
-1. Create `src/cards/<name>-card.ts` with `CardModule` export
-2. Register in `src/cards/registry.ts`
-3. Add route in `src/ui/router.ts`
-4. Add `<section id="view-<name>" class="view">` in `index.html`
+  Choice -->|Worker route| W1["worker/routes/&lt;name&gt;.ts\n(Hono pattern)"]
+  W1 --> W2["Wire in worker/index.ts"]
+  W2 --> W3["tests/unit/worker/ (mock fetch)"]
 
-### New Worker Route
-
-1. Create `worker/routes/<name>.ts` following the Hono pattern
-2. Wire in `worker/index.ts`
-3. Add tests in `tests/unit/worker/` (mock `globalThis.fetch`)
+  I3 --> Gate([npm run ci])
+  C4 --> Gate
+  W3 --> Gate
+```
 
 ## Worker Development
 
@@ -116,6 +124,15 @@ All must pass before merge:
 - Tests: all pass, 90%+ coverage
 - Build: successful
 - Bundle: under 250 KB gzip
+
+```mermaid
+flowchart LR
+  A[typecheck] --> B[lint:all]
+  B --> C[test:coverage]
+  C --> D[build]
+  D --> E[check:bundle]
+  E --> F(["✅ npm run ci green"])
+```
 
 Run `npm run ci` to verify all gates locally.
 
