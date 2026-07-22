@@ -27,12 +27,16 @@ jobs:
 
           echo "Checking branch protection for ${OWNER}/${REPO}:main …"
 
-          PROTECTION=$(gh api \
+          # gh api writes the error response body to stdout even on a
+          # non-2xx status (e.g. 404 "Branch not protected"), so relying on
+          # `cmd || echo NOT_SET` inside the same command substitution lets
+          # that JSON body leak through alongside the fallback text,
+          # producing invalid multi-line JSON. Check the exit status
+          # explicitly instead.
+          if ! PROTECTION=$(gh api \
             -H "Accept: application/vnd.github+json" \
             repos/${OWNER}/${REPO}/branches/main/protection \
-            2>/dev/null || echo "NOT_SET")
-
-          if [ "$PROTECTION" = "NOT_SET" ]; then
+            2>/dev/null); then
             echo "::warning::Branch protection is NOT configured on main. See CONTRIBUTING.md for setup instructions."
             exit 0
           fi

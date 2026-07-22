@@ -15,7 +15,7 @@ jobs:
     name: Close stale issues & PRs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@1e223db275d687790206a7acac4d1a11bd6fe629 # v10.4.0
         with:
           stale-issue-message: >
             This issue has been automatically marked as stale because it has not had

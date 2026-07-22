@@ -7,8 +7,8 @@ description: "Use when: editing CI/CD workflows, GitHub Actions, or any YAML con
 
 ## Workflow Standards
 
-- Use **`actions/checkout@v4`** and **`actions/setup-node@v4`** — current stable major versions. Do NOT use `@v5`/`@v6` (they don't exist for these actions).
-- Node.js version in CI: **24** — set via `node-version: '24'` in `actions/setup-node@v4`.
+- Use **`actions/checkout@v7`** and **`actions/setup-node@v7`** — current stable major versions. Check `gh api repos/actions/<name>/tags` before assuming a pin is current; these actions bump majors more often than this doc gets updated.
+- Node.js version in CI: **24** — set via `node-version: '24'` in `actions/setup-node@v7`.
 - Set `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true` in `env:` block when any step uses older GitHub Actions that bundle Node 16/20.
 - Set `permissions: contents: read` as default (least privilege); elevate per-job only when needed.
 - All npm installs in CI use `npm ci` (deterministic lock-file). Never `npm install` in workflows.

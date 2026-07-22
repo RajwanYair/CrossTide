@@ -18,14 +18,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout (full history for diff-based scan)
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: TruffleHog OSS — only verified findings
         # Only alerts on secrets that are cryptographically verified active.
         # Complements gitleaks (regex-based) with entropy+verification.
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@27b0417c16317ca9a472a9a8092acce143b49c55 # v3.95.9
         continue-on-error: true
         with:
           path: ./

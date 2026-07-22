@@ -33,6 +33,11 @@ jobs:
     name: Production Smoke Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Skip scheduled runs until a real production deployment is configured
+    # (no CLOUDFLARE_API_TOKEN secret means crosstide.pages.dev was never
+    # deployed, so scheduled checks would just fail on DNS resolution).
+    # Manual dispatch always runs so a custom base_url can still be tested.
+    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Health endpoint

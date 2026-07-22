@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/node-setup
         with:
           install-args: "--ignore-scripts"
@@ -42,7 +42,14 @@ jobs:
           echo "Server ready."
 
       - name: ZAP baseline scan
-        uses: zaproxy/action-baseline@v0.13.0
+        # continue-on-error: the action's internal report-artifact upload uses
+        # a legacy Artifacts API that GitHub has sunset, so it always throws
+        # "Create Artifact Container failed" even when the scan itself and
+        # the issue-writing step succeed. This job is informational only
+        # (fail_action: false), so don't let that unrelated upload failure
+        # mark the whole run red.
+        continue-on-error: true
+        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
         with:
           target: "http://127.0.0.1:4173/"
           # .zap/rules.tsv: create this file to suppress known false positives
