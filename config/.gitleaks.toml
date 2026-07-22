@@ -20,4 +20,11 @@ useDefault = true
     '''package-lock\.json$''',
     '''\.snap$''',
   ]
-  description = "Non-sensitive generated files"
+  # `FinnhubStreamOptions` is a TypeScript type name (imported/exported in
+  # src/core/finnhub-stream-manager.ts and src/core/index.ts), not a secret.
+  # The default "finnhub-access-token" rule's loose regex false-positives on
+  # it (low entropy ~3.9, confirmed not a credential).
+  regexes = [
+    '''FinnhubStreamOptions''',
+  ]
+  description = "Non-sensitive generated files and known false positives"

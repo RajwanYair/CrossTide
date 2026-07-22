@@ -1,0 +1,6 @@
+# gitleaks false-positive fingerprints — see config/.gitleaks.toml for the
+# general regex allowlist. Kept here too since gitleaks-action's config-path
+# wiring bug (fixed in .github/workflows/ci.yml) meant these were previously
+# scanned against the *default* ruleset with no allowlist applied at all.
+e482adc295d70ebe31380b753c69d1458de999ce:src/core/finnhub-stream-manager.ts:finnhub-access-token:16
+8760cb5c983a408f80121ffdb3b21779696810e0:src/core/index.ts:finnhub-access-token:192
