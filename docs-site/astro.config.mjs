@@ -1,10 +1,16 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 
 export default defineConfig({
   site: "https://rajwanyair.github.io",
   base: "/CrossTide/docs",
   output: "static",
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+  },
   integrations: [
     starlight({
       title: "CrossTide",
@@ -46,10 +52,10 @@ export default defineConfig({
         },
         {
           label: "Indicators",
-          autogenerate: { directory: "indicators" },
+          items: [{ autogenerate: { directory: "indicators" } }],
         },
       ],
-      customCss: ["./src/styles/custom.css"],
+      customCss: ["katex/dist/katex.min.css", "./src/styles/custom.css"],
     }),
   ],
 });

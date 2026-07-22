@@ -2,6 +2,23 @@
 
 [Model Context Protocol](https://modelcontextprotocol.io) server that exposes CrossTide's financial analysis API to AI agents (Claude, GPT, etc.).
 
+## How it works
+
+```mermaid
+sequenceDiagram
+  participant Agent as AI Agent (Claude/GPT)
+  participant MCP as CrossTide MCP Server
+  participant Worker as CrossTide Worker API
+  participant Provider as Data Providers
+
+  Agent->>MCP: call tool (e.g. get_consensus)
+  MCP->>Worker: HTTP request (CROSSTIDE_API_URL)
+  Worker->>Provider: fetch quote/candles (cache → network)
+  Provider-->>Worker: validated response
+  Worker-->>MCP: JSON result
+  MCP-->>Agent: tool result
+```
+
 ## Tools
 
 | Tool | Description |
