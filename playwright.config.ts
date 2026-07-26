@@ -13,12 +13,18 @@ export default defineConfig({
     headless: true,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+    // Pre-dismiss the first-run onboarding tour so its overlay never
+    // intercepts clicks during navigation-heavy tests.
+    storageState: "tests/e2e/storage-state.json",
   },
   projects: [
     // ── Desktop browsers ──────────────────────────────────────────
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      // Touch-target/viewport tests below require real device emulation
+      // (hasTouch + mobile viewport) — they run under their own projects instead.
+      testIgnore: [/mobile-responsive\.spec\.ts$/, /tablet-responsive\.spec\.ts$/],
     },
     {
       name: "firefox",
@@ -36,6 +42,7 @@ export default defineConfig({
     {
       name: "mobile-chrome",
       use: { ...devices["Pixel 7"] },
+      testMatch: /mobile-responsive\.spec\.ts$/,
     },
     {
       name: "mobile-chrome-landscape",
@@ -90,6 +97,7 @@ export default defineConfig({
     {
       name: "tablet",
       use: { ...devices["iPad (gen 7)"] },
+      testMatch: /tablet-responsive\.spec\.ts$/,
     },
     {
       name: "tablet-landscape",

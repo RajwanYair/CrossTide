@@ -234,7 +234,7 @@ jobs:
         run: npx playwright install-deps chromium
 
       - name: Run E2E tests
-        run: npx playwright test --project=chromium --reporter=github
+        run: npx playwright test --project=chromium --project=mobile-chrome --project=tablet --reporter=github
         env:
           VITE_BASE: /
 
