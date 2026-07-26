@@ -106,12 +106,12 @@ function renderCreateForm(container: HTMLElement): void {
       </div>
       <div class="rule-conditions" id="rule-conditions">
         <div class="rule-condition-row">
-          <select class="cond-type">
+          <select class="cond-type" aria-label="Condition type">
             <option value="method">Method</option>
             <option value="consensus">Consensus</option>
           </select>
-          <select class="cond-method">${methodOptions}</select>
-          <select class="cond-direction">
+          <select class="cond-method" aria-label="Method">${methodOptions}</select>
+          <select class="cond-direction" aria-label="Direction">
             <option value="BUY">BUY</option>
             <option value="SELL">SELL</option>
           </select>
@@ -179,12 +179,12 @@ export function renderAlertRulesSection(container: HTMLElement): {
         row.className = "rule-condition-row";
         patchDOM(
           row,
-          `<select class="cond-type">
+          `<select class="cond-type" aria-label="Condition type">
             <option value="method">Method</option>
             <option value="consensus">Consensus</option>
           </select>
-          <select class="cond-method">${methodOptions}</select>
-          <select class="cond-direction">
+          <select class="cond-method" aria-label="Method">${methodOptions}</select>
+          <select class="cond-direction" aria-label="Direction">
             <option value="BUY">BUY</option>
             <option value="SELL">SELL</option>
           </select>
