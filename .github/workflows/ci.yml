@@ -27,6 +27,11 @@ on:
       - ".github/prompts/**"
       - ".github/AGENTS.md"
   workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: "Regenerate Playwright visual-regression baselines"
+        type: boolean
+        default: false
 
 # Cancel any in-progress CI run for the same branch/PR on new pushes.
 concurrency:
@@ -234,9 +239,17 @@ jobs:
         run: npx playwright install-deps chromium
 
       - name: Run E2E tests
-        run: npx playwright test --project=chromium --project=mobile-chrome --project=tablet --reporter=github
+        run: npx playwright test --project=chromium --project=mobile-chrome --project=tablet --reporter=github ${{ inputs.update_snapshots && '--update-snapshots' || '' }}
         env:
           VITE_BASE: /
+
+      - name: Upload visual regression snapshots
+        if: ${{ inputs.update_snapshots }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: visual-snapshots
+          path: tests/e2e/**/*-snapshots/**
+          retention-days: 7
 
       - name: Upload Playwright report
         if: always()
