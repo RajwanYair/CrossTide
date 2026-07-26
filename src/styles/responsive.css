@@ -38,6 +38,12 @@
     font-size: 0.85rem;
   }
 
+  /* Scroll the watchlist table horizontally within its own card rather
+     than letting it force the page wider on narrow viewports. */
+  #watchlist-table-container {
+    overflow-x: auto;
+  }
+
   /* ── sm (480px) ── */
   @media (min-width: 480px) {
     .container {
@@ -122,6 +128,24 @@
     /* Sector header spans full row */
     .sector-header td {
       font-size: var(--font-size-sm);
+    }
+
+    /* Every card shares this title + actions header — wrap it on narrow
+       cards so title text and action buttons/inputs never force the card
+       (and the page) wider than the viewport. */
+    .card-header {
+      flex-wrap: wrap;
+      row-gap: var(--sp-sm);
+    }
+
+    .card-actions {
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .card-actions input {
+      flex: 1 1 auto;
+      min-width: 0;
     }
   }
 }
