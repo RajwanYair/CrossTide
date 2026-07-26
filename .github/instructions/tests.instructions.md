@@ -2,9 +2,9 @@
 applyTo: "tests/**"
 ---
 
-# Test Conventions
+# 🧪 Test Conventions
 
-## Test Type Locations
+## 📍 Test Type Locations
 
 | Type    | Location         | Framework             | Command                |
 | ------- | ---------------- | --------------------- | ---------------------- |
@@ -14,7 +14,7 @@ applyTo: "tests/**"
 
 File mirrors source: `src/domain/foo.ts` → `tests/unit/domain/foo.test.ts`
 
-## Domain Tests (pure — no mocks)
+## 🧮 Domain Tests (pure — no mocks)
 
 ```typescript
 import { describe, it, expect } from "vitest";
@@ -38,7 +38,7 @@ describe("computeMyIndicator", () => {
 - `makeCandles(prices: number[])` — helper in `tests/helpers/candle-factory.ts`
 - No mocks, no stubs — pure functions have no side effects to mock
 
-## Worker Tests (mock fetch + KV)
+## 🔌 Worker Tests (mock fetch + KV)
 
 ```typescript
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
@@ -72,7 +72,7 @@ describe("handleMyRoute", () => {
 });
 ```
 
-## Card Tests (mock localStorage/DOM APIs)
+## 🃏 Card Tests (mock localStorage/DOM APIs)
 
 ```typescript
 import { describe, it, expect, vi } from "vitest";
@@ -90,7 +90,7 @@ describe("my-card", () => {
 });
 ```
 
-## Coverage Requirements
+## 📊 Coverage Requirements
 
 | Metric     | Threshold |
 | ---------- | --------- |
@@ -101,7 +101,7 @@ describe("my-card", () => {
 
 Run: `npm run test:coverage` — fails CI if thresholds not met.
 
-## Rules
+## 📏 Rules
 
 - **`it.each`** for parameterized cases — never repeat `it` blocks with only data differences
 - **Never** make real network calls — `vi.stubGlobal("fetch", vi.fn())`

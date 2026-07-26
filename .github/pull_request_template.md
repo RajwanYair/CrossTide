@@ -1,10 +1,10 @@
-# Pull Request
+# 🔀 Pull Request
 
-## Description
+## 📝 Description
 
 Brief description of what this PR does and why.
 
-## Type of Change
+## 🏷️ Type of Change
 
 - [ ] Bug fix
 - [ ] New feature
@@ -14,7 +14,7 @@ Brief description of what this PR does and why.
 - [ ] CI/build/tooling
 - [ ] Dependencies update
 
-## Quality Gate Checklist
+## ✅ Quality Gate Checklist
 
 - [ ] `tsc --noEmit` — **zero type errors**
 - [ ] `eslint . --max-warnings 0` — **zero warnings** (no `eslint-disable` added)
@@ -23,7 +23,7 @@ Brief description of what this PR does and why.
 - [ ] Bundle size budget respected (`scripts/check-bundle-size.mjs`)
 - [ ] Manual smoke test in dev server
 
-## Security Checklist
+## 🔒 Security Checklist
 
 - [ ] No hardcoded API keys, tokens, or secrets
 - [ ] No `eval()` or `innerHTML` with unsanitized user data
@@ -31,7 +31,7 @@ Brief description of what this PR does and why.
 - [ ] Worker routes validate all inputs at the boundary (Valibot schema)
 - [ ] No new `console.log` calls (use `worker/logger.ts` or `console.warn`/`console.error`)
 
-## Architecture Checklist (if code changed)
+## 🏗️ Architecture Checklist (if code changed)
 
 - [ ] Domain functions are pure (no DOM, no fetch, no `Date.now()`)
 - [ ] No upward layer imports (domain never imports core/cards/ui)
@@ -39,7 +39,7 @@ Brief description of what this PR does and why.
 - [ ] New cards use `patchDOM()` not `innerHTML`; async mount uses `void`
 - [ ] No floating promises
 
-## Documentation
+## 📚 Documentation
 
 - [ ] CHANGELOG updated under `[Unreleased]`
 - [ ] New public functions have explicit return types

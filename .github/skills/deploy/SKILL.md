@@ -1,21 +1,21 @@
-# Skill: Deploy CrossTide
+# 🚀 Skill: Deploy CrossTide
 
-## When to use
+## 🎯 When to use
 
 - Deploying CrossTide to Cloudflare (Worker + Pages)
 - Provisioning new Cloudflare resources (KV, D1, R2)
 - Verifying production health after deployment
 - Troubleshooting failed deployments
 
-## Prerequisites
+## 📋 Prerequisites
 
 - `wrangler` CLI authenticated (`wrangler login`)
 - `worker/wrangler.toml` has real binding IDs (not PLACEHOLDERs)
 - All quality gates pass (`npm run ci`)
 
-## Deployment Playbook
+## 📖 Deployment Playbook
 
-### 1. Pre-flight checks
+### 1️⃣ Pre-flight checks
 
 ```bash
 # Verify all gates pass
@@ -25,7 +25,7 @@ npm run ci
 npx wrangler whoami
 ```
 
-### 2. Deploy Worker
+### 2️⃣ Deploy Worker
 
 ```bash
 cd worker
@@ -35,7 +35,7 @@ npx wrangler deploy --env production
 curl https://crosstide-api.workers.dev/api/health
 ```
 
-### 3. Deploy Pages (automatic via CF Pages)
+### 3️⃣ Deploy Pages (automatic via CF Pages)
 
 Push to `main` branch triggers CF Pages deployment automatically.
 
@@ -45,7 +45,7 @@ Manual trigger:
 npx wrangler pages deploy dist --project-name crosstide
 ```
 
-### 4. Post-deployment verification
+### 4️⃣ Post-deployment verification
 
 ```bash
 # Health check
@@ -58,7 +58,7 @@ curl -s https://crosstide-api.workers.dev/api/quote/AAPL | jq .status
 curl -sI https://crosstide.pages.dev | head -5
 ```
 
-### 5. Rollback
+### 5️⃣ Rollback
 
 CF Pages has instant rollback via the dashboard or:
 
@@ -66,9 +66,9 @@ CF Pages has instant rollback via the dashboard or:
 npx wrangler pages deployment rollback --project-name crosstide
 ```
 
-## Provisioning New Resources
+## 🏗️ Provisioning New Resources
 
-### KV Namespace
+### 🗄️ KV Namespace
 
 ```bash
 npx wrangler kv namespace create QUOTE_CACHE
@@ -76,20 +76,20 @@ npx wrangler kv namespace create QUOTE_CACHE --preview
 # Copy IDs to worker/wrangler.toml
 ```
 
-### D1 Database
+### 🗃️ D1 Database
 
 ```bash
 npx wrangler d1 create crosstide-db
 npx wrangler d1 migrations apply crosstide-db
 ```
 
-### R2 Bucket
+### 🨣 R2 Bucket
 
 ```bash
 npx wrangler r2 bucket create crosstide-ohlcv
 ```
 
-## Common Failures
+## 🥹 Common Failures
 
 | Symptom | Cause | Fix |
 |---|---|---|
@@ -99,7 +99,7 @@ npx wrangler r2 bucket create crosstide-ohlcv
 | D1 error | Missing migration | Run `wrangler d1 migrations apply` |
 | Stale data | KV cache not expiring | Check TTL values |
 
-## Environment Variables
+## 🔐 Environment Variables
 
 | Variable | Where | Purpose |
 |---|---|---|

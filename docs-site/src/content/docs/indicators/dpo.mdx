@@ -5,7 +5,7 @@ description: Removes the trend from price to isolate intermediate cycles and ove
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 DPO = \text{Close}_{t} - SMA\!\left(t - \left\lfloor\frac{n}{2}\right\rfloor + 1\right)
@@ -13,13 +13,13 @@ $$
 
 The SMA is shifted back by `period/2 + 1` to centre it under the cycle.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 20      | 5–200  | SMA lookback             |
 
-## Interpretation
+## 🔍 Interpretation
 
 | DPO Value | Signal                                 |
 | --------- | -------------------------------------- |
@@ -33,7 +33,7 @@ The SMA is shifted back by `period/2 + 1` to centre it under the cycle.
   Use it for cycle analysis, not real-time entry timing.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeDpo } from "../../src/domain/dpo";
@@ -41,6 +41,6 @@ import { computeDpo } from "../../src/domain/dpo";
 const values = computeDpo(candles, { period: 20 });
 ```
 
-## References
+## 📚 References
 
 - [DPO on Investopedia](https://www.investopedia.com/terms/d/detrended-price-oscillator-dpo.asp)

@@ -15,7 +15,7 @@ import { Aside } from "@astrojs/starlight/components";
 | Senkou B      | (Highest High + Lowest Low) / 2, displaced forward| 52            |
 | Chikou Span   | Close, displaced backward                        | 26             |
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter        | Default | Range  | Notes                        |
 | ---------------- | ------- | ------ | ---------------------------- |
@@ -24,7 +24,7 @@ import { Aside } from "@astrojs/starlight/components";
 | `senkouBPeriod`  | 52      | 10–200 | Leading span B period        |
 | `displacement`   | 26      | 5–100  | Cloud forward shift          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition                      | Signal                                |
 | ------------------------------ | ------------------------------------- |
@@ -39,7 +39,7 @@ import { Aside } from "@astrojs/starlight/components";
   weeks some analysts use 7/22/44 periods instead of the classic 9/26/52.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeIchimoku } from "../../src/domain/ichimoku";
@@ -52,7 +52,7 @@ const result = computeIchimoku(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Hosoda, G. (1969). _Ichimoku Kinko Hyo._
 - [Ichimoku Cloud on Investopedia](https://www.investopedia.com/terms/i/ichimoku-cloud.asp)

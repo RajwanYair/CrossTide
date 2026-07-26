@@ -5,7 +5,7 @@ description: Williams %R is an inverted stochastic oscillator that measures wher
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \%R = \frac{\text{Highest High}_{n} - \text{Close}}{\text{Highest High}_{n} - \text{Lowest Low}_{n}} \times (-100)
@@ -13,13 +13,13 @@ $$
 
 The result always falls in the range $[-100, 0]$.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range | Notes                            |
 | --------- | ------- | ----- | -------------------------------- |
 | `period`  | 14      | 2–200 | Williams' original: 14 periods   |
 
-## Interpretation
+## 🔍 Interpretation
 
 | %R Value   | Signal                                         |
 | ---------- | ---------------------------------------------- |
@@ -39,7 +39,7 @@ The result always falls in the range $[-100, 0]$.
   fires on the *exit* from the extreme zone for higher probability timing.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeWilliamsR } from "../../src/domain/williams-r-calculator";

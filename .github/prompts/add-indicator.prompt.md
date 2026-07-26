@@ -4,11 +4,11 @@ mode: "agent"
 tools: ["read_file", "create_file", "replace_string_in_file", "run_in_terminal", "runTests"]
 ---
 
-# Add Technical Indicator
+# 🧮 Add Technical Indicator
 
 Create a pure function in `src/domain/indicators/` computing the requested indicator.
 
-## Rules
+## 📏 Rules
 
 1. Follow the `computeSma`/`computeEma` pattern: accept `DailyCandle[]` + params, return `number[] | null`
 2. The function must be **pure** — no DOM, no fetch, no `Date.now()`, no `Math.random()`
@@ -16,7 +16,7 @@ Create a pure function in `src/domain/indicators/` computing the requested indic
 4. Standard input type: `DailyCandle[]` from `src/types/domain.ts`
 5. Export from `src/domain/indicators/index.ts` barrel
 
-## Tests
+## 🧪 Tests
 
 Add unit tests in `tests/unit/domain/` using:
 
@@ -24,10 +24,10 @@ Add unit tests in `tests/unit/domain/` using:
 - Cover: exact values against known-good reference, insufficient data returns `null`, edge cases
 - Use `it.each` for parameterized test cases
 
-## Validation
+## ✅ Validation
 
 Run `npm run ci` to verify all quality gates pass.
 
-## User Request
+## 💬 User Request
 
 {{input}}

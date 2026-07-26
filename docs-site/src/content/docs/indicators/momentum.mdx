@@ -5,19 +5,19 @@ description: Simple price momentum — the absolute difference between the curre
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Momentum}(n) = \text{Close}_t - \text{Close}_{t-n}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                     |
 | --------- | ------- | ------ | ------------------------- |
 | `period`  | 10      | 1–200  | Lookback distance         |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Momentum Value | Signal                            |
 | -------------- | --------------------------------- |
@@ -30,7 +30,7 @@ $$
   prefer Rate of Change (ROC) which normalises as a percentage.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeMomentum } from "../../src/domain/momentum";
@@ -38,6 +38,6 @@ import { computeMomentum } from "../../src/domain/momentum";
 const values = computeMomentum(candles, { period: 10 });
 ```
 
-## References
+## 📚 References
 
 - Murphy, J. J. (1999). _Technical Analysis of the Financial Markets._

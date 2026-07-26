@@ -5,7 +5,7 @@ description: Volume-based momentum oscillator comparing volume flow in up-trend 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 VF = V \times |2 \cdot \frac{dm}{cm} - 1| \times T \times 100
@@ -17,14 +17,14 @@ $$
 
 where $T = +1$ if trend up, $-1$ if trend down.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `fast`    | 34      | 5–100  | Fast EMA period          |
 | `slow`    | 55      | 10–200 | Slow EMA period          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | KO Value          | Signal                               |
 | ----------------- | ------------------------------------ |
@@ -37,7 +37,7 @@ where $T = +1$ if trend up, $-1$ if trend down.
   volume is shifting before price follows.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeKlingerOscillator } from "../../src/domain/klinger-oscillator";
@@ -45,6 +45,6 @@ import { computeKlingerOscillator } from "../../src/domain/klinger-oscillator";
 const values = computeKlingerOscillator(candles, { fast: 34, slow: 55 });
 ```
 
-## References
+## 📚 References
 
 - Klinger, S. (1997). _Klinger Volume Oscillator._ TASC.

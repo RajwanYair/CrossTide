@@ -5,7 +5,7 @@ description: Double and Triple Exponential Moving Averages that reduce lag while
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formulas
+## 🧮 Formulas
 
 $$
 DEMA = 2 \cdot EMA(n) - EMA(EMA(n))
@@ -15,13 +15,13 @@ $$
 TEMA = 3 \cdot EMA(n) - 3 \cdot EMA(EMA(n)) + EMA(EMA(EMA(n)))
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 20      | 2–200  | Base EMA period          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition           | Signal                               |
 | ------------------- | ------------------------------------ |
@@ -34,7 +34,7 @@ $$
   entries and a slower EMA for trend direction confirmation.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeDema, computeTema } from "../../src/domain/dema-tema";
@@ -43,6 +43,6 @@ const dema = computeDema(closes, 20);
 const tema = computeTema(closes, 20);
 ```
 
-## References
+## 📚 References
 
 - Mulloy, P. (1994). _Smoothing Data with Faster Moving Averages._ TASC.

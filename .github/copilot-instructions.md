@@ -1,8 +1,8 @@
-# CrossTide — Copilot Workspace Instructions
+# 🤖 CrossTide — Copilot Workspace Instructions
 
 Privacy-first financial analysis PWA. Vanilla TypeScript, no framework, Vite 8, Vitest 4, Hono 4 on Cloudflare Workers, LWC v5 charts, morphdom DOM patching, Cloudflare D1 + KV.
 
-## Skills & Agents
+## 🧰 Skills & Agents
 
 | Skill | Path | Use when |
 |---|---|---|
@@ -21,7 +21,7 @@ Privacy-first financial analysis PWA. Vanilla TypeScript, no framework, Vite 8, 
 | `@deploy-ops` | CF deployment, Docker, CI/CD |
 | `@perf-specialist` | Bundle, INP, LCP, WASM, caching |
 
-## Context Loading Strategy (token efficiency)
+## 📂 Context Loading Strategy (token efficiency)
 
 Load **only** the instruction file that matches the layer you are modifying:
 
@@ -40,7 +40,7 @@ Load **only** the instruction file that matches the layer you are modifying:
 
 ---
 
-## Layer Architecture (ESLint-enforced import direction)
+## 🏗️ Layer Architecture (ESLint-enforced import direction)
 
 ```text
 types ← domain ← core ← providers ← cards ← ui
@@ -59,7 +59,7 @@ docs-site/     — Astro Starlight documentation site; isolated from app code
 
 ---
 
-## Non-Negotiable Rules
+## 🚫 Non-Negotiable Rules
 
 1. No suppressions — no `eslint-disable`, `@ts-ignore`, `--force`. Fix root causes.
 2. No dead artifacts — every file, export, dep, and config entry must be referenced.
@@ -73,7 +73,7 @@ docs-site/     — Astro Starlight documentation site; isolated from app code
 10. Context economy — invoke a skill or agent rather than restating rules inline; use `memory` (three tiers: `/memories/` user, `/memories/session/` session, `/memories/repo/` repo) for cross-session persistence.
 11. Pre-release gate — before every `git tag vX.Y.Z`, load `.github/instructions/pre-release.instructions.md` and run every item; canonical version-bump file list is in `.github/skills/release/SKILL.md`.
 
-## Coding Conventions
+## 📏 Coding Conventions
 
 - **Explicit return types** on all exported functions
 - **No `any`** — use `unknown` + narrow, or define interfaces
@@ -83,7 +83,7 @@ docs-site/     — Astro Starlight documentation site; isolated from app code
 - **No floating promises** — `void asyncFn()` or `await`
 - **Barrel exports** — each layer exposes a public API via `index.ts`
 
-## Commit Format (commitlint enforced)
+## 📝 Commit Format (commitlint enforced)
 
 ```text
 type(scope): fully lowercase subject, no period, ≤72 chars
@@ -92,7 +92,7 @@ type(scope): fully lowercase subject, no period, ≤72 chars
 Types: `feat` `fix` `docs` `refactor` `test` `chore` `perf` `ci`
 Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio` `alerts` `consensus` `watchlist` `chart`
 
-## Quality Gates (all must pass before merge)
+## ✅ Quality Gates (all must pass before merge)
 
 | Gate          | Command                                   | Requirement                    |
 | ------------- | ----------------------------------------- | ------------------------------ |
@@ -109,7 +109,7 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 
 Run all: `npm run ci`
 
-## Worker API Endpoints
+## 🔌 Worker API Endpoints
 
 | Method | Path                        | Description                     |
 | ------ | --------------------------- | ------------------------------- |

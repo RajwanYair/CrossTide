@@ -1,14 +1,14 @@
-# ADR-0011: Structured JSON Logging in Worker
+# 📄 ADR-0011: Structured JSON Logging in Worker
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 Console.log with string interpolation is hard to parse in log aggregators. Need structured logs for observability dashboards (Logflare, Datadog, Grafana).
 
-## Decision
+## ✅ Decision
 
 Create a `Logger` interface with `createLogger()` factory that:
 
@@ -17,7 +17,7 @@ Create a `Logger` interface with `createLogger()` factory that:
 - Supports child loggers for scoped fields (e.g., provider name)
 - Routes to console.error/warn/log/debug by level
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: Machine-parseable logs for alerting and dashboards
 - **Pro**: Request correlation via requestId field
@@ -25,6 +25,6 @@ Create a `Logger` interface with `createLogger()` factory that:
 - **Con**: Slightly more verbose than plain console.log
 - **Con**: JSON serialization cost (~0.1ms per log line)
 
-## Related
+## 🔗 Related
 
 - P13: Implementation in `worker/logger.ts`

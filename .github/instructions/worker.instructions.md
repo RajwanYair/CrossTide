@@ -2,11 +2,11 @@
 applyTo: "worker/**,tests/unit/worker/**"
 ---
 
-# Worker Layer Rules
+# 🔌 Worker Layer Rules
 
 Hono on Cloudflare Workers. Every route handler lives in `worker/routes/`, wired in `worker/index.ts`.
 
-## Critical Requirements
+## 🚨 Critical Requirements
 
 - **`.js` extension** on ALL imports — CF Workers ESM mandates explicit extensions
 - **Validate first** — reject invalid input with `Response.json({ error }, { status: 400 })`
@@ -14,7 +14,7 @@ Hono on Cloudflare Workers. Every route handler lives in `worker/routes/`, wired
 - **KV cache** every external fetch — see TTL strategy below
 - **Wire in `worker/index.ts`** — `app.get("/api/path", (c) => handler(param, c.env))`
 
-## Route Handler Pattern
+## 🧩 Route Handler Pattern
 
 ```typescript
 // worker/routes/my-route.ts
@@ -46,20 +46,20 @@ export async function handleMyRoute(symbol: string, env: Env): Promise<Response>
 }
 ```
 
-## KV TTL Strategy
+## ⏱️ KV TTL Strategy
 
 ```typescript
 import { isMarketHours } from "../kv-cache.js";
 const ttl = isMarketHours() ? 60 : 86400; // 1 min market hours, 24 h otherwise
 ```
 
-## Rate Limiting
+## 🚦 Rate Limiting
 
 - Middleware applied in `worker/index.ts` via `app.use("*", rateLimitMiddleware)`
 - KV-backed sliding window — 100 req/min per IP
 - See `worker/rate-limit.ts` for implementation
 
-## Environment Bindings (`Env` type in `worker/index.ts`)
+## 🔐 Environment Bindings (`Env` type in `worker/index.ts`)
 
 | Binding       | Type                   | Purpose                   |
 | ------------- | ---------------------- | ------------------------- |
@@ -69,7 +69,7 @@ const ttl = isMarketHours() ? 60 : 86400; // 1 min market hours, 24 h otherwise
 | `YAHOO_KEY`   | string                 | Yahoo Finance API key     |
 | `FINNHUB_KEY` | string                 | Finnhub API key           |
 
-## Test Pattern
+## 🧪 Test Pattern
 
 ```typescript
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
@@ -103,7 +103,7 @@ describe("handleMyRoute", () => {
 - Mock `env.KV.get` returning `null` to simulate cache miss
 - Test: 400 invalid, 200 cached, 200 fresh, 502 upstream error
 
-## Common Pitfalls
+## ⚠️ Common Pitfalls
 
 - Missing `.js` on imports — will fail silently in CF Workers
 - `new Response(JSON.stringify(x))` — use `Response.json(x)` instead

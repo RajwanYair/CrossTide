@@ -5,7 +5,7 @@ description: Measures downside risk by tracking the depth and duration of drawdo
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{PctDD}_i = \frac{\text{Close}_i - \max(\text{Close}, n)}{\max(\text{Close}, n)} \times 100
@@ -15,13 +15,13 @@ $$
 UI = \sqrt{\frac{\sum_{i=1}^{n} \text{PctDD}_i^2}{n}}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 14      | 5–200  | Lookback window          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | UI Value | Risk Level                               |
 | -------- | ---------------------------------------- |
@@ -34,7 +34,7 @@ $$
   alternative to the Sharpe Ratio — useful for risk-averse investors.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeUlcerIndex } from "../../src/domain/ulcer-index";
@@ -42,6 +42,6 @@ import { computeUlcerIndex } from "../../src/domain/ulcer-index";
 const values = computeUlcerIndex(candles, { period: 14 });
 ```
 
-## References
+## 📚 References
 
 - Martin, P. & McCann, B. (1989). _The Investor's Guide to Fidelity Funds._

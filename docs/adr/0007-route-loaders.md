@@ -1,10 +1,10 @@
-# ADR-0007: Route Loaders with AbortController
+# 📄 ADR-0007: Route Loaders with AbortController
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 Cards fetch data after mount, creating a visible waterfall: the view activates,
 shows a skeleton/spinner, then fetches. Navigating away before the fetch completes
@@ -16,7 +16,7 @@ their `fetch()` calls get automatic cancellation on navigation. However, there i
 standard mechanism to **start** a fetch at navigation time (before the card mounts)
 or to **share** pre-fetched data between a route change handler and the card.
 
-## Decision
+## ✅ Decision
 
 Add `defineRoute<TData>({ name, loader })` to the router module:
 
@@ -30,7 +30,7 @@ Add `defineRoute<TData>({ name, loader })` to the router module:
 Loaders are fire-and-forget from the router's perspective; the router does not
 wait for them before activating the view. Cards opt in by awaiting the result.
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: Cards can eliminate spinner flashes when data resolves before first paint
 - **Pro**: Cancellation is automatic — `signal.aborted` prevents stale writes
@@ -47,7 +47,7 @@ wait for them before activating the view. Cards opt in by awaiting the result.
 3. **TanStack Router / React Router** — Third-party dependency; not aligned with
    the zero-dep architecture principle.
 
-## Related
+## 🔗 Related
 
 - P7: Implementation in `src/ui/router.ts` (`defineRoute`, `getRouteLoadResult`)
 - ADR-0001: Yahoo Finance provider (example loader target)

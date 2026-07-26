@@ -3,9 +3,14 @@ title: Quick Start
 description: Get CrossTide running in under 5 minutes.
 ---
 
-## Installation
+## 📦 Installation
 
 CrossTide is a web application — clone the repository and run with Vite.
+
+```mermaid
+flowchart LR
+  A["📥 git clone"] --> B["📦 npm install"] --> C["🚀 npm run dev"] --> D["🖥️ localhost:5173"]
+```
 
 ```bash
 git clone https://github.com/RajwanYair/CrossTide.git
@@ -16,7 +21,7 @@ npm test           # 2000+ unit tests
 npm run build      # Production build
 ```
 
-## Using the Indicator Library
+## 🧩 Using the Indicator Library
 
 Import any indicator directly from the `domain/` barrel:
 
@@ -39,7 +44,7 @@ const result = aggregateConsensus(candles);
 console.log("Consensus:", result.signal, result.score);
 ```
 
-## Data Format
+## 🗃 Data Format
 
 All domain functions operate on `DailyCandle[]`:
 
@@ -54,6 +59,6 @@ interface DailyCandle {
 }
 ```
 
-## Live App
+## 🌐 Live App
 
-Open the live app at [rajwanyair.github.io/CrossTide](https://rajwanyair.github.io/CrossTide) to explore the full UI.
+Open the live app at [rajwanyair.github.io/CrossTide](https://rajwanyair.github.io/CrossTide/) to explore the full UI — no install, no account, no API key required. 🎉

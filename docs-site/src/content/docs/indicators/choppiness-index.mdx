@@ -5,19 +5,19 @@ description: Measures whether the market is trending or range-bound, scaled 0–
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 CI = \frac{\log_{10}\!\left(\frac{\sum ATR(1, n)}{H_n - L_n}\right)}{\log_{10}(n)} \times 100
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 14      | 2–100  | Lookback window          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | CI Value | Market Condition                            |
 | -------- | ------------------------------------------- |
@@ -30,7 +30,7 @@ $$
   and mean-reversion strategies when CI > 62.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeChoppinessIndex } from "../../src/domain/choppiness-index";
@@ -38,6 +38,6 @@ import { computeChoppinessIndex } from "../../src/domain/choppiness-index";
 const values = computeChoppinessIndex(candles, { period: 14 });
 ```
 
-## References
+## 📚 References
 
 - Dreiss, B. (1993). Choppiness Index. _TASC._

@@ -5,7 +5,7 @@ description: Volume-weighted average price from a user-chosen anchor point, with
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 AVWAP = \frac{\sum_{i=\text{anchor}}^{t} P_i \times V_i}{\sum_{i=\text{anchor}}^{t} V_i}
@@ -13,14 +13,14 @@ $$
 
 Bands at ±1σ and ±2σ of the price-volume deviations.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter          | Default | Notes                                   |
 | ------------------ | ------- | --------------------------------------- |
 | `anchorIndex`      | —       | Bar index to anchor from                |
 | `bandMultipliers`  | [1, 2]  | Standard deviation multipliers          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition             | Signal                                     |
 | --------------------- | ------------------------------------------ |
@@ -34,7 +34,7 @@ Bands at ±1σ and ±2σ of the price-volume deviations.
   the true average cost of participants who entered at that event.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { anchoredVwap } from "../../src/domain/anchored-vwap";
@@ -45,6 +45,6 @@ const result = anchoredVwap(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Ciana, B. (2011). _New Frontiers in Technical Analysis._

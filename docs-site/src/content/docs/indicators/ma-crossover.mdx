@@ -10,11 +10,11 @@ import { Aside } from "@astrojs/starlight/components";
 A **golden cross** occurs when the fast MA crosses above the slow MA.
 A **death cross** occurs when the fast MA crosses below the slow MA.
 
-## Parameters
+## ⚙ Parameters
 
 Accepts pre-computed fast and slow MA arrays (SMA, EMA, or any variant).
 
-## Interpretation
+## 🔍 Interpretation
 
 | Event         | Signal                                  |
 | ------------- | --------------------------------------- |
@@ -27,7 +27,7 @@ Accepts pre-computed fast and slow MA arrays (SMA, EMA, or any variant).
   For faster signals, use 9/21 EMA crossovers with volume confirmation.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { detectMaCrossovers } from "../../src/domain/ma-crossover";
@@ -35,6 +35,6 @@ import { detectMaCrossovers } from "../../src/domain/ma-crossover";
 const events = detectMaCrossovers(fastMa, slowMa);
 ```
 
-## References
+## 📚 References
 
 - Murphy, J. J. (1999). _Technical Analysis of the Financial Markets._

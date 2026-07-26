@@ -5,7 +5,7 @@ description: Double-smoothed momentum oscillator bounded between -100 and +100, 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 TSI = \frac{EMA_{\text{fast}}(EMA_{\text{slow}}(\Delta \text{Close}))}{EMA_{\text{fast}}(EMA_{\text{slow}}(|\Delta \text{Close}|))} \times 100
@@ -13,7 +13,7 @@ $$
 
 Signal line = EMA of TSI.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter      | Default | Range  | Notes                            |
 | -------------- | ------- | ------ | -------------------------------- |
@@ -21,7 +21,7 @@ Signal line = EMA of TSI.
 | `fast`         | 13      | 2–50   | Short smoothing EMA period       |
 | `signal`       | 7       | 2–20   | Signal line EMA period           |
 
-## Interpretation
+## 🔍 Interpretation
 
 | TSI Value       | Signal                                      |
 | --------------- | ------------------------------------------- |
@@ -36,7 +36,7 @@ Signal line = EMA of TSI.
   for confirmation.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeTsi } from "../../src/domain/tsi";
@@ -48,6 +48,6 @@ const { tsi, signal } = computeTsi(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Blau, W. (1995). _Momentum, Direction, and Divergence._

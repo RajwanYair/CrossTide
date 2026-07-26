@@ -5,11 +5,11 @@ description: "Perform a structured code review on a PR or feature branch: layer 
 tools: ["read_file", "grep_search", "semantic_search", "get_errors", "run_in_terminal", "memory"]
 ---
 
-# Code Review — CrossTide
+# 🔍 Code Review — CrossTide
 
 Review the specified PR / branch / file set against CrossTide's project rules.
 
-## Scope
+## 🎯 Scope
 
 Specify the review target on invocation:
 
@@ -19,30 +19,30 @@ Specify the review target on invocation:
 - `worker/routes/<route>.ts` — a worker route
 - A pull request: `gh pr diff <num>`
 
-## Review Dimensions (mandatory)
+## 📋 Review Dimensions (mandatory)
 
-### 1. Layer Direction
+### 1️⃣ Layer Direction
 
 - Imports respect: `types ← domain ← core ← providers ← cards ← ui`
 - No `src/cards/` import from `src/ui/` (router types only)
 - No `src/domain/` import touching DOM, fetch, `Date.now()`, `Math.random()`
 - Run: `node scripts/arch-check.mjs --strict`
 
-### 2. Type Safety
+### 2️⃣ Type Safety
 
 - `npm run typecheck` exits 0
 - No `any` — `unknown` + narrowing or explicit interfaces
 - All exported functions have explicit return types
 - `import type { … }` for type-only imports
 
-### 3. Tests & Coverage
+### 3️⃣ Tests & Coverage
 
 - Every new domain function has a corresponding test in `tests/unit/domain/`
 - Every new worker route has a test in `tests/unit/worker/` mocking `globalThis.fetch`
 - No `.only` / `.skip` (CI gate via `scripts/check-test-focus-skip.mjs`)
 - Coverage thresholds: ≥90% stmt/line/fn, ≥80% branch
 
-### 4. Security
+### 4️⃣ Security
 
 - No raw `innerHTML` with unsanitized data
 - No `eval`, `new Function`, `document.write`
@@ -50,26 +50,26 @@ Specify the review target on invocation:
 - No new external runtime dep (no ADR? reject)
 - No hardcoded secrets — grep for `api[_-]?key`, `Bearer`, `password`
 
-### 5. Performance & Bundle
+### 5️⃣ Performance & Bundle
 
 - New heavy dep behind dynamic `import()` boundary
 - `npm run check:bundle` — < 250 KB gzip
 - No `manualChunks` added to `vite.config.ts`
 - Card cleanup: timers and listeners removed in `unmount()`
 
-### 6. Commit Hygiene
+### 6️⃣ Commit Hygiene
 
 - Conventional commits: `type(scope): subject` lowercase, ≤72 chars, no period
 - Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` etc.
 - Branch protection: PR contains no `eslint-disable`/`@ts-ignore`/`--force`
 
-### 7. Docs
+### 7️⃣ Docs
 
 - Public API change → `CHANGELOG.md` `[Unreleased]` updated
 - New worker route → `worker/openapi.yaml` updated
 - New ADR scenario → `docs/adr/` entry
 
-## Output
+## 📤 Output
 
 Produce a structured report — `PASS` / `WARNING` / `FAIL` per section, with file paths and one-line rationale.
 

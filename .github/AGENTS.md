@@ -1,4 +1,4 @@
-# CrossTide — Custom Copilot Agents
+# 🤖 CrossTide — Custom Copilot Agents
 
 > Version: v11.43.0 · Tests: 620 files · Coverage: ≥90% stmt/line/fn · ≥80% branch
 
@@ -6,7 +6,7 @@ Custom agent modes for VS Code GitHub Copilot. Each agent loads only the files i
 Global rules (coding conventions, commit format, quality gates) are in `copilot-instructions.md`.
 Layer-specific rules are in `.github/instructions/` — agents reference them, not re-state them.
 
-## Agent Registry
+## 📇 Agent Registry
 
 | Agent | File | Expertise |
 |---|---|---|
@@ -21,7 +21,7 @@ Layer-specific rules are in `.github/instructions/` — agents reference them, n
 
 ---
 
-## @domain — Pure Domain Logic Expert
+## @domain — 🧮 Pure Domain Logic Expert
 
 ```yaml
 name: domain
@@ -50,7 +50,7 @@ tools:
 
 ---
 
-## @worker — Cloudflare Worker API Expert
+## @worker — 🔌 Cloudflare Worker API Expert
 
 ```yaml
 name: worker
@@ -80,7 +80,7 @@ tools:
 
 ---
 
-## @quality — CI & Quality Gates Expert
+## @quality — ✅ CI & Quality Gates Expert
 
 ```yaml
 name: quality
@@ -109,7 +109,7 @@ tools:
 
 ---
 
-## @card — Route Card UI Expert
+## @card — 🃏 Route Card UI Expert
 
 ```yaml
 name: card
@@ -139,7 +139,7 @@ tools:
 
 ---
 
-## @barrel — Domain Barrel Export Expert
+## @barrel — 📦 Domain Barrel Export Expert
 
 ```yaml
 name: barrel
@@ -170,7 +170,7 @@ tools:
 
 ---
 
-## @compat — Cross-Browser Compatibility Expert
+## @compat — 🌐 Cross-Browser Compatibility Expert
 
 ```yaml
 name: compat
@@ -205,7 +205,7 @@ tools:
 
 ---
 
-## @sprint — Development Sprint Coordinator
+## @sprint — 🏃 Development Sprint Coordinator
 
 ```yaml
 name: sprint
@@ -254,7 +254,7 @@ tools:
 
 ---
 
-## Standalone Custom Agents (`.github/agents/`)
+## 🧑‍💻 Standalone Custom Agents (`.github/agents/`)
 
 The following agents are defined as standalone `.agent.md` files with full tool allowlists
 and handoff declarations. They supersede the inline-YAML `@quality` and `@card` entries above
@@ -268,7 +268,7 @@ for production use — they expose richer context, persistent memory, and peer h
 
 The **Explore** subagent is a built-in read-only codebase explorer — use it via `runSubagent` to investigate files without cluttering the main conversation.
 
-### When To Use What
+### 🧭 When To Use What
 
 | Need                                                  | Best Fit             |
 | ----------------------------------------------------- | -------------------- |
@@ -281,7 +281,7 @@ The **Explore** subagent is a built-in read-only codebase explorer — use it vi
 | Barrel export audit                                   | `@barrel`            |
 | Read-only codebase exploration / Q&A                  | `Explore` (subagent) |
 
-### Subagent Usage (in-chat)
+### 🔧 Subagent Usage (in-chat)
 
 ```ts
 // Use runSubagent to delegate a specialist task without cluttering main conversation:
@@ -291,7 +291,7 @@ runSubagent({ agentName: "card-designer", prompt: "Refine ct-stat-grid layout fo
 runSubagent({ agentName: "Explore", prompt: "Find all worker routes that don't have a Valibot schema — thorough" });
 ```
 
-### AI Customization Map
+### 🗺️ AI Customization Map
 
 | Type                    | Location                                 | Scope                              |
 | ----------------------- | ---------------------------------------- | ---------------------------------- |

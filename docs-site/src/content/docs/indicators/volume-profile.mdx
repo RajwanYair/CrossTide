@@ -18,14 +18,14 @@ Divides the price range into `bins` horizontal rows and sums the volume traded a
 | **VA High**   | Upper bound of the value area                           |
 | **VA Low**    | Lower bound of the value area                           |
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter      | Default | Range    | Notes                         |
 | -------------- | ------- | -------- | ----------------------------- |
 | `bins`         | 24      | 10–200   | Number of price rows          |
 | `valueAreaPct` | 0.70    | 0.5–0.9  | Value area percentage         |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition                  | Signal                                  |
 | -------------------------- | --------------------------------------- |
@@ -40,7 +40,7 @@ Divides the price range into `bins` horizontal rows and sums the volume traded a
   order-flow traders. The POC acts as a magnet for price in ranges.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeVolumeProfile } from "../../src/domain/volume-profile";
@@ -51,6 +51,6 @@ const { bins, poc, vaHigh, vaLow } = computeVolumeProfile(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Steidlmayer, P. (1986). _Markets and Market Logic._

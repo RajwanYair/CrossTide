@@ -5,7 +5,7 @@ description: Ordinary least squares regression line with slope, intercept, and R
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \hat{y} = a + bx
@@ -21,11 +21,11 @@ $$
 R^2 = 1 - \frac{\sum(y_i - \hat{y}_i)^2}{\sum(y_i - \bar{y})^2}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 Accepts arrays of values (or x, y pairs). No period parameter — fits to all supplied data.
 
-## Interpretation
+## 🔍 Interpretation
 
 | Metric      | Meaning                                         |
 | ----------- | ----------------------------------------------- |
@@ -39,7 +39,7 @@ Accepts arrays of values (or x, y pairs). No period parameter — fits to all su
   price moves and mean-reversion entries.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { linearRegression } from "../../src/domain/linear-regression";
@@ -47,6 +47,6 @@ import { linearRegression } from "../../src/domain/linear-regression";
 const { slope, intercept, rSquared } = linearRegression(closes);
 ```
 
-## References
+## 📚 References
 
 - [Linear Regression on Investopedia](https://www.investopedia.com/terms/l/linearregression.asp)

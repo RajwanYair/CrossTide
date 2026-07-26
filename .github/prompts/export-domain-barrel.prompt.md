@@ -9,11 +9,11 @@ tools:
   - get_errors
 ---
 
-# Export Domain Function to Barrel
+# 📦 Export Domain Function to Barrel
 
 Export the function(s) specified by the user from `src/domain/index.ts`.
 
-## Steps
+## 🔢 Steps
 
 1. **Audit current exports**
 
@@ -44,14 +44,14 @@ Export the function(s) specified by the user from `src/domain/index.ts`.
    runTests(files: ["tests/unit/domain/"])
    ```
 
-## Rules
+## 📏 Rules
 
 - Only export from `src/domain/index.ts` — never re-export through `src/core/` or `src/cards/`
 - If the function doesn't exist yet, use the `add-indicator` prompt instead
 - If the function is private/internal helper, do NOT export it — only export public API
 - Export from the narrowest path: `"./indicators/foo"` not `"./indicators/index"`
 
-## Common Barrel Audit
+## 🔍 Common Barrel Audit
 
 To find ALL unexported domain functions:
 

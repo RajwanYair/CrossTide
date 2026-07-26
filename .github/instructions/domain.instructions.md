@@ -2,11 +2,11 @@
 applyTo: "src/domain/**,tests/unit/domain/**"
 ---
 
-# Domain Layer Rules
+# 🧮 Domain Layer Rules
 
 All `src/domain/` functions must be **pure** — deterministic, side-effect-free, testable without mocks.
 
-## Purity Constraints
+## 🧼 Purity Constraints
 
 - No `document`, `window`, `navigator`, `localStorage`, `fetch`, `indexedDB`
 - No `Date.now()` — receive `now: number` as parameter
@@ -14,7 +14,7 @@ All `src/domain/` functions must be **pure** — deterministic, side-effect-free
 - No module-level mutable state
 - Accept all inputs as parameters; return computed results
 
-## Standard Signatures
+## ✍️ Standard Signatures
 
 ```typescript
 // Indicator: DailyCandle[] → number[] | null
@@ -31,12 +31,12 @@ export function computeSharpe(returns: readonly number[], riskFreeRate: number):
 - Return `null` (not `undefined`) when input is insufficient
 - Export from `src/domain/index.ts` barrel — every new function must appear there
 
-## Import Rules
+## 🚦 Import Rules
 
 - May import from: `src/types/` only
 - Must NOT import: `src/core/`, `src/cards/`, `src/ui/`, `src/providers/`, `worker/`
 
-## Key Modules (read before adding new ones to avoid duplication)
+## 🗂️ Key Modules (read before adding new ones to avoid duplication)
 
 | Module                              | Purpose                               |
 | ----------------------------------- | ------------------------------------- |
@@ -49,7 +49,7 @@ export function computeSharpe(returns: readonly number[], riskFreeRate: number):
 | `src/domain/seasonality.ts`         | Monthly return averages               |
 | `src/domain/market-breadth.ts`      | A/D line, McClellan, breadth %        |
 
-## Test Pattern
+## 🧪 Test Pattern
 
 ```typescript
 import { describe, it, expect } from "vitest";
@@ -80,7 +80,7 @@ describe("computeMyIndicator", () => {
 - No mocks needed — functions are pure
 - Test: normal operation, null on insufficient data, boundary values, negative/zero inputs
 
-## Common Pitfalls
+## ⚠️ Common Pitfalls
 
 - `import { something } from "../../core/..."` — **forbidden**, breaks layer rules
 - `Date.now()` inside function body — breaks determinism, tests will flicker

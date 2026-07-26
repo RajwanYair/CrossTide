@@ -5,7 +5,7 @@ description: Decomposes price action into bull power and bear power relative to 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Bull Power} = \text{High} - EMA(n)
@@ -15,13 +15,13 @@ $$
 \text{Bear Power} = \text{Low} - EMA(n)
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 13      | 5–100  | EMA period               |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition                        | Signal                         |
 | -------------------------------- | ------------------------------ |
@@ -36,7 +36,7 @@ $$
   negative but rising — this catches pullbacks within uptrends.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeElderRay } from "../../src/domain/elder-ray";
@@ -44,6 +44,6 @@ import { computeElderRay } from "../../src/domain/elder-ray";
 const { bullPower, bearPower } = computeElderRay(candles, { period: 13 });
 ```
 
-## References
+## 📚 References
 
 - Elder, A. (1993). _Trading for a Living._

@@ -5,7 +5,7 @@ description: Relates price range change to volume, showing how easily price move
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Distance} = \frac{(H + L)/2 - (H_{-1} + L_{-1})/2}{V / (H - L)}
@@ -13,13 +13,13 @@ $$
 
 Smoothed with an SMA of period `n`.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                        |
 | --------- | ------- | ------ | ---------------------------- |
 | `period`  | 14      | 2–100  | SMA smoothing period         |
 
-## Interpretation
+## 🔍 Interpretation
 
 | EOM Value | Signal                                        |
 | --------- | --------------------------------------------- |
@@ -32,7 +32,7 @@ Smoothed with an SMA of period `n`.
   demand rather than low-volume drift.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeEaseOfMovement } from "../../src/domain/ease-of-movement";
@@ -40,6 +40,6 @@ import { computeEaseOfMovement } from "../../src/domain/ease-of-movement";
 const values = computeEaseOfMovement(candles, { period: 14 });
 ```
 
-## References
+## 📚 References
 
 - Arms, R. W. (1989). _The Arms Index._

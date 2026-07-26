@@ -4,11 +4,11 @@ description: "Debug broken API calls and fetch failures in CrossTide. Use when: 
 argument-hint: "Which route or card is broken? (e.g. /api/quote/AAPL, screener-card)"
 ---
 
-# Debug Fetch — CrossTide
+# 🐛 Debug Fetch — CrossTide
 
 Use this skill when the problem is in transport, provider chain, worker validation, KV cache state, or response envelope shape.
 
-## Step 1 — Worker Tail
+## 1️⃣ Step 1 — Worker Tail
 
 ```powershell
 cd worker
@@ -22,7 +22,7 @@ Watch for:
 - Provider upstream errors
 - Rate-limit hits
 
-## Step 2 — Identify the Layer
+## 2️⃣ Step 2 — Identify the Layer
 
 | Symptom                            | Likely Cause                                      |
 | ---------------------------------- | ------------------------------------------------- |
@@ -34,7 +34,7 @@ Watch for:
 | All routes red after deploy        | `wrangler deploy --dry-run` schema error          |
 | OpenAPI client mismatch            | `worker/openapi.yaml` drift — regenerate          |
 
-## Step 3 — Check Bindings
+## 3️⃣ Step 3 — Check Bindings
 
 ```powershell
 Get-Content worker/wrangler.toml
@@ -42,7 +42,7 @@ Get-Content worker/wrangler.toml
 
 Verify NO line still says `PLACEHOLDER_KV_NAMESPACE_ID` or `PLACEHOLDER_D1_DATABASE_ID`. Run the provisioning script if needed.
 
-## Step 4 — Test Route Directly
+## 4️⃣ Step 4 — Test Route Directly
 
 ```powershell
 cd worker
@@ -62,7 +62,7 @@ Expected envelope:
 { "data": { ... }, "source": "yahoo|cache|demo", "ts": 1730000000000 }
 ```
 
-## Step 5 — Inspect Browser-Side Cache
+## 5️⃣ Step 5 — Inspect Browser-Side Cache
 
 ```javascript
 // In DevTools console
@@ -79,7 +79,7 @@ indexedDB.open("crosstide");
 
 Delete the key + reload to force re-fetch.
 
-## Step 6 — Schema Drift
+## 6️⃣ Step 6 — Schema Drift
 
 If a 502 mentions Valibot:
 
@@ -91,7 +91,7 @@ If a 502 mentions Valibot:
 6. Update `tests/unit/worker/<route>.test.ts` fixture
 7. Remove `v.passthrough()` again
 
-## Step 7 — Run Targeted Tests
+## 7️⃣ Step 7 — Run Targeted Tests
 
 ```powershell
 npx vitest run tests/unit/worker/<route>.test.ts --reporter=verbose
@@ -99,7 +99,7 @@ npx vitest run tests/unit/worker/<route>.test.ts --reporter=verbose
 
 If tests pass but production fails, the difference is real upstream — capture the response body via `wrangler tail` and update the fixture.
 
-## Step 8 — Common Fixes
+## 8️⃣ Step 8 — Common Fixes
 
 | Problem                       | Fix                                                         |
 | ----------------------------- | ----------------------------------------------------------- |
@@ -111,7 +111,7 @@ If tests pass but production fails, the difference is real upstream — capture 
 | OpenAPI schema drift          | Run `npm run gen:api-types`; update `worker/openapi.yaml`   |
 | Card never updates            | `unmount()` missing — timer leak, multiple loaders racing   |
 
-## Step 9 — Commit
+## 9️⃣ Step 9 — Commit
 
 When the fix is in:
 

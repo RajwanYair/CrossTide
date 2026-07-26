@@ -4,11 +4,11 @@ mode: "agent"
 tools: ["read_file", "create_file", "replace_string_in_file", "run_in_terminal", "runTests"]
 ---
 
-# Add Worker API Route
+# 🔌 Add Worker API Route
 
 Create a new worker route following the established pattern.
 
-## Steps
+## 🔢 Steps
 
 1. Create `worker/routes/{name}.ts` following the `fundamentals.ts` pattern
 2. Validate input with Valibot schema — reject malformed requests with 400
@@ -20,7 +20,7 @@ Create a new worker route following the established pattern.
 8. Wire the handler in `worker/index.ts`: `app.get("/api/{path}", ...)`
 9. Use `.js` extension on all imports (CF Workers ESM requirement)
 
-## Tests
+## 🧪 Tests
 
 Write tests in `tests/unit/worker/{name}.test.ts`:
 
@@ -30,10 +30,10 @@ Write tests in `tests/unit/worker/{name}.test.ts`:
 - Test: invalid input returns 400
 - Test: upstream failure handled gracefully
 
-## Validation
+## ✅ Validation
 
 Run `npm run ci` to verify all quality gates pass.
 
-## User Request
+## 💬 User Request
 
 {{input}}

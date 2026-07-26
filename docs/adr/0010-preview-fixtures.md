@@ -1,18 +1,18 @@
-# ADR-0010: Preview Environments Serve Fixture Data
+# 📄 ADR-0010: Preview Environments Serve Fixture Data
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 Cloudflare Pages preview deployments (branch deploys) don't have API keys configured. They also need deterministic data for QA screenshot comparisons.
 
-## Decision
+## ✅ Decision
 
 When `ENVIRONMENT !== "production"`, the Worker serves deterministic fixture data from `worker/fixtures.ts` instead of calling Yahoo Finance. The fixture module generates reproducible OHLCV candles using a seeded PRNG per symbol.
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: Preview URLs work without any secrets configuration
 - **Pro**: Deterministic data enables visual regression testing
@@ -20,6 +20,6 @@ When `ENVIRONMENT !== "production"`, the Worker serves deterministic fixture dat
 - **Con**: Preview doesn't test real API integration (covered by staging)
 - **Con**: Fixture data is static — won't catch parsing issues with real API
 
-## Related
+## 🔗 Related
 
 - P12: Implementation in `worker/fixtures.ts`, wired in `worker/index.ts`

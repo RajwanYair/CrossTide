@@ -5,13 +5,13 @@ description: Long-term momentum indicator — WMA of summed ROC periods, designe
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Coppock} = WMA\!\left(ROC(\text{long}) + ROC(\text{short}),\; p\right)
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter   | Default | Range  | Notes                       |
 | ----------- | ------- | ------ | --------------------------- |
@@ -19,7 +19,7 @@ $$
 | `shortRoc`  | 11      | 5–20   | Short ROC period (months)   |
 | `wmaPeriod` | 10      | 5–20   | WMA smoothing period        |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition               | Signal                                    |
 | ----------------------- | ----------------------------------------- |
@@ -32,7 +32,7 @@ $$
   scale periods by ~21 (trading days per month).
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeCoppockCurve } from "../../src/domain/coppock-curve";
@@ -44,6 +44,6 @@ const values = computeCoppockCurve(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Coppock, E. S. C. (1962). Coppock Guide. _Barron's._

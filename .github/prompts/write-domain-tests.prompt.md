@@ -4,11 +4,11 @@ mode: "agent"
 tools: ["read_file", "create_file", "replace_string_in_file", "runTests"]
 ---
 
-# Write Domain Tests
+# 🧪 Write Domain Tests
 
 Write Vitest unit tests for the specified domain function.
 
-## Rules
+## 📏 Rules
 
 1. Import `makeCandles` from `tests/helpers/candle-factory.ts` for test data
 2. Domain tests must be **pure** — no mocks needed (functions are side-effect-free)
@@ -21,10 +21,10 @@ Write Vitest unit tests for the specified domain function.
 5. No network mocks, no DOM stubs — domain is pure
 6. Test file location: `tests/unit/domain/{module-name}.test.ts`
 
-## Validation
+## ✅ Validation
 
 Run the test file to verify all pass: `npx vitest run tests/unit/domain/{file}.test.ts`
 
-## User Request
+## 💬 User Request
 
 {{input}}

@@ -1,6 +1,6 @@
-# Security Policy
+# 🔒 Security Policy
 
-## Reporting a Vulnerability
+## 🚨 Reporting a Vulnerability
 
 If you discover a security vulnerability, please report it responsibly:
 
@@ -11,7 +11,7 @@ If you discover a security vulnerability, please report it responsibly:
 
 You will receive a response within 7 days.
 
-## Supported Versions
+## 📅 Supported Versions
 
 | Version        | Supported      |
 | -------------- | -------------- |
@@ -19,7 +19,7 @@ You will receive a response within 7 days.
 | 10.x           | ❌ End of life |
 | < 10.x         | ❌ End of life |
 
-## Security Design
+## 🏗️ Security Design
 
 ### Architecture Boundaries
 
@@ -27,7 +27,7 @@ You will receive a response within 7 days.
 - **API Proxy** (Cloudflare Worker): Validates all inputs, allowlists upstream origins, no secrets stored client-side
 - **D1 + KV**: Structured query parameters only; no raw SQL concatenation
 
-### Content Security Policy
+### 📜 Content Security Policy
 
 The app enforces a strict CSP via `public/_headers` and `scripts/gen-csp.mjs`:
 
@@ -42,7 +42,7 @@ base-uri 'self'
 form-action 'none'
 ```
 
-### Cloudflare Worker Security Controls
+### ☁️ Cloudflare Worker Security Controls
 
 - Input validation on all route parameters (ticker symbols, date ranges, pagination)
 - CORS restricted to the Pages deployment origin
@@ -50,7 +50,7 @@ form-action 'none'
 - Rate limiting via KV token-bucket (see `worker/rate-limit.ts`)
 - No secrets in source — environment bindings only (Cloudflare Secrets + `.env` locally)
 
-## OWASP Top 10:2021 — CrossTide Threat Map
+## 🛡️ OWASP Top 10:2021 — CrossTide Threat Map
 
 | Risk                          | CrossTide Surface                | Control                                                                 |
 | ----------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
@@ -65,7 +65,7 @@ form-action 'none'
 | A09 Logging/Monitoring        | Worker structured logs           | `worker/logger.ts` structured JSON; Cloudflare Logpush available        |
 | A10 SSRF                      | Upstream API fetch               | Hard-coded base URLs only; no user-supplied fetch targets               |
 
-## Security Best Practices (for contributors)
+## ✅ Security Best Practices (for contributors)
 
 - Never commit API keys, tokens, or secrets — use `.env` (gitignored) or Cloudflare Secrets
 - Use `textContent` instead of `innerHTML`; use `patchDOM()` from `src/ui/dom.ts` for card updates

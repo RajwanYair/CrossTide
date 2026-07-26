@@ -5,7 +5,7 @@ description: SMA-based percentage bands — a simple overbought/oversold volatil
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Upper} = SMA(n) \times (1 + p/100)
@@ -15,14 +15,14 @@ $$
 \text{Lower} = SMA(n) \times (1 - p/100)
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range      | Notes                         |
 | --------- | ------- | ---------- | ----------------------------- |
 | `period`  | 20      | 5–200      | SMA period                    |
 | `percent` | 2.5     | 0.1–20.0   | Band offset percentage        |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition         | Signal                                   |
 | ----------------- | ---------------------------------------- |
@@ -35,7 +35,7 @@ $$
   the width is fixed rather than adaptive to volatility.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeEnvelope } from "../../src/domain/envelope";
@@ -46,6 +46,6 @@ const { upper, middle, lower } = computeEnvelope(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Murphy, J. J. (1999). _Technical Analysis of the Financial Markets._

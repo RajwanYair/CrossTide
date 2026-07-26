@@ -5,7 +5,7 @@ description: The Awesome Oscillator measures market momentum by comparing a 5-pe
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Midpoint} = \frac{\text{High} + \text{Low}}{2}
@@ -17,12 +17,12 @@ $$
 
 Unlike most oscillators, AO uses the **midpoint** (High+Low)/2 rather than the close price.
 
-## Parameters
+## ⚙ Parameters
 
 The Awesome Oscillator has **no configurable parameters** — Bill Williams' original
 specification uses fixed periods of 5 and 34.
 
-## Interpretation
+## 🔍 Interpretation
 
 | AO Pattern                     | Signal                                           |
 | ------------------------------ | ------------------------------------------------ |
@@ -38,7 +38,7 @@ specification uses fixed periods of 5 and 34.
   pattern as a higher-probability entry within an existing trend.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeAwesomeOscillator } from "../../src/domain/awesome-oscillator";

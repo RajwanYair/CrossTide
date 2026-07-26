@@ -5,7 +5,7 @@ description: Volume-weighted price change that quantifies the force behind each 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 FI = (\text{Close}_t - \text{Close}_{t-1}) \times \text{Volume}_t
@@ -13,13 +13,13 @@ $$
 
 Smoothed with an EMA of period `n`.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 13      | 2–100  | EMA smoothing period     |
 
-## Interpretation
+## 🔍 Interpretation
 
 | FI Value   | Signal                                        |
 | ---------- | --------------------------------------------- |
@@ -32,7 +32,7 @@ Smoothed with an EMA of period `n`.
   version confirms the intermediate trend direction.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeForceIndex } from "../../src/domain/force-index";
@@ -40,6 +40,6 @@ import { computeForceIndex } from "../../src/domain/force-index";
 const values = computeForceIndex(candles, { period: 13 });
 ```
 
-## References
+## 📚 References
 
 - Elder, A. (1993). _Trading for a Living._

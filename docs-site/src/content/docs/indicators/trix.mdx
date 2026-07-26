@@ -5,7 +5,7 @@ description: Rate of change of a triple-smoothed EMA, filtering noise to highlig
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 EMA_3 = EMA(EMA(EMA(\text{Close}, n), n), n)
@@ -15,13 +15,13 @@ $$
 TRIX = \frac{EMA_{3,t} - EMA_{3,t-1}}{EMA_{3,t-1}} \times 100
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                         |
 | --------- | ------- | ------ | ----------------------------- |
 | `period`  | 15      | 2–100  | EMA smoothing period (×3)     |
 
-## Interpretation
+## 🔍 Interpretation
 
 | TRIX Value   | Signal                                     |
 | ------------ | ------------------------------------------ |
@@ -35,7 +35,7 @@ $$
   chosen period). It is one of the smoothest oscillators available.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeTrix } from "../../src/domain/trix";
@@ -43,6 +43,6 @@ import { computeTrix } from "../../src/domain/trix";
 const { trix, signal } = computeTrix(candles, { period: 15 });
 ```
 
-## References
+## 📚 References
 
 - Hutson, J. (1983). TRIX. _Technical Analysis of Stocks & Commodities._

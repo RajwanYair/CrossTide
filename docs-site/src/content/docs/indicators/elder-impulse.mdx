@@ -13,7 +13,7 @@ import { Aside } from "@astrojs/starlight/components";
 | ↓         | ↓            | SELL   | Red    |
 | Mixed     | Mixed        | NEUTRAL| Blue   |
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter      | Default | Range  | Notes                    |
 | -------------- | ------- | ------ | ------------------------ |
@@ -22,7 +22,7 @@ import { Aside } from "@astrojs/starlight/components";
 | `macdSlow`     | 26      | 10–100 | MACD slow EMA            |
 | `macdSignal`   | 9       | 2–20   | MACD signal period       |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Colour | Action                                    |
 | ------ | ----------------------------------------- |
@@ -36,7 +36,7 @@ import { Aside } from "@astrojs/starlight/components";
   bars or buy on red bars.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { elderImpulse } from "../../src/domain/elder-impulse";
@@ -49,6 +49,6 @@ const signals = elderImpulse(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Elder, A. (2002). _Come into My Trading Room._

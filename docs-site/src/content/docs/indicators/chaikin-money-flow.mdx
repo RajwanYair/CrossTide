@@ -5,7 +5,7 @@ description: Measures accumulation/distribution pressure over a rolling window, 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 MFM = \frac{(C - L) - (H - C)}{H - L}
@@ -15,13 +15,13 @@ $$
 CMF = \frac{\sum_{i=1}^{n} MFM_i \times V_i}{\sum_{i=1}^{n} V_i}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 20      | 5–100  | Rolling window           |
 
-## Interpretation
+## 🔍 Interpretation
 
 | CMF Value | Signal                                    |
 | --------- | ----------------------------------------- |
@@ -35,7 +35,7 @@ $$
   is being bought — a strong bullish continuation signal.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeChaikinMoneyFlow } from "../../src/domain/chaikin-money-flow";
@@ -43,6 +43,6 @@ import { computeChaikinMoneyFlow } from "../../src/domain/chaikin-money-flow";
 const values = computeChaikinMoneyFlow(candles, { period: 20 });
 ```
 
-## References
+## 📚 References
 
 - Chaikin, M. (1984). _Chaikin Oscillator and Money Flow._

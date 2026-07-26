@@ -5,7 +5,7 @@ description: CCI measures how far the current price deviates from its average, s
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{TP} = \frac{\text{High} + \text{Low} + \text{Close}}{3}
@@ -21,13 +21,13 @@ $$
 
 The constant 0.015 was chosen so that approximately 70–80% of CCI values fall in the ±100 range.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range | Notes                        |
 | --------- | ------- | ----- | ---------------------------- |
 | `period`  | 20      | 5–200 | Lambert's original: 20 bars  |
 
-## Interpretation
+## 🔍 Interpretation
 
 | CCI Value  | Signal                                         |
 | ---------- | ---------------------------------------------- |
@@ -43,7 +43,7 @@ The constant 0.015 was chosen so that approximately 70–80% of CCI values fall 
   rather than entering extreme zones.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeCci } from "../../src/domain/cci-calculator";

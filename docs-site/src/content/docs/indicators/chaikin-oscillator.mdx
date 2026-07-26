@@ -5,20 +5,20 @@ description: MACD applied to the Accumulation/Distribution line, measuring momen
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Chaikin Osc} = EMA(\text{AD Line}, \text{fast}) - EMA(\text{AD Line}, \text{slow})
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `fast`    | 3       | 2–20   | Fast EMA period          |
 | `slow`    | 10      | 5–50   | Slow EMA period          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Value       | Signal                                   |
 | ----------- | ---------------------------------------- |
@@ -32,7 +32,7 @@ $$
   in an uptrend is a higher-probability signal.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeChaikinOscillator } from "../../src/domain/chaikin-oscillator";
@@ -40,6 +40,6 @@ import { computeChaikinOscillator } from "../../src/domain/chaikin-oscillator";
 const values = computeChaikinOscillator(candles, { fast: 3, slow: 10 });
 ```
 
-## References
+## 📚 References
 
 - Chaikin, M. (1984). Chaikin Oscillator.

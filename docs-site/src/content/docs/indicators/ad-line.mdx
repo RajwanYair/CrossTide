@@ -5,7 +5,7 @@ description: Cumulative volume-weighted money-flow indicator tracking smart-mone
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 MFM = \frac{(C - L) - (H - C)}{H - L}
@@ -15,11 +15,11 @@ $$
 AD_t = AD_{t-1} + MFM_t \times V_t
 $$
 
-## Parameters
+## ⚙ Parameters
 
 No parameters — the AD Line is a cumulative series computed from all available data.
 
-## Interpretation
+## 🔍 Interpretation
 
 | AD Behaviour         | Signal                                     |
 | -------------------- | ------------------------------------------ |
@@ -33,7 +33,7 @@ No parameters — the AD Line is a cumulative series computed from all available
   Watch for price making new highs while AD fails to confirm.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeAdLine } from "../../src/domain/ad-line";
@@ -41,6 +41,6 @@ import { computeAdLine } from "../../src/domain/ad-line";
 const adLine = computeAdLine(candles);
 ```
 
-## References
+## 📚 References
 
 - Williams, L. & Chaiken, M. (1974). Accumulation Distribution.

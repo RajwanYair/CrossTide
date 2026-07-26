@@ -1,4 +1,4 @@
-# CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
+# 🗺️ CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
 
 > **Date:** July 22, 2026
 > **Current version:** v11.43.0
@@ -12,31 +12,31 @@
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
-1. [North Star — What CrossTide Must Become](#1-north-star--what-crosstide-must-become)
-2. [State of the Art: Competitive Landscape 2026](#2-state-of-the-art-competitive-landscape-2026)
-3. [Latest Enhancements to Adopt (2026 Harvest)](#3-latest-enhancements-to-adopt-2026-harvest)
-4. [Language & Platform Refactor Decision](#4-language--platform-refactor-decision)
-5. [Master Tracking Table](#5-master-tracking-table)
-6. [Decision Audit v11 — Final Verdicts](#6-decision-audit-v11--final-verdicts)
-7. [Frontend Architecture](#7-frontend-architecture)
-8. [Backend & Infrastructure](#8-backend--infrastructure)
-9. [Data Strategy & API Ecosystem](#9-data-strategy--api-ecosystem)
-10. [AI, ML & Intelligent Compute](#10-ai-ml--intelligent-compute)
-11. [Developer Experience & Tooling](#11-developer-experience--tooling)
-12. [Documentation & Knowledge Strategy](#12-documentation--knowledge-strategy)
-13. [Quality, Security & Observability](#13-quality-security--observability)
-14. [Performance Architecture](#14-performance-architecture)
-15. [VS Code & GitHub Integration Strategy](#15-vs-code--github-integration-strategy)
-16. [Execution Phases](#16-execution-phases)
-17. [Refactor & Rewrite Backlog](#17-refactor--rewrite-backlog)
-18. [Risks, Mitigations & Scope Boundaries](#18-risks-mitigations--scope-boundaries)
-19. [Engineering Non-Negotiables](#19-engineering-non-negotiables)
+1. [North Star — What CrossTide Must Become](#1--north-star--what-crosstide-must-become)
+2. [State of the Art: Competitive Landscape 2026](#2--state-of-the-art-competitive-landscape-2026)
+3. [Latest Enhancements to Adopt (2026 Harvest)](#3--latest-enhancements-to-adopt-2026-harvest)
+4. [Language & Platform Refactor Decision](#4--language--platform-refactor-decision)
+5. [Master Tracking Table](#5--master-tracking-table)
+6. [Decision Audit v11 — Final Verdicts](#6--decision-audit-v11--final-verdicts)
+7. [Frontend Architecture](#7--frontend-architecture)
+8. [Backend & Infrastructure](#8--backend--infrastructure)
+9. [Data Strategy & API Ecosystem](#9--data-strategy--api-ecosystem)
+10. [AI, ML & Intelligent Compute](#10--ai-ml--intelligent-compute)
+11. [Developer Experience & Tooling](#11--developer-experience--tooling)
+12. [Documentation & Knowledge Strategy](#12--documentation--knowledge-strategy)
+13. [Quality, Security & Observability](#13--quality-security--observability)
+14. [Performance Architecture](#14--performance-architecture)
+15. [VS Code & GitHub Integration Strategy](#15--vs-code--github-integration-strategy)
+16. [Execution Phases](#16--execution-phases)
+17. [Refactor & Rewrite Backlog](#17--refactor--rewrite-backlog)
+18. [Risks, Mitigations & Scope Boundaries](#18--risks-mitigations--scope-boundaries)
+19. [Engineering Non-Negotiables](#19--engineering-non-negotiables)
 
 ---
 
-## 1. North Star — What CrossTide Must Become
+## 1. 🎯 North Star — What CrossTide Must Become
 
 ### 1.1 The vision (one sentence)
 
@@ -95,7 +95,7 @@ We do not compete on feature count. We compete on **philosophy**:
 
 ---
 
-## 2. State of the Art: Competitive Landscape 2026
+## 2. 🌍 State of the Art: Competitive Landscape 2026
 
 ### 2.1 Comprehensive comparison matrix
 
@@ -177,7 +177,7 @@ Rating: `★★★` best-in-class · `★★` strong · `★` adequate · `△` 
 
 ---
 
-## 3. Latest Enhancements to Adopt (2026 Harvest)
+## 3. 🌾 Latest Enhancements to Adopt (2026 Harvest)
 
 Each enhancement below is sourced from a best-in-class competitor or a 2026 platform capability, scored for fit, and mapped to a phase. These are the line items that feed the **Master Tracking Table (§5)**. Nothing here is built yet — this is the planning menu.
 
@@ -236,7 +236,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 
 ---
 
-## 4. Language & Platform Refactor Decision
+## 4. 🧭 Language & Platform Refactor Decision
 
 > The brief explicitly permits a full refactor "up to and including changing the main code language." This section makes that decision **deliberately and on the record** rather than leaving it implicit.
 
@@ -267,7 +267,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 
 ---
 
-## 5. Master Tracking Table
+## 5. 📊 Master Tracking Table
 
 > **This is the single table to run development from.** Every enhancement (§3) and phase task (§16) is tracked here. Update the **Status** column as work progresses; the phase tables in §16 hold the detail.
 
@@ -318,7 +318,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 
 ---
 
-## 6. Decision Audit v11 — Final Verdicts
+## 6. 📋 Decision Audit v11 — Final Verdicts
 
 ### 6.1 Language & Type System
 
@@ -366,7 +366,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 
 ---
 
-## 7. Frontend Architecture
+## 7. 🎨 Frontend Architecture
 
 ### 7.1 Component model (finalized)
 
@@ -391,7 +391,7 @@ flowchart LR
 
 ---
 
-## 8. Backend & Infrastructure
+## 8. 🧱 Backend & Infrastructure
 
 ### 8.1 Production deployment — THE #1 PRIORITY
 
@@ -417,7 +417,7 @@ curl https://crosstide-api.workers.dev/api/health
 
 ---
 
-## 9. Data Strategy & API Ecosystem
+## 9. 🔌 Data Strategy & API Ecosystem
 
 ### 9.1 Provider chain
 
@@ -443,7 +443,7 @@ The CrossTide Worker API serves four consumers:
 
 ---
 
-## 10. AI, ML & Intelligent Compute
+## 10. 🧠 AI, ML & Intelligent Compute
 
 | Capability | Platform | Phase |
 |---|---|---|
@@ -457,7 +457,7 @@ The CrossTide Worker API serves four consumers:
 
 ---
 
-## 11. Developer Experience & Tooling
+## 11. 🧰 Developer Experience & Tooling
 
 ### 11.1 Production toolchain
 
@@ -493,7 +493,7 @@ Run all: `npm run ci`
 
 ---
 
-## 12. Documentation & Knowledge Strategy
+## 12. 📚 Documentation & Knowledge Strategy
 
 | Priority | Document | Status |
 |---|---|---|
@@ -506,7 +506,7 @@ Run all: `npm run ci`
 
 ---
 
-## 13. Quality, Security & Observability
+## 13. 🔒 Quality, Security & Observability
 
 ### 13.1 Security controls (all active)
 
@@ -534,7 +534,7 @@ Run all: `npm run ci`
 
 ---
 
-## 14. Performance Architecture
+## 14. ⚡ Performance Architecture
 
 | Metric | Budget | Current | Status |
 |---|---|---|---|
@@ -546,7 +546,7 @@ Run all: `npm run ci`
 
 ---
 
-## 15. VS Code & GitHub Integration Strategy
+## 15. 🧩 VS Code & GitHub Integration Strategy
 
 ### 15.1 Current assets
 
@@ -614,7 +614,7 @@ Run all: `npm run ci`
 
 ---
 
-## 16. Execution Phases
+## 16. 🚦 Execution Phases
 
 > Phase IDs map to the **Master Tracking Table (§5)**. Detail tables below; run status from §5.
 
@@ -701,7 +701,7 @@ flowchart LR
 
 ---
 
-## 17. Refactor & Rewrite Backlog
+## 17. 🔄 Refactor & Rewrite Backlog
 
 | # | Refactor | Phase |
 |---|---|---|
@@ -718,7 +718,7 @@ flowchart LR
 
 ---
 
-## 18. Risks, Mitigations & Scope Boundaries
+## 18. 🚧 Risks, Mitigations & Scope Boundaries
 
 ### 18.1 Risk matrix
 
@@ -739,7 +739,7 @@ flowchart LR
 
 ---
 
-## 19. Engineering Non-Negotiables
+## 19. 🚫 Engineering Non-Negotiables
 
 1. No suppressions (`eslint-disable`, `@ts-ignore`, `--force`)
 2. No dead artifacts (every file/export/dep must be referenced)
@@ -754,7 +754,7 @@ flowchart LR
 
 ---
 
-## Appendix: Metric Targets
+## 📈 Appendix: Metric Targets
 
 | Metric | Phase P | Phase Q | Phase R | Phase S | Phase T |
 |---|---|---|---|---|---|

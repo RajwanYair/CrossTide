@@ -5,7 +5,7 @@ description: Normalises price into a near-Gaussian distribution, making turning 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 x_t = \frac{2 \cdot (\text{median} - \text{Low}_n)}{\text{High}_n - \text{Low}_n} - 1
@@ -17,13 +17,13 @@ $$
 
 (Clamped so $|x| < 0.999$.)
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                         |
 | --------- | ------- | ------ | ----------------------------- |
 | `period`  | 9       | 2–100  | Lookback for hi/lo normalise  |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Fisher Value        | Signal                                    |
 | ------------------- | ----------------------------------------- |
@@ -36,7 +36,7 @@ $$
   making them useful for automated signal detection.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeFisherTransform } from "../../src/domain/fisher-transform";
@@ -44,6 +44,6 @@ import { computeFisherTransform } from "../../src/domain/fisher-transform";
 const values = computeFisherTransform(candles, { period: 9 });
 ```
 
-## References
+## 📚 References
 
 - Ehlers, J. F. (2002). _Cybernetic Analysis for Stocks and Futures._

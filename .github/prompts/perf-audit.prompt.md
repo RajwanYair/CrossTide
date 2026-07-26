@@ -2,9 +2,9 @@
 description: "Investigate and fix performance regressions in CrossTide"
 ---
 
-# Performance Audit
+# ⚡ Performance Audit
 
-## Bundle size
+## 📦 Bundle size
 
 ```bash
 npm run build && npm run check:bundle
@@ -16,7 +16,7 @@ If over budget (250 KB gzip), analyze chunks:
 npx vite build --mode analyze
 ```
 
-## Core Web Vitals
+## 📊 Core Web Vitals
 
 Target budgets:
 
@@ -24,14 +24,14 @@ Target budgets:
 - INP < 200ms (p75)
 - CLS < 0.05
 
-## Common fixes
+## 🔧 Common fixes
 
 1. **Large chunk**: Split via dynamic `import()` in card loader
 2. **Slow INP**: Move computation to Web Worker (`src/core/worker-rpc.ts`)
 3. **Bad LCP**: Preload critical font + above-fold CSS
 4. **CLS shift**: Add explicit `width`/`height` or `aspect-ratio`
 
-## Lighthouse
+## 💡 Lighthouse
 
 ```bash
 npm run lhci

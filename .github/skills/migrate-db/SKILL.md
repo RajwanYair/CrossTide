@@ -1,15 +1,15 @@
-# Skill: D1 Database Migration
+# 🗄️ Skill: D1 Database Migration
 
-## When to use
+## 🎯 When to use
 
 - Creating a new D1 migration
 - Applying pending migrations
 - Checking migration status
 - Troubleshooting D1 schema issues
 
-## Migration Workflow
+## 🔄 Migration Workflow
 
-### 1. Create a new migration
+### 1️⃣ Create a new migration
 
 ```bash
 cd worker
@@ -18,7 +18,7 @@ npx wrangler d1 migrations create crosstide-db "description_of_change"
 
 This creates a new `.sql` file in `worker/migrations/`.
 
-### 2. Write the migration SQL
+### 2️⃣ Write the migration SQL
 
 Edit the generated file in `worker/migrations/NNNN_description_of_change.sql`:
 
@@ -36,19 +36,19 @@ CREATE INDEX IF NOT EXISTS idx_new_table_created
   ON new_table(created_at);
 ```
 
-### 3. Apply locally (dev)
+### 3️⃣ Apply locally (dev)
 
 ```bash
 npx wrangler d1 migrations apply crosstide-db --local
 ```
 
-### 4. Apply to production
+### 4️⃣ Apply to production
 
 ```bash
 npx wrangler d1 migrations apply crosstide-db --remote
 ```
 
-### 5. Verify status
+### 5️⃣ Verify status
 
 ```bash
 npx wrangler d1 migrations list crosstide-db --remote
@@ -60,7 +60,7 @@ Or via the API:
 curl https://crosstide-api.workers.dev/api/migrations/status
 ```
 
-## Schema Conventions
+## 📏 Schema Conventions
 
 | Convention | Rule |
 |---|---|
@@ -71,7 +71,7 @@ curl https://crosstide-api.workers.dev/api/migrations/status
 | Indexes | Named `idx_{table}_{column}` |
 | Foreign keys | Always declared with ON DELETE CASCADE |
 
-## Current Schema
+## 🗂️ Current Schema
 
 ```sql
 -- user_sync: Passkey-authenticated E2EE user data
@@ -80,7 +80,7 @@ curl https://crosstide-api.workers.dev/api/migrations/status
 -- provider_health: Circuit breaker state
 ```
 
-## Rollback Strategy
+## ⏪ Rollback Strategy
 
 D1 does not support automatic rollback. Write compensating migrations:
 
@@ -90,7 +90,7 @@ DROP TABLE IF EXISTS accidentally_created;
 ALTER TABLE existing_table DROP COLUMN IF EXISTS bad_column;
 ```
 
-## Testing Migrations
+## 🧪 Testing Migrations
 
 ```bash
 # Run against local D1

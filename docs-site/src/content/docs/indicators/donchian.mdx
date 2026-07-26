@@ -5,7 +5,7 @@ description: Highest high and lowest low over a lookback window — the classic 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Upper} = \max(\text{High}, n)
@@ -19,13 +19,13 @@ $$
 \text{Middle} = \frac{\text{Upper} + \text{Lower}}{2}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 20      | 5–200  | Lookback window          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition          | Signal                                  |
 | ------------------ | --------------------------------------- |
@@ -38,7 +38,7 @@ $$
   for entries and 10-day for exits — one of the most famous trend systems.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeDonchian } from "../../src/domain/donchian";
@@ -46,7 +46,7 @@ import { computeDonchian } from "../../src/domain/donchian";
 const { upper, middle, lower } = computeDonchian(candles, { period: 20 });
 ```
 
-## References
+## 📚 References
 
 - Donchian, R. (1960). Commodity channel breakouts.
 - [Donchian on Investopedia](https://www.investopedia.com/terms/d/donchianchannels.asp)

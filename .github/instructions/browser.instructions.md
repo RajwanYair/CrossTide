@@ -2,11 +2,11 @@
 applyTo: "tests/browser/**,tests/e2e/**,.browserslistrc,playwright.config.ts,vitest.browser.config.ts"
 ---
 
-# Browser Compatibility Rules
+# 🌐 Browser Compatibility Rules
 
 CrossTide targets progressive enhancement across all major browsers — never break gracefully.
 
-## Canonical Source Files (all four must stay in sync)
+## 📌 Canonical Source Files (all four must stay in sync)
 
 | File                                      | Purpose                                                                       |
 | ----------------------------------------- | ----------------------------------------------------------------------------- |
@@ -17,9 +17,9 @@ CrossTide targets progressive enhancement across all major browsers — never br
 
 **When adding a new browser target, update ALL four files.**
 
-## Two Test Types
+## 🧪 Two Test Types
 
-### Browser Unit Tests — `tests/browser/*.browser.test.ts`
+### 🔬 Browser Unit Tests — `tests/browser/*.browser.test.ts`
 
 Run by Vitest in a real browser via `@vitest/browser-playwright`. Tests load the actual DOM APIs.
 
@@ -36,7 +36,7 @@ describe("CSS feature detection", () => {
 
 Run: `npm run test:browser`
 
-### Playwright E2E Tests — `tests/e2e/*.spec.ts`
+### 🎭 Playwright E2E Tests — `tests/e2e/*.spec.ts`
 
 Run across ALL projects defined in `playwright.config.ts` (chromium, firefox, webkit + mobile variants).
 
@@ -52,7 +52,7 @@ test("graceful degradation — page renders without JS", async ({ page }) => {
 Run: `npm run test:e2e` (all projects)
 Run specific: `npx playwright test --project=firefox tests/e2e/cross-browser.spec.ts`
 
-## Feature Detection Rules
+## 🔍 Feature Detection Rules
 
 - **Detect capabilities, never browsers** — `CSS.supports(...)`, `"IntersectionObserver" in window`, etc.
 - **Always graceful** — detection must not throw; wrap in `typeof` or `try/catch`
@@ -68,7 +68,7 @@ if (hasClipboard) await navigator.clipboard.writeText(text);
 await navigator.clipboard.writeText(text);
 ```
 
-## Test Assertion Style
+## ✅ Test Assertion Style
 
 ```typescript
 // ✓ Test that the detection mechanism works
@@ -78,7 +78,7 @@ expect(typeof CSS.supports("container-type", "size")).toBe("boolean");
 expect(CSS.supports("container-type", "size")).toBe(true);
 ```
 
-## Browser Targets (from .browserslistrc)
+## 🎯 Browser Targets (from .browserslistrc)
 
 ```text
 last 2 Chrome versions
@@ -92,7 +92,7 @@ last 2 QQ Browser versions
 not dead
 ```
 
-## Common Pitfalls
+## ⚠️ Common Pitfalls
 
 - Asserting `toBe(true)` on `CSS.supports(...)` — use `typeof` check instead
 - Adding a new Playwright project without mirroring in `.browserslistrc`

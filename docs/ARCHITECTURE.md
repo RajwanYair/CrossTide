@@ -1,4 +1,4 @@
-# Architecture
+# 🏗️ Architecture
 
 > **Last updated:** v11.43.0 (June 2026)
 
@@ -7,7 +7,7 @@ It follows a strict layered architecture, keeps the production bundle small, and
 self-contained offline-first PWA with real-time streaming, multi-provider data, and Web Worker
 compute offload.
 
-## Layered architecture
+## 🧱 Layered architecture
 
 ```mermaid
 flowchart TD
@@ -31,7 +31,7 @@ flowchart TD
 **Dependency rule:** each layer may only import from layers below it. The domain layer is pure
 (zero side effects, no DOM access). Web Workers share the domain and core layers.
 
-## Runtime data flow
+## 🔄 Runtime data flow
 
 ```mermaid
 sequenceDiagram
@@ -66,7 +66,7 @@ sequenceDiagram
   SW->>Core: Background Sync / cache response
 ```
 
-## URL sharing flow (D5)
+## 🔗 URL sharing flow (D5)
 
 ```mermaid
 sequenceDiagram
@@ -88,7 +88,7 @@ sequenceDiagram
   UI-->>Recipient: auto-import tickers + toast confirmation
 ```
 
-## Key product features (v11.41)
+## ✨ Key product features (v11.41)
 
 | Feature                    | Implementation                                                                |
 | -------------------------- | ----------------------------------------------------------------------------- |
@@ -129,7 +129,7 @@ sequenceDiagram
 | Data export                | JSON, CSV, XLSX export via `src/core/data-export.ts`                          |
 | 10 data providers          | Yahoo, Finnhub, Alpha Vantage, Polygon, Tiingo, Stooq, CoinGecko + chain      |
 
-## Directory layout
+## 📁 Directory layout
 
 ```text
 CrossTide/
@@ -155,7 +155,7 @@ CrossTide/
 └── public/             Static assets, PWA manifest, 404.html
 ```
 
-## Runtime dependencies
+## 📦 Runtime dependencies
 
 | Package                      | Purpose                     | Size (gz) |
 | ---------------------------- | --------------------------- | --------- |
@@ -167,7 +167,7 @@ CrossTide/
 
 All other functionality is hand-written TypeScript — no framework runtime.
 
-## Tooling — single source of truth
+## 🧰 Tooling — single source of truth
 
 | Concern        | File                            | Notes                                                               |
 | -------------- | ------------------------------- | ------------------------------------------------------------------- |
@@ -190,7 +190,7 @@ Git hooks are configured via `simple-git-hooks`:
 - **pre-commit**: `lint-staged` runs ESLint + Prettier on staged TS/CSS/MD files
 - **commit-msg**: `commitlint` enforces [Conventional Commits](https://www.conventionalcommits.org/)
 
-## CI / CD
+## 🚀 CI / CD
 
 | Workflow         | Trigger   | Purpose                                                     |
 | ---------------- | --------- | ----------------------------------------------------------- |
@@ -218,7 +218,7 @@ flowchart LR
   Weekly --> Dependabot["dependabot.yml\ngrouped update PRs"]
 ```
 
-## Quality gates
+## ✅ Quality gates
 
 Local and CI both enforce, with **zero waivers**:
 
@@ -233,7 +233,7 @@ Local and CI both enforce, with **zero waivers**:
 - Lighthouse CI budgets met
 - Production build under 250 KB gzipped JS (`npm run check:bundle`)
 
-## Security
+## 🔒 Security
 
 - **CSP + security headers** via Cloudflare Worker middleware (`worker/security.ts`) on all API responses:
   `Content-Security-Policy`, `Strict-Transport-Security`, `X-Frame-Options: DENY`,
@@ -247,7 +247,7 @@ Local and CI both enforce, with **zero waivers**:
 - **No `innerHTML`** with user data — all DOM via `textContent` or sanitized templates
 - **Dependabot** + dependency-review-action for supply chain
 
-## Routing & card registry
+## 🧭 Routing & card registry
 
 Routes use the History API (`src/ui/router.ts`). Every route maps to a card module loaded via
 lazy `import()`. The card registry (`cards/registry.ts`) returns `{ mount(el, ctx) }` for each
@@ -276,7 +276,7 @@ entry. Cards are never destroyed on route change — hidden/shown via CSS.
 | `/provider-health`    | `cards/provider-health.ts`                            |
 | `/settings`           | `cards/settings-card.ts`                              |
 
-## Storage
+## 🗄️ Storage
 
 CrossTide uses a four-tier storage model:
 
@@ -292,7 +292,7 @@ When quota usage reaches **80%** it evicts the 20 oldest L1/L2 cache entries.
 At **95%** it evicts 50 entries and calls `navigator.storage.persist()` to request
 persistent storage from the browser.
 
-## Performance budget
+## ⚡ Performance budget
 
 | Asset                | Budget      | Gate           |
 | -------------------- | ----------- | -------------- |

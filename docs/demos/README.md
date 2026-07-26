@@ -1,8 +1,8 @@
-# Demo Recordings
+# 🎬 Demo Recordings
 
 Animated GIF demos for the README, recorded via Playwright against the live dev server.
 
-## Pipeline
+## 🔄 Pipeline
 
 ```mermaid
 flowchart LR
@@ -15,7 +15,7 @@ flowchart LR
   Manual --> Readme
 ```
 
-## Recording
+## 🎥 Recording
 
 ```bash
 # Prerequisites
@@ -29,7 +29,7 @@ npx tsx scripts/record-demos.ts
 npx tsx scripts/record-demos.ts consensus
 ```
 
-## Available Demos
+## 💼 Available Demos
 
 | File                  | Scenario                          | Duration |
 | --------------------- | --------------------------------- | -------- |
@@ -40,12 +40,12 @@ npx tsx scripts/record-demos.ts consensus
 | `signal-dsl.gif`      | Signal DSL with `plot()` output   | ~8s      |
 | `macro-dashboard.gif` | FRED macro economic overlay       | ~8s      |
 
-## Requirements
+## 📋 Requirements
 
 - **ffmpeg** on PATH for mp4 → GIF conversion (800px wide, 10fps, optimized palette)
 - Without ffmpeg, `.mp4` files are saved and can be converted manually via [ezgif.com](https://ezgif.com)
 
-## Output
+## 📤 Output
 
 - `.mp4` raw recordings (1280×720, lossless)
 - `.gif` optimized animations (800px wide, 10fps, palettegen)

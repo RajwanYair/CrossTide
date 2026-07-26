@@ -5,7 +5,7 @@ description: Weighted sum of four smoothed rate-of-change periods with a signal 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 KST = w_1 \cdot SMA(ROC_1) + w_2 \cdot SMA(ROC_2) + w_3 \cdot SMA(ROC_3) + w_4 \cdot SMA(ROC_4)
@@ -13,7 +13,7 @@ $$
 
 Default weights: 1, 2, 3, 4. Signal = SMA(KST, 9).
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter   | Default | Notes                          |
 | ----------- | ------- | ------------------------------ |
@@ -24,7 +24,7 @@ Default weights: 1, 2, 3, 4. Signal = SMA(KST, 9).
 | `sma1–sma4` | 10      | Smoothing per ROC              |
 | `signal`    | 9       | Signal line period             |
 
-## Interpretation
+## 🔍 Interpretation
 
 | KST Value           | Signal                                    |
 | -------------------- | ----------------------------------------- |
@@ -38,7 +38,7 @@ Default weights: 1, 2, 3, 4. Signal = SMA(KST, 9).
   consider shortening the four ROC periods by 20–30%.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeKst } from "../../src/domain/kst";
@@ -46,6 +46,6 @@ import { computeKst } from "../../src/domain/kst";
 const { kst, signal } = computeKst(candles);
 ```
 
-## References
+## 📚 References
 
 - Pring, M. (1992). _Technical Analysis Explained._

@@ -1,8 +1,8 @@
-# CrossTide MCP Server
+# 🔌 CrossTide MCP Server
 
 [Model Context Protocol](https://modelcontextprotocol.io) server that exposes CrossTide's financial analysis API to AI agents (Claude, GPT, etc.).
 
-## How it works
+## 🔄 How it works
 
 ```mermaid
 sequenceDiagram
@@ -19,7 +19,7 @@ sequenceDiagram
   MCP-->>Agent: tool result
 ```
 
-## Tools
+## 🧰 Tools
 
 | Tool | Description |
 |------|-------------|
@@ -30,7 +30,7 @@ sequenceDiagram
 | `run_screener` | Screen stocks by technical criteria |
 | `get_portfolio_risk` | Portfolio risk metrics (VaR, Sharpe, Sortino) |
 
-## Setup
+## ⚙️ Setup
 
 ```bash
 cd mcp-server
@@ -38,7 +38,7 @@ npm install
 npm run build
 ```
 
-## Usage with Claude Desktop
+## 💻 Usage with Claude Desktop
 
 Add to `claude_desktop_config.json`:
 
@@ -56,7 +56,7 @@ Add to `claude_desktop_config.json`:
 }
 ```
 
-## Environment Variables
+## 🔐 Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|

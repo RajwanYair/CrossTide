@@ -2,8 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
   # Primary deployment is Cloudflare Pages (cf-pages.yml).
-  # This workflow provides a manual GitHub Pages mirror of the SPA.
-  # docs.yml owns the automated push trigger for GitHub Pages (Astro docs site).
+  # This workflow publishes a GitHub Pages mirror with the SPA at /CrossTide/
+  # and the docs site nested at /CrossTide/docs/.
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -17,7 +19,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Build & Deploy
+    name: Build app + docs and deploy
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
@@ -28,16 +30,27 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build SPA
         run: npx vite build
         env:
           VITE_BASE: /CrossTide/
+
+      - name: Build docs site
+        run: npx astro build
+        working-directory: docs-site
+        env:
+          BASE_URL: /CrossTide/docs/
+
+      - name: Merge docs into Pages artifact
+        run: |
+          mkdir -p dist/docs
+          cp -R docs-site/dist/. dist/docs/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

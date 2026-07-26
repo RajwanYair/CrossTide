@@ -12,25 +12,25 @@ tools:
   - get_errors
 ---
 
-# Development Sprint
+# 🏃 Development Sprint
 
 Implement a single roadmap feature, pass all quality gates, and commit.
 
-## Sprint Workflow
+## 🔄 Sprint Workflow
 
-### 1. Select Feature (if not specified)
+### 1️⃣ Select Feature (if not specified)
 
 Read `docs/ROADMAP.md` — pick the highest-priority item not yet marked complete.
 Check current version: `grep '"version"' package.json`.
 
-### 2. Plan (before writing any code)
+### 2️⃣ Plan (before writing any code)
 
 - Identify which layer(s) are affected: `domain` / `worker` / `core` / `cards` / `ui`
 - List files to create and files to modify
 - Identify tests to write
 - Confirm no layer rule violations (see copilot-instructions.md layer diagram)
 
-### 3. Implement
+### 3️⃣ Implement
 
 - Follow the layer-specific instruction file for patterns:
   - Domain: `.github/instructions/domain.instructions.md`
@@ -39,13 +39,13 @@ Check current version: `grep '"version"' package.json`.
 - Write tests first for domain functions (TDD preferred)
 - Keep changes focused — one feature per sprint, no side improvements
 
-### 4. Quality Gates (run in order, fix before proceeding)
+### 4️⃣ Quality Gates (run in order, fix before proceeding)
 
 ```bash
 npm run ci   # typecheck → lint → test:coverage → build — all must pass
 ```
 
-### 5. Commit
+### 5️⃣ Commit
 
 ```bash
 git add -A
@@ -56,11 +56,11 @@ git commit -m "feat(scope): lowercase description of the feature"
 - Scope: matches the primary layer (`domain`, `worker`, `cards`, `core`, `ui`)
 - Breaking changes: add `BREAKING CHANGE:` in commit body
 
-### 6. Update ROADMAP.md (if feature is complete)
+### 6️⃣ Update ROADMAP.md (if feature is complete)
 
 Mark the item with `[x]` or move to completed section.
 
-### 7. GitHub Release (only when instructed)
+### 7️⃣ GitHub Release (only when instructed)
 
 ```bash
 npm version patch  # or minor/major
@@ -68,7 +68,7 @@ git push --follow-tags
 gh release create "v$(node -p "require('./package.json').version")" --generate-notes
 ```
 
-## Rules
+## 📏 Rules
 
 - **One sprint = one commit** — never batch multiple features in one commit
 - **No TODOs** — if something can't be done now, open a GitHub Issue

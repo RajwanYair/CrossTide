@@ -3,15 +3,15 @@ applyTo: "src/**/*.ts,worker/**/*.ts,scripts/**/*.mjs,tests/**"
 description: "Use when: editing any TypeScript source, worker routes, scripts, or test files."
 ---
 
-# TypeScript Conventions — CrossTide
+# 🔷 TypeScript Conventions — CrossTide
 
-## Module System
+## 📦 Module System
 
 - Pure ESM (`"type": "module"` in `package.json`). No `require()`, no `module.exports`.
 - Worker files use `.js` extension on relative imports (Cloudflare Workers ESM requirement).
 - Imports grouped: (1) Node built-ins, (2) third-party, (3) `src/types/`, (4) `src/domain/`, (5) `src/core/`, (6) `src/providers/`, (7) `src/cards/`, (8) `src/ui/`.
 
-## Type Safety
+## 🛡️ Type Safety
 
 - **No `any`** — use `unknown` + type narrowing or define an interface.
 - **Explicit return types** on every exported function.
@@ -20,14 +20,14 @@ description: "Use when: editing any TypeScript source, worker routes, scripts, o
 - **`===` always** — never `==`.
 - Use `satisfies` operator to catch shape errors while preserving narrow inferred types.
 
-## Safety Rules
+## ⚠️ Safety Rules
 
 - **Never `innerHTML`** with unsanitized data — use `textContent` or sanitize first.
 - **No `eval()`** or `new Function()` outside explicit sandbox contexts.
 - All user-supplied data (URL params, API responses, form inputs) validated at system boundaries.
 - **No `console.log`** — use `console.warn` / `console.error`, or `worker/logger.ts` in Workers.
 
-## Architecture Layers (ESLint-enforced import direction)
+## 🏗️ Architecture Layers (ESLint-enforced import direction)
 
 ```text
 types ← domain ← core ← providers ← cards ← ui
@@ -38,7 +38,7 @@ types ← domain ← core ← providers ← cards ← ui
 - `src/cards/` — route cards implementing the `CardModule` pattern; DOM allowed.
 - `worker/` — Hono on Cloudflare Workers; imports use `.js` extension.
 
-## CardModule Pattern
+## 🧩 CardModule Pattern
 
 Every route card in `src/cards/` must export:
 
@@ -56,14 +56,14 @@ export const MyCard: CardModule = {
 - `mount()` must call `signal.subscribe()` and push the disposer to a local `_subs` array.
 - `unmount()` must drain `_subs` and cancel any pending `AbortController`.
 
-## Error Handling
+## 🚨 Error Handling
 
 - Use `try/catch` only at I/O boundaries (fetch, D1 queries, KV reads).
 - Narrow `catch (e: unknown)` with `instanceof Error` before accessing `.message`.
 - Surface worker errors as typed `ErrorResponse` — never leak stack traces to clients.
 - Use `ErrorBoundary` from `src/core/error-boundary.ts` to wrap card `mount()` calls.
 
-## Naming
+## 🏷️ Naming
 
 - Functions / variables: `camelCase`.
 - Types / interfaces / classes: `PascalCase`.
@@ -71,7 +71,7 @@ export const MyCard: CardModule = {
 - Private module-local helpers: prefix with `_`, e.g. `_buildRow()`.
 - Test files: `*.test.ts` (unit), `*.spec.ts` (E2E).
 
-## JSDoc (exported symbols)
+## 📝 JSDoc (exported symbols)
 
 Every exported function and interface must have a JSDoc block:
 
@@ -85,17 +85,17 @@ export function rsi(closes: readonly number[], period = 14): number[] { … }
 
 No JSDoc needed on private / unexported helpers.
 
-## No Floating Promises
+## 🎈 No Floating Promises
 
 - `void asyncFn()` for intentional fire-and-forget.
 - `await asyncFn()` for sequential execution.
 - Never leave a promise unawaited without an explicit `void` annotation.
 
-## Barrel Exports
+## 🨣 Barrel Exports
 
 Each layer exposes its public API via an `index.ts`. Do not import from internal files across layer boundaries — import from the layer's `index.ts`.
 
-## Commit Convention
+## 💬 Commit Convention
 
 ```text
 type(scope): fully lowercase subject, no period, ≤72 chars

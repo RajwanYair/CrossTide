@@ -5,7 +5,7 @@ description: Moving average with linearly increasing weights, giving more import
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 WMA = \frac{n \cdot P_t + (n-1) \cdot P_{t-1} + \ldots + 1 \cdot P_{t-n+1}}{n + (n-1) + \ldots + 1}
@@ -13,13 +13,13 @@ $$
 
 The denominator equals $\frac{n(n+1)}{2}$.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | —       | 2–200  | Required; no default     |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition        | Signal                              |
 | ---------------- | ----------------------------------- |
@@ -32,7 +32,7 @@ The denominator equals $\frac{n(n+1)}{2}$.
   less popular than EMA in practice due to the linear weight assumption.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeWma } from "../../src/domain/wma";
@@ -40,6 +40,6 @@ import { computeWma } from "../../src/domain/wma";
 const wma = computeWma(closes, period);
 ```
 
-## References
+## 📚 References
 
 - Murphy, J. J. (1999). _Technical Analysis of the Financial Markets._

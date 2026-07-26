@@ -37,6 +37,22 @@ interface FunctionInfo {
 
 // ── Category classification ───────────────────────────────────────────────────
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  "Signal Methods": "📶",
+  Backtesting: "🔁",
+  "Pattern Recognition": "🔺",
+  "Portfolio & Risk": "💼",
+  "Chart Types": "📊",
+  Alerts: "🔔",
+  "Signal DSL": "🧬",
+  "Statistical Analysis": "📐",
+  "Oscillators & Momentum": "🌊",
+  "Trend Indicators": "📈",
+  "Volume Indicators": "📦",
+  "Volatility Indicators": "⚡",
+  Other: "🗂️",
+};
+
 function classifyCategory(filename: string, description: string): string {
   const name = filename.toLowerCase();
   const desc = description.toLowerCase();
@@ -158,12 +174,12 @@ function main(): void {
 
   // Generate markdown
   const lines: string[] = [
-    "# CrossTide Indicator Reference",
+    "# 📊 CrossTide Indicator Reference",
     "",
     `> Auto-generated from \`src/domain/\` JSDoc on ${new Date().toISOString().slice(0, 10)}.`,
     `> ${indicators.length} modules | ${indicators.reduce((sum, i) => sum + i.functions.length, 0)} exported functions | ${indicators.reduce((sum, i) => sum + i.interfaces.length, 0)} interfaces`,
     "",
-    "## Summary Table",
+    "## 📋 Summary Table",
     "",
     "| Module | Category | Functions | Description |",
     "| --- | --- | --- | --- |",
@@ -182,7 +198,8 @@ function main(): void {
   const sortedCategories = [...categories.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 
   for (const [category, inds] of sortedCategories) {
-    lines.push(`## ${category}`, "");
+    const emoji = CATEGORY_EMOJI[category] ?? "🗂️";
+    lines.push(`## ${emoji} ${category}`, "");
 
     for (const ind of inds) {
       lines.push(`### ${ind.moduleName}`, "");

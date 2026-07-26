@@ -5,7 +5,7 @@ description: Volume-weighted RSI measuring buying versus selling pressure on a 0
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Typical Price} = \frac{H + L + C}{3}
@@ -23,13 +23,13 @@ $$
 MFI = 100 - \frac{100}{1 + \text{Money Ratio}}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 14      | 5–50   | Lookback window          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition  | Signal                                       |
 | ---------- | -------------------------------------------- |
@@ -43,7 +43,7 @@ $$
   agree on overbought/oversold, the signal is stronger.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeMfiSeries } from "../../src/domain/mfi";
@@ -51,6 +51,6 @@ import { computeMfiSeries } from "../../src/domain/mfi";
 const values = computeMfiSeries(candles, { period: 14 });
 ```
 
-## References
+## 📚 References
 
 - Quong, G. & Soudack, A. (1989). "Volume-Weighted RSI: Money Flow Index." _Technical Analysis of Stocks & Commodities._

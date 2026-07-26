@@ -1,8 +1,10 @@
-# Changelog
+# 📜 Changelog
 
 All notable changes to CrossTide are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
+
+**Legend:** ✨ Added · 🔄 Changed · 🐛 Fixed · 🗑️ Removed · 🔒 Security · ⚠️ Deprecated
 
 ---
 
@@ -11,7 +13,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 > **Sprint: Production Readiness Overhaul (ROADMAP v10, workspace cleanup,
 > agent infrastructure, quality gate fixes)**
 
-### Added
+### ✨ Added
 
 - **Deploy ops agent** (`deploy-ops.agent.md`): Cloudflare deployment,
   Docker, CI/CD specialist persona.
@@ -25,7 +27,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - **Perf-audit prompt** (`perf-audit.prompt.md`): Performance audit trigger.
 - **GitKraken MCP server** (`.vscode/mcp.json`): Added gitkraken stdio server.
 
-### Fixed
+### 🐛 Fixed
 
 - **Alpaca test timeout**: `makeEnv` helper used `??` which didn't distinguish
   "not passed" from "explicitly undefined" — tests hit real network. Fixed with
@@ -33,7 +35,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - **Biome format**: 7 files reformatted to pass `format:check`.
 - **Stylelint**: 2 `comment-empty-line-before` errors in layout/responsive CSS.
 
-### Changed
+### 🔄 Changed
 
 - **ROADMAP v10** (`docs/ROADMAP.md`): Complete rewrite — "Production or Bust"
   strategic plan with decision audit, phase breakdown (P–T), and VS Code
@@ -47,7 +49,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - **AGENTS.md**: Updated with full Agent Registry table (8 agents).
 - **Architecture doc**: Version bump and freshness update.
 
-### Removed
+### 🗑️ Removed
 
 - `.prettierrc`, `.prettierignore` (migrated to Biome).
 - `.github/debug.log`, `.github/copilot/debug.log` (should never be committed).
@@ -59,7 +61,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 > **Sprint: Keyboard nav, contributor onboarding, biome, SSG infra
 > (5-sprint session)**
 
-### Added
+### ✨ Added
 
 - **Roving tabindex utility** (Q13): WAI-ARIA keyboard arrow navigation for
   grouped elements; integrated into the sidebar nav.
@@ -71,7 +73,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   pages for top 500 S&P tickers with structured data.
 - **Mutation test script**: `npm run test:mutate` runs Stryker on domain layer.
 
-### Changed
+### 🔄 Changed
 
 - **Biome formatter** (RF11): replaced Prettier with Biome 2.4 for formatting
   (100× faster). ESLint retained for linting. lint-staged updated.
@@ -86,7 +88,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 > **Sprint: DSL Loops, Multi-Timeframe Sync, AAA Accessibility, Mobile UX
 > (10-sprint session)** (commits `620a557`–`1a875b4`)
 
-### Added
+### ✨ Added
 
 - **DSL expansion** (R1): `for..in..do` loops and `let` bindings for custom
   indicators in the signal DSL runtime.
@@ -111,7 +113,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 > **Sprint: Docker Self-Hosting, R2 Archival, Kagi Charts (10-sprint session)**
 > (commits `732e037`–`b94106c`)
 
-### Added
+### ✨ Added
 
 - **Docker Compose self-hosting** (R3): run CrossTide locally with
   `docker compose up` using miniflare.
@@ -140,7 +142,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 > **Sprint: Crypto, News, Regime, Anomaly & Fallback Chain (10-sprint session)**
 > (commits `6efb6be`–`53b290f`)
 
-### Added
+### ✨ Added
 
 - **Crypto chart endpoint**: `GET /api/crypto/:id/chart?days=30` — CoinGecko
   OHLC candles with 5-min KV cache.
@@ -158,7 +160,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   daily 21:00 UTC.
 - **Provider contract tests**: 24 tests for CoinGecko and FRED schemas.
 
-### Changed
+### 🔄 Changed
 
 - Removed unused `packages/` workspace stubs.
 - Moved ONNX modules to `src/domain/_experimental/`.
@@ -169,7 +171,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 > **Sprint: Multi-Provider Architecture (commits `0ac7bc9`–`1565165`)**
 
-### Added
+### ✨ Added
 
 - **Finnhub provider** (`worker/providers/finnhub.ts`): quote, candle, and
   search endpoints with API key binding.
@@ -198,7 +200,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 > **Sprint: Phase Q Foundation (7-sprint session)** (commits `2bb2f20`–`4563716`)
 
-### Added
+### ✨ Added
 
 - **FRED economic data overlay endpoint** (`worker/routes/fred.ts`, Q6):
   `GET /api/fred?series=VIX` — serves CBOE VIX, 10Y/2Y Treasury rates, M2, Fed
@@ -222,7 +224,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   preserved unchanged (`ensureTemporal` is a no-op); polyfill loads and sets
   `globalThis.Temporal` when absent.
 
-### Changed
+### 🔄 Changed
 
 - **GlitchTip source-map upload** (`.github/workflows/release.yml`, P14): Added
   `upload-sourcemaps.mjs` step between build and bundle-size check in the release
@@ -238,7 +240,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 > **Sprint: Phase P Foundation (10-sprint session)** (commit `ae7d98c`)
 
-### Added
+### ✨ Added
 
 - **Cloudflare setup guide** (`docs/CLOUDFLARE_SETUP.md`): step-by-step provisioning
   walkthrough for KV namespace, D1 database, Rate Limiter, and Durable Object bindings.
@@ -265,7 +267,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   verifying withErrorBoundary and mountWithBoundary isolate card mount/update crashes,
   auto-retry, onError callback, fallback UI, and dynamic-import failure recovery.
 
-### Changed
+### 🔄 Changed
 
 - **ROADMAP Phase P**: P1, P3, P4, P5, P7, P8, P9, P10, P11, P13, P15 marked ✅.
   P2 (D1 migrations apply) marked 🔄 (provisioning docs added; apply requires CF account).
@@ -749,7 +751,7 @@ Phase R feature sprint: 10 trading & portfolio analysis modules — price
 targets, sector allocation, risk/reward evaluation, correlation analysis,
 gap scanning, and portfolio rebalancing.
 
-### Added
+### ✨ Added
 
 - **Price target tracker (R1)**: Set/track price targets with progress-to-target
   calculations, hit detection for long/short directions.
@@ -782,7 +784,7 @@ Phase Q feature sprint: 10 power-user analytics and management utilities —
 layout presets, provider analytics, momentum/volatility ranking, trade journal,
 and smart staleness detection.
 
-### Added
+### ✨ Added
 
 - **Dashboard layout presets (Q1)**: Save/restore named card arrangements with
   up to 20 presets, rename, and active-on-reload tracking.
@@ -815,7 +817,7 @@ Phase P feature sprint: 10 power-user utilities — performance diagnostics,
 correlation analysis, watchlist history, ticker pinning, notification
 preferences, and advanced session management.
 
-### Added
+### ✨ Added
 
 - **Auto-theme system sync (P1)**: Listen for OS prefers-color-scheme and
   prefers-contrast changes, auto-apply theme with manual override support.
@@ -848,7 +850,7 @@ Phase O feature sprint: 10 new features for power users — settings search,
 dashboard stats, color tags, card width preferences, recent tickers history,
 keyboard shortcut customization, and contextual ticker actions menu.
 
-### Added
+### ✨ Added
 
 - **Settings search/filter (O4)**: Keyword input to filter settings groups in
   real-time by label, option, or button text.
@@ -877,7 +879,7 @@ Production hardening release: removed dead infrastructure, fixed all TypeScript
 errors, eliminated false-positive VS Code extension warnings, and promoted
 ESLint browser-compat checking to error level.
 
-### Removed
+### 🗑️ Removed
 
 - **Changesets infrastructure**: Deleted `.changeset/` directory,
   `changesets.yml` workflow, changeset/version scripts, and `@changesets/cli`
@@ -887,7 +889,7 @@ ESLint browser-compat checking to error level.
   from recommendations — ESLint `eslint-plugin-compat` already provides
   accurate browser compatibility checking that respects our browserslist.
 
-### Changed
+### 🔄 Changed
 
 - **Browser compat ESLint rule promoted to error**: `compat/compat` now
   fails the build instead of warning, enforcing production-grade API usage.
@@ -896,7 +898,7 @@ ESLint browser-compat checking to error level.
 - **Parent MyScripts tooling synced**: Removed dead `@changesets/cli`,
   added `eslint-plugin-compat` to shared devDependencies.
 
-### Fixed
+### 🐛 Fixed
 
 - **TypeScript strict error in `full-backup.ts`**: Fixed
   `exactOptionalPropertyTypes` violation when `methodWeights` was `undefined`
@@ -914,7 +916,7 @@ UX polish & data management sprint: smooth theme transitions, keyboard shortcuts
 modal, data freshness indicators, configurable refresh intervals, rate-limit
 visualization, comprehensive backup/restore, print styles, and drawing URL sharing.
 
-### Added
+### ✨ Added
 
 - **Theme transition animation**: Smooth 300ms CSS transition on background-color,
   color, border-color, and box-shadow when switching between dark/light/high-contrast
@@ -935,7 +937,7 @@ visualization, comprehensive backup/restore, print styles, and drawing URL shari
 - **Chart annotation URL sharing**: `encodeDrawingsUrl()` and `decodeDrawingsUrl()`
   encode up to 50 chart drawings into a base64url shareable link.
 
-### Changed
+### 🔄 Changed
 
 - ROADMAP updated: K1–K5, L1, L2, L8 marked as done. M3 marked N/A. Phase N added.
 
@@ -948,7 +950,7 @@ visualization, comprehensive backup/restore, print styles, and drawing URL shari
 UX & documentation sprint: offline indicator, locale picker, drawing undo/redo,
 "What's New" modal, service worker update prompt, and comprehensive docs expansion.
 
-### Added
+### ✨ Added
 
 - **Offline indicator**: Fixed banner at top of viewport when network connectivity
   is lost, auto-dismisses on reconnection. ARIA `role="alert"` for screen readers.
@@ -964,7 +966,7 @@ UX & documentation sprint: offline indicator, locale picker, drawing undo/redo,
   and strategy-comparison (M4 complete).
 - **Uptime Kuma badge**: Status badge added to README.md linking to monitoring dashboard.
 
-### Changed
+### 🔄 Changed
 
 - **SW update UX**: Replaced auto-refresh toast with a persistent bottom banner
   containing "Refresh" and "Later" buttons — user controls when to apply updates.
@@ -981,7 +983,7 @@ Quality & testing sprint: eliminated all remaining innerHTML violations,
 migrated to container queries, expanded accessibility & mobile testing,
 enhanced CI with Lighthouse Web Vitals, and added GitHub issue templates.
 
-### Added
+### ✨ Added
 
 - **M1 — Virtual scroller stress test**: 7 tests validating 10K-row performance
   (O(visible) DOM, spacer height, rapid updates, scroll simulation, dispose safety).
@@ -994,7 +996,7 @@ enhanced CI with Lighthouse Web Vitals, and added GitHub issue templates.
 - **M5 — GitHub issue templates**: Bug report and feature request forms with structured
   fields (severity, browser, area dropdowns).
 
-### Changed
+### 🔄 Changed
 
 - **R14 — innerHTML elimination**: Completed migration to 0 violations in `src/cards/`.
   Converted `alert-rules-ui.ts`, `chart-card.ts`, `consensus-timeline-card.ts`,
@@ -1014,7 +1016,7 @@ enhanced CI with Lighthouse Web Vitals, and added GitHub issue templates.
 Architecture quality sprint completing K4 (event delegation) and K1
 (patchDOM migration) across remaining card files.
 
-### Changed
+### 🔄 Changed
 
 - **K4 — Event delegation**: Migrated `settings.ts`, `multi-chart-layout.ts`,
   and `screener-columns.ts` from direct `addEventListener` to `createDelegate`
@@ -1036,7 +1038,7 @@ Architecture quality sprint completing K4 (event delegation) and K1
 Feature sprint delivering multi-condition alert rules, strategy comparison,
 watchlist groups integration, and continued event delegation migration.
 
-### Added
+### ✨ Added
 
 - **L3 — Multi-condition alert rules**: Full CRUD rule builder UI with AND/OR
   operators and per-condition types (method, consensus). Rules persist to
@@ -1053,7 +1055,7 @@ watchlist groups integration, and continued event delegation migration.
   Provider Health cards.
 - **Provider Health**: Added to README card gallery (23 total cards).
 
-### Changed
+### 🔄 Changed
 
 - **K4 — Event delegation expansion**: Migrated `backtest-card`, `signal-dsl-card`,
   `heatmap`, `preset-filters`, and `relative-strength-card` from direct
@@ -1061,7 +1063,7 @@ watchlist groups integration, and continued event delegation migration.
 - **M9 — README enhancement**: Added TypeScript 5.9 and Bundle <200 KB badges,
   full 23-card gallery table with descriptions.
 
-### Fixed
+### 🐛 Fixed
 
 - Registry test card count updated (22 → 23) for strategy-comparison card.
 - Backtest and heatmap test selectors updated for delegation migration.
@@ -1090,7 +1092,7 @@ handlers replace per-render addEventListener calls.
 - **watchlist-card**: patchDOM for loading placeholder
 - **heatmap-card**: delegate for sector drill-down tile clicks
 
-### Fixed
+### 🐛 Fixed
 
 - Test selectors updated from `#btn-*` IDs to `[data-action='*']` attributes
 - Consensus-timeline test uses `bubbles: true` for delegated change events
@@ -1112,7 +1114,7 @@ Feature sprint completing all remaining Phase L & M roadmap items: watchlist
 hover zoom, comprehensive user guides for 8 cards, and expanded contributing
 documentation.
 
-### Added
+### ✨ Added
 
 - **Watchlist hover zoom** (L11): pointerenter popup shows mini sparkline,
   day-change, consensus badge, and volume for any watchlist row. 300 ms show
@@ -1123,7 +1125,7 @@ documentation.
 - **Contributing guide expansion** (M5): architecture overview, conventional
   commit conventions, testing guidelines, and file-naming rules.
 
-### Fixed
+### 🐛 Fixed
 
 - `ConsensusResult.strength` used correctly in hover zoom (was referencing
   non-existent `.score` property).
@@ -1147,7 +1149,7 @@ Major release completing Phase L & M of the roadmap: strategy comparison,
 extended charting tools, image export, comprehensive testing infrastructure,
 CI automation, i18n expansion, and documentation showcase.
 
-### Added
+### ✨ Added
 
 - **Strategy comparison** (L4): `compareStrategies()` domain function runs two
   backtest configs side-by-side and produces delta metrics (return, win rate,
@@ -1183,7 +1185,7 @@ Major release delivering Phase K of the architecture roadmap: performance
 infrastructure, accessibility improvements, observability, and developer
 experience enhancements.
 
-### Added
+### ✨ Added
 
 - **Request deduplication** (K3): `fetchOnce()` in-flight promise cache prevents
   duplicate concurrent network requests to the same resource.
@@ -1198,14 +1200,14 @@ experience enhancements.
 - **X-Request-ID propagation** (K12): Worker middleware generates/echoes a UUID
   request ID on every response for end-to-end tracing.
 
-### Changed
+### 🔄 Changed
 
 - **Sparkline memoization** (K13): `renderSparkline()` results cached via 128-entry
   LRU Map keyed by data content + options — avoids redundant SVG rebuilds.
 - **VS Code workspace config**: Disable built-in CSS validation (Stylelint handles
   CSS linting); suppress progressive-enhancement compat warnings.
 
-### Fixed
+### 🐛 Fixed
 
 - **Chart sync cleanup** (K5): Multi-chart layout now unsubscribes panel
   crosshair registrations before re-render, preventing duplicate updates.
@@ -1221,7 +1223,7 @@ experience enhancements.
   internal `proxyUrl()` removed from `src/core/data-service.ts`. CORS proxy was
   a no-op since v7.22.0 (Vite proxy handles dev; Yahoo CORS headers handle prod).
 
-### Removed
+### 🗑️ Removed
 
 - `TwelveDataTimeSeriesSchema` from valibot-schemas (zero imports; Twelve Data
   provider removed in R23).
@@ -1229,12 +1231,12 @@ experience enhancements.
 - Superseded roadmap archives (`ROADMAP.archive-2026-04.md`,
   `ROADMAP.archive-2026-05.md`) — preserved in git history.
 
-### Fixed
+### 🐛 Fixed
 
 - `vitest.config.ts` coverage exclusion typo: `paste-overlay` → `palette-overlay`.
 - `docs/ROADMAP.md` markdown table formatting (MD060 compliance).
 
-### Changed
+### 🔄 Changed
 
 - **ESLint**: Tightened `varsIgnorePattern` from 30+ prefixes to `^_` only.
 - **Browserslist**: Expanded to Opera, Samsung Internet, ChromeAndroid,
@@ -1243,7 +1245,7 @@ experience enhancements.
   iPhone 14, iPad).
 - **Vitest browser**: 3 engines (Chromium, Firefox, WebKit).
 
-### Added
+### ✨ Added
 
 - `tests/browser/cross-browser-compat.browser.test.ts` — 50+ Web API assertions
   across all engines.
@@ -1265,7 +1267,7 @@ experience enhancements.
 
 ## [7.24.0] - 2026-05-04
 
-### Fixed
+### 🐛 Fixed
 
 - **Service Worker types**: Added `/// <reference lib="webworker" />` triple-slash
   directive to `src/sw.ts`, resolving all 9 VS Code type errors for
@@ -1273,7 +1275,7 @@ experience enhancements.
 - **Vite preview proxy**: Made `secure` flag conditional on proxy presence
   (`secure: !proxyAgent`) so corporate MITM proxies don't break preview mode.
 
-### Changed
+### 🔄 Changed
 
 - **VS Code settings**: Disabled built-in CSS validation (project uses Stylelint),
   suppressed unknown-at-rule lint for `@starting-style`/`@scope`, added `softprops`
@@ -1323,7 +1325,7 @@ experience enhancements.
 - **Browserslist config**: Added explicit browser targets to package.json for
   accurate CSS/HTML compatibility validation in VS Code.
 
-### Changed
+### 🔄 Changed
 
 - **Workspace organization**: Moved CODE_OF_CONDUCT.md, CONTRIBUTING.md, and
   SECURITY.md to `.github/` directory (GitHub discovers them there).
@@ -1332,7 +1334,7 @@ experience enhancements.
 - **.gitignore**: Added `*.tsbuildinfo` pattern.
 - **.vscode/settings.json**: Added CSS compat and GitHub Actions trust settings.
 
-### Fixed
+### 🐛 Fixed
 
 - **Provider registry**: Yahoo and Stooq providers now use Vite proxy paths
   (`/api/yahoo`, `/api/stooq`) in dev mode, fixing CORS failures behind proxies.
@@ -1474,7 +1476,7 @@ more` support, and `focus-within` outline on card sections.
 - **Phase J Roadmap**: Added Phase J (v10.0.0) to ROADMAP.md — 8 future items including
   E2E Playwright tests, WCAG accessibility audit, i18n scaffolding, and plugin API.
 
-### Changed
+### 🔄 Changed
 
 - **J1 — CHANGELOG Backfill**: Added missing entries for v7.14.0, v7.15.0, and v7.16.0.
 
@@ -1508,7 +1510,7 @@ more` support, and `focus-within` outline on card sections.
 - **R21 — ARCHITECTURE.md update**: comprehensive rewrite from v7.5 to v7.15 — now
   reflects 112 domain modules, 20 routes, Hono Worker, 3884 tests, 48 MDX pages.
 
-### Changed
+### 🔄 Changed
 
 - `.gitignore`: added `.env.local` entry.
 - Roadmap: comprehensive status sync marking all completed F/G/H/I/R items.
@@ -2236,7 +2238,7 @@ Total new tests: +197 (3042 → 3239)
   - Tech-stack versions corrected (TS 5.9, Vite 8, Vitest 4, ESLint 10).
   - Documented release artifacts and Pages deployment.
 
-### Removed
+### 🗑️ Removed
 
 - `worker/` (`worker/src/index.ts`, `routes/`, `middleware/`) — 5 files, ~7 KB.
 - All references to `../tooling/*` from build/lint/test/format configs.
@@ -2278,7 +2280,7 @@ Total new tests: +197 (3042 → 3239)
   options matching `tooling/prettier.base.json`; markdown is no longer
   ignored.
 
-### Removed
+### 🗑️ Removed
 
 - `vite-env.d.ts` moved from repo root to `src/vite-env.d.ts` (and
   removed from `tsconfig.json` `include`).
@@ -2484,7 +2486,7 @@ Total new tests: +197 (3042 → 3239)
 - **Linear scale** (`ui/scale-linear`) — d3-style scale with `invert`,
   `clamp`, and `niceTicks`.
 
-### Fixed
+### 🐛 Fixed
 
 - `domain/trix`: cascaded EMAs now correctly skip leading nulls instead of
   treating them as zeros (only affected newly-added module).
@@ -2687,7 +2689,7 @@ Total new tests: +197 (3042 → 3239)
 - Cleaned `.vscode/settings.json` — removed `**/windows` exclude, updated tsdk path
 - Updated engine requirements to `^20.19.0 || ^22.13.0 || >=24.0.0`
 
-### Added
+### ✨ Added
 
 - Comprehensive `docs/ROADMAP.md` with competitive analysis, architecture, and phased plan
   - Comparison table: CrossTide vs TradingView, FinViz, StockAnalysis, thinkorswim, Webull, GhostFolio
@@ -2695,7 +2697,7 @@ Total new tests: +197 (3042 → 3239)
   - 4-phase implementation plan (v6→v8+)
   - Technology decisions matrix, scope boundaries, Flutter archive appendix
 
-### Removed
+### 🗑️ Removed
 
 - `windows/` directory (Flutter ephemeral build artifacts)
 - Legacy `.gitignore` entries (`.dart_tool/`, `.flutter-plugins`, `android/`, `windows/`)
@@ -2718,7 +2720,7 @@ Total new tests: +197 (3042 → 3239)
 - CODEOWNERS, pull request template, issue templates (bug report, feature request)
 - Dependabot config (npm weekly, GitHub Actions weekly)
 
-### Changed
+### 🔄 Changed
 
 - CONTRIBUTING.md, SECURITY.md, COPILOT_GUIDE.md rewritten for TypeScript/Vite stack
 - VS Code extensions.json cleaned (removed unused Tailwind CSS)
@@ -2727,7 +2729,7 @@ Total new tests: +197 (3042 → 3239)
 - `technical-defaults.test.ts` converted to parameterized `it.each` (8 → 17 tests)
 - `.prettierignore` cleaned
 
-### Fixed
+### 🐛 Fixed
 
 - MD040 (fenced code block language) in ARCHITECTURE.md, README.md, COPILOT_GUIDE.md
 - MD047 (trailing newline) in CHANGELOG.md, COPILOT_GUIDE.md
@@ -2742,7 +2744,7 @@ Total new tests: +197 (3042 → 3239)
 - Removed all Flutter, Dart, Android, and Windows native code
 - New browser-based SPA with dark/light theme support
 
-### Added
+### ✨ Added
 
 - TypeScript 5.8+ strict mode codebase
 - Vite 6.3+ build tool with ES2022 target
@@ -2766,7 +2768,7 @@ Total new tests: +197 (3042 → 3239)
 - Bundle size budget (200 KB JS)
 - ARCHITECTURE.md documentation
 
-### Removed
+### 🗑️ Removed
 
 - All Flutter/Dart source code (~520 domain exports, 3000+ tests)
 - Drift SQLite database layer

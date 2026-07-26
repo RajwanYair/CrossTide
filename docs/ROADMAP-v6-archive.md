@@ -1,4 +1,4 @@
-# CrossTide — Strategic Roadmap v6 (Deep Rethink)
+# 🗄️ CrossTide — Strategic Roadmap v6 (Deep Rethink)
 
 > **Date:** May 5, 2026
 > **Current version:** v11.37.0

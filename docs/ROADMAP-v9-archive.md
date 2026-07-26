@@ -1,4 +1,4 @@
-# CrossTide — Strategic Roadmap v9 (Rethink Everything)
+# 🗄️ CrossTide — Strategic Roadmap v9 (Rethink Everything)
 
 > **Date:** May 21, 2026
 > **Current version:** v11.41.0

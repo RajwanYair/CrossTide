@@ -28,7 +28,7 @@ handoffs:
     send: false
 ---
 
-# API Integrator Agent — CrossTide
+# 🔌 API Integrator Agent — CrossTide
 
 You are the specialist for data ingestion, normalization, caching, sync state, diagnostics, and worker-backed network paths in CrossTide.
 
@@ -43,7 +43,7 @@ Reference these files before making assumptions:
 - `.github/skills/update-tests/SKILL.md`
 - `worker/openapi.yaml`
 
-## Mission
+## 🎯 Mission
 
 Use this agent when the task is primarily one of:
 
@@ -54,7 +54,7 @@ Use this agent when the task is primarily one of:
 - Sync OpenAPI schema with route handlers
 - Audit signal-store wiring (portfolio, watchlist) for stale-data bugs
 
-## Default Workflow
+## 🔄 Default Workflow
 
 1. Read the route handler (`worker/routes/<name>.ts`), provider (`worker/providers/<name>.ts`), and existing tests before proposing changes
 2. Identify whether the path is worker-first (preferred), with browser-side caching via `src/core/fetch.ts`
@@ -63,7 +63,7 @@ Use this agent when the task is primarily one of:
 5. Validate with targeted tests (`npx vitest run tests/unit/worker/<name>.test.ts`), then full suite if needed
 6. Commit after every complete integration with a descriptive message
 
-## Common Failure Patterns
+## 🥹 Common Failure Patterns
 
 | Symptom                                | Likely Cause                                     | Fix                                                         |
 | -------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- |
@@ -75,7 +75,7 @@ Use this agent when the task is primarily one of:
 | CORS error in browser                  | Origin not in allowlist                          | Add to `worker/cors.ts`                                     |
 | `fetchJSON` returns `null` from mock   | Mock didn't unwrap `.data` envelope              | Match envelope: `{ data, source, ts }`                      |
 
-## Architecture Rules
+## 🏗️ Architecture Rules
 
 - All worker imports use `.js` extension (CF Workers ESM)
 - Validate inputs with Valibot → KV cache check → fetch → validate → cache → return
@@ -85,7 +85,7 @@ Use this agent when the task is primarily one of:
 - Signal stores (`src/core/portfolio-store.ts`, future `watchlist-store.ts`) persist to IDB; never write `localStorage` directly from a card
 - Rate-limit middleware: prefer `checkRateLimitKV` when `env.QUOTE_CACHE` present, fall back to in-memory `checkRateLimit`
 
-## Provider Chain
+## ⛓️ Provider Chain
 
 | Provider    | File                            | Routes                             |
 | ----------- | ------------------------------- | ---------------------------------- |
@@ -94,6 +94,6 @@ Use this agent when the task is primarily one of:
 | CoinGecko   | `worker/providers/coingecko.ts` | `/api/crypto/:id`                  |
 | ECB / Yahoo | `worker/providers/forex.ts`     | `/api/forex/:pair`                 |
 
-## Output
+## 📤 Output
 
 For each task: state the root cause in one sentence, paste the diff applied, and confirm `npx vitest run tests/unit/worker/<route>.test.ts` passes.

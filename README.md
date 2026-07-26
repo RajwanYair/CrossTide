@@ -22,11 +22,11 @@ interactive charting, and offline-first PWA support.
 [![FRED API](https://img.shields.io/badge/FRED-Economic%20Overlay-informational)](worker/routes/fred.ts)
 [![Discussions](https://img.shields.io/github/discussions/RajwanYair/CrossTide?logo=github)](https://github.com/RajwanYair/CrossTide/discussions)
 
-> **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
+> ⚠️ **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
 
 ---
 
-## Features
+## ✨ Features
 
 | Category | Highlights |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -45,14 +45,14 @@ interactive charting, and offline-first PWA support.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
 ```
 
-## Demo
+## 🎬 Demo
 
 <!-- R12: GIF demos — recorded from the live app, stored in docs/demos/ -->
 
@@ -66,15 +66,15 @@ npm run dev        # http://localhost:5173
 | **Macro Dashboard (FRED overlay)** | ![Macro demo](docs/demos/macro-dashboard.gif) |
 
 > Demos are recorded at 1× speed against live Yahoo Finance data.
-> Run `npm run dev` to explore all cards interactively — no API key required for the
+> 💡 Run `npm run dev` to explore all cards interactively — no API key required for the
 > preview fixture mode.
 
-## Screenshots
+## 📸 Screenshots
 
-> Run `npm run dev` to explore all card views interactively. Screenshots are generated
+> 💡 Run `npm run dev` to explore all card views interactively. Screenshots are generated
 > from the live app during each release cycle.
 
-### Card Gallery
+### 🗂️ Card Gallery
 
 CrossTide ships with **23 route cards**, each accessible from the sidebar navigation:
 
@@ -104,7 +104,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | Provider Health | Data provider latency, error rates, and uptime monitor |
 | Settings | Theme, API keys, export/import, locale, a11y |
 
-## Why CrossTide?
+## 🤔 Why CrossTide?
 
 | | CrossTide | TradingView | Yahoo Finance | Finviz | StockCharts |
 | -------------------------------- | :-------------: | :---------: | :-----------: | :-----: | :---------: |
@@ -124,7 +124,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | **OTel distributed tracing** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **55+ technical indicators** | ✅ | ✅ | ❌ | Partial | ✅ |
 
-## Scripts
+## 🛠️ Scripts
 
 | Command | Description |
 | ------------------------ | -------------------------------------------------------------------- |
@@ -138,7 +138,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | `npm run format` | Biome auto-format |
 | `npm run ci` | Full CI pipeline (typecheck + lint + test + build + bundle check) |
 
-## Tech Stack
+## 🧰 Tech Stack
 
 - **TypeScript 5.9** strict mode (`exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`,
   `forceConsistentCasingInFileNames`, `verbatimModuleSyntax`).
@@ -149,7 +149,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 - **Stylelint 17**, **HTMLHint 1.9**, **markdownlint-cli2** for non-TS assets.
 - **Vanilla CSS** with custom properties (dark/light themes), no UI framework — pure TypeScript + DOM APIs.
 
-## Native Mobile (Capacitor)
+## 📱 Native Mobile (Capacitor)
 
 CrossTide can be packaged as a native iOS/Android app via Capacitor:
 
@@ -162,7 +162,7 @@ npm run cap:ios       # Open in Xcode
 
 Native features: splash screen, status bar theming, secure local storage via `@capacitor/preferences`.
 
-## Worker API
+## 🔌 Worker API
 
 The Cloudflare Worker (`worker/`) provides:
 
@@ -175,7 +175,7 @@ The Cloudflare Worker (`worker/`) provides:
 | `/api/alerts/evaluate` | POST | Manual trigger for server-side alert eval (R7) |
 | `scheduled` (cron) | — | Auto-evaluates alert rules every 5 min (R7) |
 
-## Release & Deployment
+## 🚢 Release & Deployment
 
 - Tag `vX.Y.Z` on `main` triggers `.github/workflows/release.yml`, which:
   1. Re-runs typecheck, lint, tests, and build.
@@ -184,7 +184,7 @@ The Cloudflare Worker (`worker/`) provides:
 - Push to `main` also triggers `.github/workflows/pages.yml`, deploying the
   current build to GitHub Pages.
 
-## Architecture
+## 🏗️ Architecture
 
 ```text
 src/
@@ -198,7 +198,7 @@ src/
 worker/     Cloudflare Worker API proxy + security headers
 ```
 
-### High-Level Architecture
+### 🗺️ High-Level Architecture
 
 ```mermaid
 flowchart TD
@@ -238,7 +238,7 @@ flowchart TD
 
 See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full layered diagram and CI/CD reference.
 
-## Local Verification
+## ✅ Local Verification
 
 ```bash
 npm run dev        # Start dev server → http://localhost:5173
@@ -262,7 +262,7 @@ npm run build      # TypeScript check + Vite build
 npm run preview    # Serve dist/ at http://localhost:4173
 ```
 
-## Signal Logic
+## 📐 Signal Logic
 
 ```text
 close[t]    = latest close
@@ -272,7 +272,7 @@ Cross-Up:    close[t-1] <= sma200[t-1]  AND  close[t] > sma200[t]
 Consensus:   Micho Method + >=1 confirming method = BUY
 ```
 
-## Troubleshooting
+## 🧩 Troubleshooting
 
 | Problem | Cause | Fix |
 | -------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -283,12 +283,12 @@ Consensus:   Micho Method + >=1 confirming method = BUY
 | Tests timeout behind corporate firewall | npm registry unreachable | Configure `.npmrc` with `proxy` and `https-proxy` |
 | Build exceeds 200 KB budget | New dependency added | Check `npm run check:bundle` and tree-shake or lazy-load the addition |
 
-## Community
+## 💬 Community
 
 - [GitHub Discussions](https://github.com/RajwanYair/CrossTide/discussions) — ask questions, share ideas, show what you've built
 - [Contributing Guide](.github/CONTRIBUTING.md) — how to set up, code standards, PR process
 - [Good First Issues](https://github.com/RajwanYair/CrossTide/labels/good%20first%20issue) — beginner-friendly tasks
 
-## License
+## 📄 License
 
 [MIT](LICENSE)

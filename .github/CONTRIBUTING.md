@@ -1,16 +1,16 @@
-# Contributing to CrossTide
+# 🤝 Contributing to CrossTide
 
 Thank you for your interest in contributing!
 
-## Development Setup
+## 🛠️ Development Setup
 
-### Option A: Dev Container (recommended)
+### 📦 Option A: Dev Container (recommended)
 
 Open in GitHub Codespaces or VS Code Dev Containers — everything is pre-configured:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/RajwanYair/CrossTide)
 
-### Option B: Local
+### 💻 Option B: Local
 
 ```bash
 node --version   # Must be >=20.0.0
@@ -18,7 +18,7 @@ npm install
 npm run dev      # http://localhost:5173
 ```
 
-## Code Standards
+## 📋 Code Standards
 
 - Follow TypeScript strict mode — `tsc --noEmit` must pass with zero errors
 - Run `npm run lint:all` before committing (ESLint + Stylelint + HTMLHint + markdownlint)
@@ -27,7 +27,7 @@ npm run dev      # http://localhost:5173
 - Write tests for all domain logic changes
 - Never commit API keys, tokens, or secrets
 
-## Quality Gates
+## ✅ Quality Gates
 
 All of the following must pass before merging:
 
@@ -42,7 +42,7 @@ All of the following must pass before merging:
 
 Or run everything at once: `npm run ci`
 
-## Pull Request Process
+## 🔀 Pull Request Process
 
 1. Create a feature branch from `main`
 2. Make changes with clear, atomic commits
@@ -50,7 +50,7 @@ Or run everything at once: `npm run ci`
 4. Update documentation if your change affects public behavior
 5. Submit a PR with a clear description
 
-## Reporting Issues
+## 🐞 Reporting Issues
 
 Use GitHub Issues. Include:
 
@@ -60,7 +60,7 @@ Use GitHub Issues. Include:
 - Console errors (if any)
 - Screenshots (if applicable)
 
-## Commit Conventions
+## 📝 Commit Conventions
 
 We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -79,7 +79,7 @@ Common scopes: `watchlist` · `chart` · `screener` · `portfolio` · `rebalance
 
 Subjects must be **fully lowercase** — `feat(worker): add earnings calendar api endpoint` ✅
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 
 ```text
 src/
@@ -100,7 +100,7 @@ src/
 - Use `patchDOM()` for incremental rendering (not raw `innerHTML`)
 - Use `data-action` event delegation at card roots
 
-## Testing Guidelines
+## 🧪 Testing Guidelines
 
 | Test type     | Location         | Framework        | Run command            |
 | ------------- | ---------------- | ---------------- | ---------------------- |
@@ -117,7 +117,7 @@ src/
 - Coverage thresholds: 90% statements/lines/functions, 80% branches
 - Use `it.each` for parameterized tests over repeated `it` blocks
 
-## Non-Negotiable Rules
+## 🚫 Non-Negotiable Rules
 
 - **No `eslint-disable`** — fix the root cause
 - **No `@ts-ignore`** — fix the type, not the error
@@ -133,20 +133,20 @@ src/
 - Mock external APIs — never hit real networks in tests
 - Use `makeCandles()` from `tests/helpers/` for fixture data
 
-## File Naming
+## 🏷️ File Naming
 
 - TypeScript: `kebab-case.ts` (e.g., `signal-dsl.ts`)
 - Tests: `<module-name>.test.ts` (e.g., `signal-dsl.test.ts`)
 - CSS: layer-based in `src/styles/`
 - Docs: `kebab-case.mdx` in `docs-site/src/content/docs/`
 
-## Getting Help
+## 🆘 Getting Help
 
 - Read `docs/ARCHITECTURE.md` for the full system design
 - Read `.github/copilot-instructions.md` for AI-assisted development conventions
 - Browse the [Astro docs-site](https://crosstide.pages.dev/docs) for user guides
 
-## Good First Issues
+## 🌱 Good First Issues
 
 Look for the `good first issue` label on GitHub Issues. These are scoped tasks suitable for
 newcomers:

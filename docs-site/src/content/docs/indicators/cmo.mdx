@@ -5,19 +5,19 @@ description: Measures momentum as the ratio of net directional movement, oscilla
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 CMO = \frac{\sum \text{Gains}(n) - \sum \text{Losses}(n)}{\sum \text{Gains}(n) + \sum \text{Losses}(n)} \times 100
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                     |
 | --------- | ------- | ------ | ------------------------- |
 | `period`  | 9       | 2–200  | Lookback window           |
 
-## Interpretation
+## 🔍 Interpretation
 
 | CMO Value | Signal                                  |
 | --------- | --------------------------------------- |
@@ -30,7 +30,7 @@ $$
   Values near zero often indicate a trendless, choppy market.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeCmo } from "../../src/domain/chande-momentum-oscillator";
@@ -38,7 +38,7 @@ import { computeCmo } from "../../src/domain/chande-momentum-oscillator";
 const values = computeCmo(candles, { period: 9 });
 ```
 
-## References
+## 📚 References
 
 - Chande, T. (1994). _The New Technical Trader._
 - [CMO on Investopedia](https://www.investopedia.com/terms/c/chandemomentumoscillator.asp)

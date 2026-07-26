@@ -5,7 +5,7 @@ description: RSI measures momentum by comparing recent gains to recent losses on
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 RS = \frac{\text{Average Gain (n periods)}}{\text{Average Loss (n periods)}}
@@ -15,13 +15,13 @@ $$
 RSI = 100 - \frac{100}{1 + RS}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range | Notes                      |
 | --------- | ------- | ----- | -------------------------- |
 | `period`  | 14      | 2–200 | Wilder's original: 14 days |
 
-## Interpretation
+## 🔍 Interpretation
 
 | RSI Value | Signal                                 |
 | --------- | -------------------------------------- |
@@ -35,7 +35,7 @@ $$
   zones, not the zones themselves.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeRsi } from "../../src/domain/rsi-calculator";
@@ -51,7 +51,7 @@ const latest = values.at(-1) ?? NaN;
 console.log(`RSI(14): ${latest.toFixed(2)}`);
 ```
 
-## Test Vectors
+## 🧪 Test Vectors
 
 | Input (14 closes) | Expected RSI |
 | ----------------- | ------------ |
@@ -62,7 +62,7 @@ console.log(`RSI(14): ${latest.toFixed(2)}`);
 
 \* Wilder smoothing: division by zero guard returns 100.
 
-## References
+## 📚 References
 
 - Wilder, J. W. (1978). _New Concepts in Technical Trading Systems._
 - [RSI on Investopedia](https://www.investopedia.com/terms/r/rsi.asp)

@@ -5,7 +5,7 @@ description: ATR measures market volatility by averaging the true range of price
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 TR = \max\!\bigl(\text{High} - \text{Low},\; |\text{High} - \text{Prev Close}|,\; |\text{Low} - \text{Prev Close}|\bigr)
@@ -19,13 +19,13 @@ $$
 ATR_i = \frac{ATR_{i-1} \times (n-1) + TR_i}{n} \quad \text{(subsequent Wilder smoothing)}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range | Notes                         |
 | --------- | ------- | ----- | ----------------------------- |
 | `period`  | 14      | 2–200 | Wilder's original: 14 periods |
 
-## Interpretation
+## 🔍 Interpretation
 
 ATR does **not** indicate direction — only the magnitude of price swings.
 
@@ -41,7 +41,7 @@ ATR does **not** indicate direction — only the magnitude of price swings.
   of instrument volatility.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeAtr } from "../../src/domain/atr-calculator";

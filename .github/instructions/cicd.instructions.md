@@ -3,9 +3,9 @@ applyTo: ".github/**,**/*.yml,**/*.yaml"
 description: "Use when: editing CI/CD workflows, GitHub Actions, or any YAML config in CrossTide."
 ---
 
-# CI/CD Instructions — CrossTide
+# 🔁 CI/CD Instructions — CrossTide
 
-## Workflow Standards
+## 📏 Workflow Standards
 
 - Use **`actions/checkout@v7`** and **`actions/setup-node@v7`** — current stable major versions. Check `gh api repos/actions/<name>/tags` before assuming a pin is current; these actions bump majors more often than this doc gets updated.
 - Node.js version in CI: **24** — set via `node-version: '24'` in `actions/setup-node@v7`.
@@ -17,7 +17,7 @@ description: "Use when: editing CI/CD workflows, GitHub Actions, or any YAML con
 - Worker deploy via `deploy-worker.yml` when `worker/**` changes.
 - Single quality gate: `ci.yml` covers typecheck, lint, tests, security, build. Do not create secondary CI files.
 
-## Workflow Map
+## 🗺️ Workflow Map
 
 | Workflow                    | Purpose                                                       | Trigger                               |
 | --------------------------- | ------------------------------------------------------------- | ------------------------------------- |
@@ -31,7 +31,7 @@ description: "Use when: editing CI/CD workflows, GitHub Actions, or any YAML con
 
 Keep `.github/workflows/README.md` aligned with any workflow additions or deletions.
 
-## Copilot Code Review
+## 🤖 Copilot Code Review
 
 GitHub Copilot can perform automated PR code reviews:
 
@@ -40,7 +40,7 @@ GitHub Copilot can perform automated PR code reviews:
 - Suggestions are advisory — apply only those that match project rules.
 - Do not suppress Copilot review feedback with `copilot:ignore` without a comment explaining why.
 
-## Copilot Coding Agent (`copilot-setup-steps.yml`)
+## 🛠️ Copilot Coding Agent (`copilot-setup-steps.yml`)
 
 The `copilot-setup-steps.yml` workflow pre-installs Node 24, `npm ci`, and any global CLI tools needed for autonomous Copilot agent runs. Keep it in sync with local dev requirements.
 
@@ -48,7 +48,7 @@ The `copilot-setup-steps.yml` workflow pre-installs Node 24, `npm ci`, and any g
 - Worker bindings used in Copilot agent tests must use local-dev fake IDs, not production IDs
 - The agent runs in an isolated container — do not assume Windows PowerShell syntax in `copilot-setup-steps.yml`; use POSIX shell (`bash`) there
 
-## Security
+## 🔒 Security
 
 - Never log secrets in CI output.
 - Use `${{ secrets.TOKEN }}` for credentials — never hard-coded.
@@ -58,7 +58,7 @@ The `copilot-setup-steps.yml` workflow pre-installs Node 24, `npm ci`, and any g
 - `npm audit signatures` must exit 0 in CI (registry signature check).
 - All `npm ci` calls in CI use `--ignore-scripts` to satisfy SLSA L3 requirement.
 
-## Editing Rules for `.github/**`
+## ✏️ Editing Rules for `.github/**`
 
 - If you change a workflow, update the table in this file and any markdown that documents it.
 - If you add a new secret, document where it is required and which workflow consumes it.
@@ -66,7 +66,7 @@ The `copilot-setup-steps.yml` workflow pre-installs Node 24, `npm ci`, and any g
 - Preserve bash syntax inside GitHub Actions steps — local developer commands in this repository use PowerShell, but CI runs in Linux containers.
 - Do not create workflow files with names matching deleted workflows (`ci-v*.yml`, `test-only.yml`).
 
-## Shell Context
+## 💻 Shell Context
 
 > **Local dev: Windows · Shell: PowerShell** — all commands in this file assume PowerShell for local runs.
 > **CI / copilot-setup-steps.yml: Linux · Shell: bash** — use POSIX syntax in workflow YAML.

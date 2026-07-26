@@ -5,7 +5,7 @@ description: Applies the stochastic oscillator formula to RSI values, yielding a
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{StochRSI} = \frac{RSI - \min(RSI, n)}{\max(RSI, n) - \min(RSI, n)}
@@ -13,7 +13,7 @@ $$
 
 %K is a smoothed StochRSI and %D is a moving average of %K.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter      | Default | Range  | Notes                            |
 | -------------- | ------- | ------ | -------------------------------- |
@@ -22,7 +22,7 @@ $$
 | `kSmooth`      | 3       | 1–20   | %K smoothing period              |
 | `dSmooth`      | 3       | 1–20   | %D signal line smoothing period  |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Value      | Signal                                                |
 | ---------- | ----------------------------------------------------- |
@@ -36,7 +36,7 @@ $$
   so pair it with a trend filter (e.g., 200-SMA direction) to reduce whipsaws.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeStochRsi } from "../../src/domain/stochastic-rsi";
@@ -47,7 +47,7 @@ const { k, d } = computeStochRsi(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Chande, T. & Kroll, S. (1994). _The New Technical Trader._
 - [StochRSI on Investopedia](https://www.investopedia.com/terms/s/stochrsi.asp)

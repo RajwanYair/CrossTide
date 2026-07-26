@@ -5,19 +5,19 @@ description: Percentage change between the current close and the close N periods
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 ROC = \frac{\text{Close}_t - \text{Close}_{t-n}}{\text{Close}_{t-n}} \times 100
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
 | `period`  | 10      | 1–200  | Lookback window          |
 
-## Interpretation
+## 🔍 Interpretation
 
 | ROC Value | Signal                                         |
 | --------- | ---------------------------------------------- |
@@ -30,7 +30,7 @@ $$
   or divergence from price to generate signals.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeRoc } from "../../src/domain/roc";
@@ -38,6 +38,6 @@ import { computeRoc } from "../../src/domain/roc";
 const values = computeRoc(candles, { period: 10 });
 ```
 
-## References
+## 📚 References
 
 - [ROC on Investopedia](https://www.investopedia.com/terms/p/pricerateofchange.asp)

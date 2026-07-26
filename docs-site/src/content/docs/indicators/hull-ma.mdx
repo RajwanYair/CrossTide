@@ -5,19 +5,19 @@ description: Responsive WMA-based filter that virtually eliminates lag while mai
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 HMA(n) = WMA\!\left(2 \cdot WMA\!\left(\frac{n}{2}\right) - WMA(n),\; \lfloor\sqrt{n}\rfloor\right)
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                     |
 | --------- | ------- | ------ | ------------------------- |
 | `period`  | 16      | 4–200  | Base WMA period           |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition       | Signal                              |
 | --------------- | ----------------------------------- |
@@ -30,7 +30,7 @@ $$
   entries, but it can overreact during sharp intraday reversals.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeHullMA } from "../../src/domain/hull-ma";
@@ -38,6 +38,6 @@ import { computeHullMA } from "../../src/domain/hull-ma";
 const hma = computeHullMA(closes, 16);
 ```
 
-## References
+## 📚 References
 
 - Hull, A. (2005). Hull Moving Average.

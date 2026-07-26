@@ -5,7 +5,7 @@ description: How to run historical strategy backtests in CrossTide and interpret
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Overview
+## 🔭 Overview
 
 The **Backtest** card lets you test a moving-average crossover strategy against historical
 data for any watchlist ticker. The entire computation runs **off the main thread** in a
@@ -13,7 +13,7 @@ Web Worker, so the UI stays responsive even with multi-year datasets.
 
 Navigate to the Backtest card via the nav bar or press `g` then `b`.
 
-## How It Works
+## ⚙ How It Works
 
 1. Select a ticker from the dropdown (defaults to the currently selected ticker).
 2. Choose a **fast MA** period and a **slow MA** period.
@@ -22,7 +22,21 @@ Navigate to the Backtest card via the nav bar or press `g` then `b`.
    - **BUY** when fast MA crosses above slow MA.
    - **SELL** when fast MA crosses below slow MA.
 
-## Strategy Parameters
+```mermaid
+sequenceDiagram
+  participant U as 🧑 User
+  participant UI as 🎨 Backtest Card
+  participant W as 🧠 Web Worker
+  U->>UI: Pick ticker + fast/slow MA
+  UI->>W: postMessage(candles, params)
+  loop every bar
+    W->>W: crossover check → BUY/SELL
+  end
+  W-->>UI: equity curve + trade log
+  UI-->>U: 📈 render results
+```
+
+## ⚙ Strategy Parameters
 
 | Parameter       | Default | Range   | Notes                            |
 | --------------- | ------- | ------- | -------------------------------- |
@@ -35,7 +49,7 @@ Navigate to the Backtest card via the nav bar or press `g` then `b`.
   Experiment with different periods to match your trading style.
 </Aside>
 
-## Results Panel
+## 📊 Results Panel
 
 After the backtest completes, the results panel shows:
 
@@ -49,14 +63,14 @@ After the backtest completes, the results panel shows:
 | **Total Trades**     | Number of round-trip (buy → sell) trades                 |
 | **Avg Trade Return** | Mean return per trade                                    |
 
-## Equity Curve
+## 📈 Equity Curve
 
 Below the metrics table, an interactive equity curve chart shows your portfolio value
 over time. The curve is overlaid with:
 - **Drawdown shading** — highlights periods where the strategy was underwater.
 - **Trade markers** — green triangles for buys, red triangles for sells.
 
-## Trade Log
+## 📒 Trade Log
 
 Expand the **Trade Log** section to see every individual trade:
 
@@ -75,13 +89,13 @@ Expand the **Trade Log** section to see every individual trade:
   Past performance does not predict future results.
 </Aside>
 
-## Signal DSL Integration
+## 🧬 Signal DSL Integration
 
 For more complex strategies beyond MA crossover, use the **Signal DSL** card (`g` then `d`).
 DSL strategies can be backtested by exporting the signal expression and running it
 through the same backtest engine.
 
-## Keyboard Shortcuts
+## ⌨ Keyboard Shortcuts
 
 | Key     | Action                    |
 | ------- | ------------------------- |

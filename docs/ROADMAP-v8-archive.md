@@ -1,4 +1,4 @@
-# CrossTide — Strategic Roadmap v8 (Ship-First Rethink)
+# 🗄️ CrossTide — Strategic Roadmap v8 (Ship-First Rethink)
 
 > **Date:** May 12, 2026
 > **Current version:** v11.37.0

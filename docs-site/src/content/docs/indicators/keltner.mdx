@@ -5,7 +5,7 @@ description: Volatility bands around an EMA midline, using ATR for adaptive chan
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Middle} = EMA(\text{Close}, n)
@@ -19,7 +19,7 @@ $$
 \text{Lower} = \text{Middle} - m \times ATR(a)
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter    | Default | Range      | Notes                        |
 | ------------ | ------- | ---------- | ---------------------------- |
@@ -27,7 +27,7 @@ $$
 | `atrLength`  | 10      | 2–50       | ATR period                   |
 | `multiplier` | 2       | 0.5–5.0    | Band distance multiplier     |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition          | Signal                                |
 | ------------------ | ------------------------------------- |
@@ -41,7 +41,7 @@ $$
   Keltner Channels, a volatility expansion and breakout are imminent.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeKeltner } from "../../src/domain/keltner";
@@ -53,6 +53,6 @@ const { upper, middle, lower } = computeKeltner(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Keltner, C. (1960). _How to Make Money in Commodities._

@@ -10,13 +10,13 @@ import { Aside } from "@astrojs/starlight/components";
 ZigZag connects alternating highs and lows, ignoring any reversal smaller than the threshold.
 It is **repainted** — the last segment adjusts until a confirmed reversal occurs.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter           | Default | Range      | Notes                        |
 | ------------------- | ------- | ---------- | ---------------------------- |
 | `thresholdPercent`  | 0.05    | 0.01–0.20  | Min reversal (5% = 0.05)    |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Pattern                    | Signal                                  |
 | -------------------------- | --------------------------------------- |
@@ -29,7 +29,7 @@ It is **repainted** — the last segment adjusts until a confirmed reversal occu
   It is a structure analysis tool for identifying completed swings.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeZigZag } from "../../src/domain/zigzag";
@@ -37,6 +37,6 @@ import { computeZigZag } from "../../src/domain/zigzag";
 const swings = computeZigZag(candles, { thresholdPercent: 0.05 });
 ```
 
-## References
+## 📚 References
 
 - Murphy, J. J. (1999). _Technical Analysis of the Financial Markets._

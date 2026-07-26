@@ -5,7 +5,7 @@ description: The Stochastic Oscillator compares a closing price to its price ran
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \%K = 100 \cdot \frac{\text{Close} - \text{Lowest Low}_n}{\text{Highest High}_n - \text{Lowest Low}_n}
@@ -15,7 +15,7 @@ $$
 \%D = \text{SMA}_m(\%K)
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Notes                           |
 | --------- | ------- | ------------------------------- |
@@ -23,7 +23,7 @@ $$
 | `dPeriod` | 3       | %D smoothing period             |
 | `smooth`  | 3       | Slowing period (Fast=1, Slow=3) |
 
-## Interpretation
+## 🔍 Interpretation
 
 | %K Value                          | Signal          |
 | --------------------------------- | --------------- |
@@ -37,7 +37,7 @@ $$
   both %K and %D are in the extreme zone at the time of the crossover, reducing false signals.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeStochastic } from "../../src/domain/stochastic-calculator";
@@ -56,7 +56,7 @@ console.log("%K:", result.k.at(-1));
 console.log("%D:", result.d.at(-1));
 ```
 
-## Test Vectors
+## 🧪 Test Vectors
 
 For a flat-close series (all closes equal to mid-range):
 
@@ -68,7 +68,7 @@ For a monotonically rising series:
 - `%K` = 100
 - `%D` = 100 after `dPeriod` bars
 
-## References
+## 📚 References
 
 - Lane, G. C. (1984). Lane's Stochastics. _Technical Analysis of Stocks and Commodities._
 - [Stochastic Oscillator on Investopedia](https://www.investopedia.com/terms/s/stochasticoscillator.asp)

@@ -3,7 +3,7 @@ applyTo: ".github/**,worker/**,src/core/**,src/main.ts,src/sw.ts,index.html,SECU
 description: "OWASP Top 10:2021 audit checklist mapped to CrossTide's PWA + Cloudflare Worker threat surface. Run before every major release; smoke-check per patch."
 ---
 
-# Security Audit — OWASP Top 10:2021 (CrossTide)
+# 🔒 Security Audit — OWASP Top 10:2021 (CrossTide)
 
 > **Mandate**: Audit every item below in order before tagging any `vX.0.0` major release.
 > Fill the **Verified** column with commit hashes, then commit the result.
@@ -15,13 +15,13 @@ description: "OWASP Top 10:2021 audit checklist mapped to CrossTide's PWA + Clou
 
 Harvested from FamilyDashBoard sibling project — adapted to CrossTide's worker-backed PWA threat surface.
 
-## Last full audit
+## 📅 Last full audit
 
 - **Release**: pending v12.0.0
 - **Auditor**: self
 - **Date**: TBD
 
-## OWASP Top 10:2021 mapping to CrossTide
+## 🗺️ OWASP Top 10:2021 mapping to CrossTide
 
 | #   | Risk                               | CrossTide exposure                                               | Mitigation in repo                                                                                                                                                                                                           | Verified (commit) |
 | --- | ---------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
@@ -36,7 +36,7 @@ Harvested from FamilyDashBoard sibling project — adapted to CrossTide's worker
 | A09 | Security Logging & Monitoring      | **Low** — no PII to log                                          | Structured logger in `worker/logger.ts` strips request bodies and IPs. KV diagnostic envelopes contain no UA-CH high-entropy data. D1 alert history rate-limited per IP.                                                     | _pending_         |
 | A10 | Server-Side Request Forgery (SSRF) | **Medium** — worker proxies external APIs (Yahoo, Finnhub, etc.) | All upstream URLs hard-coded in `worker/providers/*.ts` (no client-controlled host). Per-route Valibot schemas reject unexpected query keys. CORS allowlist in `_headers`.                                                   | _pending_         |
 
-## Patch-cycle smoke check
+## 🔥 Patch-cycle smoke check
 
 Run on every patch release (`vX.Y.Z` with `Z > 0`):
 
@@ -53,7 +53,7 @@ Run on every patch release (`vX.Y.Z` with `Z > 0`):
 - [ ] OpenAPI spec passes Valibot schema validation
 - [ ] Worker tests pass: `npx vitest run tests/unit/worker/`
 
-## Quarterly drill (any 3 random items)
+## 🎲 Quarterly drill (any 3 random items)
 
 ```powershell
 Get-Random -InputObject 1..10 -Count 3
@@ -61,7 +61,7 @@ Get-Random -InputObject 1..10 -Count 3
 
 Re-verify the picked items' mitigations and record the commit hash in the table above.
 
-## Reject conditions (auto-block release)
+## 🚫 Reject conditions (auto-block release)
 
 - Any A-entry with **Verified** older than 12 months
 - New code introduces a runtime client dependency without ADR
@@ -70,7 +70,7 @@ Re-verify the picked items' mitigations and record the commit hash in the table 
 - Trusted Types policy regression (`require-trusted-types-for 'script'` removed)
 - SLSA provenance attestation missing on a release artifact
 
-## CSP wildcard quarterly-narrow policy
+## 📜 CSP wildcard quarterly-narrow policy
 
 Wildcards in CSP directives must be reviewed once per quarter (Mar / Jun / Sep / Dec) and narrowed to the minimum subdomain set actually contacted by the deployed worker. Procedure:
 

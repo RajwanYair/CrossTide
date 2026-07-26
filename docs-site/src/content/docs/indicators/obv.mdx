@@ -5,7 +5,7 @@ description: OBV accumulates volume on up-days and subtracts it on down-days to 
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{OBV}_t =
@@ -18,7 +18,7 @@ $$
 
 The absolute OBV value is meaningless — only the **direction and slope** matter.
 
-## Interpretation
+## 🔍 Interpretation
 
 | OBV Pattern            | Signal                                          |
 | ---------------------- | ----------------------------------------------- |
@@ -34,7 +34,7 @@ The absolute OBV value is meaningless — only the **direction and slope** matte
   OBV method detects this divergence automatically.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeObv } from "../../src/domain/obv-calculator";

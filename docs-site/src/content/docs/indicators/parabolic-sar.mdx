@@ -5,7 +5,7 @@ description: Wilder's stop-and-reverse trailing stop that accelerates with the t
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 SAR_{t+1} = SAR_t + AF \times (EP - SAR_t)
@@ -13,7 +13,7 @@ $$
 
 AF starts at `afStart` and increases by `afStep` each new extreme, capped at `afMax`.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range        | Notes                            |
 | --------- | ------- | ------------ | -------------------------------- |
@@ -21,7 +21,7 @@ AF starts at `afStart` and increases by `afStep` each new extreme, capped at `af
 | `afStep`  | 0.02    | 0.01–0.10    | AF increment per new extreme     |
 | `afMax`   | 0.20    | 0.10–0.50    | Maximum acceleration factor      |
 
-## Interpretation
+## 🔍 Interpretation
 
 | SAR Position       | Signal                            |
 | ------------------ | --------------------------------- |
@@ -34,7 +34,7 @@ AF starts at `afStart` and increases by `afStep` each new extreme, capped at `af
   Pair with a trend filter to avoid whipsaws during consolidation.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeSarSeries } from "../../src/domain/parabolic-sar-calculator";
@@ -46,7 +46,7 @@ const sar = computeSarSeries(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Wilder, J. W. (1978). _New Concepts in Technical Trading Systems._
 - [Parabolic SAR on Investopedia](https://www.investopedia.com/terms/p/parabolicindicator.asp)

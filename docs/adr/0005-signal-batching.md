@@ -1,24 +1,24 @@
-# ADR-0005: Signal Batching
+# 📄 ADR-0005: Signal Batching
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 Multiple signal writes in sequence (e.g., loading state + data + error reset) trigger N separate re-renders. This causes layout thrashing and wasted DOM work.
 
-## Decision
+## ✅ Decision
 
 Add `batch(fn)` to signals.ts that defers subscriber notifications until the outermost batch completes, then flushes all unique pending subscribers once.
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: N writes → 1 re-render cycle
 - **Pro**: Composable (nested batch calls are no-ops)
 - **Pro**: Zero-cost when not batching (no overhead in hot path)
 - **Con**: Subscribers see intermediate states if they peek during batch
 
-## Related
+## 🔗 Related
 
 - P5: Implementation in `src/core/signals.ts`

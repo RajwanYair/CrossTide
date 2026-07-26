@@ -18,7 +18,7 @@ hero:
       icon: external
 ---
 
-## Why CrossTide?
+## 🤔 Why CrossTide?
 
 CrossTide is a **best-in-class pure-TypeScript** indicator and consensus library.
 It combines 12 trading methods (RSI, MACD, Bollinger Bands, ADX, Stochastic,
@@ -27,9 +27,25 @@ into a single weighted consensus signal.
 
 | Feature        | Details                                                          |
 | -------------- | ---------------------------------------------------------------- |
-| **Indicators** | 30+ — RSI, MACD, Bollinger, ADX, Stochastic, ATR, VWAP, and more |
-| **Methods**    | 12 trading methods with configurable weights                     |
-| **Tests**      | 2000+ unit tests, 98%+ coverage                                  |
-| **Size**       | < 35 KB gzipped (production build)                               |
-| **Runtime**    | Browser + Web Worker (via `worker-rpc`)                          |
-| **License**    | MIT                                                              |
+| 📊 **Indicators** | 30+ — RSI, MACD, Bollinger, ADX, Stochastic, ATR, VWAP, and more |
+| 🗳️ **Methods**    | 12 trading methods with configurable weights                     |
+| 🧪 **Tests**      | 2000+ unit tests, 98%+ coverage                                  |
+| 🪶 **Size**       | < 35 KB gzipped (production build)                               |
+| ⚡ **Runtime**    | Browser + Web Worker (via `worker-rpc`)                          |
+| 📄 **License**    | MIT                                                              |
+
+## 🔀 How a Signal Is Born
+
+```mermaid
+flowchart LR
+  A["📈 OHLCV Candles"] --> B{"12 Methods vote"}
+  B --> C1["RSI"]
+  B --> C2["MACD"]
+  B --> C3["Bollinger"]
+  B --> C4["…8 more"]
+  C1 & C2 & C3 & C4 --> D["🧮 Weighted Consensus"]
+  D --> E{"Score"}
+  E -->|"≥ 0.3"| F["🟢 BUY"]
+  E -->|"-0.3…0.3"| G["🟡 HOLD"]
+  E -->|"≤ -0.3"| H["🔴 SELL"]
+```

@@ -4,12 +4,12 @@ description: "Create a versioned release of CrossTide. Use when: bumping the ver
 argument-hint: "New version number, e.g. 11.36.0"
 ---
 
-# Release — CrossTide
+# 🚀 Release — CrossTide
 
 Use this skill only when you are doing an actual versioned release or preparing the repository for one.
 For general cleanup, use `.github/instructions/pre-release.instructions.md` without tagging.
 
-## Version Bump Locations
+## 🔢 Version Bump Locations
 
 Update ALL of these (search the current version string, e.g. `11.35.0`):
 
@@ -26,7 +26,7 @@ Update ALL of these (search the current version string, e.g. `11.35.0`):
 | 9   | `worker/openapi.yaml`             | `info.version`                             | Must equal `package.json` version               |
 | 10  | `docs-site/` content              | Any version references in Astro Starlight  | Only if displayed in published docs             |
 
-## CHANGELOG Format
+## 📝 CHANGELOG Format
 
 ```markdown
 ## [X.Y.Z] — YYYY-MM-DD
@@ -48,7 +48,7 @@ Update ALL of these (search the current version string, e.g. `11.35.0`):
 
 One line per item. Move from `[Unreleased]` block. Skip empty sections.
 
-## Versioning Scheme
+## 📈 Versioning Scheme
 
 | Change                                | Bump  | Example           |
 | ------------------------------------- | ----- | ----------------- |
@@ -56,7 +56,7 @@ One line per item. Move from `[Unreleased]` block. Skip empty sections.
 | Bug fix / polish / docs               | Patch | 11.35.0 → 11.35.1 |
 | Breaking schema or layer redesign     | Major | 11.x → 12.0.0     |
 
-## Pre-release Gate
+## 🚧 Pre-release Gate
 
 > **Full checklist lives in `.github/instructions/pre-release.instructions.md`** — load it and run every item in order.
 
@@ -78,7 +78,7 @@ node scripts/arch-check.mjs --strict
 
 All must exit 0. Or: `npm run ci`.
 
-## Commit & Tag
+## 🏷️ Commit & Tag
 
 ```powershell
 git add -A
@@ -90,7 +90,7 @@ gh release create vX.Y.Z --generate-notes
 
 `release.yml` auto-builds and attaches `dist.zip` + SBOM + provenance attestation on `v*.*.*` tags.
 
-## Verification
+## ✅ Verification
 
 Every command below must exit 0:
 

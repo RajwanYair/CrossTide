@@ -1,14 +1,14 @@
-# Development Guide
+# 🛠️ Development Guide
 
 Quick-start for contributors to get CrossTide running locally.
 
-## Prerequisites
+## 📋 Prerequisites
 
 - **Node.js** 20+ (LTS)
 - **npm** 10+
 - **Git** 2.40+
 
-## Setup
+## ⚙️ Setup
 
 ```bash
 git clone https://github.com/RajwanYair/CrossTide.git
@@ -16,7 +16,7 @@ cd CrossTide
 npm ci
 ```
 
-## Development Server
+## 🖥️ Development Server
 
 ```bash
 npm run dev
@@ -24,7 +24,7 @@ npm run dev
 
 Opens at `http://localhost:5173` with HMR.
 
-## Available Scripts
+## 📜 Available Scripts
 
 | Script                  | Purpose                               |
 | ----------------------- | ------------------------------------- |
@@ -45,7 +45,7 @@ Opens at `http://localhost:5173` with HMR.
 | `npm run check:bundle`  | Verify bundle < 250 KB gzip           |
 | `npm run ci`            | Full CI pipeline (all of the above)   |
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 src/
@@ -61,7 +61,7 @@ worker/       ← Hono on Cloudflare Workers (API backend)
 tests/        ← Unit, browser, and E2E tests
 ```
 
-## Import Rules
+## 🚪 Import Rules
 
 Imports flow **downward only** (enforced by ESLint):
 
@@ -76,7 +76,7 @@ flowchart LR
 
 Never import upward. Domain must never import from core, cards, or ui.
 
-## Adding Features
+## 🧩 Adding Features
 
 ```mermaid
 flowchart TD
@@ -100,7 +100,7 @@ flowchart TD
   W3 --> Gate
 ```
 
-## Worker Development
+## ☁️ Worker Development
 
 The Cloudflare Worker (API) lives in `worker/`:
 
@@ -111,7 +111,7 @@ npx wrangler deploy       # Deploy to production
 
 Requires a `.dev.vars` file with API keys (see `.dev.vars.example`).
 
-## Quality Gates
+## ✅ Quality Gates
 
 All must pass before merge:
 
@@ -136,7 +136,7 @@ flowchart LR
 
 Run `npm run ci` to verify all gates locally.
 
-## Commit Convention
+## 📝 Commit Convention
 
 ```text
 type(scope): lowercase subject, ≤72 chars

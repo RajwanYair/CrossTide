@@ -4,11 +4,11 @@ description: "Add a new Hono route to the CrossTide Cloudflare Worker. Use when:
 argument-hint: "Describe the route: path, HTTP method, upstream provider, response shape, cache TTL"
 ---
 
-# Add Worker Route — CrossTide
+# 🔌 Add Worker Route — CrossTide
 
 Use this skill when shipping a complete, maintainable worker route — not just "make a fetch work".
 
-## Step 1 — Plan
+## 1️⃣ Step 1 — Plan
 
 | Decision      | Value                                                                        |
 | ------------- | ---------------------------------------------------------------------------- |
@@ -20,7 +20,7 @@ Use this skill when shipping a complete, maintainable worker route — not just 
 | Rate limit    | Default per-IP budget; raise or lower in `worker/rate-limit.ts` if justified |
 | OpenAPI entry | New `paths.<route>.<method>` block in `worker/openapi.yaml`                  |
 
-## Step 2 — Provider Module
+## 2️⃣ Step 2 — Provider Module
 
 Create or extend `worker/providers/<provider>.ts`:
 
@@ -42,7 +42,7 @@ export async function fetch<Provider><Resource>(symbol: string): Promise<Provide
 }
 ```
 
-## Step 3 — Route Handler
+## 3️⃣ Step 3 — Route Handler
 
 Create `worker/routes/<route>.ts`:
 
@@ -76,7 +76,7 @@ export async function handle<Route>(c: Context<{ Bindings: Env }>): Promise<Resp
 }
 ```
 
-## Step 4 — Wire In `worker/index.ts`
+## 4️⃣ Step 4 — Wire In `worker/index.ts`
 
 ```ts
 import { handle<Route> } from "./routes/<route>.js";
@@ -84,7 +84,7 @@ import { handle<Route> } from "./routes/<route>.js";
 app.get("/api/<route>/:symbol", handle<Route>);
 ```
 
-## Step 5 — OpenAPI
+## 5️⃣ Step 5 — OpenAPI
 
 Add the route to `worker/openapi.yaml`:
 
@@ -114,7 +114,7 @@ Then regenerate the client types:
 npm run gen:api-types
 ```
 
-## Step 6 — Tests
+## 6️⃣ Step 6 — Tests
 
 Create `tests/unit/worker/<route>.test.ts`:
 
@@ -147,7 +147,7 @@ describe("<route>", () => {
 
 NEVER make real network calls — always mock `globalThis.fetch`.
 
-## Step 7 — Validate
+## 7️⃣ Step 7 — Validate
 
 ```powershell
 npx tsc --project worker/tsconfig.json --noEmit
@@ -155,7 +155,7 @@ npx vitest run tests/unit/worker/<route>.test.ts
 cd worker; npx wrangler deploy --dry-run; cd ..
 ```
 
-## Step 8 — Commit
+## 8️⃣ Step 8 — Commit
 
 ```text
 feat(worker): add /api/<route> with kv cache and valibot validation

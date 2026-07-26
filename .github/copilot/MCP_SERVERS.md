@@ -1,8 +1,8 @@
-# MCP Servers — CrossTide
+# 🔌 MCP Servers — CrossTide
 
 This repository is compatible with VS Code's current MCP server model. No committed workspace `mcp.json` is required — developer-specific servers belong in the user profile.
 
-## Placement Policy
+## 📍 Placement Policy
 
 | Server type                         | Where it lives                          |
 | ----------------------------------- | --------------------------------------- |
@@ -10,7 +10,7 @@ This repository is compatible with VS Code's current MCP server model. No commit
 | Team-shared, repo-specific          | `.vscode/mcp.json` (committed)          |
 | Personal experiments / opt-in tools | User profile only                       |
 
-## Recommended Server Types
+## 🧰 Recommended Server Types
 
 | Server Type            | Good Fit Here | Notes                                                                        |
 | ---------------------- | ------------- | ---------------------------------------------------------------------------- |
@@ -22,7 +22,7 @@ This repository is compatible with VS Code's current MCP server model. No commit
 | Cloudflare (Wrangler)  | Conditional   | Worker deployment, KV namespace inspection, D1 queries. Disabled by default. |
 | Repo-specific internal | Conditional   | Commit only if the whole team needs the same config                          |
 
-## MCP Capability Classes
+## 🧩 MCP Capability Classes
 
 When choosing a server, consider all five capability classes:
 
@@ -32,7 +32,7 @@ When choosing a server, consider all five capability classes:
 - **Sampling / elicitation** — the server can request structured input mid-task
 - **MCP apps** — inline-rendered UI in chat where supported by the host
 
-### Transport Types
+### 🚚 Transport Types
 
 | Transport        | Use When                                              |
 | ---------------- | ----------------------------------------------------- |
@@ -42,25 +42,25 @@ When choosing a server, consider all five capability classes:
 
 Prefer `streamableHttp` for new remote MCP servers; `stdio` for local processes.
 
-### Tool Discovery in Agents
+### 🔍 Tool Discovery in Agents
 
 When adding an agent (`.github/agents/*.agent.md`) that depends on MCP tools, list those tools in the agent's `tools:` allowlist under a comment. This makes the dependency visible without requiring the server to be running at edit time.
 
-## Security Rules
+## 🔒 Security Rules
 
 - Never hardcode tokens or secrets in `mcp.json`.
 - Prefer environment-backed values or secure input variables.
 - Only trust and enable servers from known publishers.
 - Use least privilege — if a server is not helping the current task, disable it.
 
-## Windows Notes
+## 🪟 Windows Notes
 
 This repository is developed primarily on Windows with PowerShell.
 
 - Local MCP sandboxing is not available on Windows; account for this in tool trust decisions.
 - If a local server needs shell commands, ensure configuration reflects PowerShell syntax.
 
-## Operational Guidance
+## 🧭 Operational Guidance
 
 - Use the Chat Customizations editor to inspect which MCP servers are enabled.
 - Use `MCP: List Servers` or the MCP section in Extensions to start, stop, or inspect a server.

@@ -2,11 +2,11 @@
 applyTo: "src/cards/**,src/ui/**,tests/unit/cards/**"
 ---
 
-# Cards & UI Layer Rules
+# 🃏 Cards & UI Layer Rules
 
 Route cards live in `src/cards/`. Each card is a `CardModule` — self-contained view module.
 
-## CardModule Pattern
+## 🧩 CardModule Pattern
 
 ```typescript
 // src/cards/my-card.ts
@@ -41,7 +41,7 @@ const card: CardModule = {
 export default card;
 ```
 
-## Non-Negotiables
+## 🚫 Non-Negotiables
 
 - **`patchDOM(container, html)`** — never `container.innerHTML =` (breaks morphdom diffing)
 - **`data-action` attributes** — event delegation at card root, never `addEventListener` on children
@@ -50,14 +50,14 @@ export default card;
 - **Cards may import**: `src/types/`, `src/domain/`, `src/core/`, `src/providers/`
 - **Cards must NOT import**: `src/ui/` (except router types)
 
-## Registering a New Card
+## ➕ Registering a New Card
 
 1. Create `src/cards/{name}-card.ts`
 2. Add to `src/cards/registry.ts`: `{ name, loader: () => import("./{name}-card") }`
 3. Add route to `src/ui/router.ts` `RouteName` enum and route map
 4. Add view section to `index.html`: `<section id="view-{name}" class="view" hidden>`
 
-## Signal Stores
+## 📡 Signal Stores
 
 ```typescript
 // src/core/stores/my.store.ts
@@ -73,7 +73,7 @@ export const myStore = {
 - Cards subscribe to stores; stores manage fetch, cache, error handling
 - Use `batch(() => { ... })` to coalesce multiple signal updates into one render
 
-## Web Components (prefer over reimplementing)
+## 🧱 Web Components (prefer over reimplementing)
 
 | Component          | Purpose                                  |
 | ------------------ | ---------------------------------------- |
@@ -83,7 +83,7 @@ export const myStore = {
 | `<ct-filter-bar>`  | Preset buttons + custom filter inputs    |
 | `<ct-empty-state>` | Consistent empty/error/loading fallback  |
 
-## Route Loaders (data pre-fetching)
+## 🔄 Route Loaders (data pre-fetching)
 
 ```typescript
 defineRoute({
@@ -96,7 +96,7 @@ defineRoute({
 - Loaders run with AbortController — navigation cancels pending loaders
 - Data arrives at `mount()` via `ctx.loaderData` — no waterfall
 
-## Test Pattern
+## 🧪 Test Pattern
 
 ```typescript
 import { describe, it, expect, vi } from "vitest";
@@ -114,7 +114,7 @@ describe("my-card", () => {
 });
 ```
 
-## Common Pitfalls
+## ⚠️ Common Pitfalls
 
 - `innerHTML =` — causes flicker and breaks morphdom; always use `patchDOM()`
 - Attaching listeners to child elements — use `data-action` delegation on container

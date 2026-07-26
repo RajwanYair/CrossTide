@@ -16,3 +16,17 @@
   height: 1.5rem;
   width: auto;
 }
+
+/* Mermaid diagrams */
+pre.mermaid {
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}

@@ -1,10 +1,10 @@
-# ADR-0009: Web Components for Shared UI Primitives
+# 📄 ADR-0009: Web Components for Shared UI Primitives
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 24 cards independently implement tables, stat grids, empty states, and chart frames. This causes:
 
@@ -12,7 +12,7 @@ Accepted
 - Inconsistent UX (different loading spinners, empty states)
 - Hard to maintain (fix in one place, miss 23 others)
 
-## Decision
+## ✅ Decision
 
 Extract 5 base Web Components (`ct-data-table`, `ct-stat-grid`, `ct-empty-state`, `ct-chart-frame`, `ct-filter-bar`) as native Custom Elements — no Shadow DOM (to allow theme CSS to apply).
 
@@ -23,7 +23,7 @@ Why Web Components over a framework:
 - Composable with existing morphdom + signals architecture
 - No build step beyond standard ES modules
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: Single source of truth for each UI pattern
 - **Pro**: Cards become thin wrappers: fetch data → render into components
@@ -31,7 +31,7 @@ Why Web Components over a framework:
 - **Con**: No Shadow DOM means global CSS can leak in (mitigated by BEM naming)
 - **Con**: First Web Components in the project — sets a new pattern
 
-## Related
+## 🔗 Related
 
 - P9: `<ct-data-table>` in `src/ui/data-table.ts`
 - P10: `<ct-stat-grid>` in `src/ui/stat-grid.ts`

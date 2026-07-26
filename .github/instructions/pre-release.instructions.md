@@ -3,7 +3,7 @@ applyTo: "CHANGELOG.md,package.json,README.md,docs/ROADMAP.md"
 description: "Pre-release production cleanup checklist. Run every item before tagging a release. Zero tolerance: 0 errors, 0 warnings, 0 suppressions."
 ---
 
-# Pre-Release Checklist — CrossTide
+# 🚦 Pre-Release Checklist — CrossTide
 
 Run every step below in order. **All gates must be green before `git tag vX.Y.Z`.**
 
@@ -11,7 +11,7 @@ Harvested from FamilyDashBoard sibling project — adapted to CrossTide's Vite +
 
 ---
 
-## 1 · Quality Gates (zero tolerance)
+## 1 · ✅ Quality Gates (zero tolerance)
 
 ```powershell
 npm run typecheck       # 0 errors (tsc + sw + worker)
@@ -46,7 +46,7 @@ npm run ci
 
 ---
 
-## 2 · Dead Code / Dead Config / Dead Files
+## 2 · 🧹 Dead Code / Dead Config / Dead Files
 
 - [ ] `npm run typecheck` — no "unused variable" or "unused import" warnings
 - [ ] No orphaned tests (every `tests/unit/X.test.ts` has a matching `src/X.ts` or `worker/X.ts`)
@@ -64,7 +64,7 @@ node scripts/arch-check.mjs --strict
 
 ---
 
-## 3 · Documentation Audit
+## 3 · 📚 Documentation Audit
 
 Update ALL of these on every version bump. Search the old version string (e.g. `11.35.0`) to find occurrences.
 
@@ -90,7 +90,7 @@ Update ALL of these on every version bump. Search the old version string (e.g. `
 
 ---
 
-## 4 · Bundle / Performance Budget
+## 4 · ⚡ Bundle / Performance Budget
 
 | Budget         | Target   | Check command          |
 | -------------- | -------- | ---------------------- |
@@ -104,7 +104,7 @@ CI rejects any push that exceeds the JS gzip budget. Lighthouse runs on every PR
 
 ---
 
-## 5 · Security & Supply Chain
+## 5 · 🔒 Security & Supply Chain
 
 - [ ] `npm audit --omit=dev --audit-level=high` — exits 0
 - [ ] `npm audit signatures` — all packages have valid registry signatures
@@ -116,7 +116,7 @@ CI rejects any push that exceeds the JS gzip budget. Lighthouse runs on every PR
 
 ---
 
-## 6 · Worker Health
+## 6 · 🏥 Worker Health
 
 - [ ] `cd worker && npx wrangler deploy --dry-run` — schema validates
 - [ ] D1 migrations applied to production: `wrangler d1 migrations apply crosstide-db`
@@ -127,7 +127,7 @@ CI rejects any push that exceeds the JS gzip budget. Lighthouse runs on every PR
 
 ---
 
-## 7 · Commit & Tag
+## 7 · 🏷️ Commit & Tag
 
 ```powershell
 git add -A
@@ -142,7 +142,7 @@ git push origin main --tags
 
 ---
 
-## 8 · Reject Conditions (auto-block)
+## 8 · 🚫 Reject Conditions (auto-block)
 
 - Any quality gate above is non-zero
 - New `eslint-disable` / `@ts-ignore` introduced

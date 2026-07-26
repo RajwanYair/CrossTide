@@ -4,11 +4,11 @@ mode: "agent"
 tools: ["read_file", "create_file", "replace_string_in_file", "run_in_terminal", "runTests"]
 ---
 
-# Add Route Card
+# 🃏 Add Route Card
 
 Create a new card following the CardModule pattern.
 
-## Steps
+## 🔢 Steps
 
 1. Create `src/cards/{name}-card.ts` with a default `CardModule` export
 2. Use `patchDOM(container, html)` for rendering — **never raw `innerHTML`**
@@ -19,14 +19,14 @@ Create a new card following the CardModule pattern.
 7. Add the view section to `index.html`: `<section id="view-{name}" class="view">`
 8. If the card needs data, use a signal store or route loader
 
-## Architecture Rules
+## 🏗️ Architecture Rules
 
 - Cards may import from: `types`, `domain`, `core`, `providers`
 - Cards must NOT import from: `ui` (except router types)
 - Use Web Components (`<ct-data-table>`, `<ct-stat-grid>`, etc.) where applicable
 - Wrap mount/update in try-catch for error boundary resilience
 
-## Tests
+## 🧪 Tests
 
 Write tests in `tests/unit/cards/{name}-card.test.ts`:
 
@@ -36,10 +36,10 @@ Write tests in `tests/unit/cards/{name}-card.test.ts`:
 - Test: event delegation works
 - Test: dispose cleanup runs
 
-## Validation
+## ✅ Validation
 
 Run `npm run ci` to verify all quality gates pass.
 
-## User Request
+## 💬 User Request
 
 {{input}}

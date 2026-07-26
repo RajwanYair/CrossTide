@@ -5,7 +5,7 @@ description: VWAP is the average price weighted by volume, reset at the start of
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{VWAP} = \frac{\sum_{i=1}^{n} \text{Typical Price}_i \times \text{Volume}_i}{\sum_{i=1}^{n} \text{Volume}_i}
@@ -16,14 +16,14 @@ where $\text{Typical Price} = \dfrac{\text{High} + \text{Low} + \text{Close}}{3}
 CrossTide also implements **Anchored VWAP** (AVWAP), which resets the calculation at a
 user-chosen anchor bar rather than session open.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter    | Default        | Notes                                     |
 | ------------ | -------------- | ----------------------------------------- |
 | `anchorDate` | Session open   | Date string (AVWAP); omit for rolling     |
 | `period`     | Full history   | Rolling VWAP window (optional)            |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Price vs VWAP | Signal                                         |
 | ------------- | ---------------------------------------------- |
@@ -37,7 +37,7 @@ user-chosen anchor bar rather than session open.
   as a lower-risk entry point in a trending market.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeVwap } from "../../src/domain/vwap-calculator";

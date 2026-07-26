@@ -4,16 +4,16 @@ description: "Add or update tests in the CrossTide test suite. Use when: adding 
 argument-hint: "Describe what changed: new domain function name, new worker route path, changed type, broken test name, or coverage module path."
 ---
 
-# Update Tests — CrossTide
+# 🧪 Update Tests — CrossTide
 
-## Infrastructure
+## 🏗️ Infrastructure
 
 - **Runner**: Vitest 4 + `happy-dom` environment (unit) · `@vitest/browser` (browser-mode) · Playwright (E2E)
 - **Location**: `tests/unit/` — one directory per layer
 - **Coverage thresholds**: ≥90% statements/lines/functions · ≥80% branches — canonical source `vitest.config.ts`
 - **Baseline command**: `npm run test:coverage` (must exit 0, thresholds must pass)
 
-## How to Run
+## ▶️ How to Run
 
 ```powershell
 npm run test:coverage                              # all tests + coverage gate
@@ -22,9 +22,9 @@ npx vitest run --reporter=verbose                  # verbose output
 npx vitest run tests/unit/worker/                  # all worker tests
 ```
 
-## Layer Test Rules
+## 📏 Layer Test Rules
 
-### Domain (`tests/unit/domain/`)
+### 🧮 Domain (`tests/unit/domain/`)
 
 - One test file per indicator/function in `src/domain/`
 - Use `makeCandles(n, overrides?)` from `tests/helpers/candle-factory.ts` — never hand-roll fixtures
@@ -33,7 +33,7 @@ npx vitest run tests/unit/worker/                  # all worker tests
 - Never mock anything in domain tests — domain functions are pure
 - Use `fc.double()` for fast-check property arbitraries, never `fc.float()`
 
-### Worker (`tests/unit/worker/`)
+### 🔌 Worker (`tests/unit/worker/`)
 
 - Mock `globalThis.fetch` — NEVER make real network calls
 - Mock the full `Env` object: `{ QUOTE_CACHE: mockKV(), DB: mockD1(), RATE_LIMITER: mockRL() }`
@@ -41,7 +41,7 @@ npx vitest run tests/unit/worker/                  # all worker tests
 - Test Valibot validation errors (missing params → 400), cache hits, cache misses, upstream errors (502)
 - Test rate limit rejection path when `RATE_LIMITER` returns `{ success: false }`
 
-### Cards (`tests/unit/cards/`)
+### 🃏 Cards (`tests/unit/cards/`)
 
 - Use `setCardDOM({ containerId: 'card-root' })` to set up DOM in `beforeEach`
 - Call `cleanupDOM()` in `afterEach`
@@ -49,13 +49,13 @@ npx vitest run tests/unit/worker/                  # all worker tests
 - Never test internal implementation — test observable DOM output
 - Cards may not import from `src/ui/` (except router types) — enforce in tests too
 
-### Core (`tests/unit/core/`)
+### ⚙️ Core (`tests/unit/core/`)
 
 - Use `_resetForTest()` in `afterEach` for all stateful core modules
 - Never `vi.resetModules()` inside `beforeEach` — causes transform timeout
 - Signal store tests: verify `store.get()` initial value, then `store.set(v)` and confirm `store.get() === v`
 
-## File Map (key paths)
+## 🗺️ File Map (key paths)
 
 | Source layer             | Test location                     |
 | ------------------------ | --------------------------------- |
@@ -69,7 +69,7 @@ npx vitest run tests/unit/worker/                  # all worker tests
 | `src/providers/`         | `tests/unit/providers/`           |
 | `src/ui/`                | `tests/unit/ui/`                  |
 
-## Floor Rules (NEVER violate)
+## 🚫 Floor Rules (NEVER violate)
 
 1. No `.only` or `.skip` committed to `main` — enforced by `scripts/check-test-focus-skip.mjs`
 2. No `@ts-ignore` or `eslint-disable` in test files — fix root cause
@@ -80,7 +80,7 @@ npx vitest run tests/unit/worker/                  # all worker tests
 7. After calling async code, drain microtasks: `for (let i = 0; i < 20; i++) await Promise.resolve()`
 8. `vi.useRealTimers()` must be called in `afterEach` after every `vi.useFakeTimers()`
 
-## Coverage Targets
+## 📊 Coverage Targets
 
 | Metric     | Threshold |
 | ---------- | --------- |
@@ -91,7 +91,7 @@ npx vitest run tests/unit/worker/                  # all worker tests
 
 Canonical source: `vitest.config.ts`. Target ≥95% per file when adding new modules.
 
-## Property-Based Testing (fast-check)
+## 🎲 Property-Based Testing (fast-check)
 
 When using `fast-check` for property tests (domain layer — see Q13 patterns):
 

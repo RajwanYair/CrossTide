@@ -5,7 +5,7 @@ description: ADX quantifies trend strength (0–100) regardless of direction usi
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 +DM = \text{today's High} - \text{yesterday's High} \quad (\text{if} > 0 \text{ and } > |-DM|)
@@ -31,13 +31,13 @@ $$
 
 Smoothing uses Wilder's EMA: $\text{Smooth}(x) = \text{prev} - \frac{\text{prev}}{n} + x$.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Notes            |
 | --------- | ------- | ---------------- |
 | `period`  | 14      | Smoothing window |
 
-## Interpretation
+## 🔍 Interpretation
 
 | ADX Value | Trend Strength      |
 | --------- | ------------------- |
@@ -52,7 +52,7 @@ Smoothing uses Wilder's EMA: $\text{Smooth}(x) = \text{prev} - \frac{\text{prev}
   above -DI, **SELL** when ADX > 25 and -DI crosses above +DI.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeAdx } from "../../src/domain/adx-calculator";
@@ -68,7 +68,7 @@ console.log("+DI:", result.plusDI.at(-1));
 console.log("-DI:", result.minusDI.at(-1));
 ```
 
-## References
+## 📚 References
 
 - Wilder, J. W. (1978). _New Concepts in Technical Trading Systems._
 - [ADX on Investopedia](https://www.investopedia.com/terms/a/adx.asp)

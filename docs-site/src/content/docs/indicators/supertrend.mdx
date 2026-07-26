@@ -5,7 +5,7 @@ description: ATR-based trend-following overlay that flips between support and re
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Upper} = \frac{H + L}{2} + m \cdot ATR(n)
@@ -17,14 +17,14 @@ $$
 
 The active band flips when price crosses through it.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter    | Default | Range      | Notes                          |
 | ------------ | ------- | ---------- | ------------------------------ |
 | `atrPeriod`  | 10      | 2–100      | ATR lookback                   |
 | `multiplier` | 3.0     | 0.5–10.0   | Band distance multiplier       |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition               | Signal                     |
 | ----------------------- | -------------------------- |
@@ -37,7 +37,7 @@ The active band flips when price crosses through it.
   increase the multiplier to reduce whipsaws.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeSuperTrendSeries } from "../../src/domain/supertrend-calculator";
@@ -48,6 +48,6 @@ const result = computeSuperTrendSeries(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Pottier, O. (2007). SuperTrend indicator.

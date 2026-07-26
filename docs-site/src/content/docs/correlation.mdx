@@ -5,7 +5,7 @@ description: Visualize how your watchlist tickers move together using the CrossT
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Overview
+## 🔭 Overview
 
 The **Correlation Matrix** card shows an n×n heatmap of Pearson correlation coefficients
 between every pair of tickers in your watchlist. It helps identify diversification gaps
@@ -16,7 +16,7 @@ and over-concentrated positions.
   stress events (correlations tend to spike toward 1.0 in crashes).
 </Aside>
 
-## How It Works
+## ⚙ How It Works
 
 1. Fetches daily close prices for all watchlist tickers
 2. Computes pairwise Pearson-r correlation over the selected lookback window
@@ -65,7 +65,7 @@ diversification than holding MSFT + XOM (historically r ≈ 0.3).
 - Use the 120-day window for strategic allocation decisions
 - Use the 20-day window to spot short-term regime shifts
 
-## Keyboard Shortcuts
+## ⌨ Keyboard Shortcuts
 
 | Key   | Action                             |
 | ----- | ---------------------------------- |

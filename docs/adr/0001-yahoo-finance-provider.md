@@ -1,10 +1,10 @@
-# ADR-0001: Use Yahoo Finance as Primary Data Provider
+# 📄 ADR-0001: Use Yahoo Finance as Primary Data Provider
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 CrossTide needs real-time and historical market data. Options considered:
 
@@ -13,11 +13,11 @@ CrossTide needs real-time and historical market data. Options considered:
 - **Alpha Vantage**: Free tier extremely limited (5 req/min)
 - **Polygon.io**: Paid only for real-time
 
-## Decision
+## ✅ Decision
 
 Use Yahoo Finance's undocumented v8/query1 and query2 endpoints as the primary provider, with a fallback architecture that allows swapping providers via the Worker routing layer.
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: No API key required for basic chart/quote/search
 - **Pro**: Comprehensive data (OHLCV, fundamentals, options, earnings)
@@ -26,7 +26,7 @@ Use Yahoo Finance's undocumented v8/query1 and query2 endpoints as the primary p
 - **Con**: No SLA; requires KV caching to reduce dependency
 - **Mitigation**: Provider abstraction in Worker allows hot-swap; fixture mode for preview
 
-## Related
+## 🔗 Related
 
 - P1: Wire real Yahoo Finance data
 - P2: KV caching as resilience layer

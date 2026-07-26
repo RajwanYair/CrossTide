@@ -5,13 +5,13 @@ description: "Bump the project version consistently across all files: package.js
 tools: ["read_file", "replace_string_in_file", "grep_search", "run_in_terminal"]
 ---
 
-# Version Bump — CrossTide
+# 🔢 Version Bump — CrossTide
 
 Bump the version from the current value to a new semver target.
 
 > **Canonical file list**: load `.github/skills/release/SKILL.md` — it is the single source for every file that needs updating. Do not duplicate that list here.
 
-## Quick Steps
+## ⚡ Quick Steps
 
 1. Confirm the current version:
 
@@ -36,7 +36,7 @@ Bump the version from the current value to a new semver target.
    npm run format:check
    ```
 
-## Versioning Scheme
+## 📈 Versioning Scheme
 
 | Change                            | Bump  | Example           |
 | --------------------------------- | ----- | ----------------- |
@@ -44,7 +44,7 @@ Bump the version from the current value to a new semver target.
 | Bug fix / polish / docs           | Patch | 11.35.0 → 11.35.1 |
 | Breaking schema or layer redesign | Major | 11.x → 12.0.0     |
 
-## Output
+## 📤 Output
 
 - List every file changed and the old → new version string for each
 - Paste the new CHANGELOG entry

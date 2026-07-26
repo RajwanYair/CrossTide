@@ -3,27 +3,32 @@ title: Architecture
 description: CrossTide codebase overview — layers, modules, and data flow.
 ---
 
-## Layer Diagram
+## 🏗 Layer Diagram
 
-```
-┌─────────────────────────────────────────────────────┐
-│  UI Layer  (src/ui/*)                               │
-│  Cards     (src/cards/*)                            │
-├─────────────────────────────────────────────────────┤
-│  Core Utilities  (src/core/*)                       │
-│  signals · idb · fetch · worker-rpc · sync-queue    │
-├─────────────────────────────────────────────────────┤
-│  Domain Library  (src/domain/*)                     │
-│  30+ indicators · 12 methods · consensus engine     │
-├─────────────────────────────────────────────────────┤
-│  Types  (src/types/*)                               │
-└─────────────────────────────────────────────────────┘
-        ↕                           ↕
-  Web Worker              Cloudflare Worker
-  (compute-worker.ts)     (worker/)
+```mermaid
+flowchart TB
+  subgraph UI["🎨 UI Layer — src/ui/* + src/cards/*"]
+    direction LR
+    Router["Router"]
+    Cards["23 Route Cards"]
+  end
+  subgraph Core["⚙️ Core Utilities — src/core/*"]
+    direction LR
+    Signals["signals · idb · fetch · worker-rpc · sync-queue"]
+  end
+  subgraph Domain["🧮 Domain Library — src/domain/*"]
+    direction LR
+    Indicators["30+ indicators · 12 methods · consensus engine"]
+  end
+  subgraph Types["📋 Types — src/types/*"]
+  end
+
+  UI --> Core --> Domain --> Types
+  Core <-.->|"🧵 postMessage"| WW["🧠 Web Worker\ncompute-worker.ts"]
+  Core <-.->|"REST / WS"| CF["☁️ Cloudflare Worker\nworker/"]
 ```
 
-## Key Modules
+## 🧩 Key Modules
 
 ### Domain (`src/domain/`)
 
@@ -61,18 +66,13 @@ Self-contained feature panels that mount into `<section>` elements:
 | `settings-card`      | Theme, layout, export/import                 |
 | `multi-chart-layout` | 2×2 / 1+3 synchronized sparkline grid        |
 
-## Data Flow
+## 🔀 Data Flow
 
-```
-Yahoo Finance v8 API
-       ↓
-  data-service.ts   (Vite proxy in dev → direct in prod)
-       ↓
-  tiered-cache.ts   (IDB + memory LRU)
-       ↓
-  domain functions  (indicators, consensus)
-       ↓
-  signals store     (reactive state)
-       ↓
-  cards / UI layer
+```mermaid
+flowchart TD
+  A["📡 Yahoo Finance v8 API"] --> B["data-service.ts\n(Vite proxy in dev → direct in prod)"]
+  B --> C["🗄️ tiered-cache.ts\n(IDB + memory LRU)"]
+  C --> D["🧮 domain functions\n(indicators, consensus)"]
+  D --> E["📡 signals store\n(reactive state)"]
+  E --> F["🎨 cards / UI layer"]
 ```

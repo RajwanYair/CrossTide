@@ -1,9 +1,9 @@
-# Cloudflare Resource Provisioning Guide
+# ☁️ Cloudflare Resource Provisioning Guide
 
 This document walks through creating all Cloudflare resources required by CrossTide and
 wiring their IDs into `worker/wrangler.toml`.
 
-## Provisioning workflow
+## 🚀 Provisioning workflow
 
 ```mermaid
 flowchart TD
@@ -16,7 +16,7 @@ flowchart TD
   S6 --> Verify([curl /api/health])
 ```
 
-## Prerequisites
+## 📋 Prerequisites
 
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is sufficient)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
@@ -28,7 +28,7 @@ flowchart TD
 
 ---
 
-## Step 1 — KV Namespace (QUOTE_CACHE)
+## 🗄️ Step 1 — KV Namespace (QUOTE_CACHE)
 
 Caches quote, chart, and search responses with market-hours-aware TTLs.
 
@@ -53,7 +53,7 @@ preview_id = "def456..."  # replace PLACEHOLDER_KV_PREVIEW_ID
 
 ---
 
-## Step 2 — D1 Database (DB)
+## 🗃️ Step 2 — D1 Database (DB)
 
 Stores user watchlists, portfolios, alert rules, and CSP violation reports.
 
@@ -73,7 +73,7 @@ database_id = "ghi789..."   # replace PLACEHOLDER_D1_DATABASE_ID
 migrations_dir = "migrations"
 ```
 
-### Apply migrations
+### 📈 Apply migrations
 
 ```powershell
 # Staging / preview
@@ -102,7 +102,7 @@ npx wrangler d1 migrations list crosstide-db
 
 ---
 
-## Step 3 — Rate Limiter (RATE_LIMITER)
+## 🚦 Step 3 — Rate Limiter (RATE_LIMITER)
 
 The `[[unsafe.bindings]]` block for the Rate Limiting API does **not** require a separate
 create step — Cloudflare provisions it automatically on `wrangler deploy`. The `namespace_id`
@@ -112,7 +112,7 @@ No action required — the binding in `worker/wrangler.toml` is ready as-is.
 
 ---
 
-## Step 4 — Durable Object (TICKER_FANOUT)
+## 🔌 Step 4 — Durable Object (TICKER_FANOUT)
 
 The `TickerFanout` Durable Object class is declared in `worker/index.ts` and exported via
 `[[durable_objects]]` + `[[migrations]]` in `worker/wrangler.toml`. Cloudflare creates the
@@ -120,7 +120,7 @@ namespace automatically on first `wrangler deploy`. No separate provisioning ste
 
 ---
 
-## Step 5 — Local development
+## 💻 Step 5 — Local development
 
 ```powershell
 # Copy the example file
@@ -137,7 +137,7 @@ The worker runs at `http://localhost:8787`. Vite proxies `/api/*` to it when run
 
 ---
 
-## Step 6 — Deploy
+## 🚀 Step 6 — Deploy
 
 ```powershell
 # Deploy worker
@@ -152,7 +152,7 @@ npx wrangler pages deploy dist --project-name crosstide
 
 ---
 
-## Environment matrix
+## 🌐 Environment matrix
 
 | Env          | KV Binding | D1 Binding | Data source  |
 | ------------ | :--------: | :--------: | ------------ |

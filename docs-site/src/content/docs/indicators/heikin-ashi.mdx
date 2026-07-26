@@ -5,7 +5,7 @@ description: Smoothed candlestick representation that filters noise and highligh
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 HA_{\text{Close}} = \frac{O + H + L + C}{4}
@@ -23,7 +23,7 @@ $$
 HA_{\text{Low}} = \min(L, HA_{\text{Open}}, HA_{\text{Close}})
 $$
 
-## Interpretation
+## 🔍 Interpretation
 
 | Pattern                          | Signal                         |
 | -------------------------------- | ------------------------------ |
@@ -38,7 +38,7 @@ $$
   at HA open/close levels. Use standard candle prices for execution.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeHeikinAshi } from "../../src/domain/heikin-ashi";
@@ -46,6 +46,6 @@ import { computeHeikinAshi } from "../../src/domain/heikin-ashi";
 const haCandles = computeHeikinAshi(candles);
 ```
 
-## References
+## 📚 References
 
 - Valcu, D. (2004). "Using the Heikin-Ashi Technique." _Technical Analysis of Stocks & Commodities._

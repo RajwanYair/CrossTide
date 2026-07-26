@@ -10,13 +10,13 @@ import { Aside } from "@astrojs/starlight/components";
 A **bearish fractal** (swing high) forms when the middle bar's high is the highest of 5 bars.
 A **bullish fractal** (swing low) forms when the middle bar's low is the lowest of 5 bars.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range | Notes                          |
 | --------- | ------- | ----- | ------------------------------ |
 | `n`       | 2       | 1–5   | Bars on each side (5-bar = 2) |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Fractal Type   | Signal                                    |
 | -------------- | ----------------------------------------- |
@@ -31,7 +31,7 @@ A **bullish fractal** (swing low) forms when the middle bar's low is the lowest 
   Combine with Alligator lines for trend direction.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeFractals } from "../../src/domain/fractals";
@@ -39,6 +39,6 @@ import { computeFractals } from "../../src/domain/fractals";
 const { bullish, bearish } = computeFractals(candles, { n: 2 });
 ```
 
-## References
+## 📚 References
 
 - Williams, B. (1995). _Trading Chaos._

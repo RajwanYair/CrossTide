@@ -5,7 +5,7 @@ description: MACD expressed as a percentage of the slower EMA, enabling cross-as
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 PPO = \frac{EMA_{\text{fast}} - EMA_{\text{slow}}}{EMA_{\text{slow}}} \times 100
@@ -13,7 +13,7 @@ $$
 
 Signal line = EMA(PPO). Histogram = PPO − Signal.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter      | Default | Range  | Notes                       |
 | -------------- | ------- | ------ | --------------------------- |
@@ -21,7 +21,7 @@ Signal line = EMA(PPO). Histogram = PPO − Signal.
 | `slow`         | 26      | 5–200  | Slow EMA period             |
 | `signalPeriod` | 9       | 2–50   | Signal line EMA period      |
 
-## Interpretation
+## 🔍 Interpretation
 
 | PPO Value              | Signal                              |
 | ---------------------- | ----------------------------------- |
@@ -35,7 +35,7 @@ Signal line = EMA(PPO). Histogram = PPO − Signal.
   normalised scale — you can compare momentum of a $5 stock vs a $500 stock directly.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computePpo } from "../../src/domain/ppo";
@@ -47,6 +47,6 @@ const { ppo, signal, histogram } = computePpo(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - [PPO on Investopedia](https://www.investopedia.com/terms/p/ppo.asp)

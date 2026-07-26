@@ -5,7 +5,7 @@ description: Bollinger Bands use a moving average and standard deviation to defi
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Middle Band} = \text{SMA}_n(\text{close})
@@ -21,14 +21,14 @@ $$
 
 Where $\sigma_n$ is the rolling standard deviation of closes over $n$ periods.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Notes                       |
 | --------- | ------- | --------------------------- |
 | `period`  | 20      | SMA + σ window              |
 | `stdDev`  | 2       | Band width multiplier ($k$) |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition                         | Signal                               |
 | --------------------------------- | ------------------------------------ |
@@ -45,7 +45,7 @@ Where $\sigma_n$ is the rolling standard deviation of closes over $n$ periods.
   + RSI < 40** composite for its Bollinger method signal.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeBollingerBands } from "../../src/domain/bollinger-bands";
@@ -62,7 +62,7 @@ const percentB = (latestClose - lower.at(-1)!) / (upper.at(-1)! - lower.at(-1)!)
 console.log(`%B: ${(percentB * 100).toFixed(1)}%`);
 ```
 
-## References
+## 📚 References
 
 - Bollinger, J. (2001). _Bollinger on Bollinger Bands._ McGraw-Hill.
 - [Bollinger Bands on Investopedia](https://www.investopedia.com/terms/b/bollingerbands.asp)

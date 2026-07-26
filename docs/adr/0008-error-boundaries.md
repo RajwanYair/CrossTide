@@ -1,10 +1,10 @@
-# ADR-0008: Error Boundaries for Card Modules
+# 📄 ADR-0008: Error Boundaries for Card Modules
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 The application renders 20+ card modules inside a shared DOM tree. A runtime
 error in any card's `mount()` or `update()` function propagates up uncaught,
@@ -26,7 +26,7 @@ interface CardHandle {
 
 There is no existing mechanism to catch errors thrown during `mount` or `update`.
 
-## Decision
+## ✅ Decision
 
 Provide `withErrorBoundary(card: CardModule): CardModule` in
 `src/cards/error-boundary.ts`. The wrapper:
@@ -39,7 +39,7 @@ Provide `withErrorBoundary(card: CardModule): CardModule` in
 4. Exposes `dispose()` from the inner handle to ensure cleanup still runs even
    after an error during update.
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: A single card crash can no longer kill the entire application
 - **Pro**: Users see a meaningful inline error instead of a blank/broken panel
@@ -58,7 +58,7 @@ Provide `withErrorBoundary(card: CardModule): CardModule` in
 3. **`<error-boundary>` Web Component** — More indirection with no benefit for the
    imperative `CardModule` interface; deferred.
 
-## Related
+## 🔗 Related
 
 - P8: Implementation in `src/cards/error-boundary.ts`
 - ADR-0006: Store pattern (cards using stores may need to handle partial state)

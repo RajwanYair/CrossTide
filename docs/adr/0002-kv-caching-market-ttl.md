@@ -1,10 +1,10 @@
-# ADR-0002: KV Caching with Market-Hours-Aware TTL
+# 📄 ADR-0002: KV Caching with Market-Hours-Aware TTL
 
-## Status
+## 🚦 Status
 
 Accepted
 
-## Context
+## 🧩 Context
 
 Upstream Yahoo API has no SLA and adds ~200ms latency per call. We need caching that:
 
@@ -12,7 +12,7 @@ Upstream Yahoo API has no SLA and adds ~200ms latency per call. We need caching 
 - Minimizes API calls during trading hours (short TTL for freshness)
 - Provides instant responses for repeated queries
 
-## Decision
+## ✅ Decision
 
 Use Cloudflare KV as a cache layer with dynamic TTL:
 
@@ -20,7 +20,7 @@ Use Cloudflare KV as a cache layer with dynamic TTL:
 - **Market closed (overnight/weekend)**: 24-hour TTL
 - **Daily+ ranges**: 1-hour TTL during market hours, 24-hour overnight
 
-## Consequences
+## ⚖️ Consequences
 
 - **Pro**: Sub-10ms cache hits globally (KV edge cache)
 - **Pro**: Reduces Yahoo API calls by ~95% during off-hours
@@ -28,6 +28,6 @@ Use Cloudflare KV as a cache layer with dynamic TTL:
 - **Con**: 15s staleness during market hours (acceptable for retail)
 - **Con**: KV eventual consistency (~60s) across regions
 
-## Related
+## 🔗 Related
 
 - P1, P2: Implementation in `worker/kv-cache.ts`

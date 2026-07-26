@@ -5,7 +5,7 @@ description: Self-adjusting MA that speeds up in trends and slows down in choppy
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 ER = \frac{|\text{Close}_t - \text{Close}_{t-n}|}{\sum_{i=1}^{n} |\text{Close}_i - \text{Close}_{i-1}|}
@@ -19,7 +19,7 @@ $$
 KAMA_t = KAMA_{t-1} + SC \cdot (\text{Close}_t - KAMA_{t-1})
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                    |
 | --------- | ------- | ------ | ------------------------ |
@@ -27,7 +27,7 @@ $$
 | `fast`    | 2       | 2–10   | Fast constant periods    |
 | `slow`    | 30      | 10–50  | Slow constant periods    |
 
-## Interpretation
+## 🔍 Interpretation
 
 | KAMA Behaviour       | Signal                               |
 | -------------------- | ------------------------------------ |
@@ -39,7 +39,7 @@ $$
   lagging in strong trends — an ideal replacement for plain EMA.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeKama } from "../../src/domain/kama";
@@ -47,6 +47,6 @@ import { computeKama } from "../../src/domain/kama";
 const kama = computeKama(closes, { period: 10, fast: 2, slow: 30 });
 ```
 
-## References
+## 📚 References
 
 - Kaufman, P. (1995). _Smarter Trading._

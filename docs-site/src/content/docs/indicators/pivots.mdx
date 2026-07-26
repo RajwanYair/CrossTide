@@ -14,13 +14,13 @@ import { Aside } from "@astrojs/starlight/components";
 | Camarilla  | Same as classic                | Multiplied offsets × range   |
 | Woodie     | (H + L + 2C) / 4              | Close-weighted               |
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default    | Options                                  |
 | --------- | ---------- | ---------------------------------------- |
 | `kind`    | `"classic"`| `"classic"`, `"fibonacci"`, `"camarilla"`, `"woodie"` |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Level | Usage                                        |
 | ----- | -------------------------------------------- |
@@ -35,7 +35,7 @@ import { Aside } from "@astrojs/starlight/components";
   above P = bullish bias for the session; below P = bearish bias.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computePivots } from "../../src/domain/pivots";
@@ -43,6 +43,6 @@ import { computePivots } from "../../src/domain/pivots";
 const levels = computePivots(high, low, close, { kind: "classic" });
 ```
 
-## References
+## 📚 References
 
 - [Pivot Points on Investopedia](https://www.investopedia.com/terms/p/pivotpoint.asp)

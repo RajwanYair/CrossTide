@@ -5,7 +5,7 @@ description: MACD tracks trend momentum using the difference between two EMAs an
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{MACD Line} = \text{EMA}_{12}(\text{close}) - \text{EMA}_{26}(\text{close})
@@ -19,7 +19,7 @@ $$
 \text{Histogram} = \text{MACD Line} - \text{Signal Line}
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter      | Default | Notes                 |
 | -------------- | ------- | --------------------- |
@@ -27,7 +27,7 @@ $$
 | `slowPeriod`   | 26      | Long EMA window       |
 | `signalPeriod` | 9       | Signal line smoothing |
 
-## Interpretation
+## 🔍 Interpretation
 
 | Condition                 | Signal                       |
 | ------------------------- | ---------------------------- |
@@ -41,7 +41,7 @@ $$
   below zero (classic trend reversal), and **SELL** on bearish crossover when both are above zero.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeMacd } from "../../src/domain/macd-calculator";
@@ -61,7 +61,7 @@ console.log("Signal:", result.signal.at(-1));
 console.log("Histogram:", result.histogram.at(-1));
 ```
 
-## References
+## 📚 References
 
 - Appel, G. (1979). _The Moving Average Convergence-Divergence Method._
 - [MACD on Investopedia](https://www.investopedia.com/terms/m/macd.asp)

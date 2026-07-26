@@ -5,7 +5,7 @@ description: Detects range expansions that often precede trend reversals — the
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 \text{Ratio} = \frac{EMA(H - L, 9)}{EMA(EMA(H - L, 9), 9)}
@@ -15,14 +15,14 @@ $$
 MI = \sum_{i=1}^{25} \text{Ratio}_i
 $$
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter   | Default | Range  | Notes                    |
 | ----------- | ------- | ------ | ------------------------ |
 | `emaPeriod` | 9       | 5–20   | EMA smoothing of range   |
 | `sumPeriod` | 25      | 10–50  | Rolling sum window       |
 
-## Interpretation
+## 🔍 Interpretation
 
 | MI Value        | Signal                                       |
 | --------------- | -------------------------------------------- |
@@ -36,7 +36,7 @@ $$
   not their direction.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeMassIndex } from "../../src/domain/mass-index";
@@ -44,6 +44,6 @@ import { computeMassIndex } from "../../src/domain/mass-index";
 const values = computeMassIndex(candles, { emaPeriod: 9, sumPeriod: 25 });
 ```
 
-## References
+## 📚 References
 
 - Dorsey, D. (1992). _The Mass Index._ TASC.

@@ -5,7 +5,7 @@ description: Weighted average of buying pressure across three timeframes, reduci
 
 import { Aside } from "@astrojs/starlight/components";
 
-## Formula
+## 🧮 Formula
 
 $$
 BP = \text{Close} - \min(\text{Low}, \text{PrevClose})
@@ -21,7 +21,7 @@ $$
 
 where $A_n = \frac{\sum BP(n)}{\sum TR(n)}$.
 
-## Parameters
+## ⚙ Parameters
 
 | Parameter | Default | Range  | Notes                        |
 | --------- | ------- | ------ | ---------------------------- |
@@ -29,7 +29,7 @@ where $A_n = \frac{\sum BP(n)}{\sum TR(n)}$.
 | `medium`  | 14      | 5–100  | Medium period                |
 | `long`    | 28      | 10–200 | Long period                  |
 
-## Interpretation
+## 🔍 Interpretation
 
 | UO Value | Signal                                          |
 | -------- | ----------------------------------------------- |
@@ -43,7 +43,7 @@ where $A_n = \frac{\sum BP(n)}{\sum TR(n)}$.
   rather than simple overbought/oversold levels.
 </Aside>
 
-## Usage
+## 💻 Usage
 
 ```ts
 import { computeUltimateOscillator } from "../../src/domain/ultimate-oscillator";
@@ -55,6 +55,6 @@ const values = computeUltimateOscillator(candles, {
 });
 ```
 
-## References
+## 📚 References
 
 - Williams, L. (1985). _Ultimate Oscillator._ Technical Analysis of Stocks & Commodities.
