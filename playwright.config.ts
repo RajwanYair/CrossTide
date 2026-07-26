@@ -96,7 +96,10 @@ export default defineConfig({
     // ── Tablets ───────────────────────────────────────────────────
     {
       name: "tablet",
-      use: { ...devices["iPad (gen 7)"] },
+      // iPad device presets default to the WebKit engine, but CI only
+      // installs Chromium — force Chromium so tablet viewport/touch
+      // emulation runs without requiring a WebKit browser install.
+      use: { ...devices["iPad (gen 7)"], browserName: "chromium" },
       testMatch: /tablet-responsive\.spec\.ts$/,
     },
     {
