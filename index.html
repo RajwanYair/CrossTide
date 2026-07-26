@@ -34,9 +34,14 @@
     <!-- Fallback CSP for hosts without HTTP header control (e.g. GitHub Pages). -->
     <!-- Canonical CSP lives in public/_headers and vite.config.ts server.headers. -->
     <!-- Source of truth: src/core/csp-builder.ts -->
+    <!-- frame-ancestors and report-uri are intentionally omitted here: both -->
+    <!-- directives are silently ignored by browsers when delivered via a    -->
+    <!-- <meta> element (they only take effect via the HTTP header, which is  -->
+    <!-- set in public/_headers) — including them here only produces console -->
+    <!-- warnings with zero protective effect.                               -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://query1.finance.yahoo.com https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; report-uri /api/csp-report"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://query1.finance.yahoo.com https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
     />
     <title>CrossTide</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -49,19 +54,9 @@
     <link rel="stylesheet" href="/src/styles/print.css" media="print" />
     <!-- Progressive enhancement: speculationrules for Chrome prefetch.     -->
     <!-- Firefox and Safari silently ignore unknown script types.           -->
-    <script type="speculationrules">
-      {
-        "prefetch": [
-          {
-            "source": "document",
-            "where": {
-              "selector_matches": "#app-nav a.nav-link"
-            },
-            "eagerness": "moderate"
-          }
-        ]
-      }
-    </script>
+    <!-- Loaded from an external same-origin file (not inline) so it       -->
+    <!-- complies with the script-src 'self' CSP directive above.          -->
+    <script type="speculationrules" src="/speculation-rules.json"></script>
   </head>
   <body>
     <a href="#app-main" class="skip-link">Skip to main content</a>

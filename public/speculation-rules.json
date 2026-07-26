@@ -1,0 +1,11 @@
+{
+  "prefetch": [
+    {
+      "source": "document",
+      "where": {
+        "selector_matches": "#app-nav a.nav-link"
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
