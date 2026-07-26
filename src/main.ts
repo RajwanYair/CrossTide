@@ -464,6 +464,7 @@ function main(): void {
         onSearch: (query) => getChain().search(query),
         onSelect: handleAddTicker,
         placeholder: "Search ticker (e.g. AAPL)…",
+        inputId: "add-ticker",
       });
       addInput.replaceWith(autocompleteHandle.element);
     });

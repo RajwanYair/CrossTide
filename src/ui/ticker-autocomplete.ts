@@ -28,6 +28,8 @@ export interface AutocompleteOptions {
   onSelect: (symbol: string) => void;
   /** Placeholder text for the input. */
   placeholder?: string;
+  /** Optional id applied to the inner input element (e.g. to preserve an id across a DOM swap). */
+  inputId?: string;
 }
 
 export interface AutocompleteHandle {
@@ -43,7 +45,7 @@ export interface AutocompleteHandle {
  * Create and mount a ticker autocomplete widget.
  */
 export function createAutocomplete(options: AutocompleteOptions): AutocompleteHandle {
-  const { onSearch, onSelect, placeholder = "Search ticker…" } = options;
+  const { onSearch, onSelect, placeholder = "Search ticker…", inputId } = options;
 
   // ── Build DOM ──
   const wrapper = document.createElement("div");
@@ -53,6 +55,7 @@ export function createAutocomplete(options: AutocompleteOptions): AutocompleteHa
   input.type = "text";
   input.className = "autocomplete-input";
   input.placeholder = placeholder;
+  if (inputId) input.id = inputId;
   input.setAttribute("autocomplete", "off");
   input.setAttribute("spellcheck", "false");
   input.setAttribute("role", "combobox");
