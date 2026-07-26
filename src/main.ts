@@ -938,13 +938,15 @@ function main(): void {
     },
   });
 
-  // Escape → close palette if open
+  // Escape → close palette if open, otherwise blur the focused input
   shortcuts.register({
     key: "Escape",
-    description: "Close palette",
+    description: "Close palette or unfocus input",
     handler: () => {
       if (isPaletteOpen()) {
         /* handled by palette input */
+      } else if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
       }
     },
   });

@@ -44,7 +44,10 @@ export function createShortcutManager(): ShortcutRegistry {
   const shortcuts = new Map<string, Shortcut>();
 
   function onKeyDown(e: KeyboardEvent): void {
-    if (isInputFocused()) return;
+    // Escape is allowed to run even while an input is focused, so it can
+    // blur the active field or dismiss an overlay — every other shortcut
+    // is suppressed while typing to avoid interfering with input.
+    if (isInputFocused() && e.key !== "Escape") return;
 
     const combo = comboKey(e.key, e.ctrlKey || e.metaKey, e.shiftKey, e.altKey);
     const shortcut = shortcuts.get(combo);
