@@ -69,6 +69,12 @@ test("tap navigation works on mobile viewport", async ({ page }) => {
   // Wait for JS to initialise
   await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
   const nav = page.locator("#app-nav");
+  // On mobile, the sidebar starts off-canvas — open it via the hamburger
+  // toggle so its nav links are actually within the viewport and clickable.
+  const toggle = page.locator("#sidebar-toggle");
+  if (await toggle.isVisible()) {
+    await toggle.click();
+  }
   // If nav is visible, click a link (click works for touch simulation too)
   if (await nav.isVisible()) {
     const link = nav.locator('a[data-route="settings"]');

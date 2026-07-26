@@ -234,6 +234,14 @@ test("Intl.NumberFormat formats currency correctly", async ({ page }) => {
 test("focus-visible selector works for keyboard navigation", async ({ page }) => {
   await page.goto("/");
   await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  // The router moves focus to the active view's heading after render (WCAG
+  // 2.4.3 route-change announcement) via a `tabindex="-1"` element, which is
+  // programmatically focusable but not reachable by Tab — so Tab from there
+  // walks forward through the *main content* rather than back to the header.
+  // Reset focus to the document itself first so Tab starts from the very
+  // first tab stop (the skip-link), matching real "user hasn't interacted
+  // yet" keyboard navigation.
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   // Tab through focusable elements until an <a> (nav link) receives focus.
   // The exact number of tab stops before the first nav link (skip-link,
   // sidebar-toggle, etc.) is an implementation detail that shifts as the

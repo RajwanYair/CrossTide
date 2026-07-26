@@ -1104,38 +1104,44 @@ main();
 const telemetry = initTelemetry();
 telemetry.pageview(); // initial pageview
 
-// Register PWA service worker
-void registerServiceWorker().then((reg) => {
-  if (reg) {
-    watchServiceWorkerUpdates(reg, {
-      onUpdateReady: (handle) => {
-        const banner = document.createElement("div");
-        banner.className = "sw-update-banner";
-        banner.setAttribute("role", "alert");
-        banner.setAttribute("aria-live", "assertive");
+// Register PWA service worker.
+// `/sw.js` is only emitted by the production build (see vite.config.ts's
+// rollupOptions.input.sw) — the dev server (used by E2E tests too) has no
+// such file, so registering there would 404 → SPA-fallback to index.html,
+// producing a spurious "unsupported MIME type ('text/html')" console error.
+if (import.meta.env.PROD) {
+  void registerServiceWorker().then((reg) => {
+    if (reg) {
+      watchServiceWorkerUpdates(reg, {
+        onUpdateReady: (handle) => {
+          const banner = document.createElement("div");
+          banner.className = "sw-update-banner";
+          banner.setAttribute("role", "alert");
+          banner.setAttribute("aria-live", "assertive");
 
-        const msg = document.createElement("span");
-        msg.textContent = "A new version is available.";
-        banner.appendChild(msg);
+          const msg = document.createElement("span");
+          msg.textContent = "A new version is available.";
+          banner.appendChild(msg);
 
-        const btn = document.createElement("button");
-        btn.textContent = "Refresh";
-        btn.className = "sw-update-btn";
-        btn.addEventListener("click", () => {
-          handle.applyUpdate();
-          window.location.reload();
-        });
-        banner.appendChild(btn);
+          const btn = document.createElement("button");
+          btn.textContent = "Refresh";
+          btn.className = "sw-update-btn";
+          btn.addEventListener("click", () => {
+            handle.applyUpdate();
+            window.location.reload();
+          });
+          banner.appendChild(btn);
 
-        const dismiss = document.createElement("button");
-        dismiss.textContent = "Later";
-        dismiss.className = "sw-update-dismiss";
-        dismiss.setAttribute("aria-label", "Dismiss update");
-        dismiss.addEventListener("click", () => banner.remove());
-        banner.appendChild(dismiss);
+          const dismiss = document.createElement("button");
+          dismiss.textContent = "Later";
+          dismiss.className = "sw-update-dismiss";
+          dismiss.setAttribute("aria-label", "Dismiss update");
+          dismiss.addEventListener("click", () => banner.remove());
+          banner.appendChild(dismiss);
 
-        document.body.appendChild(banner);
-      },
-    });
-  }
-});
+          document.body.appendChild(banner);
+        },
+      });
+    }
+  });
+}

@@ -490,6 +490,17 @@
     /* always rendered, no override needed — desktop doesn't hide it either */
   }
 
+  /* The header brand's tagline + market status badge don't fit next to the
+     app name on narrow screens — hide the tagline and let the header clip
+     rather than force the whole page wider. */
+  #app-header {
+    overflow-x: hidden;
+  }
+
+  .header-tagline {
+    display: none;
+  }
+
   /* Sidebar becomes a fixed overlay on mobile */
   #app-nav {
     position: fixed;
