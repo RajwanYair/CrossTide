@@ -45,7 +45,7 @@ test("CSS custom properties render on Gecko", async ({ page }) => {
   await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
 
   const bgColor = await page.evaluate(() =>
-    getComputedStyle(document.documentElement).getPropertyValue("--bg-primary").trim(),
+    getComputedStyle(document.documentElement).getPropertyValue("--bg-app").trim(),
   );
   expect(bgColor.length).toBeGreaterThan(0);
 });

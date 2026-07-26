@@ -35,7 +35,7 @@ test("navigation links wrap properly without overflow", async ({ page }) => {
 test("CSS custom properties are applied", async ({ page }) => {
   await page.goto("/");
   const bgColor = await page.evaluate(() =>
-    getComputedStyle(document.documentElement).getPropertyValue("--bg-primary").trim(),
+    getComputedStyle(document.documentElement).getPropertyValue("--bg-app").trim(),
   );
   // Should have a value (dark theme default)
   expect(bgColor.length).toBeGreaterThan(0);
@@ -236,6 +236,7 @@ test("focus-visible selector works for keyboard navigation", async ({ page }) =>
   await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
   // Tab to first nav link
   await page.keyboard.press("Tab"); // skip-link
+  await page.keyboard.press("Tab"); // sidebar-toggle button
   await page.keyboard.press("Tab"); // first nav-link
   const focused = await page.evaluate(() => document.activeElement?.tagName);
   expect(focused).toBe("A");
