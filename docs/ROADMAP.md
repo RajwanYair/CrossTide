@@ -1,7 +1,7 @@
 # 🗺️ CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
 
 > **Date:** July 22, 2026
-> **Current version:** v11.43.0
+> **Current version:** v11.43.1
 > **Codebase:** 212 domain modules · 52 cards · 37 Worker routes · 608 test files
 > **Bundle:** 158 KB gzip (budget 250 KB) · 49 SW precache entries
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5

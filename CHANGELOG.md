@@ -8,6 +8,49 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [11.43.1] — 2026-07-26
+
+> **Sprint: CI Stabilization & Discoverability** (17 commits — workflow
+> fixes, GitHub Pages deploy conflict resolved, repo keywords/topics
+> synced, `Stock200Alert` legacy naming fully removed, docs enriched with
+> emoji/Mermaid, dependency security patch)
+
+### 🔄 Changed
+
+- **Docs refresh**: `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, and setup
+  docs enriched with emoji headings, Mermaid diagrams, and a new banner
+  asset (`docs/assets/banner.svg`) for a more engaging read.
+- **GitHub discoverability**: repository topics synced 1:1 with
+  `package.json` keywords; all remaining `Stock200Alert` legacy project
+  name references removed from docs and repo metadata.
+- **Dev dependencies**: bumped Astro, Vitest, and TypeScript across
+  workspaces; Docker base image bumped to `node:24-slim`.
+
+### 🐛 Fixed
+
+- **GitHub Pages deploy conflict**: merged competing `pages.yml`/`docs.yml`
+  workflows so the docs site deploys the intended content instead of being
+  overwritten by a stale build.
+- **Worker durable object export**: re-exported `TickerFanout` from the
+  worker entrypoint so Cloudflare can bind the Durable Object correctly.
+- **CI workflow stabilization**: fixed gitleaks config wiring and a
+  Finnhub type-name false positive, added fail-fast diagnostics to the
+  worker health check, fixed `smoke.yml` secrets context and docs Node
+  version, pinned GitHub Actions to latest majors, reduced secrets-scan
+  false positives, relaxed Lighthouse perf thresholds, fixed `arch-check`
+  cross-layer import allowlist, removed an invalid `manualChunks` entry,
+  and aligned the bundle perf budget to 250 KB gzip.
+
+### 🔒 Security
+
+- **`brace-expansion`**: patched to 5.0.8 — resolves a high-severity DoS
+  via unbounded expansion length ([GHSA-mh99-v99m-4gvg](https://github.com/advisories/GHSA-mh99-v99m-4gvg)).
+- **`valibot`**: patched to 1.4.2 — resolves a moderate-severity issue
+  where `record()` issue paths could make `flatten()` throw for inherited
+  `Object` property names ([GHSA-5qjj-4xww-7phc](https://github.com/advisories/GHSA-5qjj-4xww-7phc)).
+
+---
+
 ## [11.43.0] — 2026-06-02
 
 > **Sprint: Production Readiness Overhaul (ROADMAP v10, workspace cleanup,
