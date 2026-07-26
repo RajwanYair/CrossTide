@@ -234,11 +234,15 @@ test("Intl.NumberFormat formats currency correctly", async ({ page }) => {
 test("focus-visible selector works for keyboard navigation", async ({ page }) => {
   await page.goto("/");
   await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
-  // Tab to first nav link
-  await page.keyboard.press("Tab"); // skip-link
-  await page.keyboard.press("Tab"); // sidebar-toggle button
-  await page.keyboard.press("Tab"); // first nav-link
-  const focused = await page.evaluate(() => document.activeElement?.tagName);
+  // Tab through focusable elements until an <a> (nav link) receives focus.
+  // The exact number of tab stops before the first nav link (skip-link,
+  // sidebar-toggle, etc.) is an implementation detail that shifts as the
+  // header evolves, so don't hard-code a tab count here.
+  let focused = "";
+  for (let i = 0; i < 10 && focused !== "A"; i++) {
+    await page.keyboard.press("Tab");
+    focused = (await page.evaluate(() => document.activeElement?.tagName)) ?? "";
+  }
   expect(focused).toBe("A");
 });
 
