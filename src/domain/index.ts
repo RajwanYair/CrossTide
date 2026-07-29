@@ -703,6 +703,12 @@ export {
 } from "./watchlist-share";
 export type { WatchlistSnapshot, WatchlistImportResult, MergeResult } from "./watchlist-share";
 
+// ── Ticker catalog ───────────────────────────────────────────────────────
+
+/** Offline symbol catalog + fuzzy matcher backing the ticker search box. */
+export { getTickerCatalog, searchTickerCatalog, isSupportedSymbol } from "./ticker-catalog";
+export type { TickerCatalogEntry, CatalogInstrument } from "./ticker-catalog";
+
 // ── Market hours ─────────────────────────────────────────────────────────
 
 /** Exchange schedules, open/close detection, and WebSocket gating. */

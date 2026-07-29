@@ -39,6 +39,14 @@ describe("ticker-autocomplete", () => {
     expect(listbox.hidden).toBe(true);
   });
 
+  it("submits a typed symbol before suggestions are available", () => {
+    const input = handle.element.querySelector("input")!;
+    input.value = "msft";
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+    expect(onSelect).toHaveBeenCalledWith("MSFT");
+  });
+
   it("calls onSearch after debounce on input", async () => {
     vi.useFakeTimers();
     const input = handle.element.querySelector("input")!;
@@ -75,5 +83,66 @@ describe("ticker-autocomplete", () => {
 
   it("dispose removes event handlers without error", () => {
     expect(() => handle.dispose()).not.toThrow();
+  });
+
+  it("falls back to the offline catalog when the provider rejects", async () => {
+    vi.useFakeTimers();
+    const failing = vi.fn().mockRejectedValue(new Error("CORS blocked"));
+    const local = createAutocomplete({ onSearch: failing, onSelect: vi.fn() });
+    document.body.appendChild(local.element);
+
+    const input = local.element.querySelector("input")!;
+    input.value = "AAP";
+    input.dispatchEvent(new Event("input"));
+    vi.advanceTimersByTime(300);
+    await vi.runAllTimersAsync();
+
+    const listbox = local.element.querySelector("ul")!;
+    expect(listbox.hidden).toBe(false);
+    expect(listbox.textContent).toContain("AAPL");
+    local.dispose();
+    vi.useRealTimers();
+  });
+
+  it("appends catalog matches the provider missed", async () => {
+    vi.useFakeTimers();
+    const partial = vi
+      .fn()
+      .mockResolvedValue([{ symbol: "AAPL", name: "Apple Inc.", exchange: "NASDAQ" }]);
+    const local = createAutocomplete({ onSearch: partial, onSelect: vi.fn() });
+    document.body.appendChild(local.element);
+
+    const input = local.element.querySelector("input")!;
+    input.value = "AA";
+    input.dispatchEvent(new Event("input"));
+    vi.advanceTimersByTime(300);
+    await vi.runAllTimersAsync();
+
+    const symbols = [...local.element.querySelectorAll("li")].map(
+      (li) => li.getAttribute("data-symbol") ?? "",
+    );
+    expect(symbols[0]).toBe("AAPL");
+    expect(symbols.filter((s) => s === "AAPL")).toHaveLength(1);
+    local.dispose();
+    vi.useRealTimers();
+  });
+
+  it("shows an explicit empty state when nothing matches", async () => {
+    vi.useFakeTimers();
+    const empty = vi.fn().mockResolvedValue([]);
+    const local = createAutocomplete({ onSearch: empty, onSelect: vi.fn() });
+    document.body.appendChild(local.element);
+
+    const input = local.element.querySelector("input")!;
+    input.value = "ZZZZQQQ";
+    input.dispatchEvent(new Event("input"));
+    vi.advanceTimersByTime(300);
+    await vi.runAllTimersAsync();
+
+    const listbox = local.element.querySelector("ul")!;
+    expect(listbox.hidden).toBe(false);
+    expect(listbox.textContent).toContain("No matching tickers");
+    local.dispose();
+    vi.useRealTimers();
   });
 });

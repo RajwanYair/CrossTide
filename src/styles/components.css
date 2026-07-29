@@ -224,7 +224,12 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .setting-group.hidden {
+  /*
+   * Generic visibility utility. Scripts toggle `.hidden` on arbitrary elements
+   * (`#watchlist-empty`, the PWA setting group, …); without this rule the class
+   * is inert and "empty state" copy stays on screen next to real content.
+   */
+  .hidden {
     display: none;
   }
 
@@ -2209,6 +2214,16 @@
   color: inherit;
   border-radius: 2px;
   padding: 0 1px;
+}
+
+.autocomplete-empty {
+  color: var(--text-secondary);
+  cursor: default;
+  font-style: italic;
+}
+
+.autocomplete-empty:hover {
+  background: transparent;
 }
 
 /* ── Data freshness badge ── */

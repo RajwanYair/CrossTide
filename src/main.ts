@@ -16,7 +16,7 @@ import {
 } from "./core/config";
 import { createCrossTabSync } from "./core/broadcast-channel";
 import { registerServiceWorker } from "./core/sw-register";
-import { watchServiceWorkerUpdates } from "./core/sw-update";
+import { activateServiceWorkerUpdate, watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
 import { initRouter, navigateTo, navigateToPath, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
@@ -35,7 +35,7 @@ import { showToast } from "./ui/toast";
 import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
 import type { PaletteCommand } from "./ui/command-palette";
 import { fetchAllTickers, fetchTickerData, type TickerData } from "./core/data-service";
-import { selectedTickerStore } from "./core/app-store";
+import { selectedTickerStore, tickerDataStore } from "./core/app-store";
 import { ensureTemporal } from "./core/temporal-init";
 
 import { TieredCache } from "./core/tiered-cache";
@@ -69,6 +69,8 @@ import { initDashboardStats } from "./ui/dashboard-stats";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { initPlausible } from "./core/plausible";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
+import { searchTickers } from "./providers/ticker-search-service";
+import { isSupportedSymbol } from "./domain/ticker-catalog";
 import { createAutocomplete } from "./ui/ticker-autocomplete";
 import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
 import { evaluateAlertRules } from "./core/alert-rules-evaluator";
@@ -80,6 +82,7 @@ import { initCardPrefetchOnIntent } from "./ui/card-prefetch";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
+  consensus: "consensus-container",
   chart: "chart-container",
   alerts: "alerts-container",
   heatmap: "heatmap-container",
@@ -88,6 +91,7 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   portfolio: "portfolio-container",
   risk: "risk-container",
   backtest: "backtest-container",
+  "strategy-comparison": "strategy-comparison-container",
   "consensus-timeline": "consensus-timeline-container",
   "signal-dsl": "signal-dsl-container",
   "multi-chart": "multi-chart-container",
@@ -97,6 +101,9 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   "macro-dashboard": "macro-dashboard-container",
   "sector-rotation": "sector-rotation-container",
   "relative-strength": "relative-strength-container",
+  seasonality: "seasonality-container",
+  comparison: "comparison-container",
+  rebalance: "rebalance-container",
 };
 
 async function activateCard(
@@ -224,6 +231,7 @@ function main(): void {
     const tickers = config.watchlist.map((e) => e.ticker);
     if (tickers.length === 0) {
       tickerDataCache.clear();
+      tickerDataStore.set(new Map());
       refreshWatchlist(config, new Map());
       updateStatus("Ready");
       return;
@@ -241,6 +249,7 @@ function main(): void {
     );
 
     tickerDataCache = results;
+    tickerDataStore.set(results);
 
     // G19: Persist company names returned by the data service into WatchlistEntry.
     // Build a map of ticker → name from successful fetches only.
@@ -357,6 +366,18 @@ function main(): void {
   initSidebarToggle();
   initTheme(config.theme);
   loadPersistedPalette(); // C2: restore color-blind palette from localStorage
+
+  // Subscribe BEFORE initRouter(): it dispatches the initial route
+  // synchronously, and a handler added afterwards would miss it — leaving a
+  // deep-linked card (e.g. /seasonality) mounted-less and its view blank.
+  let currentRoute: RouteName = "watchlist";
+  onRouteChange((route, info) => {
+    currentRoute = route;
+    void activateCard(route, info?.params ?? {});
+    // A17: track route navigation as a pageview
+    getTelemetry()?.pageview(window.location.pathname);
+  });
+
   initRouter();
   initOfflineIndicator();
   initCardCollapse();
@@ -406,15 +427,6 @@ function main(): void {
     navigateTo(activeShareRoute);
   }
 
-  let currentRoute: RouteName = "watchlist";
-
-  onRouteChange((route, info) => {
-    currentRoute = route;
-    void activateCard(route, info?.params ?? {});
-    // A17: track route navigation as a pageview
-    getTelemetry()?.pageview(window.location.pathname);
-  });
-
   // Version display
   const versionEl = document.getElementById("app-version");
   if (versionEl) {
@@ -439,7 +451,7 @@ function main(): void {
   function handleAddTicker(ticker: string): void {
     const t = ticker.trim().toUpperCase();
     if (!t) return;
-    if (!/^[A-Z][A-Z0-9.-]{0,9}$/.test(t)) {
+    if (!isSupportedSymbol(t)) {
       showToast({ message: `Invalid ticker: ${t}`, type: "error" });
       return;
     }
@@ -454,20 +466,19 @@ function main(): void {
     maybeRequestPersist();
     void fetchTickerData(t).then((data) => {
       tickerDataCache.set(t, data);
+      tickerDataStore.set(new Map(tickerDataCache));
       void refreshData();
     });
   }
 
   if (addInput) {
-    void import("./providers/provider-registry").then(({ getChain }) => {
-      autocompleteHandle = createAutocomplete({
-        onSearch: (query) => getChain().search(query),
-        onSelect: handleAddTicker,
-        placeholder: "Search ticker (e.g. AAPL)…",
-        inputId: "add-ticker",
-      });
-      addInput.replaceWith(autocompleteHandle.element);
+    autocompleteHandle = createAutocomplete({
+      onSearch: (query) => searchTickers(query),
+      onSelect: handleAddTicker,
+      placeholder: "Search ticker (e.g. AAPL)…",
+      inputId: "add-ticker",
     });
+    addInput.replaceWith(autocompleteHandle.element);
   }
 
   // D5: Share watchlist button — encode tickers into a deep-link URL
@@ -1034,6 +1045,7 @@ function main(): void {
     const cached = tickerDataCache.get(ticker);
     if (cached) {
       tickerDataCache.set(ticker, { ...cached, price });
+      tickerDataStore.set(new Map(tickerDataCache));
     }
   });
 
@@ -1127,8 +1139,11 @@ if (import.meta.env.PROD) {
           btn.textContent = "Refresh";
           btn.className = "sw-update-btn";
           btn.addEventListener("click", () => {
-            handle.applyUpdate();
-            window.location.reload();
+            btn.disabled = true;
+            btn.textContent = "Updating...";
+            activateServiceWorkerUpdate(handle, navigator.serviceWorker, () => {
+              window.location.reload();
+            });
           });
           banner.appendChild(btn);
 

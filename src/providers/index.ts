@@ -23,3 +23,4 @@ export {
   configureTiingo,
 } from "./provider-registry";
 export type { HealthSnapshot, ProviderRegistryEntry } from "./provider-registry";
+export { searchTickers } from "./ticker-search-service";

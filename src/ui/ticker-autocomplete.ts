@@ -6,9 +6,12 @@
  * - Keyboard navigation (↑/↓/Enter/Escape)
  * - Highlights matching substring in results
  * - Accessible: role=listbox, aria-activedescendant
- * - Falls back to local fuzzy match when provider is unavailable
+ * - Falls back to the offline ticker catalog when the provider rejects or
+ *   returns nothing (CORS-restricted static hosting, offline, outage), so the
+ *   dropdown never silently stays empty
  */
 import type { SearchResult } from "../providers/types";
+import { searchTickerCatalog } from "../domain/ticker-catalog";
 
 function escapeHtml(s: string): string {
   return s
@@ -20,6 +23,36 @@ function escapeHtml(s: string): string {
 
 const DEBOUNCE_MS = 300;
 const MAX_RESULTS = 8;
+
+/** Local catalog rows mapped onto the provider's SearchResult shape. */
+function localResults(query: string): readonly SearchResult[] {
+  return searchTickerCatalog(query, MAX_RESULTS).map(
+    (e): SearchResult => ({
+      symbol: e.symbol,
+      name: e.name,
+      exchange: e.exchange,
+      type: e.type,
+    }),
+  );
+}
+
+/**
+ * Merge provider hits with local catalog hits, provider first, de-duplicated
+ * by symbol.
+ */
+function mergeResults(
+  remote: readonly SearchResult[],
+  local: readonly SearchResult[],
+): readonly SearchResult[] {
+  const seen = new Set(remote.map((r) => r.symbol.toUpperCase()));
+  const merged = [...remote];
+  for (const entry of local) {
+    if (seen.has(entry.symbol.toUpperCase())) continue;
+    seen.add(entry.symbol.toUpperCase());
+    merged.push(entry);
+  }
+  return merged.slice(0, MAX_RESULTS);
+}
 
 export interface AutocompleteOptions {
   /** Called to fetch search suggestions from the active data provider. */
@@ -90,8 +123,10 @@ export function createAutocomplete(options: AutocompleteOptions): AutocompleteHa
 
   function renderResults(query: string): void {
     if (results.length === 0) {
-      listbox.hidden = true;
-      input.setAttribute("aria-expanded", "false");
+      listbox.innerHTML = `<li class="autocomplete-item autocomplete-empty" role="option" aria-selected="false" aria-disabled="true">No matching tickers</li>`;
+      listbox.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      input.removeAttribute("aria-activedescendant");
       return;
     }
 
@@ -148,15 +183,30 @@ export function createAutocomplete(options: AutocompleteOptions): AutocompleteHa
 
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
-      void onSearch(query).then((res) => {
-        results = res;
-        activeIndex = -1;
-        renderResults(query);
-      });
+      const local = localResults(query);
+      void onSearch(query)
+        .catch(() => [] as readonly SearchResult[])
+        .then((remote) => {
+          // Ignore a stale response if the user kept typing.
+          if (input.value.trim() !== query) return;
+          results = mergeResults(remote, local);
+          activeIndex = -1;
+          renderResults(query);
+        });
     }, DEBOUNCE_MS);
   }
 
   function handleKeydown(e: KeyboardEvent): void {
+    if (e.key === "Enter" && (listbox.hidden || activeIndex < 0)) {
+      const symbol = input.value.trim();
+      if (symbol) {
+        e.preventDefault();
+        onSelect(symbol.toUpperCase());
+        close();
+      }
+      return;
+    }
+
     if (listbox.hidden) return;
 
     switch (e.key) {
@@ -172,12 +222,7 @@ export function createAutocomplete(options: AutocompleteOptions): AutocompleteHa
         break;
       case "Enter":
         e.preventDefault();
-        if (activeIndex >= 0) {
-          selectItem(activeIndex);
-        } else if (input.value.trim()) {
-          onSelect(input.value.trim().toUpperCase());
-          close();
-        }
+        selectItem(activeIndex);
         break;
       case "Escape":
         close();
@@ -195,7 +240,6 @@ export function createAutocomplete(options: AutocompleteOptions): AutocompleteHa
       onSelect(symbol);
     }
   }
-
   function handleBlur(): void {
     // Delay to allow click on listbox item
     setTimeout(close, 200);
