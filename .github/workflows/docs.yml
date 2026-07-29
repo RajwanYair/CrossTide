@@ -36,6 +36,10 @@ jobs:
         working-directory: .
 
       - name: Build Astro site
-        run: npx astro build
+        # Must use the workspace-installed Astro: `npx astro` can fetch a fresh
+        # copy from the registry, which then resolves a CommonJS `cookie` and
+        # fails with "Named export 'parseCookie' not found".
+        run: npm run build --workspace docs-site
+        working-directory: .
         env:
           BASE_URL: /CrossTide/docs/

@@ -32,7 +32,7 @@ jobs:
       - name: Build
         # workbox-inject is mandatory: without it sw.js keeps the dev fallback
         # manifest (revision: null) and never picks up new builds.
-        run: npx vite build && node scripts/workbox-inject.mjs
+        run: ./node_modules/.bin/vite build && node scripts/workbox-inject.mjs
         env:
           VITE_BASE: /
 

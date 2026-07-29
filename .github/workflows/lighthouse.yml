@@ -26,7 +26,7 @@ jobs:
         run: npm ci
 
       - name: Build production bundle
-        run: npx vite build
+        run: ./node_modules/.bin/vite build
 
       - name: Run Lighthouse CI
         run: |

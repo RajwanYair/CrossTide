@@ -22,13 +22,13 @@ jobs:
       - run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Build
         run: npm run build
 
       - name: Run visual regression tests
-        run: npx playwright test tests/visual/ --project=chromium
+        run: ./node_modules/.bin/playwright test tests/visual/ --project=chromium
 
       - name: Upload diff artifacts
         if: failure()

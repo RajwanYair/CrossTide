@@ -64,7 +64,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Validate PR commits
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+        run: ./node_modules/.bin/commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
   lint-test-build:
     name: Lint, Test & Build
@@ -111,7 +111,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Build
-        run: npx vite build
+        run: ./node_modules/.bin/vite build
 
       - name: Bundle size check
         run: npm run check:bundle
@@ -232,14 +232,14 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Install Playwright system deps (cached)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+        run: ./node_modules/.bin/playwright install-deps chromium
 
       - name: Run E2E tests
-        run: npx playwright test --project=chromium --project=mobile-chrome --project=tablet --reporter=github ${{ inputs.update_snapshots && '--update-snapshots' || '' }}
+        run: ./node_modules/.bin/playwright test --project=chromium --project=mobile-chrome --project=tablet --reporter=github ${{ inputs.update_snapshots && '--update-snapshots' || '' }}
         env:
           VITE_BASE: /
 
@@ -337,7 +337,7 @@ jobs:
         run: npm ci
 
       - name: Start worker (wrangler dev)
-        run: npx wrangler dev worker/index.ts --port 8787 > wrangler-dev.log 2>&1 &
+        run: ./node_modules/.bin/wrangler dev worker/index.ts --port 8787 > wrangler-dev.log 2>&1 &
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
 

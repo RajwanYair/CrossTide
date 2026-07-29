@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Build PR branch
-        run: npx vite build
+        run: ./node_modules/.bin/vite build
 
       - name: Measure PR bundle size
         id: pr_size
@@ -54,7 +54,7 @@ jobs:
         run: |
           git checkout ${{ github.event.pull_request.base.sha }}
           npm ci
-          npx vite build
+          ./node_modules/.bin/vite build
         continue-on-error: true
 
       - name: Measure base bundle size
@@ -75,7 +75,7 @@ jobs:
         id: lighthouse
         run: |
           npm install -g @lhci/cli@0.15.x
-          npx vite preview --port 4173 &
+          ./node_modules/.bin/vite preview --port 4173 &
           sleep 3
           lhci collect --url=http://localhost:4173/ --settings.preset=desktop --numberOfRuns=1 || true
           if [ -f ".lighthouseci/lhr-0.json" ]; then

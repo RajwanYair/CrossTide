@@ -10,33 +10,39 @@ permissions:
   id-token: write
   attestations: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   release:
     name: Build & Release
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 20
+          node-version: "24"
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
-      - name: TypeScript check
-        run: npm run typecheck
+      - name: Quality gates
+        run: npm run ci
 
-      - name: ESLint
-        run: npm run lint
+      - name: Architecture check
+        run: node scripts/arch-check.mjs --strict
 
-      - name: Unit tests
-        run: npm test
+      - name: Color contrast check
+        run: npm run check:contrast
 
-      - name: Build production
-        run: npx vite build
+      - name: Security audit
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Registry signature audit
+        run: npm audit signatures
 
       - name: Upload source maps to GlitchTip (P14)
         run: node scripts/upload-sourcemaps.mjs

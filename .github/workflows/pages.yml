@@ -39,13 +39,15 @@ jobs:
       - name: Build SPA
         # workbox-inject is mandatory: without it sw.js keeps the dev fallback
         # manifest (revision: null) and never picks up new builds.
-        run: npx vite build && node scripts/workbox-inject.mjs
+        run: ./node_modules/.bin/vite build && node scripts/workbox-inject.mjs
         env:
           VITE_BASE: /CrossTide/
 
       - name: Build docs site
-        run: npx astro build
-        working-directory: docs-site
+        # Must use the workspace-installed Astro: `npx astro` can fetch a fresh
+        # copy from the registry, which then resolves a CommonJS `cookie` and
+        # fails with "Named export 'parseCookie' not found".
+        run: npm run build --workspace docs-site
         env:
           BASE_URL: /CrossTide/docs/
 

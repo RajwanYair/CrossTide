@@ -39,7 +39,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: ./node_modules/.bin/playwright install --with-deps chromium firefox webkit
 
       - name: Build production bundle (root-served for preview)
         run: npm run build
@@ -47,7 +47,7 @@ jobs:
           VITE_BASE: "/"
 
       - name: Update visual snapshots
-        run: npx playwright test tests/e2e/visual.spec.ts --update-snapshots
+        run: ./node_modules/.bin/playwright test tests/e2e/visual.spec.ts --update-snapshots
         continue-on-error: false
 
       - name: Commit and push baselines

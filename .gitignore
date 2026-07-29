@@ -8,6 +8,7 @@ coverage/
 build/
 *.tsbuildinfo
 docs-site/.astro/
+.wrangler/
 
 # Environment
 .env

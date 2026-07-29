@@ -34,10 +34,10 @@ jobs:
       - name: Verify toolchain
         run: |
           node --version
-          npx tsc --version
-          npx vitest --version
-          npx eslint --version
-          npx vite --version
+          ./node_modules/.bin/tsc --version
+          ./node_modules/.bin/vitest --version
+          ./node_modules/.bin/eslint --version
+          ./node_modules/.bin/vite --version
 
       - name: Quick sanity (typecheck only)
         run: npm run typecheck

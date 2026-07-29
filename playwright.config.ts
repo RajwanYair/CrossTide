@@ -99,7 +99,9 @@ export default defineConfig({
     deviceProject("nexus-10", { ...devices["Nexus 10"] }),
   ],
   webServer: {
-    command: "npx vite --port 4173",
+    // `npm run` resolves node_modules/.bin cross-platform; `npx` may fetch a
+    // different Vite from the registry.
+    command: "npm run dev -- --port 4173",
     url: "http://localhost:4173",
     reuseExistingServer: !process.env["CI"],
     timeout: 60_000,
