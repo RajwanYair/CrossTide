@@ -26,14 +26,27 @@ async function waitForShell(page: Page): Promise<void> {
 /** Navigate to a named route by clicking its nav link. */
 async function goToRoute(page: Page, route: string): Promise<void> {
   const link = page.locator(`#app-nav a[data-route="${route}"]`);
-  if ((await link.count()) > 0) {
+  // At mobile widths the sidebar is parked off-canvas with translateX(-220px).
+  // The link still reports `visible` (non-empty box, visibility: visible) but
+  // lies outside the viewport, so clicking it hangs until the test times out.
+  // Only click when the link is genuinely within the viewport.
+  const box = await link.boundingBox();
+  const viewport = page.viewportSize();
+  const inViewport =
+    box !== null &&
+    viewport !== null &&
+    box.x >= 0 &&
+    box.y >= 0 &&
+    box.x + box.width <= viewport.width &&
+    box.y + box.height <= viewport.height;
+
+  if (inViewport) {
     await link.click();
-    await page.waitForTimeout(300);
   } else {
     // Fallback: direct hash navigation
     await page.goto(`/#/${route}`);
-    await page.waitForTimeout(300);
   }
+  await page.waitForTimeout(300);
 }
 
 // ── Test configuration ───────────────────────────────────────────────────────
