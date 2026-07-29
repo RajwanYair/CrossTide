@@ -2,6 +2,8 @@
  * Card registry tests — lazy loader, metadata, cache behaviour.
  */
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   getCardEntry,
   listCards,
@@ -95,6 +97,30 @@ describe("listCards", () => {
       expect(card.title.length).toBeGreaterThan(0);
       expect(card.viewId).toBe(`view-${card.route}`);
     }
+  });
+});
+
+describe("E2E card matrix", () => {
+  // The Playwright matrix hand-mirrors the registry because importing the card
+  // graph into the Node test runner would pull in DOM-only modules. Parse it as
+  // text so a newly registered card cannot ship without an E2E guard.
+  // Resolved from the Vitest root: happy-dom rewrites `import.meta.url` to a
+  // non-`file:` scheme, so `fileURLToPath` is unusable in this project.
+  const spec = readFileSync(resolve(process.cwd(), "tests/e2e/cards.spec.ts"), {
+    encoding: "utf8",
+  });
+  const covered = new Set([...spec.matchAll(/\{\s*route:\s*"([^"]+)"/g)].map((m) => m[1] ?? ""));
+
+  it("covers every registered card route", () => {
+    const missing = listCards()
+      .map((c) => c.route)
+      .filter((route) => !covered.has(route));
+    expect(missing).toEqual([]);
+  });
+
+  it("does not reference routes that no longer exist", () => {
+    const known = new Set(listCards().map((c) => c.route));
+    expect([...covered].filter((route) => !known.has(route))).toEqual([]);
   });
 });
 

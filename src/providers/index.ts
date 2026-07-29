@@ -1,3 +1,9 @@
+/**
+ * Public API barrel for `src/providers` — market-data source adapters.
+ *
+ * Each provider implements `MarketDataProvider`; the registry composes them into
+ * a fallback chain so a single upstream outage cannot break data loading.
+ */
 export type { Quote, SearchResult, ProviderHealth, MarketDataProvider } from "./types";
 export { createYahooProvider } from "./yahoo-provider";
 export { createAlphaVantageProvider } from "./alpha-vantage-provider";

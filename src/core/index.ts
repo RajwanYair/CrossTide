@@ -1,3 +1,9 @@
+/**
+ * Public API barrel for `src/core` — reactive state, config, caching and fetch.
+ *
+ * Holds the signal primitives (`signal`/`computed`/`effect`) plus the app's
+ * stores and worker API client. Depends on `types` and `domain`; contains no UI.
+ */
 export {
   signal,
   computed,
@@ -84,7 +90,7 @@ export type {
   AuthenticatePasskeyResult,
 } from "./passkey";
 export { registerServiceWorker } from "./sw-register";
-export { watchServiceWorkerUpdates } from "./sw-update";
+export { activateServiceWorkerUpdate, watchServiceWorkerUpdates } from "./sw-update";
 export type { SwUpdateHandle, SwUpdateOptions } from "./sw-update";
 export {
   backgroundFetchSupported,

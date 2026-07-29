@@ -1,3 +1,9 @@
+/**
+ * Public API barrel for `src/types` — shared interfaces and type aliases.
+ *
+ * The base of the import chain (`types <- domain <- core <- providers <- cards <- ui`):
+ * this layer is types-only and must not import from any other `src/` layer.
+ */
 export type {
   DailyCandle,
   MethodSignal,

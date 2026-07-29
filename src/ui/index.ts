@@ -1,3 +1,8 @@
+/**
+ * Public API barrel for `src/ui` — router, theme, toasts and DOM widgets.
+ *
+ * The outermost layer and the only one permitted to touch the DOM directly.
+ */
 export {
   initRouter,
   navigateTo,
