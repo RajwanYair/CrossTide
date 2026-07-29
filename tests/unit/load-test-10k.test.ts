@@ -68,7 +68,8 @@ describe("Load testing — 10K rows", () => {
     expect(spacer?.style.height).toBe("320000px");
   });
 
-  it("update() handles growing to 10K rows", () => {
+  // Wall-clock budgets are scheduler-sensitive under a parallel suite; retry absorbs jitter.
+  it("update() handles growing to 10K rows", { retry: 2 }, () => {
     const vs = new VirtualScroller({
       container,
       rowHeight: 32,
@@ -87,7 +88,7 @@ describe("Load testing — 10K rows", () => {
     expect(spacer?.style.height).toBe("320000px");
   });
 
-  it("handles 50,000 rows (stress test)", () => {
+  it("handles 50,000 rows (stress test)", { retry: 2 }, () => {
     const t0 = performance.now();
     new VirtualScroller({
       container,

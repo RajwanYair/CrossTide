@@ -4,6 +4,8 @@
  * Tests cover the pure utility functions (preprocessing, softmax, argmax,
  * topK, buildInputTensor) and the model-loader orchestration logic.
  * The actual `onnxruntime-web` module is mocked since it requires WASM.
+ *
+ * @vitest-environment happy-dom
  */
 import { describe, it, expect, vi } from "vitest";
 import {

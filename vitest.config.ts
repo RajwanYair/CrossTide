@@ -1,17 +1,59 @@
 import { defineConfig } from "vitest/config";
 
+/** Suites that never touch DOM globals — running them on `node` skips happy-dom construction. */
+const NODE_ONLY_SUITES = [
+  "tests/unit/domain/**/*.test.ts",
+  "tests/unit/worker/**/*.test.ts",
+  "tests/unit/providers/**/*.test.ts",
+  "tests/unit/types/**/*.test.ts",
+  "tests/unit/helpers/**/*.test.ts",
+];
+
 export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify("test"),
   },
   test: {
-    environment: "happy-dom",
     globals: true,
     pool: "forks",
     testTimeout: 10000,
     hookTimeout: 10000,
-    include: ["tests/**/*.test.ts"],
-    exclude: ["tests/browser/**"],
+    projects: [
+      {
+        define: { __APP_VERSION__: JSON.stringify("test") },
+        test: {
+          name: "node",
+          environment: "node",
+          globals: true,
+          testTimeout: 10000,
+          hookTimeout: 10000,
+          setupFiles: ["tests/helpers/node-network.ts"],
+          include: NODE_ONLY_SUITES,
+        },
+      },
+      {
+        define: { __APP_VERSION__: JSON.stringify("test") },
+        test: {
+          name: "dom",
+          environment: "happy-dom",
+          environmentOptions: {
+            happyDOM: {
+              settings: {
+                disableCSSFileLoading: true,
+                disableIframePageLoading: true,
+                disableJavaScriptFileLoading: true,
+              },
+            },
+          },
+          globals: true,
+          testTimeout: 10000,
+          hookTimeout: 10000,
+          setupFiles: ["tests/helpers/happy-dom-network.ts"],
+          include: ["tests/**/*.test.ts"],
+          exclude: ["tests/browser/**", ...NODE_ONLY_SUITES],
+        },
+      },
+    ],
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],
