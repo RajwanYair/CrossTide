@@ -7,11 +7,14 @@
  */
 
 export interface SwUpdateHandle {
-  /** Tell the waiting worker to skipWaiting and become active. */
-  applyUpdate(): void;
+  /** Tell the waiting worker to skipWaiting. Returns false if none is waiting. */
+  applyUpdate(): boolean;
   /** Stop watching. */
   dispose(): void;
 }
+
+/** Fallback delay before reloading anyway when `controllerchange` never fires. */
+export const ACTIVATION_TIMEOUT_MS = 4_000;
 
 export interface SwUpdateOptions {
   /** Notified when an update is ready to be applied. */
@@ -28,13 +31,58 @@ interface UpdatableRegistration {
   addEventListener(type: "updatefound", listener: () => void): void;
 }
 
+interface ServiceWorkerController {
+  addEventListener(
+    type: "controllerchange",
+    listener: () => void,
+    options?: AddEventListenerOptions,
+  ): void;
+}
+
 function makeHandle(reg: UpdatableRegistration, cleanup: () => void): SwUpdateHandle {
   return {
-    applyUpdate(): void {
-      reg.waiting?.postMessage({ type: "SKIP_WAITING" });
+    applyUpdate(): boolean {
+      const waiting = reg.waiting;
+      if (!waiting) return false;
+      waiting.postMessage({ type: "SKIP_WAITING" });
+      return true;
     },
     dispose: cleanup,
   };
+}
+
+/**
+ * Activate a waiting worker and run the callback once it controls the page.
+ *
+ * `controllerchange` is not guaranteed: the page may be uncontrolled, the
+ * waiting worker may have vanished, or the browser may swallow the event.
+ * A timeout therefore always runs `onActivated` so the UI never dead-ends.
+ */
+export function activateServiceWorkerUpdate(
+  handle: SwUpdateHandle,
+  controller: ServiceWorkerController,
+  onActivated: () => void,
+  timeoutMs: number = ACTIVATION_TIMEOUT_MS,
+): void {
+  let activated = false;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  const finish = (): void => {
+    if (activated) return;
+    activated = true;
+    if (timer !== null) clearTimeout(timer);
+    handle.dispose();
+    onActivated();
+  };
+
+  controller.addEventListener("controllerchange", finish, { once: true });
+
+  if (!handle.applyUpdate()) {
+    finish();
+    return;
+  }
+
+  timer = setTimeout(finish, timeoutMs);
 }
 
 /**
