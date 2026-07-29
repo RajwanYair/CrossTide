@@ -35,6 +35,17 @@ export function handleHealth(env: Env): Response {
       name: "finnhub",
       available: typeof env.FINNHUB_KEY === "string" && env.FINNHUB_KEY.length > 0,
     },
+    {
+      name: "massive",
+      available:
+        (typeof env.MASSIVE_KEY === "string" && env.MASSIVE_KEY.length > 0) ||
+        (typeof env.POLYGON_KEY === "string" && env.POLYGON_KEY.length > 0),
+    },
+    {
+      name: "alpha-vantage",
+      available: typeof env.ALPHA_VANTAGE_KEY === "string" && env.ALPHA_VANTAGE_KEY.length > 0,
+    },
+    { name: "frankfurter", available: true }, // no-key ECB/reference-rate fallback
     { name: "fred-api", available: typeof env.FRED_KEY === "string" && env.FRED_KEY.length > 0 },
     { name: "fred-csv", available: true }, // always available (no key)
   ];

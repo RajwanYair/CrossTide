@@ -17,6 +17,7 @@ describe("handleHealth — providers", () => {
     expect(names).toContain("yahoo");
     expect(names).toContain("coingecko");
     expect(names).toContain("stooq");
+    expect(names).toContain("frankfurter");
     expect(names).toContain("fred-csv");
   });
 
@@ -48,6 +49,29 @@ describe("handleHealth — providers", () => {
     };
     const fred = body.providers.find((p) => p.name === "fred-api");
     expect(fred?.available).toBe(true);
+  });
+
+  it.each([
+    { key: "MASSIVE_KEY", value: "current-key" },
+    { key: "POLYGON_KEY", value: "legacy-key" },
+  ])("reports massive as available when $key is set", async ({ key, value }) => {
+    const env = { API_VERSION: "1", [key]: value } as Env;
+    const res = handleHealth(env);
+    const body = (await res.json()) as {
+      providers: Array<{ name: string; available: boolean }>;
+    };
+    expect(body.providers.find((provider) => provider.name === "massive")?.available).toBe(true);
+  });
+
+  it("reports alpha-vantage availability from its key", async () => {
+    const env = { API_VERSION: "1", ALPHA_VANTAGE_KEY: "test-key" } as Env;
+    const res = handleHealth(env);
+    const body = (await res.json()) as {
+      providers: Array<{ name: string; available: boolean }>;
+    };
+    expect(body.providers.find((provider) => provider.name === "alpha-vantage")?.available).toBe(
+      true,
+    );
   });
 });
 

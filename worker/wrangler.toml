@@ -7,10 +7,13 @@ ENVIRONMENT = "production"
 # Bump this whenever you make a backwards-incompatible API change
 API_VERSION = "1"
 
-# P8: Provider API keys — set via `wrangler secret put FINNHUB_KEY` / `FRED_KEY`.
+# P8: Optional provider API keys — set via `wrangler secret put <KEY>`.
 # Declared empty here so they appear in the Env interface; actual values
 # are stored as encrypted secrets, never committed.
 # FINNHUB_KEY = ""
+# MASSIVE_KEY = ""
+# POLYGON_KEY = "" # legacy Massive/Polygon secret name
+# ALPHA_VANTAGE_KEY = ""
 # FRED_KEY = ""
 
 # P2: KV namespace for caching chart/quote/search data with market-hours-aware TTL.

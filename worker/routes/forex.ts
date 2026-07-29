@@ -8,6 +8,7 @@
  */
 import type { Env } from "../index.js";
 import { kvGet, kvPut } from "../kv-cache.js";
+import { fetchFrankfurterRate } from "../providers/frankfurter.js";
 
 const FOREX_TTL = 120; // 2 minutes
 const PAIR_RE = /^[A-Z]{6}$/;
@@ -57,9 +58,7 @@ export async function handleForex(pair: string, env: Env): Promise<Response> {
       headers: { "User-Agent": "CrossTide/1.0" },
     });
 
-    if (!res.ok) {
-      return Response.json({ error: "Upstream provider error" }, { status: 502 });
-    }
+    if (!res.ok) throw new Error(`Yahoo forex API returned ${res.status}`);
 
     const json = (await res.json()) as {
       chart?: {
@@ -79,7 +78,7 @@ export async function handleForex(pair: string, env: Env): Promise<Response> {
 
     const meta = json.chart?.result?.[0]?.meta;
     if (!meta || typeof meta.regularMarketPrice !== "number") {
-      return Response.json({ error: "No data available for this pair" }, { status: 404 });
+      throw new Error("Yahoo returned no forex data");
     }
 
     const rate = meta.regularMarketPrice;
@@ -109,6 +108,28 @@ export async function handleForex(pair: string, env: Env): Promise<Response> {
 
     return Response.json(data);
   } catch {
-    return Response.json({ error: "Failed to fetch forex data" }, { status: 502 });
+    try {
+      const fallback = await fetchFrankfurterRate(from, to);
+      const timestamp = Date.parse(`${fallback.date}T00:00:00Z`);
+      const data: ForexQuote = {
+        pair: p,
+        from,
+        to,
+        rate: fallback.rate,
+        bid: fallback.rate,
+        ask: fallback.rate,
+        change: 0,
+        changePercent: 0,
+        dayHigh: fallback.rate,
+        dayLow: fallback.rate,
+        previousClose: fallback.rate,
+        timestamp: Number.isFinite(timestamp) ? timestamp : Date.now(),
+        source: "frankfurter",
+      };
+      if (env.QUOTE_CACHE) await kvPut(env.QUOTE_CACHE, cacheKey, data, FOREX_TTL);
+      return Response.json(data);
+    } catch {
+      return Response.json({ error: "Failed to fetch forex data" }, { status: 502 });
+    }
   }
 }

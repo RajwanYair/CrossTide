@@ -90,4 +90,73 @@ describe("handleQuote — Finnhub fallback", () => {
     const res = await handleQuote("AAPL", makeEnv());
     expect(res.status).toBe(502);
   });
+
+  it("falls back to Massive when Yahoo fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url.includes("yahoo")) return new Response("Unavailable", { status: 503 });
+        if (url.includes("massive")) {
+          return Response.json({
+            status: "OK",
+            results: [{ o: 100, h: 105, l: 99, c: 104, v: 1_000, t: 1_704_153_600_000 }],
+          });
+        }
+        return new Response("Not Found", { status: 404 });
+      }),
+    );
+
+    const res = await handleQuote("AAPL", makeEnv({ MASSIVE_KEY: "test-key" }));
+    const body = (await res.json()) as { source: string; price: number };
+    expect(res.status).toBe(200);
+    expect(body).toMatchObject({ source: "massive", price: 104 });
+  });
+
+  it("continues to Massive when Yahoo does not know the ticker", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url.includes("yahoo")) return new Response("Not Found", { status: 404 });
+        if (url.includes("massive")) {
+          return Response.json({
+            status: "OK",
+            results: [{ o: 100, h: 105, l: 99, c: 104, v: 1_000, t: 1_704_153_600_000 }],
+          });
+        }
+        return new Response("Unavailable", { status: 503 });
+      }),
+    );
+
+    const res = await handleQuote("AAPL", makeEnv({ MASSIVE_KEY: "test-key" }));
+    const body = (await res.json()) as { source: string };
+    expect(res.status).toBe(200);
+    expect(body.source).toBe("massive");
+  });
+
+  it("falls back to Alpha Vantage when earlier providers fail", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url.includes("alphavantage")) {
+          return Response.json({
+            "Global Quote": {
+              "01. symbol": "AAPL",
+              "02. open": "100",
+              "03. high": "105",
+              "04. low": "99",
+              "05. price": "104",
+              "06. volume": "1000",
+              "08. previous close": "102",
+            },
+          });
+        }
+        return new Response("Unavailable", { status: 503 });
+      }),
+    );
+
+    const res = await handleQuote("AAPL", makeEnv({ ALPHA_VANTAGE_KEY: "test-key" }));
+    const body = (await res.json()) as { source: string; price: number };
+    expect(res.status).toBe(200);
+    expect(body).toMatchObject({ source: "alpha-vantage", price: 104 });
+  });
 });

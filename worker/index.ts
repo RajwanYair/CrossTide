@@ -126,6 +126,12 @@ export interface Env {
   API_VERSION?: string;
   /** P8: Finnhub API key for alternative quote/candle data. */
   FINNHUB_KEY?: string;
+  /** Massive (formerly Polygon.io) key for delayed US equity fallback data. */
+  MASSIVE_KEY?: string;
+  /** Legacy Polygon key name accepted during the Massive rebrand transition. */
+  POLYGON_KEY?: string;
+  /** Alpha Vantage key for heavily rate-limited last-resort equity data. */
+  ALPHA_VANTAGE_KEY?: string;
   /** P8: FRED API key — enables JSON API; falls back to CSV without it. */
   FRED_KEY?: string;
   /**

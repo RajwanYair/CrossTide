@@ -9,9 +9,11 @@
  * P2: KV caching with market-hours-aware TTL (integrated).
  */
 
-import { fetchYahooChart, YahooApiError } from "../providers/yahoo.js";
-import { fetchFinnhubCandles, FinnhubApiError } from "../providers/finnhub.js";
+import { fetchYahooChart } from "../providers/yahoo.js";
+import { fetchFinnhubCandles } from "../providers/finnhub.js";
 import { fetchStooqHistory } from "../providers/stooq.js";
+import { fetchMassiveHistory } from "../providers/massive.js";
+import { fetchAlphaVantageHistory } from "../providers/alpha-vantage.js";
 import { kvGet, kvPut, chartTtl } from "../kv-cache.js";
 import type { Env } from "../index.js";
 
@@ -32,7 +34,7 @@ export interface ChartResponse {
   ticker: string;
   currency: string;
   candles: CandleRecord[];
-  source: "yahoo" | "finnhub" | "stooq" | "cache" | "demo";
+  source: "yahoo" | "finnhub" | "massive" | "stooq" | "alpha-vantage" | "cache" | "demo";
 }
 
 const RANGE_DAYS: Record<string, number> = {
@@ -87,10 +89,7 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
       await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
 
       return json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
-    } catch (yahooErr) {
-      if (yahooErr instanceof YahooApiError && yahooErr.status === 404) {
-        return json({ error: `Ticker not found: ${ticker}` }, 404);
-      }
+    } catch {
       // Yahoo failed — try Finnhub
     }
 
@@ -111,11 +110,29 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
         const response = json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
         response.headers.set("X-Data-Source", "finnhub-fallback");
         return response;
-      } catch (finnhubErr) {
-        if (finnhubErr instanceof FinnhubApiError && finnhubErr.status === 404) {
-          // Finnhub doesn't have this ticker — try Stooq
-        }
+      } catch {
         // Finnhub failed — try Stooq
+      }
+    }
+
+    // ── Massive delayed EOD history (configured, daily only) ─────────────
+    const massiveKey = env.MASSIVE_KEY ?? env.POLYGON_KEY;
+    if (massiveKey && interval === "1d") {
+      try {
+        const candles = await fetchMassiveHistory(ticker, RANGE_DAYS[range] ?? 365, massiveKey);
+        const body: ChartResponse = {
+          ticker,
+          currency: "USD",
+          candles: candles.map((c) => ({ ...c })),
+          source: "massive",
+        };
+        const ttl = chartTtl(range);
+        await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
+        const response = json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
+        response.headers.set("X-Data-Source", "massive-fallback");
+        return response;
+      } catch {
+        // Massive failed — try the no-key Stooq feed.
       }
     }
 
@@ -136,7 +153,31 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
       response.headers.set("X-Data-Source", "stooq-fallback");
       return response;
     } catch {
-      // All providers failed — fall through to demo data
+      // Stooq failed — try the low-quota Alpha Vantage fallback.
+    }
+
+    // ── Alpha Vantage EOD history (last resort, daily only) ───────────────
+    if (env.ALPHA_VANTAGE_KEY && interval === "1d") {
+      try {
+        const candles = await fetchAlphaVantageHistory(
+          ticker,
+          RANGE_DAYS[range] ?? 365,
+          env.ALPHA_VANTAGE_KEY,
+        );
+        const body: ChartResponse = {
+          ticker,
+          currency: "USD",
+          candles: candles.map((c) => ({ ...c })),
+          source: "alpha-vantage",
+        };
+        const ttl = chartTtl(range);
+        await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
+        const response = json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
+        response.headers.set("X-Data-Source", "alpha-vantage-fallback");
+        return response;
+      } catch {
+        // All providers failed — fall through to demo data.
+      }
     }
 
     const response = json(generateDemoResponse(ticker, range), 200, "public, max-age=60");

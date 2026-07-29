@@ -18,6 +18,7 @@ import type { Env, D1Database } from "../index.js";
 const VALID_PROVIDERS = new Set([
   "finnhub",
   "alpaca",
+  "massive",
   "polygon",
   "tiingo",
   "alpha-vantage",

@@ -65,18 +65,18 @@ describe("handleStoreKey", () => {
     expect(body.error).toContain("Invalid provider");
   });
 
-  it("stores key successfully for valid request", async () => {
+  it.each(["massive", "polygon"])("stores a key for %s naming", async (provider) => {
     const db = mockDb();
     const req = makeRequest(
       "POST",
-      { provider: "finnhub", encrypted_key: "YWJjZGVm", iv: "MTIzNDU2Nzg5MDEy" },
+      { provider, encrypted_key: "YWJjZGVm", iv: "MTIzNDU2Nzg5MDEy" },
       "cred-1234567890",
     );
     const res = await handleStoreKey(req, makeEnv(db));
     expect(res.status).toBe(201);
     const body = (await res.json()) as { ok: boolean; provider: string };
     expect(body.ok).toBe(true);
-    expect(body.provider).toBe("finnhub");
+    expect(body.provider).toBe(provider);
   });
 
   it("rejects non-base64 encrypted_key", async () => {

@@ -8,7 +8,9 @@
  */
 
 import { fetchYahooQuote, YahooApiError, type YahooQuoteResult } from "../providers/yahoo.js";
-import { fetchFinnhubQuote, FinnhubApiError } from "../providers/finnhub.js";
+import { fetchFinnhubQuote } from "../providers/finnhub.js";
+import { fetchMassiveQuote } from "../providers/massive.js";
+import { fetchAlphaVantageQuote } from "../providers/alpha-vantage.js";
 import { kvGet, kvPut, quoteTtl } from "../kv-cache.js";
 import type { Env } from "../index.js";
 
@@ -37,10 +39,8 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
       const ttl = quoteTtl(quote.marketState);
       await kvPut(env.QUOTE_CACHE, cacheKey, quote, ttl);
       return json({ ...quote, source: "yahoo" }, 200, `public, max-age=${Math.min(ttl, 30)}`);
-    } catch (err) {
-      if (err instanceof YahooApiError && err.status === 404) {
-        return json({ error: `Ticker not found: ${ticker}` }, 404);
-      }
+    } catch (error) {
+      const tickerNotFound = error instanceof YahooApiError && error.status === 404;
       // Yahoo failed — try Finnhub as fallback
       if (env.FINNHUB_KEY) {
         try {
@@ -71,13 +71,85 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
             200,
             `public, max-age=${Math.min(ttl, 30)}`,
           );
-        } catch (fhErr) {
-          if (fhErr instanceof FinnhubApiError && fhErr.status === 404) {
-            return json({ error: `Ticker not found: ${ticker}` }, 404);
-          }
+        } catch {
+          // Finnhub failed — try the remaining providers.
         }
       }
-      return json({ error: "Upstream provider error" }, 502);
+
+      const massiveKey = env.MASSIVE_KEY ?? env.POLYGON_KEY;
+      if (massiveKey) {
+        try {
+          const quote = await fetchMassiveQuote(ticker, massiveKey);
+          const previousClose = quote.previousClose;
+          const change = quote.price - previousClose;
+          const mapped: YahooQuoteResult = {
+            ticker: quote.ticker,
+            shortName: quote.ticker,
+            currency: "USD",
+            price: quote.price,
+            change,
+            changePercent: previousClose !== 0 ? (change / previousClose) * 100 : 0,
+            previousClose,
+            open: quote.open,
+            dayHigh: quote.high,
+            dayLow: quote.low,
+            volume: quote.volume,
+            marketCap: 0,
+            fiftyTwoWeekHigh: 0,
+            fiftyTwoWeekLow: 0,
+            exchange: "MASSIVE",
+            marketState: "CLOSED",
+            source: "massive",
+          };
+          const ttl = quoteTtl("CLOSED");
+          await kvPut(env.QUOTE_CACHE, cacheKey, mapped, ttl);
+          return json(
+            { ...mapped, source: "massive" },
+            200,
+            `public, max-age=${Math.min(ttl, 30)}`,
+          );
+        } catch {
+          // Massive failed — try the low-quota Alpha Vantage fallback.
+        }
+      }
+
+      if (env.ALPHA_VANTAGE_KEY) {
+        try {
+          const quote = await fetchAlphaVantageQuote(ticker, env.ALPHA_VANTAGE_KEY);
+          const change = quote.price - quote.previousClose;
+          const mapped: YahooQuoteResult = {
+            ticker: quote.ticker,
+            shortName: quote.ticker,
+            currency: "USD",
+            price: quote.price,
+            change,
+            changePercent: quote.previousClose !== 0 ? (change / quote.previousClose) * 100 : 0,
+            previousClose: quote.previousClose,
+            open: quote.open,
+            dayHigh: quote.high,
+            dayLow: quote.low,
+            volume: quote.volume,
+            marketCap: 0,
+            fiftyTwoWeekHigh: 0,
+            fiftyTwoWeekLow: 0,
+            exchange: "ALPHA_VANTAGE",
+            marketState: "CLOSED",
+            source: "alpha-vantage",
+          };
+          const ttl = quoteTtl("CLOSED");
+          await kvPut(env.QUOTE_CACHE, cacheKey, mapped, ttl);
+          return json(
+            { ...mapped, source: "alpha-vantage" },
+            200,
+            `public, max-age=${Math.min(ttl, 30)}`,
+          );
+        } catch {
+          // All configured providers failed.
+        }
+      }
+      return tickerNotFound
+        ? json({ error: `Ticker not found: ${ticker}` }, 404)
+        : json({ error: "Upstream provider error" }, 502);
     }
   }
 

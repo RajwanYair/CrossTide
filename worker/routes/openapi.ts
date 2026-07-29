@@ -37,7 +37,8 @@ export const OPENAPI_SPEC = {
       get: {
         operationId: "getHealth",
         summary: "Worker health check",
-        description: "Returns the current worker status, API version, and ISO timestamp.",
+        description:
+          "Returns worker status, API version, binding availability, and configured upstream providers.",
         tags: ["System"],
         responses: {
           "200": {
@@ -56,7 +57,7 @@ export const OPENAPI_SPEC = {
         operationId: "getChart",
         summary: "OHLCV candlestick data",
         description:
-          "Returns daily (or intraday) OHLCV candles for the given ticker. Proxies to Yahoo Finance; falls back to synthetic seeded data in development.",
+          "Returns daily or intraday OHLCV candles. Uses Yahoo Finance first, then configured Finnhub and Massive fallbacks; daily data can also fall back to Stooq and Alpha Vantage. Development without KV uses deterministic demo data.",
         tags: ["Market Data"],
         parameters: [
           {

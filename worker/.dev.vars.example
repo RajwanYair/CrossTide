@@ -11,10 +11,13 @@
 # Set to "preview" to serve deterministic fixture data (no real API calls).
 ENVIRONMENT=development
 
-# ── Optional: Finnhub WebSocket streaming ─────────────────────────────────────
-# Free API key at https://finnhub.io/register
-# Only needed when testing /api/ws/:symbol (TickerFanout Durable Object)
+# ── Optional provider fallbacks ───────────────────────────────────────────────
+# Keys stay server-side. Use only the providers whose free tiers you need.
+# Finnhub also enables /api/ws/:symbol (TickerFanout Durable Object).
 # FINNHUB_KEY=your_finnhub_api_key_here
+# MASSIVE_KEY=your_massive_api_key_here
+# ALPHA_VANTAGE_KEY=your_alpha_vantage_api_key_here
+# Frankfurter, Yahoo, Stooq, CoinGecko, and FRED CSV require no key.
 
 # ── Optional: GlitchTip error tracking DSN ────────────────────────────────────
 # Self-hosted GlitchTip or Sentry-compatible DSN.

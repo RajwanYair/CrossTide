@@ -79,6 +79,27 @@ describe("handleForex", () => {
     expect(res.status).toBe(502);
   });
 
+  it("falls back to Frankfurter when Yahoo fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url.includes("yahoo")) return new Response("Unavailable", { status: 503 });
+        return Response.json({
+          date: "2026-07-29",
+          base: "EUR",
+          quote: "USD",
+          rate: 1.16,
+        });
+      }),
+    );
+
+    const res = await handleForex("EURUSD", makeEnv());
+    const body = (await res.json()) as { source: string; rate: number; bid: number; ask: number };
+    expect(res.status).toBe(200);
+    expect(body).toMatchObject({ source: "frankfurter", rate: 1.16, bid: 1.16, ask: 1.16 });
+    expect(mockKvStore.put).toHaveBeenCalled();
+  });
+
   it("caches result in KV", async () => {
     await handleForex("EURUSD", makeEnv());
     expect(mockKvStore.put).toHaveBeenCalled();
