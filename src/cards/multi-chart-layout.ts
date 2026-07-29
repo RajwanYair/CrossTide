@@ -210,9 +210,9 @@ const STYLES = `
     font-size: 0.8rem;
   }
   .mc-layout-btn--active {
-    background: var(--color-primary, #3b82f6);
+    background: var(--color-primary, #1d4ed8);
     color: #fff;
-    border-color: var(--color-primary, #3b82f6);
+    border-color: var(--color-primary, #1d4ed8);
   }
   .mc-grid {
     display: grid;

@@ -20,6 +20,12 @@
     --danger: #f85149;
     --danger-hover: #da3633;
 
+    /* Badges tint their background with the signal color, which leaves the raw
+       signal color below WCAG AA as a foreground. Blend it away from the
+       surface instead so badges keep following color-blind palette swaps. */
+    --badge-fg-blend: #fff;
+    --badge-fg-blend-amt: 30%;
+
     /* Spacing */
     --sp-xs: 4px;
     --sp-sm: 8px;
@@ -63,6 +69,8 @@
     --accent-hover: #0550ae;
     --signal-buy: #1a7f37;
     --signal-sell: #cf222e;
+    --badge-fg-blend: #000;
+    --badge-fg-blend-amt: 35%;
   }
 
   /* ── Color-blind palettes (C2) — override signal / accent tokens ─────── */

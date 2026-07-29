@@ -195,17 +195,21 @@
 
   .badge-buy {
     background: color-mix(in sRGB, var(--signal-buy) 20%, transparent);
-    color: var(--signal-buy);
+    color: color-mix(in sRGB, var(--signal-buy), var(--badge-fg-blend) var(--badge-fg-blend-amt));
   }
 
   .badge-sell {
     background: color-mix(in sRGB, var(--signal-sell) 20%, transparent);
-    color: var(--signal-sell);
+    color: color-mix(in sRGB, var(--signal-sell), var(--badge-fg-blend) var(--badge-fg-blend-amt));
   }
 
   .badge-neutral {
     background: color-mix(in sRGB, var(--signal-neutral) 20%, transparent);
-    color: var(--signal-neutral);
+    color: color-mix(
+      in sRGB,
+      var(--signal-neutral),
+      var(--badge-fg-blend) var(--badge-fg-blend-amt)
+    );
   }
 
   .change-positive {
@@ -516,32 +520,35 @@
     font-size: var(--font-size-sm);
     font-weight: 600;
     color: #fff;
-    text-shadow: 0 1px 2px rgb(0, 0, 0, 0.4);
   }
 
+  /* Fully opaque so the computed foreground stays pure white: a translucent
+     white blends with the tile and drops below the WCAG AA 4.5:1 threshold. */
   .heatmap-pct {
     font-size: 0.7rem;
-    color: rgb(255, 255, 255, 0.9);
+    color: #fff;
   }
 
+  /* Tile backgrounds are dark enough to hold white text at >=4.5:1 (WCAG AA).
+     Do not lighten these without re-running `npm run test:e2e -- wcag-audit`. */
   .heatmap-strong-up {
-    background: #0f9d58;
+    background: #146c37; /* 6.5:1 on #fff */
   }
 
   .heatmap-up {
-    background: #4caf50;
+    background: #2e7d32; /* 5.1:1 on #fff */
   }
 
   .heatmap-flat {
-    background: #616161;
+    background: #616161; /* 6.3:1 on #fff */
   }
 
   .heatmap-down {
-    background: #e53935;
+    background: #c62828; /* 5.5:1 on #fff */
   }
 
   .heatmap-strong-down {
-    background: #b71c1c;
+    background: #b71c1c; /* 6.6:1 on #fff */
   }
 
   /* ── G21: Heatmap sector drill-down ──────────────────────────────────── */
@@ -1968,6 +1975,13 @@
   margin-top: var(--space-sm);
 }
 
+/* WCAG 2.2 SC 2.5.8 Target Size: <summary> is a native click target but lays
+   out at line-height only, which falls under the 24x24 CSS px floor. */
+summary {
+  min-height: 24px;
+  padding-block: 2px;
+}
+
 .rule-create-form summary {
   cursor: pointer;
   font-weight: 600;
@@ -2097,11 +2111,15 @@
   border-color: var(--accent);
 }
 
-/* ── Market hours indicator ── */
+/* ── Market hours indicator ──
+   Wraps rather than overflowing: the exchange list is wider than a 375px
+   viewport and would otherwise force the whole page to scroll horizontally. */
 .market-indicator {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
+  max-width: 100%;
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
 }
@@ -2128,7 +2146,9 @@
 
 .market-exchanges {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 8px;
+  max-width: 100%;
   margin-left: 8px;
 }
 
