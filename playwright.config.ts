@@ -1,5 +1,29 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/**
+ * Engine-agnostic suites. The card matrix sweeps every route on every
+ * instrument type; running it on all 20 device projects would multiply the
+ * suite by ~700 tests for no extra signal, so device projects skip it and the
+ * four desktop engines cover it instead.
+ */
+const DESKTOP_ONLY = [/cards\.spec\.ts$/];
+
+/** Build a device-emulation project that skips the desktop-only suites. */
+function deviceProject(
+  name: string,
+  use: Record<string, unknown>,
+  testMatch?: RegExp,
+): {
+  name: string;
+  use: Record<string, unknown>;
+  testIgnore: RegExp[];
+  testMatch?: RegExp;
+} {
+  return testMatch === undefined
+    ? { name, use, testIgnore: DESKTOP_ONLY }
+    : { name, use, testIgnore: DESKTOP_ONLY, testMatch };
+}
+
 export default defineConfig({
   testDir: "tests/e2e",
   testMatch: "**/*.spec.ts",
@@ -39,98 +63,40 @@ export default defineConfig({
       use: { ...devices["Desktop Edge"] },
     },
     // ── Mobile viewports ──────────────────────────────────────────
-    {
-      name: "mobile-chrome",
-      use: { ...devices["Pixel 7"] },
-      testMatch: /mobile-responsive\.spec\.ts$/,
-    },
-    {
-      name: "mobile-chrome-landscape",
-      use: { ...devices["Pixel 7 landscape"] },
-    },
-    {
-      name: "mobile-safari",
-      use: { ...devices["iPhone 14"] },
-    },
-    {
-      name: "mobile-safari-pro",
-      use: { ...devices["iPhone 15 Pro"] },
-    },
-    {
-      name: "mobile-safari-landscape",
-      use: { ...devices["iPhone 15 landscape"] },
-    },
-    {
-      name: "mobile-safari-mini",
-      use: { ...devices["iPhone SE"] },
-    },
-    {
-      name: "android-galaxy",
-      use: { ...devices["Galaxy S9+"] },
-    },
-    {
-      name: "android-galaxy-s24",
-      use: { ...devices["Galaxy S24"] },
-    },
-    {
-      name: "android-galaxy-landscape",
-      use: { ...devices["Galaxy S9+ landscape"] },
-    },
-    {
-      name: "android-galaxy-a55",
-      use: { ...devices["Galaxy A55"] },
-    },
-    {
-      name: "android-galaxy-a55-landscape",
-      use: { ...devices["Galaxy A55 landscape"] },
-    },
+    deviceProject("mobile-chrome", { ...devices["Pixel 7"] }, /mobile-responsive\.spec\.ts$/),
+    deviceProject("mobile-chrome-landscape", { ...devices["Pixel 7 landscape"] }),
+    deviceProject("mobile-safari", { ...devices["iPhone 14"] }),
+    deviceProject("mobile-safari-pro", { ...devices["iPhone 15 Pro"] }),
+    deviceProject("mobile-safari-landscape", { ...devices["iPhone 15 landscape"] }),
+    deviceProject("mobile-safari-mini", { ...devices["iPhone SE"] }),
+    deviceProject("android-galaxy", { ...devices["Galaxy S9+"] }),
+    deviceProject("android-galaxy-s24", { ...devices["Galaxy S24"] }),
+    deviceProject("android-galaxy-landscape", { ...devices["Galaxy S9+ landscape"] }),
+    deviceProject("android-galaxy-a55", { ...devices["Galaxy A55"] }),
+    deviceProject("android-galaxy-a55-landscape", { ...devices["Galaxy A55 landscape"] }),
     // ── Firefox for Android (Gecko engine — different from Chromium) ──
-    {
-      name: "firefox-android",
-      use: { browserName: "firefox", ...devices["Pixel 7"] },
-    },
-    {
-      name: "firefox-android-landscape",
-      use: { browserName: "firefox", ...devices["Pixel 7 landscape"] },
-    },
+    deviceProject("firefox-android", { browserName: "firefox", ...devices["Pixel 7"] }),
+    deviceProject("firefox-android-landscape", {
+      browserName: "firefox",
+      ...devices["Pixel 7 landscape"],
+    }),
     // ── Tablets ───────────────────────────────────────────────────
-    {
-      name: "tablet",
-      // iPad device presets default to the WebKit engine, but CI only
-      // installs Chromium — force Chromium so tablet viewport/touch
-      // emulation runs without requiring a WebKit browser install.
-      use: { ...devices["iPad (gen 7)"], browserName: "chromium" },
-      testMatch: /tablet-responsive\.spec\.ts$/,
-    },
-    {
-      name: "tablet-landscape",
-      use: { ...devices["iPad (gen 7) landscape"] },
-    },
-    {
-      name: "tablet-pro",
-      use: { ...devices["iPad Pro 11"] },
-    },
-    {
-      name: "tablet-pro-landscape",
-      use: { ...devices["iPad Pro 11 landscape"] },
-    },
-    {
-      name: "android-tablet",
-      use: { ...devices["Galaxy Tab S4"] },
-    },
-    {
-      name: "android-tablet-s9",
-      use: { ...devices["Galaxy Tab S9"] },
-    },
-    {
-      name: "android-tablet-landscape",
-      use: { ...devices["Galaxy Tab S9 landscape"] },
-    },
+    // iPad device presets default to the WebKit engine, but CI only installs
+    // Chromium — force Chromium so tablet viewport/touch emulation runs
+    // without requiring a WebKit browser install.
+    deviceProject(
+      "tablet",
+      { ...devices["iPad (gen 7)"], browserName: "chromium" },
+      /tablet-responsive\.spec\.ts$/,
+    ),
+    deviceProject("tablet-landscape", { ...devices["iPad (gen 7) landscape"] }),
+    deviceProject("tablet-pro", { ...devices["iPad Pro 11"] }),
+    deviceProject("tablet-pro-landscape", { ...devices["iPad Pro 11 landscape"] }),
+    deviceProject("android-tablet", { ...devices["Galaxy Tab S4"] }),
+    deviceProject("android-tablet-s9", { ...devices["Galaxy Tab S9"] }),
+    deviceProject("android-tablet-landscape", { ...devices["Galaxy Tab S9 landscape"] }),
     // ── Windows tablet ────────────────────────────────────────────
-    {
-      name: "nexus-10",
-      use: { ...devices["Nexus 10"] },
-    },
+    deviceProject("nexus-10", { ...devices["Nexus 10"] }),
   ],
   webServer: {
     command: "npx vite --port 4173",

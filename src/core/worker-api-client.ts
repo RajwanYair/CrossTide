@@ -115,6 +115,17 @@ export interface WorkerApiClient {
 
 type FetchFn = typeof fetch;
 
+function normalizeBaseUrl(base: string): string {
+  // In development we intentionally use a relative base ("/api/worker").
+  // Normalize it to an absolute URL so all engines (notably WebKit) resolve
+  // request URLs identically.
+  if (/^https?:\/\//i.test(base)) return base;
+  if (typeof window !== "undefined" && typeof window.location?.origin === "string") {
+    return new URL(base, window.location.origin).toString();
+  }
+  return base;
+}
+
 function buildUrl(base: string, path: string, query?: Record<string, string>): string {
   const url = new URL(path, base.endsWith("/") ? base : base + "/");
   if (query) {
@@ -180,10 +191,11 @@ export function createApiClient(
 ): WorkerApiClient {
   const fetchFn = options.fetchFn ?? fetch;
   const signal = options.signal;
+  const resolvedBaseUrl = normalizeBaseUrl(baseUrl);
 
   return {
     async health(): Promise<Result<HealthResponse>> {
-      const url = buildUrl(baseUrl, "api/health");
+      const url = buildUrl(resolvedBaseUrl, "api/health");
       return getJson<HealthResponse>(fetchFn, url, signal);
     },
 
@@ -191,24 +203,24 @@ export function createApiClient(
       const query: Record<string, string> = { ticker: params.ticker };
       if (params.range) query["range"] = params.range;
       if (params.interval) query["interval"] = params.interval;
-      const url = buildUrl(baseUrl, "api/chart", query);
+      const url = buildUrl(resolvedBaseUrl, "api/chart", query);
       return getJson<ChartResponse>(fetchFn, url, signal);
     },
 
     async search(params): Promise<Result<SearchResponse>> {
       const query: Record<string, string> = { q: params.q };
       if (params.limit !== undefined) query["limit"] = String(params.limit);
-      const url = buildUrl(baseUrl, "api/search", query);
+      const url = buildUrl(resolvedBaseUrl, "api/search", query);
       return getJson<SearchResponse>(fetchFn, url, signal);
     },
 
     async screener(params): Promise<Result<ScreenerResponse>> {
-      const url = buildUrl(baseUrl, "api/screener");
+      const url = buildUrl(resolvedBaseUrl, "api/screener");
       return postJson<ScreenerResponse>(fetchFn, url, params, signal);
     },
 
     async signalDslExecute(params): Promise<Result<SignalDslExecuteResponse>> {
-      const url = buildUrl(baseUrl, "api/signal-dsl/execute");
+      const url = buildUrl(resolvedBaseUrl, "api/signal-dsl/execute");
       return postJson<SignalDslExecuteResponse>(fetchFn, url, params, signal);
     },
   };

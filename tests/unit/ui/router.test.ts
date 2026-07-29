@@ -16,6 +16,7 @@ import {
   _resetRouterForTests,
   type RouteName,
 } from "../../../src/ui/router";
+import { listCards } from "../../../src/cards/registry";
 
 function setupDOM(): void {
   document.body.innerHTML = `
@@ -199,6 +200,36 @@ describe("onRouteChange", () => {
     unsub();
     navigateTo("settings");
     expect(routes).toHaveLength(0);
+  });
+
+  it("delivers the initial route to handlers registered before initRouter", () => {
+    // main.ts must subscribe first: initRouter() fires the initial route
+    // synchronously, and a handler added afterwards would never see it —
+    // leaving a deep-linked card unmounted.
+    gotoPath("/settings");
+    const routes: RouteName[] = [];
+    onRouteChange((r) => routes.push(r));
+    initRouter();
+    expect(routes).toEqual(["settings"]);
+  });
+});
+
+describe("route table completeness", () => {
+  beforeEach(() => {
+    _resetRouterForTests();
+    setupDOM();
+    gotoPath("/");
+  });
+
+  it("every registered card route round-trips through buildPath/parse", () => {
+    initRouter();
+    const unmatched = listCards()
+      .map((card) => card.route)
+      .filter((route) => {
+        gotoPath(buildPath(route));
+        return getCurrentRoute() !== route;
+      });
+    expect(unmatched).toEqual([]);
   });
 });
 

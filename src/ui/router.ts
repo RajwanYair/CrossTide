@@ -100,14 +100,24 @@ const PATTERNS: readonly RoutePattern[] = [
   { name: "risk", segments: ["risk"] },
   { name: "backtest", segments: ["backtest"] },
   { name: "backtest", segments: ["backtest", ":symbol"] },
+  { name: "strategy-comparison", segments: ["strategy-comparison"] },
   { name: "consensus-timeline", segments: ["consensus-timeline"] },
   { name: "consensus-timeline", segments: ["consensus-timeline", ":symbol"] },
   { name: "signal-dsl", segments: ["signal-dsl"] },
   { name: "multi-chart", segments: ["multi-chart"] },
+  { name: "correlation", segments: ["correlation"] },
+  { name: "market-breadth", segments: ["market-breadth"] },
+  { name: "earnings-calendar", segments: ["earnings-calendar"] },
+  { name: "earnings-calendar", segments: ["earnings-calendar", ":symbol"] },
+  { name: "macro-dashboard", segments: ["macro-dashboard"] },
+  { name: "sector-rotation", segments: ["sector-rotation"] },
+  { name: "relative-strength", segments: ["relative-strength"] },
+  { name: "relative-strength", segments: ["relative-strength", ":symbol"] },
   { name: "comparison", segments: ["comparison"] },
   { name: "comparison", segments: ["comparison", ":symbol"] },
   { name: "seasonality", segments: ["seasonality"] },
   { name: "seasonality", segments: ["seasonality", ":symbol"] },
+  { name: "rebalance", segments: ["rebalance"] },
 ];
 
 const listeners: RouteChangeHandler[] = [];
@@ -387,9 +397,10 @@ function activateView(route: RouteName): void {
 function activateViewWithTransition(route: RouteName): void {
   // View Transitions API (C5) — Chrome 111+, Firefox 129+, Safari 18+
   if (typeof document !== "undefined" && "startViewTransition" in document) {
-    (
-      document as unknown as { startViewTransition: (cb: () => void) => unknown }
-    ).startViewTransition(() => activateView(route));
+    const transition = document.startViewTransition(() => activateView(route)) as
+      | ViewTransition
+      | undefined;
+    if (transition !== undefined) void transition.finished.catch(() => undefined);
   } else {
     activateView(route);
   }

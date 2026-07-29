@@ -89,6 +89,14 @@ describe("WorkerApiClient", () => {
       const result = await client.chart({ ticker: "ZZZZZ" });
       expect(result.ok).toBe(false);
     });
+
+    it("normalizes relative base URLs against window origin", async () => {
+      const fetchFn = mockFetch(200, { ticker: "AAPL", currency: "USD", candles: [] });
+      const client = createApiClient("/api/worker", { fetchFn });
+      await client.chart({ ticker: "AAPL" });
+      const calledUrl = (fetchFn as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+      expect(calledUrl).toContain(`${window.location.origin}/api/worker/api/chart`);
+    });
   });
 
   // ---------------------------------------------------------------------------

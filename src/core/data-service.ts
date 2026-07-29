@@ -22,6 +22,20 @@ import { markFetched } from "./data-freshness";
  * "Access-Control-Allow-Origin: *" so the browser calls it directly.
  */
 const YAHOO_BASE: string = import.meta.env.DEV ? "/api/yahoo" : "https://query1.finance.yahoo.com";
+const WORKER_BASE: string =
+  typeof __WORKER_BASE_URL__ !== "undefined"
+    ? __WORKER_BASE_URL__
+    : "https://worker.crosstide.pages.dev";
+
+function resolveWorkerBase(base: string): string {
+  if (/^https?:\/\//i.test(base)) return base;
+  if (typeof window !== "undefined" && typeof window.location?.origin === "string") {
+    return new URL(base, window.location.origin).toString();
+  }
+  return base;
+}
+
+declare const __WORKER_BASE_URL__: string | undefined;
 
 export interface TickerData {
   ticker: string;
@@ -62,6 +76,12 @@ interface CandleResult {
   name: string | undefined;
 }
 
+interface WorkerChartResponse {
+  readonly ticker?: string;
+  readonly source?: string;
+  readonly candles?: readonly unknown[];
+}
+
 /**
  * Chart timeframe presets — range + interval combinations.
  */
@@ -86,7 +106,7 @@ export const DEFAULT_TIMEFRAME: TimeframePreset = TIMEFRAME_PRESETS[4]!; // 1Y
  * Fetch history candles from Yahoo Finance for a single ticker.
  * Uses 1-year range by default to have enough data for all indicators (SMA150 needs 151+ candles).
  */
-async function fetchCandles(
+async function fetchYahooCandles(
   ticker: string,
   signal?: AbortSignal,
   timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
@@ -134,6 +154,81 @@ async function fetchCandles(
     sector: result.meta?.sector,
     name: result.meta?.shortName ?? result.meta?.longName,
   };
+}
+
+function parseWorkerCandle(value: unknown): DailyCandle | null {
+  if (typeof value !== "object" || value === null) return null;
+  const candle = value as Record<string, unknown>;
+  if (
+    typeof candle["date"] !== "string" ||
+    typeof candle["open"] !== "number" ||
+    typeof candle["high"] !== "number" ||
+    typeof candle["low"] !== "number" ||
+    typeof candle["close"] !== "number" ||
+    typeof candle["volume"] !== "number"
+  ) {
+    return null;
+  }
+  const values = [candle["open"], candle["high"], candle["low"], candle["close"], candle["volume"]];
+  if (values.some((number) => !Number.isFinite(number))) return null;
+  return {
+    date: candle["date"],
+    open: candle["open"],
+    high: candle["high"],
+    low: candle["low"],
+    close: candle["close"],
+    volume: candle["volume"],
+  };
+}
+
+async function fetchWorkerCandles(
+  ticker: string,
+  signal?: AbortSignal,
+  timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
+): Promise<CandleResult> {
+  const query = new URLSearchParams({
+    ticker,
+    range: timeframe.range,
+    interval: timeframe.interval,
+  });
+  const base = resolveWorkerBase(WORKER_BASE).replace(/\/$/, "");
+  const response = await fetchWithTimeout(
+    `${base}/api/chart?${query.toString()}`,
+    {},
+    15000,
+    signal,
+  );
+  const data = (await response.json()) as WorkerChartResponse;
+  if (data.source === "demo" || !Array.isArray(data.candles)) {
+    throw new Error(`Worker returned no live provider data for ${ticker}`);
+  }
+  const candles = data.candles.map(parseWorkerCandle);
+  if (candles.some((candle) => candle === null)) {
+    throw new Error(`Worker returned invalid candle data for ${ticker}`);
+  }
+  return {
+    candles: candles as DailyCandle[],
+    instrumentType: undefined,
+    sector: undefined,
+    name: undefined,
+  };
+}
+
+async function fetchCandles(
+  ticker: string,
+  signal?: AbortSignal,
+  timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
+): Promise<CandleResult> {
+  try {
+    return await fetchYahooCandles(ticker, signal, timeframe);
+  } catch (primaryError) {
+    if (signal?.aborted) throw primaryError;
+    try {
+      return await fetchWorkerCandles(ticker, signal, timeframe);
+    } catch {
+      throw primaryError;
+    }
+  }
 }
 
 /**
