@@ -109,3 +109,12 @@ Run: `npm run test:coverage` — fails CI if thresholds not met.
 - **Import paths**: 3 levels up from `tests/unit/domain/` → `../../../src/domain/`
 - **Worker imports**: `.js` extension — `from "../../../worker/routes/foo.js"`
 - **`describe` mirrors** source file path: `describe("computeEma", ...)` not `describe("EMA indicator", ...)`
+
+## 🎭 Playwright Matrix Rules (`tests/e2e/`)
+
+- Prefer data-driven route matrices for card coverage, but keep assertions aligned with actual DOM contracts:
+  - Views with static card shells in `index.html` should assert heading + card visibility.
+  - Container-only views should assert non-empty rendered content, not pre-existing `<h2>`.
+- When testing watchlist symbol entry, dismiss autocomplete (`Escape`) before pressing Enter if the test is validating typed-symbol acceptance.
+- Add and maintain a unit guard that every card route in `src/cards/registry.ts` round-trips through router parsing/building.
+- Ensure deep-link E2E scenarios subscribe to route changes before initial router dispatch in app code.

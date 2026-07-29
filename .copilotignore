@@ -1,0 +1,15 @@
+# Generated artifacts and reports — exclude from Copilot indexing/context.
+dist/
+coverage/
+test-results/
+playwright-report/
+worker/.wrangler/
+
+# Dependency/vendor trees.
+node_modules/
+docs-site/node_modules/
+mcp-server/node_modules/
+
+# Build outputs in subprojects.
+docs-site/dist/
+mcp-server/dist/

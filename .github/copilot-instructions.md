@@ -15,11 +15,22 @@ Privacy-first financial analysis PWA. Vanilla TypeScript, no framework, Vite 8, 
 
 | Agent | Use when |
 |---|---|
+| `@domain-specialist` | Indicators, analytics, risk, domain purity |
 | `@api-integrator` | Worker routes, KV cache, provider chain |
 | `@card-designer` | Card layout, theme, accessibility |
+| `@compat-specialist` | Browser APIs, progressive enhancement, cross-browser tests |
 | `@quality-reviewer` | Lint, coverage, security, dead code |
 | `@deploy-ops` | CF deployment, Docker, CI/CD |
 | `@perf-specialist` | Bundle, INP, LCP, WASM, caching |
+
+| MCP server | Use when |
+|---|---|
+| `github` | Issues, pull requests, repository operations |
+| `cloudflare` | Cloudflare account resources and API operations |
+| `cloudflare-docs` | Current Cloudflare platform documentation |
+| `cloudflare-observability` | Worker logs, errors, and production analytics |
+| `playwright` | Interactive browser inspection and E2E debugging |
+| `crosstide` | CrossTide quotes, indicators, screener, and portfolio tools |
 
 ## 📂 Context Loading Strategy (token efficiency)
 
@@ -108,6 +119,28 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 | Architecture  | `node scripts/arch-check.mjs --strict`    | Zero violations                |
 
 Run all: `npm run ci`
+
+## 🧠 Recent Learnings (must retain)
+
+1. **PWA deploys must inject Workbox manifest**
+	- Any deploy workflow that runs Vite build must also run `node scripts/workbox-inject.mjs` (or call `npm run build` if that script already chains it).
+	- Without injection, `sw.js` keeps fallback entries with `revision: null`, causing stale clients and broken refresh UX.
+
+2. **Service Worker update UX needs a safe fallback path**
+	- If `registration.waiting` is absent at click-time, update handlers must not hang indefinitely.
+	- Keep activation logic resilient with explicit no-waiting handling and timeout fallback.
+
+3. **Static-host production data flow is Worker-first**
+	- On GitHub Pages, direct Yahoo requests can fail via CSP + CORS.
+	- Search/quote/chart flows in production should route through allowed Worker origins.
+
+4. **UI async flows must surface provider failures**
+	- Event-handler promise chains require `.catch()` and explicit empty/error states.
+	- Never allow silent rejection paths that leave empty UI with no feedback.
+
+5. **Router route table completeness must be tested**
+	- Every registered card route must round-trip through router parse/build mappings.
+	- Keep a unit guard that compares card registry routes against router parsing behavior.
 
 ## 🔌 Worker API Endpoints
 

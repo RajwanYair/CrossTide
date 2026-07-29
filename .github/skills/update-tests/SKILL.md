@@ -99,3 +99,10 @@ When using `fast-check` for property tests (domain layer — see Q13 patterns):
 - `.filter((v) => v.trim().length > 0)` on string arbitraries to exclude whitespace-only
 - Pair `fc.string({ minLength: 1 })` with `.filter((t) => t.trim().length > 0)`
 - Use `fc.oneof()` over `fc.frequency()` when weights don't matter
+
+## 🧯 Regression Patterns To Always Guard
+
+- **Route table drift**: if a route exists in `RouteName`/card registry/nav but not router patterns, links appear to work but resolve to fallback views. Keep a test that verifies every registered card route round-trips through router parse/build.
+- **Deep-link mount ordering**: if `initRouter()` dispatches before `onRouteChange` subscription, deep-linked cards never mount. Keep at least one test that registers handler before init and asserts initial route delivery.
+- **Autocomplete submit conflicts**: watchlist acceptance tests should ensure Enter submits typed symbol, not highlighted suggestion.
+- **Container-only card views**: route matrix tests must not require static headings for views rendered asynchronously by card modules.

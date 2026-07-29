@@ -18,6 +18,8 @@
   },
   "typescript.tsdk": "./node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
+  "npm.packageManager": "npm",
+  "npm.autoDetect": "on",
   "eslint.useFlatConfig": true,
   "markdownlint.config": {
     "extends": "./config/.markdownlint.json"
@@ -27,12 +29,18 @@
     "**/node_modules": true,
     "**/dist": true,
     "**/coverage": true,
-    "**/build": true
+    "**/build": true,
+    "**/test-results": true,
+    "**/playwright-report": true,
+    "**/.wrangler": true
   },
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
-    "**/coverage": true
+    "**/coverage": true,
+    "**/test-results": true,
+    "**/playwright-report": true,
+    "**/.wrangler": true
   },
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
@@ -49,6 +57,7 @@
     "*": true
   },
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.codesearch.enabled": true,
   "chat.instructionsFilesLocations": {
     ".github/copilot-instructions.md": true,
     ".github/instructions": true
@@ -75,8 +84,8 @@
     "**/build/**",
     "**/config/**",
     "**/.**/**",
-    "**/**.test.**",
-    "**/**.spec.**",
+    "**/*.test.*",
+    "**/*.spec.*",
     "eslint.config.mjs",
     "**/worker/**",
     "**/scripts/**",
