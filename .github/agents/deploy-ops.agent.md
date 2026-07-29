@@ -1,6 +1,14 @@
 ---
 name: deploy-ops
 description: "Infrastructure and deployment specialist for CrossTide. Handles Cloudflare Worker deployment, KV/D1/R2 provisioning, Docker self-hosting, CI/CD pipeline issues, and production health verification."
+argument-hint: "Describe the deployment target, infrastructure change, outage, or migration task"
+tools: [read, search, edit, execute, todo, cloudflare/*]
+user-invocable: true
+handoffs:
+	- label: Quality review
+		agent: quality-reviewer
+		prompt: Review the infrastructure changes for security, test coverage, and release readiness.
+		send: false
 ---
 
 # 🚀 @deploy-ops — Infrastructure & Deployment Specialist

@@ -1,6 +1,6 @@
 # 🏗️ Architecture
 
-> **Last updated:** v11.43.1 (July 2026)
+> **Last updated:** v11.44.0 (July 2026)
 
 CrossTide Web is a browser-based stock monitoring dashboard built with vanilla TypeScript and Vite.
 It follows a strict layered architecture, keeps the production bundle small, and ships as a
@@ -173,7 +173,7 @@ All other functionality is hand-written TypeScript — no framework runtime.
 | -------------- | ------------------------------- | ------------------------------------------------------------------- |
 | TypeScript     | `tsconfig.json`                 | strict + `exactOptionalPropertyTypes` + `noUncheckedIndexedAccess`  |
 | Bundler        | `vite.config.ts`                | Vite 8, oxc minifier, ES2022                                        |
-| Tests (unit)   | `vitest.config.ts`              | happy-dom, v8 coverage, 90% thresholds                              |
+| Tests (unit)   | `vitest.config.ts`              | split `node` / `happy-dom` projects, v8 coverage, 90% thresholds    |
 | Tests (E2E)    | `playwright.config.ts`          | Chromium, 15+ critical flows + axe-core                             |
 | Linting (TS)   | `eslint.config.mjs`             | ESLint 10 flat + typescript-eslint 8 + import-x, `--max-warnings 0` |
 | Linting (CSS)  | `config/.stylelintrc.json`      | inline rule set                                                     |

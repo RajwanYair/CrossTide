@@ -1,6 +1,6 @@
 ---
 description: "Add a new Hono worker API route with KV caching and tests"
-mode: "agent"
+agent: "api-integrator"
 tools: ["read_file", "create_file", "replace_string_in_file", "run_in_terminal", "runTests"]
 ---
 

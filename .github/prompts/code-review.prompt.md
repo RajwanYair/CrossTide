@@ -1,5 +1,5 @@
 ---
-mode: "agent"
+agent: "quality-reviewer"
 model: "Claude Sonnet 4.5 (copilot)"
 description: "Perform a structured code review on a PR or feature branch: layer direction, purity, types, tests, security, and bundle impact."
 tools: ["read_file", "grep_search", "semantic_search", "get_errors", "run_in_terminal", "memory"]
@@ -66,7 +66,7 @@ Specify the review target on invocation:
 ### 7️⃣ Docs
 
 - Public API change → `CHANGELOG.md` `[Unreleased]` updated
-- New worker route → `worker/openapi.yaml` updated
+- New worker route → `worker/routes/openapi.ts` updated
 - New ADR scenario → `docs/adr/` entry
 
 ## 📤 Output

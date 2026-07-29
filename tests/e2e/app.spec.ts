@@ -58,14 +58,16 @@ test("clicking nav links activates the correct view section", async ({ page }) =
 });
 
 // ---------------------------------------------------------------------------
-// Flow 4: Watchlist input is present and accepts input
+// Flow 4: Watchlist accepts and renders a ticker
 // ---------------------------------------------------------------------------
-test("watchlist add-ticker input accepts text", async ({ page }) => {
+test("watchlist adds a typed ticker on Enter", async ({ page }) => {
   await page.goto("/watchlist");
   const input = page.locator("#add-ticker");
   await expect(input).toBeVisible();
-  await input.fill("AAPL");
-  await expect(input).toHaveValue("AAPL");
+  await expect(input).toHaveAttribute("role", "combobox");
+  await input.fill("MSFT");
+  await input.press("Enter");
+  await expect(page.locator('#watchlist-body tr[data-ticker="MSFT"]')).toBeVisible();
 });
 
 // ---------------------------------------------------------------------------
@@ -197,8 +199,8 @@ test("footer with status indicators is present", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("app includes essential meta tags", async ({ page }) => {
   await page.goto("/");
-  const viewport = page.locator('meta[name="viewport"]');
-  await expect(viewport).toHaveAttribute("content", /width=device-width/);
+  const viewportMeta = page.locator('meta[name="viewport"]');
+  await expect(viewportMeta).toHaveAttribute("content", /width=device-width/);
   const description = page.locator('meta[name="description"]');
   await expect(description).toHaveAttribute("content", /.+/);
 });

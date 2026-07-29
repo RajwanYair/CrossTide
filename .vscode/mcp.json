@@ -6,16 +6,33 @@
       "gallery": true
     },
     "cloudflare": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["mcp-remote", "https://mcp.cloudflare.com/sse"],
+      "type": "http",
+      "url": "https://mcp.cloudflare.com/mcp",
       "gallery": true
     },
-    "gitkraken": {
+    "cloudflare-docs": {
+      "type": "http",
+      "url": "https://docs.mcp.cloudflare.com/mcp",
+      "gallery": true
+    },
+    "cloudflare-observability": {
+      "type": "http",
+      "url": "https://observability.mcp.cloudflare.com/mcp",
+      "gallery": true
+    },
+    "playwright": {
       "type": "stdio",
       "command": "npx",
-      "args": ["gitkraken-mcp-server"],
+      "args": ["-y", "@playwright/mcp", "--isolated", "--headless"],
       "gallery": true
+    },
+    "crosstide": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/mcp-server/dist/index.js"],
+      "env": {
+        "CROSSTIDE_API_URL": "http://localhost:8787"
+      }
     }
   }
 }

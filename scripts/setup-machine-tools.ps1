@@ -72,6 +72,8 @@ This script must run elevated.
 $NpmPrefix = Join-Path $Root "npm"
 $NpmCache = Join-Path $Root "npm-cache"
 $PwBrowsers = Join-Path $Root "ms-playwright"
+$NpmEtc = Join-Path $NpmPrefix "etc"
+$NpmGlobalConfig = Join-Path $NpmEtc "npmrc"
 
 function New-SharedDirectory {
   param([Parameter(Mandatory)][string]$Path)
@@ -120,6 +122,83 @@ function Move-ScopeContent {
     Remove-Item -LiteralPath $From -Recurse -Force -ErrorAction SilentlyContinue
   }
   Write-Host "  $Label - user-scope copy removed"
+}
+
+function Move-NpmUserScopeContent {
+  param(
+    [Parameter(Mandatory)][string]$From,
+    [Parameter(Mandatory)][string]$To
+  )
+
+  if (-not (Test-Path $From)) {
+    Write-Host "  npm global - no user-scope copy at $From (nothing to migrate)"
+    return
+  }
+
+  $items = @(Get-ChildItem -LiteralPath $From -Force -ErrorAction SilentlyContinue)
+  if ($items.Count -eq 0) {
+    Write-Host "  npm global - no user-scope items found"
+    return
+  }
+
+  Write-Host "  npm global - migrating user binaries/modules: $From -> $To"
+  foreach ($item in $items) {
+    if ($item.Name -eq "etc") {
+      # npm may still resolve globalconfig from this path until a new shell picks up machine env vars.
+      Write-Host "    preserving $($item.FullName) (npm globalconfig compatibility)"
+      continue
+    }
+    $target = Join-Path $To $item.Name
+    if (Test-Path $target) { continue }
+    if ($PSCmdlet.ShouldProcess($item.FullName, "Move to $target")) {
+      Move-Item -LiteralPath $item.FullName -Destination $target -Force
+    }
+  }
+
+  Write-Host "  npm global - user binaries/modules migrated; user etc folder preserved"
+}
+
+function Initialize-MachineNpmGlobalConfig {
+  if (-not (Test-Path $NpmEtc)) {
+    if ($PSCmdlet.ShouldProcess($NpmEtc, "Create machine npm etc directory")) {
+      New-Item -ItemType Directory -Path $NpmEtc -Force | Out-Null
+    }
+  }
+
+  if (-not (Test-Path $NpmGlobalConfig)) {
+    if ($PSCmdlet.ShouldProcess($NpmGlobalConfig, "Create machine npmrc")) {
+      Set-Content -LiteralPath $NpmGlobalConfig -Value @(
+        "prefix=$NpmPrefix",
+        "cache=$NpmCache"
+      ) -Encoding utf8
+    }
+  }
+
+  Set-MachineEnvironmentVariable -Name "NPM_CONFIG_GLOBALCONFIG" -Value $NpmGlobalConfig
+}
+
+function Set-MachineNpmPerformanceDefaults {
+  $npmCmd = Join-Path $env:ProgramFiles "nodejs\npm.cmd"
+  if (-not (Test-Path $npmCmd)) {
+    Write-Warning "npm.cmd not found under Program Files; skipping npm perf defaults."
+    return
+  }
+
+  # Keep npm fast for repeated invocations across many repos.
+  $settings = @(
+    @("prefer-offline", "true"),
+    @("fund", "false"),
+    @("audit", "false"),
+    @("progress", "false")
+  )
+
+  foreach ($pair in $settings) {
+    $key = [string]$pair[0]
+    $value = [string]$pair[1]
+    if ($PSCmdlet.ShouldProcess("npm global config", "set $key=$value")) {
+      & $npmCmd config --global set $key $value | Out-Null
+    }
+  }
 }
 
 function Set-MachineEnvironmentVariable {
@@ -192,7 +271,7 @@ New-SharedDirectory -Path $PwBrowsers
 
 # ── 2. Migrate user-scope content ─────────────────────────────────────────────
 Write-Host "`n[2/6] Migrating user-scope tool data to machine scope" -ForegroundColor Cyan
-Move-ScopeContent -From (Join-Path $env:APPDATA "npm") -To $NpmPrefix -Label "npm global"
+Move-NpmUserScopeContent -From (Join-Path $env:APPDATA "npm") -To $NpmPrefix
 Move-ScopeContent -From (Join-Path $env:LOCALAPPDATA "npm-cache") -To $NpmCache -Label "npm cache"
 Move-ScopeContent -From (Join-Path $env:LOCALAPPDATA "ms-playwright") -To $PwBrowsers -Label "playwright browsers"
 
@@ -201,6 +280,8 @@ Write-Host "`n[3/6] Setting machine-scope environment variables" -ForegroundColo
 Set-MachineEnvironmentVariable -Name "NPM_CONFIG_PREFIX" -Value $NpmPrefix
 Set-MachineEnvironmentVariable -Name "NPM_CONFIG_CACHE" -Value $NpmCache
 Set-MachineEnvironmentVariable -Name "PLAYWRIGHT_BROWSERS_PATH" -Value $PwBrowsers
+Initialize-MachineNpmGlobalConfig
+Set-MachineNpmPerformanceDefaults
 
 Add-MachinePathEntry -Entry $NpmPrefix
 Remove-UserPathEntry -Entry (Join-Path $env:APPDATA "npm")
@@ -240,7 +321,7 @@ else {
   }
 
   # npm -g now resolves to $NpmPrefix (machine scope).
-  $npmGlobals = @("wrangler", "@biomejs/biome", "tsx", "markdownlint-cli2")
+  $npmGlobals = @("wrangler", "@biomejs/biome", "tsx", "markdownlint-cli2", "@playwright/mcp")
   foreach ($pkg in $npmGlobals) {
     if ($PSCmdlet.ShouldProcess($pkg, "npm install -g")) {
       Write-Host "  npm -g: $pkg"
@@ -260,6 +341,7 @@ Write-Host "`n[6/6] Verification" -ForegroundColor Cyan
 $checks = [ordered]@{
   "NPM_CONFIG_PREFIX (Machine)"        = [Environment]::GetEnvironmentVariable("NPM_CONFIG_PREFIX", "Machine")
   "NPM_CONFIG_CACHE (Machine)"         = [Environment]::GetEnvironmentVariable("NPM_CONFIG_CACHE", "Machine")
+  "NPM_CONFIG_GLOBALCONFIG (Machine)"  = [Environment]::GetEnvironmentVariable("NPM_CONFIG_GLOBALCONFIG", "Machine")
   "PLAYWRIGHT_BROWSERS_PATH (Machine)" = [Environment]::GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH", "Machine")
   "user %APPDATA%\npm still present"   = (Test-Path (Join-Path $env:APPDATA "npm"))
   "user ms-playwright still present"   = (Test-Path (Join-Path $env:LOCALAPPDATA "ms-playwright"))

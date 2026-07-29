@@ -1,6 +1,6 @@
 ---
 description: "Add a new pure technical indicator to the domain layer with tests"
-mode: "agent"
+agent: "domain-specialist"
 tools: ["read_file", "create_file", "replace_string_in_file", "run_in_terminal", "runTests"]
 ---
 

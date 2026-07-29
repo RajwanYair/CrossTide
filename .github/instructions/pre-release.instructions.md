@@ -79,7 +79,6 @@ Update ALL of these on every version bump. Search the old version string (e.g. `
 | 7   | `docs/ARCHITECTURE.md`            | Title `(vX.Y.Z)` and stack table                      |
 | 8   | `docs/ROADMAP.md`                 | `Shipped baseline: vX.Y.Z` and version-history table  |
 | 9   | `docs-site/` content              | Any version references in Astro Starlight pages       |
-| 10  | `worker/openapi.yaml`             | `info.version` — must equal `package.json` version    |
 
 - [ ] All files above updated with the new version
 - [ ] `CHANGELOG.md` — unreleased items moved to new version section; old sprints collapsed to one line each
@@ -121,8 +120,8 @@ CI rejects any push that exceeds the JS gzip budget. Lighthouse runs on every PR
 - [ ] `cd worker && npx wrangler deploy --dry-run` — schema validates
 - [ ] D1 migrations applied to production: `wrangler d1 migrations apply crosstide-db`
 - [ ] KV namespaces present and not placeholder: check `worker/wrangler.toml`
-- [ ] OpenAPI spec served at `/openapi.json` matches `worker/openapi.yaml`
-- [ ] `worker/openapi.yaml` × `package.json` version string match (CI guard)
+- [ ] OpenAPI spec served at `/openapi.json` matches `worker/routes/openapi.ts`
+- [ ] Generated API types are current: `npm run gen:api-types && git diff --exit-code -- src/core/api-types.ts`
 - [ ] Rate-limit middleware enabled in `worker/index.ts`
 
 ---

@@ -41,7 +41,7 @@ Reference these files before making assumptions:
 - `.github/skills/add-worker-route/SKILL.md`
 - `.github/skills/debug-fetch/SKILL.md`
 - `.github/skills/update-tests/SKILL.md`
-- `worker/openapi.yaml`
+- `worker/routes/openapi.ts`
 
 ## 🎯 Mission
 
@@ -71,7 +71,7 @@ Use this agent when the task is primarily one of:
 | 502 from worker with `validation` body | Upstream schema drifted                          | Loosen Valibot schema, log raw, then tighten with new shape |
 | Worker always returns demo             | `env.QUOTE_CACHE` not bound                      | Replace `PLACEHOLDER_*` IDs in `worker/wrangler.toml`       |
 | 429 rate-limit on every call           | Per-IP budget too low or KV binding missing      | Tune `worker/rate-limit.ts`; verify `checkRateLimitKV` path |
-| OpenAPI generator output drifts        | `worker/openapi.yaml` and route handler disagree | Run `npm run gen:api-types`; reconcile shape                |
+| OpenAPI generator output drifts        | `worker/routes/openapi.ts` and route handler disagree | Run `npm run gen:api-types`; reconcile shape            |
 | CORS error in browser                  | Origin not in allowlist                          | Add to `worker/cors.ts`                                     |
 | `fetchJSON` returns `null` from mock   | Mock didn't unwrap `.data` envelope              | Match envelope: `{ data, source, ts }`                      |
 

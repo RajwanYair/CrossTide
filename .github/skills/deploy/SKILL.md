@@ -1,3 +1,8 @@
+---
+name: deploy
+description: "Deploy CrossTide to Cloudflare Workers and Pages, provision KV/D1/R2 resources, verify production health, or troubleshoot deployment failures. Use when deploying, provisioning, rolling back, or checking production."
+---
+
 # 🚀 Skill: Deploy CrossTide
 
 ## 🎯 When to use

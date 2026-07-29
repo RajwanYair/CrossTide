@@ -1,6 +1,6 @@
 ---
 description: "Write comprehensive tests for a domain function"
-mode: "agent"
+agent: "domain-specialist"
 tools: ["read_file", "create_file", "replace_string_in_file", "runTests"]
 ---
 

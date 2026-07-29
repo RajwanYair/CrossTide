@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import starlight from "@astrojs/starlight";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
@@ -26,8 +27,10 @@ export default defineConfig({
   base: "/CrossTide/docs",
   output: "static",
   markdown: {
-    remarkPlugins: [remarkMath, remarkMermaid],
-    rehypePlugins: [rehypeKatex],
+    processor: unified({
+      remarkPlugins: [remarkMath, remarkMermaid],
+      rehypePlugins: [rehypeKatex],
+    }),
   },
   integrations: [
     starlight({

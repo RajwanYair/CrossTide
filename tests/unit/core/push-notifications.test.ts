@@ -71,8 +71,7 @@ function makeRegistration(pushManager: PushManager): ServiceWorkerRegistration {
 describe("isPushSupported", () => {
   it("returns false when serviceWorker is missing", () => {
     const orig = navigator.serviceWorker;
-    // @ts-expect-error — intentional
-    delete (navigator as { serviceWorker?: unknown }).serviceWorker;
+    Reflect.deleteProperty(navigator, "serviceWorker");
     expect(isPushSupported()).toBe(false);
     Object.defineProperty(navigator, "serviceWorker", { value: orig, configurable: true });
   });

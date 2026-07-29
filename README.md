@@ -13,7 +13,7 @@ interactive charting, and offline-first PWA support.
 [![Uptime](https://img.shields.io/badge/Uptime-Monitored-brightgreen?logo=upptime)](https://crosstide-uptime.fly.dev/status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript)](tsconfig.json)
-[![Bundle](https://img.shields.io/badge/Bundle-%3C200KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
+[![Bundle](https://img.shields.io/badge/Bundle-%3C250KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
 [![Install Size](https://img.shields.io/badge/Install%20Size-~4.2MB-informational)](package.json)
 [![SLSA 3](https://img.shields.io/badge/SLSA-Level_3-green?logo=sigstore)](https://github.com/RajwanYair/CrossTide/attestations)
 [![WCAG 2.2 AAA](https://img.shields.io/badge/WCAG-2.2%20AAA-blueviolet)](src/styles/a11y.css)
@@ -37,7 +37,7 @@ interactive charting, and offline-first PWA support.
 | **Portfolio Tracking** | Holdings management, allocation pie chart, P&L tracking, sector exposure analysis |
 | **Market Intelligence** | Heatmap, sector rotation, relative strength, market breadth, correlation matrix, seasonality patterns |
 | **Alerts** | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions |
-| **Data Providers** | Yahoo Finance, Finnhub, CoinGecko, Polygon.io — automatic failover with provider health monitoring |
+| **Data Providers** | Yahoo Finance, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko, Frankfurter, and FRED with automatic failover and health reporting |
 | **PWA / Offline** | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile |
 | **Accessibility** | WCAG 2.2 AAA (contrast, focus, target size, error suggestion), keyboard nav, color-blind palettes, skip links, `[data-contrast="aaa"]` mode |
 | **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP |
@@ -51,6 +51,19 @@ interactive charting, and offline-first PWA support.
 npm install
 npm run dev        # http://localhost:5173
 ```
+
+No provider key is required for local development. Optional server-side fallbacks can be enabled
+without exposing secrets to the browser:
+
+```powershell
+npx wrangler secret put FINNHUB_KEY
+npx wrangler secret put MASSIVE_KEY
+npx wrangler secret put ALPHA_VANTAGE_KEY
+```
+
+Massive and Alpha Vantage free tiers provide delayed/end-of-day equity fallbacks. Frankfurter is
+a no-key, open-source reference-rate fallback for forex; it does not provide executable bid/ask
+prices.
 
 ## 🎬 Demo
 
@@ -132,6 +145,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | `npm run dev:components` | Component preview grid (<http://localhost:5173/dev/components.html>) |
 | `npm run build` | TypeScript check + production build |
 | `npm test` | Run unit tests |
+| `npm run test:fast` | Unit tests on the threads pool (local iteration) |
 | `npm run test:coverage` | Tests with v8 coverage |
 | `npm run lint` | ESLint |
 | `npm run lint:all` | ESLint + Stylelint + HTMLHint + markdownlint |
@@ -140,10 +154,11 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 
 ## 🧰 Tech Stack
 
-- **TypeScript 5.9** strict mode (`exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`,
+- **TypeScript 6.0** strict mode (`exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`,
   `forceConsistentCasingInFileNames`, `verbatimModuleSyntax`).
 - **Vite 8** build tool (oxc minifier, ES2022 target).
-- **Vitest 4.1** testing — happy-dom environment, v8 coverage, 90% statement / 80% branch / 90% function / 90% line thresholds.
+- **Vitest 4.1** testing — split `node` / `happy-dom` projects so DOM-free suites skip browser
+  emulation, v8 coverage, 90% statement / 80% branch / 90% function / 90% line thresholds.
 - **ESLint 10** flat config + **typescript-eslint 8**.
 - **Biome 2** code formatting (100× faster than Prettier).
 - **Stylelint 17**, **HTMLHint 1.9**, **markdownlint-cli2** for non-TS assets.
@@ -190,7 +205,7 @@ The Cloudflare Worker (`worker/`) provides:
 src/
   domain/   Pure calculators (30+ indicators, consensus, backtest, risk)
   core/     Signals, cache, config, fetch, idb, i18n, storage-manager
-  providers/ Market-data adapters (Yahoo, Finnhub, CoinGecko, Polygon, chain)
+  providers/ Market-data adapters (Yahoo, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko)
   cards/    Composable UI cards — 13 route cards, lazy-loaded via registry
   ui/       Router, toast, modal, command palette, a11y, view transitions
   types/    Shared interfaces + Valibot schemas
@@ -220,7 +235,11 @@ flowchart TD
     Yahoo["Yahoo Finance"]
     Finnhub["Finnhub"]
     CoinGecko["CoinGecko"]
-    Polygon["Polygon"]
+    Massive["Massive"]
+    Stooq["Stooq"]
+    AlphaVantage["Alpha Vantage"]
+    Frankfurter["Frankfurter"]
+    FRED["FRED"]
   end
 
   SPA -- "REST / WebSocket" --> Worker
@@ -233,7 +252,11 @@ flowchart TD
   Worker --> Yahoo
   Worker --> Finnhub
   Worker --> CoinGecko
-  Worker --> Polygon
+  Worker --> Massive
+  Worker --> Stooq
+  Worker --> AlphaVantage
+  Worker --> Frankfurter
+  Worker --> FRED
 ```
 
 See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full layered diagram and CI/CD reference.

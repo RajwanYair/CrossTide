@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: "domain-specialist"
 description: Export a domain module from the src/domain/index.ts barrel. Audits unexported functions and wires them.
 tools:
   - grep_search

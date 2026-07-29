@@ -3,8 +3,8 @@
   "tasks": [
     {
       "label": "dev server",
-      "type": "shell",
-      "command": "npx vite",
+      "type": "npm",
+      "script": "dev",
       "isBackground": true,
       "problemMatcher": {
         "pattern": {
@@ -20,8 +20,9 @@
     },
     {
       "label": "build",
-      "type": "shell",
-      "command": "npx vite build",
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": ["$tsc"],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -29,8 +30,8 @@
     },
     {
       "label": "test",
-      "type": "shell",
-      "command": "npx vitest run",
+      "type": "npm",
+      "script": "test",
       "group": {
         "kind": "test",
         "isDefault": true
@@ -38,27 +39,37 @@
     },
     {
       "label": "test watch",
-      "type": "shell",
-      "command": "npx vitest",
+      "type": "npm",
+      "script": "test:watch",
       "isBackground": true,
       "group": "test"
     },
     {
       "label": "lint",
-      "type": "shell",
-      "command": "npx eslint . --max-warnings 0",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": ["$eslint-stylish"],
       "group": "test"
     },
     {
       "label": "typecheck",
-      "type": "shell",
-      "command": "npx tsc --noEmit",
+      "type": "npm",
+      "script": "typecheck",
+      "problemMatcher": ["$tsc"],
+      "group": "test"
+    },
+    {
+      "label": "e2e cards",
+      "type": "npm",
+      "script": "test:e2e:cards",
+      "problemMatcher": [],
       "group": "test"
     },
     {
       "label": "ci",
-      "type": "shell",
-      "command": "npm run ci",
+      "type": "npm",
+      "script": "ci",
+      "problemMatcher": ["$tsc", "$eslint-stylish"],
       "group": "test"
     }
   ]

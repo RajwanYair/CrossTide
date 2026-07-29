@@ -16,7 +16,6 @@ const browserGlobals = {
   setInterval: "readonly",
   clearInterval: "readonly",
   requestAnimationFrame: "readonly",
-  requestIdleCallback: "readonly",
   console: "readonly",
   getComputedStyle: "readonly",
   Map: "readonly",
@@ -42,9 +41,7 @@ const browserGlobals = {
   MutationObserver: "readonly",
   ResizeObserver: "readonly",
   IntersectionObserver: "readonly",
-  PushManager: "readonly",
   ServiceWorkerRegistration: "readonly",
-  structuredClone: "readonly",
   queueMicrotask: "readonly",
   crypto: "readonly",
 };
@@ -227,6 +224,34 @@ export default tseslint.config(
     },
     rules: {
       "no-console": "off",
+    },
+  },
+  {
+    files: ["mcp-server/src/**/*.ts"],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        fetch: "readonly",
+        process: "readonly",
+      },
+      parserOptions: {
+        project: ["./mcp-server/tsconfig.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      ...sharedRules,
+      "no-undef": "off",
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^_", argsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
+      "@typescript-eslint/explicit-function-return-type": "error",
+      "no-console": ["error", { allow: ["error"] }],
     },
   },
   {

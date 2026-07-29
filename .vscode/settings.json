@@ -37,11 +37,35 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
+    "**/build": true,
     "**/coverage": true,
     "**/test-results": true,
     "**/playwright-report": true,
-    "**/.wrangler": true
+    "**/.wrangler": true,
+    "**/.astro": true,
+    "**/package-lock.json": true,
+    "docs/ROADMAP-v*-archive.md": true
   },
+  // Watching these trees keeps a file handle per entry and is the single largest
+  // source of VS Code CPU/memory cost in this repo.
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/build/**": true,
+    "**/test-results/**": true,
+    "**/playwright-report/**": true,
+    "**/.wrangler/**": true,
+    "**/.astro/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true
+  },
+  "search.followSymlinks": false,
+  "search.useIgnoreFiles": true,
+  "typescript.tsserver.maxTsServerMemory": 6144,
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "javascript.preferences.includePackageJsonAutoImports": "off",
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
@@ -62,6 +86,50 @@
     ".github/copilot-instructions.md": true,
     ".github/instructions": true
   },
+  "chat.promptFilesLocations": {
+    ".github/prompts": true
+  },
+  "chat.modeFilesLocations": {
+    ".github/agents": true
+  },
+  "chat.todoListTool.enabled": true,
+  "chat.tools.terminal.autoApprove": {
+    "npm run typecheck": true,
+    "npm run lint": true,
+    "npm run lint:all": true,
+    "npm run test": true,
+    "npm run test:fast": true,
+    "npm run build": true,
+    "npm run check:bundle": true,
+    "npm run audit:jsdoc": true,
+    "git status": true,
+    "git diff": true,
+    "git log": true
+  },
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Use Conventional Commits: type(scope): lowercase subject, no trailing period, max 72 chars. Types: feat fix docs refactor test chore perf ci. Scopes: domain worker cards core ui ci docs screener portfolio alerts consensus watchlist chart."
+    }
+  ],
+  "github.copilot.chat.reviewSelection.instructions": [
+    {
+      "file": ".github/copilot-instructions.md"
+    }
+  ],
+  // Without this, generated tests land in the wrong Vitest project and fail on
+  // missing DOM globals or the outbound-fetch guard.
+  "github.copilot.chat.testGeneration.instructions": [
+    {
+      "file": ".github/instructions/tests.instructions.md"
+    }
+  ],
+  "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+    {
+      "text": "Summarize what changed and why, grouped by layer (domain/worker/cards/core/ui/ci). Call out any quality-gate impact: coverage thresholds, bundle size, or new tests. Keep it factual and short; no marketing language."
+    }
+  ],
+  "coverage-gutters.coverageBaseDir": "coverage",
+  "coverage-gutters.coverageFileNames": ["lcov.info"],
   // Browser Compatibility Checker — align with .browserslistrc targets; exclude non-browser code
   "browser-compatibility-checker.browserList": [
     "chrome",

@@ -12,15 +12,14 @@ const WASM_DIR = resolve(import.meta.dirname ?? ".", "../dist/wasm");
 const BUDGET_BYTES = 200 * 1024; // 200 KB
 
 if (!existsSync(WASM_DIR)) {
-  console.log("⚠ No WASM output directory found at dist/wasm/");
-  console.log("  Run AssemblyScript compilation first.");
+  console.log("SKIP: WASM output is not configured yet.");
   process.exit(0); // Not an error — modules haven't been compiled yet
 }
 
 const files = readdirSync(WASM_DIR).filter((f) => f.endsWith(".wasm"));
 
 if (files.length === 0) {
-  console.log("⚠ No .wasm files found in dist/wasm/");
+  console.log("SKIP: No compiled WASM modules found.");
   process.exit(0);
 }
 

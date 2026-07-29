@@ -71,6 +71,12 @@ describe("Ticker navigation — route params", () => {
       expect(info.params["symbol"]).toBe("TSLA");
     });
 
+    it("parses the strategy comparison route", () => {
+      initRouter();
+      navigateToPath("strategy-comparison");
+      expect(getCurrentRouteInfo().name).toBe("strategy-comparison");
+    });
+
     it("consensus-timeline route carries the symbol param", () => {
       initRouter();
       navigateToPath("consensus-timeline", { symbol: "NVDA" });

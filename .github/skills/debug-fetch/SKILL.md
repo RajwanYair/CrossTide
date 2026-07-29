@@ -32,7 +32,7 @@ Watch for:
 | Worker returns demo / fixture data | KV binding missing — check `worker/wrangler.toml` |
 | Card shows stale data forever      | TTL too long or `unmount()` not clearing timer    |
 | All routes red after deploy        | `wrangler deploy --dry-run` schema error          |
-| OpenAPI client mismatch            | `worker/openapi.yaml` drift — regenerate          |
+| OpenAPI client mismatch            | `worker/routes/openapi.ts` drift — regenerate     |
 
 ## 3️⃣ Step 3 — Check Bindings
 
@@ -108,7 +108,7 @@ If tests pass but production fails, the difference is real upstream — capture 
 | 429 on every request          | Rate-limit budget too low — tune `worker/rate-limit.ts`     |
 | Client fails CORS preflight   | Add origin to allowlist in `worker/cors.ts`                 |
 | Stale cache served past TTL   | KV TTL not honoured — check `kvPut` `expirationTtl`         |
-| OpenAPI schema drift          | Run `npm run gen:api-types`; update `worker/openapi.yaml`   |
+| OpenAPI schema drift          | Run `npm run gen:api-types`; update `worker/routes/openapi.ts` |
 | Card never updates            | `unmount()` missing — timer leak, multiple loaders racing   |
 
 ## 9️⃣ Step 9 — Commit

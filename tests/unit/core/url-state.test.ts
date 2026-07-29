@@ -43,8 +43,7 @@ describe("readCurrentUrlState", () => {
 
   it("returns null in non-browser environment", () => {
     const orig = (globalThis as Record<string, unknown>).location;
-    // @ts-expect-error intentionally removing location
-    delete globalThis.location;
+    Reflect.deleteProperty(globalThis, "location");
     try {
       expect(readCurrentUrlState()).toBeNull();
     } finally {
@@ -74,8 +73,7 @@ describe("updateCurrentUrlState", () => {
 
   it("is a no-op when location is unavailable", () => {
     const orig = (globalThis as Record<string, unknown>).location;
-    // @ts-expect-error intentionally removing location
-    delete globalThis.location;
+    Reflect.deleteProperty(globalThis, "location");
     expect(() => updateCurrentUrlState({ symbol: "X" })).not.toThrow();
     (globalThis as Record<string, unknown>).location = orig;
   });
@@ -135,8 +133,7 @@ describe("buildCurrentShareUrl", () => {
 
   it("falls back to localhost when location is unavailable", () => {
     const orig = (globalThis as Record<string, unknown>).location;
-    // @ts-expect-error intentionally removing location
-    delete globalThis.location;
+    Reflect.deleteProperty(globalThis, "location");
     try {
       const url = buildCurrentShareUrl({ symbol: "AMD" });
       expect(url).toMatch(/[?&]s=/);
@@ -196,8 +193,7 @@ describe("onUrlStateChange", () => {
 
   it("returns no-op handle in non-browser environment", () => {
     const orig = (globalThis as Record<string, unknown>).window;
-    // @ts-expect-error intentionally removing window
-    delete globalThis.window;
+    Reflect.deleteProperty(globalThis, "window");
     try {
       const listener = onUrlStateChange(vi.fn());
       expect(() => listener.remove()).not.toThrow();

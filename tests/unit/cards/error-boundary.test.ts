@@ -1,10 +1,12 @@
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { withErrorBoundary } from "../../../src/cards/error-boundary";
 import type { CardModule, CardContext } from "../../../src/cards/registry";
 
 const ctx: CardContext = { route: "watchlist", params: {} };
 
 describe("withErrorBoundary", () => {
+  afterEach(() => vi.restoreAllMocks());
+
   it("passes through a successful mount", () => {
     const card: CardModule = {
       mount: () => ({}),
@@ -15,6 +17,7 @@ describe("withErrorBoundary", () => {
   });
 
   it("renders error fallback when mount throws", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const card: CardModule = {
       mount: () => {
         throw new Error("mount failed");
@@ -24,9 +27,11 @@ describe("withErrorBoundary", () => {
     withErrorBoundary(card).mount(el, ctx);
     expect(el.innerHTML).toContain("mount failed");
     expect(el.innerHTML).toContain("card--error");
+    expect(errorSpy).toHaveBeenCalledOnce();
   });
 
   it("renders error fallback when update throws", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const card: CardModule = {
       mount: () => ({
         update: () => {
@@ -38,6 +43,7 @@ describe("withErrorBoundary", () => {
     const handle = withErrorBoundary(card).mount(el, ctx);
     handle?.update?.(ctx);
     expect(el.innerHTML).toContain("update failed");
+    expect(errorSpy).toHaveBeenCalledOnce();
   });
 
   it("preserves dispose from wrapped handle", () => {
@@ -50,6 +56,7 @@ describe("withErrorBoundary", () => {
   });
 
   it("handles non-Error thrown values", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const card: CardModule = {
       mount: () => {
         throw "string error";
@@ -58,6 +65,7 @@ describe("withErrorBoundary", () => {
     const el = document.createElement("div");
     withErrorBoundary(card).mount(el, ctx);
     expect(el.innerHTML).toContain("string error");
+    expect(errorSpy).toHaveBeenCalledOnce();
   });
 
   it("does not wrap when card returns void", () => {

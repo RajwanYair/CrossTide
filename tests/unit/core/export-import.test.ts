@@ -8,6 +8,8 @@ import {
   downloadCompressedFile,
   EXPORT_SCHEMA_VERSION,
 } from "../../../src/core/export-import";
+
+const COMPRESSION_STREAM_KEY = ["Compression", "Stream"].join("");
 import type { AppConfig } from "../../../src/types/domain";
 
 const SAMPLE_CONFIG: AppConfig = {
@@ -177,10 +179,8 @@ describe("downloadCompressedFile — G11 Compression Streams", () => {
   });
 
   it("falls back to plain downloadFile when CompressionStream is unavailable", async () => {
-    // @ts-expect-error intentionally removing global for this test
-    const orig = globalThis.CompressionStream;
-    // @ts-expect-error intentionally
-    delete globalThis.CompressionStream;
+    const original = Reflect.get(globalThis, COMPRESSION_STREAM_KEY);
+    Reflect.deleteProperty(globalThis, COMPRESSION_STREAM_KEY);
 
     const mockAnchor = { href: "", download: "", click: vi.fn() } as unknown as HTMLAnchorElement;
     vi.spyOn(document, "createElement").mockReturnValue(mockAnchor);
@@ -194,7 +194,6 @@ describe("downloadCompressedFile — G11 Compression Streams", () => {
     // Fallback strips .gz extension
     expect(mockAnchor.download).toBe("export.json");
 
-    // @ts-expect-error restore
-    globalThis.CompressionStream = orig;
+    Reflect.set(globalThis, COMPRESSION_STREAM_KEY, original);
   });
 });

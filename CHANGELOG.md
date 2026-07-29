@@ -8,6 +8,59 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [Unreleased]
+
+> **Sprint: Test Performance, Deterministic CI & Toolchain Integration**
+
+### 🔄 Changed
+
+- **Unit test suite is 38% faster** (259s → 159s): Vitest now runs as two projects. The 313 DOM-free suites (`domain`, `worker`, `providers`, `types`, `helpers`) execute on the `node` environment instead of paying happy-dom construction, cutting total environment time from 996s to 441s. Suites needing browser globals declare `@vitest-environment happy-dom` per file.
+- **ESLint is cached** (`node_modules/.cache/eslint/`): 37.7s → 3.4s on re-run, which is the gate the pre-commit hook and inner dev loop hit most. `lint:nocache` forces a full pass.
+- **`npm run ci` no longer typechecks twice**: it now calls `build:only`, since `typecheck` already ran earlier in the same pipeline.
+- **CI uses installed binaries instead of `npx`**: workflow steps now call `./node_modules/.bin/*` for `vite`, `playwright`, `commitlint`, and `wrangler`. Remaining `npx` calls are only for tools deliberately fetched from the registry (`@lhci/cli`, `cyclonedx`, `license-checker`, `oxlint`, `serve`, `asc`).
+- **Local scripts and git hooks drop `npx`**, resolving `commitlint`/`lint-staged` straight from `node_modules/.bin`.
+
+### ✨ Added
+
+- **`tests/helpers/node-network.ts`**: network guard for the `node` project mirroring the happy-dom interceptor, so DOM-free suites fail fast on unstubbed outbound requests instead of performing real DNS lookups.
+- **`test:fast` script** for opting into the threads pool during local iteration.
+- **`build:only` and `lint:nocache` scripts** for pipeline and cache-bypass control.
+- **Copilot Chat test generation is wired to `tests.instructions.md`**, so generated tests land in the correct Vitest project instead of failing on missing DOM globals. PR-description instructions, coverage-gutters paths, and a wider safe-command auto-approve list were added alongside.
+- **`audit:headers` gate** (`scripts/audit-file-headers.mjs`, wired into `lint:all`): every file under `src/`, `worker/` and `scripts/` must open with a `/** … */` docblock. Coverage is now 592/592 (100%). A leading one-line summary lets an assistant identify a file's purpose without parsing its body.
+- **E2E card-matrix drift guard**: `tests/unit/cards/registry.test.ts` parses `tests/e2e/cards.spec.ts` and fails in both directions — a newly registered card cannot ship without an E2E entry, and a removed card cannot leave a stale one.
+
+### 🐛 Fixed
+
+- **Astro docs build in CI**: `npx astro build` could fetch a fresh Astro from the registry, which then resolved a CommonJS `cookie` and failed with `Named export 'parseCookie' not found`. Both `pages.yml` and `docs.yml` now build via `npm run build --workspace docs-site`, using the lockfile-pinned `astro@7.1.5` / `cookie@2.0.1`.
+- **Flaky virtual-scroller load test**: the 10K/50K row wall-clock budget assertions now retry, so scheduler jitter under the parallel suite cannot fail CI.
+- **Markdownlint CI blocker**: hard tabs removed from `.github/copilot-instructions.md`.
+- **Playwright E2E web server**: `playwright.config.ts` launched the dev server with `npx vite`, which could resolve a different Vite from the registry and fail the run. It now uses `npm run dev -- --port 4173`; the full 38-test card matrix passes on chromium.
+
+---
+
+## [11.44.0] — 2026-07-29
+
+> **Provider Resilience, Shared Ticker Navigation & PWA Updates**
+
+### ✨ Added
+
+- **Open provider fallbacks**: added server-side Massive and Alpha Vantage equity adapters plus Frankfurter reference-rate forex fallback, with KV-aware quote/chart chains, provider health reporting, BYOK compatibility, and contract tests.
+- **Shared ticker navigation**: watchlist selection now follows the selected ticker across symbol-aware cards and routes, including Consensus and Strategy views.
+- **Copilot workspace integration**: expanded project agents, skills, prompts, MCP configuration, and workspace tooling for provider, deployment, compatibility, domain, and quality workflows.
+
+### 🐛 Fixed
+
+- **Ticker entry and tracking**: repaired autocomplete submission, ticker persistence, route registration, and shared ticker snapshots so symbols can be added, selected, and analyzed reliably.
+- **PWA update refresh**: the waiting service worker now handles `SKIP_WAITING`; the update banner waits for `controllerchange` before reloading, preventing Refresh from silently retaining the old GitHub Pages version.
+- **Provider failover semantics**: provider-specific 404 responses no longer terminate quote/chart fallback chains before another provider can resolve the symbol.
+
+### 🔄 Changed
+
+- **Browser data resilience**: the watchlist data service now falls back to the Worker chart chain when direct Yahoo access fails while rejecting synthetic demo candles as live data.
+- **Release workflow**: tag releases now use Node 24 and run the canonical CI, architecture, contrast, audit, Workbox build, SBOM, provenance, and artifact publication path.
+
+---
+
 ## [11.43.1] — 2026-07-26
 
 > **Sprint: CI Stabilization & Discoverability** (17 commits — workflow

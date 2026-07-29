@@ -23,8 +23,7 @@ Update ALL of these (search the current version string, e.g. `11.35.0`):
 | 6   | `.github/AGENTS.md`               | Header `> Version: vX.Y.Z` line            | Top of file                                     |
 | 7   | `docs/ARCHITECTURE.md`            | Title `(vX.Y.Z)`                           | Line 1                                          |
 | 8   | `docs/ROADMAP.md`                 | `Shipped baseline: vX.Y.Z`                 | Refresh-date header + version-history table row |
-| 9   | `worker/openapi.yaml`             | `info.version`                             | Must equal `package.json` version               |
-| 10  | `docs-site/` content              | Any version references in Astro Starlight  | Only if displayed in published docs             |
+| 9   | `docs-site/` content              | Any version references in Astro Starlight  | Only if displayed in published docs             |
 
 ## 📝 CHANGELOG Format
 

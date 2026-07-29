@@ -1,5 +1,6 @@
 ---
 description: "Investigate and fix performance regressions in CrossTide"
+agent: "perf-specialist"
 ---
 
 # ⚡ Performance Audit

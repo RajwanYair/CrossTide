@@ -1,3 +1,8 @@
+---
+name: migrate-db
+description: "Create, apply, verify, or troubleshoot CrossTide Cloudflare D1 migrations. Use when changing database schema, applying migrations locally or remotely, checking migration status, or planning rollback migrations."
+---
+
 # 🗄️ Skill: D1 Database Migration
 
 ## 🎯 When to use

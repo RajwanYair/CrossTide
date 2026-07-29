@@ -37,6 +37,17 @@ precacheAndRoute(
   ],
 );
 
+self.addEventListener("message", (event: ExtendableMessageEvent) => {
+  const data: unknown = event.data;
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    (data as Record<string, unknown>)["type"] === "SKIP_WAITING"
+  ) {
+    event.waitUntil(self.skipWaiting());
+  }
+});
+
 // ─── Runtime caching ──────────────────────────────────────────────────────────
 
 // /api/* — NetworkFirst: fresh data preferred, stale on timeout/offline

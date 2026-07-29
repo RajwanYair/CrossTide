@@ -7,29 +7,36 @@ import { Aside } from "@astrojs/starlight/components";
 
 ## 🔭 Overview
 
-The **Provider Health** card displays real-time status of all configured data providers,
-showing response times, error rates, and circuit breaker state.
+The **Provider Health** card displays runtime status for the browser provider registry,
+including availability, recent failures, and circuit-breaker state. The Worker health
+endpoint separately reports which server-side providers are configured.
 
 ## Monitored Providers
 
-| Provider       | Type              | Health Checks          |
-| -------------- | ----------------- | ---------------------- |
-| Yahoo Finance  | Primary quotes    | Latency, HTTP errors   |
-| Finnhub        | Streaming + REST  | WS connectivity, rate  |
-| Stooq          | Historical CSV    | Download success       |
-| CoinGecko      | Crypto            | API response time      |
-| Tiingo         | Premium           | Auth status, latency   |
-| Polygon        | Premium           | Auth status, latency   |
-| Alpha Vantage  | Fallback          | Rate limit tracking    |
-| FRED           | Economic data     | Availability           |
+### Browser Registry
+
+| Provider      | Role                                  |
+| ------------- | ------------------------------------- |
+| Yahoo Finance | Primary browser quote/history/search  |
+| Stooq         | No-key end-of-day history fallback    |
+| Alpaca        | Worker-proxied US equity fallback     |
+| Finnhub       | Optional when configured in the app   |
+| Tiingo        | Optional when configured in the app   |
+
+### Worker Availability
+
+`GET /api/health` reports configuration availability for Yahoo Finance, Finnhub,
+Massive (including the legacy `POLYGON_KEY` binding), Alpha Vantage, Frankfurter,
+CoinGecko, Stooq, FRED, and other server-side services. Massive and Alpha Vantage
+keys remain on the Worker and are never exposed to browser code.
 
 ## Status Indicators
 
-| Status  | Icon | Description                          |
-| ------- | ---- | ------------------------------------ |
-| Healthy | 🟢   | < 2s response, < 5% error rate       |
-| Degraded| 🟡   | > 2s response or > 5% error rate     |
-| Down    | 🔴   | Circuit breaker open or unreachable   |
+| Status   | Description                                    |
+| -------- | ---------------------------------------------- |
+| Healthy  | Provider is available and its breaker is closed |
+| Degraded | Recent provider errors have been recorded       |
+| Down     | Provider is unavailable or its breaker is open   |
 
 ## Circuit Breaker
 

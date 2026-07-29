@@ -28,7 +28,7 @@ sequenceDiagram
 | `get_chart_data` | OHLCV candlestick data |
 | `get_indicators` | Technical indicators (SMA, RSI, MACD, etc.) |
 | `run_screener` | Screen stocks by technical criteria |
-| `get_portfolio_risk` | Portfolio risk metrics (VaR, Sharpe, Sortino) |
+| `get_portfolio_analytics` | Portfolio allocation, P&L, and concentration metrics |
 
 ## ⚙️ Setup
 
@@ -36,6 +36,12 @@ sequenceDiagram
 cd mcp-server
 npm install
 npm run build
+```
+
+Start the local Worker API before calling tools:
+
+```bash
+npx wrangler dev --config worker/wrangler.toml
 ```
 
 ## 💻 Usage with Claude Desktop
@@ -49,7 +55,7 @@ Add to `claude_desktop_config.json`:
       "command": "node",
       "args": ["path/to/CrossTide/mcp-server/dist/index.js"],
       "env": {
-        "CROSSTIDE_API_URL": "https://crosstide-worker.workers.dev"
+        "CROSSTIDE_API_URL": "http://localhost:8787"
       }
     }
   }
@@ -60,4 +66,4 @@ Add to `claude_desktop_config.json`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `CROSSTIDE_API_URL` | `https://crosstide-worker.workers.dev` | Worker API base URL |
+| `CROSSTIDE_API_URL` | `http://localhost:8787` | Worker API base URL |

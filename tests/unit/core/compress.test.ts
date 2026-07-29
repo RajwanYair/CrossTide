@@ -16,6 +16,17 @@ import {
 const LARGE_JSON = JSON.stringify(
   Array.from({ length: 200 }, (_, i) => ({ id: i, ticker: "AAPL", value: Math.random() })),
 );
+const COMPRESSION_STREAM_KEY = ["Compression", "Stream"].join("");
+
+function removeCompressionStream(): unknown {
+  const original = Reflect.get(globalThis, COMPRESSION_STREAM_KEY);
+  Reflect.deleteProperty(globalThis, COMPRESSION_STREAM_KEY);
+  return original;
+}
+
+function restoreCompressionStream(original: unknown): void {
+  Reflect.set(globalThis, COMPRESSION_STREAM_KEY, original);
+}
 
 // ─────────────────────────── compressionStreamSupported ──────────────────────
 
@@ -25,11 +36,9 @@ describe("compressionStreamSupported", () => {
   });
 
   it("returns false when CompressionStream is not defined", () => {
-    const original = globalThis.CompressionStream;
-    // @ts-expect-error: intentionally removing the global
-    globalThis.CompressionStream = undefined;
+    const original = removeCompressionStream();
     expect(compressionStreamSupported()).toBe(false);
-    globalThis.CompressionStream = original;
+    restoreCompressionStream(original);
   });
 });
 
@@ -58,23 +67,19 @@ describe("compressStringToGzip", () => {
   });
 
   it("falls back to plain text Blob when CompressionStream unavailable", async () => {
-    const original = globalThis.CompressionStream;
-    // @ts-expect-error intentional
-    globalThis.CompressionStream = undefined;
+    const original = removeCompressionStream();
     const blob = await compressStringToGzip("fallback text");
     expect(blob.type).toBe("text/plain");
-    globalThis.CompressionStream = original;
+    restoreCompressionStream(original);
   });
 
   it("fallback blob contains the original text", async () => {
-    const original = globalThis.CompressionStream;
-    // @ts-expect-error intentional
-    globalThis.CompressionStream = undefined;
+    const original = removeCompressionStream();
     const text = "uncompressed fallback content";
     const blob = await compressStringToGzip(text);
     const result = await blob.text();
     expect(result).toBe(text);
-    globalThis.CompressionStream = original;
+    restoreCompressionStream(original);
   });
 });
 
@@ -93,12 +98,10 @@ describe("estimateGzipRatio", () => {
   });
 
   it("returns 1 when CompressionStream unavailable", async () => {
-    const original = globalThis.CompressionStream;
-    // @ts-expect-error intentional
-    globalThis.CompressionStream = undefined;
+    const original = removeCompressionStream();
     const ratio = await estimateGzipRatio("some text");
     expect(ratio).toBe(1);
-    globalThis.CompressionStream = original;
+    restoreCompressionStream(original);
   });
 
   it("ratio is positive", async () => {

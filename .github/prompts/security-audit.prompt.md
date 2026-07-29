@@ -1,5 +1,5 @@
 ---
-mode: "agent"
+agent: "quality-reviewer"
 model: "Claude Sonnet 4.5 (copilot)"
 description: "Run a targeted OWASP Top 10 security audit against the CrossTide codebase (PWA + Cloudflare Worker)."
 tools: ["read_file", "grep_search", "run_in_terminal", "get_errors", "semantic_search"]

@@ -1,6 +1,6 @@
 ---
 description: "Fix a failing CI check (lint, typecheck, test, build, or bundle)"
-mode: "agent"
+agent: "quality-reviewer"
 tools: ["read_file", "replace_string_in_file", "run_in_terminal", "runTests", "get_errors", "grep_search"]
 ---
 

@@ -20,7 +20,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
-const API_BASE = process.env.CROSSTIDE_API_URL ?? "https://crosstide-worker.workers.dev";
+const API_BASE = process.env.CROSSTIDE_API_URL ?? "http://localhost:8787";
 
 const TOOLS = [
   {
@@ -37,7 +37,7 @@ const TOOLS = [
   {
     name: "get_consensus",
     description:
-      "Get the 12-method technical consensus signal (BUY/SELL/HOLD) with confidence score for a ticker",
+      "Get the technical consensus signal and score for a ticker from the CrossTide screener",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -88,46 +88,49 @@ const TOOLS = [
   },
   {
     name: "run_screener",
-    description: "Screen stocks by technical criteria (e.g. RSI < 30, price > SMA200)",
+    description: "Screen a ticker list by RSI, ADX, consensus, and fundamental criteria",
     inputSchema: {
       type: "object" as const,
       properties: {
-        filters: {
+        tickers: {
+          type: "array",
+          items: { type: "string" },
+          description: "One to 50 ticker symbols",
+        },
+        minRsi: { type: "number", description: "Minimum RSI from 0 to 100" },
+        maxRsi: { type: "number", description: "Maximum RSI from 0 to 100" },
+        minAdx: { type: "number", description: "Minimum ADX from 0 to 100" },
+        consensus: { type: "string", enum: ["BUY", "SELL", "NEUTRAL"] },
+        minPe: { type: "number" },
+        maxPe: { type: "number" },
+        minMarketCap: { type: "number", description: "Minimum market cap in USD" },
+        maxMarketCap: { type: "number", description: "Maximum market cap in USD" },
+        minDividendYield: { type: "number", description: "Minimum decimal dividend yield" },
+        minProfitMargin: { type: "number", description: "Minimum decimal profit margin" },
+      },
+      required: ["tickers"],
+    },
+  },
+  {
+    name: "get_portfolio_analytics",
+    description: "Calculate portfolio allocation, profit and loss, and concentration analytics",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        holdings: {
           type: "array",
           items: {
             type: "object",
             properties: {
-              field: { type: "string", description: "Field to filter (rsi, price, volume, etc.)" },
-              operator: { type: "string", enum: ["gt", "lt", "eq", "gte", "lte"] },
-              value: { type: "number" },
+              symbol: { type: "string" },
+              shares: { type: "number" },
+              costBasis: { type: "number", description: "Per-share cost basis" },
             },
-            required: ["field", "operator", "value"],
+            required: ["symbol", "shares", "costBasis"],
           },
-          description: "Array of filter conditions",
-        },
-        limit: { type: "number", description: "Max results to return (default: 20)" },
-      },
-      required: ["filters"],
-    },
-  },
-  {
-    name: "get_portfolio_risk",
-    description: "Calculate portfolio risk metrics: VaR, Sharpe ratio, Sortino ratio, max drawdown",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        symbols: {
-          type: "array",
-          items: { type: "string" },
-          description: "Array of ticker symbols in the portfolio",
-        },
-        weights: {
-          type: "array",
-          items: { type: "number" },
-          description: "Portfolio weights (must sum to 1.0)",
         },
       },
-      required: ["symbols", "weights"],
+      required: ["holdings"],
     },
   },
 ] as const;
@@ -146,18 +149,24 @@ async function callApi(path: string): Promise<unknown> {
 async function handleTool(name: string, args: Record<string, unknown>): Promise<string> {
   switch (name) {
     case "get_quote": {
-      const data = await callApi(`/api/quote/${args.symbol}`);
+      const data = await callApi(`/api/quote/${encodeURIComponent(String(args.symbol))}`);
       return JSON.stringify(data, null, 2);
     }
     case "get_consensus": {
-      const data = await callApi(`/api/quote/${args.symbol}`);
-      return JSON.stringify(data, null, 2);
+      const res = await fetch(`${API_BASE}/api/screener`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
+        body: JSON.stringify({ tickers: [args.symbol] }),
+      });
+      if (!res.ok) throw new Error(`Consensus error ${res.status}: ${await res.text()}`);
+      const data = (await res.json()) as { readonly rows?: readonly unknown[] };
+      return JSON.stringify(data.rows?.[0] ?? null, null, 2);
     }
     case "get_chart_data": {
       const range = (args.range as string) ?? "3mo";
       const interval = (args.interval as string) ?? "1d";
       const data = await callApi(
-        `/api/chart?symbol=${args.symbol}&range=${range}&interval=${interval}`,
+        `/api/chart?ticker=${encodeURIComponent(String(args.symbol))}&range=${encodeURIComponent(range)}&interval=${encodeURIComponent(interval)}`,
       );
       return JSON.stringify(data, null, 2);
     }
@@ -165,7 +174,7 @@ async function handleTool(name: string, args: Record<string, unknown>): Promise<
       const indicators = (args.indicators as string[]).join(",");
       const period = (args.period as number) ?? 14;
       const data = await callApi(
-        `/api/chart?symbol=${args.symbol}&range=6mo&interval=1d&indicators=${indicators}&period=${period}`,
+        `/api/indicators?symbol=${encodeURIComponent(String(args.symbol))}&indicators=${encodeURIComponent(indicators)}&range=6mo&period=${encodeURIComponent(String(period))}`,
       );
       return JSON.stringify(data, null, 2);
     }
@@ -173,16 +182,16 @@ async function handleTool(name: string, args: Record<string, unknown>): Promise<
       const res = await fetch(`${API_BASE}/api/screener`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
-        body: JSON.stringify({ filters: args.filters, limit: args.limit ?? 20 }),
+        body: JSON.stringify(args),
       });
       if (!res.ok) throw new Error(`Screener error: ${await res.text()}`);
       return JSON.stringify(await res.json(), null, 2);
     }
-    case "get_portfolio_risk": {
-      const res = await fetch(`${API_BASE}/api/portfolio/rebalance`, {
+    case "get_portfolio_analytics": {
+      const res = await fetch(`${API_BASE}/api/portfolio/analytics`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
-        body: JSON.stringify({ symbols: args.symbols, weights: args.weights }),
+        body: JSON.stringify({ holdings: args.holdings }),
       });
       if (!res.ok) throw new Error(`Portfolio error: ${await res.text()}`);
       return JSON.stringify(await res.json(), null, 2);

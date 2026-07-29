@@ -189,6 +189,43 @@ describe("fetchTickerData", () => {
     expect(data.candles).toEqual([]);
   });
 
+  it("falls back to the Worker provider chain when Yahoo fails", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Yahoo unavailable")).mockResolvedValueOnce(
+      makeResponse({
+        ticker: "AAPL",
+        currency: "USD",
+        source: "massive",
+        candles: [
+          { date: "2026-07-28", open: 100, high: 105, low: 99, close: 104, volume: 1_000 },
+          { date: "2026-07-29", open: 104, high: 108, low: 103, close: 107, volume: 1_200 },
+        ],
+      }),
+    );
+
+    const data = await fetchTickerData("AAPL");
+
+    expect(data.error).toBeUndefined();
+    expect(data.price).toBe(107);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(String(mockFetch.mock.calls[1]?.[0])).toContain("/api/chart?ticker=AAPL");
+  });
+
+  it("does not present Worker demo candles as live data", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Yahoo unavailable")).mockResolvedValueOnce(
+      makeResponse({
+        ticker: "AAPL",
+        currency: "USD",
+        source: "demo",
+        candles: [{ date: "2026-07-29", open: 100, high: 105, low: 99, close: 104, volume: 1_000 }],
+      }),
+    );
+
+    const data = await fetchTickerData("AAPL");
+
+    expect(data.error).toBe("Yahoo unavailable");
+    expect(data.candles).toEqual([]);
+  });
+
   it("returns emptyData when response fails schema validation", async () => {
     mockFetch.mockResolvedValue(makeResponse({ bad: "data" }));
 

@@ -159,7 +159,7 @@ describe("showLocalNotification — non-SW Notification constructor fallback (li
   });
 
   it("returns ok:false when new Notification() throws", async () => {
-    const NotifCtor = vi.fn().mockImplementation(() => {
+    const NotifCtor = vi.fn().mockImplementation(function throwNotificationError() {
       throw new Error("Notification ctor error");
     });
     NotifCtor.permission = "granted";

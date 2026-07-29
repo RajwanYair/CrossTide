@@ -61,6 +61,13 @@ function makeSucceedingProvider(name = "healthy"): MarketDataProvider {
   };
 }
 
+vi.mock("../../../src/providers/yahoo-provider", () => ({
+  createYahooProvider: vi.fn(() => makeSucceedingProvider("yahoo")),
+}));
+vi.mock("../../../src/providers/finnhub-provider", () => ({
+  createFinnhubProvider: vi.fn((_key: string) => makeSucceedingProvider("finnhub")),
+}));
+
 // ── Inline breaker-aware wrapper (mirrors registry's createBreakerAwareProvider)
 import type { DailyCandle } from "../../../src/types/domain";
 import type { SearchResult } from "../../../src/providers/types";
@@ -237,13 +244,6 @@ describe("registry configureFinnhub activation (A8)", () => {
   });
 
   it("configureFinnhub adds finnhub to health snapshot", async () => {
-    vi.mock("../../../src/providers/yahoo-provider", () => ({
-      createYahooProvider: vi.fn(() => makeSucceedingProvider("yahoo")),
-    }));
-    vi.mock("../../../src/providers/finnhub-provider", () => ({
-      createFinnhubProvider: vi.fn((_key: string) => makeSucceedingProvider("finnhub")),
-    }));
-
     const { configureFinnhub, getHealthSnapshot } = await import(
       "../../../src/providers/provider-registry"
     );
@@ -253,13 +253,6 @@ describe("registry configureFinnhub activation (A8)", () => {
   });
 
   it("finnhub entry starts with closed breaker after configureFinnhub", async () => {
-    vi.mock("../../../src/providers/yahoo-provider", () => ({
-      createYahooProvider: vi.fn(() => makeSucceedingProvider("yahoo")),
-    }));
-    vi.mock("../../../src/providers/finnhub-provider", () => ({
-      createFinnhubProvider: vi.fn((_key: string) => makeSucceedingProvider("finnhub")),
-    }));
-
     const { configureFinnhub, getHealthSnapshot } = await import(
       "../../../src/providers/provider-registry"
     );

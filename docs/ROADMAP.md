@@ -1,9 +1,10 @@
 # 🗺️ CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
 
-> **Date:** July 22, 2026
-> **Current version:** v11.43.1
-> **Codebase:** 212 domain modules · 52 cards · 37 Worker routes · 608 test files
-> **Bundle:** 158 KB gzip (budget 250 KB) · 49 SW precache entries
+> **Date:** July 29, 2026
+> **Current version:** v11.44.0
+> **Codebase:** 221 domain modules · 52 cards · 45 Worker routes · 632 test files (7,160 tests)
+> **Bundle:** 212.1 KB gzip (budget 250 KB) · 50 SW precache entries
+> **Coverage:** 93.15% stmt · 84.03% branch · 95.06% func · 94.96% lines
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
 > **ADRs on record:** 11 (all accepted)
 > **Previous roadmap:** v10 archived intent retained below; v9 at `docs/ROADMAP-v9-archive.md`
@@ -287,8 +288,8 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | E16 | Growth | Docker one-liner validated end-to-end | P | P1 | M | — | ⬜ |
 | E1 | Agent | Wire MCP server to live Worker API | P | P1 | M | P4 | ⬜ |
 | P8 | Docs | GIF demos in README (from live app) | P | P1 | M | E15 | ⬜ |
-| P9 | DX | VS Code / GitHub integration cleanup | P | P1 | S | — | ⬜ |
-| P10 | Quality | Remove dead code / config / docs | P | P1 | M | — | ⬜ |
+| P9 | DX | VS Code / GitHub integration cleanup | P | P1 | S | — | ✅ |
+| P10 | Quality | Remove dead code / config / docs | P | P1 | M | — | 🟡 |
 | E12 | Data | Alpaca Markets provider (free real-time) | Q | P0 | M | P4 | ⬜ |
 | E11 | Data | Wire WebSocket DO fan-out (real-time) | Q | P0 | L | E12 | ⬜ |
 | E13 | Data | BYOK — encrypted user API keys in D1 | Q | P1 | M | P3 | ⬜ |
@@ -465,31 +466,32 @@ The CrossTide Worker API serves four consumers:
 |---|---|---|
 | TypeScript | 6.0.3 | Type checking |
 | Vite | 8.0.10 | Build + dev server |
-| Vitest | 4.1.4 | Unit + integration |
-| Playwright | 1.59.1 | E2E + visual |
-| ESLint | 10.2.1 | Linting |
-| Biome | 2.4.15 | Formatting |
-| fast-check | 4.7.0 | Property testing |
+| Vitest | 4.1.10 | Unit + integration (split `node` / `happy-dom` projects) |
+| Playwright | 1.62.0 | E2E + visual |
+| ESLint | 10.8.0 | Linting (cached) |
+| Biome | 2.5.6 | Formatting |
+| fast-check | 4.9.0 | Property testing |
 | workbox-build | 7.4.0 | SW precaching |
-| commitlint | 20.5.3 | Commit format |
+| commitlint | 21.2.1 | Commit format |
 | simple-git-hooks | 2.13.1 | Git hooks |
-| lint-staged | 16.4.0 | Pre-commit |
+| lint-staged | 17.2.0 | Pre-commit |
 
 ### 11.2 Quality gates
 
-| Gate | Command | Requirement |
-|---|---|---|
-| Type check | `npm run typecheck` | 0 errors |
-| ESLint | `npm run lint` | 0 warnings |
-| Stylelint | `npm run lint:css` | 0 warnings |
-| Biome | `npm run format:check` | Exit 0 |
-| Tests | `npm run test:coverage` | ≥90% stmt/line/fn, ≥80% branch |
-| Build | `npm run build` | Success |
-| Bundle | `npm run check:bundle` | < 250 KB gzip |
-| Supply chain | `npm audit --omit=dev` | 0 high/critical |
-| Architecture | `node scripts/arch-check.mjs --strict` | 0 violations |
+| Gate | Command | Requirement | Cost |
+|---|---|---|---|
+| Type check | `npm run typecheck` | 0 errors | ~6.5s |
+| ESLint | `npm run lint` | 0 warnings | ~38s cold / ~3.4s cached |
+| Stylelint | `npm run lint:css` | 0 warnings | ~2s |
+| Biome | `npm run format:check` | Exit 0 | ~1s |
+| Markdown | `npm run lint:md` | 0 issues | ~2.2s |
+| Tests | `npm run test:coverage` | ≥90% stmt/line/fn, ≥80% branch | ~160s |
+| Build | `npm run build` | Success | ~9.3s |
+| Bundle | `npm run check:bundle` | < 250 KB gzip | ~1s |
+| Supply chain | `npm audit --omit=dev` | 0 high/critical | ~5s |
+| Architecture | `node scripts/arch-check.mjs --strict` | 0 violations | ~1s |
 
-Run all: `npm run ci`
+Run all: `npm run ci` (~237s; uses `build:only` because `typecheck` already ran).
 
 ---
 
@@ -536,13 +538,37 @@ Run all: `npm run ci`
 
 ## 14. ⚡ Performance Architecture
 
+### 14.1 Runtime budgets
+
 | Metric | Budget | Current | Status |
 |---|---|---|---|
-| JS initial (gzip) | < 200 KB | 158 KB | ✅ |
+| JS initial (gzip) | < 250 KB (CI-enforced) | 212.1 KB | ✅ |
 | LCP (4G Android) | < 1.8s | ~1.2s | ✅ |
 | INP (p75) | < 200ms | ~80ms | ✅ |
 | CLS | < 0.05 | ~0.02 | ✅ |
 | Lighthouse | ≥ 90 | ≥ 90 | ✅ |
+
+> Bundle headroom is now 38 KB. The WASM kernels (E8–E10) and WebLLM (E5–E7)
+> must load lazily/off-thread or they will breach the gate.
+
+### 14.2 Developer-loop budgets
+
+Build-time performance is a first-class budget: a slow inner loop is the tax
+every future feature pays.
+
+| Loop | Budget | Current | Notes |
+|---|---|---|---|
+| Unit suite | < 180s | ~159s | Split `node`/`happy-dom` projects; 313 DOM-free suites skip browser emulation |
+| ESLint (cached) | < 10s | ~3.4s | `--cache` into `node_modules/.cache/eslint/` |
+| Typecheck | < 10s | ~6.5s | |
+| Production build | < 15s | ~9.3s | oxc minifier |
+| Full `npm run ci` | < 300s | ~237s | |
+
+**Rules that keep this fast:**
+
+- New DOM-free suites go in the `node` project — do not widen the `dom` project.
+- Both projects block unstubbed outbound `fetch`; tests must never hit the network.
+- Wall-clock assertions belong in `tests/bench/` or carry `{ retry: 2 }`.
 
 ---
 
@@ -553,11 +579,10 @@ Run all: `npm run ci`
 | Asset | Count | Quality |
 |---|---|---|
 | Instruction files (`.github/instructions/`) | 10 | ★★★ |
-| Prompt files (`.github/prompts/`) | 14 | ★★★ |
-| Skills (`.github/skills/`) | 4 | ★★ Expand |
-| Agents (`.github/agents/`) | 3 | ★★ Expand |
-| Copilot config (`.github/copilot/`) | 1 | ★★★ |
-| MCP servers (`.vscode/mcp.json`) | 2 | ★★ Add more |
+| Prompt files (`.github/prompts/`) | 16 | ★★★ |
+| Skills (`.github/skills/`) | 6 | ★★★ |
+| Agents (`.github/agents/`) | 7 | ★★★ |
+| MCP servers (`.vscode/mcp.json`) | 6 | ★★★ |
 | GH Actions workflows | 27 | ★★★ |
 | Composite actions | 1 (node-setup) | △ Expand |
 
@@ -572,9 +597,9 @@ Run all: `npm run ci`
 | `deploy` | CF deployment playbook | ✅ exists |
 | `migrate-db` | D1 migration workflow | ✅ exists |
 | `add-provider` | New data provider | Q (new) |
-| `perf-audit` | Performance investigation | R (new) |
 | `add-card` | Scaffold a new route card | R (new) |
 | `add-indicator` | Scaffold a new domain indicator | R (new) |
+| `onboard-contributor` | First-PR walkthrough (E19) | R (new) |
 
 ### 15.3 Agents expansion
 
@@ -585,8 +610,30 @@ Run all: `npm run ci`
 | `quality-reviewer` | Lint, coverage, security | ✅ exists |
 | `deploy-ops` | Infrastructure, CF, Docker | ✅ exists |
 | `perf-specialist` | Bundle, INP, LCP, WASM | ✅ exists |
+| `domain-specialist` | Indicators, analytics, purity | ✅ exists |
+| `compat-specialist` | Browser APIs, cross-browser tests | ✅ exists |
 
-### 15.4 Recommended VS Code extensions
+### 15.4 Copilot Chat wiring (`.vscode/settings.json`)
+
+Instruction files only influence Copilot if they are registered. The workspace
+binds each surface explicitly:
+
+| Setting | Points at | Why it matters |
+|---|---|---|
+| `chat.instructionsFilesLocations` | `.github/copilot-instructions.md`, `.github/instructions` | Layer rules apply automatically via `applyTo` globs |
+| `chat.promptFilesLocations` | `.github/prompts` | 16 prompts become invocable |
+| `chat.modeFilesLocations` | `.github/agents` | 7 specialist agents become selectable |
+| `testGeneration.instructions` | `tests.instructions.md` | Keeps generated tests in the correct Vitest project |
+| `commitMessageGeneration.instructions` | inline | Matches the commitlint contract |
+| `reviewSelection.instructions` | `copilot-instructions.md` | Reviews enforce layer direction + non-negotiables |
+| `chat.tools.terminal.autoApprove` | read-only gates | Removes approval friction for safe commands |
+
+**Editor performance guardrails** — `files.watcherExclude` (not just
+`files.exclude`) is required, or VS Code keeps a handle per entry across
+`node_modules`, `dist`, `coverage`, and `.wrangler`. Auto-imports from
+`package.json` are disabled and the TS server is given 6 GB.
+
+### 15.5 Recommended VS Code extensions
 
 **Essential for this workspace:**
 
@@ -600,17 +647,25 @@ Run all: `npm run ci`
 - `ms-edgedevtools.vscode-browser-compatibility` — Browser compat
 - `DavidAnson.vscode-markdownlint` — Markdown linting
 - `eamodio.gitlens` — Git history and blame
+- `ryanluker.vscode-coverage-gutters` — Inline coverage from `coverage/lcov.info`
 
 **Remove from recommendations:**
 
 - `esbenp.prettier-vscode` — Replaced by Biome
 
-### 15.5 MCP server configuration
+### 15.6 MCP server configuration
 
 | Server | Transport | Purpose |
 |---|---|---|
-| `github` | HTTP (Copilot MCP) | PR/issue/review workflows |
-| `cloudflare` | stdio (mcp-remote) | KV/D1/Worker inspection |
+| `github` | HTTP | PR/issue/review workflows |
+| `cloudflare` | HTTP | Account resources and API operations |
+| `cloudflare-docs` | HTTP | Current platform documentation |
+| `cloudflare-observability` | HTTP | Worker logs, errors, production analytics |
+| `playwright` | stdio | Interactive browser inspection, E2E debugging |
+| `crosstide` | stdio | Quotes, indicators, screener, portfolio (E1) |
+
+> Pin MCP packages (no `@latest`) — a floating tag costs a registry round-trip
+> on every server launch.
 
 ---
 

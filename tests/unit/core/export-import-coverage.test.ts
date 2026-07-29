@@ -16,6 +16,8 @@ import {
   EXPORT_SCHEMA_VERSION,
 } from "../../../src/core/export-import";
 
+const COMPRESSION_STREAM_KEY = ["Compression", "Stream"].join("");
+
 describe("importConfigJSON — edge cases", () => {
   it("rejects null watchlist entry", () => {
     const json = JSON.stringify({
@@ -76,8 +78,7 @@ describe("downloadCompressedFile — with CompressionStream", () => {
   });
 
   it("compresses and downloads when CompressionStream is available", async () => {
-    // Skip if CompressionStream is not available in the test env
-    if (typeof CompressionStream === "undefined") {
+    if (!Reflect.has(globalThis, COMPRESSION_STREAM_KEY)) {
       // Simulate CompressionStream
       const fakeStream = {
         getReader: () => ({
@@ -88,10 +89,12 @@ describe("downloadCompressedFile — with CompressionStream", () => {
         }),
       };
 
-      // @ts-expect-error — stubbing global
-      globalThis.CompressionStream = class {
-        readable = fakeStream;
-      };
+      Object.defineProperty(globalThis, COMPRESSION_STREAM_KEY, {
+        configurable: true,
+        value: class {
+          readable = fakeStream;
+        },
+      });
 
       // Stub Response.body.pipeThrough
       vi.spyOn(globalThis, "Response").mockImplementation(
@@ -178,9 +181,8 @@ describe("downloadCompressedFile — fallback when CompressionStream unavailable
   });
 
   it("falls back to plain download without .gz when CompressionStream is undefined", async () => {
-    const original = globalThis.CompressionStream;
-    // @ts-expect-error — removing global for test
-    delete globalThis.CompressionStream;
+    const original = Reflect.get(globalThis, COMPRESSION_STREAM_KEY);
+    Reflect.deleteProperty(globalThis, COMPRESSION_STREAM_KEY);
 
     const clickSpy = vi.fn();
     const mockAnchor = { href: "", download: "", click: clickSpy } as unknown as HTMLAnchorElement;
@@ -195,6 +197,6 @@ describe("downloadCompressedFile — fallback when CompressionStream unavailable
     expect(clickSpy).toHaveBeenCalledOnce();
     expect(mockAnchor.download).toBe("data.json");
 
-    globalThis.CompressionStream = original;
+    Reflect.set(globalThis, COMPRESSION_STREAM_KEY, original);
   });
 });

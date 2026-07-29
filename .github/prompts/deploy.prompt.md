@@ -1,5 +1,6 @@
 ---
 description: "Deploy CrossTide to Cloudflare production"
+agent: "deploy-ops"
 ---
 
 # 🚀 Deploy to Production

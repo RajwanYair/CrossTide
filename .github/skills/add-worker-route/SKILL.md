@@ -18,7 +18,7 @@ Use this skill when shipping a complete, maintainable worker route — not just 
 | Cache TTL     | `quoteTtl(marketState)` for live quotes; fixed seconds for ref data          |
 | Provider      | Yahoo, Finnhub, CoinGecko, ECB, etc. — file in `worker/providers/`           |
 | Rate limit    | Default per-IP budget; raise or lower in `worker/rate-limit.ts` if justified |
-| OpenAPI entry | New `paths.<route>.<method>` block in `worker/openapi.yaml`                  |
+| OpenAPI entry | New `paths.<route>.<method>` block in `worker/routes/openapi.ts`             |
 
 ## 2️⃣ Step 2 — Provider Module
 
@@ -86,26 +86,33 @@ app.get("/api/<route>/:symbol", handle<Route>);
 
 ## 5️⃣ Step 5 — OpenAPI
 
-Add the route to `worker/openapi.yaml`:
+Add the route to `OPENAPI_SPEC.paths` in `worker/routes/openapi.ts`:
 
-```yaml
-/api/<route>/{symbol}:
-  get:
-    summary: <one-line description>
-    parameters:
-      - name: symbol
-        in: path
-        required: true
-        schema: { type: string, pattern: "^[A-Z0-9.-]{1,8}$" }
-    responses:
-      "200":
-        description: OK
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/<Schema>"
-      "400": { description: invalid input }
-      "502": { description: upstream error }
+```ts
+"/api/<route>/{symbol}": {
+  get: {
+    operationId: "get<Resource>",
+    summary: "<one-line description>",
+    parameters: [
+      {
+        name: "symbol",
+        in: "path",
+        required: true,
+        schema: { type: "string", pattern: "^[A-Z0-9.-]{1,8}$" },
+      },
+    ],
+    responses: {
+      "200": {
+        description: "OK",
+        content: {
+          "application/json": { schema: { $ref: "#/components/schemas/<Schema>" } },
+        },
+      },
+      "400": { description: "invalid input" },
+      "502": { description: "upstream error" },
+    },
+  },
+},
 ```
 
 Then regenerate the client types:

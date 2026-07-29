@@ -49,8 +49,7 @@ describe("supportsCssScope", () => {
 
   it("returns false when CSS global is absent", () => {
     const orig = globalThis.CSS;
-    // @ts-expect-error intentional test override
-    globalThis.CSS = undefined;
+    Reflect.deleteProperty(globalThis, "CSS");
     expect(supportsCssScope()).toBe(false);
     globalThis.CSS = orig;
   });

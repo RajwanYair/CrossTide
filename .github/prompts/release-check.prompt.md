@@ -1,5 +1,5 @@
 ---
-mode: "agent"
+agent: "quality-reviewer"
 model: "Claude Sonnet 4.5 (copilot)"
 description: "Run the full CrossTide pre-release checklist before tagging a version. All gates must be green."
 tools: ["read_file", "grep_search", "replace_string_in_file", "run_in_terminal", "get_errors", "memory"]
@@ -22,7 +22,7 @@ Confirm `vX.Y.Z` appears consistently in all of:
 - `.github/AGENTS.md` → header
 - `docs/ARCHITECTURE.md` → title
 - `docs/ROADMAP.md` → "Shipped baseline" line
-- `worker/openapi.yaml` → `info.version`
+- `worker/routes/openapi.ts` → spec is current and generated API types match
 
 ## 2️⃣ Quality Gates (PowerShell)
 

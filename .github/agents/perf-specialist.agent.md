@@ -1,6 +1,14 @@
 ---
 name: perf-specialist
 description: "Performance optimization specialist for CrossTide. Analyzes bundle size, runtime performance (INP/LCP/CLS), Web Worker compute offload, WASM compilation, caching strategy, and Lighthouse audits."
+argument-hint: "Specify the metric, route, card, bundle, or runtime behavior to profile"
+tools: [read, search, edit, execute, todo, playwright/*]
+user-invocable: true
+handoffs:
+	- label: Quality review
+		agent: quality-reviewer
+		prompt: Review the performance changes for correctness, coverage, and bundle regressions.
+		send: false
 ---
 
 # ⚡ @perf-specialist — Performance Optimization Expert

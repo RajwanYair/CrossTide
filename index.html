@@ -41,7 +41,7 @@
     <!-- warnings with zero protective effect.                               -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://query1.finance.yahoo.com https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://query1.finance.yahoo.com https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
     />
     <title>CrossTide</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -182,7 +182,7 @@
                       Volume
                     </th>
                     <th class="wl-col-52w">52W Range</th>
-                    <th></th>
+                    <th><span class="sr-only">Actions</span></th>
                   </tr>
                 </thead>
                 <tbody id="watchlist-body"></tbody>
@@ -263,6 +263,10 @@
             <div class="card-header"><h2>Backtest</h2></div>
             <div id="backtest-container"></div>
           </div>
+        </section>
+
+        <section id="view-strategy-comparison" class="view">
+          <div id="strategy-comparison-container"></div>
         </section>
 
         <section id="view-consensus-timeline" class="view">

@@ -1,7 +1,7 @@
 ---
-mode: "agent"
+agent: "agent"
 model: "Claude Sonnet 4.5 (copilot)"
-description: "Bump the project version consistently across all files: package.json, CHANGELOG.md, README.md, .github/AGENTS.md, copilot-instructions.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, worker/openapi.yaml."
+description: "Bump the project version consistently across package.json, CHANGELOG.md, README.md, .github/AGENTS.md, copilot-instructions.md, docs/ARCHITECTURE.md, and docs/ROADMAP.md."
 tools: ["read_file", "replace_string_in_file", "grep_search", "run_in_terminal"]
 ---
 
@@ -22,7 +22,7 @@ Bump the version from the current value to a new semver target.
 2. Load `.github/skills/release/SKILL.md` for the complete file table.
 3. For each file in the SKILL table, replace **every** occurrence of the old version with the new one.
 4. Add a CHANGELOG entry at the top: `## [X.Y.Z] — YYYY-MM-DD` with a bulleted summary of feat/fix/perf items.
-5. Regenerate the OpenAPI types if `worker/openapi.yaml` changed:
+5. Regenerate the OpenAPI types if `worker/routes/openapi.ts` changed:
 
    ```powershell
    npm run gen:api-types

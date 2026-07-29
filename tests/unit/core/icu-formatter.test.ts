@@ -143,8 +143,8 @@ describe("defineMessages + formatMessage", () => {
   });
 
   it("formatMessage returns the key for an unknown key", () => {
-    // @ts-expect-error — intentionally testing unknown key runtime behaviour
-    expect(formatMessage(messages, "unknownKey")).toBe("unknownKey");
+    const unknownKey = "unknownKey" as keyof typeof messages;
+    expect(formatMessage(messages, unknownKey)).toBe("unknownKey");
   });
 });
 

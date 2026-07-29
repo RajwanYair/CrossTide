@@ -108,9 +108,10 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 | Gate          | Command                                   | Requirement                    |
 | ------------- | ----------------------------------------- | ------------------------------ |
 | Type check    | `npm run typecheck`                       | Zero errors                    |
-| ESLint        | `npm run lint`                            | Zero warnings                  |
+| ESLint        | `npm run lint`                            | Zero warnings (cached)         |
 | Stylelint     | `npm run lint:css`                        | Zero warnings                  |
-| Prettier      | `npm run format:check`                    | Exit 0                         |
+| Format        | `npm run format:check`                    | Exit 0 (Biome, not Prettier)   |
+| File headers  | `npm run audit:headers`                   | 100% — every file has a docblock |
 | Tests         | `npm run test:coverage`                   | ≥90% stmt/line/fn, ≥80% branch |
 | Build         | `npm run build`                           | Successful                     |
 | Bundle        | `npm run check:bundle`                    | <250 KB gzip                   |
@@ -120,27 +121,57 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 
 Run all: `npm run ci`
 
+> `lint` writes a cache to `node_modules/.cache/eslint/` (38s → 3.4s on re-run).
+> Use `lint:nocache` to force a full pass. `ci` calls `build:only` because
+> `typecheck` has already run in the same pipeline.
+
 ## 🧠 Recent Learnings (must retain)
 
 1. **PWA deploys must inject Workbox manifest**
-	- Any deploy workflow that runs Vite build must also run `node scripts/workbox-inject.mjs` (or call `npm run build` if that script already chains it).
-	- Without injection, `sw.js` keeps fallback entries with `revision: null`, causing stale clients and broken refresh UX.
+   - Any deploy workflow that runs Vite build must also run `node scripts/workbox-inject.mjs` (or call `npm run build` if that script already chains it).
+   - Without injection, `sw.js` keeps fallback entries with `revision: null`, causing stale clients and broken refresh UX.
 
 2. **Service Worker update UX needs a safe fallback path**
-	- If `registration.waiting` is absent at click-time, update handlers must not hang indefinitely.
-	- Keep activation logic resilient with explicit no-waiting handling and timeout fallback.
+   - If `registration.waiting` is absent at click-time, update handlers must not hang indefinitely.
+   - Keep activation logic resilient with explicit no-waiting handling and timeout fallback.
 
 3. **Static-host production data flow is Worker-first**
-	- On GitHub Pages, direct Yahoo requests can fail via CSP + CORS.
-	- Search/quote/chart flows in production should route through allowed Worker origins.
+   - On GitHub Pages, direct Yahoo requests can fail via CSP + CORS.
+   - Search/quote/chart flows in production should route through allowed Worker origins.
 
 4. **UI async flows must surface provider failures**
-	- Event-handler promise chains require `.catch()` and explicit empty/error states.
-	- Never allow silent rejection paths that leave empty UI with no feedback.
+   - Event-handler promise chains require `.catch()` and explicit empty/error states.
+   - Never allow silent rejection paths that leave empty UI with no feedback.
 
 5. **Router route table completeness must be tested**
-	- Every registered card route must round-trip through router parse/build mappings.
-	- Keep a unit guard that compares card registry routes against router parsing behavior.
+   - Every registered card route must round-trip through router parse/build mappings.
+   - Keep a unit guard that compares card registry routes against router parsing behavior.
+
+6. **Vitest runs as two projects — put new tests in the right one**
+   - `node` project: `tests/unit/{domain,worker,providers,types,helpers}/**` — no DOM globals available, `tests/helpers/node-network.ts` blocks unstubbed `fetch`.
+   - `dom` project: everything else, happy-dom + `tests/helpers/happy-dom-network.ts`.
+   - A DOM-free-by-path test that still needs browser globals (`self`, `WebAssembly`) must declare `@vitest-environment happy-dom` in its file docblock — config-level `exclude` beats `include`, so exceptions cannot be expressed as globs.
+
+7. **Never call `npx` for a devDependency**
+   - Locally use the bare binary name (npm puts `node_modules/.bin` on PATH); in workflows use `./node_modules/.bin/<tool>`.
+   - `npx` may silently fetch a *different* version from the registry. This caused the Astro Pages deploy failure (`Named export 'parseCookie' not found`) because a registry-fetched Astro resolved a CommonJS `cookie`.
+   - Build workspace packages with `npm run build --workspace <name>`.
+   - This applies to config files too: Playwright's `webServer.command` uses `npm run dev --`, not `npx vite`.
+
+8. **Wall-clock assertions in unit tests must tolerate scheduler jitter**
+   - Budget assertions (`expect(elapsed).toBeLessThan(n)`) flake under the parallel suite; add `{ retry: 2 }` or move them to `tests/bench/`.
+
+9. **`import.meta.url` is not a `file:` URL in the `dom` project**
+   - happy-dom rewrites it, so `fileURLToPath(import.meta.url)` throws `ERR_INVALID_URL_SCHEME`.
+   - To read a repo file from a test, resolve from the Vitest root: `resolve(process.cwd(), "tests/e2e/cards.spec.ts")`.
+
+10. **Every file needs a leading docblock — it is a CI gate**
+    - `npm run audit:headers` (inside `lint:all`) fails if any file in `src/`, `worker/`, or `scripts/` lacks a `/** … */` header.
+    - A one-line summary at the top of a file lets an assistant identify its purpose without parsing the body, which is the cheapest available context saving.
+
+11. **Machine-scope toolchain**
+    - Shared CLIs live in `C:\ProgramData\npm` (`NPM_CONFIG_GLOBALCONFIG` → `C:\ProgramData\npm\etc\npmrc`); Playwright browsers in `C:\ProgramData\ms-playwright`.
+    - Machine env vars only reach *new* processes — a VS Code restart is required after changing them, otherwise `tsx`/`wrangler` appear missing on PATH.
 
 ## 🔌 Worker API Endpoints
 

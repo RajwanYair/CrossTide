@@ -1,5 +1,5 @@
 ---
-mode: "agent"
+agent: "api-integrator"
 model: "Claude Sonnet 4.5 (copilot)"
 description: "Debug a broken Cloudflare Worker route: fetch failures, Valibot validation errors, KV read/write, rate-limit issues, envelope shape mismatches."
 tools: ["read_file", "grep_search", "replace_string_in_file", "run_in_terminal"]
@@ -81,7 +81,7 @@ curl "http://localhost:8787/api/health"
 | 429 on every request          | Rate-limit budget too low or KV binding wrong                   |
 | Client fails CORS preflight   | Add origin to allowlist in `worker/cors.ts`                     |
 | Stale cache served past TTL   | `kvGet` reading expired entry — TTL not honoured by KV provider |
-| OpenAPI schema drift          | Run `npm run gen:api-types`; update `worker/openapi.yaml`       |
+| OpenAPI schema drift          | Run `npm run gen:api-types`; update `worker/routes/openapi.ts`  |
 
 ## 📤 Output
 

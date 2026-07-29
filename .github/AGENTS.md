@@ -1,6 +1,6 @@
 # 🤖 CrossTide — Custom Copilot Agents
 
-> Version: v11.43.1 · Tests: 621 files · Coverage: ≥90% stmt/line/fn · ≥80% branch
+> Version: v11.44.0 · Tests: 622 files · Coverage: ≥90% stmt/line/fn · ≥80% branch
 
 Custom agent modes for VS Code GitHub Copilot. Each agent loads only the files it needs.
 Global rules (coding conventions, commit format, quality gates) are in `copilot-instructions.md`.
@@ -10,11 +10,10 @@ Layer-specific rules are in `.github/instructions/` — agents reference them, n
 
 | Agent | File | Expertise |
 |---|---|---|
-| `@domain` | — (AGENTS.md inline) | Pure domain layer — indicators, consensus, analytics |
-| `@worker` | — (AGENTS.md inline) | Hono Worker — routes, KV, D1, WebSocket |
-| `@card` | — (AGENTS.md inline) | Route cards — CardModule, morphdom, Web Components |
+| `@domain-specialist` | `agents/domain-specialist.agent.md` | Pure domain layer — indicators, consensus, analytics |
 | `@api-integrator` | `agents/api-integrator.agent.md` | Data flows, provider chain, signal stores |
 | `@card-designer` | `agents/card-designer.agent.md` | Card layout, theme, accessibility |
+| `@compat-specialist` | `agents/compat-specialist.agent.md` | Browser compatibility and cross-browser tests |
 | `@quality-reviewer` | `agents/quality-reviewer.agent.md` | Lint, coverage, security, dead code |
 | `@deploy-ops` | `agents/deploy-ops.agent.md` | CF deployment, KV/D1, Docker, CI/CD |
 | `@perf-specialist` | `agents/perf-specialist.agent.md` | Bundle, INP, LCP, WASM, caching |

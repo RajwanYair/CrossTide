@@ -36,6 +36,7 @@ export default defineConfig({
     target: "es2022",
     sourcemap: true,
     minify: "oxc",
+    cssMinify: "esbuild",
     outDir: "dist",
     rollupOptions: {
       input: {

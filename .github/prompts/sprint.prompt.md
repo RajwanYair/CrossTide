@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: "agent"
 description: Plan and execute a development sprint — implement one feature from ROADMAP.md, commit with conventional commit, and optionally create a GitHub release.
 tools:
   - read_file
