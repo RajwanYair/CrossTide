@@ -252,4 +252,54 @@ export interface ApiRoutes {
     readonly request: never;
     readonly response: unknown;
   };
+  /** GET /api/dividends/{symbol} */
+  readonly getDividends: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/insiders/{symbol} */
+  readonly getInsiderTrades: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/etf/{symbol}/holdings */
+  readonly getEtfHoldings: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/regime */
+  readonly getMarketRegime: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/anomaly */
+  readonly getAnomalySignals: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/archive */
+  readonly listArchivedOhlcv: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/archive/{ticker} */
+  readonly getArchivedOhlcv: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/alpaca/quote/{symbol} */
+  readonly getAlpacaQuote: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/alpaca/bars/{symbol} */
+  readonly getAlpacaBars: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/portfolio/analytics */
+  readonly analyzePortfolio: {
+    readonly request: Record<string, unknown>;
+    readonly response: Record<string, unknown>;
+  };
 }

@@ -874,6 +874,312 @@ export const OPENAPI_SPEC = {
         },
       },
     },
+    "/api/dividends/{symbol}": {
+      get: {
+        operationId: "getDividends",
+        summary: "Dividend history",
+        description: "Returns historical dividend events and yield metadata for a symbol.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Dividend events",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/insiders/{symbol}": {
+      get: {
+        operationId: "getInsiderTrades",
+        summary: "Insider activity",
+        description: "Returns recent insider buy/sell filings for a symbol.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Insider filings",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/etf/{symbol}/holdings": {
+      get: {
+        operationId: "getEtfHoldings",
+        summary: "ETF holdings",
+        description: "Returns top holdings and weights for an ETF symbol.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "ETF ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ETF holdings",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/regime": {
+      get: {
+        operationId: "getMarketRegime",
+        summary: "Market regime classification",
+        description:
+          "Returns market regime features and the current classified regime for requested symbols.",
+        tags: ["Signals"],
+        parameters: [
+          {
+            name: "ticker",
+            in: "query",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+          {
+            name: "lookback",
+            in: "query",
+            required: false,
+            description: "Lookback period in bars",
+            schema: { type: "integer", minimum: 20, maximum: 1000, default: 252 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Regime classification",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/anomaly": {
+      get: {
+        operationId: "getAnomalySignals",
+        summary: "Price anomaly detection",
+        description: "Returns anomaly scores and events from statistical outlier detection models.",
+        tags: ["Signals"],
+        parameters: [
+          {
+            name: "ticker",
+            in: "query",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+          {
+            name: "window",
+            in: "query",
+            required: false,
+            description: "Rolling window size",
+            schema: { type: "integer", minimum: 10, maximum: 500, default: 60 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Anomaly output",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/archive": {
+      get: {
+        operationId: "listArchivedOhlcv",
+        summary: "Archived OHLCV index",
+        description: "Returns available archived symbols and metadata from cold storage.",
+        tags: ["System"],
+        responses: {
+          "200": {
+            description: "Archive index",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "503": {
+            description: "Archive storage not available",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/archive/{ticker}": {
+      get: {
+        operationId: "getArchivedOhlcv",
+        summary: "Archived OHLCV series",
+        description: "Returns long-range archived candles for a single symbol.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "ticker",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+          {
+            name: "range",
+            in: "query",
+            required: false,
+            description: "History range",
+            schema: {
+              type: "string",
+              enum: ["1y", "2y", "5y", "10y", "20y", "max"],
+              default: "max",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Archived candle payload",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "503": {
+            description: "Archive storage not available",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/alpaca/quote/{symbol}": {
+      get: {
+        operationId: "getAlpacaQuote",
+        summary: "Alpaca quote fallback",
+        description: "Returns a quote from Alpaca Markets for the provided symbol.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Alpaca quote",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/alpaca/bars/{symbol}": {
+      get: {
+        operationId: "getAlpacaBars",
+        summary: "Alpaca bars fallback",
+        description: "Returns OHLCV bars from Alpaca Markets for the provided symbol.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+          {
+            name: "range",
+            in: "query",
+            required: false,
+            description: "History range",
+            schema: {
+              type: "string",
+              enum: ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "max"],
+              default: "1mo",
+            },
+          },
+          {
+            name: "interval",
+            in: "query",
+            required: false,
+            description: "Bar interval",
+            schema: {
+              type: "string",
+              enum: ["1m", "5m", "15m", "1h", "1d", "1wk", "1mo"],
+              default: "1d",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Alpaca bar payload",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/portfolio/analytics": {
+      post: {
+        operationId: "analyzePortfolio",
+        summary: "Portfolio analytics",
+        description:
+          "Calculates aggregate portfolio metrics including P/L, concentration and risk measures.",
+        tags: ["Portfolio"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Portfolio analytics output",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
   },
   components: {
     schemas: {

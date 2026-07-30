@@ -48,18 +48,9 @@ function documentedRoutes(): string[] {
  */
 const KNOWN_GAP: readonly string[] = [
   "DELETE /api/keys/{id}",
-  "GET /api/alpaca/bars/{symbol}",
-  "GET /api/alpaca/quote/{symbol}",
-  "GET /api/anomaly",
-  "GET /api/archive",
-  "GET /api/archive/{ticker}",
   "GET /api/auth/challenge",
-  "GET /api/dividends/{symbol}",
-  "GET /api/etf/{symbol}/holdings",
-  "GET /api/insiders/{symbol}",
   "GET /api/keys",
   "GET /api/keys/get",
-  "GET /api/regime",
   "GET /api/sync",
   "GET /api/ws/{symbol}",
   "GET /favicon.ico",
@@ -71,7 +62,6 @@ const KNOWN_GAP: readonly string[] = [
   "POST /api/keys",
   "POST /api/monte-carlo",
   "POST /api/pairs",
-  "POST /api/portfolio/analytics",
   "POST /api/signal-dsl/execute-script",
   "PUT /api/sync",
 ];
