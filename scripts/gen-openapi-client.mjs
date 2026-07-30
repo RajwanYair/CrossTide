@@ -14,6 +14,7 @@
 
 // @ts-check
 import { writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -26,7 +27,6 @@ const outFile = resolve(rootDir, "src", "core", "api-types.ts");
 // We use a child process so type-stripping applies to the TypeScript import.
 let spec;
 try {
-  const { execSync } = await import("node:child_process");
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
   const { pathToFileURL } = await import("node:url");
@@ -159,6 +159,11 @@ const banner = `/**
 `;
 
 writeFileSync(outFile, banner + schemaInterfaces + "\n\n" + apiRoutes + "\n", "utf-8");
+execSync(`biome format --write "${outFile}"`, {
+  cwd: rootDir,
+  encoding: "utf-8",
+  stdio: "pipe",
+});
 console.log(`Generated ${outFile}`);
 console.log(`  ${Object.keys(schemas).length} schema interfaces`);
 console.log(`  ${Object.values(paths).flatMap((m) => Object.values(m)).length} route operations`);
