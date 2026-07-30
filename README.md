@@ -171,7 +171,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | **NLP news sentiment** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **WebSocket live streaming** | ✅ (DO fan-out) | ✅ | ❌ | ❌ | ❌ |
 | **OTel distributed tracing** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **55+ technical indicators** | ✅ | ✅ | ❌ | Partial | ✅ |
+| **80+ technical indicators** | ✅ | ✅ | ❌ | Partial | ✅ |
 
 ## 🛠️ Scripts
 
@@ -240,10 +240,10 @@ The Cloudflare Worker (`worker/`) provides:
 
 ```text
 src/
-  domain/   Pure calculators (30+ indicators, consensus, backtest, risk)
+  domain/   Pure calculators (80+ indicators, consensus, backtest, risk)
   core/     Signals, cache, config, fetch, idb, i18n, storage-manager
   providers/ Market-data adapters (Yahoo, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko)
-  cards/    Composable UI cards — 13 route cards, lazy-loaded via registry
+  cards/    Composable UI cards — 23 route cards, lazy-loaded via registry
   ui/       Router, toast, modal, command palette, a11y, view transitions
   types/    Shared interfaces + Valibot schemas
   styles/   Design tokens, base, responsive, components, color-blind palettes

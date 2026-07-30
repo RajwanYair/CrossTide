@@ -24,6 +24,8 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - **`npm run ci` no longer typechecks twice**: it now calls `build:only`, since `typecheck` already ran earlier in the same pipeline.
 - **CI uses installed binaries instead of `npx`**: workflow steps now call `./node_modules/.bin/*` for `vite`, `playwright`, `commitlint`, and `wrangler`. Remaining `npx` calls are only for tools deliberately fetched from the registry (`@lhci/cli`, `cyclonedx`, `license-checker`, `oxlint`, `serve`, `asc`).
 - **Local scripts and git hooks drop `npx`**, resolving `commitlint`/`lint-staged` straight from `node_modules/.bin`.
+- **Roadmap E21 widget follow-up is now merged and CI-verified on `main`.** The quote and consensus embeddable elements plus the out-of-app host-page smoke test shipped in commit `08f4f9b`, and CI run `30557395874` completed green across lint/build, Lighthouse, worker health and Playwright E2E.
+- **P10 dependency/runtime surface audit is now tracked with explicit outcomes.** A no-`rg` PowerShell scan over `src/`, `worker/`, `scripts/`, `mcp-server/`, `packages/`, `docs-site/` and root configs identified one likely runtime candidate (`lit-html`) and mobile packaging dependencies (`@capacitor/*`) that require keep/remove decisions based on native packaging scope; docs now reflect the active card/indicator counts discovered during the same pass.
 
 ### ✨ Added
 

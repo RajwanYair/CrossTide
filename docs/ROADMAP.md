@@ -335,12 +335,12 @@ the current sprint are marked complete so the queue can keep moving without losi
 7. E21: add a docs-site page with copy-paste widget examples — ✅
 8. E21: add a host-page E2E smoke test that loads the built widget outside the app shell — ✅
 9. E18: create the Discord server invite link and wire it into contributor docs — ⛔ owner action
-10. P10: audit the 52 remaining core/ui/cards orphan modules from [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ⬜
+10. P10: audit the 52 remaining core/ui/cards orphan modules from [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ✅
 11. P10: wire or delete the first 10 orphan modules with their tests — ⬜
 12. P10: wire or delete the next 10 orphan modules with their tests — ⬜
 13. P10: wire or delete the remaining orphan modules and close [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ⬜
-14. P10: audit unused dependencies against the current runtime surface — ⬜
-15. P10: remove stale config/docs found by the orphan and dependency audits — ⬜
+14. P10: audit unused dependencies against the current runtime surface — ✅
+15. P10: remove stale config/docs found by the orphan and dependency audits — 🟡
 16. E2: document the first 10 of the remaining 29 Worker routes in OpenAPI — ⬜
 17. E2: document the next 10 remaining Worker routes in OpenAPI — ⬜
 18. E2: document the final 9 routes, remove `KNOWN_GAP`, and close [#105](https://github.com/RajwanYair/CrossTide/issues/105) — ⬜
