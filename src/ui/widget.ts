@@ -5,16 +5,17 @@
  * apps can embed to show a CrossTide mini-chart.
  *
  * Usage:
- *   <script type="module" src="https://cdn.crosstide.dev/widget.mjs"></script>
- *   <crosstide-chart ticker="AAPL" interval="1d" theme="dark"></crosstide-chart>
+ *   <script type="module" src="https://<host>/widget.mjs"></script>
+ *   <crosstide-chart ticker="AAPL" interval="1d" range="3mo" theme="dark"></crosstide-chart>
  *
  * Attributes:
  *   - ticker     — Stock symbol (required, e.g. "AAPL")
  *   - interval   — Candle interval: "1d" | "1w" | "1mo" (default "1d")
+ *   - range      — Candle range: "1mo" | "3mo" | "6mo" | "1y" | "5y" (default "3mo")
  *   - theme      — "dark" | "light" | "auto" (default "auto")
  *   - height     — Height in px or CSS value (default "300")
  *   - show-volume— Show volume bars (default "true")
- *   - api-base   — Override API base URL (default "https://api.crosstide.dev")
+ *   - api-base   — Override Worker API base URL (default "https://worker.crosstide.pages.dev")
  *
  * The widget renders inside a closed Shadow DOM for style isolation.
  */
@@ -33,6 +34,7 @@ interface CandleData {
 interface WidgetConfig {
   readonly ticker: string;
   readonly interval: string;
+  readonly range: string;
   readonly theme: "dark" | "light" | "auto";
   readonly height: number;
   readonly showVolume: boolean;
@@ -208,6 +210,7 @@ export class CrosstideChartElement extends HTMLElement {
   static readonly observedAttributes = [
     "ticker",
     "interval",
+    "range",
     "theme",
     "height",
     "show-volume",
@@ -244,10 +247,14 @@ export class CrosstideChartElement extends HTMLElement {
     return {
       ticker: this.getAttribute("ticker") ?? "AAPL",
       interval: this.getAttribute("interval") ?? "1d",
+      range: this.getAttribute("range") ?? "3mo",
       theme: (this.getAttribute("theme") as "dark" | "light" | "auto") ?? "auto",
       height: parseInt(this.getAttribute("height") ?? "300", 10) || 300,
       showVolume: this.getAttribute("show-volume") !== "false",
-      apiBase: this.getAttribute("api-base") ?? "https://api.crosstide.dev",
+      apiBase: (this.getAttribute("api-base") ?? "https://worker.crosstide.pages.dev").replace(
+        /\/+$/u,
+        "",
+      ),
     };
   }
 
@@ -258,7 +265,7 @@ export class CrosstideChartElement extends HTMLElement {
     const config = this.#getConfig();
 
     try {
-      const url = `${config.apiBase}/api/yahoo/chart?ticker=${encodeURIComponent(config.ticker)}&interval=${encodeURIComponent(config.interval)}`;
+      const url = `${config.apiBase}/api/chart?ticker=${encodeURIComponent(config.ticker)}&range=${encodeURIComponent(config.range)}&interval=${encodeURIComponent(config.interval)}`;
       const resp = await fetch(url, { signal: this.#abortCtrl.signal });
 
       if (!resp.ok) {

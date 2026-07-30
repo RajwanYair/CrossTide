@@ -19,6 +19,7 @@ describe("CrosstideChartElement", () => {
     expect(CrosstideChartElement.observedAttributes).toEqual([
       "ticker",
       "interval",
+      "range",
       "theme",
       "height",
       "show-volume",
@@ -95,10 +96,32 @@ describe("CrosstideChartElement", () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : (input as Request).url;
       expect(url).toContain("ticker=AAPL");
+      expect(url).toContain("/api/chart?");
+      expect(url).toContain("range=3mo");
+      expect(url).toContain("interval=1d");
+      expect(url).toStartWith("https://worker.crosstide.pages.dev/");
       return new Response(JSON.stringify({ candles: [] }), { status: 200 });
     });
 
     const el = document.createElement("crosstide-chart") as CrosstideChartElement;
+    document.body.appendChild(el);
+
+    vi.restoreAllMocks();
+  });
+
+  it("should respect custom range and api base attributes", () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const url = typeof input === "string" ? input : (input as Request).url;
+      expect(url).toContain("range=1y");
+      expect(url).toContain("ticker=NVDA");
+      expect(url).toStartWith("https://example.test/api/chart");
+      return new Response(JSON.stringify({ candles: [] }), { status: 200 });
+    });
+
+    const el = document.createElement("crosstide-chart") as CrosstideChartElement;
+    el.setAttribute("ticker", "NVDA");
+    el.setAttribute("range", "1y");
+    el.setAttribute("api-base", "https://example.test/");
     document.body.appendChild(el);
 
     vi.restoreAllMocks();

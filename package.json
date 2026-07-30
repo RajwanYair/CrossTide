@@ -48,9 +48,10 @@
   "scripts": {
     "dev": "vite",
     "dev:components": "vite docs/components-preview.html",
-    "build": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit && vite build && node scripts/workbox-inject.mjs",
-    "build:only": "vite build && node scripts/workbox-inject.mjs",
+    "build": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit && vite build && npm run build:widget && node scripts/workbox-inject.mjs",
+    "build:only": "vite build && npm run build:widget && node scripts/workbox-inject.mjs",
     "build:domain": "npm run build --workspace @crosstide/domain",
+    "build:widget": "vite build --config vite.widget.config.ts",
     "build:sourcemaps": "npm run build && node scripts/upload-sourcemaps.mjs",
     "preview": "vite preview",
     "test": "vitest run",

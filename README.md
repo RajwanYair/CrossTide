@@ -38,6 +38,7 @@ interactive charting, and offline-first PWA support.
 | **Market Intelligence** | Heatmap, sector rotation, relative strength, market breadth, correlation matrix, seasonality patterns |
 | **Alerts** | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions |
 | **Data Providers** | Yahoo Finance, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko, Frankfurter, and FRED with automatic failover and health reporting |
+| **Embeddable Widgets** | Ship a standalone `<script type="module">` bundle with a `<crosstide-chart>` custom element backed by the Worker chart API |
 | **PWA / Offline** | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile |
 | **Accessibility** | WCAG 2.2 AA verified on all 23 routes (contrast, target size, error suggestion), keyboard nav, color-blind palettes, skip links, opt-in AAA enhanced-contrast mode |
 | **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP |
@@ -64,6 +65,30 @@ npx wrangler secret put ALPHA_VANTAGE_KEY
 Massive and Alpha Vantage free tiers provide delayed/end-of-day equity fallbacks. Frankfurter is
 a no-key, open-source reference-rate fallback for forex; it does not provide executable bid/ask
 prices.
+
+## 🔌 Embeddable Widget
+
+CrossTide now ships a standalone `dist/widget.mjs` bundle for third-party sites. The bundle
+auto-registers a `<crosstide-chart>` custom element and fetches candles from the production
+Worker by default.
+
+```html
+<script
+  type="module"
+  src="https://rajwanyair.github.io/CrossTide/widget.mjs"
+></script>
+
+<crosstide-chart
+  ticker="AAPL"
+  interval="1d"
+  range="3mo"
+  theme="auto"
+  height="320"
+></crosstide-chart>
+```
+
+Supported attributes: `ticker`, `interval`, `range`, `theme`, `height`, `show-volume`, `api-base`.
+Set `api-base` when you want the widget to call a self-hosted Worker instead of the public one.
 
 ## 🎬 Demo
 
@@ -144,6 +169,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | `npm run dev` | Start dev server (<http://localhost:5173>) |
 | `npm run dev:components` | Component preview grid (<http://localhost:5173/dev/components.html>) |
 | `npm run build` | TypeScript check + production build |
+| `npm run build:widget` | Build the standalone embeddable `widget.mjs` bundle |
 | `npm test` | Run unit tests |
 | `npm run test:fast` | Unit tests on the threads pool (local iteration) |
 | `npm run test:coverage` | Tests with v8 coverage |

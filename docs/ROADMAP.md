@@ -314,12 +314,43 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | E9 | Compute | WASM Monte Carlo VaR | S | P1 | L | E8 | ⬜ |
 | E10 | Compute | WASM backtest kernel | S | P1 | L | E8 | ⬜ |
 | E20 | Platform | Publish `@crosstide/domain` to npm | T | P0 | M | — | 🟡 |
-| E21 | Platform | Embeddable widgets (`<script>` snippet) | T | P0 | L | E2 | ⬜ |
+| E21 | Platform | Embeddable widgets (`<script>` snippet) | T | P0 | L | E2 | 🟡 |
 | E22 | Platform | Plugin sandbox (Worker-isolated) | T | P0 | L | E20 | ⬜ |
 | E23 | Platform | Signal adapters (React/Solid/Svelte) | T | P1 | M | E20 | ⬜ |
 | T4 | DX | pnpm + Turborepo migration | T | P2 | M | — | ⬜ |
 
 ---
+
+## 5.1 Next 25-task execution queue
+
+This queue turns the phase tables into the next concrete sprint order. Items already delivered in
+the current sprint are marked complete so the queue can keep moving without losing the plan.
+
+1. E21: ship `dist/widget.mjs` from the existing widget module — ✅
+2. E21: point the widget at the Worker `GET /api/chart` contract and add `range` — ✅
+3. E21: publish the embed snippet and widget attributes in `README.md` — ✅
+4. E21: add a build/output smoke test for `widget.mjs` — ⬜
+5. E21: add a quote badge / tape widget alongside the chart widget — ⬜
+6. E21: add a consensus badge widget — ⬜
+7. E21: add a docs-site page with copy-paste widget examples — ⬜
+8. E21: add a host-page E2E smoke test that loads the built widget outside the app shell — ⬜
+9. E18: create the Discord server invite link and wire it into contributor docs — ⛔ owner action
+10. P10: audit the 52 remaining core/ui/cards orphan modules from [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ⬜
+11. P10: wire or delete the first 10 orphan modules with their tests — ⬜
+12. P10: wire or delete the next 10 orphan modules with their tests — ⬜
+13. P10: wire or delete the remaining orphan modules and close [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ⬜
+14. P10: audit unused dependencies against the current runtime surface — ⬜
+15. P10: remove stale config/docs found by the orphan and dependency audits — ⬜
+16. E2: document the first 10 of the remaining 29 Worker routes in OpenAPI — ⬜
+17. E2: document the next 10 remaining Worker routes in OpenAPI — ⬜
+18. E2: document the final 9 routes, remove `KNOWN_GAP`, and close [#105](https://github.com/RajwanYair/CrossTide/issues/105) — ⬜
+19. E2: add `security` blocks for auth, key, and sync routes — ⬜
+20. E20: add the `NPM_TOKEN` secret and publish `@crosstide/domain` for real — ⛔ secret missing
+21. E23: ship the React signal adapter package — ⬜
+22. E23: ship the Solid signal adapter package — ⬜
+23. E23: ship the Svelte signal adapter package — ⬜
+24. E23: document adapter usage and versioning alongside `@crosstide/domain` — ⬜
+25. E4: stream agent responses over SSE from the Worker edge — ⬜
 
 ## 6. 📋 Decision Audit v11 — Final Verdicts
 
@@ -764,11 +795,13 @@ flowchart LR
 |---|---|---|---|
 | E22 | Plugin sandbox (Worker-isolated) | P0 | ⬜ |
 | E20 | Publish `@crosstide/domain` to npm | P0 | 🟡 |
-| E21 | Embeddable widgets (`<script>` snippet) | P0 | ⬜ |
+| E21 | Embeddable widgets (`<script>` snippet) | P0 | 🟡 |
 | E23 | Signal adapters (React, Solid, Svelte) | P1 | ⬜ |
 | T4 | pnpm + Turborepo migration | P2 | ⬜ |
 
-**E20 detail (partial):** `packages/domain/` builds `src/domain` into a single side-effect-free ESM bundle with 688 exports and zero runtime dependencies, verified by importing the built artifact in bare Node. Extracting it surfaced a layer violation that `arch-check` had been configured not to see: `domain->core` and `domain->cards` sat on its `ALLOWED_CROSS_LAYER` allowlist, so three modules in the layer documented as 100% pure were reaching outward — `fundamental-data.ts` called core's `fetchWithTimeout` and read `import.meta.env`, `watchlist-share.ts` imported core's base64 helpers, and `heatmap-drilldown.ts` imported a type from a card. `fundamental-data.ts` moved to `src/providers/` where a Yahoo adapter belongs, `base64-url.ts` moved down into `src/domain/` because it is pure and runtime-agnostic, `ConstituentStock` moved to `src/types/domain.ts`, and both allowlist entries are gone. `tests/unit/domain/package-manifest.test.ts` walks every file in the layer and fails on any relative import that escapes `src/domain` or `src/types`, so the allowlist cannot quietly widen again. `.github/workflows/publish-domain.yml` runs the full gate set, asserts the tarball is dependency-free, and publishes with npm provenance. _Remaining:_ an `NPM_TOKEN` repository secret with publish rights on the `@crosstide` scope.
+**E20 detail (partial):** `packages/domain/` builds `src/domain` into a single side-effect-free ESM bundle with 688 exports and zero runtime dependencies, verified by importing the built artifact in bare Node. Extracting it surfaced a layer violation that `arch-check` had been configured not to see: `domain->core` and `domain->cards` sat on its `ALLOWED_CROSS_LAYER` allowlist, so three modules in the layer documented as 100% pure were reaching outward — `fundamental-data.ts` called core's `fetchWithTimeout` and read `import.meta.env`, `watchlist-share.ts` imported core's base64 helpers, and `heatmap-drilldown.ts` imported a type from a card. `fundamental-data.ts` moved to `src/providers/` where a Yahoo adapter belongs, `base64-url.ts` moved down into `src/domain/` because it is pure and runtime-agnostic, `ConstituentStock` moved to `src/types/domain.ts`, and both allowlist entries are gone. `tests/unit/domain/package-manifest.test.ts` walks every file in the layer and fails on any relative import that escapes `src/domain` or `src/types`, so the allowlist cannot quietly widen again. `.github/workflows/publish-domain.yml` runs the full gate set, asserts the tarball is dependency-free, and publishes with npm provenance; when the secret is absent it now skips publish cleanly instead of failing the release train red. _Remaining:_ an `NPM_TOKEN` repository secret with publish rights on the `@crosstide` scope.
+
+**E21 detail (partial):** `src/ui/widget.ts` was already present and tested, but it was effectively dead code: nothing built it, the usage comment pointed at a fictional CDN URL, and the fetch path targeted `/api/yahoo/chart`, a dev-only proxy route that does not exist in production. `vite.widget.config.ts` now emits a stable `dist/widget.mjs` bundle as part of the normal build, `package.json` exposes that build via `npm run build:widget`, and the widget calls the Worker `/api/chart` endpoint with a real `range` attribute instead of hardcoding one timespan. `README.md` now carries the copy-paste embed snippet and the supported attribute list. _Remaining:_ a docs-site page, an out-of-app smoke test, and more widget types than the current chart-first element.
 
 ---
 
