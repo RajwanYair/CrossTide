@@ -1,8 +1,8 @@
 # 🗺️ CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
 
-> **Date:** July 29, 2026
-> **Current version:** v11.44.0
-> **Codebase:** 221 domain modules · 52 cards · 45 Worker routes · 632 test files (7,160 tests)
+> **Date:** July 31, 2026
+> **Current version:** v11.44.1
+> **Codebase:** 221 domain modules · 52 cards · 56 Worker routes · 632 test files (7,160 tests)
 > **Bundle:** 212.1 KB gzip (budget 250 KB) · 50 SW precache entries
 > **Coverage:** 93.15% stmt · 84.03% branch · 95.06% func · 94.96% lines
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
@@ -293,7 +293,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | E12 | Data | Alpaca Markets provider (free real-time) | Q | P0 | M | P4 | ⬜ |
 | E11 | Data | Wire WebSocket DO fan-out (real-time) | Q | P0 | L | E12 | ⬜ |
 | E13 | Data | BYOK — encrypted user API keys in D1 | Q | P1 | M | P3 | ⬜ |
-| E2 | Agent | Formalize single data layer (OpenAPI contract) | Q | P1 | L | — | 🟡 |
+| E2 | Agent | Formalize single data layer (OpenAPI contract) | Q | P1 | L | — | ✅ |
 | E3 | Agent | Agent tool manifest (typed MCP tools) | Q | P1 | M | — | ✅ |
 | Q3 | Quality | Signal DSL fuzz testing | Q | P2 | M | — | ✅ |
 | Q4 | Quality | Property tests → 50+ total | Q | P1 | M | — | ✅ |
@@ -343,7 +343,7 @@ the current sprint are marked complete so the queue can keep moving without losi
 15. P10: remove stale config/docs found by the orphan and dependency audits — 🟡
 16. E2: document the first 10 of the remaining 29 Worker routes in OpenAPI — ✅
 17. E2: document the next 10 remaining Worker routes in OpenAPI — ✅
-18. E2: document the final 8 routes, remove `KNOWN_GAP`, and close [#105](https://github.com/RajwanYair/CrossTide/issues/105) — ⬜
+18. E2: document the final 8 routes, remove `KNOWN_GAP`, and close [#105](https://github.com/RajwanYair/CrossTide/issues/105) — ✅
 19. E2: add `security` blocks for auth, key, and sync routes — ✅
 20. E20: add the `NPM_TOKEN` secret and publish `@crosstide/domain` for real — ⛔ secret missing
 21. E23: ship the React signal adapter package — ⬜
@@ -382,7 +382,7 @@ the current sprint are marked complete so the queue can keep moving without losi
 | Cloudflare all-in ($0/mo) | **KEEP** | 90% |
 | D1 (SQLite edge) | **KEEP** | 85% |
 | KV for cache (TTL, edge) | **KEEP** | 95% |
-| REST + OpenAPI (37 routes) as single data layer | **KEEP + formalize** (E2) | 95% |
+| REST + OpenAPI (56 routes) as single data layer | **KEEP + formalize** (E2) | 95% |
 
 ### 6.4 Tooling
 
@@ -750,12 +750,12 @@ flowchart LR
 | E12 | Alpaca Markets provider (free real-time) | P0 | ⬜ |
 | E11 | Wire WebSocket DO fan-out (real-time) | P0 | ⬜ |
 | E13 | BYOK (user API keys, encrypted D1) | P1 | ⬜ |
-| E2 | Formalize single data layer (OpenAPI contract) | P1 | 🟡 |
+| E2 | Formalize single data layer (OpenAPI contract) | P1 | ✅ |
 | E3 | Agent tool manifest (typed MCP tools) | P1 | ✅ |
 
 **E3 detail (done):** `mcp-server/src/tool-manifest.ts` pairs every advertised tool with a Valibot schema and the Worker route it calls. Arguments are parsed at the boundary instead of cast, ticker symbols are constrained before URL interpolation, and only declared fields are forwarded upstream. `tests/unit/mcp/tool-manifest.test.ts` keeps the manifest, the validators and the Worker route table in step — the package previously had no tests.
 
-**E2 detail:** The contract is now enforced. `tests/unit/worker/openapi-drift.test.ts` parses the Hono route table out of `worker/index.ts` and fails when a registered route is undocumented, when the spec describes a route that is not registered, or when its `KNOWN_GAP` backlog goes stale — the list may only shrink. `npm run check:api-types` joined `npm run ci`, so a spec edit that is not reflected in the committed `src/core/api-types.ts` fails the pipeline. 8 of 56 routes were documented before this effort; 48 are now documented, adding compare, indicators, economic, movers, sector heatmap, news, FRED, crypto search/chart, default OG, dividends, insiders, ETF holdings, regime, anomaly, archive index/detail, Alpaca quote/bars, portfolio analytics, and auth/key/sync route docs with explicit security blocks. The remaining 8 are tracked in [#105](https://github.com/RajwanYair/CrossTide/issues/105).
+**E2 detail:** The contract is now enforced. `tests/unit/worker/openapi-drift.test.ts` parses the Hono route table out of `worker/index.ts` and fails when a registered route is undocumented, when the spec describes a route that is not registered, or when its `KNOWN_GAP` backlog goes stale — the list may only shrink. `npm run check:api-types` joined `npm run ci`, so a spec edit that is not reflected in the committed `src/core/api-types.ts` fails the pipeline. 8 of 56 routes were documented before this effort; all 56 are now documented, adding compare, indicators, economic, movers, sector heatmap, news, FRED, crypto search/chart, default OG, dividends, insiders, ETF holdings, regime, anomaly, archive index/detail, Alpaca quote/bars, portfolio analytics, auth/key/sync route docs with explicit security blocks, plus monte-carlo, pairs, factor-model, fundamentals batch, signal-dsl script execution, CSP report sink, WebSocket fan-out, and favicon no-op. `KNOWN_GAP` is now empty and [#105](https://github.com/RajwanYair/CrossTide/issues/105) can be closed.
 | Q3 | Signal DSL fuzz testing | P2 | ✅ |
 | Q4 | Property tests → 50+ total | P1 | ✅ |
 | Q5 | Keyboard navigation audit | P1 | ✅ |
@@ -776,7 +776,7 @@ flowchart LR
 | R2 | 3-minute video walkthrough | P1 | ⬜ |
 | R4 | Product Hunt + HN + Reddit launch | P0 | ⬜ |
 
-**E18 detail (partial):** `.github/CONTRIBUTING.md` was refreshed against the gates that actually run — it had told contributors to format with Prettier (the repo uses Biome, which does not touch markdown at all) and listed six gates when `npm run ci` runs ten. It now documents `audit:headers`, `check:contrast`, `check:api-types` and `arch-check`, states the Vitest two-project split that decides whether a new test gets DOM globals, and records the three E2E traps that cost this project real CI time: a bare `waitForLoadState` racing the bootstrap, a hardcoded iteration budget, and locally generated `*-win32.png` baselines that CI never validates. Three issues were labelled `good first issue` and are now linked from the contributing guide: [#105](https://github.com/RajwanYair/CrossTide/issues/105) (8 undocumented Worker routes, one route per contributor, with `openapi-drift.test.ts` naming the remaining ones), [#104](https://github.com/RajwanYair/CrossTide/issues/104) (12 duplicate-named domain modules) and [#103](https://github.com/RajwanYair/CrossTide/issues/103) (52 orphaned domain modules). _Remaining:_ the Discord server itself has to be created by the repo owner; the invite link is the only outstanding piece.
+**E18 detail (partial):** `.github/CONTRIBUTING.md` was refreshed against the gates that actually run — it had told contributors to format with Prettier (the repo uses Biome, which does not touch markdown at all) and listed six gates when `npm run ci` runs ten. It now documents `audit:headers`, `check:contrast`, `check:api-types` and `arch-check`, states the Vitest two-project split that decides whether a new test gets DOM globals, and records the three E2E traps that cost this project real CI time: a bare `waitForLoadState` racing the bootstrap, a hardcoded iteration budget, and locally generated `*-win32.png` baselines that CI never validates. Three issues were labelled `good first issue` and are now linked from the contributing guide: [#105](https://github.com/RajwanYair/CrossTide/issues/105) (now completed), [#104](https://github.com/RajwanYair/CrossTide/issues/104) (12 duplicate-named domain modules) and [#103](https://github.com/RajwanYair/CrossTide/issues/103) (52 orphaned domain modules). _Remaining:_ the Discord server itself has to be created by the repo owner; the invite link is the only outstanding piece.
 
 ### Phase S — v15.0.0 "Intelligence" (6-8 weeks)
 

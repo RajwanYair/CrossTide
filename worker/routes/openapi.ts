@@ -1446,6 +1446,171 @@ export const OPENAPI_SPEC = {
         },
       },
     },
+    "/api/monte-carlo": {
+      post: {
+        operationId: "runMonteCarlo",
+        summary: "Monte Carlo portfolio simulation",
+        description:
+          "Simulates portfolio value paths from a mean/stddev return model and returns percentile bands, loss probability, and up to 5 sample paths.",
+        tags: ["Portfolio"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Simulation percentiles and sample paths",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/pairs": {
+      post: {
+        operationId: "analyzePairsTrade",
+        summary: "Pairs trading analysis",
+        description:
+          "Computes spread, z-score series, hedge ratio, and entry/exit signals for two cointegrated price series.",
+        tags: ["Signals"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Pairs signal output",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/factor-model": {
+      post: {
+        operationId: "analyzeFactorModel",
+        summary: "Fama-French factor attribution",
+        description:
+          "Estimates alpha, market beta, SMB, and HML factor exposures and decomposes portfolio returns by factor contribution.",
+        tags: ["Portfolio"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Factor attribution output",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/fundamentals/batch": {
+      post: {
+        operationId: "getFundamentalsBatch",
+        summary: "Batch fundamentals lookup",
+        description:
+          "Fetches fundamentals for up to 20 symbols in one request, returning partial results if some symbols fail.",
+        tags: ["Market Data"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Per-symbol fundamentals and errors",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/signal-dsl/execute-script": {
+      post: {
+        operationId: "executeSignalDslScript",
+        summary: "Execute a multi-statement signal DSL script",
+        description:
+          "Runs a Signal DSL script supporting `let`, `for` loops, arrays, index access, and the `plot()` builtin for custom overlays.",
+        tags: ["Signals"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Script execution result",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/csp-report": {
+      post: {
+        operationId: "reportCspViolation",
+        summary: "CSP violation report sink",
+        description:
+          "Accepts browser-generated Content-Security-Policy violation reports for monitoring. Rate-limited at 10 reports/min per IP.",
+        tags: ["System"],
+        security: [],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "204": { description: "Report accepted" },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "405": { description: "Method not allowed" },
+        },
+      },
+    },
+    "/api/ws/{symbol}": {
+      get: {
+        operationId: "streamTickerWs",
+        summary: "WebSocket ticker fan-out",
+        description:
+          "Upgrades to a WebSocket connection that streams live ticker updates for the given symbol via a Durable Object fan-out.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "101": { description: "Switching Protocols — WebSocket upgrade" },
+          "503": {
+            description: "WebSocket streaming not available",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/favicon.ico": {
+      get: {
+        operationId: "getFavicon",
+        summary: "Favicon no-op",
+        description: "Always returns 204 No Content; the app has no favicon asset.",
+        tags: ["System"],
+        security: [],
+        responses: {
+          "204": { description: "No content" },
+        },
+      },
+    },
   },
   components: {
     securitySchemes: {

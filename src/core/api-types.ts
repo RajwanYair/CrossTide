@@ -370,4 +370,44 @@ export interface ApiRoutes {
     readonly request: never;
     readonly response: Record<string, unknown>;
   };
+  /** POST /api/monte-carlo */
+  readonly runMonteCarlo: {
+    readonly request: Record<string, unknown>;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/pairs */
+  readonly analyzePairsTrade: {
+    readonly request: Record<string, unknown>;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/factor-model */
+  readonly analyzeFactorModel: {
+    readonly request: Record<string, unknown>;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/fundamentals/batch */
+  readonly getFundamentalsBatch: {
+    readonly request: Record<string, unknown>;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/signal-dsl/execute-script */
+  readonly executeSignalDslScript: {
+    readonly request: Record<string, unknown>;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/csp-report */
+  readonly reportCspViolation: {
+    readonly request: Record<string, unknown>;
+    readonly response: unknown;
+  };
+  /** GET /api/ws/{symbol} */
+  readonly streamTickerWs: {
+    readonly request: never;
+    readonly response: unknown;
+  };
+  /** GET /favicon.ico */
+  readonly getFavicon: {
+    readonly request: never;
+    readonly response: unknown;
+  };
 }

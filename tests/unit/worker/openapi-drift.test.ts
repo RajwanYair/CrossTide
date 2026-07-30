@@ -7,10 +7,10 @@
  * a route missing from the generated client, and the only thing that caught it
  * was a manual checkbox in the pre-release checklist.
  *
- * The gap is being burned down under
- * https://github.com/RajwanYair/CrossTide/issues/105. `KNOWN_GAP` is a ratchet:
- * it may only shrink. Documenting a route without removing it from the list
- * fails, and registering a new undocumented route fails.
+ * The gap tracked under https://github.com/RajwanYair/CrossTide/issues/105 has
+ * been closed — every registered route is documented. `KNOWN_GAP` stays as an
+ * empty ratchet: it may only shrink, so a newly registered undocumented route
+ * fails immediately instead of silently reopening the gap.
  */
 
 import { describe, expect, it } from "vitest";
@@ -44,18 +44,9 @@ function documentedRoutes(): string[] {
 
 /**
  * Routes registered on the Worker that the spec does not yet describe.
- * This list may only get shorter.
+ * Empty — closed under #105. This list may only get shorter.
  */
-const KNOWN_GAP: readonly string[] = [
-  "GET /api/ws/{symbol}",
-  "GET /favicon.ico",
-  "POST /api/csp-report",
-  "POST /api/factor-model",
-  "POST /api/fundamentals/batch",
-  "POST /api/monte-carlo",
-  "POST /api/pairs",
-  "POST /api/signal-dsl/execute-script",
-];
+const KNOWN_GAP: readonly string[] = [];
 
 describe("OpenAPI contract", () => {
   const registered = registeredRoutes();
