@@ -40,6 +40,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - **Markdownlint CI blocker**: hard tabs removed from `.github/copilot-instructions.md`. This gate had been aborting the pipeline before the Playwright E2E job ran, so the E2E failures below were reported as "skipped" rather than failing.
 - **Playwright E2E web server**: `playwright.config.ts` launched the dev server with `npx vite`, which could resolve a different Vite from the registry and fail the run. It now uses `npm run dev -- --port 4173`.
 - **Two incorrect E2E test assumptions**. `goToRoute` in `visual.spec.ts` clicked a sidebar link that reports `visible: true` but is parked off-canvas at `translateX(-220px)`, so the click hung until timeout; it now checks the bounding box against the viewport. The `focus-visible` cross-browser test tabbed _forward_ from a position the router had already moved into `<main>`, so it could never reach the header — it now walks backwards with `Shift+Tab` and additionally asserts `:focus-visible` matches.
+- **Vacuous E2E readiness guard** in 12 places across 6 spec files. `document.getElementById("app-version")?.textContent !== ""` returns `true` when the element does not exist yet, so the wait resolved immediately and tests raced the app bootstrap — dropping early input such as the `/` shortcut before its keydown listener was attached. Replaced with a shared `waitForAppReady` helper that requires the element to exist and carry a non-empty value.
 
 ### 🗑️ Removed
 

@@ -5,6 +5,7 @@
  * to succeed in CI, so tests assert on layout and interaction, not live data.
  */
 import { test, expect } from "@playwright/test";
+import { waitForAppReady } from "./app-ready";
 import AxeBuilder from "@axe-core/playwright";
 
 // ---------------------------------------------------------------------------
@@ -43,7 +44,7 @@ test("all navigation links are rendered", async ({ page }) => {
 test("clicking nav links activates the correct view section", async ({ page }) => {
   await page.goto("/");
   // Wait for JS to initialise (router registers click handlers)
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  await waitForAppReady(page);
   // Default view is watchlist
   await expect(page.locator("#view-watchlist")).toHaveClass(/active/);
 

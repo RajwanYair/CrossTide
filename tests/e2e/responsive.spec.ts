@@ -5,6 +5,7 @@
  * across all configured browser projects (Chromium, Firefox, WebKit, mobile).
  */
 import { test, expect } from "@playwright/test";
+import { waitForAppReady } from "./app-ready";
 
 const VIEWPORTS = {
   mobile: { width: 375, height: 812 },
@@ -67,7 +68,7 @@ test("tap navigation works on mobile viewport", async ({ page }) => {
   await page.setViewportSize(VIEWPORTS.mobile);
   await page.goto("/");
   // Wait for JS to initialise
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  await waitForAppReady(page);
   const nav = page.locator("#app-nav");
   // On mobile, the sidebar starts off-canvas — open it via the hamburger
   // toggle so its nav links are actually within the viewport and clickable.

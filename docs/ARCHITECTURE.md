@@ -88,7 +88,7 @@ sequenceDiagram
   UI-->>Recipient: auto-import tickers + toast confirmation
 ```
 
-## ✨ Key product features (v11.41)
+## ✨ Key product features (v11.44)
 
 | Feature                    | Implementation                                                                |
 | -------------------------- | ----------------------------------------------------------------------------- |
@@ -296,7 +296,7 @@ persistent storage from the browser.
 
 | Asset                | Budget      | Gate           |
 | -------------------- | ----------- | -------------- |
-| JS initial           | ≤ 200 KB gz | `check:bundle` |
+| JS initial           | ≤ 250 KB gz | `check:bundle` |
 | Lazy card chunk      | ≤ 50 KB gz  | build          |
 | CSS                  | ≤ 30 KB gz  | build          |
 | LCP (4G mid Android) | ≤ 1.8 s     | Lighthouse CI  |

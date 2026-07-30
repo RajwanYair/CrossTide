@@ -20,10 +20,11 @@ flowchart TD
 
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is sufficient)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
-  installed and authenticated:
+  installed and authenticated. Wrangler is a devDependency, so invoke the
+  lockfile-pinned binary rather than `npx`, which may fetch a different version:
 
   ```powershell
-  npx wrangler login
+  ./node_modules/.bin/wrangler login
   ```
 
 ---
@@ -34,11 +35,11 @@ Caches quote, chart, and search responses with market-hours-aware TTLs.
 
 ```powershell
 # Create production namespace
-npx wrangler kv namespace create QUOTE_CACHE
+./node_modules/.bin/wrangler kv namespace create QUOTE_CACHE
 # Output: { id: "abc123..." }
 
 # Create preview namespace (used by PR preview deployments)
-npx wrangler kv namespace create QUOTE_CACHE --preview
+./node_modules/.bin/wrangler kv namespace create QUOTE_CACHE --preview
 # Output: { preview_id: "def456..." }
 ```
 
@@ -59,7 +60,7 @@ Stores user watchlists, portfolios, alert rules, and CSP violation reports.
 
 ```powershell
 # Create the database
-npx wrangler d1 create crosstide-db
+./node_modules/.bin/wrangler d1 create crosstide-db
 # Output: { database_id: "ghi789..." }
 ```
 
@@ -77,7 +78,7 @@ migrations_dir = "migrations"
 
 ```powershell
 # Staging / preview
-npx wrangler d1 migrations apply crosstide-db --env staging
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db --env staging
 
 # Production
 npx wrangler d1 migrations apply crosstide-db
@@ -97,7 +98,7 @@ To check migration status:
 curl http://localhost:8787/api/migrations/status
 
 # Via wrangler
-npx wrangler d1 migrations list crosstide-db
+./node_modules/.bin/wrangler d1 migrations list crosstide-db
 ```
 
 ---
@@ -129,11 +130,11 @@ Copy-Item worker\.dev.vars.example worker\.dev.vars
 
 # Start the worker locally (hot-reload, KV/D1 in-memory stubs)
 cd worker
-npx wrangler dev
+./node_modules/.bin/wrangler dev
 ```
 
 The worker runs at `http://localhost:8787`. Vite proxies `/api/*` to it when running
-`npx vite` (see `vite.config.ts`).
+`npm run dev` (see `vite.config.ts`).
 
 ---
 
@@ -142,12 +143,12 @@ The worker runs at `http://localhost:8787`. Vite proxies `/api/*` to it when run
 ```powershell
 # Deploy worker
 cd worker
-npx wrangler deploy
+./node_modules/.bin/wrangler deploy
 
 # Deploy Pages (static build)
 cd ..
 npm run build
-npx wrangler pages deploy dist --project-name crosstide
+./node_modules/.bin/wrangler pages deploy dist --project-name crosstide
 ```
 
 ---

@@ -6,6 +6,7 @@
  * Runs in ALL Playwright projects (desktop + mobile + tablet).
  */
 import { test, expect } from "@playwright/test";
+import { waitForAppReady } from "./app-ready";
 
 // ---------------------------------------------------------------------------
 // CSS Grid / Flexbox layout doesn't break
@@ -60,11 +61,7 @@ test("text renders without FOIT causing invisible content", async ({ page }) => 
 test("ES module script loads and initializes", async ({ page }) => {
   await page.goto("/");
   // App version gets set by JS on load
-  await page.waitForFunction(
-    () => document.getElementById("app-version")?.textContent !== "",
-    null,
-    { timeout: 10_000 },
-  );
+  await waitForAppReady(page, 10_000);
   const version = await page.locator("#app-version").textContent();
   expect(version).toMatch(/\d+\.\d+/);
 });
@@ -74,7 +71,7 @@ test("ES module script loads and initializes", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("SPA navigation works via history API", async ({ page }) => {
   await page.goto("/");
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  await waitForAppReady(page);
 
   // Navigate forward
   await page.locator('a[data-route="chart"]').click();
@@ -119,7 +116,7 @@ test("viewport meta prevents unwanted zoom", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("button click events work", async ({ page }) => {
   await page.goto("/settings");
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  await waitForAppReady(page);
   const themeSelect = page.locator("#theme-select");
   await expect(themeSelect).toBeVisible();
   await themeSelect.selectOption("light");
@@ -233,7 +230,7 @@ test("Intl.NumberFormat formats currency correctly", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("focus-visible selector works for keyboard navigation", async ({ page }) => {
   await page.goto("/");
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  await waitForAppReady(page);
   // After render the router moves focus to the active view's heading (WCAG
   // 2.4.3 route-change announcement). That heading sits inside <main>, so it
   // also becomes the sequential focus navigation starting point — and blurring

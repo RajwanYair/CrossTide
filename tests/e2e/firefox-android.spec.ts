@@ -14,6 +14,7 @@
  *      --project=firefox-android --project=firefox-android-landscape
  */
 import { test, expect } from "@playwright/test";
+import { waitForAppReady } from "./app-ready";
 
 // ---------------------------------------------------------------------------
 // Baseline load — app initialises on Gecko without errors
@@ -23,9 +24,7 @@ test("app loads on Firefox for Android without JS errors", async ({ page }) => {
   page.on("pageerror", (err) => errors.push(err.message));
 
   await page.goto("/");
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "", {
-    timeout: 15_000,
-  });
+  await waitForAppReady(page, 15_000);
 
   const critical = errors.filter(
     (e) =>
@@ -42,7 +41,7 @@ test("app loads on Firefox for Android without JS errors", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("CSS custom properties render on Gecko", async ({ page }) => {
   await page.goto("/");
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  await waitForAppReady(page);
 
   const bgColor = await page.evaluate(() =>
     getComputedStyle(document.documentElement).getPropertyValue("--bg-app").trim(),
@@ -66,7 +65,7 @@ test("header uses flexbox or grid on Gecko", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("SPA navigation works on Gecko", async ({ page }) => {
   await page.goto("/");
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+  await waitForAppReady(page);
 
   await page.locator('a[data-route="chart"]').click();
   await expect(page.locator("#view-chart")).toHaveClass(/active/);

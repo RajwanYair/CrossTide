@@ -105,8 +105,8 @@ flowchart TD
 The Cloudflare Worker (API) lives in `worker/`:
 
 ```bash
-npx wrangler dev          # Local worker dev server
-npx wrangler deploy       # Deploy to production
+./node_modules/.bin/wrangler dev          # Local worker dev server
+./node_modules/.bin/wrangler deploy       # Deploy to production
 ```
 
 Requires a `.dev.vars` file with API keys (see `.dev.vars.example`).

@@ -13,6 +13,7 @@
  * (stock, ETF, crypto, forex, index) to guard symbol parsing and row rendering.
  */
 import { test, expect, type Page } from "@playwright/test";
+import { waitForAppReady } from "./app-ready";
 
 interface CardSpec {
   readonly route: string;
@@ -76,10 +77,6 @@ function trackPageErrors(page: Page): string[] {
     errors.push(e.message);
   });
   return errors;
-}
-
-async function waitForAppReady(page: Page): Promise<void> {
-  await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
 }
 
 test.describe("card matrix", () => {

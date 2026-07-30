@@ -4,13 +4,14 @@
  * Validates that shortcut keys are wired and focus management works.
  */
 import { test, expect } from "@playwright/test";
+import { waitForAppReady } from "./app-ready";
 
 test.describe("Keyboard shortcuts", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
     // Wait for JS to initialise (version text is set during init)
-    await page.waitForFunction(() => document.getElementById("app-version")?.textContent !== "");
+    await waitForAppReady(page);
   });
 
   test("/ focuses the ticker input", async ({ page }) => {
