@@ -31,6 +31,16 @@ flowchart TD
 **Dependency rule:** each layer may only import from layers below it. The domain layer is pure
 (zero side effects, no DOM access). Web Workers share the domain and core layers.
 
+The rule is enforced by `node scripts/arch-check.mjs --strict` in CI. Its `ALLOWED_CROSS_LAYER`
+set holds the three deliberate exceptions — `cards->ui`, `core->cards`, `core->ui` — and nothing
+may be added to it to accommodate a module: an entry that names a category rather than a single
+file repeals the rule it sits inside. `domain->core` and `domain->cards` were on that list once,
+and three domain modules had drifted outward behind them.
+
+Because the domain layer imports nothing but itself and `src/types`, it can be built as a
+standalone, dependency-free npm package — see `packages/domain/`. Pointing a bundler at the layer
+is the sharpest available purity check, since the compiler has to follow every import outward.
+
 ## 🔄 Runtime data flow
 
 ```mermaid
@@ -150,8 +160,10 @@ CrossTide/
 │   ├── rate-limit.ts   Rate limiting
 │   └── routes/         chart, health, og, openapi, screener, search, signal-dsl
 ├── docs-site/          Astro Starlight documentation site (48 indicator MDX pages)
+├── packages/
+│   └── domain/         @crosstide/domain — src/domain built as a zero-dependency npm package
 ├── docs/               Roadmap, contributing guidelines, architecture
-├── tests/unit/         Vitest unit tests (625 files)
+├── tests/unit/         Vitest unit tests (628 files)
 └── public/             Static assets, PWA manifest, 404.html
 ```
 
