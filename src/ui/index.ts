@@ -15,6 +15,12 @@ export {
 export type { RouteName, RouteInfo, RouteChangeHandler } from "./router";
 export { initTheme, applyTheme } from "./theme";
 export type { Theme } from "./theme";
+export {
+  initAutoThemeSync,
+  getThemeOverride,
+  setThemeOverride,
+  hasThemeOverride,
+} from "./auto-theme-sync";
 export { renderWatchlist } from "./watchlist";
 export { showToast, clearAllToasts, toastCount } from "./toast";
 export type { ToastType, ToastOptions } from "./toast";

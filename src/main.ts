@@ -13,13 +13,15 @@ import {
   reorderWatchlist,
   updateWatchlistNames,
   updateWatchlistInstrumentTypes,
+  hasStoredConfig,
 } from "./core/config";
 import { createCrossTabSync } from "./core/broadcast-channel";
 import { registerServiceWorker } from "./core/sw-register";
 import { activateServiceWorkerUpdate, watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
 import { initRouter, navigateTo, navigateToPath, onRouteChange, type RouteName } from "./ui/router";
-import { initTheme } from "./ui/theme";
+import { detectPreferredTheme, initTheme } from "./ui/theme";
+import { getThemeOverride, initAutoThemeSync, setThemeOverride } from "./ui/auto-theme-sync";
 import { initEnhancedContrast } from "./core/contrast-preference";
 import { initLocale } from "./core/i18n";
 import {
@@ -365,7 +367,16 @@ function main(): void {
   // Initialize UI
   initLocale(); // D7: apply persisted locale & <html dir>
   initSidebarToggle();
-  initTheme(config.theme);
+
+  // P10: honour the OS colour scheme until the user picks a theme in Settings.
+  // `config.theme` defaults to "dark", so passing it unconditionally made
+  // `detectPreferredTheme()` unreachable and pinned every first visit to dark.
+  // A returning visitor who chose a theme before the override key existed is
+  // migrated here so their choice is not silently replaced by the OS value.
+  if (hasStoredConfig() && getThemeOverride() === null) setThemeOverride(config.theme);
+  initTheme(getThemeOverride() ?? detectPreferredTheme());
+  initAutoThemeSync(); // re-applies on OS change while no override is set
+
   initEnhancedContrast(); // Q6: restore [data-contrast="aaa"] from localStorage
   loadPersistedPalette(); // C2: restore color-blind palette from localStorage
 
@@ -594,6 +605,7 @@ function main(): void {
   const themeSelect = document.getElementById("theme-select") as HTMLSelectElement | null;
   themeSelect?.addEventListener("change", () => {
     const theme = themeSelect.value as "dark" | "light";
+    setThemeOverride(theme); // stops auto-sync from overwriting the choice
     config = { ...config, theme };
     saveAndBroadcast(config);
   });

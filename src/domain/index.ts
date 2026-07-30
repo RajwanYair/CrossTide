@@ -919,3 +919,426 @@ export type {
   HexColor,
   ConfigValidationResult,
 } from "./indicator-config";
+
+// ============================================================================
+// P10 — modules that were tested but absent from the public API surface.
+// Every file under src/domain/ must be reachable from this barrel; see
+// tests/unit/domain/barrel-completeness.test.ts for the guard.
+// ============================================================================
+
+/** Price alert proximity check — determine how close current prices are to configured alert levels for watchlist overview display. */
+export {
+  calculateProximity,
+  checkAlertProximity,
+  checkMultipleAlerts,
+  getAlertsWithinThreshold,
+  formatProximity,
+} from "./alert-proximity";
+export type { AlertProximity } from "./alert-proximity";
+/** ATR trailing stop — dynamic stop-loss levels based on Average True Range for volatility-adjusted exits. */
+export {
+  trueRange,
+  atr,
+  longTrailingStop,
+  shortTrailingStop,
+  trailingStopSeries,
+} from "./atr-trailing-stop";
+export type { TrailingStopResult } from "./atr-trailing-stop";
+/** Breakout detector — identify price breakouts above resistance or below support with optional volume confirmation. */
+export {
+  rollingHigh,
+  rollingLow,
+  detectBreakouts,
+  confirmedBreakouts,
+  lastBreakout,
+} from "./breakout-detector";
+export type { BreakoutCandle, BreakoutEvent } from "./breakout-detector";
+/** Candlestick pattern detector — identify common bullish/bearish single and multi-bar patterns from OHLC data. */
+export { isEngulfing, scanPatterns, filterByType, lastPattern } from "./candlestick-patterns";
+export type { PatternMatch } from "./candlestick-patterns";
+/** Causal impact analysis — simplified Bayesian structural time series. */
+export { causalImpact } from "./causal-impact";
+export type { CausalImpactResult, CausalImpactConfig } from "./causal-impact";
+/** Bayesian changepoint detection — identifies structural breaks in time series. */
+export { bayesianChangepoints, cusumChangepoints } from "./changepoint-detection";
+export type { Changepoint, ChangepointResult } from "./changepoint-detection";
+/** Commission & slippage model for backtesting. */
+export {
+  calculateCommission,
+  applySlippage,
+  netTradePnl,
+  totalFees,
+  DEFAULT_COMMISSION,
+  ZERO_COMMISSION,
+} from "./commission";
+export type { CommissionConfig } from "./commission";
+/** Copula dependence — models joint tail dependence between assets. */
+export {
+  fitClayton,
+  fitGumbel,
+  fitGaussian,
+  dependenceAnalysis,
+  toUniform,
+  kendallTau,
+} from "./copula";
+export type { CopulaFit, DependenceAnalysis } from "./copula";
+/** Ticker correlation quick-check — compute Pearson correlation coefficient between two price series without needing the full correlation matrix card. */
+export { computeReturns, interpretCorrelation, correlationCheck } from "./correlation-check";
+/** Correlation Heatmap render-data helpers (G22). */
+export { rToHslColor, buildHeatmapRenderData, sliceCorrelationResult } from "./correlation-heatmap";
+export type { HeatmapCell, HeatmapRenderData } from "./correlation-heatmap";
+/** Custom index builder — create equal-weighted or cap-weighted custom indices from a basket of assets. */
+export { equalWeightedIndex, capWeightedIndex, rebalanceWeights } from "./custom-index";
+export type { IndexComponent, IndexResult } from "./custom-index";
+/** Dividend Discount Model (DDM) — intrinsic value estimation. */
+export { gordonGrowthModel, twoStageDDM, hModelDDM, impliedGrowthRate, ddmAnalysis } from "./ddm";
+export type { DDMResult } from "./ddm";
+/** Distribution fitting tests — Kolmogorov-Smirnov and Anderson-Darling. */
+export {
+  kolmogorovSmirnov,
+  andersonDarling,
+  normalCdf,
+  normalityTest,
+  exponentialTest,
+} from "./distribution-fit";
+export type { GoodnessOfFitResult } from "./distribution-fit";
+/** Dividend calendar planner — track ex-dividend dates, payment schedules, and projected annual income from holdings. */
+export {
+  projectIncome,
+  totalAnnualIncome,
+  monthlyBreakdown,
+  upcomingExDates,
+  dividendYield,
+} from "./dividend-calendar";
+export type { DividendEntry, DividendProjection, MonthlyBreakdown } from "./dividend-calendar";
+/** Earnings surprise tracker — record and analyze actual vs estimated EPS for post-earnings momentum analysis. */
+export {
+  calculateSurprise,
+  batchSurprises,
+  beatRate,
+  averageSurprise,
+  topBeats,
+  topMisses,
+  beatStreak,
+  classifySurprise,
+} from "./earnings-surprise";
+export type { EarningsResult, EarningsSurprise } from "./earnings-surprise";
+/** Efficient frontier — Markowitz mean-variance portfolio optimization. */
+export {
+  assetStatsFromReturns,
+  covarianceMatrix,
+  portfolioVolatility,
+  portfolioReturn,
+  efficientFrontier,
+} from "./efficient-frontier";
+export type { AssetStats, PortfolioPoint } from "./efficient-frontier";
+/** ETF Constituent Drilldown domain (G18). */
+export {
+  buildEtfDrilldown,
+  topHoldingsByWeight,
+  topHoldersByContribution,
+  positiveContributors,
+  negativeContributors,
+} from "./etf-drilldown";
+export type { EtfHolding, EtfDrilldownEntry, EtfDrilldownResult } from "./etf-drilldown";
+/** Fractal dimension — measures market complexity and roughness. */
+export {
+  higuchiFractalDimension,
+  boxCountingDimension,
+  katzFractalDimension,
+  interpretFractalDimension,
+} from "./fractal-dimension";
+/** Garman-Klass and related intraday volatility estimators. */
+export { garmanKlassSingle, garmanKlassVol, compareEstimators } from "./garman-klass";
+/** Granger causality — test whether one time series helps predict another. */
+export { grangerCausality, bidirectionalGranger, selectLagOrder } from "./granger-causality";
+export type { GrangerResult, BidirectionalGranger } from "./granger-causality";
+/** Hawkes process — self-exciting point process for event clustering. */
+export { fitHawkes, simulateHawkes, hawkesIntensity } from "./hawkes-process";
+export type { HawkesParams, HawkesResult } from "./hawkes-process";
+/** Heatmap Sector Drill-down domain helpers (G21). */
+export {
+  computeAbsoluteMove,
+  buildDrilldownEntries,
+  sortDrilldown,
+  buildBreadcrumb,
+  buildDrilldown,
+  computeAttributionBar,
+} from "./heatmap-drilldown";
+export type { DrilldownSortKey, DrilldownEntry, DrilldownResult } from "./heatmap-drilldown";
+/** Implied volatility surface — construct vol smile/skew from option prices. */
+export { buildVolSurface } from "./implied-volatility";
+export type { OptionQuote, IVPoint, VolSurface } from "./implied-volatility";
+/** Information ratio and related performance metrics. */
+export {
+  informationRatio,
+  trackingError,
+  activeReturn,
+  treynorRatio,
+  computeBeta,
+  mSquared,
+  performanceAttribution,
+} from "./information-ratio";
+/** Intraday high/low distance — calculate how far the current price is from the day's high and low, useful for timing entries. */
+export {
+  calculateRangeDistance,
+  batchRangeDistance,
+  nearHigh,
+  nearLow,
+  widestRange,
+  narrowestRange,
+  averagePositionInRange,
+} from "./intraday-range";
+export type { IntradayRange, RangeDistance } from "./intraday-range";
+/** Merton Jump Diffusion model — extends geometric Brownian motion with Poisson jumps. */
+export { estimateJumpDiffusion, mertonCallPrice, detectJumps } from "./jump-diffusion";
+export type { JumpDiffusionParams, JumpDiffusionResult } from "./jump-diffusion";
+/** Kalman filter — adaptive price smoothing and trend estimation. */
+export {
+  initKalman,
+  kalmanStep,
+  kalmanFilter,
+  adaptiveKalmanFilter,
+  kalmanTrendSignal,
+} from "./kalman-filter";
+export type { KalmanState, KalmanParams } from "./kalman-filter";
+/** Kelly criterion calculator — determine optimal position sizing based on win rate and win/loss ratio. */
+export { kellyAnalysis, kellyFromTrades, kellyPositionSize } from "./kelly-criterion";
+export type { KellyResult } from "./kelly-criterion";
+/** Liquidity metrics — measures of market liquidity and trading costs. */
+export {
+  amihudIlliquidity,
+  rollSpread,
+  turnoverRatio,
+  kyleLambda,
+  liquidityScore,
+  liquidityAnalysis,
+} from "./liquidity-metrics";
+export type { LiquidityMetrics } from "./liquidity-metrics";
+/** Moving average ribbon — compute multiple MAs (5,10,20,50,100,200) with spread/convergence metrics for trend analysis. */
+export { computeRibbon, ribbonSummary, findCrossovers } from "./ma-ribbon";
+export type { RibbonPoint, RibbonSummary } from "./ma-ribbon";
+/** Market impact model (Almgren-Chriss) — optimal execution with price impact. */
+export { optimalExecution, squareRootImpact, vwapParticipation } from "./market-impact";
+export type { MarketImpactParams, ExecutionSchedule } from "./market-impact";
+/** Mean reversion scanner — identify assets that are far from their moving average (z-score based) for potential reversion trades. */
+export {
+  zScore,
+  deviationFromMa,
+  analyzeReversion,
+  scanForReversion,
+  mostOversold,
+  mostOverbought,
+} from "./mean-reversion";
+export type { MeanReversionSignal } from "./mean-reversion";
+/** Multi-ticker momentum rank — rank tickers by rate-of-change performance over configurable lookback periods for relative strength comparison. */
+export {
+  rateOfChange,
+  rankByMomentum,
+  compositeMomentum,
+  rankByCompositeMomentum,
+  getMomentumLeaders,
+  getMomentumLaggards,
+} from "./momentum-rank";
+export type { MomentumRank } from "./momentum-rank";
+/** Multi-timeframe trend — consolidate trend signals across daily, weekly, and monthly timeframes for confluence. */
+export {
+  detectTrend,
+  resampleWeekly,
+  resampleMonthly,
+  multiTimeframeTrend,
+  isFullyAligned,
+} from "./multi-timeframe";
+export type {
+  Timeframe,
+  TrendDirection,
+  TimeframeTrend,
+  MultiTrendResult,
+} from "./multi-timeframe";
+/** Company name enrichment helpers (G19). */
+export {
+  normaliseCompanyName,
+  extractShortName,
+  formatDisplayName,
+  enrichWatchlistEntry,
+  buildNameMap,
+} from "./name-enrichment";
+/** Optimal portfolio turnover — transaction cost-aware rebalancing. */
+export {
+  optimalRebalance,
+  computeTurnover,
+  breakEvenFrequency,
+  cumulativeTurnover,
+} from "./optimal-turnover";
+export type { TurnoverResult, RebalanceConfig } from "./optimal-turnover";
+/** Order flow imbalance — buy/sell pressure from tick-level trade classification. */
+export {
+  tickRuleClassify,
+  bulkVolumeClassify,
+  orderFlowImbalance,
+  computeVPIN,
+  flowBuckets,
+} from "./order-flow";
+export type { OrderFlowMetrics, FlowBucket } from "./order-flow";
+/** Ornstein-Uhlenbeck (OU) process — mean-reversion parameter estimation. */
+export { estimateOU, ouAnalysis, simulateOU, expectedTimeToMean } from "./ornstein-uhlenbeck";
+export type { OUParams, OUResult } from "./ornstein-uhlenbeck";
+/** Profit factor and trade performance metrics from a list of trades. */
+export { profitFactor, equityCurve } from "./profit-factor";
+export type { ProfitFactorResult } from "./profit-factor";
+/** Range bar chart computation. */
+export { computeRangeBars, suggestRangeSize } from "./range-bars";
+export type { RangeBar, RangeBarInput } from "./range-bars";
+/** Renko chart brick computation. */
+export { computeRenko, suggestBrickSize } from "./renko";
+export type { RenkoBrick, RenkoInput } from "./renko";
+/** Risk/reward ratio calculator — evaluate trade setups with entry, stop loss, and target price. */
+export {
+  analyzeRiskReward,
+  positionSizeFromRisk,
+  dollarRisk,
+  expectedValue,
+  batchAnalyze,
+  filterFavorable,
+  sortByRatio,
+} from "./risk-reward";
+export type { TradeSetup, RiskRewardAnalysis } from "./risk-reward";
+/** Sector allocation calculator — compute sector weightings and concentration metrics for a portfolio of holdings. */
+export {
+  calculateAllocations,
+  herfindahlIndex,
+  allocationSummary,
+  overweightSectors,
+  underweightSectors,
+  deviationFromEqual,
+} from "./sector-allocation";
+export type { AllocationSummary } from "./sector-allocation";
+/** Data snapshot diffing — compare two point-in-time ticker data snapshots to highlight what changed (price, volume, signal flips). */
+export {
+  diffSnapshots,
+  summarizeDiff,
+  getSignificantMovers,
+  sortByLargestMove,
+  getSignalFlips,
+} from "./snapshot-diff";
+export type { TickerData, SnapshotDiff, DiffSummary } from "./snapshot-diff";
+/** Gain/loss streak tracker — analyze consecutive up/down days for streak detection and pattern awareness. */
+export {
+  currentStreak,
+  longestGainStreak,
+  longestLossStreak,
+  analyzeStreak,
+  rankByStreak,
+  getGainStreaks,
+  getLossStreaks,
+} from "./streak-tracker";
+export type { StreakResult } from "./streak-tracker";
+/** Tail index estimation (Extreme Value Theory) — Hill estimator, peaks-over-threshold. */
+export {
+  hillEstimator,
+  peaksOverThreshold,
+  meanExcessFunction,
+  gpdRiskMeasures,
+} from "./tail-index";
+export type { TailIndexResult, PeaksOverThreshold } from "./tail-index";
+/** Tail risk metrics — CVaR (Conditional Value at Risk) / Expected Shortfall. */
+export {
+  historicalVaR,
+  cvar,
+  parametricVaR,
+  cornishFisherVaR,
+  tailRiskAnalysis,
+} from "./tail-risk";
+/** Ticker comparison table — side-by-side data comparison for multiple tickers across various metrics. */
+export {
+  buildComparison,
+  rankByMetric,
+  distanceFrom52WeekHigh,
+  distanceFrom52WeekLow,
+  performanceRank,
+} from "./ticker-comparison";
+export type { TickerMetrics, ComparisonColumn, ComparisonResult } from "./ticker-comparison";
+/** Trade performance stats — calculate key trading metrics from a history of completed trades. */
+export { computeStats, streaks, avgReturnPercent } from "./trade-stats";
+/** Turtle Trading System — Donchian breakout trend-following with position sizing. */
+export { donchianChannel, computeATR, turtleTrading } from "./turtle-trading";
+export type { TurtleConfig, TurtleSignal, TurtleResult } from "./turtle-trading";
+/** VaR backtest — Kupiec POF test and Christoffersen independence/conditional coverage tests. */
+export { kupiecTest, christoffersenTest, varBacktest } from "./var-backtest";
+export type { KupiecResult, ChristoffersenResult, VarBacktestResult } from "./var-backtest";
+/** Chart comparison — normalizes multiple ticker candle series to percentage change from their respective starting prices. */
+export { normalizeForComparison, computeComparisonStats } from "./chart-comparison";
+export type { ComparisonPoint, ComparisonSeries, ComparisonStats } from "./chart-comparison";
+/** Earnings Calendar domain — pure types and transforms (H18). */
+export { parseEarningsResponse, filterUpcoming, getDaysUntilEarnings } from "./earnings-calendar";
+export type { EarningsEntry, RawEarningsItem } from "./earnings-calendar";
+/** Fibonacci retracement & extension calculator — compute key Fibonacci levels from swing high/low points. */
+export { fibRetracements, fibExtensions, fibAnalysis, nearestFibLevel, autoFib } from "./fibonacci";
+export type { FibLevel, FibResult } from "./fibonacci";
+/** Fundamental Data — fetches P/E, EPS, Revenue, Market Cap from Yahoo quoteSummary. */
+export { fetchFundamentals, clearFundamentalsCache } from "./fundamental-data";
+/** Macro Dashboard domain — pure regime classification and formatters (H19). */
+export {
+  getMacroTicker,
+  classifyMacroRegime,
+  classifyMacroRegimeExtended,
+  formatMacroChange,
+  regimeCssClass,
+  MACRO_TICKERS,
+} from "./macro-dashboard";
+export type { MacroRegime, MacroTicker, MacroSnapshot } from "./macro-dashboard";
+/** Market Breadth domain — pure computation layer (G23). */
+export { computeMarketBreadth, classifyBreadthCondition } from "./market-breadth";
+export type { BreadthTicker, BreadthResult } from "./market-breadth";
+/** Portfolio benchmark comparison — compare portfolio returns against a market index. */
+export {
+  computeBenchmarkComparison,
+  buildReturnSeries,
+  BENCHMARK_OPTIONS,
+  DEFAULT_BENCHMARK,
+} from "./portfolio-benchmark";
+export type { BenchmarkComparison, ReturnSeries, BenchmarkTicker } from "./portfolio-benchmark";
+/** Portfolio rebalance calculator — compute trades needed to bring a portfolio back to target allocation weights. */
+export {
+  calculateRebalance,
+  actionableTrades,
+  totalBuyAmount,
+  totalSellAmount,
+  sharesToTrade,
+  validateTargets,
+} from "./portfolio-rebalance";
+export type {
+  CurrentHolding,
+  TargetAllocation,
+  RebalanceTrade,
+  RebalancePlan,
+} from "./portfolio-rebalance";
+/** Relative Strength Comparison domain helpers (H21). */
+export {
+  normalizeSeries,
+  windowStartDate,
+  computeRelativeStrengths,
+  findOutperformer,
+  findUnderperformer,
+  summariseReturns,
+} from "./relative-strength";
+export type { RSPoint, RSeries, RSComparisonResult, RSInput } from "./relative-strength";
+/** Sector Rotation domain — relative strength ranking (H20). */
+export {
+  computeReturn,
+  computeRelativeReturn,
+  classifySectorPerformance,
+  rankSectors,
+  SECTOR_ETFS,
+} from "./sector-rotation";
+export type { SectorEtf, SectorReturnInput, SectorRankEntry } from "./sector-rotation";
+/** Strategy comparison — run two backtest configurations side-by-side on the same candle data and produce comparative metrics. */
+export { compareStrategies, renderComparisonTable } from "./strategy-comparison";
+export type {
+  StrategyComparisonInput,
+  StrategyComparisonResult,
+  StrategyDelta,
+} from "./strategy-comparison";
+/** Volume-weighted price calculations — VWAP and TWAP from intraday price/volume data. */
+export { vwap, runningVwap, vwapWithBands, twap, simpleTwap, vwapDeviation } from "./vwap";
+export type { PriceVolume, TimedPrice, VwapResult } from "./vwap";

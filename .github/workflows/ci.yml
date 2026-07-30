@@ -239,7 +239,11 @@ jobs:
         run: ./node_modules/.bin/playwright install-deps chromium
 
       - name: Run E2E tests
-        run: ./node_modules/.bin/playwright test --project=chromium --project=mobile-chrome --project=tablet --reporter=github ${{ inputs.update_snapshots && '--update-snapshots' || '' }}
+        # `--update-snapshots` without a value does not force a rewrite: a
+        # deliberate baseline refresh has to ask for `all`, otherwise a run
+        # dispatched with update_snapshots=true returns the existing images
+        # unchanged and the refresh silently no-ops.
+        run: ./node_modules/.bin/playwright test --project=chromium --project=mobile-chrome --project=tablet --reporter=github ${{ inputs.update_snapshots && '--update-snapshots=all' || '' }}
         env:
           VITE_BASE: /
 

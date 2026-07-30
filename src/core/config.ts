@@ -91,6 +91,21 @@ export function saveConfig(config: AppConfig): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
 }
 
+/**
+ * Whether a config has ever been persisted for this origin.
+ *
+ * Distinguishes "returning visitor whose stored settings happen to match the
+ * defaults" from "first visit", which is what lets the theme follow the OS
+ * colour scheme until the user makes an explicit choice.
+ */
+export function hasStoredConfig(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
 export function addTicker(config: AppConfig, ticker: string): AppConfig {
   const normalized = ticker.toUpperCase().trim();
   if (!normalized || config.watchlist.some((w) => w.ticker === normalized)) {
