@@ -13,16 +13,23 @@ Open in GitHub Codespaces or VS Code Dev Containers — everything is pre-config
 ### 💻 Option B: Local
 
 ```bash
-node --version   # Must be >=20.0.0
+node --version   # Must be >=20.19.0
 npm install
 npm run dev      # http://localhost:5173
 ```
 
+> Never invoke a devDependency through `npx` — it may silently fetch a different version
+> from the registry. Use the bare binary name locally (npm puts `node_modules/.bin` on
+> PATH) or `./node_modules/.bin/<tool>` in a workflow.
+
 ## 📋 Code Standards
 
 - Follow TypeScript strict mode — `tsc --noEmit` must pass with zero errors
-- Run `npm run lint:all` before committing (ESLint + Stylelint + HTMLHint + markdownlint)
-- Run `npm run format` to auto-format with Prettier
+- Run `npm run lint:all` before committing (ESLint + Stylelint + HTMLHint + markdownlint +
+  Biome format + file-header audit + WCAG contrast)
+- Run `npm run format` to auto-format with Biome (Biome does not format markdown —
+  `npm run lint:md` owns that)
+- Every file in `src/`, `worker/` and `scripts/` needs a leading `/** … */` docblock
 - Domain logic (`src/domain/`) must be pure functions — no DOM, no fetch, no side effects
 - Write tests for all domain logic changes
 - Never commit API keys, tokens, or secrets
@@ -31,16 +38,25 @@ npm run dev      # http://localhost:5173
 
 All of the following must pass before merging:
 
-| Gate       | Command                 | Requirement             |
-| ---------- | ----------------------- | ----------------------- |
-| Type check | `npm run typecheck`     | Zero errors             |
-| Lint       | `npm run lint:all`      | Zero warnings           |
-| Format     | `npm run format:check`  | Exit 0                  |
-| Tests      | `npm run test:coverage` | All pass, ≥90% coverage |
-| Build      | `npm run build`         | Successful              |
-| Bundle     | `npm run check:bundle`  | Under 250 KB            |
+| Gate         | Command                                | Requirement                    |
+| ------------ | -------------------------------------- | ------------------------------ |
+| Type check   | `npm run typecheck`                    | Zero errors                    |
+| Lint         | `npm run lint:all`                     | Zero warnings                  |
+| Format       | `npm run format:check`                 | Exit 0 (Biome, not Prettier)   |
+| File headers | `npm run audit:headers`                | Every file has a docblock      |
+| Contrast     | `npm run check:contrast`               | Every token pair meets WCAG    |
+| API types    | `npm run check:api-types`              | No drift from `openapi.ts`     |
+| Tests        | `npm run test:coverage`                | ≥90% stmt/line/fn, ≥80% branch |
+| Build        | `npm run build`                        | Successful                     |
+| Bundle       | `npm run check:bundle`                 | Under 250 KB gzip              |
+| Architecture | `node scripts/arch-check.mjs --strict` | Zero layer violations          |
 
 Or run everything at once: `npm run ci`
+
+A gate is only worth having if it can fail. When you add one, ask what edit would break
+it — if there is no clear answer, the gate is decorative. Derive assertions from the
+artifact (parse the CSS, parse the route table, walk the directory) rather than restating
+it in the test.
 
 ## 🔀 Pull Request Process
 
@@ -108,6 +124,17 @@ src/
 | Browser tests | `tests/browser/` | Vitest + browser | `npm run test:browser` |
 | E2E tests     | `tests/e2e/`     | Playwright       | `npm run test:e2e`     |
 
+**Vitest runs as two projects — put your test in the right one:**
+
+| Project | Paths                                                                                       | Environment                    |
+| ------- | ------------------------------------------------------------------------------------------- | ------------------------------ |
+| `node`  | `tests/unit/{domain,worker,providers,types,helpers,mcp}/**`                                  | No DOM globals; `fetch` blocked |
+| `dom`   | everything else under `tests/`                                                                 | happy-dom                      |
+
+A test whose path puts it in the `node` project but which still needs browser globals
+(`self`, `WebAssembly`) must declare `@vitest-environment happy-dom` in its file docblock —
+the config-level `exclude` beats `include`, so the exception cannot be written as a glob.
+
 **Rules:**
 
 - Domain tests are pure — no mocks needed
@@ -116,6 +143,14 @@ src/
 - Core/card tests mock `localStorage` via `vi.stubGlobal`
 - Coverage thresholds: 90% statements/lines/functions, 80% branches
 - Use `it.each` for parameterized tests over repeated `it` blocks
+- E2E specs must await `waitForAppReady(page)` from `tests/e2e/app-ready.ts`, never a bare
+  `waitForLoadState("domcontentloaded")` — the latter races the bootstrap
+- Never derive an E2E budget from a hardcoded count ("press Tab up to 10 times"); read the
+  bound off the document instead, or it will pass locally and fail in CI
+- Playwright visual baselines are platform-specific. Regenerate them with
+  `gh workflow run ci.yml --ref main -f update_snapshots=true`, then download and commit the
+  `*-linux.png` files. Never commit locally generated `*-win32.png` baselines — CI never
+  validates them.
 
 ## 🚫 Non-Negotiable Rules
 
@@ -126,12 +161,8 @@ src/
 - **No `console.log`** — use `console.warn`/`console.error` only
 - **No floating promises** — use `void asyncFn()` or `await`
 - **No raw `innerHTML =`** — use `patchDOM()` from `core/patch-dom`
-
-- Domain logic: always add unit tests (aim for 100% branch coverage)
-- UI changes: add at least one integration test
-- New cards: add both unit test and E2E smoke test
-- Mock external APIs — never hit real networks in tests
-- Use `makeCandles()` from `tests/helpers/` for fixture data
+- **No hardcoded foreground on a themed background** — `color: #fff` on `var(--accent)` is
+  only correct for one theme. Use `var(--bg-app)` so it flips with the theme.
 
 ## 🏷️ File Naming
 
@@ -151,7 +182,15 @@ src/
 Look for the `good first issue` label on GitHub Issues. These are scoped tasks suitable for
 newcomers:
 
-- Adding a new domain indicator (pure function + tests)
-- Improving CSS accessibility (contrast, focus rings)
-- Adding missing unit tests to reach coverage threshold
+- [#105](https://github.com/RajwanYair/CrossTide/issues/105) — document one of the 29 Worker
+  routes still missing from `worker/routes/openapi.ts`. Each route is independent, so the
+  issue takes as many contributors as want it, and
+  `tests/unit/worker/openapi-drift.test.ts` tells you exactly which ones are left.
+- [#104](https://github.com/RajwanYair/CrossTide/issues/104) — disambiguate one of the 12
+  duplicate-named domain modules.
+- [#103](https://github.com/RajwanYair/CrossTide/issues/103) — wire up or retire one of the
+  52 orphaned domain modules. They are tested but unreachable from any barrel.
+- Adding a new domain indicator (pure function + tests) — see
+  `.github/skills/add-indicator/SKILL.md`
+- Adding missing unit tests to reach the coverage threshold
 - Documentation improvements and typo fixes

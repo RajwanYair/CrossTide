@@ -745,6 +745,8 @@ flowchart LR
 | R2 | 3-minute video walkthrough | P1 | ⬜ |
 | R4 | Product Hunt + HN + Reddit launch | P0 | ⬜ |
 
+**E18 detail (partial):** `.github/CONTRIBUTING.md` was refreshed against the gates that actually run — it had told contributors to format with Prettier (the repo uses Biome, which does not touch markdown at all) and listed six gates when `npm run ci` runs ten. It now documents `audit:headers`, `check:contrast`, `check:api-types` and `arch-check`, states the Vitest two-project split that decides whether a new test gets DOM globals, and records the three E2E traps that cost this project real CI time: a bare `waitForLoadState` racing the bootstrap, a hardcoded iteration budget, and locally generated `*-win32.png` baselines that CI never validates. Three issues were labelled `good first issue` and are now linked from the contributing guide: [#105](https://github.com/RajwanYair/CrossTide/issues/105) (29 undocumented Worker routes, one route per contributor, with `openapi-drift.test.ts` naming the remaining ones), [#104](https://github.com/RajwanYair/CrossTide/issues/104) (12 duplicate-named domain modules) and [#103](https://github.com/RajwanYair/CrossTide/issues/103) (52 orphaned domain modules). _Remaining:_ the Discord server itself has to be created by the repo owner; the invite link is the only outstanding piece.
+
 ### Phase S — v15.0.0 "Intelligence" (6-8 weeks)
 
 | # | Task | Priority |
