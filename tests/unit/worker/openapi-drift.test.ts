@@ -47,23 +47,14 @@ function documentedRoutes(): string[] {
  * This list may only get shorter.
  */
 const KNOWN_GAP: readonly string[] = [
-  "DELETE /api/keys/{id}",
-  "GET /api/auth/challenge",
-  "GET /api/keys",
-  "GET /api/keys/get",
-  "GET /api/sync",
   "GET /api/ws/{symbol}",
   "GET /favicon.ico",
-  "POST /api/auth/authenticate",
-  "POST /api/auth/register",
   "POST /api/csp-report",
   "POST /api/factor-model",
   "POST /api/fundamentals/batch",
-  "POST /api/keys",
   "POST /api/monte-carlo",
   "POST /api/pairs",
   "POST /api/signal-dsl/execute-script",
-  "PUT /api/sync",
 ];
 
 describe("OpenAPI contract", () => {

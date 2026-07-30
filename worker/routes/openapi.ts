@@ -1180,8 +1180,288 @@ export const OPENAPI_SPEC = {
         },
       },
     },
+    "/api/auth/challenge": {
+      get: {
+        operationId: "getAuthChallenge",
+        summary: "Issue WebAuthn challenge",
+        description: "Issues a one-time challenge for passkey registration or authentication.",
+        tags: ["System"],
+        security: [],
+        responses: {
+          "200": {
+            description: "Challenge payload",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/auth/register": {
+      post: {
+        operationId: "registerPasskey",
+        summary: "Register passkey credential",
+        description: "Registers a WebAuthn credential and stores its public-key metadata in D1.",
+        tags: ["System"],
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: [
+                  "credentialId",
+                  "rawId",
+                  "attestationObject",
+                  "clientDataJSON",
+                  "userHandle",
+                ],
+                properties: {
+                  credentialId: { type: "string" },
+                  rawId: { type: "string" },
+                  attestationObject: { type: "string" },
+                  clientDataJSON: { type: "string" },
+                  publicKey: { type: "string" },
+                  userHandle: { type: "string" },
+                  rpId: { type: "string" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Credential registered",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "409": { description: "Credential already registered" },
+          "503": { description: "Auth storage unavailable" },
+        },
+      },
+    },
+    "/api/auth/authenticate": {
+      post: {
+        operationId: "authenticatePasskey",
+        summary: "Authenticate passkey assertion",
+        description: "Verifies a WebAuthn assertion and updates credential usage metadata.",
+        tags: ["System"],
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["credentialId", "authenticatorData", "clientDataJSON", "signature"],
+                properties: {
+                  credentialId: { type: "string" },
+                  authenticatorData: { type: "string" },
+                  clientDataJSON: { type: "string" },
+                  signature: { type: "string" },
+                  userHandle: { type: "string" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Authentication success",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "401": { description: "Authentication failed" },
+          "503": { description: "Auth storage unavailable" },
+        },
+      },
+    },
+    "/api/sync": {
+      get: {
+        operationId: "getEncryptedSyncBlob",
+        summary: "Read encrypted sync payload",
+        description:
+          "Returns encrypted user sync state for a credential identifier. The server treats payloads as opaque ciphertext.",
+        tags: ["System"],
+        security: [{ CredentialIdQuery: [] }],
+        parameters: [
+          {
+            name: "credentialId",
+            in: "query",
+            required: true,
+            description: "Credential identifier",
+            schema: { type: "string", minLength: 1, maxLength: 512 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Encrypted sync blob",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "503": { description: "Sync storage unavailable" },
+        },
+      },
+      put: {
+        operationId: "putEncryptedSyncBlob",
+        summary: "Write encrypted sync payload",
+        description:
+          "Stores or replaces encrypted sync state using optimistic version checks keyed by credentialId.",
+        tags: ["System"],
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["credentialId", "encryptedBlob", "version"],
+                properties: {
+                  credentialId: { type: "string" },
+                  encryptedBlob: { type: "string" },
+                  version: { type: "integer", minimum: 1 },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Sync payload stored",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "404": { description: "Credential not found" },
+          "409": { description: "Version conflict" },
+          "503": { description: "Sync storage unavailable" },
+        },
+      },
+    },
+    "/api/keys": {
+      get: {
+        operationId: "listUserKeys",
+        summary: "List stored BYOK metadata",
+        description: "Lists encrypted API-key metadata for the authenticated credential.",
+        tags: ["System"],
+        security: [{ CredentialHeader: [] }],
+        responses: {
+          "200": {
+            description: "Stored key metadata",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "401": { description: "Missing or invalid credential" },
+          "503": { description: "Database unavailable" },
+        },
+      },
+      post: {
+        operationId: "storeUserKey",
+        summary: "Store encrypted BYOK secret",
+        description:
+          "Stores an encrypted API key for a provider. The server stores ciphertext only.",
+        tags: ["System"],
+        security: [{ CredentialHeader: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["provider", "encrypted_key", "iv"],
+                properties: {
+                  provider: { type: "string" },
+                  encrypted_key: { type: "string" },
+                  iv: { type: "string" },
+                  label: { type: "string" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Key stored",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "401": { description: "Missing or invalid credential" },
+          "503": { description: "Database unavailable" },
+        },
+      },
+    },
+    "/api/keys/get": {
+      get: {
+        operationId: "getUserKey",
+        summary: "Retrieve encrypted provider key",
+        description:
+          "Returns encrypted key material for a provider under the authenticated credential.",
+        tags: ["System"],
+        security: [{ CredentialHeader: [] }],
+        parameters: [
+          {
+            name: "provider",
+            in: "query",
+            required: true,
+            description: "Provider identifier",
+            schema: { type: "string", minLength: 1 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Encrypted provider key",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "401": { description: "Missing or invalid credential" },
+          "404": { description: "Provider key not found" },
+          "503": { description: "Database unavailable" },
+        },
+      },
+    },
+    "/api/keys/{id}": {
+      delete: {
+        operationId: "deleteUserKey",
+        summary: "Delete encrypted provider key",
+        description:
+          "Deletes an encrypted provider key by numeric id for the authenticated credential.",
+        tags: ["System"],
+        security: [{ CredentialHeader: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "Numeric key identifier",
+            schema: { type: "integer", minimum: 1 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Key deleted",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "401": { description: "Missing or invalid credential" },
+          "404": { description: "Key not found" },
+          "503": { description: "Database unavailable" },
+        },
+      },
+    },
   },
   components: {
+    securitySchemes: {
+      CredentialHeader: {
+        type: "apiKey",
+        in: "header",
+        name: "X-Credential-ID",
+        description: "Credential identifier header required by BYOK routes.",
+      },
+      CredentialIdQuery: {
+        type: "apiKey",
+        in: "query",
+        name: "credentialId",
+        description: "Credential identifier used by sync read route.",
+      },
+    },
     schemas: {
       HealthResponse: {
         type: "object",

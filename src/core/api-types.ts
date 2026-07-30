@@ -302,4 +302,72 @@ export interface ApiRoutes {
     readonly request: Record<string, unknown>;
     readonly response: Record<string, unknown>;
   };
+  /** GET /api/auth/challenge */
+  readonly getAuthChallenge: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/auth/register */
+  readonly registerPasskey: {
+    readonly request: {
+      readonly credentialId: string;
+      readonly rawId: string;
+      readonly attestationObject: string;
+      readonly clientDataJSON: string;
+      readonly publicKey?: string;
+      readonly userHandle: string;
+      readonly rpId?: string;
+    };
+    readonly response: unknown;
+  };
+  /** POST /api/auth/authenticate */
+  readonly authenticatePasskey: {
+    readonly request: {
+      readonly credentialId: string;
+      readonly authenticatorData: string;
+      readonly clientDataJSON: string;
+      readonly signature: string;
+      readonly userHandle?: string;
+    };
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/sync */
+  readonly getEncryptedSyncBlob: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** PUT /api/sync */
+  readonly putEncryptedSyncBlob: {
+    readonly request: {
+      readonly credentialId: string;
+      readonly encryptedBlob: string;
+      readonly version: number;
+    };
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/keys */
+  readonly listUserKeys: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** POST /api/keys */
+  readonly storeUserKey: {
+    readonly request: {
+      readonly provider: string;
+      readonly encrypted_key: string;
+      readonly iv: string;
+      readonly label?: string;
+    };
+    readonly response: unknown;
+  };
+  /** GET /api/keys/get */
+  readonly getUserKey: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** DELETE /api/keys/{id} */
+  readonly deleteUserKey: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
 }
