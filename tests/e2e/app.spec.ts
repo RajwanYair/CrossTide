@@ -129,8 +129,10 @@ test("Ctrl+K opens the command palette", async ({ page }) => {
 // ---------------------------------------------------------------------------
 test("no critical accessibility violations on the watchlist page", async ({ page }) => {
   await page.goto("/watchlist");
-  // Wait for DOM to stabilise
-  await page.waitForLoadState("domcontentloaded");
+  // domcontentloaded is not enough: the theme is applied during bootstrap, so
+  // axe would sample a page whose surfaces had flipped to the light palette
+  // while the 150ms color transition on .nav-link still held dark values.
+  await waitForAppReady(page);
 
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa"])
@@ -151,7 +153,7 @@ test("no critical accessibility violations on the watchlist page", async ({ page
 // ---------------------------------------------------------------------------
 test("no critical accessibility violations on the settings page", async ({ page }) => {
   await page.goto("/settings");
-  await page.waitForLoadState("domcontentloaded");
+  await waitForAppReady(page);
 
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
 
@@ -169,7 +171,7 @@ test("no critical accessibility violations on the settings page", async ({ page 
 // ---------------------------------------------------------------------------
 test("no critical accessibility violations on the consensus page", async ({ page }) => {
   await page.goto("/consensus");
-  await page.waitForLoadState("domcontentloaded");
+  await waitForAppReady(page);
 
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa"])

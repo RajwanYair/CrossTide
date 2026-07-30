@@ -294,7 +294,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | E11 | Data | Wire WebSocket DO fan-out (real-time) | Q | P0 | L | E12 | ⬜ |
 | E13 | Data | BYOK — encrypted user API keys in D1 | Q | P1 | M | P3 | ⬜ |
 | E2 | Agent | Formalize single data layer (OpenAPI contract) | Q | P1 | L | — | 🟡 |
-| E3 | Agent | Agent tool manifest (typed MCP tools) | Q | P1 | M | E2 | ⬜ |
+| E3 | Agent | Agent tool manifest (typed MCP tools) | Q | P1 | M | — | ✅ |
 | Q3 | Quality | Signal DSL fuzz testing | Q | P2 | M | — | ✅ |
 | Q4 | Quality | Property tests → 50+ total | Q | P1 | M | — | ✅ |
 | Q5 | A11y | Keyboard navigation audit | Q | P1 | M | — | ✅ |
@@ -720,7 +720,9 @@ flowchart LR
 | E11 | Wire WebSocket DO fan-out (real-time) | P0 | ⬜ |
 | E13 | BYOK (user API keys, encrypted D1) | P1 | ⬜ |
 | E2 | Formalize single data layer (OpenAPI contract) | P1 | 🟡 |
-| E3 | Agent tool manifest (typed MCP tools) | P1 | ⬜ |
+| E3 | Agent tool manifest (typed MCP tools) | P1 | ✅ |
+
+**E3 detail (done):** `mcp-server/src/tool-manifest.ts` pairs every advertised tool with a Valibot schema and the Worker route it calls. Arguments are parsed at the boundary instead of cast, ticker symbols are constrained before URL interpolation, and only declared fields are forwarded upstream. `tests/unit/mcp/tool-manifest.test.ts` keeps the manifest, the validators and the Worker route table in step — the package previously had no tests.
 
 **E2 detail:** The contract is now enforced. `tests/unit/worker/openapi-drift.test.ts` parses the Hono route table out of `worker/index.ts` and fails when a registered route is undocumented, when the spec describes a route that is not registered, or when its `KNOWN_GAP` backlog goes stale — the list may only shrink. `npm run check:api-types` joined `npm run ci`, so a spec edit that is not reflected in the committed `src/core/api-types.ts` fails the pipeline. 8 of 56 routes were documented before this; 19 are now. The remaining 29 are tracked in [#105](https://github.com/RajwanYair/CrossTide/issues/105).
 | Q3 | Signal DSL fuzz testing | P2 | ✅ |

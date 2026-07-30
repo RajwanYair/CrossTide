@@ -19,121 +19,9 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { isToolName, parseToolArgs, TOOLS } from "./tool-manifest.js";
 
 const API_BASE = process.env.CROSSTIDE_API_URL ?? "http://localhost:8787";
-
-const TOOLS = [
-  {
-    name: "get_quote",
-    description: "Get a real-time stock quote including price, change, volume, and market cap",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        symbol: { type: "string", description: "Ticker symbol (e.g. AAPL, MSFT)" },
-      },
-      required: ["symbol"],
-    },
-  },
-  {
-    name: "get_consensus",
-    description:
-      "Get the technical consensus signal and score for a ticker from the CrossTide screener",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        symbol: { type: "string", description: "Ticker symbol" },
-      },
-      required: ["symbol"],
-    },
-  },
-  {
-    name: "get_chart_data",
-    description: "Get OHLCV candlestick data for charting and analysis",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        symbol: { type: "string", description: "Ticker symbol" },
-        range: {
-          type: "string",
-          description: "Time range: 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, max",
-          enum: ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "max"],
-        },
-        interval: {
-          type: "string",
-          description: "Candle interval: 1m, 5m, 15m, 1h, 1d, 1wk, 1mo",
-          enum: ["1m", "5m", "15m", "1h", "1d", "1wk", "1mo"],
-        },
-      },
-      required: ["symbol"],
-    },
-  },
-  {
-    name: "get_indicators",
-    description:
-      "Calculate technical indicators (SMA, EMA, RSI, MACD, Bollinger, etc.) for a ticker",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        symbol: { type: "string", description: "Ticker symbol" },
-        indicators: {
-          type: "array",
-          items: { type: "string" },
-          description:
-            "Indicator names: sma, ema, rsi, macd, bollinger, stochastic, adx, obv, vwap, atr",
-        },
-        period: { type: "number", description: "Lookback period (default: 14)" },
-      },
-      required: ["symbol", "indicators"],
-    },
-  },
-  {
-    name: "run_screener",
-    description: "Screen a ticker list by RSI, ADX, consensus, and fundamental criteria",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        tickers: {
-          type: "array",
-          items: { type: "string" },
-          description: "One to 50 ticker symbols",
-        },
-        minRsi: { type: "number", description: "Minimum RSI from 0 to 100" },
-        maxRsi: { type: "number", description: "Maximum RSI from 0 to 100" },
-        minAdx: { type: "number", description: "Minimum ADX from 0 to 100" },
-        consensus: { type: "string", enum: ["BUY", "SELL", "NEUTRAL"] },
-        minPe: { type: "number" },
-        maxPe: { type: "number" },
-        minMarketCap: { type: "number", description: "Minimum market cap in USD" },
-        maxMarketCap: { type: "number", description: "Maximum market cap in USD" },
-        minDividendYield: { type: "number", description: "Minimum decimal dividend yield" },
-        minProfitMargin: { type: "number", description: "Minimum decimal profit margin" },
-      },
-      required: ["tickers"],
-    },
-  },
-  {
-    name: "get_portfolio_analytics",
-    description: "Calculate portfolio allocation, profit and loss, and concentration analytics",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        holdings: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              symbol: { type: "string" },
-              shares: { type: "number" },
-              costBasis: { type: "number", description: "Per-share cost basis" },
-            },
-            required: ["symbol", "shares", "costBasis"],
-          },
-        },
-      },
-      required: ["holdings"],
-    },
-  },
-] as const;
 
 async function callApi(path: string): Promise<unknown> {
   const url = `${API_BASE}${path}`;
@@ -146,58 +34,65 @@ async function callApi(path: string): Promise<unknown> {
   return res.json();
 }
 
+async function postApi(path: string, body: unknown): Promise<unknown> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`API error ${res.status}: ${await res.text()}`);
+  }
+  return res.json();
+}
+
+/**
+ * Arguments arrive from an MCP client that may ignore the advertised schema, so
+ * every branch parses them first. Only validated, explicitly named fields are
+ * forwarded upstream — `run_screener` previously relayed the whole argument bag.
+ */
 async function handleTool(name: string, args: Record<string, unknown>): Promise<string> {
+  if (!isToolName(name)) {
+    throw new Error(`Unknown tool: ${name}`);
+  }
+
   switch (name) {
     case "get_quote": {
-      const data = await callApi(`/api/quote/${encodeURIComponent(String(args.symbol))}`);
-      return JSON.stringify(data, null, 2);
+      const { symbol } = parseToolArgs("get_quote", args);
+      return JSON.stringify(await callApi(`/api/quote/${encodeURIComponent(symbol)}`), null, 2);
     }
     case "get_consensus": {
-      const res = await fetch(`${API_BASE}/api/screener`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
-        body: JSON.stringify({ tickers: [args.symbol] }),
-      });
-      if (!res.ok) throw new Error(`Consensus error ${res.status}: ${await res.text()}`);
-      const data = (await res.json()) as { readonly rows?: readonly unknown[] };
+      const { symbol } = parseToolArgs("get_consensus", args);
+      const data = (await postApi("/api/screener", { tickers: [symbol] })) as {
+        readonly rows?: readonly unknown[];
+      };
       return JSON.stringify(data.rows?.[0] ?? null, null, 2);
     }
     case "get_chart_data": {
-      const range = (args.range as string) ?? "3mo";
-      const interval = (args.interval as string) ?? "1d";
-      const data = await callApi(
-        `/api/chart?ticker=${encodeURIComponent(String(args.symbol))}&range=${encodeURIComponent(range)}&interval=${encodeURIComponent(interval)}`,
-      );
-      return JSON.stringify(data, null, 2);
+      const { symbol, range, interval } = parseToolArgs("get_chart_data", args);
+      const query = new URLSearchParams({ ticker: symbol, range, interval });
+      return JSON.stringify(await callApi(`/api/chart?${query.toString()}`), null, 2);
     }
     case "get_indicators": {
-      const indicators = (args.indicators as string[]).join(",");
-      const period = (args.period as number) ?? 14;
-      const data = await callApi(
-        `/api/indicators?symbol=${encodeURIComponent(String(args.symbol))}&indicators=${encodeURIComponent(indicators)}&range=6mo&period=${encodeURIComponent(String(period))}`,
-      );
-      return JSON.stringify(data, null, 2);
+      const { symbol, indicators, period } = parseToolArgs("get_indicators", args);
+      const query = new URLSearchParams({
+        symbol,
+        indicators: indicators.join(","),
+        range: "6mo",
+        period: String(period),
+      });
+      return JSON.stringify(await callApi(`/api/indicators?${query.toString()}`), null, 2);
     }
     case "run_screener": {
-      const res = await fetch(`${API_BASE}/api/screener`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
-        body: JSON.stringify(args),
-      });
-      if (!res.ok) throw new Error(`Screener error: ${await res.text()}`);
-      return JSON.stringify(await res.json(), null, 2);
+      const criteria = parseToolArgs("run_screener", args);
+      return JSON.stringify(await postApi("/api/screener", criteria), null, 2);
     }
     case "get_portfolio_analytics": {
-      const res = await fetch(`${API_BASE}/api/portfolio/analytics`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
-        body: JSON.stringify({ holdings: args.holdings }),
-      });
-      if (!res.ok) throw new Error(`Portfolio error: ${await res.text()}`);
-      return JSON.stringify(await res.json(), null, 2);
+      const { holdings } = parseToolArgs("get_portfolio_analytics", args);
+      return JSON.stringify(await postApi("/api/portfolio/analytics", { holdings }), null, 2);
     }
     default:
-      throw new Error(`Unknown tool: ${name}`);
+      throw new Error(`Unhandled tool: ${String(name)}`);
   }
 }
 

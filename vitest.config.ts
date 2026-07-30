@@ -7,6 +7,7 @@ const NODE_ONLY_SUITES = [
   "tests/unit/providers/**/*.test.ts",
   "tests/unit/types/**/*.test.ts",
   "tests/unit/helpers/**/*.test.ts",
+  "tests/unit/mcp/**/*.test.ts",
 ];
 
 export default defineConfig({
