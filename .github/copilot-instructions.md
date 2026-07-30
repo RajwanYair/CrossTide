@@ -197,6 +197,24 @@ Run all: `npm run ci`
     - `src/styles/a11y.css` and `src/styles/fonts.css` are not referenced by `index.html`. Adding rules to them has no effect at runtime.
     - Only `tokens`, `base`, `layout`, `components`, `responsive` and `print` are loaded. Tracked as roadmap Q6.
 
+17. **A readiness guard built on optional chaining is vacuous**
+    - `document.getElementById(id)?.textContent !== ""` evaluates to `undefined !== ""` → `true` when the element is absent, so `waitForFunction` resolves *immediately* and the test races the bootstrap.
+    - This produced an intermittent (not deterministic) E2E failure, which is the hardest class to attribute. Always use `waitForAppReady` from `tests/e2e/app-ready.ts`.
+    - Generalisation: a guard that can only ever return `true` is worse than no guard — it buys false confidence. The same defect shape exists in `tests/unit/a11y-audit.test.ts`, which asserts against file *text* rather than applied styles.
+
+18. **Markdown formatting is owned by markdownlint alone**
+    - Biome 2.5 does **not** format markdown; `biome format <file>.md` reports "paths were provided but ignored". There is no Biome/markdownlint conflict to resolve.
+    - `MD049` (emphasis-style) runs in **consistent** mode: the *first* emphasis marker in a file sets the expected style for that file. Introducing one `*asterisk*` into a file that uses `_underscore_` errors on every pre-existing underscore.
+    - CHANGELOG.md and docs/ROADMAP.md use `_underscore_`; this file uses `*asterisk*`. Match the file you are editing.
+
+19. **PowerShell escaped quotes break `git commit -m`**
+    - A `\"` inside a `-m "…"` argument makes git re-parse the remainder as pathspecs (`fatal: … is outside repository`).
+    - Write quote-free commit bodies, one `-m` per paragraph, each line under 100 chars (commitlint `body-max-line-length`).
+
+20. **The edit tool can fuzzy-match and silently drop a neighbouring line**
+    - During a 12-site replacement it matched on indentation alone and deleted three adjacent statements.
+    - After any multi-site edit to source or tests, run `git diff -U0` and read every hunk. Recover a damaged region with `git show HEAD:<path>`.
+
 ## 🔌 Worker API Endpoints
 
 | Method | Path                        | Description                     |

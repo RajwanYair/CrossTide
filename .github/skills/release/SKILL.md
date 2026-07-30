@@ -99,4 +99,4 @@ npm audit --omit=dev --audit-level=high
 npm audit signatures
 ```
 
-Zero tolerance: 0 type errors · 0 lint errors/warnings · 0 markdownlint errors · 0 test failures · JS gzip < 200 KB · OpenAPI version matches `package.json`.
+Zero tolerance: 0 type errors · 0 lint errors/warnings · 0 markdownlint errors · 0 test failures · JS gzip < 250 KB · OpenAPI version matches `package.json`.

@@ -7,13 +7,29 @@ description: "Use when: editing any CSS or style file in the project."
 
 ## 🧱 Layer Order
 
-CSS is organized with `@layer` in this strict order:
+The cascade order is declared once, at the top of `src/styles/tokens.css`:
 
-```text
-reset → tokens → base → layout → components → cards → utilities → overrides
+```css
+@layer tokens, themes, base, layout, components;
 ```
 
-New rules must go into the appropriate layer. Never add rules outside a `@layer` block.
+A layer not named there sorts **after** all named layers (`responsive.css` uses
+`layout-responsive`, which is why its overrides win). New rules must go into an
+existing layer — never add rules outside a `@layer` block, and do not invent a
+new layer name without adding it to the declaration.
+
+### 📎 Which stylesheets actually ship
+
+`index.html` loads exactly six files:
+
+```text
+tokens.css  base.css  layout.css  components.css  responsive.css  print.css (media=print)
+```
+
+`src/styles/a11y.css` and `src/styles/fonts.css` are **not referenced by anything**
+— editing them has no runtime effect. `tests/unit/a11y-audit.test.ts` asserts
+against a11y.css's *file text*, so it passes while proving nothing. Tracked as
+roadmap Q6; until it is resolved, put global a11y rules in `components.css`.
 
 ## 🎛️ Custom Properties
 
@@ -94,3 +110,35 @@ LWC v5 chart components (`<lwc-chart>`) use shadow DOM — pierce with `::part()
 ## 🧹 Stylelint
 
 `npm run lint:css` must exit 0 with 0 errors and 0 warnings. No inline `/* stylelint-disable */` comments.
+
+`comment-empty-line-before` fires on a comment placed directly above a rule with
+no blank line. Fold the explanation into the existing `/* ── Section ── */` header
+rather than adding a second comment block.
+
+## ♿ Contrast & Target Size (WCAG 2.2 AA)
+
+`tests/e2e/wcag-audit.spec.ts` runs axe across all 23 routes and fails on any
+serious/critical violation. It is the authority — the README badge claims **AA**,
+not AAA.
+
+- Text needs **≥ 4.5:1** against its *computed* background. A translucent
+  foreground blends with the surface and loses contrast, so keep label colors
+  fully opaque on colored tiles.
+- Interactive targets need **≥ 24×24 CSS px**. `<summary>` lays out at line-height
+  only and needs an explicit `min-height`.
+- **Never hardcode a hex for signal colors.** `--signal-buy` / `--signal-sell` /
+  `--signal-neutral` are swapped by the color-blind palettes, so a hardcoded
+  foreground silently breaks under a palette change. Blend the signal color away
+  from the surface instead:
+
+  ```css
+  .badge-buy {
+    background: color-mix(in sRGB, var(--signal-buy) 20%, transparent);
+    color: color-mix(in sRGB, var(--signal-buy), var(--badge-fg-blend) var(--badge-fg-blend-amt));
+  }
+  ```
+
+  `--badge-fg-blend` is `#fff`/30% in dark and `#000`/35% in light.
+
+After changing any color token or tile background, re-run
+`./node_modules/.bin/playwright test tests/e2e/wcag-audit.spec.ts --project=chromium`.

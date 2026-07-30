@@ -161,7 +161,7 @@ Always call `handle?.dispose?.()` in `afterEach` — otherwise a leaked subscrip
 ## 5️⃣ Step 5 — Verify
 
 ```powershell
-npx --no-install vitest run tests/unit/cards
+./node_modules/.bin/vitest run tests/unit/cards
 $env:PLAYWRIGHT_BROWSERS_PATH='C:\ProgramData\ms-playwright'
 npm run test:e2e:cards
 npm run ci

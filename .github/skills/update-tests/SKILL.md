@@ -17,9 +17,9 @@ argument-hint: "Describe what changed: new domain function name, new worker rout
 
 ```powershell
 npm run test:coverage                              # all tests + coverage gate
-npx vitest run tests/unit/domain/rsi.test.ts      # single file
-npx vitest run --reporter=verbose                  # verbose output
-npx vitest run tests/unit/worker/                  # all worker tests
+./node_modules/.bin/vitest run tests/unit/domain/rsi.test.ts      # single file
+./node_modules/.bin/vitest run --reporter=verbose                  # verbose output
+./node_modules/.bin/vitest run tests/unit/worker/                  # all worker tests
 ```
 
 ## 📏 Layer Test Rules

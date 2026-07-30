@@ -157,9 +157,9 @@ NEVER make real network calls — always mock `globalThis.fetch`.
 ## 7️⃣ Step 7 — Validate
 
 ```powershell
-npx tsc --project worker/tsconfig.json --noEmit
-npx vitest run tests/unit/worker/<route>.test.ts
-cd worker; npx wrangler deploy --dry-run; cd ..
+./node_modules/.bin/tsc --project worker/tsconfig.json --noEmit
+./node_modules/.bin/vitest run tests/unit/worker/<route>.test.ts
+cd worker; ../node_modules/.bin/wrangler deploy --dry-run; cd ..
 ```
 
 ## 8️⃣ Step 8 — Commit

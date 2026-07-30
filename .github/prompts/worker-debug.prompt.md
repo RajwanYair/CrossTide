@@ -13,12 +13,12 @@ Diagnose and fix a failing Cloudflare Worker route. Follow this checklist in ord
 
 - Which path is failing? (e.g. `/api/quote/:symbol`, `/api/chart`)
 - What error are clients seeing? Check browser devtools network tab and the response body
-- Is the Worker deployed? `cd worker && npx wrangler tail` to see live logs
+- Is the Worker deployed? `cd worker; ../node_modules/.bin/wrangler tail` to see live logs
 
 ## 2️⃣ Type Check Worker
 
 ```powershell
-npx tsc --project worker/tsconfig.json --noEmit
+./node_modules/.bin/tsc --project worker/tsconfig.json --noEmit
 ```
 
 Expected: **0 errors**.
@@ -29,7 +29,7 @@ Upstream APIs (Yahoo, Finnhub, CoinGecko, ECB) may have changed shape.
 
 - Check the relevant Valibot schema in `worker/providers/<provider>.ts` or `worker/routes/<route>.ts`
 - Add `.passthrough()` temporarily to see the raw shape, log it, then tighten the schema
-- Run `npx vitest run tests/unit/worker/<route>.test.ts` to verify the schema fixture still matches
+- Run `./node_modules/.bin/vitest run tests/unit/worker/<route>.test.ts` to verify the schema fixture still matches
 
 ## 4️⃣ KV Cache Behaviour
 
@@ -62,7 +62,7 @@ Verify with: `Select-String -Pattern '\.data\b' -Path src/core/fetch.ts`.
 
 ```powershell
 cd worker
-npx wrangler dev --local
+./node_modules/.bin/wrangler dev --local
 ```
 
 Then in another terminal:

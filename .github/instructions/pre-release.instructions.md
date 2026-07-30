@@ -93,7 +93,7 @@ Update ALL of these on every version bump. Search the old version string (e.g. `
 
 | Budget         | Target   | Check command          |
 | -------------- | -------- | ---------------------- |
-| JS gzip total  | < 200 KB | `npm run check:bundle` |
+| JS gzip total  | < 250 KB | `npm run check:bundle` |
 | First card LCP | < 2.5 s  | `npm run lhci`         |
 | TBT            | < 200 ms | `npm run lhci`         |
 | CLS            | < 0.1    | `npm run lhci`         |
@@ -117,7 +117,7 @@ CI rejects any push that exceeds the JS gzip budget. Lighthouse runs on every PR
 
 ## 6 · 🏥 Worker Health
 
-- [ ] `cd worker && npx wrangler deploy --dry-run` — schema validates
+- [ ] `cd worker; ../node_modules/.bin/wrangler deploy --dry-run` — schema validates
 - [ ] D1 migrations applied to production: `wrangler d1 migrations apply crosstide-db`
 - [ ] KV namespaces present and not placeholder: check `worker/wrangler.toml`
 - [ ] OpenAPI spec served at `/openapi.json` matches `worker/routes/openapi.ts`
@@ -146,7 +146,7 @@ git push origin main --tags
 - Any quality gate above is non-zero
 - New `eslint-disable` / `@ts-ignore` introduced
 - New runtime dependency without an accompanying ADR
-- Bundle gzip exceeds 200 KB
+- Bundle gzip exceeds 250 KB
 - Coverage drops below threshold (90 / 80)
 - New worker route lacks Valibot/Zod schema validation
 - CSP wildcard added without quarterly-narrow follow-up issue

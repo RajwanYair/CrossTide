@@ -23,7 +23,7 @@ Write Vitest unit tests for the specified domain function.
 
 ## ✅ Validation
 
-Run the test file to verify all pass: `npx vitest run tests/unit/domain/{file}.test.ts`
+Run the test file to verify all pass: `./node_modules/.bin/vitest run tests/unit/domain/{file}.test.ts`
 
 ## 💬 User Request
 

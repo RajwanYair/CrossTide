@@ -38,7 +38,7 @@ All of the following must pass before merging:
 | Format     | `npm run format:check`  | Exit 0                  |
 | Tests      | `npm run test:coverage` | All pass, ≥90% coverage |
 | Build      | `npm run build`         | Successful              |
-| Bundle     | `npm run check:bundle`  | Under 200 KB            |
+| Bundle     | `npm run check:bundle`  | Under 250 KB            |
 
 Or run everything at once: `npm run ci`
 

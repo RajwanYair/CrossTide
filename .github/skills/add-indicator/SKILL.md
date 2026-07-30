@@ -175,13 +175,13 @@ Good invariants: output bounds, scale invariance, constant-input identity, serie
 `scripts/generate-indicator-docs.ts` scrapes `src/domain/*.ts` for the leading file docblock, exported function JSDoc, and exported interfaces to build `docs/INDICATORS.md`. Nothing is registered manually — but a missing or `@`-only docblock yields an empty description, so write a real one-line summary.
 
 ```powershell
-npx --no-install tsx scripts/generate-indicator-docs.ts
+./node_modules/.bin/tsx scripts/generate-indicator-docs.ts
 ```
 
 ## 6️⃣ Step 6 — Verify
 
 ```powershell
-npx --no-install vitest run tests/unit/domain
+./node_modules/.bin/vitest run tests/unit/domain
 node scripts/arch-check.mjs --strict
 npm run ci
 ```

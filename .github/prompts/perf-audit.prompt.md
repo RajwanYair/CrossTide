@@ -14,7 +14,7 @@ npm run build && npm run check:bundle
 If over budget (250 KB gzip), analyze chunks:
 
 ```bash
-npx vite build --mode analyze
+./node_modules/.bin/vite build --mode analyze
 ```
 
 ## 📊 Core Web Vitals

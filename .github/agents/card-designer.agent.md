@@ -73,10 +73,13 @@ Use this agent when the task is primarily one of:
 
 ## 🌓 Theme System
 
-- CSS custom properties in `src/styles/tokens.css`
-- Per-theme overrides in `src/styles/themes.css`
+- CSS custom properties and every `[data-theme]` override live in `src/styles/tokens.css`
+  (`@layer tokens` then `@layer themes`) — there is no separate `themes.css`
 - Components consume tokens (`var(--accent)`, `var(--bg-card)`) — no hardcoded colors
 - 6 themes total — confirm new components render correctly across all of them
+- Only six stylesheets are loaded by `index.html`: `tokens`, `base`, `layout`,
+  `components`, `responsive`, `print`. **`a11y.css` and `fonts.css` are orphaned**
+  — rules added there never reach the browser (roadmap Q6)
 
 ## ♿ Accessibility Checklist
 
@@ -85,7 +88,12 @@ Use this agent when the task is primarily one of:
 - [ ] All icons either have `aria-label` or `aria-hidden="true"`
 - [ ] Modal dialogs use `<dialog>` with `.showModal()` / `.close()` — focus trap automatic
 - [ ] Reduced motion: animations gated by `@media (prefers-reduced-motion: reduce)`
-- [ ] Color contrast ≥ WCAG AA — `npm run check:contrast` exits 0
+- [ ] Color contrast ≥ WCAG 2.2 AA (4.5:1 text) — `npm run check:contrast` exits 0 and
+      `tests/e2e/wcag-audit.spec.ts` reports 0 serious/critical axe violations
+- [ ] Interactive targets ≥ 24×24 CSS px — `<summary>` needs an explicit `min-height`
+- [ ] Signal colors blended, never hardcoded: use
+      `color-mix(in sRGB, var(--signal-buy), var(--badge-fg-blend) var(--badge-fg-blend-amt))`
+      so the color-blind palettes keep working
 
 ## 🧩 Web Components
 

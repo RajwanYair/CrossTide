@@ -147,3 +147,8 @@ Run: `npm run test:coverage` — fails CI if thresholds not met.
   a card, add its `{ route, viewId }` entry to the matrix.
 - The `webServer` command must be `npm run dev -- --port 4173`, never `npx vite`.
 - Ensure deep-link E2E scenarios subscribe to route changes before initial router dispatch in app code.
+- Gate every spec on `waitForAppReady` from `tests/e2e/app-ready.ts`. Never hand-roll
+  `getElementById(id)?.textContent !== ""` — it is `undefined !== ""` when the element
+  is absent, so it resolves instantly and races the bootstrap.
+- Visual baselines are platform-specific (`<name>-<project>-linux.png`) and must be
+  generated in CI, not on Windows. See `.github/instructions/browser.instructions.md`.

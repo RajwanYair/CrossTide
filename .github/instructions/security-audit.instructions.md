@@ -51,7 +51,7 @@ Run on every patch release (`vX.Y.Z` with `Z > 0`):
 - [ ] No `localStorage` write of secrets, OAuth tokens, JWTs, or session IDs
 - [ ] No new external runtime dep (browser side)
 - [ ] OpenAPI spec passes Valibot schema validation
-- [ ] Worker tests pass: `npx vitest run tests/unit/worker/`
+- [ ] Worker tests pass: `./node_modules/.bin/vitest run tests/unit/worker/`
 
 ## 🎲 Quarterly drill (any 3 random items)
 

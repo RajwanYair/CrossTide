@@ -27,14 +27,14 @@ description: "Deploy CrossTide to Cloudflare Workers and Pages, provision KV/D1/
 npm run ci
 
 # Verify wrangler auth
-npx wrangler whoami
+./node_modules/.bin/wrangler whoami
 ```
 
 ### 2️⃣ Deploy Worker
 
 ```bash
 cd worker
-npx wrangler deploy --env production
+./node_modules/.bin/wrangler deploy --env production
 
 # Verify
 curl https://crosstide-api.workers.dev/api/health
@@ -47,7 +47,7 @@ Push to `main` branch triggers CF Pages deployment automatically.
 Manual trigger:
 
 ```bash
-npx wrangler pages deploy dist --project-name crosstide
+./node_modules/.bin/wrangler pages deploy dist --project-name crosstide
 ```
 
 ### 4️⃣ Post-deployment verification
@@ -68,7 +68,7 @@ curl -sI https://crosstide.pages.dev | head -5
 CF Pages has instant rollback via the dashboard or:
 
 ```bash
-npx wrangler pages deployment rollback --project-name crosstide
+./node_modules/.bin/wrangler pages deployment rollback --project-name crosstide
 ```
 
 ## 🏗️ Provisioning New Resources
@@ -76,22 +76,22 @@ npx wrangler pages deployment rollback --project-name crosstide
 ### 🗄️ KV Namespace
 
 ```bash
-npx wrangler kv namespace create QUOTE_CACHE
-npx wrangler kv namespace create QUOTE_CACHE --preview
+./node_modules/.bin/wrangler kv namespace create QUOTE_CACHE
+./node_modules/.bin/wrangler kv namespace create QUOTE_CACHE --preview
 # Copy IDs to worker/wrangler.toml
 ```
 
 ### 🗃️ D1 Database
 
 ```bash
-npx wrangler d1 create crosstide-db
-npx wrangler d1 migrations apply crosstide-db
+./node_modules/.bin/wrangler d1 create crosstide-db
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db
 ```
 
 ### 🨣 R2 Bucket
 
 ```bash
-npx wrangler r2 bucket create crosstide-ohlcv
+./node_modules/.bin/wrangler r2 bucket create crosstide-ohlcv
 ```
 
 ## 🥹 Common Failures

@@ -41,7 +41,7 @@ You are a specialist in CrossTide's performance architecture.
 
 | Metric | Budget | Action if exceeded |
 |---|---|---|
-| JS initial (gzip) | < 200 KB | Split lazy chunks |
+| JS initial (gzip) | < 250 KB | Split lazy chunks |
 | Lazy card chunk | < 50 KB each | Extract shared deps |
 | LCP (4G mid-Android) | < 1.8s | Preload critical resources |
 | INP (p75) | < 200ms | Move to Web Worker |

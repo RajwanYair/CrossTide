@@ -44,7 +44,7 @@ GitHub Copilot can perform automated PR code reviews:
 
 The `copilot-setup-steps.yml` workflow pre-installs Node 24, `npm ci`, and any global CLI tools needed for autonomous Copilot agent runs. Keep it in sync with local dev requirements.
 
-- Confirm `npx wrangler` version matches `wrangler` in `package.json`
+- Confirm the pinned `wrangler` devDependency in `package.json` matches the version CI installs — invoke it as `./node_modules/.bin/wrangler`, never `npx wrangler`
 - Worker bindings used in Copilot agent tests must use local-dev fake IDs, not production IDs
 - The agent runs in an isolated container — do not assume Windows PowerShell syntax in `copilot-setup-steps.yml`; use POSIX shell (`bash`) there
 

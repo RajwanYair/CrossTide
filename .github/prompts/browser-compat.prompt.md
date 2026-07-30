@@ -25,7 +25,7 @@ READ FIRST: `.github/instructions/browser.instructions.md`
 
 Browser unit tests: `npm run test:browser`
 Playwright E2E (all projects): `npm run test:e2e`
-Playwright (specific): `npx playwright test --project=chromium tests/e2e/{file}.spec.ts`
+Playwright (specific): `./node_modules/.bin/playwright test --project=chromium tests/e2e/{file}.spec.ts`
 
 ## 💬 User Request
 

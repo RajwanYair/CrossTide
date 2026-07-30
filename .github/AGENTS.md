@@ -1,6 +1,6 @@
 # 🤖 CrossTide — Custom Copilot Agents
 
-> Version: v11.44.0 · Tests: 622 files · Coverage: ≥90% stmt/line/fn · ≥80% branch
+> Version: v11.44.0 · Tests: 624 files / 7162 tests · Coverage: ≥90% stmt/line/fn · ≥80% branch
 
 Custom agent modes for VS Code GitHub Copilot. Each agent loads only the files it needs.
 Global rules (coding conventions, commit format, quality gates) are in `copilot-instructions.md`.
@@ -17,6 +17,24 @@ Layer-specific rules are in `.github/instructions/` — agents reference them, n
 | `@quality-reviewer` | `agents/quality-reviewer.agent.md` | Lint, coverage, security, dead code |
 | `@deploy-ops` | `agents/deploy-ops.agent.md` | CF deployment, KV/D1, Docker, CI/CD |
 | `@perf-specialist` | `agents/perf-specialist.agent.md` | Bundle, INP, LCP, WASM, caching |
+
+## 📚 Skill Registry
+
+Skills are step-by-step playbooks for repeatable tasks. Read the matching
+`SKILL.md` **before** starting the task — they encode the file sets that must
+change together.
+
+| Skill | Path | Use when |
+|---|---|---|
+| `add-worker-route` | `skills/add-worker-route/SKILL.md` | Adding a new API endpoint |
+| `add-card` | `skills/add-card/SKILL.md` | Adding a new route card / view |
+| `add-indicator` | `skills/add-indicator/SKILL.md` | Adding a calculator or consensus method |
+| `debug-fetch` | `skills/debug-fetch/SKILL.md` | Broken API calls, stale data |
+| `update-tests` | `skills/update-tests/SKILL.md` | Add/fix tests, coverage drops |
+| `onboard-contributor` | `skills/onboard-contributor/SKILL.md` | New contributor setup, "where do I start" |
+| `release` | `skills/release/SKILL.md` | Version bump, git tag, GH release |
+| `deploy` | `skills/deploy/SKILL.md` | CF deployment, provisioning |
+| `migrate-db` | `skills/migrate-db/SKILL.md` | D1 schema changes |
 
 ---
 
@@ -259,11 +277,15 @@ The following agents are defined as standalone `.agent.md` files with full tool 
 and handoff declarations. They supersede the inline-YAML `@quality` and `@card` entries above
 for production use — they expose richer context, persistent memory, and peer handoffs.
 
-| File                               | Invoke as           | Best For                                                               |
-| ---------------------------------- | ------------------- | ---------------------------------------------------------------------- |
-| `agents/quality-reviewer.agent.md` | `@quality-reviewer` | Pre-release gate, PR review, coverage audit, dead-code scan            |
-| `agents/api-integrator.agent.md`   | `@api-integrator`   | Worker routes, KV cache, provider chain, Valibot validation, D1 wiring |
-| `agents/card-designer.agent.md`    | `@card-designer`    | Card layout, Web Components, a11y, theme tokens, signal store UI       |
+| File                                 | Invoke as             | Best For                                                               |
+| ------------------------------------ | --------------------- | ---------------------------------------------------------------------- |
+| `agents/quality-reviewer.agent.md`   | `@quality-reviewer`   | Pre-release gate, PR review, coverage audit, dead-code scan            |
+| `agents/api-integrator.agent.md`     | `@api-integrator`     | Worker routes, KV cache, provider chain, Valibot validation, D1 wiring |
+| `agents/card-designer.agent.md`      | `@card-designer`      | Card layout, Web Components, a11y, theme tokens, signal store UI       |
+| `agents/domain-specialist.agent.md`  | `@domain-specialist`  | Indicators, consensus, analytics, purity and barrel exports            |
+| `agents/compat-specialist.agent.md`  | `@compat-specialist`  | Browser APIs, progressive enhancement, Playwright cross-browser runs   |
+| `agents/deploy-ops.agent.md`         | `@deploy-ops`         | Cloudflare deploys, KV/D1/R2 provisioning, Docker, CI/CD pipelines     |
+| `agents/perf-specialist.agent.md`    | `@perf-specialist`    | Bundle budget, INP/LCP/CLS, WASM, caching, Lighthouse                  |
 
 The **Explore** subagent is a built-in read-only codebase explorer — use it via `runSubagent` to investigate files without cluttering the main conversation.
 
@@ -300,6 +322,7 @@ runSubagent({ agentName: "Explore", prompt: "Find all worker routes that don't h
 | Reusable slash prompts  | `.github/prompts/*.prompt.md`            | Manual invocation                  |
 | Standalone agents       | `.github/agents/*.agent.md`              | Specialist personas + tool scoping |
 | Skills / playbooks      | `.github/skills/*/SKILL.md`              | Repeatable engineering checklists  |
+| Persistent memory       | `/memories/{,session/,repo/}`            | User, conversation, and repo notes |
 | Copilot config          | `.github/copilot/config.json`            | Mode aliases and context files     |
 | MCP guidance            | `.github/copilot/MCP_SERVERS.md`         | Server placement and security      |
 | Post-edit reminders     | `.github/hooks/post-edit.json`           | Layer-direction and purity checks  |

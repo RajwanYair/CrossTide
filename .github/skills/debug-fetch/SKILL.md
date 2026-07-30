@@ -12,7 +12,7 @@ Use this skill when the problem is in transport, provider chain, worker validati
 
 ```powershell
 cd worker
-npx wrangler tail
+./node_modules/.bin/wrangler tail
 ```
 
 Watch for:
@@ -46,7 +46,7 @@ Verify NO line still says `PLACEHOLDER_KV_NAMESPACE_ID` or `PLACEHOLDER_D1_DATAB
 
 ```powershell
 cd worker
-npx wrangler dev --local
+./node_modules/.bin/wrangler dev --local
 ```
 
 In another terminal:
@@ -94,7 +94,7 @@ If a 502 mentions Valibot:
 ## 7️⃣ Step 7 — Run Targeted Tests
 
 ```powershell
-npx vitest run tests/unit/worker/<route>.test.ts --reporter=verbose
+./node_modules/.bin/vitest run tests/unit/worker/<route>.test.ts --reporter=verbose
 ```
 
 If tests pass but production fails, the difference is real upstream — capture the response body via `wrangler tail` and update the fixture.

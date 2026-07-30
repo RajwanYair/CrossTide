@@ -18,7 +18,7 @@ description: "Create, apply, verify, or troubleshoot CrossTide Cloudflare D1 mig
 
 ```bash
 cd worker
-npx wrangler d1 migrations create crosstide-db "description_of_change"
+./node_modules/.bin/wrangler d1 migrations create crosstide-db "description_of_change"
 ```
 
 This creates a new `.sql` file in `worker/migrations/`.
@@ -44,19 +44,19 @@ CREATE INDEX IF NOT EXISTS idx_new_table_created
 ### 3️⃣ Apply locally (dev)
 
 ```bash
-npx wrangler d1 migrations apply crosstide-db --local
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db --local
 ```
 
 ### 4️⃣ Apply to production
 
 ```bash
-npx wrangler d1 migrations apply crosstide-db --remote
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db --remote
 ```
 
 ### 5️⃣ Verify status
 
 ```bash
-npx wrangler d1 migrations list crosstide-db --remote
+./node_modules/.bin/wrangler d1 migrations list crosstide-db --remote
 ```
 
 Or via the API:
@@ -99,8 +99,8 @@ ALTER TABLE existing_table DROP COLUMN IF EXISTS bad_column;
 
 ```bash
 # Run against local D1
-npx wrangler d1 migrations apply crosstide-db --local
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db --local
 
 # Query local D1
-npx wrangler d1 execute crosstide-db --local --command "SELECT * FROM sqlite_master WHERE type='table'"
+./node_modules/.bin/wrangler d1 execute crosstide-db --local --command "SELECT * FROM sqlite_master WHERE type='table'"
 ```

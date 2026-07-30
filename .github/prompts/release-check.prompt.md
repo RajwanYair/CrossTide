@@ -55,8 +55,8 @@ Run `/security-audit` for the full OWASP smoke check.
 
 ```powershell
 cd worker
-npx wrangler deploy --dry-run
-npx vitest run tests/unit/worker/
+./node_modules/.bin/wrangler deploy --dry-run
+./node_modules/.bin/vitest run tests/unit/worker/
 cd ..
 ```
 
