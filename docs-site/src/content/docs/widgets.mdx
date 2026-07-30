@@ -1,0 +1,72 @@
+---
+title: Embeddable Widgets
+description: Add a CrossTide chart to any page with one module script and a custom element.
+---
+
+## Overview
+
+CrossTide ships a standalone ES module bundle, `widget.mjs`, that auto-registers
+the `<crosstide-chart>` custom element. It is the smallest way to reuse the
+CrossTide chart surface outside the full application shell.
+
+The current widget is chart-first: it renders OHLCV candles from the Worker
+`GET /api/chart` route and uses a closed Shadow DOM so host-page CSS cannot leak
+into it.
+
+## Quick Start
+
+```html
+<script
+  type="module"
+  src="https://rajwanyair.github.io/CrossTide/widget.mjs"
+></script>
+
+<crosstide-chart
+  ticker="AAPL"
+  interval="1d"
+  range="3mo"
+  theme="auto"
+  height="320"
+></crosstide-chart>
+```
+
+The element fetches data from `https://worker.crosstide.pages.dev/api/chart` by
+default. If you self-host the Worker, set `api-base` to your own origin.
+
+## Attributes
+
+| Attribute | Default | Purpose |
+| --- | --- | --- |
+| `ticker` | `AAPL` | Symbol to chart |
+| `interval` | `1d` | Candle interval (`1d`, `1w`, `1mo`) |
+| `range` | `3mo` | History window (`1mo`, `3mo`, `6mo`, `1y`, `5y`) |
+| `theme` | `auto` | `dark`, `light`, or follow `prefers-color-scheme` |
+| `height` | `300` | Widget height in pixels |
+| `show-volume` | `true` | Render the volume strip under candles |
+| `api-base` | `https://worker.crosstide.pages.dev` | Override the Worker origin |
+
+## Self-hosted Worker
+
+```html
+<crosstide-chart
+  ticker="MSFT"
+  range="1y"
+  api-base="https://quotes.example.com"
+></crosstide-chart>
+```
+
+The widget trims trailing slashes from `api-base`, so both
+`https://quotes.example.com` and `https://quotes.example.com/` are valid.
+
+## Accessibility & Behavior
+
+- The widget renders into a **closed Shadow DOM** for style isolation.
+- The canvas exposes `role="img"` and an `aria-label` with the ticker symbol.
+- Network failures render an inline alert state instead of failing silently.
+- Resizing the host container triggers a redraw through `ResizeObserver`.
+
+## Current Scope
+
+This first E21 slice ships the chart widget only. Planned follow-ups in the
+roadmap include a docs-host smoke test, more widget types (quote / consensus),
+and framework adapters that compose with `@crosstide/domain`.

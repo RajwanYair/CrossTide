@@ -329,10 +329,10 @@ the current sprint are marked complete so the queue can keep moving without losi
 1. E21: ship `dist/widget.mjs` from the existing widget module — ✅
 2. E21: point the widget at the Worker `GET /api/chart` contract and add `range` — ✅
 3. E21: publish the embed snippet and widget attributes in `README.md` — ✅
-4. E21: add a build/output smoke test for `widget.mjs` — ⬜
+4. E21: add a build/output smoke test for `widget.mjs` — ✅
 5. E21: add a quote badge / tape widget alongside the chart widget — ⬜
 6. E21: add a consensus badge widget — ⬜
-7. E21: add a docs-site page with copy-paste widget examples — ⬜
+7. E21: add a docs-site page with copy-paste widget examples — ✅
 8. E21: add a host-page E2E smoke test that loads the built widget outside the app shell — ⬜
 9. E18: create the Discord server invite link and wire it into contributor docs — ⛔ owner action
 10. P10: audit the 52 remaining core/ui/cards orphan modules from [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ⬜
@@ -801,7 +801,7 @@ flowchart LR
 
 **E20 detail (partial):** `packages/domain/` builds `src/domain` into a single side-effect-free ESM bundle with 688 exports and zero runtime dependencies, verified by importing the built artifact in bare Node. Extracting it surfaced a layer violation that `arch-check` had been configured not to see: `domain->core` and `domain->cards` sat on its `ALLOWED_CROSS_LAYER` allowlist, so three modules in the layer documented as 100% pure were reaching outward — `fundamental-data.ts` called core's `fetchWithTimeout` and read `import.meta.env`, `watchlist-share.ts` imported core's base64 helpers, and `heatmap-drilldown.ts` imported a type from a card. `fundamental-data.ts` moved to `src/providers/` where a Yahoo adapter belongs, `base64-url.ts` moved down into `src/domain/` because it is pure and runtime-agnostic, `ConstituentStock` moved to `src/types/domain.ts`, and both allowlist entries are gone. `tests/unit/domain/package-manifest.test.ts` walks every file in the layer and fails on any relative import that escapes `src/domain` or `src/types`, so the allowlist cannot quietly widen again. `.github/workflows/publish-domain.yml` runs the full gate set, asserts the tarball is dependency-free, and publishes with npm provenance; when the secret is absent it now skips publish cleanly instead of failing the release train red. _Remaining:_ an `NPM_TOKEN` repository secret with publish rights on the `@crosstide` scope.
 
-**E21 detail (partial):** `src/ui/widget.ts` was already present and tested, but it was effectively dead code: nothing built it, the usage comment pointed at a fictional CDN URL, and the fetch path targeted `/api/yahoo/chart`, a dev-only proxy route that does not exist in production. `vite.widget.config.ts` now emits a stable `dist/widget.mjs` bundle as part of the normal build, `package.json` exposes that build via `npm run build:widget`, and the widget calls the Worker `/api/chart` endpoint with a real `range` attribute instead of hardcoding one timespan. `README.md` now carries the copy-paste embed snippet and the supported attribute list. _Remaining:_ a docs-site page, an out-of-app smoke test, and more widget types than the current chart-first element.
+**E21 detail (partial):** `src/ui/widget.ts` was already present and tested, but it was effectively dead code: nothing built it, the usage comment pointed at a fictional CDN URL, and the fetch path targeted `/api/yahoo/chart`, a dev-only proxy route that does not exist in production. `vite.widget.config.ts` now emits a stable `dist/widget.mjs` bundle as part of the normal build, `package.json` exposes that build via `npm run build:widget`, and the widget calls the Worker `/api/chart` endpoint with a real `range` attribute instead of hardcoding one timespan. `README.md` now carries the copy-paste embed snippet and the supported attribute list. `tests/unit/ui/widget-bundle.test.ts` keeps the output path and script wiring from silently dropping out of the build, and `docs-site/src/content/docs/widgets.mdx` gives the docs site a canonical embed page instead of leaving the snippet stranded in the README. _Remaining:_ an out-of-app smoke test and more widget types than the current chart-first element.
 
 ---
 
