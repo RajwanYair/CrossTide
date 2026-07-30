@@ -69,8 +69,21 @@ jobs:
             console.log('tarball ok —', files.length, 'files, 0 dependencies');
           "
 
+      - name: Check npm publish credentials
+        id: npm_auth
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "can_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::NPM_TOKEN is not configured; skipping npm publish for this run."
+            echo "can_publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish
-        if: github.event_name == 'push' || inputs.dry_run == false
+        if: steps.npm_auth.outputs.can_publish == 'true' && (github.event_name == 'push' || inputs.dry_run == false)
         run: npm publish --provenance --access public
         working-directory: packages/domain
         env:
