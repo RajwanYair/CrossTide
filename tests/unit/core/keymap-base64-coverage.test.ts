@@ -3,7 +3,7 @@
  */
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { formatKeymap } from "../../../src/ui/keymap-formatter";
-import { base64UrlEncodeBytes, base64UrlDecodeBytes } from "../../../src/core/base64-url";
+import { base64UrlEncodeBytes, base64UrlDecodeBytes } from "../../../src/domain/base64-url";
 
 describe("keymap-formatter coverage — detectPlatform + mac modifiers sort (lines 109-114)", () => {
   afterEach(() => {

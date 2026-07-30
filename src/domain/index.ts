@@ -702,6 +702,13 @@ export {
   snapshotToText,
 } from "./watchlist-share";
 export type { WatchlistSnapshot, WatchlistImportResult, MergeResult } from "./watchlist-share";
+/** URL-safe Base64 (RFC 4648 §5) — the transport encoding behind share links. */
+export {
+  base64UrlEncode,
+  base64UrlDecode,
+  base64UrlEncodeBytes,
+  base64UrlDecodeBytes,
+} from "./base64-url";
 
 // ── Ticker catalog ───────────────────────────────────────────────────────
 
@@ -1275,8 +1282,6 @@ export type { EarningsEntry, RawEarningsItem } from "./earnings-calendar";
 /** Fibonacci retracement & extension calculator — compute key Fibonacci levels from swing high/low points. */
 export { fibRetracements, fibExtensions, fibAnalysis, nearestFibLevel, autoFib } from "./fibonacci";
 export type { FibLevel, FibResult } from "./fibonacci";
-/** Fundamental Data — fetches P/E, EPS, Revenue, Market Cap from Yahoo quoteSummary. */
-export { fetchFundamentals, clearFundamentalsCache } from "./fundamental-data";
 /** Macro Dashboard domain — pure regime classification and formatters (H19). */
 export {
   getMacroTicker,

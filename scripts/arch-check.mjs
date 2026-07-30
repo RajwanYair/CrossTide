@@ -93,14 +93,13 @@ function resolveRel(fromFile, importSrc) {
 // Allowed cross-layer imports — intentional design patterns.
 // cards use shared UI utilities (delegate, router, toast, theme, etc.).
 // core workers bundle card logic for Web Worker contexts.
-// domain modules use core fetch/encoding utilities.
-const ALLOWED_CROSS_LAYER = new Set([
-  "cards->ui",
-  "core->cards",
-  "core->ui",
-  "domain->core",
-  "domain->cards",
-]);
+//
+// `domain->core` and `domain->cards` were once on this list, which meant the
+// layer that is documented as 100% pure was free to reach into fetch, DOM and
+// card modules — and three of them did. The entries are gone; if a domain
+// module needs something from an outer layer, the something is in the wrong
+// layer, not the rule.
+const ALLOWED_CROSS_LAYER = new Set(["cards->ui", "core->cards", "core->ui"]);
 
 let violations = 0;
 

@@ -240,6 +240,15 @@ Run all: `npm run ci`
 26. **A fixed iteration budget in an E2E test is an implementation detail in disguise**
     - "Press Shift+Tab up to 10 times" passed locally and failed in CI, where more data had loaded and more buttons sat ahead of the header. Derive the bound from the document (`querySelectorAll(...).length`).
 
+27. **An allowlist is how a real gate becomes a decorative one**
+    - `scripts/arch-check.mjs` enforced the layer direction correctly, then carried `domain->core` and `domain->cards` in `ALLOWED_CROSS_LAYER` with the comment "domain modules use core fetch/encoding utilities" — blanket-permitting the exact thing the rule exists to forbid. Three modules had drifted out of the layer behind it.
+    - This is learning 23 with a twist: the gate *could* observe the violation, but had been told not to. When you read a gate, read its exceptions first — an entry that describes a category rather than a named file is a rule repeal, not an exception.
+    - The fix is almost always that the *module* is in the wrong layer, not that the rule is too strict.
+
+28. **Packaging a layer is the strongest purity test available**
+    - `src/domain` claimed purity for releases. Pointing a Vite lib build at it forced the compiler to follow every import outward, and `src/core/fetch.ts`, `src/cards/heatmap.ts` and `src/ui/delegate.ts` appeared in the program immediately.
+    - Dropping `DOM` from `lib` is a cheap second signal: it separates genuinely portable Web APIs (`URL`, `crypto`, `AbortSignal`, `TextEncoder` — present in Node, Workers and browsers) from real DOM dependencies.
+
 ## 🔌 Worker API
 
 The Worker registers **56 routes**. `worker/routes/openapi.ts` is the contract —

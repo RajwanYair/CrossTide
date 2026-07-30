@@ -29,7 +29,8 @@
   "private": true,
   "workspaces": [
     "docs-site",
-    "mcp-server"
+    "mcp-server",
+    "packages/*"
   ],
   "exports": {
     ".": "./src/main.ts",
@@ -49,6 +50,7 @@
     "dev:components": "vite docs/components-preview.html",
     "build": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit && vite build && node scripts/workbox-inject.mjs",
     "build:only": "vite build && node scripts/workbox-inject.mjs",
+    "build:domain": "npm run build --workspace @crosstide/domain",
     "build:sourcemaps": "npm run build && node scripts/upload-sourcemaps.mjs",
     "preview": "vite preview",
     "test": "vitest run",

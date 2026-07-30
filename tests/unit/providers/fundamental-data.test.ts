@@ -2,7 +2,7 @@
  * Unit tests for fundamental-data domain module.
  */
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { fetchFundamentals, clearFundamentalsCache } from "../../src/domain/fundamental-data";
+import { fetchFundamentals, clearFundamentalsCache } from "../../../src/providers/fundamental-data";
 
 // Mock fetch
 const mockFetch = vi.fn();

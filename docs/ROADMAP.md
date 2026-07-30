@@ -313,7 +313,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | E8 | Compute | WASM correlation matrix (Rust) | S | P0 | L | — | ⬜ |
 | E9 | Compute | WASM Monte Carlo VaR | S | P1 | L | E8 | ⬜ |
 | E10 | Compute | WASM backtest kernel | S | P1 | L | E8 | ⬜ |
-| E20 | Platform | Publish `@crosstide/domain` to npm | T | P0 | M | — | ⬜ |
+| E20 | Platform | Publish `@crosstide/domain` to npm | T | P0 | M | — | 🟡 |
 | E21 | Platform | Embeddable widgets (`<script>` snippet) | T | P0 | L | E2 | ⬜ |
 | E22 | Platform | Plugin sandbox (Worker-isolated) | T | P0 | L | E20 | ⬜ |
 | E23 | Platform | Signal adapters (React/Solid/Svelte) | T | P1 | M | E20 | ⬜ |
@@ -760,13 +760,15 @@ flowchart LR
 
 ### Phase T — v16.0.0 "Platform" (8-12 weeks)
 
-| # | Task | Priority |
-|---|---|---|
-| E22 | Plugin sandbox (Worker-isolated) | P0 |
-| E20 | Publish `@crosstide/domain` to npm | P0 |
-| E21 | Embeddable widgets (`<script>` snippet) | P0 |
-| E23 | Signal adapters (React, Solid, Svelte) | P1 |
-| T4 | pnpm + Turborepo migration | P2 |
+| # | Task | Priority | Status |
+|---|---|---|---|
+| E22 | Plugin sandbox (Worker-isolated) | P0 | ⬜ |
+| E20 | Publish `@crosstide/domain` to npm | P0 | 🟡 |
+| E21 | Embeddable widgets (`<script>` snippet) | P0 | ⬜ |
+| E23 | Signal adapters (React, Solid, Svelte) | P1 | ⬜ |
+| T4 | pnpm + Turborepo migration | P2 | ⬜ |
+
+**E20 detail (partial):** `packages/domain/` builds `src/domain` into a single side-effect-free ESM bundle with 688 exports and zero runtime dependencies, verified by importing the built artifact in bare Node. Extracting it surfaced a layer violation that `arch-check` had been configured not to see: `domain->core` and `domain->cards` sat on its `ALLOWED_CROSS_LAYER` allowlist, so three modules in the layer documented as 100% pure were reaching outward — `fundamental-data.ts` called core's `fetchWithTimeout` and read `import.meta.env`, `watchlist-share.ts` imported core's base64 helpers, and `heatmap-drilldown.ts` imported a type from a card. `fundamental-data.ts` moved to `src/providers/` where a Yahoo adapter belongs, `base64-url.ts` moved down into `src/domain/` because it is pure and runtime-agnostic, `ConstituentStock` moved to `src/types/domain.ts`, and both allowlist entries are gone. `tests/unit/domain/package-manifest.test.ts` walks every file in the layer and fails on any relative import that escapes `src/domain` or `src/types`, so the allowlist cannot quietly widen again. `.github/workflows/publish-domain.yml` runs the full gate set, asserts the tarball is dependency-free, and publishes with npm provenance. _Remaining:_ an `NPM_TOKEN` repository secret with publish rights on the `@crosstide` scope.
 
 ---
 

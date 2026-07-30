@@ -333,7 +333,7 @@ export {
   base64UrlDecode,
   base64UrlEncodeBytes,
   base64UrlDecodeBytes,
-} from "./base64-url";
+} from "../domain/base64-url";
 
 export {
   currentTimeZone,

@@ -11,7 +11,7 @@
  *   const decoded = decodeWatchlistUrl(url);
  */
 
-import { base64UrlEncode, base64UrlDecode } from "../core/base64-url";
+import { base64UrlEncode, base64UrlDecode } from "./base64-url";
 
 // ── Types ────────────────────────────────────────────────────────────────
 

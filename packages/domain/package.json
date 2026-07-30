@@ -1,0 +1,56 @@
+{
+  "name": "@crosstide/domain",
+  "version": "11.44.0",
+  "description": "Pure TypeScript financial analysis engine — 200+ technical indicators, consensus scoring, portfolio analytics and risk metrics with zero runtime dependencies.",
+  "keywords": [
+    "technical-analysis",
+    "technical-indicators",
+    "finance",
+    "quantitative-finance",
+    "trading",
+    "backtesting",
+    "portfolio-analytics",
+    "risk-metrics",
+    "rsi",
+    "macd",
+    "bollinger-bands",
+    "typescript",
+    "zero-dependency"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "license": "MIT",
+  "homepage": "https://github.com/RajwanYair/CrossTide/tree/main/packages/domain",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RajwanYair/CrossTide.git",
+    "directory": "packages/domain"
+  },
+  "bugs": {
+    "url": "https://github.com/RajwanYair/CrossTide/issues"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types/domain/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/types/domain/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build && tsc --project tsconfig.build.json",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

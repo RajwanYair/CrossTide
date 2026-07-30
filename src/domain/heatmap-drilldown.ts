@@ -8,7 +8,7 @@
  * card has already fetched from the quote cache (no new API calls) and
  * produces the objects needed to render the drill-down view.
  */
-import type { ConstituentStock } from "../cards/heatmap";
+import type { ConstituentStock } from "../types/domain";
 
 // ─── types ───────────────────────────────────────────────────────────────────
 

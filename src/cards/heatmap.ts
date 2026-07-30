@@ -14,16 +14,9 @@ export interface SectorData {
 
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
+import type { ConstituentStock } from "../types/domain";
 
-/** G21: A single constituent stock within a sector. */
-export interface ConstituentStock {
-  readonly ticker: string;
-  readonly name?: string;
-  readonly price: number;
-  readonly changePercent: number;
-  /** Market-cap proxy weight in the sector (0–1, sums to 1 across constituents). */
-  readonly weight: number;
-}
+export type { ConstituentStock };
 
 /** G21: SectorData extended with optional constituent breakdown. */
 export interface SectorDataWithConstituents extends SectorData {

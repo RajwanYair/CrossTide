@@ -4,7 +4,7 @@ import {
   base64UrlDecode,
   base64UrlEncodeBytes,
   base64UrlDecodeBytes,
-} from "../../../src/core/base64-url";
+} from "../../../src/domain/base64-url";
 
 describe("base64Url string roundtrip", () => {
   it("ASCII", () => {

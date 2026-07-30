@@ -10,7 +10,7 @@ import {
   mergeWatchlists,
   snapshotToText,
 } from "../../../src/domain/watchlist-share";
-import { base64UrlEncode } from "../../../src/core/base64-url";
+import { base64UrlEncode } from "../../../src/domain/base64-url";
 
 // ── createWatchlistSnapshot ──────────────────────────────────────────────
 

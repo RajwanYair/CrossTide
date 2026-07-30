@@ -90,11 +90,13 @@ export default tseslint.config(
     ignores: [
       "node_modules/**",
       "dist/**",
+      "packages/*/dist/**",
       "coverage/**",
       "build/**",
       "config/**",
       "docs-site/**",
       "vite.config.ts",
+      "packages/*/vite.config.ts",
       "vitest.config.ts",
     ],
   },

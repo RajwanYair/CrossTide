@@ -14,7 +14,7 @@ import { saveDrawings, loadDrawings } from "./drawing-persistence";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
 import { TIMEFRAME_PRESETS, DEFAULT_TIMEFRAME, type TimeframePreset } from "../core/data-service";
-import { fetchFundamentals } from "../domain/fundamental-data";
+import { fetchFundamentals } from "../providers/fundamental-data";
 import { heikinAshi } from "../domain/heikin-ashi";
 import { showToast } from "../ui/toast";
 import { getNavigationSignal } from "../ui/router";

@@ -228,6 +228,22 @@ export interface FundamentalData {
   readonly fetchedAt: string; // ISO 8601
 }
 
+/**
+ * A single constituent stock within a sector heatmap tile.
+ *
+ * Lives in the types layer because both the heatmap card that renders it and
+ * the drilldown domain module that ranks it need the shape, and domain may not
+ * import from cards.
+ */
+export interface ConstituentStock {
+  readonly ticker: string;
+  readonly name?: string;
+  readonly price: number;
+  readonly changePercent: number;
+  /** Market-cap proxy weight in the sector (0–1, sums to 1 across constituents). */
+  readonly weight: number;
+}
+
 /** A single portfolio holding. */
 export interface Holding {
   readonly ticker: string;

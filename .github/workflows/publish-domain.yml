@@ -1,0 +1,77 @@
+name: Publish @crosstide/domain
+
+# The domain layer is re-published to npm as a standalone, zero-dependency
+# package. It is built from the same `src/domain` the app ships, so the only
+# way it can be wrong is if it is published without the gates having run —
+# hence the full `npm run ci` before `npm publish`.
+#
+# Requires an `NPM_TOKEN` repository secret with publish rights on the
+# `@crosstide` scope. Provenance is attested through GitHub OIDC, so the
+# published package links back to this workflow run.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Pack and inspect the tarball without publishing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  publish:
+    name: Build & Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Quality gates
+        run: npm run ci
+
+      - name: Build the package
+        run: npm run build:domain
+
+      - name: Verify the tarball carries no dependencies
+        run: |
+          cd packages/domain
+          npm pack --dry-run --json > pack.json
+          node -e "
+            const pkg = require('./package.json');
+            const deps = { ...pkg.dependencies, ...pkg.peerDependencies };
+            if (Object.keys(deps).length > 0) {
+              console.error('@crosstide/domain must stay dependency-free, found:', deps);
+              process.exit(1);
+            }
+            const files = require('./pack.json')[0].files.map((f) => f.path);
+            if (!files.includes('dist/index.js')) {
+              console.error('tarball is missing dist/index.js');
+              process.exit(1);
+            }
+            console.log('tarball ok —', files.length, 'files, 0 dependencies');
+          "
+
+      - name: Publish
+        if: github.event_name == 'push' || inputs.dry_run == false
+        run: npm publish --provenance --access public
+        working-directory: packages/domain
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
