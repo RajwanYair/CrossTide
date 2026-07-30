@@ -586,7 +586,7 @@
   .btn-sort:hover,
   .btn-sort.sort-active {
     background: var(--accent);
-    color: #fff;
+    color: var(--bg-app);
     border-color: var(--accent);
   }
 
@@ -1013,7 +1013,11 @@
   .filter-chip.active {
     background: var(--accent);
     border-color: var(--accent);
-    color: #000;
+
+    /* --bg-app is the surface the accent contrasts against, so it flips with
+       the theme: 7.49:1 on the dark accent, 4.87:1 on the light one. A literal
+       #000 was 4.04:1 once the light theme actually became reachable. */
+    color: var(--bg-app);
     font-weight: 600;
   }
 
@@ -2107,7 +2111,7 @@ summary {
 
 .timeframe-btn.active {
   background: var(--accent);
-  color: #fff;
+  color: var(--bg-app);
   border-color: var(--accent);
 }
 

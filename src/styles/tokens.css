@@ -9,7 +9,7 @@
     --bg-input: #0d1117;
     --text-primary: #e6edf3;
     --text-secondary: #8b949e;
-    --text-muted: #7d8590;
+    --text-muted: #848d97; /* 4.81:1 on --bg-card-hover, the tightest dark pairing */
     --accent: #58a6ff;
     --accent-hover: #79c0ff;
     --border: #30363d;
@@ -62,13 +62,16 @@
     --bg-input: #f6f8fa;
     --text-primary: #1f2328;
     --text-secondary: #656d76;
-    --text-muted: #8b949e;
+    --text-muted: #59636e; /* 5.56:1 on --bg-card-hover; #8b949e was 2.79:1 */
+    --signal-neutral: #57606a; /* used as text, so held to 4.5:1, not 3:1 */
     --border: #d0d7de;
     --border-focus: #0969da;
     --accent: #0969da;
     --accent-hover: #0550ae;
     --signal-buy: #1a7f37;
     --signal-sell: #cf222e;
+    --danger: #cf222e; /* the dark #f85149 was 3.04:1 on the light surfaces */
+    --danger-hover: #a40e26;
     --badge-fg-blend: #000;
     --badge-fg-blend-amt: 35%;
   }

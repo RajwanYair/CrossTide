@@ -1,82 +1,151 @@
 /**
- * Color contrast validation script.
+ * Color contrast validation for the design tokens.
  *
- * Checks that CSS design token pairs (foreground/background) meet WCAG 2.1 AA
- * contrast requirements (4.5:1 for normal text, 3:1 for large text / UI).
+ * Reads the token values out of `src/styles/tokens.css` and `src/styles/a11y.css`
+ * and checks every foreground/background combination a theme can actually
+ * produce against its WCAG threshold.
+ *
+ * This script used to carry its own hardcoded copy of the palette, which meant
+ * it validated a list that had drifted from the stylesheet: `--text-muted` was
+ * absent from that list entirely, and the light theme shipped it at 2.88:1.
+ * Parse the real tokens instead — a token that is in the CSS cannot be skipped.
  *
  * Run: node scripts/check-contrast.mjs
- * Exits with code 1 if any pair fails.
+ * Exits 1 if any pair fails.
  */
 
-// WCAG relative luminance formula
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import postcss from "postcss";
+
+const ROOT = process.cwd();
+
+/** Foreground tokens that render body text — WCAG 1.4.3 wants 4.5:1. */
+const TEXT_TOKENS = ["--text-primary", "--text-secondary", "--text-muted"];
+
+/**
+ * Signal colors. These read as text (`.btn-danger`, change columns, verdict
+ * labels), so they are held to the 4.5:1 text threshold rather than the 3:1
+ * non-text one — axe caught `--danger` rendering at 3.04:1 as button text.
+ */
+const SIGNAL_TOKENS = ["--signal-buy", "--signal-sell", "--signal-neutral", "--danger"];
+
+/** Icons, borders and other non-text UI — WCAG 1.4.11 wants 3:1. */
+const UI_TOKENS = ["--accent", "--accent-hover", "--border-focus"];
+
+/** Surfaces any of the above can sit on. */
+const SURFACE_TOKENS = ["--bg-app", "--bg-card", "--bg-card-hover", "--bg-input"];
+
 function sRGBtoLinear(c) {
   const v = c / 255;
   return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
 }
 
-function luminance(r, g, b) {
+function luminance([r, g, b]) {
   return 0.2126 * sRGBtoLinear(r) + 0.7152 * sRGBtoLinear(g) + 0.0722 * sRGBtoLinear(b);
 }
 
-function contrastRatio(l1, l2) {
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  return (lighter + 0.05) / (darker + 0.05);
+function contrastRatio(fg, bg) {
+  const a = luminance(fg);
+  const b = luminance(bg);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
-function hexToRgb(hex) {
-  const h = hex.replace("#", "");
-  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+/** Accepts #rgb and #rrggbb. Returns null for var(), color-mix() and keywords. */
+function hexToRgb(value) {
+  const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(value.trim());
+  if (match === null) return null;
+  const digits = match[1];
+  const full =
+    digits.length === 3
+      ? `${digits[0]}${digits[0]}${digits[1]}${digits[1]}${digits[2]}${digits[2]}`
+      : digits;
+  return [
+    Number.parseInt(full.slice(0, 2), 16),
+    Number.parseInt(full.slice(2, 4), 16),
+    Number.parseInt(full.slice(4, 6), 16),
+  ];
 }
 
-// Design token pairs to validate: [foreground, background, minRatio, description]
-const TOKEN_PAIRS = [
-  // Dark theme (default) — text on #0d1117
-  ["#e6edf3", "#0d1117", 4.5, "text-primary on bg-app (dark)"],
-  ["#8b949e", "#0d1117", 4.5, "text-secondary on bg-app (dark)"],
-  ["#8b949e", "#161b22", 4.5, "text-secondary on bg-card (dark)"],
-  ["#e6edf3", "#161b22", 4.5, "text-primary on bg-card (dark)"],
+/** Collects custom-property declarations from every rule with this exact selector. */
+function tokensForSelector(css, selector) {
+  const found = {};
+  postcss.parse(css).walkRules((rule) => {
+    if (rule.selector.trim() !== selector) return;
+    for (const node of rule.nodes ?? []) {
+      if (node.type === "decl" && node.prop.startsWith("--")) found[node.prop] = node.value;
+    }
+  });
+  return found;
+}
 
-  // Light theme — text on #f6f8fa / #fff
-  ["#1f2328", "#ffffff", 4.5, "text-primary on white (light)"],
-  ["#656d76", "#ffffff", 4.5, "text-secondary on white (light)"],
-  ["#1f2328", "#f6f8fa", 4.5, "text-primary on bg-app (light)"],
+const tokensCss = readFileSync(resolve(ROOT, "src/styles/tokens.css"), "utf8");
+const a11yCss = readFileSync(resolve(ROOT, "src/styles/a11y.css"), "utf8");
 
-  // Signal colors on dark background
-  ["#3fb950", "#0d1117", 3.0, "signal-buy on bg-app (dark, UI)"],
-  ["#3fb950", "#161b22", 3.0, "signal-buy on bg-card (dark, UI)"],
-  ["#f85149", "#0d1117", 3.0, "signal-sell on bg-app (dark, UI)"],
-  ["#f85149", "#161b22", 3.0, "signal-sell on bg-card (dark, UI)"],
+const dark = tokensForSelector(tokensCss, ":root");
+const light = { ...dark, ...tokensForSelector(tokensCss, '[data-theme="light"]') };
+const darkAaa = { ...dark, ...tokensForSelector(a11yCss, '[data-contrast="aaa"]') };
+const lightAaa = {
+  ...light,
+  ...tokensForSelector(a11yCss, '[data-theme="light"][data-contrast="aaa"]'),
+};
 
-  // Signal colors on light background
-  ["#1a7f37", "#ffffff", 3.0, "signal-buy on white (light, UI)"],
-  ["#cf222e", "#ffffff", 3.0, "signal-sell on white (light, UI)"],
-
-  // Accent colors
-  ["#58a6ff", "#0d1117", 3.0, "accent on bg-app (dark, UI)"],
-  ["#0969da", "#ffffff", 3.0, "accent on white (light, UI)"],
+/** AAA (1.4.6) raises normal text to 7:1; non-text stays at 3:1. */
+const THEMES = [
+  { name: "dark", tokens: dark, textMin: 4.5 },
+  { name: "light", tokens: light, textMin: 4.5 },
+  { name: "dark+aaa", tokens: darkAaa, textMin: 7 },
+  { name: "light+aaa", tokens: lightAaa, textMin: 7 },
 ];
 
 let failures = 0;
+let checked = 0;
+let skipped = 0;
 
-for (const [fg, bg, minRatio, desc] of TOKEN_PAIRS) {
-  const [fgR, fgG, fgB] = hexToRgb(fg);
-  const [bgR, bgG, bgB] = hexToRgb(bg);
-  const fgL = luminance(fgR, fgG, fgB);
-  const bgL = luminance(bgR, bgG, bgB);
-  const ratio = contrastRatio(fgL, bgL);
+for (const { name, tokens, textMin } of THEMES) {
+  const groups = [
+    { foregrounds: TEXT_TOKENS, min: textMin },
+    { foregrounds: SIGNAL_TOKENS, min: 4.5 },
+    { foregrounds: UI_TOKENS, min: 3 },
+  ];
 
-  if (ratio < minRatio) {
-    console.error(`✗ FAIL: ${desc} — ${fg} on ${bg} = ${ratio.toFixed(2)}:1 (need ${minRatio}:1)`);
-    failures++;
-  } else {
-    console.log(`✓ PASS: ${desc} — ${ratio.toFixed(2)}:1 ≥ ${minRatio}:1`);
+  for (const { foregrounds, min } of groups) {
+    for (const fgToken of foregrounds) {
+      const fg = hexToRgb(tokens[fgToken] ?? "");
+      if (fg === null) {
+        skipped++;
+        continue;
+      }
+
+      for (const bgToken of SURFACE_TOKENS) {
+        const bg = hexToRgb(tokens[bgToken] ?? "");
+        if (bg === null) {
+          skipped++;
+          continue;
+        }
+
+        checked++;
+        const ratio = contrastRatio(fg, bg);
+        if (ratio < min) {
+          console.error(
+            `FAIL ${name}: ${fgToken} (${tokens[fgToken]}) on ${bgToken} (${tokens[bgToken]}) = ${ratio.toFixed(2)}:1, need ${min}:1`,
+          );
+          failures++;
+        }
+      }
+    }
   }
 }
 
-if (failures > 0) {
-  console.error(`\n${failures} color contrast failure(s). Fix token values.`);
-  process.exit(1);
-} else {
-  console.log(`\nAll ${TOKEN_PAIRS.length} color pairs pass WCAG AA contrast requirements.`);
+if (skipped > 0) {
+  console.log(`Skipped ${skipped} pair(s) whose token is not a literal hex value.`);
 }
+
+if (failures > 0) {
+  console.error(
+    `\n${failures} of ${checked} token pairs fail WCAG contrast. Fix the token values.`,
+  );
+  process.exit(1);
+}
+
+console.log(`All ${checked} token pairs across ${THEMES.length} themes pass WCAG contrast.`);

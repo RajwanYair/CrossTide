@@ -240,10 +240,19 @@ test("focus-visible selector works for keyboard navigation", async ({ page }) =>
   //
   // Walk backwards instead, which is what a keyboard user does to reach the
   // nav from the post-route-change focus position. The number of stops before
-  // the first nav link is an implementation detail, so don't hard-code it.
+  // the first nav link is an implementation detail, so don't hard-code it —
+  // a fixed budget of 10 passed locally and failed in CI, where the dashboard
+  // had fetched its data and rendered more buttons ahead of the header. Bound
+  // the walk by the number of focusable elements actually in the document.
+  const budget = await page.evaluate(
+    () =>
+      document.querySelectorAll(
+        'a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])',
+      ).length + 1,
+  );
   let focused = "";
   let focusVisible = false;
-  for (let i = 0; i < 10 && focused !== "A"; i++) {
+  for (let i = 0; i < budget && focused !== "A"; i++) {
     await page.keyboard.press("Shift+Tab");
     const state = await page.evaluate(() => {
       const el = document.activeElement as HTMLElement | null;
