@@ -4,6 +4,7 @@
 import type { AppConfig, CardId, CardSettingsMap, MethodWeights } from "../types/domain";
 import { DEFAULT_METHOD_WEIGHTS } from "../types/domain";
 import { FINNHUB_KEY_STORAGE } from "../core/finnhub-stream-manager";
+import { isEnhancedContrast, setEnhancedContrast } from "../core/contrast-preference";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
 import { getLocale, setLocale } from "../core/i18n";
@@ -80,6 +81,13 @@ export function renderSettings(
         <option value="light"${config.theme === "light" ? " selected" : ""}>Light</option>
         <option value="high-contrast"${config.theme === "high-contrast" ? " selected" : ""}>High Contrast</option>
       </select>
+    </div>
+    <div class="setting-group">
+      <label for="contrast-toggle">Enhanced contrast</label>
+      <label class="setting-inline">
+        <input id="contrast-toggle" type="checkbox" data-action="contrast-change"${isEnhancedContrast() ? " checked" : ""} />
+        <span class="text-secondary">Raise text contrast to WCAG AAA (7:1)</span>
+      </label>
     </div>
     <div class="setting-group">
       <label for="locale-select">Language</label>
@@ -190,6 +198,10 @@ export function renderSettings(
         if (localeSelect) {
           setLocale(localeSelect.value);
         }
+      },
+      "contrast-change": () => {
+        const toggle = container.querySelector<HTMLInputElement>("#contrast-toggle");
+        if (toggle) setEnhancedContrast(toggle.checked);
       },
       "refresh-interval-change": () => {
         const select = container.querySelector<HTMLSelectElement>("#refresh-interval-select");

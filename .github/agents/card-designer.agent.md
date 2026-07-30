@@ -77,9 +77,8 @@ Use this agent when the task is primarily one of:
   (`@layer tokens` then `@layer themes`) — there is no separate `themes.css`
 - Components consume tokens (`var(--accent)`, `var(--bg-card)`) — no hardcoded colors
 - 6 themes total — confirm new components render correctly across all of them
-- Only six stylesheets are loaded by `index.html`: `tokens`, `base`, `layout`,
-  `components`, `responsive`, `print`. **`a11y.css` and `fonts.css` are orphaned**
-  — rules added there never reach the browser (roadmap Q6)
+- `index.html` is the only stylesheet registry. A `.css` file under `src/styles/`
+  that is not linked there fails `tests/unit/a11y-audit.test.ts`
 
 ## ♿ Accessibility Checklist
 

@@ -14,6 +14,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### 🔄 Changed
 
+- **`tests/unit/a11y-audit.test.ts` asserts applied CSS, not file text.** Every assertion was previously a `toContain` against the stylesheet's source, which is why it stayed green for releases while the stylesheet reached no browser. It now parses with `postcss` — happy-dom's CSSOM silently drops rules nested inside `@layer` and returns `undefined` for custom properties — and includes a regression guard that fails if any file under `src/styles/` is missing from `index.html`.
 - **Unit test suite is 38% faster** (259s → 159s): Vitest now runs as two projects. The 313 DOM-free suites (`domain`, `worker`, `providers`, `types`, `helpers`) execute on the `node` environment instead of paying happy-dom construction, cutting total environment time from 996s to 441s. Suites needing browser globals declare `@vitest-environment happy-dom` per file.
 - **ESLint is cached** (`node_modules/.cache/eslint/`): 37.7s → 3.4s on re-run, which is the gate the pre-commit hook and inner dev loop hit most. `lint:nocache` forces a full pass.
 - **`npm run ci` no longer typechecks twice**: it now calls `build:only`, since `typecheck` already ran earlier in the same pipeline.
@@ -22,6 +23,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### ✨ Added
 
+- **Enhanced-contrast mode is reachable** (WCAG 2.2 SC 1.4.6, AAA): a _Settings → Enhanced contrast_ toggle sets `data-contrast="aaa"` on `<html>`, activating the AAA palette that had been defined in `a11y.css` but never switched on by anything. Backed by `src/core/contrast-preference.ts`, persisted in `localStorage` and restored at boot before first paint.
 - **`tests/helpers/node-network.ts`**: network guard for the `node` project mirroring the happy-dom interceptor, so DOM-free suites fail fast on unstubbed outbound requests instead of performing real DNS lookups.
 - **`test:fast` script** for opting into the threads pool during local iteration.
 - **`build:only` and `lint:nocache` scripts** for pipeline and cache-bypass control.
@@ -33,6 +35,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### 🐛 Fixed
 
+- **The accessibility stylesheet never shipped** (roadmap Q6): `src/styles/a11y.css` was not linked from `index.html`, so `.skip-link`, `.sr-only` and `.btn-icon` appeared in the markup with no rule behind them. The "Skip to main content" link rendered permanently visible at the top of every page, the `<th>Actions</th>` label and the onboarding live region were painted on screen instead of being screen-reader-only, and icon-only buttons had no target sizing. The file is now linked and `a11y` is declared last in the `@layer` order in `tokens.css`. Its blanket 2.75rem target-size rule was narrowed to the SC 2.5.8 floor of 1.5rem on controls only, so inline prose links keep their natural box, and an invalid `aria-hidden` CSS declaration was removed.
 - **WCAG 2.2 AA contrast and target-size violations** across `/alerts`, `/multi-chart`, `/macro-dashboard` and `/heatmap`. Heatmap tiles carried white text on `#4caf50` (2.5–3.6:1), signal badges rendered the raw signal color on a 20%-tinted background (4.0–4.1:1), the active multi-chart layout button used `#3b82f6` (3.7:1), and `<summary>` laid out at 21px against the 24px target-size floor. Badges now blend the signal color away from the surface via `--badge-fg-blend`, so they keep following the color-blind palette swaps. The audit passes on all 23 routes.
 - **Horizontal page overflow on mobile**: the market-hours exchange list forced `document.body.scrollWidth` to 586px at a 375px viewport. `.market-indicator` and `.market-exchanges` now wrap.
 - **Astro docs build in CI**: `npx astro build` could fetch a fresh Astro from the registry, which then resolved a CommonJS `cookie` and failed with `Named export 'parseCookie' not found`. Both `pages.yml` and `docs.yml` now build via `npm run build --workspace docs-site`, using the lockfile-pinned `astro@7.1.5` / `cookie@2.0.1`.
@@ -44,6 +47,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### 🗑️ Removed
 
+- **`src/styles/fonts.css`**: every `@font-face` in it pointed at `/fonts/*.woff2`, a directory that does not exist in `public/`. It was superseded by the `@fontsource-variable/inter` import in `src/main.ts` and, being unlinked from `index.html`, had no runtime effect either way.
 - **Duplicate issue templates** `bug_report.md` and `feature_request.md`, superseded by the richer YAML forms.
 
 ---

@@ -1,4 +1,4 @@
-@layer tokens, themes, base, layout, components;
+@layer tokens, themes, base, layout, components, a11y;
 
 @layer tokens {
   :root {

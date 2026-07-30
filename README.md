@@ -39,7 +39,7 @@ interactive charting, and offline-first PWA support.
 | **Alerts** | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions |
 | **Data Providers** | Yahoo Finance, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko, Frankfurter, and FRED with automatic failover and health reporting |
 | **PWA / Offline** | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile |
-| **Accessibility** | WCAG 2.2 AA verified on all 23 routes (contrast, target size, error suggestion), keyboard nav, color-blind palettes, skip links |
+| **Accessibility** | WCAG 2.2 AA verified on all 23 routes (contrast, target size, error suggestion), keyboard nav, color-blind palettes, skip links, opt-in AAA enhanced-contrast mode |
 | **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP |
 | **i18n** | English, Hebrew (RTL), with expansion to ES/DE/ZH |
 

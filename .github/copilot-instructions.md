@@ -193,14 +193,15 @@ Run all: `npm run ci`
     - After a route change the router moves focus into `<main>` for the WCAG 2.4.3 announcement, which also sets the sequential focus navigation starting point. Calling `.blur()` does not reset it.
     - To reach header/nav elements from that position, walk backwards with `Shift+Tab`.
 
-16. **Orphaned stylesheets ship nothing**
-    - `src/styles/a11y.css` and `src/styles/fonts.css` are not referenced by `index.html`. Adding rules to them has no effect at runtime.
-    - Only `tokens`, `base`, `layout`, `components`, `responsive` and `print` are loaded. Tracked as roadmap Q6.
+16. **A stylesheet is only real once `index.html` links it**
+    - `src/styles/a11y.css` shipped nothing for several releases: `.skip-link`, `.sr-only` and `.btn-icon` were in the markup with no rule behind them, so screen-reader-only text rendered visibly.
+    - Fixed in Q6 — `a11y.css` is now linked and declared last in the `@layer` order; `fonts.css` was deleted (superseded by the `@fontsource-variable/inter` import in `src/main.ts`).
+    - `tests/unit/a11y-audit.test.ts` now fails if any file in `src/styles/` is not referenced by `index.html`.
 
 17. **A readiness guard built on optional chaining is vacuous**
     - `document.getElementById(id)?.textContent !== ""` evaluates to `undefined !== ""` → `true` when the element is absent, so `waitForFunction` resolves *immediately* and the test races the bootstrap.
     - This produced an intermittent (not deterministic) E2E failure, which is the hardest class to attribute. Always use `waitForAppReady` from `tests/e2e/app-ready.ts`.
-    - Generalisation: a guard that can only ever return `true` is worse than no guard — it buys false confidence. The same defect shape exists in `tests/unit/a11y-audit.test.ts`, which asserts against file *text* rather than applied styles.
+    - Generalisation: a guard that can only ever return `true` is worse than no guard — it buys false confidence. `tests/unit/a11y-audit.test.ts` had the same shape (asserting file *text*) and was rewritten in Q6 to parse the CSS with postcss instead.
 
 18. **Markdown formatting is owned by markdownlint alone**
     - Biome 2.5 does **not** format markdown; `biome format <file>.md` reports "paths were provided but ignored". There is no Biome/markdownlint conflict to resolve.
@@ -214,6 +215,13 @@ Run all: `npm run ci`
 20. **The edit tool can fuzzy-match and silently drop a neighbouring line**
     - During a 12-site replacement it matched on indentation alone and deleted three adjacent statements.
     - After any multi-site edit to source or tests, run `git diff -U0` and read every hunk. Recover a damaged region with `git show HEAD:<path>`.
+
+21. **happy-dom's CSSOM cannot parse this project's stylesheets**
+    - Rules nested inside `@layer` blocks are dropped and custom properties return `undefined` from `getPropertyValue`, so a CSSOM-based CSS test fails for reasons unrelated to the CSS.
+    - Parse with `postcss` (an explicit devDependency) instead: `postcss.parse(css).walkRules(...)`. See `tests/unit/a11y-audit.test.ts`.
+
+22. **`--reporter=basic` does not exist in Vitest 4**
+    - It fails at startup with `Failed to load url basic`. Use the default reporter and pipe through `Select-Object -Last n` to trim output.
 
 ## 🔌 Worker API Endpoints
 

@@ -20,6 +20,7 @@ import { activateServiceWorkerUpdate, watchServiceWorkerUpdates } from "./core/s
 import { createShortcutManager } from "./core/keyboard";
 import { initRouter, navigateTo, navigateToPath, onRouteChange, type RouteName } from "./ui/router";
 import { initTheme } from "./ui/theme";
+import { initEnhancedContrast } from "./core/contrast-preference";
 import { initLocale } from "./core/i18n";
 import {
   renderWatchlist as renderWatchlistCore,
@@ -365,6 +366,7 @@ function main(): void {
   initLocale(); // D7: apply persisted locale & <html dir>
   initSidebarToggle();
   initTheme(config.theme);
+  initEnhancedContrast(); // Q6: restore [data-contrast="aaa"] from localStorage
   loadPersistedPalette(); // C2: restore color-blind palette from localStorage
 
   // Subscribe BEFORE initRouter(): it dispatches the initial route

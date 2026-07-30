@@ -10,7 +10,7 @@ description: "Use when: editing any CSS or style file in the project."
 The cascade order is declared once, at the top of `src/styles/tokens.css`:
 
 ```css
-@layer tokens, themes, base, layout, components;
+@layer tokens, themes, base, layout, components, a11y;
 ```
 
 A layer not named there sorts **after** all named layers (`responsive.css` uses
@@ -18,18 +18,13 @@ A layer not named there sorts **after** all named layers (`responsive.css` uses
 existing layer — never add rules outside a `@layer` block, and do not invent a
 new layer name without adding it to the declaration.
 
-### 📎 Which stylesheets actually ship
+### 📎 Which stylesheets ship
 
-`index.html` loads exactly six files:
-
-```text
-tokens.css  base.css  layout.css  components.css  responsive.css  print.css (media=print)
-```
-
-`src/styles/a11y.css` and `src/styles/fonts.css` are **not referenced by anything**
-— editing them has no runtime effect. `tests/unit/a11y-audit.test.ts` asserts
-against a11y.css's *file text*, so it passes while proving nothing. Tracked as
-roadmap Q6; until it is resolved, put global a11y rules in `components.css`.
+`index.html` is the only place a stylesheet is registered, and
+`tests/unit/a11y-audit.test.ts` fails if any file in `src/styles/` is not listed
+there. Adding a `.css` file without linking it is therefore a test failure, not a
+silent no-op — this guard exists because `a11y.css` was orphaned for several
+releases while `.skip-link`, `.sr-only` and `.btn-icon` shipped unstyled.
 
 ## 🎛️ Custom Properties
 

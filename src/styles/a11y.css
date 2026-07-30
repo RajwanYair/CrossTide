@@ -1,5 +1,7 @@
 /**
- * Accessibility CSS layer — focus indicators, reduced motion, screen reader utilities.
+ * Accessibility layer — focus indicators, screen-reader utilities, target size,
+ * forced-colors and the opt-in [data-contrast="aaa"] enhanced-contrast palette.
+ * Loaded by index.html and declared last in the cascade order in tokens.css.
  * @layer a11y
  */
 @layer a11y {
@@ -81,23 +83,25 @@
     contain: layout;
   }
 
-  /* ── Minimum touch target (WCAG 2.2 Success Criterion 2.5.8) ── */
-  [role="button"],
+  /* ── Minimum touch target (WCAG 2.2 SC 2.5.8, AA — 24×24 CSS px) ──
+   * Applied to controls only. A blanket rule on `a` would force every inline
+   * link to a 24px box and break prose and table layout, so anchors are sized
+   * by their own component rules; `.btn-icon` below carries the 44px AAA size.
+   * ──────────────────────────────────────────────────────────────────────── */
   button,
-  a,
-  input,
+  [role="button"],
+  input:not([type="hidden"]),
   select,
-  textarea {
-    min-height: 2.75rem; /* 44px — AAA level target size */
-    min-width: 2.75rem;
+  textarea,
+  summary {
+    min-height: 1.5rem; /* 24px — SC 2.5.8 minimum */
   }
 
-  /* Inline links within prose are exempt from target size */
-  p a,
-  td a,
-  li a {
-    min-width: unset;
-    min-height: unset;
+  button,
+  [role="button"],
+  select,
+  summary {
+    min-width: 1.5rem;
   }
 
   /* ── WCAG 2.2: Dragging Movements (2.5.7) — ensure drag has click alt ── */
@@ -173,9 +177,8 @@
   }
 
   /* ── WCAG 2.2 AAA: SC 2.5.8 Target Size Minimum ─────────────────────────
-   * Minimum: 24×24 CSS px. AAA (2.5.5 Target Size): 44×44 CSS px.
-   * The existing 2.75rem (44px) rule applies to most interactive elements.
-   * Icon-only buttons need explicit override to maintain AAA.
+   * Minimum: 24×24 CSS px (applied above). AAA (2.5.5 Target Size): 44×44 px.
+   * Icon-only buttons carry no text to widen them, so they get the AAA size.
    * ──────────────────────────────────────────────────────────────────────── */
   .btn-icon {
     width: 2.75rem; /* 44px */
@@ -245,13 +248,5 @@
   .card :focus-visible {
     outline-offset: 2px;
     border-radius: 2px; /* rounded ring looks less clipped */
-  }
-
-  /* ── WCAG 2.2 AAA: SC 1.3.6 Identify Purpose ────────────────────────────
-   * Use aria-label + purpose tokens so AT can expose purpose.
-   * CSS ensures purpose-bearing icons have accessible backing text.
-   * ──────────────────────────────────────────────────────────────────────── */
-  [aria-label] > .icon-decorative {
-    aria-hidden: true; /* handled in CSS for enforcement, must also be in HTML */
   }
 }

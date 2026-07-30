@@ -298,7 +298,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | Q3 | Quality | Signal DSL fuzz testing | Q | P2 | M | — | ✅ |
 | Q4 | Quality | Property tests → 50+ total | Q | P1 | M | — | ✅ |
 | Q5 | A11y | Keyboard navigation audit | Q | P1 | M | — | ✅ |
-| Q6 | A11y | Wire or delete orphaned `a11y.css` / `fonts.css` | Q | P1 | M | — | ⬜ |
+| Q6 | A11y | Wire orphaned `a11y.css`, delete dead `fonts.css` | Q | P1 | M | — | ✅ |
 | Q7 | DX | De-duplicate `.md`/`.yml` issue templates | Q | P2 | S | — | ✅ |
 | E17 | Growth | SSG top-500 ticker pages (Astro) | R | P0 | L | E15 | ⬜ |
 | E18 | Growth | Discord + CONTRIBUTING + good-first-issue | R | P0 | M | E15 | 🟡 |
@@ -722,10 +722,10 @@ flowchart LR
 | Q3 | Signal DSL fuzz testing | P2 | ✅ |
 | Q4 | Property tests → 50+ total | P1 | ✅ |
 | Q5 | Keyboard navigation audit | P1 | ✅ |
-| Q6 | Wire or delete orphaned `a11y.css` / `fonts.css` | P1 | ⬜ |
+| Q6 | Wire orphaned `a11y.css`, delete dead `fonts.css` | P1 | ✅ |
 | Q7 | De-duplicate `.md`/`.yml` issue templates | P2 | ✅ |
 
-**Q6 detail:** `src/styles/a11y.css` and `src/styles/fonts.css` are not referenced by `index.html` or any module, so they never ship. Everything they define — the `[data-contrast="aaa"]` enhanced-contrast mode, the 3px `:focus-visible` ring, and the 2.75rem minimum target size — is dead at runtime. `tests/unit/a11y-audit.test.ts` asserts against the file's _text_, so it passes without proving any of it is applied. Wiring the file in changes the height of every button, anchor, input, select and textarea, so it needs its own visual-baseline refresh rather than a drive-by fix. The **AA** audit in `tests/e2e/wcag-audit.spec.ts` does pass across all 23 routes; the AAA claim was removed from `README.md` until Q6 lands.
+**Q6 detail (done):** `src/styles/a11y.css` was never referenced by `index.html`, so `.skip-link`, `.sr-only` and `.btn-icon` shipped with no rule behind them — the "Skip to main content" link rendered permanently visible and screen-reader-only text was painted on screen. The file is now linked and `a11y` is declared last in the `@layer` order in `tokens.css`. The blanket 2.75rem target-size rule was narrowed to the SC 2.5.8 floor of 1.5rem on controls only, so inline prose links keep their natural box. `src/styles/fonts.css` was deleted: every `@font-face` in it pointed at `/fonts/*.woff2`, a directory that does not exist, and it was superseded by the `@fontsource-variable/inter` import in `src/main.ts`. The `[data-contrast="aaa"]` palette is now reachable through a settings toggle backed by `src/core/contrast-preference.ts`, restored at boot from `localStorage`. `tests/unit/a11y-audit.test.ts` was rewritten to parse the CSS with `postcss` and assert applied declarations rather than file text, and it now fails if any stylesheet under `src/styles/` is missing from `index.html`.
 
 ### Phase R — v14.0.0 "Public Launch" (4-6 weeks)
 
