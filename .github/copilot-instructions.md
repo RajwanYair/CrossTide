@@ -223,6 +223,23 @@ Run all: `npm run ci`
 22. **`--reporter=basic` does not exist in Vitest 4**
     - It fails at startup with `Failed to load url basic`. Use the default reporter and pipe through `Select-Object -Last n` to trim output.
 
+23. **The dominant failure mode in this repo is a gate that passes without checking anything**
+    - Five instances so far: a readiness guard built on optional chaining that could only return `true`; `a11y-audit` asserting *file text* instead of applied CSS; a bare `--update-snapshots` that rewrote no baseline; `check-contrast.mjs` validating a hand-maintained copy of the palette instead of `tokens.css`; and `check:contrast` being defined in `package.json` but wired into neither `ci` nor `lint:all`.
+    - The tell is always the same: a check that cannot observe the thing it names. Ask of any gate — *what edit would make this fail?* If there isn't a clear answer, it is decorative.
+    - Derive assertions from the artifact (parse the CSS, parse the route table, walk the directory). Never restate the artifact in the test.
+    - A green gate that was never wired into `ci` is indistinguishable from no gate. Grep `package.json` for scripts that nothing calls.
+
+24. **A code path that never executes accumulates defects silently**
+    - `initTheme(config.theme)` pinned dark, so the light theme never rendered — in the app *or* in CI. The moment it became reachable, 29 E2E tests failed on contrast bugs that had been shipping for releases.
+    - The same shape produced the orphaned `a11y.css` and ~100 unreachable domain modules.
+    - When you make a dormant path reachable, expect a burst of failures and treat them as pre-existing debt, not as a regression from your change.
+
+25. **Foreground literals on a themed background are wrong by construction**
+    - `color: #fff` on `background: var(--accent)` is only correct for one theme. Use `var(--bg-app)` — the surface the accent is designed to contrast against — so it flips automatically.
+
+26. **A fixed iteration budget in an E2E test is an implementation detail in disguise**
+    - "Press Shift+Tab up to 10 times" passed locally and failed in CI, where more data had loaded and more buttons sat ahead of the header. Derive the bound from the document (`querySelectorAll(...).length`).
+
 ## 🔌 Worker API
 
 The Worker registers **56 routes**. `worker/routes/openapi.ts` is the contract —
