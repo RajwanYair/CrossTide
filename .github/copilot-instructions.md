@@ -223,22 +223,30 @@ Run all: `npm run ci`
 22. **`--reporter=basic` does not exist in Vitest 4**
     - It fails at startup with `Failed to load url basic`. Use the default reporter and pipe through `Select-Object -Last n` to trim output.
 
-## 🔌 Worker API Endpoints
+## 🔌 Worker API
+
+The Worker registers **56 routes**. `worker/routes/openapi.ts` is the contract —
+`scripts/gen-openapi-client.mjs` derives `src/core/api-types.ts` from it, and
+`tests/unit/worker/openapi-drift.test.ts` fails if a newly registered route is
+not documented there. Adding a route means editing the spec in the same commit.
+
+The most-used endpoints:
 
 | Method | Path                        | Description                     |
 | ------ | --------------------------- | ------------------------------- |
 | GET    | `/api/health`               | Worker + provider status        |
-| GET    | `/api/quote/:symbol`        | Real-time quote (Yahoo Finance) |
+| GET    | `/api/quote/:symbol`        | Real-time quote                 |
+| GET    | `/api/quotes`               | Batch quotes — one upstream hit |
 | GET    | `/api/chart`                | OHLCV candles with KV cache     |
 | GET    | `/api/search`               | Ticker fuzzy search             |
 | GET    | `/api/fundamentals/:symbol` | P/E, EPS, revenue metrics       |
 | GET    | `/api/earnings/:symbol`     | Earnings calendar + history     |
-| GET    | `/api/crypto/:id`           | Crypto OHLCV (CoinGecko)        |
+| GET    | `/api/crypto/:id`           | Crypto quote (CoinGecko id)     |
 | GET    | `/api/forex/:pair`          | Forex rate (ECB/Yahoo)          |
 | GET    | `/api/seasonality/:symbol`  | Monthly return seasonality      |
-| GET    | `/api/market-breadth`       | NYSE/NASDAQ breadth indicators  |
 | GET    | `/api/alerts/history`       | Alert fire history (D1)         |
 | GET    | `/api/migrations/status`    | D1 migration status             |
+| POST   | `/api/market-breadth`       | NYSE/NASDAQ breadth indicators  |
 | POST   | `/api/screener`             | Technical screener              |
 | POST   | `/api/signal-dsl/execute`   | Signal DSL expression evaluator |
 | POST   | `/api/news/sentiment`       | NLP sentiment scoring           |
@@ -246,3 +254,6 @@ Run all: `npm run ci`
 | GET    | `/api/og/:symbol`           | OG social preview image         |
 | GET    | `/api/ws/:symbol`           | WebSocket ticker fan-out (DO)   |
 | GET    | `/openapi.json`             | OpenAPI spec                    |
+
+29 routes are registered but not yet in the spec — the backlog is pinned in
+`KNOWN_GAP` and tracked in issue #105. That list may only shrink.

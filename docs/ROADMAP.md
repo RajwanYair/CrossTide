@@ -293,7 +293,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | E12 | Data | Alpaca Markets provider (free real-time) | Q | P0 | M | P4 | ⬜ |
 | E11 | Data | Wire WebSocket DO fan-out (real-time) | Q | P0 | L | E12 | ⬜ |
 | E13 | Data | BYOK — encrypted user API keys in D1 | Q | P1 | M | P3 | ⬜ |
-| E2 | Agent | Formalize single data layer (OpenAPI contract) | Q | P1 | M | E1 | ⬜ |
+| E2 | Agent | Formalize single data layer (OpenAPI contract) | Q | P1 | L | — | 🟡 |
 | E3 | Agent | Agent tool manifest (typed MCP tools) | Q | P1 | M | E2 | ⬜ |
 | Q3 | Quality | Signal DSL fuzz testing | Q | P2 | M | — | ✅ |
 | Q4 | Quality | Property tests → 50+ total | Q | P1 | M | — | ✅ |
@@ -708,7 +708,9 @@ flowchart LR
 | E1 | Wire MCP server to live API | P1 | ⬜ |
 | P8 | GIF demos in README | P1 | ⬜ |
 | P9 | VS Code/GitHub integration cleanup | P1 | ⬜ |
-| P10 | Remove dead code/config/docs | P1 | ⬜ |
+| P10 | Remove dead code/config/docs | P1 | 🟡 |
+
+**P10 detail:** The domain layer is done — 51 of its 221 modules were unreachable from `src/domain/index.ts` and imported by no card, and are now re-exported behind the `tests/unit/domain/barrel-completeness.test.ts` guard. `src/ui/auto-theme-sync.ts` was imported by nothing and is now wired, which also fixed the app ignoring the OS colour scheme on a first visit. The same audit found 52 further tested-but-unwired modules in `core` (38), `ui` (10) and `cards` (4); a barrel export would not be an honest fix for application infrastructure, so each needs its own wire-or-delete decision — tracked in [#103](https://github.com/RajwanYair/CrossTide/issues/103). Completing the domain barrel also surfaced 12 modules that redeclare a name another module already exports, including two implementations each of Black-Scholes, implied volatility and the Kelly fraction — tracked in [#104](https://github.com/RajwanYair/CrossTide/issues/104).
 
 ### Phase Q — v13.0.0 "Data Depth & Agent Layer" (4-6 weeks)
 
@@ -717,8 +719,10 @@ flowchart LR
 | E12 | Alpaca Markets provider (free real-time) | P0 | ⬜ |
 | E11 | Wire WebSocket DO fan-out (real-time) | P0 | ⬜ |
 | E13 | BYOK (user API keys, encrypted D1) | P1 | ⬜ |
-| E2 | Formalize single data layer (OpenAPI contract) | P1 | ⬜ |
+| E2 | Formalize single data layer (OpenAPI contract) | P1 | 🟡 |
 | E3 | Agent tool manifest (typed MCP tools) | P1 | ⬜ |
+
+**E2 detail:** The contract is now enforced. `tests/unit/worker/openapi-drift.test.ts` parses the Hono route table out of `worker/index.ts` and fails when a registered route is undocumented, when the spec describes a route that is not registered, or when its `KNOWN_GAP` backlog goes stale — the list may only shrink. `npm run check:api-types` joined `npm run ci`, so a spec edit that is not reflected in the committed `src/core/api-types.ts` fails the pipeline. 8 of 56 routes were documented before this; 19 are now. The remaining 29 are tracked in [#105](https://github.com/RajwanYair/CrossTide/issues/105).
 | Q3 | Signal DSL fuzz testing | P2 | ✅ |
 | Q4 | Property tests → 50+ total | P1 | ✅ |
 | Q5 | Keyboard navigation audit | P1 | ✅ |

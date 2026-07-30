@@ -323,6 +323,287 @@ export const OPENAPI_SPEC = {
         },
       },
     },
+    "/api/quote/{symbol}": {
+      get: {
+        operationId: "getQuote",
+        summary: "Real-time quote",
+        description:
+          "Latest price, change and volume for a single symbol. Falls through the configured provider chain and is cached in KV with a market-hours-aware TTL.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol (1–12 chars, e.g. AAPL, BRK.A)",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Quote",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/QuoteResponse" },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/quotes": {
+      get: {
+        operationId: "getBatchQuotes",
+        summary: "Batch quotes",
+        description:
+          "Quotes for several symbols in one round trip. Prefer this over parallel calls to /api/quote/{symbol}: it shares a single upstream request and one rate-limit slot.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbols",
+            in: "query",
+            required: true,
+            description: "Comma-separated ticker symbols",
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Quotes keyed by symbol",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  additionalProperties: { $ref: "#/components/schemas/QuoteResponse" },
+                },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/fundamentals/{symbol}": {
+      get: {
+        operationId: "getFundamentals",
+        summary: "Fundamental metrics",
+        description: "P/E, EPS, market cap, revenue and margin metrics for a single symbol.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Fundamental metrics",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/earnings/{symbol}": {
+      get: {
+        operationId: "getEarnings",
+        summary: "Earnings calendar and history",
+        description: "Upcoming earnings dates plus historical estimate-versus-actual surprises.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Earnings calendar",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/crypto/{id}": {
+      get: {
+        operationId: "getCrypto",
+        summary: "Crypto quote",
+        description: "Current price and 24h change for a CoinGecko asset id (e.g. `bitcoin`).",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "CoinGecko asset id, not a ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 64 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Crypto quote",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/forex/{pair}": {
+      get: {
+        operationId: "getForex",
+        summary: "Forex rate",
+        description:
+          "Exchange rate for a currency pair, sourced from the ECB with a Yahoo fallback.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "pair",
+            in: "path",
+            required: true,
+            description: "Currency pair, e.g. EURUSD",
+            schema: { type: "string", minLength: 6, maxLength: 7 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Forex rate",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/seasonality/{symbol}": {
+      get: {
+        operationId: "getSeasonality",
+        summary: "Monthly return seasonality",
+        description: "Average return per calendar month across the available history.",
+        tags: ["Signals"],
+        parameters: [
+          {
+            name: "symbol",
+            in: "path",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Seasonality by month",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/market-breadth": {
+      post: {
+        operationId: "getMarketBreadth",
+        summary: "Market breadth indicators",
+        description:
+          "Advance/decline, new highs versus new lows and percentage above moving average for the supplied universe.",
+        tags: ["Signals"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Breadth indicators",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/news/sentiment": {
+      post: {
+        operationId: "scoreNewsSentiment",
+        summary: "News sentiment scoring",
+        description: "Scores supplied headlines with the Worker's on-device NLP sentiment model.",
+        tags: ["Signals"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Sentiment scores",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/portfolio/rebalance": {
+      post: {
+        operationId: "rebalancePortfolio",
+        summary: "Rebalancing trade calculations",
+        description:
+          "Returns the buy and sell quantities that move holdings back to target weights.",
+        tags: ["Portfolio"],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { type: "object" } } },
+        },
+        responses: {
+          "200": {
+            description: "Rebalancing trades",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+        },
+      },
+    },
+    "/api/migrations/status": {
+      get: {
+        operationId: "getMigrationStatus",
+        summary: "D1 migration status",
+        description: "Which migrations have been applied to the bound D1 database, and when.",
+        tags: ["System"],
+        responses: {
+          "200": {
+            description: "Migration status",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "503": {
+            description: "Database not available",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     schemas: {
@@ -461,6 +742,21 @@ export const OPENAPI_SPEC = {
           fired_at: { type: "string", format: "date-time" },
         },
       },
+      QuoteResponse: {
+        type: "object",
+        required: ["symbol", "price"],
+        properties: {
+          symbol: { type: "string" },
+          price: { type: "number" },
+          change: { type: "number", description: "Absolute change since the previous close" },
+          changePercent: { type: "number" },
+          previousClose: { type: "number" },
+          volume: { type: "number" },
+          currency: { type: "string" },
+          source: { type: "string", description: "Provider that served this quote" },
+          timestamp: { type: "string", format: "date-time" },
+        },
+      },
       ErrorResponse: {
         type: "object",
         required: ["error"],
@@ -472,6 +768,14 @@ export const OPENAPI_SPEC = {
     responses: {
       BadRequest: {
         description: "Invalid request parameters",
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/ErrorResponse" },
+          },
+        },
+      },
+      UpstreamFailure: {
+        description: "Every configured provider failed or timed out",
         content: {
           "application/json": {
             schema: { $ref: "#/components/schemas/ErrorResponse" },
@@ -496,8 +800,9 @@ export const OPENAPI_SPEC = {
   },
   tags: [
     { name: "System", description: "Health and meta endpoints" },
-    { name: "Market Data", description: "OHLCV candles and ticker search" },
+    { name: "Market Data", description: "Quotes, OHLCV candles, fundamentals and ticker search" },
     { name: "Signals", description: "Consensus, screener, and signal DSL execution" },
+    { name: "Portfolio", description: "Holdings analytics and rebalancing" },
     { name: "Alerts", description: "Alert rules and fired alert history" },
     { name: "UI", description: "Generated UI assets" },
   ],
