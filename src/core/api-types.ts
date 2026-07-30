@@ -202,4 +202,54 @@ export interface ApiRoutes {
     readonly request: never;
     readonly response: Record<string, unknown>;
   };
+  /** GET /api/compare */
+  readonly getCompare: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/indicators */
+  readonly getIndicators: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/economic */
+  readonly getEconomicData: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/movers */
+  readonly getMovers: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/sector-heatmap */
+  readonly getSectorHeatmap: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/news */
+  readonly getNews: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/fred */
+  readonly getFredSeries: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/crypto/search */
+  readonly searchCryptoAssets: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/crypto/{id}/chart */
+  readonly getCryptoChart: {
+    readonly request: never;
+    readonly response: Record<string, unknown>;
+  };
+  /** GET /api/og */
+  readonly getOgImageDefault: {
+    readonly request: never;
+    readonly response: unknown;
+  };
 }

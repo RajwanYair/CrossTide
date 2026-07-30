@@ -341,7 +341,7 @@ the current sprint are marked complete so the queue can keep moving without losi
 13. P10: wire or delete the remaining orphan modules and close [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ⬜
 14. P10: audit unused dependencies against the current runtime surface — ✅
 15. P10: remove stale config/docs found by the orphan and dependency audits — 🟡
-16. E2: document the first 10 of the remaining 29 Worker routes in OpenAPI — ⬜
+16. E2: document the first 10 of the remaining 29 Worker routes in OpenAPI — ✅
 17. E2: document the next 10 remaining Worker routes in OpenAPI — ⬜
 18. E2: document the final 9 routes, remove `KNOWN_GAP`, and close [#105](https://github.com/RajwanYair/CrossTide/issues/105) — ⬜
 19. E2: add `security` blocks for auth, key, and sync routes — ⬜
@@ -755,7 +755,7 @@ flowchart LR
 
 **E3 detail (done):** `mcp-server/src/tool-manifest.ts` pairs every advertised tool with a Valibot schema and the Worker route it calls. Arguments are parsed at the boundary instead of cast, ticker symbols are constrained before URL interpolation, and only declared fields are forwarded upstream. `tests/unit/mcp/tool-manifest.test.ts` keeps the manifest, the validators and the Worker route table in step — the package previously had no tests.
 
-**E2 detail:** The contract is now enforced. `tests/unit/worker/openapi-drift.test.ts` parses the Hono route table out of `worker/index.ts` and fails when a registered route is undocumented, when the spec describes a route that is not registered, or when its `KNOWN_GAP` backlog goes stale — the list may only shrink. `npm run check:api-types` joined `npm run ci`, so a spec edit that is not reflected in the committed `src/core/api-types.ts` fails the pipeline. 8 of 56 routes were documented before this; 19 are now. The remaining 29 are tracked in [#105](https://github.com/RajwanYair/CrossTide/issues/105).
+**E2 detail:** The contract is now enforced. `tests/unit/worker/openapi-drift.test.ts` parses the Hono route table out of `worker/index.ts` and fails when a registered route is undocumented, when the spec describes a route that is not registered, or when its `KNOWN_GAP` backlog goes stale — the list may only shrink. `npm run check:api-types` joined `npm run ci`, so a spec edit that is not reflected in the committed `src/core/api-types.ts` fails the pipeline. 8 of 56 routes were documented before this effort; 29 are now documented, including compare, indicators, economic, movers, sector heatmap, news, FRED, crypto search, crypto chart and default OG image. The remaining 19 are tracked in [#105](https://github.com/RajwanYair/CrossTide/issues/105).
 | Q3 | Signal DSL fuzz testing | P2 | ✅ |
 | Q4 | Property tests → 50+ total | P1 | ✅ |
 | Q5 | Keyboard navigation audit | P1 | ✅ |

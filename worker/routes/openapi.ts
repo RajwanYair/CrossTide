@@ -604,6 +604,276 @@ export const OPENAPI_SPEC = {
         },
       },
     },
+    "/api/compare": {
+      get: {
+        operationId: "getCompare",
+        summary: "Compare multiple symbols",
+        description:
+          "Returns normalized multi-symbol comparison data for chart overlays and relative performance views.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "tickers",
+            in: "query",
+            required: true,
+            description: "Comma-separated ticker symbols",
+            schema: { type: "string", minLength: 1 },
+          },
+          {
+            name: "range",
+            in: "query",
+            required: false,
+            description: "History range for normalization",
+            schema: {
+              type: "string",
+              enum: ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "max"],
+              default: "3mo",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Comparison payload",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/indicators": {
+      get: {
+        operationId: "getIndicators",
+        summary: "Indicator calculations",
+        description:
+          "Calculates one or more technical indicators from requested symbols and chart windows.",
+        tags: ["Signals"],
+        parameters: [
+          {
+            name: "ticker",
+            in: "query",
+            required: true,
+            description: "Ticker symbol",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+          {
+            name: "indicators",
+            in: "query",
+            required: true,
+            description: "Comma-separated indicator IDs",
+            schema: { type: "string", minLength: 1 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Indicator values",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/economic": {
+      get: {
+        operationId: "getEconomicData",
+        summary: "Economic indicator snapshot",
+        description:
+          "Returns macro-economic data used by the macro dashboard card and derived indicators.",
+        tags: ["Market Data"],
+        responses: {
+          "200": {
+            description: "Economic data snapshot",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/movers": {
+      get: {
+        operationId: "getMovers",
+        summary: "Top gainers and losers",
+        description: "Returns ranked market movers for a configurable universe and session window.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "limit",
+            in: "query",
+            required: false,
+            description: "Maximum rows per side",
+            schema: { type: "integer", minimum: 1, maximum: 200, default: 25 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Top movers",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/sector-heatmap": {
+      get: {
+        operationId: "getSectorHeatmap",
+        summary: "Sector heatmap snapshot",
+        description: "Returns sector-level and constituent-level data for the market heatmap card.",
+        tags: ["Market Data"],
+        responses: {
+          "200": {
+            description: "Heatmap payload",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/news": {
+      get: {
+        operationId: "getNews",
+        summary: "News feed",
+        description: "Returns news articles by ticker, topic and time window for dashboard cards.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "ticker",
+            in: "query",
+            required: false,
+            description: "Optional symbol filter",
+            schema: { type: "string", minLength: 1, maxLength: 12 },
+          },
+          {
+            name: "limit",
+            in: "query",
+            required: false,
+            description: "Maximum number of items",
+            schema: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "News items",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/fred": {
+      get: {
+        operationId: "getFredSeries",
+        summary: "FRED macro series",
+        description:
+          "Returns a FRED time series payload for a requested economic series identifier.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "series",
+            in: "query",
+            required: true,
+            description: "FRED series ID",
+            schema: { type: "string", minLength: 1, maxLength: 64 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "FRED series",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/crypto/search": {
+      get: {
+        operationId: "searchCryptoAssets",
+        summary: "Crypto asset search",
+        description: "Searches CoinGecko assets and returns matching ids and symbols.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "q",
+            in: "query",
+            required: true,
+            description: "Search query",
+            schema: { type: "string", minLength: 1, maxLength: 100 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Matching crypto assets",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/crypto/{id}/chart": {
+      get: {
+        operationId: "getCryptoChart",
+        summary: "Crypto OHLCV chart",
+        description: "Returns historical crypto OHLCV candles for a CoinGecko asset id.",
+        tags: ["Market Data"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "CoinGecko asset id",
+            schema: { type: "string", minLength: 1, maxLength: 64 },
+          },
+          {
+            name: "range",
+            in: "query",
+            required: false,
+            description: "History range",
+            schema: {
+              type: "string",
+              enum: ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "max"],
+              default: "1mo",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Crypto chart payload",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "502": { $ref: "#/components/responses/UpstreamFailure" },
+        },
+      },
+    },
+    "/api/og": {
+      get: {
+        operationId: "getOgImageDefault",
+        summary: "Default social preview image",
+        description:
+          "Returns the default SVG social-preview (OG) card when no symbol path is used.",
+        tags: ["UI"],
+        responses: {
+          "200": {
+            description: "SVG social card",
+            content: { "image/svg+xml": { schema: { type: "string" } } },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+        },
+      },
+    },
   },
   components: {
     schemas: {
