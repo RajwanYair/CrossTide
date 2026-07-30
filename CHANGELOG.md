@@ -10,7 +10,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-> **Sprint: Test Performance, Deterministic CI & Toolchain Integration**
+> **Sprint: Test Performance, Deterministic CI, Toolchain Integration & WCAG 2.2 AA**
 
 ### 🔄 Changed
 
@@ -28,13 +28,22 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - **Copilot Chat test generation is wired to `tests.instructions.md`**, so generated tests land in the correct Vitest project instead of failing on missing DOM globals. PR-description instructions, coverage-gutters paths, and a wider safe-command auto-approve list were added alongside.
 - **`audit:headers` gate** (`scripts/audit-file-headers.mjs`, wired into `lint:all`): every file under `src/`, `worker/` and `scripts/` must open with a `/** … */` docblock. Coverage is now 592/592 (100%). A leading one-line summary lets an assistant identify a file's purpose without parsing its body.
 - **E2E card-matrix drift guard**: `tests/unit/cards/registry.test.ts` parses `tests/e2e/cards.spec.ts` and fails in both directions — a newly registered card cannot ship without an E2E entry, and a removed card cannot leave a stale one.
+- **Linux visual-regression baselines** committed to `tests/e2e/visual.spec.ts-snapshots/`. They had never been generated, so all 17 snapshot assertions failed with "a snapshot doesn't exist" on every CI run.
+- **Three new in-repo AI skills** (roadmap E19): `add-card`, `add-indicator` and `onboard-contributor`, bringing the skill set to nine.
 
 ### 🐛 Fixed
 
+- **WCAG 2.2 AA contrast and target-size violations** across `/alerts`, `/multi-chart`, `/macro-dashboard` and `/heatmap`. Heatmap tiles carried white text on `#4caf50` (2.5–3.6:1), signal badges rendered the raw signal color on a 20%-tinted background (4.0–4.1:1), the active multi-chart layout button used `#3b82f6` (3.7:1), and `<summary>` laid out at 21px against the 24px target-size floor. Badges now blend the signal color away from the surface via `--badge-fg-blend`, so they keep following the color-blind palette swaps. The audit passes on all 23 routes.
+- **Horizontal page overflow on mobile**: the market-hours exchange list forced `document.body.scrollWidth` to 586px at a 375px viewport. `.market-indicator` and `.market-exchanges` now wrap.
 - **Astro docs build in CI**: `npx astro build` could fetch a fresh Astro from the registry, which then resolved a CommonJS `cookie` and failed with `Named export 'parseCookie' not found`. Both `pages.yml` and `docs.yml` now build via `npm run build --workspace docs-site`, using the lockfile-pinned `astro@7.1.5` / `cookie@2.0.1`.
 - **Flaky virtual-scroller load test**: the 10K/50K row wall-clock budget assertions now retry, so scheduler jitter under the parallel suite cannot fail CI.
-- **Markdownlint CI blocker**: hard tabs removed from `.github/copilot-instructions.md`.
-- **Playwright E2E web server**: `playwright.config.ts` launched the dev server with `npx vite`, which could resolve a different Vite from the registry and fail the run. It now uses `npm run dev -- --port 4173`; the full 38-test card matrix passes on chromium.
+- **Markdownlint CI blocker**: hard tabs removed from `.github/copilot-instructions.md`. This gate had been aborting the pipeline before the Playwright E2E job ran, so the E2E failures below were reported as "skipped" rather than failing.
+- **Playwright E2E web server**: `playwright.config.ts` launched the dev server with `npx vite`, which could resolve a different Vite from the registry and fail the run. It now uses `npm run dev -- --port 4173`.
+- **Two incorrect E2E test assumptions**. `goToRoute` in `visual.spec.ts` clicked a sidebar link that reports `visible: true` but is parked off-canvas at `translateX(-220px)`, so the click hung until timeout; it now checks the bounding box against the viewport. The `focus-visible` cross-browser test tabbed _forward_ from a position the router had already moved into `<main>`, so it could never reach the header — it now walks backwards with `Shift+Tab` and additionally asserts `:focus-visible` matches.
+
+### 🗑️ Removed
+
+- **Duplicate issue templates** `bug_report.md` and `feature_request.md`, superseded by the richer YAML forms.
 
 ---
 

@@ -295,12 +295,14 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | E13 | Data | BYOK — encrypted user API keys in D1 | Q | P1 | M | P3 | ⬜ |
 | E2 | Agent | Formalize single data layer (OpenAPI contract) | Q | P1 | M | E1 | ⬜ |
 | E3 | Agent | Agent tool manifest (typed MCP tools) | Q | P1 | M | E2 | ⬜ |
-| Q3 | Quality | Signal DSL fuzz testing | Q | P2 | M | — | ⬜ |
-| Q4 | Quality | Property tests → 50+ total | Q | P1 | M | — | ⬜ |
-| Q5 | A11y | Keyboard navigation audit | Q | P1 | M | — | ⬜ |
+| Q3 | Quality | Signal DSL fuzz testing | Q | P2 | M | — | ✅ |
+| Q4 | Quality | Property tests → 50+ total | Q | P1 | M | — | ✅ |
+| Q5 | A11y | Keyboard navigation audit | Q | P1 | M | — | ✅ |
+| Q6 | A11y | Wire or delete orphaned `a11y.css` / `fonts.css` | Q | P1 | M | — | ⬜ |
+| Q7 | DX | De-duplicate `.md`/`.yml` issue templates | Q | P2 | S | — | ✅ |
 | E17 | Growth | SSG top-500 ticker pages (Astro) | R | P0 | L | E15 | ⬜ |
-| E18 | Growth | Discord + CONTRIBUTING + good-first-issue | R | P0 | M | E15 | ⬜ |
-| E19 | DX | Expand in-repo AI skills for contributors | R | P1 | M | — | ⬜ |
+| E18 | Growth | Discord + CONTRIBUTING + good-first-issue | R | P0 | M | E15 | 🟡 |
+| E19 | DX | Expand in-repo AI skills for contributors | R | P1 | M | — | ✅ |
 | E4 | Agent | Streaming agent responses (SSE) | R | P1 | M | E3 | ⬜ |
 | E14 | Data | Options chain + IV surface card | R | P1 | L | E12 | ⬜ |
 | R2 | Growth | 3-minute video walkthrough | R | P1 | M | E15 | ⬜ |
@@ -710,28 +712,32 @@ flowchart LR
 
 ### Phase Q — v13.0.0 "Data Depth & Agent Layer" (4-6 weeks)
 
-| # | Task | Priority |
-|---|---|---|
-| E12 | Alpaca Markets provider (free real-time) | P0 |
-| E11 | Wire WebSocket DO fan-out (real-time) | P0 |
-| E13 | BYOK (user API keys, encrypted D1) | P1 |
-| E2 | Formalize single data layer (OpenAPI contract) | P1 |
-| E3 | Agent tool manifest (typed MCP tools) | P1 |
-| Q3 | Signal DSL fuzz testing | P2 |
-| Q4 | Property tests → 50+ total | P1 |
-| Q5 | Keyboard navigation audit | P1 |
+| # | Task | Priority | Status |
+|---|---|---|---|
+| E12 | Alpaca Markets provider (free real-time) | P0 | ⬜ |
+| E11 | Wire WebSocket DO fan-out (real-time) | P0 | ⬜ |
+| E13 | BYOK (user API keys, encrypted D1) | P1 | ⬜ |
+| E2 | Formalize single data layer (OpenAPI contract) | P1 | ⬜ |
+| E3 | Agent tool manifest (typed MCP tools) | P1 | ⬜ |
+| Q3 | Signal DSL fuzz testing | P2 | ✅ |
+| Q4 | Property tests → 50+ total | P1 | ✅ |
+| Q5 | Keyboard navigation audit | P1 | ✅ |
+| Q6 | Wire or delete orphaned `a11y.css` / `fonts.css` | P1 | ⬜ |
+| Q7 | De-duplicate `.md`/`.yml` issue templates | P2 | ✅ |
+
+**Q6 detail:** `src/styles/a11y.css` and `src/styles/fonts.css` are not referenced by `index.html` or any module, so they never ship. Everything they define — the `[data-contrast="aaa"]` enhanced-contrast mode, the 3px `:focus-visible` ring, and the 2.75rem minimum target size — is dead at runtime. `tests/unit/a11y-audit.test.ts` asserts against the file's _text_, so it passes without proving any of it is applied. Wiring the file in changes the height of every button, anchor, input, select and textarea, so it needs its own visual-baseline refresh rather than a drive-by fix. The **AA** audit in `tests/e2e/wcag-audit.spec.ts` does pass across all 23 routes; the AAA claim was removed from `README.md` until Q6 lands.
 
 ### Phase R — v14.0.0 "Public Launch" (4-6 weeks)
 
-| # | Task | Priority |
-|---|---|---|
-| E17 | SSG top 500 ticker pages (Astro) | P0 |
-| E18 | Discord + CONTRIBUTING + good-first-issue | P0 |
-| E19 | Expand in-repo AI skills for contributors | P1 |
-| E4 | Streaming agent responses (SSE) | P1 |
-| E14 | Options chain + IV surface card | P1 |
-| R2 | 3-minute video walkthrough | P1 |
-| R4 | Product Hunt + HN + Reddit launch | P0 |
+| # | Task | Priority | Status |
+|---|---|---|---|
+| E17 | SSG top 500 ticker pages (Astro) | P0 | ⬜ |
+| E18 | Discord + CONTRIBUTING + good-first-issue | P0 | 🟡 |
+| E19 | Expand in-repo AI skills for contributors | P1 | ✅ |
+| E4 | Streaming agent responses (SSE) | P1 | ⬜ |
+| E14 | Options chain + IV surface card | P1 | ⬜ |
+| R2 | 3-minute video walkthrough | P1 | ⬜ |
+| R4 | Product Hunt + HN + Reddit launch | P0 | ⬜ |
 
 ### Phase S — v15.0.0 "Intelligence" (6-8 weeks)
 

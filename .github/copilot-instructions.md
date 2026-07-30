@@ -7,9 +7,12 @@ Privacy-first financial analysis PWA. Vanilla TypeScript, no framework, Vite 8, 
 | Skill | Path | Use when |
 |---|---|---|
 | `add-worker-route` | `.github/skills/add-worker-route/SKILL.md` | Adding a new API endpoint |
+| `add-card` | `.github/skills/add-card/SKILL.md` | Adding a new route card / view |
+| `add-indicator` | `.github/skills/add-indicator/SKILL.md` | Adding a calculator or consensus method |
 | `debug-fetch` | `.github/skills/debug-fetch/SKILL.md` | Broken API calls, stale data |
 | `release` | `.github/skills/release/SKILL.md` | Version bump, git tag, GH release |
 | `update-tests` | `.github/skills/update-tests/SKILL.md` | Add/fix tests, coverage drops |
+| `onboard-contributor` | `.github/skills/onboard-contributor/SKILL.md` | New contributor setup, "where do I start" |
 | `deploy` | `.github/skills/deploy/SKILL.md` | CF deployment, provisioning |
 | `migrate-db` | `.github/skills/migrate-db/SKILL.md` | D1 schema changes |
 
@@ -172,6 +175,27 @@ Run all: `npm run ci`
 11. **Machine-scope toolchain**
     - Shared CLIs live in `C:\ProgramData\npm` (`NPM_CONFIG_GLOBALCONFIG` → `C:\ProgramData\npm\etc\npmrc`); Playwright browsers in `C:\ProgramData\ms-playwright`.
     - Machine env vars only reach *new* processes — a VS Code restart is required after changing them, otherwise `tsx`/`wrangler` appear missing on PATH.
+
+12. **A gate that fails early hides every gate behind it**
+    - Markdownlint failing in CI caused the Playwright E2E job to be *skipped*, which read as "not failing" for several runs. When a pipeline turns green after fixing an early gate, re-check the jobs that were previously skipped.
+    - Order of discovery, not order of severity, determines what you see first.
+
+13. **Playwright visual baselines are platform-specific and must be committed**
+    - Baselines are named `<name>-<project>-<platform>.png`; a linux baseline cannot be generated on Windows.
+    - Regenerate via `gh workflow run ci.yml --ref main -f update_snapshots=true`, then `gh run download <id> -n visual-snapshots` and commit into `tests/e2e/visual.spec.ts-snapshots/`.
+    - Never commit locally generated `*-win32.png` files — CI never validates them.
+
+14. **`isVisible()` does not mean clickable**
+    - The mobile sidebar is parked off-canvas with `translateX(-220px)`. Its links report `visible: true` (non-empty box, `visibility: visible`) but sit at negative x, so `click()` hangs until the test times out.
+    - Check the bounding box against `page.viewportSize()` before clicking, or navigate directly.
+
+15. **Forward `Tab` does not start at the top of the document**
+    - After a route change the router moves focus into `<main>` for the WCAG 2.4.3 announcement, which also sets the sequential focus navigation starting point. Calling `.blur()` does not reset it.
+    - To reach header/nav elements from that position, walk backwards with `Shift+Tab`.
+
+16. **Orphaned stylesheets ship nothing**
+    - `src/styles/a11y.css` and `src/styles/fonts.css` are not referenced by `index.html`. Adding rules to them has no effect at runtime.
+    - Only `tokens`, `base`, `layout`, `components`, `responsive` and `print` are loaded. Tracked as roadmap Q6.
 
 ## 🔌 Worker API Endpoints
 

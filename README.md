@@ -16,7 +16,7 @@ interactive charting, and offline-first PWA support.
 [![Bundle](https://img.shields.io/badge/Bundle-%3C250KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
 [![Install Size](https://img.shields.io/badge/Install%20Size-~4.2MB-informational)](package.json)
 [![SLSA 3](https://img.shields.io/badge/SLSA-Level_3-green?logo=sigstore)](https://github.com/RajwanYair/CrossTide/attestations)
-[![WCAG 2.2 AAA](https://img.shields.io/badge/WCAG-2.2%20AAA-blueviolet)](src/styles/a11y.css)
+[![WCAG 2.2 AA](https://img.shields.io/badge/WCAG-2.2%20AA-blueviolet)](tests/e2e/wcag-audit.spec.ts)
 [![Docs](https://img.shields.io/badge/Docs-Indicator%20Reference-blue)](https://rajwanyair.github.io/CrossTide/docs/)
 [![Architecture](https://img.shields.io/badge/Architecture-Diagram-orange)](docs/ARCHITECTURE.md)
 [![FRED API](https://img.shields.io/badge/FRED-Economic%20Overlay-informational)](worker/routes/fred.ts)
@@ -39,7 +39,7 @@ interactive charting, and offline-first PWA support.
 | **Alerts** | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions |
 | **Data Providers** | Yahoo Finance, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko, Frankfurter, and FRED with automatic failover and health reporting |
 | **PWA / Offline** | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile |
-| **Accessibility** | WCAG 2.2 AAA (contrast, focus, target size, error suggestion), keyboard nav, color-blind palettes, skip links, `[data-contrast="aaa"]` mode |
+| **Accessibility** | WCAG 2.2 AA verified on all 23 routes (contrast, target size, error suggestion), keyboard nav, color-blind palettes, skip links |
 | **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP |
 | **i18n** | English, Hebrew (RTL), with expansion to ES/DE/ZH |
 
@@ -130,7 +130,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | **< 250 KB gzip bundle** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **Native iOS / Android** | ✅ (Capacitor) | ✅ | ✅ | ❌ | ❌ |
 | **Strategy backtesting** | ✅ | ✅ | ❌ | ❌ | ✅ (paid) |
-| **Accessibility WCAG 2.2 AAA** | ✅ | ❌ | Partial | ❌ | ❌ |
+| **Accessibility WCAG 2.2 AA** | ✅ | ❌ | Partial | ❌ | ❌ |
 | **FRED macro overlay** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **NLP news sentiment** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **WebSocket live streaming** | ✅ (DO fan-out) | ✅ | ❌ | ❌ | ❌ |
@@ -301,10 +301,10 @@ Consensus:   Micho Method + >=1 confirming method = BUY
 | -------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `ERR_CERT_AUTHORITY_INVALID` in dev | Corporate MITM proxy | Set `HTTPS_PROXY=http://proxy-dmz.intel.com:912` before `npm run dev` |
 | CSP blocks fetch requests in dev | Hitting Yahoo directly instead of Vite proxy | Ensure `import.meta.env.DEV` routes through `/api/yahoo` (already default) |
-| Firefox/WebKit Playwright tests fail to start | Browser engines not installed | Run `npx playwright install firefox webkit` |
+| Firefox/WebKit Playwright tests fail to start | Browser engines not installed | Run `./node_modules/.bin/playwright install firefox webkit` |
 | `@starting-style` / `@scope` shown as unknown in VS Code | CSS language service needs custom data | Verify `css.customData` points to `./config/css-custom-data.json` in `.vscode/settings.json` |
 | Tests timeout behind corporate firewall | npm registry unreachable | Configure `.npmrc` with `proxy` and `https-proxy` |
-| Build exceeds 200 KB budget | New dependency added | Check `npm run check:bundle` and tree-shake or lazy-load the addition |
+| Build exceeds 250 KB budget | New dependency added | Check `npm run check:bundle` and tree-shake or lazy-load the addition |
 
 ## 💬 Community
 
