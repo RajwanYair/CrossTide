@@ -6,12 +6,15 @@ description: Add a CrossTide chart to any page with one module script and a cust
 ## Overview
 
 CrossTide ships a standalone ES module bundle, `widget.mjs`, that auto-registers
-the `<crosstide-chart>` custom element. It is the smallest way to reuse the
-CrossTide chart surface outside the full application shell.
+three custom elements:
 
-The current widget is chart-first: it renders OHLCV candles from the Worker
-`GET /api/chart` route and uses a closed Shadow DOM so host-page CSS cannot leak
-into it.
+- `<crosstide-chart>` (OHLCV candles)
+- `<crosstide-quote>` (quote tape/badge)
+- `<crosstide-consensus>` (consensus direction and score)
+
+These are the smallest way to reuse CrossTide surfaces outside the full
+application shell. All widgets use closed Shadow DOM so host-page CSS cannot
+leak into them.
 
 ## Quick Start
 
@@ -28,12 +31,18 @@ into it.
   theme="auto"
   height="320"
 ></crosstide-chart>
+
+<crosstide-quote ticker="AAPL"></crosstide-quote>
+
+<crosstide-consensus ticker="AAPL"></crosstide-consensus>
 ```
 
 The element fetches data from `https://worker.crosstide.pages.dev/api/chart` by
 default. If you self-host the Worker, set `api-base` to your own origin.
 
 ## Attributes
+
+### `crosstide-chart`
 
 | Attribute | Default | Purpose |
 | --- | --- | --- |
@@ -45,6 +54,23 @@ default. If you self-host the Worker, set `api-base` to your own origin.
 | `show-volume` | `true` | Render the volume strip under candles |
 | `api-base` | `https://worker.crosstide.pages.dev` | Override the Worker origin |
 
+### `crosstide-quote`
+
+| Attribute | Default | Purpose |
+| --- | --- | --- |
+| `ticker` | `AAPL` | Symbol to quote |
+| `theme` | `auto` | `dark`, `light`, or follow `prefers-color-scheme` |
+| `show-change` | `true` | Toggle day change + percent display |
+| `api-base` | `https://worker.crosstide.pages.dev` | Override the Worker origin |
+
+### `crosstide-consensus`
+
+| Attribute | Default | Purpose |
+| --- | --- | --- |
+| `ticker` | `AAPL` | Symbol to evaluate |
+| `theme` | `auto` | `dark`, `light`, or follow `prefers-color-scheme` |
+| `api-base` | `https://worker.crosstide.pages.dev` | Override the Worker origin |
+
 ## Self-hosted Worker
 
 ```html
@@ -53,6 +79,16 @@ default. If you self-host the Worker, set `api-base` to your own origin.
   range="1y"
   api-base="https://quotes.example.com"
 ></crosstide-chart>
+
+<crosstide-quote
+  ticker="MSFT"
+  api-base="https://quotes.example.com"
+></crosstide-quote>
+
+<crosstide-consensus
+  ticker="MSFT"
+  api-base="https://quotes.example.com"
+></crosstide-consensus>
 ```
 
 The widget trims trailing slashes from `api-base`, so both
@@ -61,12 +97,12 @@ The widget trims trailing slashes from `api-base`, so both
 ## Accessibility & Behavior
 
 - The widget renders into a **closed Shadow DOM** for style isolation.
-- The canvas exposes `role="img"` and an `aria-label` with the ticker symbol.
+- The chart canvas exposes `role="img"` and an `aria-label` with the ticker symbol.
 - Network failures render an inline alert state instead of failing silently.
 - Resizing the host container triggers a redraw through `ResizeObserver`.
 
 ## Current Scope
 
-This first E21 slice ships the chart widget only. Planned follow-ups in the
-roadmap include a docs-host smoke test, more widget types (quote / consensus),
-and framework adapters that compose with `@crosstide/domain`.
+The E21 baseline now includes chart, quote, and consensus widgets plus a
+host-page smoke test that runs the widgets outside the app shell. Remaining
+platform follow-ups are framework adapters and plugin surfaces in Phase T.

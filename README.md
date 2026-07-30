@@ -38,7 +38,7 @@ interactive charting, and offline-first PWA support.
 | **Market Intelligence** | Heatmap, sector rotation, relative strength, market breadth, correlation matrix, seasonality patterns |
 | **Alerts** | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions |
 | **Data Providers** | Yahoo Finance, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko, Frankfurter, and FRED with automatic failover and health reporting |
-| **Embeddable Widgets** | Ship a standalone `<script type="module">` bundle with a `<crosstide-chart>` custom element backed by the Worker chart API |
+| **Embeddable Widgets** | Ship a standalone `<script type="module">` bundle with `<crosstide-chart>`, `<crosstide-quote>`, and `<crosstide-consensus>` custom elements backed by Worker APIs |
 | **PWA / Offline** | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile |
 | **Accessibility** | WCAG 2.2 AA verified on all 23 routes (contrast, target size, error suggestion), keyboard nav, color-blind palettes, skip links, opt-in AAA enhanced-contrast mode |
 | **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP |
@@ -69,8 +69,13 @@ prices.
 ## 🔌 Embeddable Widget
 
 CrossTide now ships a standalone `dist/widget.mjs` bundle for third-party sites. The bundle
-auto-registers a `<crosstide-chart>` custom element and fetches candles from the production
-Worker by default.
+auto-registers three custom elements:
+
+- `<crosstide-chart>` for OHLCV candles
+- `<crosstide-quote>` for a compact real-time quote tape/badge
+- `<crosstide-consensus>` for the consensus direction + score badge
+
+All widgets call the production Worker by default.
 
 ```html
 <script
@@ -85,10 +90,16 @@ Worker by default.
   theme="auto"
   height="320"
 ></crosstide-chart>
+
+<crosstide-quote ticker="AAPL"></crosstide-quote>
+
+<crosstide-consensus ticker="AAPL"></crosstide-consensus>
 ```
 
-Supported attributes: `ticker`, `interval`, `range`, `theme`, `height`, `show-volume`, `api-base`.
-Set `api-base` when you want the widget to call a self-hosted Worker instead of the public one.
+Chart attributes: `ticker`, `interval`, `range`, `theme`, `height`, `show-volume`, `api-base`.
+Quote attributes: `ticker`, `theme`, `show-change`, `api-base`.
+Consensus attributes: `ticker`, `theme`, `api-base`.
+Set `api-base` when you want widgets to call a self-hosted Worker instead of the public one.
 
 ## 🎬 Demo
 

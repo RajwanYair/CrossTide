@@ -1,9 +1,19 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { CrosstideChartElement } from "../../../src/ui/widget.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  CrosstideChartElement,
+  CrosstideConsensusElement,
+  CrosstideQuoteElement,
+} from "../../../src/ui/widget.js";
 
 // Register the element if not already
 if (!customElements.get("crosstide-chart")) {
   customElements.define("crosstide-chart", CrosstideChartElement);
+}
+if (!customElements.get("crosstide-quote")) {
+  customElements.define("crosstide-quote", CrosstideQuoteElement);
+}
+if (!customElements.get("crosstide-consensus")) {
+  customElements.define("crosstide-consensus", CrosstideConsensusElement);
 }
 
 describe("CrosstideChartElement", () => {
@@ -13,6 +23,11 @@ describe("CrosstideChartElement", () => {
 
   it("should be a custom element", () => {
     expect(customElements.get("crosstide-chart")).toBe(CrosstideChartElement);
+  });
+
+  it("registers quote and consensus elements", () => {
+    expect(customElements.get("crosstide-quote")).toBe(CrosstideQuoteElement);
+    expect(customElements.get("crosstide-consensus")).toBe(CrosstideConsensusElement);
   });
 
   it("should observe the correct attributes", () => {
@@ -28,7 +43,6 @@ describe("CrosstideChartElement", () => {
   });
 
   it("should render a loading state on connect", () => {
-    // Mock fetch to avoid actual network calls
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify({ candles: [] }), { status: 200 }),
     );
@@ -37,7 +51,6 @@ describe("CrosstideChartElement", () => {
     el.setAttribute("ticker", "MSFT");
     document.body.appendChild(el);
 
-    // Height should be set
     expect(el.style.height).toBe("300px");
 
     vi.restoreAllMocks();
@@ -64,11 +77,8 @@ describe("CrosstideChartElement", () => {
     el.setAttribute("ticker", "INVALID");
     document.body.appendChild(el);
 
-    // Wait for async fetch
     await new Promise((r) => setTimeout(r, 50));
 
-    // The shadow root should contain an error
-    // closed shadow root — can't inspect directly, but element should still be in DOM
     expect(el.isConnected).toBe(true);
 
     vi.restoreAllMocks();
@@ -86,7 +96,6 @@ describe("CrosstideChartElement", () => {
     document.body.appendChild(el);
     document.body.removeChild(el);
 
-    // No errors should be thrown
     expect(el.isConnected).toBe(false);
 
     vi.restoreAllMocks();
@@ -125,5 +134,75 @@ describe("CrosstideChartElement", () => {
     document.body.appendChild(el);
 
     vi.restoreAllMocks();
+  });
+
+  it("quote widget fetches /api/quote/:symbol", async () => {
+    let requestedUrl = "";
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      requestedUrl = typeof input === "string" ? input : (input as Request).url;
+      return new Response(
+        JSON.stringify({
+          ticker: "MSFT",
+          price: 420.12,
+          change: 2.34,
+          changePercent: 0.56,
+          currency: "USD",
+        }),
+        { status: 200 },
+      );
+    });
+
+    const el = document.createElement("crosstide-quote") as CrosstideQuoteElement;
+    el.setAttribute("ticker", "MSFT");
+    el.setAttribute("api-base", "https://example.test/");
+    document.body.appendChild(el);
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(requestedUrl).toBe("https://example.test/api/quote/MSFT");
+    vi.restoreAllMocks();
+  });
+
+  it("consensus widget posts to /api/screener", async () => {
+    let method = "";
+    let url = "";
+    let body = "";
+
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+      url = typeof input === "string" ? input : (input as Request).url;
+      method = init?.method ?? "GET";
+      body = typeof init?.body === "string" ? init.body : "";
+
+      return new Response(
+        JSON.stringify({ rows: [{ ticker: "AAPL", consensus: "BUY", score: 87 }] }),
+        {
+          status: 200,
+        },
+      );
+    });
+
+    const el = document.createElement("crosstide-consensus") as CrosstideConsensusElement;
+    el.setAttribute("ticker", "aapl");
+    el.setAttribute("api-base", "https://worker.example");
+    document.body.appendChild(el);
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(url).toBe("https://worker.example/api/screener");
+    expect(method).toBe("POST");
+    expect(JSON.parse(body)).toEqual({ tickers: ["AAPL"] });
+    vi.restoreAllMocks();
+  });
+
+  it("quote and consensus observed attributes stay explicit", () => {
+    expect(CrosstideQuoteElement.observedAttributes).toEqual([
+      "ticker",
+      "theme",
+      "api-base",
+      "show-change",
+    ]);
+    expect(CrosstideConsensusElement.observedAttributes).toEqual(["ticker", "theme", "api-base"]);
   });
 });
