@@ -10,6 +10,12 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [11.44.3] — 2026-08-02
+
+### 🔄 Changed
+
+- **Release documentation now distinguishes shipped hosting from blocked infrastructure.** GitHub Pages is publicly deployed and verified; Cloudflare Worker/Pages production remains blocked on Cloudflare authentication and placeholder KV/D1 bindings. The roadmap and release metadata now describe that state consistently.
+
 ## [11.44.2] — 2026-08-02
 
 ### 🐛 Fixed

@@ -1,14 +1,16 @@
 # 🗺️ CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
 
 > **Date:** August 2, 2026
-> **Current version:** v11.44.2
+> **Current version:** v11.44.3
 > **Codebase:** 222 domain modules · 52 cards · 56 Worker routes · 629 test files (7,198 tests)
 > **Bundle:** 212.6 KB gzip (budget 250 KB) · 50 SW precache entries
 > **Coverage:** 93.05% stmt · 83.87% branch · 94.95% func · 94.85% lines
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
 > **ADRs on record:** 11 (all accepted)
 > **Previous roadmap:** v10 archived intent retained below; v9 at `docs/ROADMAP-v9-archive.md`
-> **Reality check since v10:** Phase P ("Ship It", June 2–16 hard deadline) **slipped** — still 0 production deployments, 0 users. `wrangler whoami` remains unauthenticated in this environment, which is the sole blocker on P1–P6, E15, E16 and E1 (all deploy-dependent). v11 keeps the ship-or-die posture but re-sequences around a single blocking milestone (live demo) and folds in the 2026 market shift: **the OSS finance frontier is now agent-native** (OpenBB pivoted to an MCP-first data platform at 70.9k★; Ghostfolio ships AI skills in-repo). CrossTide already has the MCP server, skills, and agents — v11 is about wiring them to a live product.
+> **Release status:** ✅ v11.44.3 is prepared from the green v11.44.2 tag baseline. GitHub Pages is publicly deployed at `https://rajwanyair.github.io/CrossTide/`; the GitHub release pipeline produced the tagged ZIP, checksum, and SBOM artifacts.
+> **Deployment status:** ⛔ Cloudflare Worker/Pages production is not shipped. `wrangler whoami` remains unauthenticated in this environment and `worker/wrangler.toml` still contains placeholder KV/D1 IDs. Those are the active blockers for P1–P6, E1, E15, and E16. GitHub Pages is a static frontend deployment and does not satisfy the Cloudflare live-data exit gate.
+> **Reality check since v10:** Phase P ("Ship It", June 2–16 hard deadline) slipped because the Cloudflare live-data exit gate was not completed. The implementation remains agent-native and the next milestone is still a verified Worker-backed demo, not another feature sprint.
 > **Key change from v10:** Adds (1) a single **Master Tracking Table** to run development from, (2) a formal **language & platform refactor decision** (TS core + Rust/WASM hot paths), and (3) an **agent-native + on-device-AI** enhancement track harvested from 2026 best-in-class tools.
 
 ---
@@ -282,7 +284,7 @@ Each enhancement below is sourced from a best-in-class competitor or a 2026 plat
 | P2 | Deploy | Replace PLACEHOLDER binding IDs in `wrangler.toml` | P | P0 | S | P1 | ⬜ |
 | P3 | Deploy | Run D1 migrations (`migrate-db` skill) | P | P0 | S | P1 | ⬜ |
 | P4 | Deploy | Deploy Worker + verify `/api/health` | P | P0 | S | P2,P3 | ⬜ |
-| P5 | Deploy | Deploy Pages to production | P | P0 | S | P4 | ⬜ |
+| P5 | Deploy | Deploy Cloudflare Pages to production | P | P0 | S | P4 | ⬜ |
 | E15 | Growth | **Live demo URL** shows live AAPL to any visitor | P | P0 | S | P5 | ⬜ |
 | P6 | Deploy | Verify live quote + chart E2E against prod | P | P0 | M | E15 | ⬜ |
 | E16 | Growth | Docker one-liner validated end-to-end | P | P1 | M | — | ⬜ |
@@ -427,7 +429,9 @@ flowchart LR
 
 ## 8. 🧱 Backend & Infrastructure
 
-### 8.1 Production deployment — THE #1 PRIORITY
+### 8.1 Cloudflare production deployment — BLOCKED
+
+GitHub Pages is deployed and serves the static frontend. The production API and live-data demo remain blocked until Cloudflare authentication is available and the KV/D1 bindings in `worker/wrangler.toml` are provisioned. Do not treat a green GitHub Pages workflow as completion of this phase.
 
 ```bash
 # 30-minute provisioning sequence
@@ -720,11 +724,11 @@ flowchart LR
   style T fill:#1a2a3a,stroke:#22d3ee,color:#fff
 ```
 
-### Phase P — v12.0.0 "Ship It" (RE-OPENED — slipped from June deadline)
+### Phase P — v12.0.0 "Ship It" (RE-OPENED — Cloudflare deployment blocked)
 
 **Theme:** Deploy to production. Real data flowing. Live demo accessible.
 **Exit gate:** `crosstide.pages.dev` shows live AAPL data to any visitor (E15).
-**Status note:** The original June 2–16 deadline passed with 0 deployments. This phase is now the sole blocking milestone — nothing in Q–T starts until the exit gate is green.
+**Status note:** GitHub Pages is deployed, but the Cloudflare Worker/Pages live-data exit gate is still blocked. The original June 2–16 deadline passed without a verified Cloudflare deployment, so nothing in Q–T starts until the exit gate is green.
 
 | # | Task | Priority | Status |
 |---|---|---|---|
@@ -732,7 +736,7 @@ flowchart LR
 | P2 | Replace PLACEHOLDER IDs in wrangler.toml | P0 | ⬜ |
 | P3 | Run D1 migrations | P0 | ⬜ |
 | P4 | Deploy Worker + verify /api/health | P0 | ⬜ |
-| P5 | Deploy Pages to production | P0 | ⬜ |
+| P5 | Deploy Cloudflare Pages to production | P0 | ⬜ |
 | E15 | Live demo URL (exit gate) | P0 | ⬜ |
 | P6 | Verify live quote + chart E2E | P0 | ⬜ |
 | E16 | Docker one-liner validated E2E | P1 | ⬜ |

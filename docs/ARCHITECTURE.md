@@ -1,6 +1,6 @@
 # 🏗️ Architecture
 
-> **Last updated:** v11.44.2 (August 2026)
+> **Last updated:** v11.44.3 (August 2026)
 
 CrossTide Web is a browser-based stock monitoring dashboard built with vanilla TypeScript and Vite.
 It follows a strict layered architecture, keeps the production bundle small, and ships as a
