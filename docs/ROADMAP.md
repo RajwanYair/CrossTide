@@ -1,14 +1,14 @@
 # 🗺️ CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
 
-> **Date:** July 31, 2026
-> **Current version:** v11.44.1
-> **Codebase:** 221 domain modules · 52 cards · 56 Worker routes · 632 test files (7,160 tests)
-> **Bundle:** 212.1 KB gzip (budget 250 KB) · 50 SW precache entries
-> **Coverage:** 93.15% stmt · 84.03% branch · 95.06% func · 94.96% lines
+> **Date:** August 2, 2026
+> **Current version:** v11.44.2
+> **Codebase:** 222 domain modules · 52 cards · 56 Worker routes · 629 test files (7,198 tests)
+> **Bundle:** 212.6 KB gzip (budget 250 KB) · 50 SW precache entries
+> **Coverage:** 93.05% stmt · 83.87% branch · 94.95% func · 94.85% lines
 > **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
 > **ADRs on record:** 11 (all accepted)
 > **Previous roadmap:** v10 archived intent retained below; v9 at `docs/ROADMAP-v9-archive.md`
-> **Reality check since v10:** Phase P ("Ship It", June 2–16 hard deadline) **slipped** — still 0 production deployments, 0 users. v11 keeps the ship-or-die posture but re-sequences around a single blocking milestone (live demo) and folds in the 2026 market shift: **the OSS finance frontier is now agent-native** (OpenBB pivoted to an MCP-first data platform at 70.9k★; Ghostfolio ships AI skills in-repo). CrossTide already has the MCP server, skills, and agents — v11 is about wiring them to a live product.
+> **Reality check since v10:** Phase P ("Ship It", June 2–16 hard deadline) **slipped** — still 0 production deployments, 0 users. `wrangler whoami` remains unauthenticated in this environment, which is the sole blocker on P1–P6, E15, E16 and E1 (all deploy-dependent). v11 keeps the ship-or-die posture but re-sequences around a single blocking milestone (live demo) and folds in the 2026 market shift: **the OSS finance frontier is now agent-native** (OpenBB pivoted to an MCP-first data platform at 70.9k★; Ghostfolio ships AI skills in-repo). CrossTide already has the MCP server, skills, and agents — v11 is about wiring them to a live product.
 > **Key change from v10:** Adds (1) a single **Master Tracking Table** to run development from, (2) a formal **language & platform refactor decision** (TS core + Rust/WASM hot paths), and (3) an **agent-native + on-device-AI** enhancement track harvested from 2026 best-in-class tools.
 
 ---

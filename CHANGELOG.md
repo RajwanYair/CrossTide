@@ -10,6 +10,12 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [11.44.2] — 2026-08-02
+
+### 🐛 Fixed
+
+- **`check:api-types` could fail on a green build with zero API changes.** `scripts/gen-openapi-client.mjs` stamped the generated `src/core/api-types.ts` header with `new Date().toISOString()`, so `npm run ci` regenerated a file that differed from the committed one by exactly one line — the date — on any day after the last regeneration, independent of whether the OpenAPI spec had changed. The banner no longer embeds a generation date; provenance is carried by the `Source: worker/routes/openapi.ts` line alone, and the check is now idempotent across days.
+
 ## [11.44.1] — 2026-07-31
 
 > **Sprint: Test Performance, Deterministic CI, Toolchain Integration & WCAG 2.2 AA**

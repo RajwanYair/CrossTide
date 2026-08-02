@@ -153,7 +153,6 @@ const banner = `/**
  * DO NOT EDIT — regenerate with: npm run gen:api-types
  *
  * Source: worker/routes/openapi.ts (OpenAPI ${spec.openapi})
- * Generated: ${new Date().toISOString().split("T")[0]}
  */
 
 `;

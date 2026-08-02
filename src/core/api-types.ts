@@ -3,7 +3,6 @@
  * DO NOT EDIT — regenerate with: npm run gen:api-types
  *
  * Source: worker/routes/openapi.ts (OpenAPI 3.1.0)
- * Generated: 2026-07-30
  */
 
 export interface HealthResponse {

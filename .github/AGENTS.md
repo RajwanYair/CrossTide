@@ -1,6 +1,6 @@
 # 🤖 CrossTide — Custom Copilot Agents
 
-> Version: v11.44.1 · Tests: 624 files / 7162 tests · Coverage: ≥90% stmt/line/fn · ≥80% branch
+> Version: v11.44.2 · Tests: 629 files / 7198 tests · Coverage: ≥90% stmt/line/fn · ≥80% branch
 
 Custom agent modes for VS Code GitHub Copilot. Each agent loads only the files it needs.
 Global rules (coding conventions, commit format, quality gates) are in `copilot-instructions.md`.
