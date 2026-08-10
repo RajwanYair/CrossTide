@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SRC_ROOT = resolve(ROOT, "src");
 const REPORT_PATH = resolve(ROOT, "docs/REACHABILITY.md");
+const COVERAGE_PATH = resolve(ROOT, "coverage/coverage-summary.json");
 const ENTRY_POINTS = [resolve(SRC_ROOT, "main.ts"), resolve(SRC_ROOT, "sw.ts")];
 const IMPORT_PATTERN = /(?:from\s+|import\s*\(\s*|import\s*)["']([^"']+)["']/g;
 
@@ -145,6 +146,44 @@ export function renderDispositionReport(inventory) {
   return `${lines.join("\n")}\n`;
 }
 
+/**
+ * Aggregate V8 coverage only across reachable source modules with coverage data.
+ * Reachable modules missing from the report remain visible as unmeasured.
+ */
+export function calculateReachableCoverage(inventory, coverageSummary) {
+  const coverageByPath = new Map(
+    Object.entries(coverageSummary)
+      .filter(([path]) => path !== "total")
+      .map(([path, summary]) => [relativeSource(resolve(path)), summary]),
+  );
+  const reachable = inventory.modules.filter((module) => module.reachable);
+  const measured = reachable.filter((module) => coverageByPath.has(module.path));
+  const totals = ["lines", "statements", "functions", "branches"].reduce((result, metric) => {
+    const counters = measured.reduce(
+      (sum, module) => {
+        const value = coverageByPath.get(module.path)[metric];
+        return {
+          covered: sum.covered + value.covered,
+          total: sum.total + value.total,
+        };
+      },
+      { covered: 0, total: 0 },
+    );
+    result[metric] = {
+      ...counters,
+      pct: counters.total === 0 ? 100 : (counters.covered / counters.total) * 100,
+    };
+    return result;
+  }, {});
+
+  return {
+    reachableModules: reachable.length,
+    measuredModules: measured.length,
+    unmeasuredModules: reachable.length - measured.length,
+    totals,
+  };
+}
+
 const inventory = buildInventory();
 if (process.argv.includes("--json")) {
   process.stdout.write(`${JSON.stringify(inventory, null, 2)}\n`);
@@ -159,6 +198,11 @@ if (process.argv.includes("--json")) {
   } else {
     process.stdout.write(`Reachability report is current: ${relative(ROOT, REPORT_PATH)}\n`);
   }
+} else if (process.argv.includes("--reachable-coverage")) {
+  const coverageSummary = JSON.parse(readFileSync(COVERAGE_PATH, "utf8"));
+  process.stdout.write(
+    `${JSON.stringify(calculateReachableCoverage(inventory, coverageSummary), null, 2)}\n`,
+  );
 } else {
   process.stdout.write(
     `Reachability: ${inventory.totals.reachable}/${inventory.totals.sourceModules} reachable; ` +

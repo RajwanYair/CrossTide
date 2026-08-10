@@ -1,9 +1,11 @@
 /**
- * Reachability inventory tests — keep the stitching metric tied to the source graph.
+ * Reachability inventory tests - keep stitching metrics tied to the source graph.
  */
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   buildInventory,
+  calculateReachableCoverage,
   renderDispositionReport,
 } from "../../../scripts/reachability-inventory.mjs";
 
@@ -46,5 +48,30 @@ describe("buildInventory", () => {
 
     expect(rows).toHaveLength(inventory.totals.unreachable);
     expect(rows.every((row) => /\| (WIRE|PUBLISH|PROMOTE|MERGE|DEFER) \|$/u.test(row))).toBe(true);
+  });
+
+  it("aggregates coverage over reachable modules and reports unmeasured modules", () => {
+    const inventory = {
+      modules: [
+        { path: "src/core/reachable.ts", reachable: true },
+        { path: "src/ui/unmeasured.ts", reachable: true },
+        { path: "src/domain/orphan.ts", reachable: false },
+      ],
+    };
+    const coverage = {
+      [resolve("src/core/reachable.ts")]: {
+        lines: { covered: 8, total: 10 },
+        statements: { covered: 8, total: 10 },
+        functions: { covered: 4, total: 5 },
+        branches: { covered: 6, total: 8 },
+      },
+    };
+
+    const result = calculateReachableCoverage(inventory, coverage);
+
+    expect(result.reachableModules).toBe(2);
+    expect(result.measuredModules).toBe(1);
+    expect(result.unmeasuredModules).toBe(1);
+    expect(result.totals.statements.pct).toBe(80);
   });
 });

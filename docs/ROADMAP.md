@@ -376,7 +376,7 @@ that cannot observe what it claims to observe.
 | P10c | Stitch | Wire ui hard orphans and decide the `<ct-*>` component fate | Q | P0 | M | P10a | ⬜ |
 | P10d | Stitch | Register `news-feed-card`, promote portfolio orphans | Q | P1 | M | P10a | 🟡 |
 | P10e | Stitch | Merge the 12 duplicate-named domain modules | Q | P1 | M | R1 | ⬜ |
-| Q10 | Quality | Reachability metric and coverage over the reachable graph | Q | P0 | M | P10a | ⬜ |
+| Q10 | Quality | Reachability metric and coverage over the reachable graph | Q | P0 | M | P10a | ✅ |
 | Q11 | Quality | Gate: a new module must be reachable or declared PUBLISH | Q | P1 | M | Q10 | ⬜ |
 | E12 | Data | Alpaca Markets provider for free real-time quotes | Q | P0 | M | P4 | ⬜ |
 | E11 | Data | Wire the `TickerFanout` Durable Object fan-out | Q | P0 | L | E12 | ⬜ |
