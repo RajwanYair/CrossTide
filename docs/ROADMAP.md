@@ -93,7 +93,7 @@ this table is stale and is corrected under §4.
 | Coverage | 93.05% stmt · 83.86% branch · 94.95% func · 94.85% line | `npm run test:coverage` |
 | Bundle | 212.6 KB gzip, cap 250 KB | `npm run check:bundle` |
 | Service worker precache | 50 entries, 941.3 KB | `scripts/workbox-inject.mjs` |
-| ADRs | 11, all accepted | `docs/adr/` |
+| ADRs | 15, all accepted | `docs/adr/` |
 | GitHub workflows | 26 | `.github/workflows/` |
 | **Modules reachable from `src/main.ts` and `src/sw.ts`** | **200 of 517, or 39%** | transitive import walk |
 
@@ -261,7 +261,7 @@ detect.
 | D2 | No doc-fact gate | Nothing prevents a number in Markdown from drifting from code. Recurrence is certain without automation. |
 | D3 | Dead links unresolved | The repository now checks local Markdown targets and anchors deterministically; issue [#106](https://github.com/RajwanYair/CrossTide/issues/106) still needs owner-side closure for any external URL findings. |
 | D4 | Issue tracker drift | Contributor guidance now records #105 as complete, #103 as 57 hard orphans across `core`, `ui`, and `cards`, and #104 as the 12 duplicate-name merge track; GitHub issue closure remains owner-side. |
-| D5 | Missing ADRs | The 11 ADRs stop before the split-Vitest-projects, Biome-over-Prettier, domain-packaging, and WASM decisions. |
+| D5 | Missing ADRs | The ADR set now records split Vitest projects, Biome and ESLint roles, domain packaging, and benchmark-gated WASM. |
 | D6 | `INDICATORS.md` quality | Generated, excluded from `lint:md`, and some rows dump whole source bodies into a table cell. |
 | D7 | Misleading subsystem READMEs | `docs/demos/`, `monitoring/`, `mcp-server/` describe capabilities that are code-ready but undeployed, with no status banner. |
 | P8 | README lacks proof | No live demo link or video, and its six embedded demo GIFs do not exist on disk. `scripts/record-demos.ts` exists to produce them but needs a running app. |
@@ -353,7 +353,7 @@ that cannot observe what it claims to observe.
 | D2 | Docs | Doc-fact gate asserting Markdown counts against code | P | P1 | M | D1 | ⬜ |
 | D3 | Docs | Triage and close the dead-link issue #106 | P | P1 | S | — | 🟡 |
 | D4 | Docs | Reconcile issues #103, #104, #105 with audit reality | P | P1 | S | P10a | 🟡 |
-| D5 | Docs | ADRs 0012 to 0015: split test projects, Biome, packaging, WASM | P | P2 | M | — | ⬜ |
+| D5 | Docs | ADRs 0012 to 0015: split test projects, Biome, packaging, WASM | P | P2 | M | — | ✅ |
 | D6 | Docs | Fix the `INDICATORS.md` generator emitting source bodies | Q | P2 | S | — | ⬜ |
 | D7 | Docs | Status banners on undeployed subsystem READMEs | P | P2 | S | — | ⬜ |
 | P1 | Deploy | Provision Cloudflare KV and D1 namespaces | P | P0 | S | — | ⛔ |

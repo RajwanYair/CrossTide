@@ -32,3 +32,7 @@ stateDiagram-v2
 | 0009 | Web Components for shared UI primitives    | ✅ Accepted | 2026-05-04 |
 | 0010 | Preview environments serve fixture data    | ✅ Accepted | 2026-05-04 |
 | 0011 | Structured JSON logging in Worker          | ✅ Accepted | 2026-05-04 |
+| 0012 | Split Vitest into Node and DOM projects    | ✅ Accepted | 2026-05-04 |
+| 0013 | Divide formatting and linting tooling      | ✅ Accepted | 2026-05-04 |
+| 0014 | Keep the domain layer publishable           | ✅ Accepted | 2026-05-04 |
+| 0015 | Gate WASM adoption with benchmarks          | ✅ Accepted | 2026-05-04 |
