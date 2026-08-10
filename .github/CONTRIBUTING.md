@@ -182,14 +182,15 @@ the config-level `exclude` beats `include`, so the exception cannot be written a
 Look for the `good first issue` label on GitHub Issues. These are scoped tasks suitable for
 newcomers:
 
-- [#105](https://github.com/RajwanYair/CrossTide/issues/105) — document one of the 29 Worker
-  routes still missing from `worker/routes/openapi.ts`. Each route is independent, so the
-  issue takes as many contributors as want it, and
-  `tests/unit/worker/openapi-drift.test.ts` tells you exactly which ones are left.
 - [#104](https://github.com/RajwanYair/CrossTide/issues/104) — disambiguate one of the 12
   duplicate-named domain modules.
-- [#103](https://github.com/RajwanYair/CrossTide/issues/103) — wire up or retire one of the
-  52 orphaned domain modules. They are tested but unreachable from any barrel.
+- [#103](https://github.com/RajwanYair/CrossTide/issues/103) — wire up one of the 57 orphaned
+  modules in `core`, `ui`, and `cards`. They are tested but imported by nothing, so they never
+  execute in the running app. Per `docs/ROADMAP.md` §3.4 these are wired, promoted, or merged —
+  never deleted.
+- [#105](https://github.com/RajwanYair/CrossTide/issues/105) — complete: all 56 registered
+  Worker routes are documented and `KNOWN_GAP` is empty. Close this issue rather than starting
+  another documentation tranche.
 - Adding a new domain indicator (pure function + tests) — see
   `.github/skills/add-indicator/SKILL.md`
 - Adding missing unit tests to reach the coverage threshold
