@@ -27,6 +27,7 @@ import { fetchTickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import type { CardContext, CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
+import { renderPerformanceMetrics } from "./performance-metrics";
 import { createDelegate } from "../ui/delegate";
 import type { CtDataTable, DataTableColumn } from "../ui/data-table";
 
@@ -253,6 +254,16 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
     }
 
     const totalPnl = finalEquity - initialCapital;
+    const performanceMetrics = {
+      totalReturn: totalRetPct / 100,
+      annualizedReturn: annReturn,
+      sharpeRatio: null,
+      sortinoRatio: null,
+      maxDrawdown: dd,
+      winRate: stats.winRate,
+      tradeCount: stats.trades,
+      profitFactor: stats.profitFactor === Infinity ? null : stats.profitFactor,
+    } as const;
 
     const statsHtml = `
       <div class="portfolio-summary-row">
@@ -308,6 +319,9 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
           ${renderTradeLog(trades, CANDLES)}
         </div>`,
       );
+      const metricsEl = document.createElement("div");
+      renderPerformanceMetrics(metricsEl, "Backtest Performance", performanceMetrics);
+      resultEl.prepend(metricsEl.firstElementChild as HTMLElement);
     }
   };
 

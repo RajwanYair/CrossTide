@@ -109,5 +109,6 @@ describe("backtest-card (CardModule)", () => {
     // The result area should have some content after run
     const resultEl = container.querySelector("#backtest-result");
     expect(resultEl).not.toBeNull();
+    expect(resultEl?.textContent).toContain("Backtest Performance");
   });
 });
