@@ -7,6 +7,7 @@ import {
   buildInventory,
   calculateReachableCoverage,
   renderDispositionReport,
+  validateReachableCoverage,
 } from "../../../scripts/reachability-inventory.mjs";
 
 describe("buildInventory", () => {
@@ -72,5 +73,14 @@ describe("buildInventory", () => {
     expect(result.measuredModules).toBe(1);
     expect(result.unmeasuredModules).toBe(1);
     expect(result.totals.statements.pct).toBe(80);
+    expect(validateReachableCoverage(result)).toEqual([
+      "statements 80.00% < 89.8% baseline",
+      "branches 75.00% < 80.1% baseline",
+      "functions 80.00% < 91.4% baseline",
+      "lines 80.00% < 91.6% baseline",
+    ]);
+    expect(validateReachableCoverage({ ...result, unmeasuredModules: 39 })).toContain(
+      "unmeasured modules 39 > 38 baseline",
+    );
   });
 });

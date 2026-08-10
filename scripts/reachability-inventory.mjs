@@ -9,6 +9,13 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SRC_ROOT = resolve(ROOT, "src");
 const REPORT_PATH = resolve(ROOT, "docs/REACHABILITY.md");
 const COVERAGE_PATH = resolve(ROOT, "coverage/coverage-summary.json");
+const REACHABLE_COVERAGE_BASELINE = {
+  statements: 89.8,
+  branches: 80.1,
+  functions: 91.4,
+  lines: 91.6,
+  maxUnmeasuredModules: 38,
+};
 const ENTRY_POINTS = [resolve(SRC_ROOT, "main.ts"), resolve(SRC_ROOT, "sw.ts")];
 const IMPORT_PATTERN = /(?:from\s+|import\s*\(\s*|import\s*)["']([^"']+)["']/g;
 
@@ -184,6 +191,24 @@ export function calculateReachableCoverage(inventory, coverageSummary) {
   };
 }
 
+/** Validate the reachable-graph coverage ratchet against its verified baseline. */
+export function validateReachableCoverage(result) {
+  const failures = [];
+  for (const metric of ["statements", "branches", "functions", "lines"]) {
+    if (result.totals[metric].pct < REACHABLE_COVERAGE_BASELINE[metric]) {
+      failures.push(
+        `${metric} ${result.totals[metric].pct.toFixed(2)}% < ${REACHABLE_COVERAGE_BASELINE[metric]}% baseline`,
+      );
+    }
+  }
+  if (result.unmeasuredModules > REACHABLE_COVERAGE_BASELINE.maxUnmeasuredModules) {
+    failures.push(
+      `unmeasured modules ${result.unmeasuredModules} > ${REACHABLE_COVERAGE_BASELINE.maxUnmeasuredModules} baseline`,
+    );
+  }
+  return failures;
+}
+
 const inventory = buildInventory();
 if (process.argv.includes("--json")) {
   process.stdout.write(`${JSON.stringify(inventory, null, 2)}\n`);
@@ -200,9 +225,10 @@ if (process.argv.includes("--json")) {
   }
 } else if (process.argv.includes("--reachable-coverage")) {
   const coverageSummary = JSON.parse(readFileSync(COVERAGE_PATH, "utf8"));
-  process.stdout.write(
-    `${JSON.stringify(calculateReachableCoverage(inventory, coverageSummary), null, 2)}\n`,
-  );
+  const result = calculateReachableCoverage(inventory, coverageSummary);
+  const failures = validateReachableCoverage(result);
+  process.stdout.write(`${JSON.stringify({ ...result, failures }, null, 2)}\n`);
+  if (failures.length > 0) process.exitCode = 1;
 } else {
   process.stdout.write(
     `Reachability: ${inventory.totals.reachable}/${inventory.totals.sourceModules} reachable; ` +
