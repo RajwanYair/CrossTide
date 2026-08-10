@@ -352,7 +352,7 @@ that cannot observe what it claims to observe.
 | D1 | Docs | Correct every drifted fact listed in §4.1 | P | P0 | S | — | ✅ |
 | D2 | Docs | Doc-fact gate asserting Markdown counts against code | P | P1 | M | D1 | ✅ |
 | D3 | Docs | Triage and close the dead-link issue #106 | P | P1 | S | — | ✅ |
-| D4 | Docs | Reconcile issues #103, #104, #105 with audit reality | P | P1 | S | P10a | 🟡 |
+| D4 | Docs | Reconcile issues #103, #104, #105 with audit reality | P | P1 | S | P10a | ✅ |
 | D5 | Docs | ADRs 0012 to 0015: split test projects, Biome, packaging, WASM | P | P2 | M | — | ✅ |
 | D6 | Docs | Fix the `INDICATORS.md` generator emitting source bodies | Q | P2 | S | — | ✅ |
 | D7 | Docs | Status banners on undeployed subsystem READMEs | P | P2 | S | — | ✅ |
