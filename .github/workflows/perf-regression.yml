@@ -55,7 +55,6 @@ jobs:
           git checkout ${{ github.event.pull_request.base.sha }}
           npm ci
           ./node_modules/.bin/vite build
-        continue-on-error: true
 
       - name: Measure base bundle size
         id: base_size
@@ -69,7 +68,6 @@ jobs:
             echo "js_gz=0" >> "$GITHUB_OUTPUT"
             echo "css_gz=0" >> "$GITHUB_OUTPUT"
           fi
-        continue-on-error: true
 
       - name: Run Lighthouse for Web Vitals
         id: lighthouse
@@ -96,7 +94,6 @@ jobs:
             echo "perf=0" >> "$GITHUB_OUTPUT"
           fi
           kill %1 2>/dev/null || true
-        continue-on-error: true
 
       - name: Compare and comment
         if: github.event_name == 'pull_request'

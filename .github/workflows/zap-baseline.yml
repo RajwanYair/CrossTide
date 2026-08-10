@@ -17,9 +17,11 @@ permissions:
 
 jobs:
   zap:
-    name: OWASP ZAP baseline
+    name: OWASP ZAP baseline (informational)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # ZAP findings are triaged through the issue it creates; this job is not a required gate.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/node-setup
@@ -41,13 +43,6 @@ jobs:
           echo "Server ready."
 
       - name: ZAP baseline scan
-        # continue-on-error: the action's internal report-artifact upload uses
-        # a legacy Artifacts API that GitHub has sunset, so it always throws
-        # "Create Artifact Container failed" even when the scan itself and
-        # the issue-writing step succeed. This job is informational only
-        # (fail_action: false), so don't let that unrelated upload failure
-        # mark the whole run red.
-        continue-on-error: true
         uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
         with:
           target: "http://127.0.0.1:4173/"
