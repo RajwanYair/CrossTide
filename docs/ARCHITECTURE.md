@@ -102,7 +102,7 @@ sequenceDiagram
 
 | Feature                    | Implementation                                                                |
 | -------------------------- | ----------------------------------------------------------------------------- |
-| 212 domain modules         | `src/domain/*` — pure TS, exhaustive tests                                    |
+| 220 domain modules         | `src/domain/*` — pure TS, exhaustive tests                                    |
 | 12-method consensus engine | `src/domain/consensus-engine.ts`                                              |
 | Signal DSL                 | `src/domain/signal-dsl.ts` + `cards/signal-dsl-card.ts`                       |
 | Interactive charting       | `lightweight-charts@^5` via `src/cards/lw-chart.ts`                           |
@@ -158,12 +158,12 @@ CrossTide/
 │   ├── security.ts     withSecurityHeaders() middleware — CSP, HSTS, COOP, CORP, COEP
 │   ├── cors.ts         CORS handling
 │   ├── rate-limit.ts   Rate limiting
-│   └── routes/         chart, health, og, openapi, screener, search, signal-dsl
+│   └── routes/         56 OpenAPI-documented routes (chart, quote, screener, signal-dsl, …)
 ├── docs-site/          Astro Starlight documentation site (48 indicator MDX pages)
 ├── packages/
 │   └── domain/         @crosstide/domain — src/domain built as a zero-dependency npm package
 ├── docs/               Roadmap, contributing guidelines, architecture
-├── tests/unit/         Vitest unit tests (628 files)
+├── tests/unit/         Vitest unit tests (654 test files)
 └── public/             Static assets, PWA manifest, 404.html
 ```
 
@@ -191,7 +191,7 @@ All other functionality is hand-written TypeScript — no framework runtime.
 | Linting (CSS)  | `config/.stylelintrc.json`      | inline rule set                                                     |
 | Linting (HTML) | `config/.htmlhintrc`            | inline rule set                                                     |
 | Linting (MD)   | `config/.markdownlint.json`     | `default: true`, allow common HTML elements                         |
-| Format         | `.prettierrc`                   | repo-local; `npm run format:check` is the gate                      |
+| Format         | `biome.json`                    | Biome format check (replaces Prettier)                              |
 | Bundle budget  | `scripts/check-bundle-size.mjs` | 250 KB gzipped JS                                                   |
 | Lighthouse     | `config/lighthouserc.json`      | Perf ≥ 85, A11y ≥ 90, Best ≥ 90                                     |
 
@@ -199,7 +199,7 @@ The repo is fully self-contained: `git clone` → `npm ci` → `npm run ci` work
 
 Git hooks are configured via `simple-git-hooks`:
 
-- **pre-commit**: `lint-staged` runs ESLint + Prettier on staged TS/CSS/MD files
+- **pre-commit**: `lint-staged` runs ESLint + Biome on staged files
 - **commit-msg**: `commitlint` enforces [Conventional Commits](https://www.conventionalcommits.org/)
 
 ## 🚀 CI / CD
@@ -239,8 +239,8 @@ Local and CI both enforce, with **zero waivers**:
 - 0 Stylelint warnings (`npm run lint:css`)
 - 0 HTMLHint findings (`npm run lint:html`)
 - 0 markdownlint findings (`npm run lint:md`)
-- Prettier clean (`npm run format:check`)
-- 5718+ unit tests pass (`npm test`), v8 coverage thresholds met
+- Biome clean (`npm run format:check`)
+- All unit tests pass across 654 test files (`npm test`), v8 coverage thresholds met
 - 15+ Playwright E2E flows + axe a11y audit pass
 - Lighthouse CI budgets met
 - Production build under 250 KB gzipped JS (`npm run check:bundle`)

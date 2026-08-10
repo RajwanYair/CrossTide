@@ -1,878 +1,659 @@
-# 🗺️ CrossTide — Strategic Roadmap v11 (Agent-Native & Shipped)
+# CrossTide — Consolidated Master Roadmap v12
 
-> **Date:** August 2, 2026
-> **Current version:** v11.44.3
-> **Codebase:** 222 domain modules · 52 cards · 56 Worker routes · 629 test files (7,198 tests)
-> **Bundle:** 212.6 KB gzip (budget 250 KB) · 50 SW precache entries
-> **Coverage:** 93.05% stmt · 83.87% branch · 94.95% func · 94.85% lines
-> **Stack:** TypeScript 6.0 · Vite 8 · Vitest 4 · Hono 4 · morphdom · LWC v5
-> **ADRs on record:** 11 (all accepted)
-> **Previous roadmap:** v10 archived intent retained below; v9 at `docs/ROADMAP-v9-archive.md`
-> **Release status:** ✅ v11.44.3 is prepared from the green v11.44.2 tag baseline. GitHub Pages is publicly deployed at `https://rajwanyair.github.io/CrossTide/`; the GitHub release pipeline produced the tagged ZIP, checksum, and SBOM artifacts.
-> **Deployment status:** ⛔ Cloudflare Worker/Pages production is not shipped. `wrangler whoami` remains unauthenticated in this environment and `worker/wrangler.toml` still contains placeholder KV/D1 IDs. Those are the active blockers for P1–P6, E1, E15, and E16. GitHub Pages is a static frontend deployment and does not satisfy the Cloudflare live-data exit gate.
-> **Reality check since v10:** Phase P ("Ship It", June 2–16 hard deadline) slipped because the Cloudflare live-data exit gate was not completed. The implementation remains agent-native and the next milestone is still a verified Worker-backed demo, not another feature sprint.
-> **Key change from v10:** Adds (1) a single **Master Tracking Table** to run development from, (2) a formal **language & platform refactor decision** (TS core + Rust/WASM hot paths), and (3) an **agent-native + on-device-AI** enhancement track harvested from 2026 best-in-class tools.
+> **Date:** 10 August 2026 · **Current release:** v11.44.3
+> **Supersedes:** Strategic Roadmap v11 (2 Aug 2026), v10, v9, v8, v6.
+> Archived predecessors remain readable at `docs/ROADMAP-v9-archive.md`,
+> `docs/ROADMAP-v8-archive.md`, `docs/ROADMAP-v6-archive.md`.
 
----
+This is the **single planning document** for CrossTide. Everything previously
+scattered across five roadmap generations, the issue tracker, and the
+`.github/instructions/` learning notes is consolidated here.
 
-## 📑 Table of Contents
-
-1. [North Star — What CrossTide Must Become](#1--north-star--what-crosstide-must-become)
-2. [State of the Art: Competitive Landscape 2026](#2--state-of-the-art-competitive-landscape-2026)
-3. [Latest Enhancements to Adopt (2026 Harvest)](#3--latest-enhancements-to-adopt-2026-harvest)
-4. [Language & Platform Refactor Decision](#4--language--platform-refactor-decision)
-5. [Master Tracking Table](#5--master-tracking-table)
-6. [Decision Audit v11 — Final Verdicts](#6--decision-audit-v11--final-verdicts)
-7. [Frontend Architecture](#7--frontend-architecture)
-8. [Backend & Infrastructure](#8--backend--infrastructure)
-9. [Data Strategy & API Ecosystem](#9--data-strategy--api-ecosystem)
-10. [AI, ML & Intelligent Compute](#10--ai-ml--intelligent-compute)
-11. [Developer Experience & Tooling](#11--developer-experience--tooling)
-12. [Documentation & Knowledge Strategy](#12--documentation--knowledge-strategy)
-13. [Quality, Security & Observability](#13--quality-security--observability)
-14. [Performance Architecture](#14--performance-architecture)
-15. [VS Code & GitHub Integration Strategy](#15--vs-code--github-integration-strategy)
-16. [Execution Phases](#16--execution-phases)
-17. [Refactor & Rewrite Backlog](#17--refactor--rewrite-backlog)
-18. [Risks, Mitigations & Scope Boundaries](#18--risks-mitigations--scope-boundaries)
-19. [Engineering Non-Negotiables](#19--engineering-non-negotiables)
+**This document plans work. It does not perform it.** No code changes are
+implied by merging this file.
 
 ---
 
-## 1. 🎯 North Star — What CrossTide Must Become
+## Reading order
 
-### 1.1 The vision (one sentence)
-
-**CrossTide is the fastest, most private, open-source financial analysis platform — where data never leaves your device, the bundle is 30x smaller than competitors, and the 12-method consensus engine exists nowhere else.**
-
-### 1.2 The strategic position
-
-```mermaid
-quadrantChart
-  title Privacy vs. Cost positioning
-  x-axis Low Cost --> High Cost
-  y-axis Low Privacy --> High Privacy
-  quadrant-1 Best-in-class
-  quadrant-2 Overpriced for privacy
-  quadrant-3 Race to the bottom
-  quadrant-4 Premium, low trust
-  CrossTide: [0.08, 0.95]
-  TradingView: [0.55, 0.2]
-  Koyfin: [0.5, 0.25]
-  OpenBB: [0.15, 0.55]
-  Ghostfolio: [0.12, 0.6]
-```
-
-We do not compete on feature count. We compete on **philosophy**:
-
-- Privacy-first (no account, no tracking, no data leaves the browser)
-- Performance-first (158 KB vs 2-5 MB)
-- Cost-first ($0/month forever, self-hostable)
-- Quality-first (608 tests, 90%+ coverage, 14 CI gates)
-
-### 1.3 The uncomfortable truth v11 confronts
-
-| # | Truth | v11 Action |
-|---|-------|-----------|
-| 1 | **Zero deployments. Zero users.** | Phase P has a 2-week hard deadline. Deploy or archive. |
-| 2 | **Over-engineering for zero ROI.** | Freeze features. Ship what exists. |
-| 3 | **Solo developer.** | Design for contributors. Plugin system. MCP for AI leverage. |
-| 4 | **No community.** | Product Hunt launch in Phase R. Discord on day 1. |
-| 5 | **VS Code/GitHub integration is excellent but underutilized.** | Wire everything end-to-end. |
-
-### 1.4 What is genuinely world-class (verified)
-
-| Area | Evidence |
-|------|----------|
-| **Pure domain layer** | 212 modules. Zero I/O. 100% deterministic. WASM-ready. npm-publishable. |
-| **Bundle discipline** | 158 KB total. Competitors ship 2-5 MB. 10-30x advantage. |
-| **Type safety** | TS 6 strict, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`. |
-| **Indicator depth** | 80+ TA/quant indicators. More than most commercial products. |
-| **Offline-first** | 5-tier cache. Background Fetch. OPFS. Service Worker. Web Push. |
-| **Security posture** | CSP strict. HSTS preload. Valibot boundaries. Rate limiting. |
-| **Zero-dep reactive signals** | Custom primitives. batch(). Auto-tracking. No framework cost. |
-| **CSS architecture** | Layers. @scope. Container queries. Color-blind palettes. |
-| **Test culture** | 608 files. 90%+ coverage. Property testing. Visual regression. |
-| **12-method consensus** | Unique in OSS. No competitor aggregates 12 signal methods. |
-| **DevOps maturity** | 27 GH workflows. 14 prompts. 4 skills. 3 agents. MCP server. |
+1. [North Star and Market Position](#1--north-star-and-market-position)
+2. [Verified Baseline](#2--verified-baseline)
+3. [The Stitching Gap](#3--the-stitching-gap)
+4. [Documentation Health Audit](#4--documentation-health-audit)
+5. [Refactor Mandate](#5--refactor-mandate)
+6. [Master Tracking Table](#6--master-tracking-table)
+7. [Phase Execution Plan](#7--phase-execution-plan)
+8. [Frontend and Card Architecture](#8--frontend-and-card-architecture)
+9. [Backend and Edge Infrastructure](#9--backend-and-edge-infrastructure)
+10. [Data Providers and Ecosystem](#10--data-providers-and-ecosystem)
+11. [Developer Experience](#11--developer-experience)
+12. [Quality, Security, Observability](#12--quality-security-observability)
+13. [Non-Negotiables](#13--non-negotiables)
 
 ---
 
-## 2. 🌍 State of the Art: Competitive Landscape 2026
+## 1. 🎯 North Star and Market Position
 
-### 2.1 Comprehensive comparison matrix
+### 1.1 Vision
 
-Rating: `★★★` best-in-class · `★★` strong · `★` adequate · `△` partial · `✗` absent
+_CrossTide is the fastest, most private open-source financial analysis platform:
+a sub-250 KB installable PWA with a 12-method consensus engine, a pure and
+publishable domain layer, and an agent-native data layer that serves the web app,
+AI agents, embeddable widgets, and third-party SDKs from one contract._
 
-**Rule:** Only SHIPPED, USER-VERIFIED functionality gets stars. Planned = `✗`.
+### 1.2 What best-in-class requires
 
-| Capability | **CrossTide** | TradingView | FinViz | StockAnalysis | Koyfin | OpenBB | Ghostfolio | TrendSpider | Webull | Maybe Finance |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **License** | MIT | Proprietary | Proprietary | Proprietary | Proprietary | AGPL | AGPL | Proprietary | Proprietary | Proprietary |
-| **Pricing** | Free | $15-60/mo | $25-50/mo | Free/Pro | $39/mo | Free | Free/Prem | $39-97/mo | Free | $12-50/mo |
-| **Self-hostable** | ★★★ | ✗ | ✗ | ✗ | ✗ | ★★★ | ★★★ | ✗ | ✗ | ✗ |
-| **No account required** | ★★★ | △ | ★★★ | ★★★ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| **Privacy (cookieless)** | ★★★ | ✗ | ✗ | ✗ | ✗ | ★★ | ★★★ | △ | ✗ | ★★ |
-| **Bundle / load speed** | ★★★ (158 KB) | ✗ (~5 MB) | ★★ (SSR) | ★★ (SSR) | △ (~3 MB) | n/a | ★ (~500 KB) | △ (~2 MB) | ✗ (~4 MB) | ★★ |
-| **Lighthouse performance** | ★★★ (≥90) | △ (~50) | ★★ (~70) | ★★ (~75) | △ (~60) | n/a | △ (~65) | △ (~55) | ✗ (~45) | ★★ (~80) |
-| **Offline / PWA** | ★★★ | ✗ | ✗ | ✗ | ✗ | ★★★ | ★★ | ✗ | ✗ | ✗ |
-| **Real-time streaming** | ✗ (not wired) | ★★★ | △ | ★★ | ★★ | ★★ | ✗ | ★★★ | ★★★ | ★★ |
-| **Charting depth** | ★★ (LWC v5) | ★★★ (20+) | △ | ★ | ★★ | ★★ | ✗ | ★★★ | ★★ | ★★ |
-| **Indicator library** | ★★★ (80+) | ★★★ (400+) | ★★ (50+) | ★ (30+) | ★★ (80+) | ★★ (80+) | ✗ | ★★★ (100+) | ★★ | ★ |
-| **Consensus / multi-signal** | ★★★ (unique 12) | ✗ | ✗ | △ | ✗ | ✗ | ✗ | △ | ✗ | ✗ |
-| **Screener** | ★★ (DSL) | ★★ | ★★★ | ★★★ | ★★ | ★★★ | ✗ | ★★★ | ★★ | ✗ |
-| **Backtest engine** | ★ (basic) | ★★ (Pine) | ✗ | ✗ | ★ | ★★ | ✗ | ★★★ | ✗ | ✗ |
-| **Portfolio analytics** | ★★ | ✗ | ✗ | ★ | ★★★ | ★★ | ★★★ | ✗ | ★★ | ★★★ |
-| **Fundamental data** | △ | ★★★ | ★★★ | ★★★ | ★★★ | ★★★ | ✗ | ✗ | ★★ | ★★ |
-| **MCP / AI agent support** | △ (server exists) | ✗ | ✗ | ✗ | ✗ | ★★★ | ✗ | ✗ | ✗ | ✗ |
-| **On-device AI** | ✗ (planned) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| **Custom scripting** | ★★ (DSL) | ★★★ (Pine) | ✗ | ✗ | ✗ | ★★★ (Python) | ✗ | ✗ | ✗ | ✗ |
-| **WCAG accessibility** | ★★★ (AA) | △ | ✗ | △ | △ | △ | ★★ | ✗ | △ | ★★ |
-| **Test coverage** | ★★★ (608 files) | Unknown | Unknown | Unknown | Unknown | ★★ | ★★ | Unknown | Unknown | Unknown |
-| **DevOps maturity** | ★★★ (27 workflows) | Unknown | Unknown | Unknown | Unknown | ★★ | ★★ | Unknown | Unknown | Unknown |
-| **Community** | ✗ (0 users) | ★★★ (50M+) | ★★★ | ★★ | ★★ | ★★★ (70.9K⭐) | ★★★ (9K⭐) | ★★ | ★★★ | ★★ |
-| **Docker one-liner** | △ (exists) | ✗ | ✗ | ✗ | ✗ | ★★★ | ★★★ | ✗ | ✗ | ✗ |
-| **Live demo** | ✗ | ★★★ | ★★★ | ★★★ | ★★★ | ★★★ | ★★★ | ★★★ | ★★★ | ★★★ |
-
-### 2.2 Technology comparison (2026 leaders)
-
-| Dimension | **CrossTide** | **TradingView** | **OpenBB** | **Ghostfolio** | **Maybe Finance** |
-|---|---|---|---|---|---|
-| **Language** | TypeScript 6 (strict) | TS + C++ + Go | Python 3.9+ | TypeScript | Ruby + TypeScript |
-| **Frontend** | Vanilla TS + morphdom | Custom Canvas | React Workspace | Angular 21 | Next.js 15 |
-| **Backend** | Hono 4 (CF Workers) | Go + C++ μsvc | FastAPI | NestJS + Prisma | Rails 7 |
-| **Database** | CF D1 (SQLite edge) | ClickHouse + Redis | None | PostgreSQL | PostgreSQL + Redis |
-| **Cache** | CF KV + 5-tier client | Redis + CDN | In-memory | Redis | Redis + CDN |
-| **Charts** | Lightweight Charts v5 | Custom Canvas | Plotly | Custom | Recharts |
-| **Auth** | Passkey (WebAuthn) | Email + OAuth2 | API keys | Email + OIDC | Email + OAuth2 |
-| **Validation** | Valibot (3 KB) | Internal | Pydantic | class-validator | Zod |
-| **Build** | Vite 8 + oxc | Webpack | Poetry | Nx 22 | Turbopack |
-| **Hosting** | Cloudflare ($0/mo) | Proprietary DC | Docker | Docker/VPS | Self-hosted |
-| **Tests** | Vitest 4 + Playwright | Internal | pytest | Jest + Nx | RSpec + Jest |
-| **Bundle** | **158 KB** | ~5 MB | n/a | ~500 KB | ~1.2 MB |
-| **AI** | MCP (stdio) | None | MCP + SDK | None | None |
-| **Open source** | MIT | No | AGPL | AGPL | AGPL |
-
-### 2.3 Best practices harvested from leaders
-
-| Practice | Source | Action |
+| Pillar | Commitment | Status today |
 |---|---|---|
-| Live demo with no signup | All OSS | Deploy immediately (Phase P) |
-| Docker one-liner | Ghostfolio, OpenBB | Validate existing docker-compose |
-| MCP server | OpenBB | Wire existing code to live API |
-| SSR/SSG for SEO | StockAnalysis | Astro SSG in Phase R |
-| Contributor onboarding | OpenBB | Dev container + labels in Phase R |
-| Community Discord | OpenBB, Ghostfolio | Create before public launch |
-| Real-time streaming | TradingView | Wire existing DO code |
-| Property-based testing | Netflix | Already best-in-class. Expand. |
-| Edge caching | All production apps | Deploy (code already done) |
-| Copilot agents/skills | Internal advantage | Enhance (this session) |
+| Privacy | No account, no cookies, no third-party analytics; sync is client-encrypted | Held |
+| Performance | < 250 KB gzip initial JS, LCP < 1.8s, INP < 200ms | Held at 212.6 KB |
+| Quant depth | 12-method consensus, 221 domain modules, property-tested | Built, mostly unreachable — see §3 |
+| Agent-native | One OpenAPI contract feeding SPA, MCP, widgets, SDK | Contract done, consumers partial |
+| Zero-cost edge | $0/month on Cloudflare, self-host via Docker | Not yet deployed |
+| Credibility | Live demo, GIFs, video, community | **Missing — biggest gap** |
 
-### 2.4 What changed in the market since v10 (2026 signal)
+### 1.3 Competitive frame
 
-| Shift | Evidence (verified 2026) | Implication for CrossTide |
+| Capability | CrossTide | TradingView | OpenBB | Ghostfolio | StockAnalysis |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Open source | MIT | No | AGPLv3 | AGPLv3 | No |
+| Self-hostable | Yes | No | Yes | Yes | No |
+| No signup | Yes | No | Partial | Yes | Partial |
+| Initial bundle | < 250 KB | ~5 MB | n/a | ~500 KB | ~800 KB |
+| 12-method consensus | Unique | No | No | No | No |
+| MCP server for agents | Yes | No | Yes | No | No |
+| On-device LLM | Planned, Phase S | No | No | No | No |
+| WASM hot paths | Planned, Phase S | Partial | No | No | No |
+| **Live public demo** | **Blocked** | Yes | Yes | Yes | Yes |
+
+The absence of a live URL is the single biggest credibility gap and blocks every
+growth item downstream.
+
+---
+
+## 2. 📐 Verified Baseline
+
+All figures below were measured against the working tree on 10 August 2026, not
+copied from a previous roadmap. Any number in any document that disagrees with
+this table is stale and is corrected under §4.
+
+| Metric | Verified value | Source of truth |
 |---|---|---|
-| **Agent-native is the new baseline** | OpenBB (70.9k⭐) pivoted from "terminal" to an **Open Data Platform**: "connect once, consume everywhere" — Python, Workspace UI, Excel, **MCP servers**, REST, all fed by one data layer. | Reframe the Worker API as the single data layer feeding SPA + MCP + SDK + widgets. Elevate MCP from side-project to first-class consumer. |
-| **AI skills ship inside the repo** | Ghostfolio (9k⭐) added `.claude/skills` + `.agents/skills` (Karpathy-guideline skills) alongside code. | CrossTide's `.github/skills` bet is validated. Expand skills to cover the full contributor + agent workflow. |
-| **Local-first + on-device AI** | WebGPU + WebLLM (Phi-4-mini, Qwen3-mini) now run NL→query and summarization fully in-browser; no data egress. | On-device AI is now our privacy moat, not a gimmick. Move it forward in sequence. |
-| **Rust/WASM for hot paths** | Compute-heavy OSS finance increasingly compiles Rust→WASM for correlation/Monte-Carlo/backtests at near-native speed. | Evaluate a Rust hot-path kernel for the domain layer (see §4) without a full rewrite. |
-| **Live demo is table-stakes** | Every serious OSS competitor (OpenBB, Ghostfolio) leads with a one-click live demo + Docker one-liner. | The absence of a live URL is the single biggest credibility gap. Blocks everything downstream. |
+| Release | v11.44.3 | `package.json` |
+| Source modules under `src/` | 517 TypeScript files | file walk |
+| Domain modules | 220, plus `_experimental/` | `src/domain/*.ts` |
+| Core modules | 139 | `src/core/*.ts` |
+| UI modules | 75 | `src/ui/*.ts` |
+| Card files | 52 | `src/cards/*.ts` |
+| Registered card routes | 25 | `src/cards/registry.ts` |
+| Worker route files | 45 | `worker/routes/*.ts` |
+| Registered Worker routes | 56 | `worker/index.ts` |
+| OpenAPI documented routes | 56 of 56, `KNOWN_GAP` empty | `tests/unit/worker/openapi-drift.test.ts` |
+| Test files | 654 | `tests/**/*.{test,spec}.ts` |
+| Coverage | 93.05% stmt · 83.86% branch · 94.95% func · 94.85% line | `npm run test:coverage` |
+| Bundle | 212.6 KB gzip, cap 250 KB | `npm run check:bundle` |
+| Service worker precache | 50 entries, 941.3 KB | `scripts/workbox-inject.mjs` |
+| ADRs | 11, all accepted | `docs/adr/` |
+| GitHub workflows | 26 | `.github/workflows/` |
+| **Modules reachable from `src/main.ts` and `src/sw.ts`** | **200 of 517, or 39%** | transitive import walk |
+
+### 2.1 Stack of record
+
+TypeScript 6.0 · Vite 8 · Vitest 4 with split `node` and `happy-dom` projects ·
+Playwright 1.62 · Hono 4 on Cloudflare Workers · Lightweight Charts v5 ·
+morphdom with lit-html · Valibot · Biome 2.5 · ESLint 10 flat config ·
+Cloudflare D1, KV, and Durable Objects.
 
 ---
 
-## 3. 🌾 Latest Enhancements to Adopt (2026 Harvest)
+## 3. 🧵 The Stitching Gap
 
-Each enhancement below is sourced from a best-in-class competitor or a 2026 platform capability, scored for fit, and mapped to a phase. These are the line items that feed the **Master Tracking Table (§5)**. Nothing here is built yet — this is the planning menu.
+> **This is the defining finding of the v12 audit and the reason this roadmap exists.**
 
-### 3.1 Agent-native platform (from OpenBB's Open Data Platform pivot)
+**Only 200 of 517 source modules, 39%, are reachable** by following imports from
+the application entry points. The remaining **319 modules are compiled, tested,
+coverage-counted, and documented — but never execute in the running app.**
 
-| ID | Enhancement | Why it wins | Phase |
-|---|---|---|---|
-| E1 | **Elevate MCP server to first-class consumer** — wire the existing `mcp-server/` to the live Worker API (quotes, charts, consensus, screener) over HTTP + stdio | OpenBB proved AI agents are now a primary surface; CrossTide already has the server, just not wired | P |
-| E2 | **"Connect once, consume everywhere" data layer** — formalize the Worker API as the single source for SPA + MCP + SDK + widgets, documented in one OpenAPI contract | Removes duplicate data logic; every new surface is free | Q |
-| E3 | **Agent tool manifest** — expose CrossTide indicators/consensus as callable MCP tools with typed schemas | Lets Claude/GPT run a 12-method consensus on demand | Q |
-| E4 | **Streaming agent responses** — SSE from Worker for long-running screener/backtest agent calls | Matches OpenBB Workspace UX | R |
+| Layer | Total | Unreachable from entry points | Share |
+|---|---:|---:|---:|
+| `src/domain` | 220 | 176 | 80% |
+| `src/core` | 139 | 90 | 65% |
+| `src/ui` | 75 | 37 | 49% |
+| `src/cards` | 52 | 8 | 15% |
+| `src/providers` | 13 | 6 | 46% |
+| `src/types` | — | 1 | — |
+| **Total** | **517** | **319** | **62%** |
 
-### 3.2 On-device AI (privacy moat — nobody else has this)
+### 3.1 Two distinct failure modes
 
-| ID | Enhancement | Why it wins | Phase |
-|---|---|---|---|
-| E5 | **WebLLM (Phi-4-mini / Qwen3-mini via WebGPU)** — natural-language → Screener DSL, fully in-browser | Zero data egress; unique vs every competitor | S |
-| E6 | **On-device news/earnings summarization** — local LLM summarizes fetched articles | No API cost, no tracking | S |
-| E7 | **NL chart annotation** — "mark the golden crosses" → drawing primitives | TrendSpider-class feature, private | S |
+The 319 unreachable modules are not one problem. They split cleanly, and the
+correct response differs:
 
-### 3.3 Compute performance (Rust/WASM hot paths — see §4)
+| Mode | Count | Meaning | Correct response |
+|---|---:|---|---|
+| **Hard orphan** — imported by nothing | 57 | Never referenced by any source file, only by its own test | Wire into a real surface |
+| **Barrel-only** — imported solely by an `index.ts` | 245 | Reachable through a layer barrel the app never imports | Decide: public API, or app feature |
 
-| ID | Enhancement | Why it wins | Phase |
-|---|---|---|---|
-| E8 | **WASM correlation matrix** (Rust or AssemblyScript) | Near-native for N×N correlation on large baskets | S |
-| E9 | **WASM Monte Carlo VaR / portfolio simulation** | 10–50× over JS for 100k paths | S |
-| E10 | **WASM backtest kernel** — vectorized OHLCV replay | Closes the gap vs TrendSpider/Pine backtests | S |
+Hard orphans by layer: `src/core` 38 · `src/ui` 12 · `src/cards` 7.
 
-### 3.4 Real-time & data depth (from TradingView / Alpaca)
+### 3.2 Why barrels do not count as wired
 
-| ID | Enhancement | Why it wins | Phase |
-|---|---|---|---|
-| E11 | **Wire WebSocket DO fan-out** — the Durable Object ticker code exists but is not live | Real-time is the #1 missing shipped capability | Q |
-| E12 | **Alpaca Markets provider** — free real-time quotes | Removes Yahoo single-point dependency | Q |
-| E13 | **BYOK (bring-your-own-key)** — user API keys, encrypted at rest in D1 | Lets power users add premium providers privately | Q |
-| E14 | **Options chain + IV surface card** | High-demand gap vs Webull/TradingView | R |
+No file in `src/` imports `src/core/index.ts` or `src/ui/index.ts`. Those barrels
+exist only to satisfy the `exports` map in `package.json`. A module re-exported by
+an unconsumed barrel is exactly as unreachable as one imported by nothing, so
+adding a barrel entry is **not** an honest fix for application infrastructure.
 
-### 3.5 Growth & credibility (from every shipped OSS competitor)
+For `src/domain` the barrel **is** the product: `@crosstide/domain` publishes it,
+so barrel-only is the intended state there. The 177 unreachable domain modules are
+therefore a **packaging** concern rather than a defect — but they must not be
+counted as delivered app features, and their coverage must not be read as app
+coverage.
 
-| ID | Enhancement | Why it wins | Phase |
-|---|---|---|---|
-| E15 | **Live demo URL** (`crosstide.pages.dev`) with no signup | The single biggest credibility unlock; blocks §16 Phase P exit | P |
-| E16 | **Docker one-liner** validated end-to-end (compose up → working app) | Ghostfolio/OpenBB baseline for self-hosters | P |
-| E17 | **SSG top-500 ticker pages (Astro)** for SEO discovery | StockAnalysis-class organic acquisition | R |
-| E18 | **Discord + CONTRIBUTING + good-first-issue labels** | Converts stars into contributors (OpenBB playbook) | R |
-| E19 | **In-repo AI skills for contributors** (validated by Ghostfolio's `.claude/skills`) — expand `.github/skills` to cover onboarding, add-card, add-indicator | Lowers contributor ramp; leverages agents | R |
+### 3.3 Consequence for the quality gates
 
-### 3.6 Platform & ecosystem (long game)
+Coverage is currently measured across code that never runs in the app. A 93%
+statement figure over a tree where 62% of modules are unreachable is not a
+statement about the shipped product. The response is not to lower the threshold;
+it is to **add a second, honest metric** — item Q10 — reporting coverage over the
+reachable graph separately.
 
-| ID | Enhancement | Why it wins | Phase |
-|---|---|---|---|
-| E20 | **Publish `@crosstide/domain` to npm** — the 212 pure modules as a standalone package | Turns the crown-jewel domain layer into a distributable asset | T |
-| E21 | **Embeddable widgets** (`<script>` snippet for consensus/chart) | Distribution surface competitors gate behind paywalls | T |
-| E22 | **Plugin sandbox** (Worker-isolated custom indicators) | Community extensibility without core risk | T |
-| E23 | **Signal framework adapters** (React/Solid/Svelte) | Broadens SDK reach | T |
+This is the failure shape already recorded in `.github/copilot-instructions.md`
+learning 23: _a gate that passes without checking the thing it names._
+
+### 3.4 Stitching principle — no deletion
+
+Per the standing directive, **no module is deleted to close this gap.** Each of the
+319 receives an explicit disposition recorded in a tracking file:
+
+| Disposition | Definition | Typical target |
+|---|---|---|
+| **WIRE** | Import from a card, store, router, or Worker route so it executes | App infrastructure in `core`, `ui`, `cards` |
+| **PUBLISH** | Keep barrel-only as public API of `@crosstide/domain` | Most of `src/domain` |
+| **PROMOTE** | Turn into a registered card or Worker route of its own | `news-feed-card`, `portfolio`, `trade-journal`, `net-worth` |
+| **MERGE** | Fold into a canonical sibling, preserving behaviour and tests | The 12 duplicate-named domain modules, issue #104 |
+| **DEFER** | Genuinely future work, annotated with the phase that consumes it | `plugin-contracts`, `plugin-integrity`, `speculation-rules` |
+
+There is no sixth option. Delete is not on the list.
+
+### 3.5 Hard-orphan inventory
+
+The inventory is now reproducible with `npm run check:reachability`. It follows
+relative TypeScript imports from `src/main.ts` and `src/sw.ts`, normalizes runtime
+`.js` specifiers, and emits JSON with each module's importers, category, and
+non-destructive default disposition. Layer barrels with no importers remain
+visible in the output and are not treated as application features.
+
+The verified list, to be transcribed into the tracking file under P10a, grouped by
+the surface each module should attach to.
+
+**`src/core` — 38 hard orphans**
+
+| Cluster | Modules | Target surface |
+|---|---|---|
+| Watchlist data | `watchlist-store`, `watchlist-export`, `watchlist-import`, `watchlist-history`, `ticker-tags`, `ticker-notes`, `ticker-pinning`, `ticker-selection` | Watchlist card and Settings export |
+| Portfolio depth | `net-worth`, `trade-journal`, `price-targets` | Portfolio card, or promote to new cards |
+| Session and routing | `session-state`, `url-state`, `route-guards`, `recent-tickers`, `search-history` | Router and command palette |
+| Diagnostics | `cache-stats`, `perf-metrics`, `provider-usage`, `rate-limit-tracker`, `quote-staleness`, `failover-log` | Provider Health card |
+| Platform APIs | `navigation-api`, `speculation-rules`, `cross-tab-share`, `webauthn`, `notification-prefs` | App shell and Settings |
+| Presentation | `layout-presets`, `multi-timeframe-panel`, `css-scope`, `font-loader`, `export-image` | Dashboard shell |
+| Backup and compute | `full-backup`, `screener-worker`, `shortcut-customization`, `ai-disclaimer`, `plugin-contracts`, `plugin-integrity` | Settings, screener, Phase T |
+
+**`src/ui` — 12 hard orphans**
+
+`a11y-aaa`, `card-width`, `chart-frame`, `empty-state`, `filter-bar`, `mobile-ux`,
+`popover`, `route-loader`, `scroll-driven`, `stat-grid`, `ticker-context-menu`,
+`uplot-helpers`.
+
+Several of these are the Web Components that `.github/instructions/cards.instructions.md`
+instructs contributors to use — `<ct-stat-grid>`, `<ct-filter-bar>`,
+`<ct-empty-state>`, `<ct-chart-frame>`. **The documented component library is not
+actually mounted.** That contradiction is itself a P0 decision, item Q11.
+
+**`src/cards` — 7 hard orphans**
+
+`drawing-history`, `error-boundary`, `heatmap-layout`, `indicator-config`,
+`news-feed-card`, `performance-metrics`, `portfolio`.
+
+`news-feed-card` is a complete card never added to `src/cards/registry.ts` — one
+registration away from being a 25th route.
+
+### 3.6 Domain duplication, issue #104
+
+Twelve modules redeclare a name another module already exports. Canonical targets:
+
+| Area | Duplicates | Canonical target |
+|---|---|---|
+| Black-Scholes | `black-scholes`, `option-pricing` | `black-scholes` |
+| Implied volatility | `implied-volatility`, `iv-solver` | `implied-volatility` |
+| Kelly fraction | `kelly-criterion`, `position-sizing` | `kelly-criterion` |
+| Risk ratios | `sharpe-ratio`, `risk-metrics` | `risk-metrics` |
+| Volatility estimation | `historical-volatility`, `realized-volatility` | `volatility` |
+| Moving averages | `sma`, `ema`, `wma` | keep separate, unify only barrel grouping |
+
+Merges must be behaviour-preserving, with both test suites retained.
 
 ---
 
-## 4. 🧭 Language & Platform Refactor Decision
+## 4. 📚 Documentation Health Audit
 
-> The brief explicitly permits a full refactor "up to and including changing the main code language." This section makes that decision **deliberately and on the record** rather than leaving it implicit.
+Every Markdown file in the repository was reviewed. All 71 linted files pass
+`npm run lint:md`; the defects below are **factual drift**, which linting cannot
+detect.
 
-### 4.1 Options evaluated
+### 4.1 Confirmed drift, corrected under D1
 
-| Option | Primary lang | Pros | Cons | Verdict |
-|---|---|---|---|---|
-| **A. Status quo** | TypeScript 6 | 158 KB bundle, 608 tests, pure domain, CF Workers native, zero rewrite risk | JS compute ceiling on heavy math | **KEEP as primary** |
-| **B. Full Rust rewrite** | Rust (+ WASM front) | Max performance, one language | Kills PWA ergonomics, DOM story is poor, throws away 212 tested modules, 6–12 mo of zero user value | **REJECT** |
-| **C. Full Python (OpenBB-style)** | Python | Rich quant ecosystem | Not viable in-browser, no offline PWA, heavier deploy, abandons privacy-first edge model | **REJECT** |
-| **D. Go/Elixir backend swap** | Go/Elixir | Concurrency for streaming | CF Workers is already the edge runtime; no ROI; loses $0/mo model | **REJECT** |
-| **E. TS core + Rust/WASM hot paths** | TypeScript + Rust(WASM) | Keeps everything that works; adds near-native speed only where JS is the bottleneck (correlation, Monte Carlo, backtest) | Adds a build-toolchain (wasm-pack) and a size budget | **ADOPT (targeted)** |
+| File | Claim | Reality |
+|---|---|---|
+| `docs/ROADMAP.md` | Held a v12 draft concatenated with orphaned v11 fragments: duplicate sections 4, 5 and 13, a sentence beginning mid-clause, two conflicting master tables, two broken anchors | Replaced by this document |
+| `.github/CONTRIBUTING.md` | "#105 — document one of the 29 Worker routes still missing" | None missing; all 56 documented, `KNOWN_GAP` empty |
+| `.github/CONTRIBUTING.md` | "#103 — one of the 52 orphaned _domain_ modules, unreachable from any barrel" | Wrong layer and count: 57 hard orphans in `core`, `ui`, `cards`; the domain barrel is complete |
+| `.github/copilot-instructions.md` | "Do NOT speculatively load `src/domain/indicators/` (218 files)" | That directory does not exist; domain is flat with 221 files |
+| `.github/copilot-instructions.md` | "`src/cards/` (54 files)" | 52 |
+| `.github/AGENTS.md` | "Tests: 629 files / 7198 tests" | 654 test files |
+| `docs/ARCHITECTURE.md` | "Vitest unit tests (629 files / 7,198 tests)" | 654 test files |
+| `README.md` | Embeds six demo GIFs from `docs/demos/` | **All six are missing.** `docs/demos/` holds only a README, so the landing page renders six broken images |
+| Prior roadmap | "158 KB bundle", "608 tests" | 212.6 KB, 652 test files |
 
-### 4.2 Decision
+### 4.2 Structural gaps
 
-**Keep TypeScript 6 as the primary language.** It is the correct choice for a privacy-first, offline-capable, 158 KB PWA running on Cloudflare Workers — no other language preserves the bundle discipline, the pure/tested domain layer, and the $0/mo edge model simultaneously.
+| ID | Gap | Detail |
+|---|---|---|
+| D2 | No doc-fact gate | Nothing prevents a number in Markdown from drifting from code. Recurrence is certain without automation. |
+| D3 | Dead links unresolved | Issue [#106](https://github.com/RajwanYair/CrossTide/issues/106) is open from the monthly link-check workflow and was never triaged. |
+| D4 | Issue tracker drift | [#105](https://github.com/RajwanYair/CrossTide/issues/105) is complete but open; [#103](https://github.com/RajwanYair/CrossTide/issues/103) says 52 where the audit finds 57. |
+| D5 | Missing ADRs | The 11 ADRs stop before the split-Vitest-projects, Biome-over-Prettier, domain-packaging, and WASM decisions. |
+| D6 | `INDICATORS.md` quality | Generated, excluded from `lint:md`, and some rows dump whole source bodies into a table cell. |
+| D7 | Misleading subsystem READMEs | `docs/demos/`, `monitoring/`, `mcp-server/` describe capabilities that are code-ready but undeployed, with no status banner. |
+| P8 | README lacks proof | No live demo link or video, and its six embedded demo GIFs do not exist on disk. `scripts/record-demos.ts` exists to produce them but needs a running app. |
 
-**Adopt Option E for compute only:** introduce a **Rust → WASM hot-path kernel** (via `wasm-pack`) strictly for the three measured bottlenecks (E8 correlation, E9 Monte Carlo, E10 backtest). The pure-function boundary of `src/domain/` makes this a drop-in: the WASM module implements the same signature, guarded by a JS fallback so no-WebGPU/no-WASM environments still work.
+### 4.3 Documents verified current
 
-### 4.3 Guardrails for the WASM kernel
-
-| Guardrail | Rule |
-|---|---|
-| Size | WASM binary counted in bundle budget; `scripts/check-wasm-size.mjs` already exists — enforce a hard cap (start 100 KB) |
-| Fallback | Every WASM export must have a pure-TS fallback so the domain layer stays 100% functional without WASM |
-| Purity | WASM modules stay deterministic — no I/O, matching the `src/domain/` contract |
-| Scope creep | WASM is allowed **only** where a benchmark (`tests/bench/`) proves a >5× win; otherwise stay in TS |
+`docs/ARCHITECTURE.md` apart from its test counts, all 11 ADRs, all 9
+`.github/instructions/*.md`, all 9 `.github/skills/*/SKILL.md`, all 7
+`.github/agents/*.agent.md`, `.github/SECURITY.md`,
+`.github/CODE_OF_CONDUCT.md`, `docs/DEVELOPMENT.md`, `docs/CLOUDFLARE_SETUP.md`,
+and `CHANGELOG.md`.
 
 ---
 
-## 5. 📊 Master Tracking Table
+## 5. 🧩 Refactor Mandate
 
-> **This is the single table to run development from.** Every enhancement (§3) and phase task (§16) is tracked here. Update the **Status** column as work progresses; the phase tables in §16 hold the detail.
+> **Directive: everything is open to refactor.** No structure, config, dependency,
+> naming scheme, or architectural choice is retained merely because it already
+> exists. The only protected asset is _behaviour that has tests_, and even that may
+> move, provided the tests move with it.
 
-**Status legend:** ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked · 🔵 Deferred
-**Priority:** P0 blocker · P1 high · P2 nice-to-have
-**Effort:** S ≤1 day · M ≤1 week · L >1 week
+### 5.1 Directory taxonomy — the largest structural debt
 
-| ID | Workstream | Task / Enhancement | Phase | Pri | Effort | Depends On | Status |
+Three layers are flat directories well past the point of navigability:
+
+| Layer | Files | Problem | Proposed structure |
+|---|---:|---|---|
+| `src/domain` | 221 | Flat. The instructions already reference a non-existent `src/domain/indicators/`, proving the mental model diverged from disk | `indicators/`, `analytics/`, `risk/`, `portfolio/`, `backtest/`, `statistics/`, `market/` |
+| `src/core` | 139 | Flat. Mixes state, storage, network, platform APIs, and formatting | `state/`, `storage/`, `net/`, `platform/`, `format/` |
+| `src/ui` | 75 | Flat. Mixes Web Components, DOM helpers, accessibility, and layout | `components/`, `a11y/`, `layout/`, `dom/` |
+
+This is a mechanical, high-value, low-risk refactor: imports are explicit, and
+`arch-check.mjs` plus the barrel-completeness tests catch every mistake. It should
+precede the stitching work so wiring happens against the final layout — sequenced
+as R1 before P10b.
+
+### 5.2 Architecture decisions re-examined
+
+Each was reconsidered from zero rather than defended:
+
+| Decision | Verdict | Reasoning |
+|---|---|---|
+| TypeScript 6 as primary language | **KEEP** | The only choice preserving a 250 KB PWA, a pure domain, and a $0 edge simultaneously. A Rust or Python rewrite discards 652 test files for no user-visible gain. |
+| Vanilla TS with signals, no framework | **KEEP** | A 0 KB runtime is the bundle budget's entire headroom. |
+| morphdom with lit-html | **REVIEW in Phase R** | Two rendering strategies is one too many. Measure, then converge. |
+| Hono 4 on Cloudflare Workers | **KEEP** | Free tier covers projected load; D1, KV, and Durable Objects are native. |
+| Valibot over Zod | **KEEP** | 3 KB against 30 KB at the boundary. |
+| Biome for format, ESLint for lint | **KEEP** | Fast, with cleanly split roles. |
+| npm workspaces | **REPLACE in Phase T** | pnpm with Turborepo once four or more packages exist. |
+| Rust to WASM for hot paths | **ADOPT, targeted** | Only where `tests/bench/` proves more than 5x, always with a pure-TypeScript fallback. |
+| Web Components `<ct-*>` | **DECIDE in Phase Q** | Documented but unmounted, §3.5. Either mount them or stop documenting them. |
+| Flat layer directories | **REFACTOR** | See §5.1. |
+
+### 5.3 Configuration and CI refactor
+
+Concrete defects found while auditing the 26 workflows in `.github/workflows/`:
+
+| ID | Defect | Action |
+|---|---|---|
+| C1 | `ci.yml` runs oxlint suffixed with `\|\| true`, which cannot fail and therefore checks nothing, and fetches a tool that is not a dependency | Remove it, or add oxlint as a real devDependency and let it fail |
+| C2 | `ci.yml` calls `npx @lhci/cli@0.15.x` and `npx @cyclonedx/cyclonedx-npm` although `@lhci/cli` is a declared devDependency | Use `./node_modules/.bin/lhci`; declare or digest-pin the SBOM tool |
+| C3 | A step named "Prettier check" actually runs Biome | Rename the step |
+| C4 | `zap-baseline.yml`, `perf-regression.yml`, and `trufflehog.yml` carry `continue-on-error: true` on the scanning step | Decide per workflow: enforce it, or move it off the gate path and stop calling it a gate |
+| C5 | `cicd.instructions.md` claims a single quality gate and lists `deploy.yml` and `deploy-worker.yml`, which do not exist | Reconcile the documented workflow map with disk |
+| C6 | Ten or more tool configs are split between the repository root and `config/` with no stated rule | Adopt one rule and document it |
+
+Every item above is an instance of the project's own recorded anti-pattern: a gate
+that cannot observe what it claims to observe.
+
+### 5.4 Refactor guardrails
+
+1. One refactor per pull request. Never combine a move with a behaviour change.
+2. Review `git diff -U0` hunk by hunk after any multi-site edit.
+3. `npm run ci` green before and after, with the bundle delta reported in the PR body.
+4. Tests move with their subject in the same commit.
+5. A refactor that no existing gate can validate must ship that gate first.
+
+---
+
+## 6. 📊 Master Tracking Table
+
+**Status:** ⬜ not started · 🟡 in progress · ✅ done · ⛔ blocked
+**Priority:** P0 blocker · P1 high · P2 opportunistic
+**Effort:** S up to 1 day · M up to 1 week · L over 1 week
+
+| ID | Stream | Task | Phase | Pri | Eff | Depends | Status |
 |---|---|---|:---:|:---:|:---:|---|:---:|
-| P1 | Deploy | Provision CF resources (KV + D1 namespaces) | P | P0 | S | — | ⬜ |
-| P2 | Deploy | Replace PLACEHOLDER binding IDs in `wrangler.toml` | P | P0 | S | P1 | ⬜ |
-| P3 | Deploy | Run D1 migrations (`migrate-db` skill) | P | P0 | S | P1 | ⬜ |
-| P4 | Deploy | Deploy Worker + verify `/api/health` | P | P0 | S | P2,P3 | ⬜ |
-| P5 | Deploy | Deploy Cloudflare Pages to production | P | P0 | S | P4 | ⬜ |
-| E15 | Growth | **Live demo URL** shows live AAPL to any visitor | P | P0 | S | P5 | ⬜ |
-| P6 | Deploy | Verify live quote + chart E2E against prod | P | P0 | M | E15 | ⬜ |
-| E16 | Growth | Docker one-liner validated end-to-end | P | P1 | M | — | ⬜ |
-| E1 | Agent | Wire MCP server to live Worker API | P | P1 | M | P4 | ⬜ |
-| P8 | Docs | GIF demos in README (from live app) | P | P1 | M | E15 | ⬜ |
-| P9 | DX | VS Code / GitHub integration cleanup | P | P1 | S | — | ✅ |
-| P10 | Quality | Remove dead code / config / docs | P | P1 | M | — | 🟡 |
-| E12 | Data | Alpaca Markets provider (free real-time) | Q | P0 | M | P4 | ⬜ |
-| E11 | Data | Wire WebSocket DO fan-out (real-time) | Q | P0 | L | E12 | ⬜ |
-| E13 | Data | BYOK — encrypted user API keys in D1 | Q | P1 | M | P3 | ⬜ |
-| E2 | Agent | Formalize single data layer (OpenAPI contract) | Q | P1 | L | — | ✅ |
-| E3 | Agent | Agent tool manifest (typed MCP tools) | Q | P1 | M | — | ✅ |
-| Q3 | Quality | Signal DSL fuzz testing | Q | P2 | M | — | ✅ |
-| Q4 | Quality | Property tests → 50+ total | Q | P1 | M | — | ✅ |
-| Q5 | A11y | Keyboard navigation audit | Q | P1 | M | — | ✅ |
-| Q6 | A11y | Wire orphaned `a11y.css`, delete dead `fonts.css` | Q | P1 | M | — | ✅ |
-| Q7 | DX | De-duplicate `.md`/`.yml` issue templates | Q | P2 | S | — | ✅ |
-| E17 | Growth | SSG top-500 ticker pages (Astro) | R | P0 | L | E15 | ⬜ |
-| E18 | Growth | Discord + CONTRIBUTING + good-first-issue | R | P0 | M | E15 | 🟡 |
-| E19 | DX | Expand in-repo AI skills for contributors | R | P1 | M | — | ✅ |
-| E4 | Agent | Streaming agent responses (SSE) | R | P1 | M | E3 | ⬜ |
-| E14 | Data | Options chain + IV surface card | R | P1 | L | E12 | ⬜ |
-| R2 | Growth | 3-minute video walkthrough | R | P1 | M | E15 | ⬜ |
-| R4 | Growth | Product Hunt + HN + Reddit launch | R | P0 | M | E17,E18 | ⬜ |
-| E5 | AI | WebLLM: NL → Screener DSL (WebGPU) | S | P0 | L | — | ⬜ |
-| E6 | AI | On-device news/earnings summarization | S | P1 | L | E5 | ⬜ |
-| E7 | AI | NL chart annotation | S | P2 | L | E5 | ⬜ |
-| E8 | Compute | WASM correlation matrix (Rust) | S | P0 | L | — | ⬜ |
-| E9 | Compute | WASM Monte Carlo VaR | S | P1 | L | E8 | ⬜ |
-| E10 | Compute | WASM backtest kernel | S | P1 | L | E8 | ⬜ |
-| E20 | Platform | Publish `@crosstide/domain` to npm | T | P0 | M | — | 🟡 |
-| E21 | Platform | Embeddable widgets (`<script>` snippet) | T | P0 | L | E2 | ✅ |
-| E22 | Platform | Plugin sandbox (Worker-isolated) | T | P0 | L | E20 | ⬜ |
-| E23 | Platform | Signal adapters (React/Solid/Svelte) | T | P1 | M | E20 | ⬜ |
-| T4 | DX | pnpm + Turborepo migration | T | P2 | M | — | ⬜ |
+| D1 | Docs | Correct every drifted fact listed in §4.1 | P | P0 | S | — | ✅ |
+| D2 | Docs | Doc-fact gate asserting Markdown counts against code | P | P1 | M | D1 | ⬜ |
+| D3 | Docs | Triage and close the dead-link issue #106 | P | P1 | S | — | ⬜ |
+| D4 | Docs | Reconcile issues #103, #104, #105 with audit reality | P | P1 | S | P10a | ⬜ |
+| D5 | Docs | ADRs 0012 to 0015: split test projects, Biome, packaging, WASM | P | P2 | M | — | ⬜ |
+| D6 | Docs | Fix the `INDICATORS.md` generator emitting source bodies | Q | P2 | S | — | ⬜ |
+| D7 | Docs | Status banners on undeployed subsystem READMEs | P | P2 | S | — | ⬜ |
+| P1 | Deploy | Provision Cloudflare KV and D1 namespaces | P | P0 | S | — | ⛔ |
+| P2 | Deploy | Replace placeholder IDs in `worker/wrangler.toml` | P | P0 | S | P1 | ⛔ |
+| P3 | Deploy | Apply D1 migrations | P | P0 | S | P1 | ⛔ |
+| P4 | Deploy | Deploy the Worker and verify `/api/health` | P | P0 | S | P2, P3 | ⛔ |
+| P5 | Deploy | Deploy the Pages frontend | P | P0 | S | P4 | ⛔ |
+| E15 | Growth | Live demo URL serving live data with no signup | P | P0 | S | P5 | ⛔ |
+| E16 | Growth | Docker one-liner validated end to end | P | P1 | M | — | ⬜ |
+| P8 | Docs | README GIFs recorded from the live app | P | P0 | M | E15 | ⬜ |
+| C1 | CI | Remove or enforce the non-failing oxlint step | P | P0 | S | — | ✅ |
+| C2 | CI | Eliminate `npx` for declared devDependencies | P | P0 | S | — | 🟡 |
+| C3 | CI | Rename the mislabelled Prettier step | P | P2 | S | — | ✅ |
+| C4 | CI | Resolve the `continue-on-error` scanners | P | P1 | S | — | ⬜ |
+| C5 | CI | Reconcile the workflow map with disk | P | P1 | S | — | ⬜ |
+| C6 | CI | Single documented rule for config file placement | Q | P2 | S | — | ⬜ |
+| R1 | Refactor | Sub-directory taxonomy for domain, core, and ui | Q | P0 | L | — | ⬜ |
+| P10a | Stitch | Disposition record for all 319 unreachable modules | Q | P0 | M | R1 | 🟡 |
+| P10b | Stitch | Wire core hard orphans: watchlist, session, diagnostics | Q | P0 | L | P10a | ⬜ |
+| P10c | Stitch | Wire ui hard orphans and decide the `<ct-*>` component fate | Q | P0 | M | P10a | ⬜ |
+| P10d | Stitch | Register `news-feed-card`, promote portfolio orphans | Q | P1 | M | P10a | 🟡 |
+| P10e | Stitch | Merge the 12 duplicate-named domain modules | Q | P1 | M | R1 | ⬜ |
+| Q10 | Quality | Reachability metric and coverage over the reachable graph | Q | P0 | M | P10a | ⬜ |
+| Q11 | Quality | Gate: a new module must be reachable or declared PUBLISH | Q | P1 | M | Q10 | ⬜ |
+| E12 | Data | Alpaca Markets provider for free real-time quotes | Q | P0 | M | P4 | ⬜ |
+| E11 | Data | Wire the `TickerFanout` Durable Object fan-out | Q | P0 | L | E12 | ⬜ |
+| E13 | Data | Bring-your-own-key encrypted API keys in D1 | Q | P1 | M | P3 | ⬜ |
+| E1 | Agent | Point the MCP server at the live Worker API | Q | P1 | M | P4 | ⬜ |
+| E17 | Growth | Static top-500 ticker pages via Astro | R | P0 | L | E15 | ⬜ |
+| E18 | Growth | Community: Discord and good-first-issue labels | R | P0 | M | E15 | 🟡 |
+| R2 | Growth | Three-minute video walkthrough | R | P1 | M | E15 | ⬜ |
+| R4 | Growth | Public launch on Product Hunt, Hacker News, Reddit | R | P0 | M | E17, E18 | ⬜ |
+| E4 | Agent | Server-sent-event streaming for screener and backtest | R | P1 | M | E1 | ⬜ |
+| E14 | Data | Options chain and implied-volatility surface card | R | P1 | L | E12 | ⬜ |
+| R5 | Refactor | Converge morphdom and lit-html on one strategy | R | P1 | M | R1 | ⬜ |
+| E8 | Compute | WASM correlation matrix kernel | S | P0 | L | D5 | ⬜ |
+| E9 | Compute | WASM Monte Carlo value-at-risk kernel | S | P1 | L | E8 | ⬜ |
+| E10 | Compute | WASM vectorized backtest kernel | S | P1 | L | E8 | ⬜ |
+| E5 | AI | WebLLM natural language to Signal DSL | S | P0 | L | D5 | ⬜ |
+| E6 | AI | On-device news and earnings summarization | S | P1 | L | E5 | ⬜ |
+| E7 | AI | Natural-language chart annotation | S | P2 | L | E5 | ⬜ |
+| E20 | Platform | Publish `@crosstide/domain` to npm | T | P0 | M | — | ⛔ |
+| E23 | Platform | React, Solid, and Svelte signal adapters | T | P1 | M | E20 | ⬜ |
+| E22 | Platform | Worker-isolated plugin sandbox | T | P0 | L | E20 | ⬜ |
+| T4 | DX | pnpm and Turborepo migration | T | P2 | M | E23 | ⬜ |
+
+### 6.1 Blocked items and their owners
+
+| Blocker | Blocks | Needs |
+|---|---|---|
+| `wrangler login` not authenticated | P1 to P5, E15, E1, E11 | Repository owner runs the interactive OAuth flow |
+| `NPM_TOKEN` secret absent | E20, and through it E22, E23, T4 | Owner adds a repository secret with `@crosstide` publish rights |
+| Discord server not created | E18 | Owner action |
+
+Nothing in Phase Q depends on these except E1, E11, and E12. **The entire stitching
+and refactor programme — R1, P10a to P10e, Q10, Q11, D1 to D7, C1 to C6 — is
+unblocked and can proceed immediately.**
 
 ---
 
-## 5.1 Next 25-task execution queue
-
-This queue turns the phase tables into the next concrete sprint order. Items already delivered in
-the current sprint are marked complete so the queue can keep moving without losing the plan.
-
-1. E21: ship `dist/widget.mjs` from the existing widget module — ✅
-2. E21: point the widget at the Worker `GET /api/chart` contract and add `range` — ✅
-3. E21: publish the embed snippet and widget attributes in `README.md` — ✅
-4. E21: add a build/output smoke test for `widget.mjs` — ✅
-5. E21: add a quote badge / tape widget alongside the chart widget — ✅
-6. E21: add a consensus badge widget — ✅
-7. E21: add a docs-site page with copy-paste widget examples — ✅
-8. E21: add a host-page E2E smoke test that loads the built widget outside the app shell — ✅
-9. E18: create the Discord server invite link and wire it into contributor docs — ⛔ owner action
-10. P10: audit the 52 remaining core/ui/cards orphan modules from [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ✅
-11. P10: wire or delete the first 10 orphan modules with their tests — ⬜
-12. P10: wire or delete the next 10 orphan modules with their tests — ⬜
-13. P10: wire or delete the remaining orphan modules and close [#103](https://github.com/RajwanYair/CrossTide/issues/103) — ⬜
-14. P10: audit unused dependencies against the current runtime surface — ✅
-15. P10: remove stale config/docs found by the orphan and dependency audits — 🟡
-16. E2: document the first 10 of the remaining 29 Worker routes in OpenAPI — ✅
-17. E2: document the next 10 remaining Worker routes in OpenAPI — ✅
-18. E2: document the final 8 routes, remove `KNOWN_GAP`, and close [#105](https://github.com/RajwanYair/CrossTide/issues/105) — ✅
-19. E2: add `security` blocks for auth, key, and sync routes — ✅
-20. E20: add the `NPM_TOKEN` secret and publish `@crosstide/domain` for real — ⛔ secret missing
-21. E23: ship the React signal adapter package — ⬜
-22. E23: ship the Solid signal adapter package — ⬜
-23. E23: ship the Svelte signal adapter package — ⬜
-24. E23: document adapter usage and versioning alongside `@crosstide/domain` — ⬜
-25. E4: stream agent responses over SSE from the Worker edge — ⬜
-
-## 6. 📋 Decision Audit v11 — Final Verdicts
-
-### 6.1 Language & Type System
-
-| Decision | v11 Verdict | Confidence |
-|---|---|---|
-| TypeScript 6 strict (primary language) | **KEEP** (see §4) | 99% |
-| No `any` enforced | **KEEP** | 99% |
-| Explicit returns on exports | **KEEP** | 95% |
-| Valibot over Zod (3 KB vs 30 KB) | **KEEP** | 95% |
-| Rust → WASM for compute hot paths | **ADOPT (targeted)** | 85% |
-
-### 6.2 Frontend
-
-| Decision | v11 Verdict | Confidence |
-|---|---|---|
-| Vanilla TS + signals (0 KB runtime) | **KEEP** | 90% |
-| morphdom + lit-html hybrid | **KEEP** | 95% |
-| Lightweight Charts v5 | **KEEP** | 99% |
-| CSS Layers + @scope (zero runtime) | **KEEP** | 95% |
-| Biome formatter (replaces Prettier) | **DONE** | 95% |
-
-### 6.3 Backend
-
-| Decision | v11 Verdict | Confidence |
-|---|---|---|
-| Hono 4 on CF Workers | **KEEP** | 99% |
-| Cloudflare all-in ($0/mo) | **KEEP** | 90% |
-| D1 (SQLite edge) | **KEEP** | 85% |
-| KV for cache (TTL, edge) | **KEEP** | 95% |
-| REST + OpenAPI (56 routes) as single data layer | **KEEP + formalize** (E2) | 95% |
-
-### 6.4 Tooling
-
-| Decision | v11 Verdict | Confidence |
-|---|---|---|
-| Vite 8 | **KEEP** | 99% |
-| Vitest 4 | **KEEP** | 99% |
-| Playwright | **KEEP** | 95% |
-| ESLint 10 flat config | **KEEP** (compat + import-x) | 90% |
-| Biome 2 for formatting | **KEEP** | 95% |
-| fast-check (property) | **KEEP + expand** | 99% |
-| `wasm-pack` (new, hot paths only) | **ADD in Phase S** | 80% |
-| simple-git-hooks | **KEEP** | 95% |
-| npm (not pnpm) | **KEEP** until Phase T | 80% |
-
----
-
-## 7. 🎨 Frontend Architecture
-
-### 7.1 Component model (finalized)
-
-| Layer | Technology | Bundle Cost |
-|---|---|---|
-| Layout & routing | Vanilla TS + signals | 0 KB |
-| Simple cards | morphdom + template strings | 0 KB (shared 2.7 KB) |
-| Complex cards | lit-html tagged templates | ~2 KB |
-| Shared primitives | Native Web Components | 0 KB |
-| Charts | Lightweight Charts v5 | 45 KB |
-
-### 7.2 Rendering evolution
+## 7. 🚦 Phase Execution Plan
 
 ```mermaid
 flowchart LR
-  A["v1–v7\ninnerHTML"] --> B["v8–v11\nmorphdom"]
-  B --> C["v12\n+ Web Components"]
-  C --> D["v13\n+ lit-html"]
-  D --> E["v14\n+ View Transitions"]
-  E --> F["v15\n+ Rust/WASM compute"]
+  P["Phase P v12<br/>Truth, CI hygiene<br/>and deployment"]
+  Q["Phase Q v13<br/>Refactor<br/>and stitching"]
+  R["Phase R v14<br/>Launch<br/>and ecosystem"]
+  S["Phase S v15<br/>WASM and<br/>on-device AI"]
+  T["Phase T v16<br/>Packages<br/>and plugins"]
+  P --> Q --> R --> S --> T
 ```
+
+### Phase P — v12.0.0, Truth and Deployment
+
+_Goal: every published statement about CrossTide is verifiable, every CI gate
+actually gates, and the app is reachable at a public URL._
+
+- **D1 to D7** — correct drifted documentation, add the doc-fact gate, triage issues.
+- **C1 to C5** — remove decorative CI steps, eliminate `npx` for declared tools.
+- **P1 to P5, E15** — Cloudflare provisioning through live demo, owner-blocked.
+- **E16, P8** — Docker validation and README GIFs.
+
+**Exit criteria:** no factual contradiction between docs and code; no CI step that
+cannot fail; a live demo answering a real quote.
+
+### Phase Q — v13.0.0, Refactor and Stitching
+
+_Goal: the codebase the tests describe is the codebase that runs._
+
+- **R1** — sub-directory taxonomy for domain, core, and ui. Do this first.
+- **P10a** — disposition record for all 319 unreachable modules.
+- **P10b to P10e** — wire, promote, and merge per disposition. No deletions.
+- **Q10, Q11** — reachability metric, then a gate preventing regression.
+- **E12, E11, E13, E1** — Alpaca, real-time fan-out, BYOK, live MCP.
+
+**Exit criteria:** reachable-module share above 85%; every remaining unreachable
+module carries an explicit PUBLISH or DEFER disposition; issues #103 and #104 closed.
+
+### Phase R — v14.0.0, Launch and Ecosystem
+
+E17 SEO ticker pages · E18 community · R2 video · R4 launch · E4 streaming ·
+E14 options chain · R5 rendering convergence.
+
+### Phase S — v15.0.0, WASM and On-Device AI
+
+E8 to E10 Rust-to-WASM kernels, each behind a benchmark proving more than 5x, each
+with a pure-TypeScript fallback, each counted against the bundle budget.
+E5 to E7 WebLLM over WebGPU, lazily loaded and fully on-device.
+
+### Phase T — v16.0.0, Packages and Plugins
+
+E20 publish `@crosstide/domain` · E23 framework adapters · E22 plugin sandbox ·
+T4 pnpm with Turborepo.
 
 ---
 
-## 8. 🧱 Backend & Infrastructure
+## 8. 🎨 Frontend and Card Architecture
 
-### 8.1 Cloudflare production deployment — BLOCKED
+### 8.1 Composition model
 
-GitHub Pages is deployed and serves the static frontend. The production API and live-data demo remain blocked until Cloudflare authentication is available and the KV/D1 bindings in `worker/wrangler.toml` are provisioned. Do not treat a green GitHub Pages workflow as completion of this phase.
+| Layer | Technology | Bundle cost |
+|---|---|---|
+| Shell and routing | Vanilla TypeScript with signals | 0 KB |
+| Simple cards | morphdom with template strings | shared ~2.7 KB |
+| Complex cards | lit-html tagged templates | ~2 KB |
+| Shared primitives | Native Web Components `<ct-*>` | 0 KB — **currently unmounted, §3.5** |
+| Charts | Lightweight Charts v5 | ~45 KB |
+| Embeddable widgets | Standalone custom elements | 12.1 KB, separate bundle |
 
-```bash
-# 30-minute provisioning sequence
-wrangler kv namespace create QUOTE_CACHE
-wrangler kv namespace create QUOTE_CACHE --preview
-wrangler d1 create crosstide-db
-wrangler d1 migrations apply crosstide-db
-wrangler deploy
-curl https://crosstide-api.workers.dev/api/health
+### 8.2 Registered routes, 24
+
+`watchlist` · `consensus` · `chart` · `alerts` · `heatmap` · `screener` ·
+`settings` · `provider-health` · `portfolio` · `risk` · `backtest` ·
+`strategy-comparison` · `consensus-timeline` · `signal-dsl` · `multi-chart` ·
+`correlation` · `market-breadth` · `earnings-calendar` · `macro-dashboard` ·
+`sector-rotation` · `relative-strength` · `seasonality` · `comparison` ·
+`rebalance`
+
+A twenty-fifth, `news-feed`, is registered and covered by the card route matrix.
+
+### 8.3 Planned frontend refactors
+
+1. Every card standardises on `createStore()` and `batch()`, with no ad-hoc globals.
+2. `CardHandle.dispose()` guarantees signal-subscription cleanup.
+3. Cross-tab state through `BroadcastChannel` once `cross-tab-share` is wired.
+4. Converge on a single rendering strategy, R5.
+5. Apply the `src/ui` sub-directory taxonomy, R1.
+
+---
+
+## 9. 🧱 Backend and Edge Infrastructure
+
+```mermaid
+flowchart TD
+  Client["SPA, MCP, widget"] --> Hono["Hono 4 Worker"]
+  Hono --> Sec["Security headers and CORS"]
+  Sec --> RL["Rate limiter over KV"]
+  RL --> Routes["56 documented routes"]
+  Routes --> Cache{"KV cache hit?"}
+  Cache -->|hit| Cached["Return cached JSON"]
+  Cache -->|miss| Chain["Provider chain"]
+  Chain --> Valid["Valibot validation"]
+  Valid --> Store["Write KV"]
+  Store --> Fresh["Return fresh JSON"]
+  Routes --> D1["D1: watchlists, alerts, keys"]
+  Routes --> DO["Durable Object TickerFanout, not yet wired"]
 ```
 
-### 8.2 Cost model
+### 9.1 Contract parity
 
-| Resource | Free Tier | Our Usage | Monthly Cost |
+All 56 registered routes are documented in `worker/routes/openapi.ts`.
+`tests/unit/worker/openapi-drift.test.ts` fails on an undocumented route, on a
+documented route that is not registered, and on a stale `KNOWN_GAP` — which is now
+empty and may only shrink. `src/core/api-types.ts` is generated from the spec and
+diff-checked by `npm run check:api-types`.
+
+### 9.2 Cost model
+
+| Resource | Free tier | Projected use | Cost |
 |---|---|---|---|
-| CF Pages | Unlimited BW | ~10 GB/mo | $0 |
-| CF Workers | 100K req/day | ~5-20K/day | $0 |
-| CF KV | 100K reads/day | ~10-50K reads | $0 |
-| CF D1 | 5 GB | < 100 MB | $0 |
+| Pages | Unlimited bandwidth | ~10 GB per month | $0 |
+| Workers | 100K requests per day | 5K to 20K per day | $0 |
+| KV | 100K reads per day | 10K to 50K per day | $0 |
+| D1 | 5 GB | under 100 MB | $0 |
 | **Total** | | | **$0** |
 
 ---
 
-## 9. 🔌 Data Strategy & API Ecosystem
-
-### 9.1 Provider chain
+## 10. 🔌 Data Providers and Ecosystem
 
 ```mermaid
 flowchart LR
-  RT[Real-time] --> Yahoo1[Yahoo] --> Finnhub1[Finnhub] --> Alpaca["Alpaca (Phase Q)"]
-  OHLCV[OHLCV] --> Yahoo2[Yahoo] --> R2[R2 archive] --> Stooq[Stooq]
-  Crypto[Crypto] --> CoinGecko[CoinGecko] --> Finnhub2[Finnhub]
-  Fund[Fundamentals] --> Yahoo3[Yahoo] --> Finnhub3[Finnhub]
-  Macro[Macro] --> FRED[FRED]
-  Forex[Forex] --> ECB[ECB] --> Yahoo4[Yahoo]
-  News[News] --> Finnhub4[Finnhub] --> Yahoo5[Yahoo]
+  RT["Real-time"] --> Y1["Yahoo"] --> F1["Finnhub"] --> A1["Alpaca, Phase Q"]
+  OH["OHLCV"] --> Y2["Yahoo"] --> S1["Stooq"]
+  CR["Crypto"] --> CG["CoinGecko"] --> F2["Finnhub"]
+  MA["Macro"] --> FR["FRED"]
+  FX["Forex"] --> EC["ECB"] --> Y3["Yahoo"]
 ```
 
-### 9.2 API as platform
+Planned resiliency work: circuit breakers with adaptive backoff across every
+adapter, bring-your-own-key credentials encrypted in D1 under E13, and
+market-hours-aware IndexedDB caching so repeat candle requests never reach the
+Worker.
 
-The CrossTide Worker API serves four consumers:
+### 10.1 Four consumers of one contract
 
-1. **SPA** (web dashboard)
-2. **MCP server** (AI agents — Claude, GPT)
-3. **npm SDK** (`@crosstide/api-client` — Phase T)
-4. **Embeddable widgets** (Phase T)
-
----
-
-## 10. 🧠 AI, ML & Intelligent Compute
-
-| Capability | Platform | Phase |
-|---|---|---|
-| MCP server (AI agents) | Node.js stdio + HTTP | P (wire to live API) |
-| NL → Screener DSL | WebGPU (Phi-4-mini / Qwen3-mini) | S |
-| WASM correlation matrix | Rust → WASM (`wasm-pack`) | S |
-| WASM Monte Carlo VaR | Rust → WASM | S |
-| ONNX pattern recognition | WebAssembly | S |
-
-**Principle:** All AI on-device. Zero data transmitted externally.
+1. The SPA dashboard
+2. The MCP server for AI agents
+3. `@crosstide/domain` and the framework adapters
+4. Embeddable `<crosstide-*>` widgets
 
 ---
 
-## 11. 🧰 Developer Experience & Tooling
+## 11. 🧰 Developer Experience
 
-### 11.1 Production toolchain
-
-| Tool | Version | Purpose |
+| Concern | Tool | Version |
 |---|---|---|
-| TypeScript | 6.0.3 | Type checking |
-| Vite | 8.0.10 | Build + dev server |
-| Vitest | 4.1.10 | Unit + integration (split `node` / `happy-dom` projects) |
-| Playwright | 1.62.0 | E2E + visual |
-| ESLint | 10.8.0 | Linting (cached) |
-| Biome | 2.5.6 | Formatting |
-| fast-check | 4.9.0 | Property testing |
-| workbox-build | 7.4.0 | SW precaching |
-| commitlint | 21.2.1 | Commit format |
-| simple-git-hooks | 2.13.1 | Git hooks |
-| lint-staged | 17.2.0 | Pre-commit |
+| Types | TypeScript | 6.0.3 |
+| Build | Vite | 8.0.10 |
+| Unit tests | Vitest, split `node` and `happy-dom` | 4.1.10 |
+| End-to-end | Playwright | 1.62.0 |
+| Lint | ESLint flat config | 10.8.0 |
+| Format | Biome | 2.5.6 |
+| CSS lint | Stylelint | 17.14.1 |
+| Markdown lint | markdownlint-cli2 | 0.23.2 |
+| Property tests | fast-check | 4.9.0 |
+| Hooks | simple-git-hooks with lint-staged | 2.13.1 and 17.2.0 |
 
-### 11.2 Quality gates
+### 11.1 Inner-loop budgets
 
-| Gate | Command | Requirement | Cost |
-|---|---|---|---|
-| Type check | `npm run typecheck` | 0 errors | ~6.5s |
-| ESLint | `npm run lint` | 0 warnings | ~38s cold / ~3.4s cached |
-| Stylelint | `npm run lint:css` | 0 warnings | ~2s |
-| Biome | `npm run format:check` | Exit 0 | ~1s |
-| Markdown | `npm run lint:md` | 0 issues | ~2.2s |
-| Tests | `npm run test:coverage` | ≥90% stmt/line/fn, ≥80% branch | ~160s |
-| Build | `npm run build` | Success | ~9.3s |
-| Bundle | `npm run check:bundle` | < 250 KB gzip | ~1s |
-| Supply chain | `npm audit --omit=dev` | 0 high/critical | ~5s |
-| Architecture | `node scripts/arch-check.mjs --strict` | 0 violations | ~1s |
+| Loop | Budget | Current |
+|---|---|---|
+| Typecheck | under 10s | ~6.5s |
+| ESLint, cached | under 10s | ~3.4s |
+| Unit suite | under 180s | ~160s |
+| Production build | under 15s | ~9.3s |
+| Full `npm run ci` | under 300s | ~237s |
 
-Run all: `npm run ci` (~237s; uses `build:only` because `typecheck` already ran).
+Rules that keep this fast: DOM-free suites belong to the `node` project; both
+projects block unstubbed `fetch`; wall-clock assertions live in `tests/bench/` or
+carry `{ retry: 2 }`; never `npx` a declared devDependency.
 
 ---
 
-## 12. 📚 Documentation & Knowledge Strategy
+## 12. 🔒 Quality, Security, Observability
 
-| Priority | Document | Status |
-|---|---|---|
-| P0 | Live demo (deployed) | ✗ → Phase P |
-| P0 | README (GIFs, badges) | ★★ → enhance |
-| P1 | OpenAPI docs (Swagger) | ★★★ done |
-| P1 | CONTRIBUTING.md | ★★ exists |
-| P2 | 3-min video | ✗ → Phase R |
-| P2 | docs-site (Starlight) | △ shell exists |
+### 12.1 Gates, all passing with zero warnings
 
----
-
-## 13. 🔒 Quality, Security & Observability
-
-### 13.1 Security controls (all active)
-
-| Control | Status |
-|---|---|
-| CSP strict (no unsafe-inline/eval) | ✅ |
-| HSTS preload (1 year) | ✅ |
-| Valibot at all boundaries | ✅ |
-| SRI hashes on preloads | ✅ |
-| Rate limiting (CF Worker) | ✅ |
-| gitleaks + npm audit signatures | ✅ |
-| Signal DSL sandboxing (no eval) | ✅ |
-| Passkey (WebAuthn) auth | ✅ |
-| AES-GCM encrypted sync | ✅ |
-
-### 13.2 Observability
-
-| Layer | Tool | Status |
-|---|---|---|
-| Errors | GlitchTip (source-mapped) | Code ready |
-| Analytics | Plausible (privacy) | Code ready |
-| Uptime | Uptime Kuma | Configured |
-| Worker traces | CF Logpush | Structured logging |
-| Client perf | Web Vitals | Collecting |
-
----
-
-## 14. ⚡ Performance Architecture
-
-### 14.1 Runtime budgets
-
-| Metric | Budget | Current | Status |
-|---|---|---|---|
-| JS initial (gzip) | < 250 KB (CI-enforced) | 212.1 KB | ✅ |
-| LCP (4G Android) | < 1.8s | ~1.2s | ✅ |
-| INP (p75) | < 200ms | ~80ms | ✅ |
-| CLS | < 0.05 | ~0.02 | ✅ |
-| Lighthouse | ≥ 90 | ≥ 90 | ✅ |
-
-> Bundle headroom is now 38 KB. The WASM kernels (E8–E10) and WebLLM (E5–E7)
-> must load lazily/off-thread or they will breach the gate.
-
-### 14.2 Developer-loop budgets
-
-Build-time performance is a first-class budget: a slow inner loop is the tax
-every future feature pays.
-
-| Loop | Budget | Current | Notes |
-|---|---|---|---|
-| Unit suite | < 180s | ~159s | Split `node`/`happy-dom` projects; 313 DOM-free suites skip browser emulation |
-| ESLint (cached) | < 10s | ~3.4s | `--cache` into `node_modules/.cache/eslint/` |
-| Typecheck | < 10s | ~6.5s | |
-| Production build | < 15s | ~9.3s | oxc minifier |
-| Full `npm run ci` | < 300s | ~237s | |
-
-**Rules that keep this fast:**
-
-- New DOM-free suites go in the `node` project — do not widen the `dom` project.
-- Both projects block unstubbed outbound `fetch`; tests must never hit the network.
-- Wall-clock assertions belong in `tests/bench/` or carry `{ retry: 2 }`.
-
----
-
-## 15. 🧩 VS Code & GitHub Integration Strategy
-
-### 15.1 Current assets
-
-| Asset | Count | Quality |
-|---|---|---|
-| Instruction files (`.github/instructions/`) | 10 | ★★★ |
-| Prompt files (`.github/prompts/`) | 16 | ★★★ |
-| Skills (`.github/skills/`) | 6 | ★★★ |
-| Agents (`.github/agents/`) | 7 | ★★★ |
-| MCP servers (`.vscode/mcp.json`) | 6 | ★★★ |
-| GH Actions workflows | 27 | ★★★ |
-| Composite actions | 1 (node-setup) | △ Expand |
-
-### 15.2 Skills expansion
-
-| Skill | Purpose | Phase |
-|---|---|---|
-| `add-worker-route` | New API endpoint | ✅ exists |
-| `debug-fetch` | Fix broken API calls | ✅ exists |
-| `release` | Version bump + tag | ✅ exists |
-| `update-tests` | Add/fix tests | ✅ exists |
-| `deploy` | CF deployment playbook | ✅ exists |
-| `migrate-db` | D1 migration workflow | ✅ exists |
-| `add-provider` | New data provider | Q (new) |
-| `add-card` | Scaffold a new route card | R (new) |
-| `add-indicator` | Scaffold a new domain indicator | R (new) |
-| `onboard-contributor` | First-PR walkthrough (E19) | R (new) |
-
-### 15.3 Agents expansion
-
-| Agent | Expertise | Phase |
-|---|---|---|
-| `api-integrator` | Worker routes, KV, providers | ✅ exists |
-| `card-designer` | Card layout, theme, a11y | ✅ exists |
-| `quality-reviewer` | Lint, coverage, security | ✅ exists |
-| `deploy-ops` | Infrastructure, CF, Docker | ✅ exists |
-| `perf-specialist` | Bundle, INP, LCP, WASM | ✅ exists |
-| `domain-specialist` | Indicators, analytics, purity | ✅ exists |
-| `compat-specialist` | Browser APIs, cross-browser tests | ✅ exists |
-
-### 15.4 Copilot Chat wiring (`.vscode/settings.json`)
-
-Instruction files only influence Copilot if they are registered. The workspace
-binds each surface explicitly:
-
-| Setting | Points at | Why it matters |
-|---|---|---|
-| `chat.instructionsFilesLocations` | `.github/copilot-instructions.md`, `.github/instructions` | Layer rules apply automatically via `applyTo` globs |
-| `chat.promptFilesLocations` | `.github/prompts` | 16 prompts become invocable |
-| `chat.modeFilesLocations` | `.github/agents` | 7 specialist agents become selectable |
-| `testGeneration.instructions` | `tests.instructions.md` | Keeps generated tests in the correct Vitest project |
-| `commitMessageGeneration.instructions` | inline | Matches the commitlint contract |
-| `reviewSelection.instructions` | `copilot-instructions.md` | Reviews enforce layer direction + non-negotiables |
-| `chat.tools.terminal.autoApprove` | read-only gates | Removes approval friction for safe commands |
-
-**Editor performance guardrails** — `files.watcherExclude` (not just
-`files.exclude`) is required, or VS Code keeps a handle per entry across
-`node_modules`, `dist`, `coverage`, and `.wrangler`. Auto-imports from
-`package.json` are disabled and the TS server is given 6 GB.
-
-### 15.5 Recommended VS Code extensions
-
-**Essential for this workspace:**
-
-- `github.copilot-chat` — AI pair programming
-- `dbaeumer.vscode-eslint` — ESLint flat config
-- `biomejs.biome` — Formatting (replaces Prettier)
-- `stylelint.vscode-stylelint` — CSS linting
-- `vitest.explorer` — Test runner UI
-- `ms-playwright.playwright` — E2E test runner
-- `github.vscode-github-actions` — Workflow editing
-- `ms-edgedevtools.vscode-browser-compatibility` — Browser compat
-- `DavidAnson.vscode-markdownlint` — Markdown linting
-- `eamodio.gitlens` — Git history and blame
-- `ryanluker.vscode-coverage-gutters` — Inline coverage from `coverage/lcov.info`
-
-**Remove from recommendations:**
-
-- `esbenp.prettier-vscode` — Replaced by Biome
-
-### 15.6 MCP server configuration
-
-| Server | Transport | Purpose |
-|---|---|---|
-| `github` | HTTP | PR/issue/review workflows |
-| `cloudflare` | HTTP | Account resources and API operations |
-| `cloudflare-docs` | HTTP | Current platform documentation |
-| `cloudflare-observability` | HTTP | Worker logs, errors, production analytics |
-| `playwright` | stdio | Interactive browser inspection, E2E debugging |
-| `crosstide` | stdio | Quotes, indicators, screener, portfolio (E1) |
-
-> Pin MCP packages (no `@latest`) — a floating tag costs a registry round-trip
-> on every server launch.
-
----
-
-## 16. 🚦 Execution Phases
-
-> Phase IDs map to the **Master Tracking Table (§5)**. Detail tables below; run status from §5.
-
-```mermaid
-flowchart LR
-  P["Phase P\nShip It\n(RE-OPENED)"] -->|"exit gate\nE15 live demo"| Q["Phase Q\nData Depth &\nAgent Layer"]
-  Q --> R["Phase R\nPublic Launch"]
-  R --> S["Phase S\nIntelligence"]
-  S --> T["Phase T\nPlatform"]
-
-  style P fill:#3a1010,stroke:#e2665a,color:#fff
-  style Q fill:#1a2a3a,stroke:#22d3ee,color:#fff
-  style R fill:#1a2a3a,stroke:#22d3ee,color:#fff
-  style S fill:#1a2a3a,stroke:#22d3ee,color:#fff
-  style T fill:#1a2a3a,stroke:#22d3ee,color:#fff
+```bash
+npm run typecheck       # tsc plus the service-worker project
+npm run lint:all        # ESLint, Stylelint, HTMLHint, markdownlint, Biome, headers, contrast
+npm run check:api-types # OpenAPI contract drift
+npm run test:coverage   # >=90% stmt/line/fn, >=80% branch
+npm run build:only      # Vite, widget, Workbox injection
+npm run check:bundle    # under 250 KB gzip
+node scripts/arch-check.mjs --strict
+npm audit --omit=dev --audit-level=high
+npm audit signatures
 ```
 
-### Phase P — v12.0.0 "Ship It" (RE-OPENED — Cloudflare deployment blocked)
+Run everything with `npm run ci`.
 
-**Theme:** Deploy to production. Real data flowing. Live demo accessible.
-**Exit gate:** `crosstide.pages.dev` shows live AAPL data to any visitor (E15).
-**Status note:** GitHub Pages is deployed, but the Cloudflare Worker/Pages live-data exit gate is still blocked. The original June 2–16 deadline passed without a verified Cloudflare deployment, so nothing in Q–T starts until the exit gate is green.
+Planned additions: Q10 reachable-graph coverage, Q11 reachability gate, D2
+doc-fact gate.
 
-| # | Task | Priority | Status |
-|---|---|---|---|
-| P1 | Provision CF resources (KV + D1) | P0 | ⬜ |
-| P2 | Replace PLACEHOLDER IDs in wrangler.toml | P0 | ⬜ |
-| P3 | Run D1 migrations | P0 | ⬜ |
-| P4 | Deploy Worker + verify /api/health | P0 | ⬜ |
-| P5 | Deploy Cloudflare Pages to production | P0 | ⬜ |
-| E15 | Live demo URL (exit gate) | P0 | ⬜ |
-| P6 | Verify live quote + chart E2E | P0 | ⬜ |
-| E16 | Docker one-liner validated E2E | P1 | ⬜ |
-| E1 | Wire MCP server to live API | P1 | ⬜ |
-| P8 | GIF demos in README | P1 | ⬜ |
-| P9 | VS Code/GitHub integration cleanup | P1 | ⬜ |
-| P10 | Remove dead code/config/docs | P1 | 🟡 |
+### 12.2 Gate design discipline
 
-**P10 detail:** The domain layer is done — 51 of its 221 modules were unreachable from `src/domain/index.ts` and imported by no card, and are now re-exported behind the `tests/unit/domain/barrel-completeness.test.ts` guard. `src/ui/auto-theme-sync.ts` was imported by nothing and is now wired, which also fixed the app ignoring the OS colour scheme on a first visit. The same audit found 52 further tested-but-unwired modules in `core` (38), `ui` (10) and `cards` (4); a barrel export would not be an honest fix for application infrastructure, so each needs its own wire-or-delete decision — tracked in [#103](https://github.com/RajwanYair/CrossTide/issues/103). Completing the domain barrel also surfaced 12 modules that redeclare a name another module already exports, including two implementations each of Black-Scholes, implied volatility and the Kelly fraction — tracked in [#104](https://github.com/RajwanYair/CrossTide/issues/104).
+Before adding or accepting any gate, answer: **what edit would make this fail?** If
+there is no crisp answer, the gate is decorative. Read a gate's exception list
+before its logic — an allowlist entry naming a _category_ rather than a named file
+is a rule repeal. This project has recorded seven gates that passed without
+checking anything; §5.3 lists three more that are still live.
 
-### Phase Q — v13.0.0 "Data Depth & Agent Layer" (4-6 weeks)
+### 12.3 Security posture
 
-| # | Task | Priority | Status |
-|---|---|---|---|
-| E12 | Alpaca Markets provider (free real-time) | P0 | ⬜ |
-| E11 | Wire WebSocket DO fan-out (real-time) | P0 | ⬜ |
-| E13 | BYOK (user API keys, encrypted D1) | P1 | ⬜ |
-| E2 | Formalize single data layer (OpenAPI contract) | P1 | ✅ |
-| E3 | Agent tool manifest (typed MCP tools) | P1 | ✅ |
+Content Security Policy without `unsafe-inline` or `unsafe-eval` · HSTS preload ·
+Valibot at every boundary · subresource integrity on preloads · KV-backed rate
+limiting · gitleaks and TruffleHog · `npm audit signatures` · Signal DSL evaluated
+without `eval` · WebAuthn passkeys, code-ready but unwired per §3.5 · AES-GCM
+client-side sync encryption.
 
-**E3 detail (done):** `mcp-server/src/tool-manifest.ts` pairs every advertised tool with a Valibot schema and the Worker route it calls. Arguments are parsed at the boundary instead of cast, ticker symbols are constrained before URL interpolation, and only declared fields are forwarded upstream. `tests/unit/mcp/tool-manifest.test.ts` keeps the manifest, the validators and the Worker route table in step — the package previously had no tests.
-
-**E2 detail:** The contract is now enforced. `tests/unit/worker/openapi-drift.test.ts` parses the Hono route table out of `worker/index.ts` and fails when a registered route is undocumented, when the spec describes a route that is not registered, or when its `KNOWN_GAP` backlog goes stale — the list may only shrink. `npm run check:api-types` joined `npm run ci`, so a spec edit that is not reflected in the committed `src/core/api-types.ts` fails the pipeline. 8 of 56 routes were documented before this effort; all 56 are now documented, adding compare, indicators, economic, movers, sector heatmap, news, FRED, crypto search/chart, default OG, dividends, insiders, ETF holdings, regime, anomaly, archive index/detail, Alpaca quote/bars, portfolio analytics, auth/key/sync route docs with explicit security blocks, plus monte-carlo, pairs, factor-model, fundamentals batch, signal-dsl script execution, CSP report sink, WebSocket fan-out, and favicon no-op. `KNOWN_GAP` is now empty and [#105](https://github.com/RajwanYair/CrossTide/issues/105) can be closed.
-| Q3 | Signal DSL fuzz testing | P2 | ✅ |
-| Q4 | Property tests → 50+ total | P1 | ✅ |
-| Q5 | Keyboard navigation audit | P1 | ✅ |
-| Q6 | Wire orphaned `a11y.css`, delete dead `fonts.css` | P1 | ✅ |
-| Q7 | De-duplicate `.md`/`.yml` issue templates | P2 | ✅ |
-
-**Q6 detail (done):** `src/styles/a11y.css` was never referenced by `index.html`, so `.skip-link`, `.sr-only` and `.btn-icon` shipped with no rule behind them — the "Skip to main content" link rendered permanently visible and screen-reader-only text was painted on screen. The file is now linked and `a11y` is declared last in the `@layer` order in `tokens.css`. The blanket 2.75rem target-size rule was narrowed to the SC 2.5.8 floor of 1.5rem on controls only, so inline prose links keep their natural box. `src/styles/fonts.css` was deleted: every `@font-face` in it pointed at `/fonts/*.woff2`, a directory that does not exist, and it was superseded by the `@fontsource-variable/inter` import in `src/main.ts`. The `[data-contrast="aaa"]` palette is now reachable through a settings toggle backed by `src/core/contrast-preference.ts`, restored at boot from `localStorage`. `tests/unit/a11y-audit.test.ts` was rewritten to parse the CSS with `postcss` and assert applied declarations rather than file text, and it now fails if any stylesheet under `src/styles/` is missing from `index.html`.
-
-### Phase R — v14.0.0 "Public Launch" (4-6 weeks)
-
-| # | Task | Priority | Status |
-|---|---|---|---|
-| E17 | SSG top 500 ticker pages (Astro) | P0 | ⬜ |
-| E18 | Discord + CONTRIBUTING + good-first-issue | P0 | 🟡 |
-| E19 | Expand in-repo AI skills for contributors | P1 | ✅ |
-| E4 | Streaming agent responses (SSE) | P1 | ⬜ |
-| E14 | Options chain + IV surface card | P1 | ⬜ |
-| R2 | 3-minute video walkthrough | P1 | ⬜ |
-| R4 | Product Hunt + HN + Reddit launch | P0 | ⬜ |
-
-**E18 detail (partial):** `.github/CONTRIBUTING.md` was refreshed against the gates that actually run — it had told contributors to format with Prettier (the repo uses Biome, which does not touch markdown at all) and listed six gates when `npm run ci` runs ten. It now documents `audit:headers`, `check:contrast`, `check:api-types` and `arch-check`, states the Vitest two-project split that decides whether a new test gets DOM globals, and records the three E2E traps that cost this project real CI time: a bare `waitForLoadState` racing the bootstrap, a hardcoded iteration budget, and locally generated `*-win32.png` baselines that CI never validates. Three issues were labelled `good first issue` and are now linked from the contributing guide: [#105](https://github.com/RajwanYair/CrossTide/issues/105) (now completed), [#104](https://github.com/RajwanYair/CrossTide/issues/104) (12 duplicate-named domain modules) and [#103](https://github.com/RajwanYair/CrossTide/issues/103) (52 orphaned domain modules). _Remaining:_ the Discord server itself has to be created by the repo owner; the invite link is the only outstanding piece.
-
-### Phase S — v15.0.0 "Intelligence" (6-8 weeks)
-
-| # | Task | Priority |
-|---|---|---|
-| E5 | WebLLM: Phi-4-mini via WebGPU (NL → DSL) | P0 |
-| E6 | On-device news/earnings summarization | P1 |
-| E7 | NL chart annotation | P2 |
-| E8 | WASM correlation matrix (Rust) | P0 |
-| E9 | WASM Monte Carlo VaR (Rust) | P1 |
-| E10 | WASM backtest kernel (Rust) | P1 |
-
-### Phase T — v16.0.0 "Platform" (8-12 weeks)
-
-| # | Task | Priority | Status |
-|---|---|---|---|
-| E22 | Plugin sandbox (Worker-isolated) | P0 | ⬜ |
-| E20 | Publish `@crosstide/domain` to npm | P0 | 🟡 |
-| E21 | Embeddable widgets (`<script>` snippet) | P0 | ✅ |
-| E23 | Signal adapters (React, Solid, Svelte) | P1 | ⬜ |
-| T4 | pnpm + Turborepo migration | P2 | ⬜ |
-
-**E20 detail (partial):** `packages/domain/` builds `src/domain` into a single side-effect-free ESM bundle with 688 exports and zero runtime dependencies, verified by importing the built artifact in bare Node. Extracting it surfaced a layer violation that `arch-check` had been configured not to see: `domain->core` and `domain->cards` sat on its `ALLOWED_CROSS_LAYER` allowlist, so three modules in the layer documented as 100% pure were reaching outward — `fundamental-data.ts` called core's `fetchWithTimeout` and read `import.meta.env`, `watchlist-share.ts` imported core's base64 helpers, and `heatmap-drilldown.ts` imported a type from a card. `fundamental-data.ts` moved to `src/providers/` where a Yahoo adapter belongs, `base64-url.ts` moved down into `src/domain/` because it is pure and runtime-agnostic, `ConstituentStock` moved to `src/types/domain.ts`, and both allowlist entries are gone. `tests/unit/domain/package-manifest.test.ts` walks every file in the layer and fails on any relative import that escapes `src/domain` or `src/types`, so the allowlist cannot quietly widen again. `.github/workflows/publish-domain.yml` runs the full gate set, asserts the tarball is dependency-free, and publishes with npm provenance; when the secret is absent it now skips publish cleanly instead of failing the release train red. _Remaining:_ an `NPM_TOKEN` repository secret with publish rights on the `@crosstide` scope.
-
-**E21 detail (done):** `src/ui/widget.ts` was already present and tested, but it was effectively dead code: nothing built it, the usage comment pointed at a fictional CDN URL, and the fetch path targeted `/api/yahoo/chart`, a dev-only proxy route that does not exist in production. `vite.widget.config.ts` now emits a stable `dist/widget.mjs` bundle as part of the normal build, `package.json` exposes that build via `npm run build:widget`, and the chart widget calls the Worker `/api/chart` endpoint with a real `range` attribute instead of hardcoding one timespan. The widget surface now includes `crosstide-quote` (`GET /api/quote/:symbol`) and `crosstide-consensus` (`POST /api/screener`) alongside `crosstide-chart`, with unit coverage in `tests/unit/ui/widget.test.ts` and a host-page Playwright smoke test in `tests/e2e/widget-embed.spec.ts` that runs outside the app shell via `page.setContent`. `README.md` and `docs-site/src/content/docs/widgets.mdx` now both carry copy-paste snippets and attribute docs for all three elements.
+Observability is code-ready but inert until Phase P: GlitchTip source-mapped
+errors, Plausible privacy analytics, Uptime Kuma, and Worker structured logging.
 
 ---
 
-## 17. 🔄 Refactor & Rewrite Backlog
+## 13. 🚫 Non-Negotiables
 
-| # | Refactor | Phase |
-|---|---|---|
-| RF1 | Provision CF resources | P |
-| RF2 | Replace PLACEHOLDER binding IDs | P |
-| RF3 | Update extensions.json (remove Prettier, add Biome) | P |
-| RF4 | Remove debug.log files from .github | P |
-| RF5 | Validate Docker self-hosting E2E | P |
-| RF6 | Add Alpaca provider | Q |
-| RF7 | Establish `wasm-pack` build toolchain + size gate | S |
-| RF8 | Extract Rust/WASM hot-path kernel (correlation, MC, backtest) | S |
-| RF9 | SSG ticker pages | R |
-| RF10 | Extract `@crosstide/domain` to npm | T |
-
----
-
-## 18. 🚧 Risks, Mitigations & Scope Boundaries
-
-### 18.1 Risk matrix
-
-| Risk | Likelihood | Impact | Mitigation |
-|---|---|---|---|
-| Never deploying | HIGH | Fatal | Single blocking milestone (E15); nothing else starts first |
-| No users after launch | High | High | SEO (E17) + widgets (E21) + PH/HN (R4) |
-| Yahoo API breaks | High | High | 5+ failover providers + Alpaca (E12) |
-| Solo burnout | High | High | Plugin SDK (E22) + community (E18) + in-repo skills (E19) |
-| WASM toolchain drag | Medium | Medium | Gated to benchmarked >5× wins only (§4.3); TS fallback mandatory |
-| CF free tier limits | Low | Medium | Hono portable |
-
-### 18.2 Scope boundaries
-
-**CrossTide IS:** Privacy-first financial analysis · 12-method consensus · Offline PWA · MIT · $0/mo · MCP-compatible · Embeddable widgets
-
-**CrossTide IS NOT:** Trading platform · Social network · Robo-advisor · Paid SaaS
+1. **No suppressions.** No `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, or `--force`.
+2. **No deletion to close the stitching gap.** Every module receives WIRE, PUBLISH, PROMOTE, MERGE, or DEFER.
+3. **No `TODO` in code.** Open an issue instead.
+4. **No secrets in source.** Use `.env` or Cloudflare secrets.
+5. **Validate at boundaries.** Every external input passes through Valibot.
+6. **One-way layer imports.** `types` to `domain` to `core` to `providers` to `cards` to `ui`.
+7. **Pure domain.** No DOM, `fetch`, `Date.now()`, or `Math.random()` in `src/domain/`.
+8. **No floating promises.** Use `void asyncFn()` or `await`.
+9. **Bundle discipline.** CI rejects anything over 250 KB gzip; WASM and model assets load lazily and off-thread.
+10. **Tests move with their subject.** A refactor that strands a test is incomplete.
+11. **Documents state verified numbers.** A figure that cannot be reproduced by a command does not belong in a document.
 
 ---
 
-## 19. 🚫 Engineering Non-Negotiables
-
-1. No suppressions (`eslint-disable`, `@ts-ignore`, `--force`)
-2. No dead artifacts (every file/export/dep must be referenced)
-3. No `TODO` in code (open GitHub Issue instead)
-4. No secrets in source (`.env` + CF Secrets only)
-5. Validation at boundaries (sanitize all external input)
-6. Layer imports one-way (`types ← domain ← core ← providers ← cards ← ui`)
-7. Domain stays pure (no DOM, fetch, Date.now(), Math.random())
-8. No floating promises (`void asyncFn()` or `await`)
-9. Ship before perfecting (deployed imperfect > undeployed perfect)
-10. Test before shipping (new logic requires tests)
-
----
-
-## 📈 Appendix: Metric Targets
-
-| Metric | Phase P | Phase Q | Phase R | Phase S | Phase T |
-|---|---|---|---|---|---|
-| Real users | 1+ | 10+ | 100+ | 500+ | 1000+ |
-| GitHub stars | — | — | 100+ | 300+ | 500+ |
-| Bundle (gzip) | < 200 KB | < 200 KB | < 200 KB | < 220 KB | < 250 KB |
-| Uptime | > 99% | > 99.5% | > 99.9% | > 99.9% | > 99.9% |
-| Contributors | 1 | 1-2 | 3-5 | 5-10 | 10+ |
-
----
-
-_Supersedes: ROADMAP v10 (June 2, 2026). Prior: v9 (May 21, 2026), archived at `docs/ROADMAP-v9-archive.md`._
-_Next review: After Phase P deployment (exit gate E15 — live demo URL)._
+_Consolidated Roadmap v12 · 10 August 2026 · Next review at Phase P exit._
