@@ -60,21 +60,28 @@ it in the test.
 
 ## 🔀 Pull Request Process
 
-1. Create a feature branch from `main`
-2. Make changes with clear, atomic commits
-3. Ensure all quality gates pass: `npm run ci`
-4. Update documentation if your change affects public behavior
-5. Submit a PR with a clear description
+1. Start from an existing GitHub Issue, or open one before coding. The issue owns scope,
+  acceptance criteria, discussion, and the final closure record.
+2. Create a feature branch from `main` named after the issue, for example `fix/123-cache-ui`.
+3. Make changes with clear, atomic Conventional Commits. Include `Refs #123` in interim
+  commit bodies when useful for traceability.
+4. Open a PR linked to the issue and include `Closes #123` in the PR body. One cohesive
+  issue should normally map to one PR; split only when the issue explicitly says so.
+5. Ensure all quality gates pass: `npm run ci`, then request review in the PR.
+6. Update the roadmap index only after the issue/PR status changes; do not use it as a
+  substitute for an issue or PR.
 
 ## 🐞 Reporting Issues
 
-Use GitHub Issues. Include:
+Use [GitHub Issues](https://github.com/RajwanYair/CrossTide/issues). Do not create a
+roadmap-only task for work that needs implementation history. Include:
 
 - Steps to reproduce
 - Expected vs actual behavior
 - Browser and OS version
 - Console errors (if any)
 - Screenshots (if applicable)
+- A concise acceptance checklist for feature and refactor requests
 
 ## 📝 Commit Conventions
 

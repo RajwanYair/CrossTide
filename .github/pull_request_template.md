@@ -4,6 +4,13 @@
 
 Brief description of what this PR does and why.
 
+## 🔗 GitHub Issue
+
+Closes #
+
+Issue scope and acceptance criteria must live in the linked GitHub Issue. Use `Refs #N`
+for related issues that this PR does not close.
+
 ## 🏷️ Type of Change
 
 - [ ] Bug fix
@@ -44,6 +51,7 @@ Brief description of what this PR does and why.
 - [ ] CHANGELOG updated under `[Unreleased]`
 - [ ] New public functions have explicit return types
 - [ ] New routes wired in `worker/index.ts` and added to worker API table
+- [ ] Roadmap index updated only if the linked Issue or PR status changed
 
 ---
 

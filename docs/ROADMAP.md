@@ -5,12 +5,15 @@
 > Archived predecessors remain readable at `docs/ROADMAP-v9-archive.md`,
 > `docs/ROADMAP-v8-archive.md`, `docs/ROADMAP-v6-archive.md`.
 
-This is the **single planning document** for CrossTide. Everything previously
-scattered across five roadmap generations, the issue tracker, and the
-`.github/instructions/` learning notes is consolidated here.
+This is a **status index** for CrossTide. GitHub Issues are the source of truth
+for work-item scope, discussion, acceptance criteria, and closure. Pull requests
+are the source of truth for implementation, review, checks, and commit history.
+This file links those records and summarizes their current status; it does not
+replace them.
 
-**This document plans work. It does not perform it.** No code changes are
-implied by merging this file.
+**No roadmap row is executable by itself.** Start work from a GitHub Issue,
+implement it on a branch, and use a pull request that closes the issue. Update
+this index only when the issue or PR state changes.
 
 ---
 
@@ -22,7 +25,7 @@ implied by merging this file.
 4. [Documentation Health Audit](#4--documentation-health-audit)
 5. [Refactor Mandate](#5--refactor-mandate)
 6. [Master Tracking Table](#6--master-tracking-table)
-7. [Phase Execution Plan](#7--phase-execution-plan)
+7. [Phase Execution Index](#7--phase-execution-index)
 8. [Frontend and Card Architecture](#8--frontend-and-card-architecture)
 9. [Backend and Edge Infrastructure](#9--backend-and-edge-infrastructure)
 10. [Data Providers and Ecosystem](#10--data-providers-and-ecosystem)
@@ -414,7 +417,7 @@ unblocked and can proceed immediately.**
 
 ---
 
-## 7. 🚦 Phase Execution Plan
+## 7. 🚦 Phase Execution Index
 
 ```mermaid
 flowchart LR
