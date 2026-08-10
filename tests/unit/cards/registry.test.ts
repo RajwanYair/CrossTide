@@ -61,13 +61,16 @@ vi.mock("../../../src/cards/seasonality-card", () => ({
 vi.mock("../../../src/cards/multi-chart-layout", () => ({
   default: { mount: vi.fn(() => ({})) } satisfies CardModule,
 }));
+vi.mock("../../../src/cards/news-feed-card", () => ({
+  default: { mount: vi.fn(() => ({})) } satisfies CardModule,
+}));
 
 const CTX: CardContext = { route: "watchlist", params: {} };
 
 describe("listCards", () => {
-  it("returns 24 entries covering all routes", () => {
+  it("returns 25 entries covering all routes", () => {
     const cards = listCards();
-    expect(cards).toHaveLength(24);
+    expect(cards).toHaveLength(25);
     const routes = cards.map((c) => c.route);
     expect(routes).toContain("watchlist");
     expect(routes).toContain("consensus");
@@ -90,6 +93,7 @@ describe("listCards", () => {
     expect(routes).toContain("sector-rotation");
     expect(routes).toContain("relative-strength");
     expect(routes).toContain("seasonality");
+    expect(routes).toContain("news-feed");
   });
 
   it("each entry has a title and viewId", () => {
@@ -153,7 +157,7 @@ describe("loadCard", () => {
     await p1;
   });
 
-  it("resolves for all 14 routes", async () => {
+  it("resolves for the initial card routes", async () => {
     const routes = [
       "watchlist",
       "consensus",
@@ -169,6 +173,7 @@ describe("loadCard", () => {
       "consensus-timeline",
       "signal-dsl",
       "multi-chart",
+      "news-feed",
     ] as const;
     await Promise.all(routes.map((r) => loadCard(r)));
   });

@@ -90,7 +90,13 @@ export function renderNewsFeed(container: HTMLElement, items: readonly FeedItem[
   if (items.length === 0) {
     patchDOM(
       container,
-      `<div class="card"><div class="card-body"><p class="empty-state">No news available.</p></div></div>`,
+      `<div class="card">
+        <div class="card-header">
+          <h2>News Feed</h2>
+          <span class="text-secondary">Sentiment-scored headlines</span>
+        </div>
+        <div class="card-body"><p class="empty-state">No news available.</p></div>
+      </div>`,
     );
     return;
   }

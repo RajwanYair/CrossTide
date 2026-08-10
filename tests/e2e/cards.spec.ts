@@ -52,6 +52,7 @@ const CARDS: readonly CardSpec[] = [
   { route: "seasonality", viewId: "view-seasonality" },
   { route: "comparison", viewId: "view-comparison" },
   { route: "rebalance", viewId: "view-rebalance" },
+  { route: "news-feed", viewId: "view-news-feed", heading: /news feed/i },
 ];
 
 /** Symbol conventions the watchlist must accept, one per instrument class. */

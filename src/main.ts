@@ -107,6 +107,7 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   seasonality: "seasonality-container",
   comparison: "comparison-container",
   rebalance: "rebalance-container",
+  "news-feed": "news-feed-container",
 };
 
 async function activateCard(

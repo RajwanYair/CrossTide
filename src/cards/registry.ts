@@ -180,6 +180,12 @@ const REGISTRY: readonly CardEntry[] = [
     viewId: "view-rebalance",
     load: () => import("./rebalance-card").then((m) => m.default),
   },
+  {
+    route: "news-feed",
+    title: "News Feed",
+    viewId: "view-news-feed",
+    load: () => import("./news-feed-card").then((m) => m.default),
+  },
 ];
 
 const cache = new Map<RouteName, Promise<CardModule>>();

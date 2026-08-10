@@ -41,7 +41,8 @@ export type RouteName =
   | "seasonality"
   | "comparison"
   | "strategy-comparison"
-  | "rebalance";
+  | "rebalance"
+  | "news-feed";
 
 export interface RouteInfo {
   readonly name: RouteName;
@@ -77,6 +78,7 @@ const VALID_ROUTES = new Set<RouteName>([
   "comparison",
   "strategy-comparison",
   "rebalance",
+  "news-feed",
 ]);
 
 interface RoutePattern {
@@ -118,6 +120,7 @@ const PATTERNS: readonly RoutePattern[] = [
   { name: "seasonality", segments: ["seasonality"] },
   { name: "seasonality", segments: ["seasonality", ":symbol"] },
   { name: "rebalance", segments: ["rebalance"] },
+  { name: "news-feed", segments: ["news-feed"] },
 ];
 
 const listeners: RouteChangeHandler[] = [];
