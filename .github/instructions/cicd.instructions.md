@@ -13,23 +13,16 @@ description: "Use when: editing CI/CD workflows, GitHub Actions, or any YAML con
 - Set `permissions: contents: read` as default (least privilege); elevate per-job only when needed.
 - All npm installs in CI use `npm ci` (deterministic lock-file). Never `npm install` in workflows.
 - Bundle size violations must `exit 1` — never use `::warning::` for budget failures.
-- Deploy via Cloudflare Pages on push to `main` (`deploy.yml`).
-- Worker deploy via `deploy-worker.yml` when `worker/**` changes.
+- Deploy the app through `cf-pages.yml`; it publishes to Cloudflare Pages when the
+  required credentials are available.
+- Publish the standalone domain package through `publish-domain.yml` on version tags.
 - Single quality gate: `ci.yml` covers typecheck, lint, tests, security, build. Do not create secondary CI files.
 
 ## 🗺️ Workflow Map
 
-| Workflow                    | Purpose                                                       | Trigger                               |
-| --------------------------- | ------------------------------------------------------------- | ------------------------------------- |
-| `ci.yml`                    | Typecheck, lint, format, tests, security, build, bundle check | push, pull_request, manual            |
-| `deploy.yml`                | Build and publish Cloudflare Pages artifact                   | push to `main`, manual                |
-| `deploy-worker.yml`         | Deploy Cloudflare Worker via wrangler                         | `worker/**` changes on `main`, manual |
-| `release.yml`               | Build tagged release, generate GitHub Release notes           | tag push `vX.Y.Z`                     |
-| `auto-label.yml`            | Label PRs and issues by type                                  | GitHub PR / issue events              |
-| `dependabot-auto-merge.yml` | Auto-merge patch-level Dependabot PRs after CI green          | Dependabot PR events                  |
-| `copilot-setup-steps.yml`   | Copilot Coding Agent environment setup                        | GitHub Copilot agent invocations      |
-
-Keep `.github/workflows/README.md` aligned with any workflow additions or deletions.
+The canonical map of every workflow on disk is
+`.github/workflows/README.md`. Keep it aligned with any workflow additions,
+deletions, or renames.
 
 ## 🤖 Copilot Code Review
 

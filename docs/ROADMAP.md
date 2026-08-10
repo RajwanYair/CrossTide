@@ -368,7 +368,7 @@ that cannot observe what it claims to observe.
 | C2 | CI | Eliminate `npx` for declared devDependencies | P | P0 | S | — | ✅ |
 | C3 | CI | Rename the mislabelled Prettier step | P | P2 | S | — | ✅ |
 | C4 | CI | Resolve the `continue-on-error` scanners | P | P1 | S | — | ✅ |
-| C5 | CI | Reconcile the workflow map with disk | P | P1 | S | — | ⬜ |
+| C5 | CI | Reconcile the workflow map with disk | P | P1 | S | — | ✅ |
 | C6 | CI | Single documented rule for config file placement | Q | P2 | S | — | ⬜ |
 | R1 | Refactor | Sub-directory taxonomy for domain, core, and ui | Q | P0 | L | — | ⬜ |
 | P10a | Stitch | Disposition record for all 319 unreachable modules | Q | P0 | M | R1 | 🟡 |
