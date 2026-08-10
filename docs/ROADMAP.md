@@ -372,7 +372,7 @@ that cannot observe what it claims to observe.
 | C6 | CI | Single documented rule for config file placement | Q | P2 | S | — | ✅ |
 | R1 | Refactor | Sub-directory taxonomy for domain, core, and ui | Q | P0 | L | — | ⬜ |
 | P10a | Stitch | Disposition record for all 319 unreachable modules | Q | P0 | M | R1 | ✅ |
-| P10b | Stitch | Wire core hard orphans: watchlist, session, diagnostics | Q | P0 | L | P10a | ⬜ |
+| P10b | Stitch | Wire core hard orphans: watchlist, session, diagnostics | Q | P0 | L | P10a | ✅ |
 | P10c | Stitch | Wire ui hard orphans and decide the `<ct-*>` component fate | Q | P0 | M | P10a | ⬜ |
 | P10d | Stitch | Register `news-feed-card`, promote portfolio orphans | Q | P1 | M | P10a | 🟡 |
 | P10e | Stitch | Merge the 12 duplicate-named domain modules | Q | P1 | M | R1 | ⬜ |

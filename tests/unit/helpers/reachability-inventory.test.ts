@@ -20,15 +20,14 @@ describe("buildInventory", () => {
     expect(inventory.modules.find((module) => module.path === "src/main.ts")?.reachable).toBe(true);
   });
 
-  it("keeps hard orphans visible with an actionable disposition", () => {
+  it("tracks the watchlist store as reachable application state", () => {
     const inventory = buildInventory();
     const watchlistStore = inventory.modules.find(
       (module) => module.path === "src/core/watchlist-store.ts",
     );
 
-    expect(watchlistStore?.category).toBe("HARD_ORPHAN");
-    expect(watchlistStore?.disposition).toBe("WIRE");
-    expect(watchlistStore?.importers).toEqual([]);
+    expect(watchlistStore?.category).toBe("REACHABLE");
+    expect(watchlistStore?.reachable).toBe(true);
   });
 
   it("classifies domain modules as publishable instead of deleting them", () => {

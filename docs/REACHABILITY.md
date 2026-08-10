@@ -4,9 +4,9 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 517
-- Reachable modules: 200
-- Unreachable modules: 317
-- Hard orphans: 62
+- Reachable modules: 208
+- Unreachable modules: 309
+- Hard orphans: 55
 - Barrel-only modules: 239
 
 | Module | Category | Importers | Disposition |
@@ -23,7 +23,6 @@
 | `src/core/background-fetch.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/binary-search.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/cache-manager.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/cache-stats.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/cache.ts` | UNREACHABLE | src/core/cache-manager.ts<br>src/core/index.ts | PUBLISH |
 | `src/core/chunk-array.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/compress.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
@@ -59,7 +58,6 @@
 | `src/core/opfs-storage.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/optimistic.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/passkey.ts` | UNREACHABLE | src/core/index.ts<br>src/core/route-guards.ts | PUBLISH |
-| `src/core/perf-metrics.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/pick-omit.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/plugin-api.ts` | UNREACHABLE | src/core/plugin-api.ts | PUBLISH |
 | `src/core/plugin-contracts.ts` | HARD_ORPHAN | - | WIRE |
@@ -80,12 +78,10 @@
 | `src/core/screener-worker.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/search-history.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/seedrandom.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/session-state.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/shortcut-customization.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/speculation-rules.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/sri.ts` | UNREACHABLE | src/core/index.ts<br>src/core/plugin-integrity.ts | PUBLISH |
 | `src/core/storage-manager.ts` | UNREACHABLE | src/core/storage-manager.ts | PUBLISH |
-| `src/core/store.ts` | UNREACHABLE | src/core/portfolio-store.ts<br>src/core/watchlist-store.ts | PUBLISH |
 | `src/core/sync-queue.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/tauri-bridge.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/throttle-debounce.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
@@ -101,10 +97,6 @@
 | `src/core/url-builder.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/url-state.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/uuid.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/watchlist-export.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/watchlist-history.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/watchlist-import.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/watchlist-store.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/webauthn.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/ws-fanout.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/xlsx-export.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |

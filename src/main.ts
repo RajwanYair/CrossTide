@@ -64,6 +64,13 @@ import {
 } from "./ui/palette-switcher";
 import { exportFullDataJson, exportFullDataCsv } from "./core/data-export";
 import { downloadFile, downloadCompressedFile } from "./core/export-import";
+import { exportWatchlist } from "./core/watchlist-export";
+import { parseTickersFromText } from "./core/watchlist-import";
+import { recordAdd, recordRemove } from "./core/watchlist-history";
+import { restoreSessionState, saveSessionState } from "./core/session-state";
+import { watchlistStore } from "./core/watchlist-store";
+import { estimateLocalStorageUsage, updateStorageSize } from "./core/cache-stats";
+import { initPerfObserver } from "./core/perf-metrics";
 import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initOfflineIndicator } from "./ui/offline-indicator";
@@ -149,6 +156,10 @@ function main(): void {
   let config = loadConfig();
   let tickerDataCache = new Map<string, TickerData>();
   let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  const savedSession = restoreSessionState();
+  if (savedSession?.selectedTicker) selectedTickerStore.set(savedSession.selectedTicker);
+  for (const entry of config.watchlist) watchlistStore.actions.addTicker(entry.ticker);
+  const stopPerfObserver = initPerfObserver();
 
   // H3: eager-prefetch card chunks on hover/focus intent.
   initCardPrefetchOnIntent();
@@ -254,6 +265,7 @@ function main(): void {
 
     tickerDataCache = results;
     tickerDataStore.set(results);
+    updateStorageSize(estimateLocalStorageUsage().bytes + JSON.stringify(results).length * 2);
 
     // G19: Persist company names returned by the data service into WatchlistEntry.
     // Build a map of ticker → name from successful fetches only.
@@ -387,12 +399,18 @@ function main(): void {
   let currentRoute: RouteName = "watchlist";
   onRouteChange((route, info) => {
     currentRoute = route;
+    saveSessionState({
+      route,
+      selectedTicker: selectedTickerStore.peek() ?? "",
+      scrollY: window.scrollY,
+    });
     void activateCard(route, info?.params ?? {});
     // A17: track route navigation as a pageview
     getTelemetry()?.pageview(window.location.pathname);
   });
 
   initRouter();
+  window.addEventListener("pagehide", stopPerfObserver, { once: true });
   initOfflineIndicator();
   initCardCollapse();
   initDashboardStats();
@@ -474,6 +492,8 @@ function main(): void {
       return;
     }
     config = addTicker(config, t);
+    watchlistStore.actions.addTicker(t);
+    recordAdd(t);
     saveAndBroadcast(config);
     refreshWatchlist(config, new Map());
     showToast({ message: `Added ${t} — fetching data…`, type: "success" });
@@ -518,6 +538,8 @@ function main(): void {
       const ticker = target.dataset["ticker"];
       if (ticker) {
         config = removeTicker(config, ticker);
+        watchlistStore.actions.removeTicker(ticker);
+        recordRemove(ticker);
         saveAndBroadcast(config);
         refreshWatchlist(config, new Map());
         showToast({ message: `Removed ${ticker}`, type: "info" });
@@ -623,7 +645,11 @@ function main(): void {
 
   // Export watchlist
   document.getElementById("btn-export")?.addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(config.watchlist, null, 2)], {
+    const content = exportWatchlist(
+      config.watchlist.map((entry) => ({ ticker: entry.ticker })),
+      "json",
+    );
+    const blob = new Blob([content], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -646,13 +672,26 @@ function main(): void {
       const reader = new FileReader();
       reader.addEventListener("load", () => {
         try {
-          const parsed = JSON.parse(String(reader.result));
-          if (!Array.isArray(parsed)) throw new Error("Expected an array");
+          const rawText = String(reader.result);
+          let parsed: unknown[];
+          try {
+            const decoded: unknown = JSON.parse(rawText);
+            if (!Array.isArray(decoded)) throw new Error("Expected an array");
+            parsed = decoded;
+          } catch {
+            parsed = parseTickersFromText(rawText);
+          }
           const cleaned: { ticker: string; addedAt: string }[] = [];
           const now = new Date().toISOString();
           for (const raw of parsed) {
             const ticker =
-              typeof raw === "string" ? raw : typeof raw?.ticker === "string" ? raw.ticker : null;
+              typeof raw === "string"
+                ? raw
+                : typeof raw === "object" && raw !== null && "ticker" in raw
+                  ? typeof raw.ticker === "string"
+                    ? raw.ticker
+                    : null
+                  : null;
             if (ticker && /^[A-Z][A-Z0-9.-]{0,9}$/.test(ticker.toUpperCase())) {
               cleaned.push({ ticker: ticker.toUpperCase(), addedAt: now });
             }
@@ -667,6 +706,8 @@ function main(): void {
           for (const e of cleaned) {
             if (!seen.has(e.ticker)) {
               merged.push(e);
+              watchlistStore.actions.addTicker(e.ticker);
+              recordAdd(e.ticker);
               seen.add(e.ticker);
               added++;
             }
