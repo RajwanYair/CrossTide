@@ -4,9 +4,9 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 517
-- Reachable modules: 216
-- Unreachable modules: 301
-- Hard orphans: 47
+- Reachable modules: 219
+- Unreachable modules: 298
+- Hard orphans: 44
 - Barrel-only modules: 239
 
 | Module | Category | Importers | Disposition |
@@ -49,7 +49,6 @@
 | `src/core/multi-chart-sync.ts` | UNREACHABLE | src/core/multi-timeframe-panel.ts | PUBLISH |
 | `src/core/multi-timeframe-panel.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/navigation-api.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/net-worth.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/notification-prefs.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/og-image.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/once-memoize.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
@@ -61,7 +60,6 @@
 | `src/core/plugin-contracts.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/plugin-integrity.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/portfolio-store.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/price-targets.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/promise-pool.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/provider-usage.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/public-api.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
@@ -90,7 +88,6 @@
 | `src/core/tier-policy.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/timezone.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/token-bucket.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/trade-journal.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/transferable-ohlc.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/url-builder.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/url-state.ts` | HARD_ORPHAN | - | WIRE |

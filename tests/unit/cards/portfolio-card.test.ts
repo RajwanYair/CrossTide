@@ -6,6 +6,9 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { Holding } from "../../../src/domain/portfolio-analytics";
+import { clearAllTargets } from "../../../src/core/price-targets";
+import { clearHistory } from "../../../src/core/net-worth";
+import { clearJournal } from "../../../src/core/trade-journal";
 
 // Mock portfolio-store so tests don't need IDB
 vi.mock("../../../src/cards/portfolio-store", () => ({
@@ -21,6 +24,9 @@ describe("portfolio-card (CardModule)", () => {
   });
 
   afterEach(() => {
+    clearAllTargets();
+    clearHistory();
+    clearJournal();
     document.body.removeChild(container);
     vi.clearAllMocks();
   });
@@ -113,5 +119,13 @@ describe("portfolio-card (CardModule)", () => {
     portfolioCard.mount(container, { route: "portfolio", params: {} });
     expect(container.textContent).toContain("Projected Annual Income");
     expect(container.textContent).toContain("$0.00");
+  });
+
+  it("shows portfolio tracking summaries", async () => {
+    const { default: portfolioCard } = await import("../../../src/cards/portfolio-card");
+    portfolioCard.mount(container, { route: "portfolio", params: {} });
+    expect(container.textContent).toContain("Net Worth Snapshots");
+    expect(container.textContent).toContain("Journal Trades");
+    expect(container.textContent).toContain("Price Targets");
   });
 });

@@ -17,6 +17,9 @@ import {
 } from "../domain/portfolio-benchmark";
 import { loadHoldings } from "./portfolio-store";
 import { computePortfolioSummary } from "./portfolio";
+import { getSummary as getNetWorthSummary } from "../core/net-worth";
+import { getJournal } from "../core/trade-journal";
+import { checkAllTargets, getAllTargets, getHitTargets } from "../core/price-targets";
 import type { CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
 
@@ -67,6 +70,13 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
       currentPrice: holding.currentPrice,
     })),
   );
+  const netWorthSummary = getNetWorthSummary();
+  const journalCount = getJournal().length;
+  const targetProgress = checkAllTargets(
+    new Map(holdings.map((holding) => [holding.ticker, holding.currentPrice])),
+  );
+  const targetCount = getAllTargets().length;
+  const hitTargetCount = getHitTargets(targetProgress).length;
 
   const totalPnl = metrics.reduce((s, m) => s + m.unrealizedPnl, 0);
   const totalCost = holdings.reduce((s, h) => s + h.quantity * h.avgCost, 0);
@@ -115,6 +125,18 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
         <div class="portfolio-summary-stat">
           <span class="stat-label">Projected Annual Income</span>
           <span class="stat-value">${fmtCurrency(incomeSummary.projectedAnnualIncome)}</span>
+        </div>
+        <div class="portfolio-summary-stat">
+          <span class="stat-label">Net Worth Snapshots</span>
+          <span class="stat-value">${netWorthSummary.entryCount}</span>
+        </div>
+        <div class="portfolio-summary-stat">
+          <span class="stat-label">Journal Trades</span>
+          <span class="stat-value">${journalCount}</span>
+        </div>
+        <div class="portfolio-summary-stat">
+          <span class="stat-label">Price Targets</span>
+          <span class="stat-value">${hitTargetCount}/${targetCount} hit</span>
         </div>
       </div>
 
