@@ -1,7 +1,7 @@
 # 📊 CrossTide Indicator Reference
 
-> Auto-generated from `src/domain/` JSDoc on 2026-07-26.
-> 216 modules | 672 exported functions | 352 interfaces
+> Auto-generated from `src/domain/` JSDoc.
+> 217 modules | 677 exported functions | 353 interfaces
 
 ## 📋 Summary Table
 
@@ -9,7 +9,7 @@
 | --- | --- | --- | --- |
 | [`Ad Line`](#ad-line) | Volume Indicators | 1 | Accumulation/Distribution Line (Marc Chaikin). Cumulative volume-weighted mon… |
 | [`Adaptive Rsi`](#adaptive-rsi) | Trend Indicators | 1 | Adaptive RSI — RSI with a dynamically adjusted lookback period based on price… |
-| [`Adx Calculator`](#adx-calculator) | Trend Indicators | 2 | ADX (Average Directional Index) — Pure domain logic. Ported from Dart: lib/sr… |
+| [`Adx Calculator`](#adx-calculator) | Other | 2 | ADX (Average Directional Index) — Pure domain logic. Ported from Dart: lib/sr… |
 | [`Adx Method`](#adx-method) | Signal Methods | 1 | ADX Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/adx… |
 | [`Alert Proximity`](#alert-proximity) | Alerts | 5 | Price alert proximity check — determine how close current prices are to confi… |
 | [`Alert State Machine`](#alert-state-machine) | Alerts | 3 | Alert State Machine — Pure domain logic. Ported from Dart: lib/src/domain/ent… |
@@ -20,9 +20,10 @@
 | [`Atr Trailing Stop`](#atr-trailing-stop) | Volatility Indicators | 5 | ATR trailing stop — dynamic stop-loss levels based on Average True Range for … |
 | [`Autocorrelation`](#autocorrelation) | Statistical Analysis | 6 | Autocorrelation — serial correlation analysis for price returns. Detects mome… |
 | [`Awesome Oscillator`](#awesome-oscillator) | Oscillators & Momentum | 1 | Awesome Oscillator (Bill Williams): AO = SMA(median, fast=5) - SMA(median, sl… |
-| [`Backtest Engine`](#backtest-engine) | Backtesting | 2 | Backtest Engine — run method signals against historical candles.  Pure domain… |
+| [`Backtest Engine`](#backtest-engine) | Backtesting | 2 | Backtest Engine — run method signals against historical candles. |
 | [`Backtest Metrics`](#backtest-metrics) | Backtesting | 8 | Backtest performance metrics. Pure module that converts an equity curve plus … |
-| [`Bar Replay`](#bar-replay) | Other | 1 | Bar Replay — step through historical OHLCV candles with play/pause/speed/seek… |
+| [`Bar Replay`](#bar-replay) | Other | 1 | Bar Replay — step through historical OHLCV candles with play/pause/speed/seek. |
+| [`Base64 Url`](#base64-url) | Other | 4 | URL-safe Base64 encoding/decoding (RFC 4648 §5). Replaces `+` with `-`, `/` w… |
 | [`Benchmark`](#benchmark) | Other | 3 | Benchmark comparison helpers — compute the normalized "performance vs benchma… |
 | [`Black Scholes`](#black-scholes) | Other | 4 | Black-Scholes option pricing model and Greeks. Pure math — no options chain d… |
 | [`Bollinger Calculator`](#bollinger-calculator) | Volatility Indicators | 2 | Bollinger Bands Calculator — Pure domain logic. Ported from Dart: lib/src/dom… |
@@ -39,14 +40,14 @@
 | [`Chart Comparison`](#chart-comparison) | Chart Types | 2 | Chart comparison — normalizes multiple ticker candle series to percentage cha… |
 | [`Choppiness Index`](#choppiness-index) | Trend Indicators | 1 | Choppiness Index. E.W. Dreiss's measure of whether the market is trending (lo… |
 | [`Cointegration`](#cointegration) | Statistical Analysis | 5 | Cointegration test — Engle-Granger two-step method for pairs trading. Tests w… |
-| [`Commission`](#commission) | Backtesting | 4 | Commission & slippage model for backtesting.  Supports fixed per-trade fees, … |
+| [`Commission`](#commission) | Backtesting | 4 | Commission & slippage model for backtesting. |
 | [`Connors Rsi`](#connors-rsi) | Other | 1 | Connors RSI (Larry Connors). Composite of three components: 1. RSI(close, rsi… |
 | [`Consensus Engine`](#consensus-engine) | Signal Methods | 1 | Consensus Engine — Pure domain logic. Ported from Dart: lib/src/domain/consen… |
 | [`Coppock Curve`](#coppock-curve) | Oscillators & Momentum | 1 | Coppock Curve (Edwin Coppock, 1962). Long-term momentum: coppock = WMA( ROC(c… |
 | [`Copula`](#copula) | Statistical Analysis | 6 | Copula dependence — models joint tail dependence between assets. Supports Cla… |
-| [`Corp Actions`](#corp-actions) | Volume Indicators | 4 | Corporate Action Adjustment — pure functions for adjusting OHLCV data for sto… |
+| [`Corp Actions`](#corp-actions) | Other | 4 | Corporate Action Adjustment — pure functions for adjusting OHLCV data for sto… |
 | [`Correlation Check`](#correlation-check) | Statistical Analysis | 4 | Ticker correlation quick-check — compute Pearson correlation coefficient betw… |
-| [`Correlation Heatmap`](#correlation-heatmap) | Statistical Analysis | 3 | Correlation Heatmap render-data helpers (G22).  Pure functions that transform… |
+| [`Correlation Heatmap`](#correlation-heatmap) | Statistical Analysis | 3 | Correlation Heatmap render-data helpers (G22). |
 | [`Correlation Matrix`](#correlation-matrix) | Statistical Analysis | 2 | Pearson correlation between aligned numeric series. Produces a symmetric N×N … |
 | [`Correlation Scanner`](#correlation-scanner) | Statistical Analysis | 1 | Correlation scanner — scan multiple assets to find highest/lowest correlated … |
 | [`Cross Up Detector`](#cross-up-detector) | Other | 1 | Cross-Up Detector — Pure domain logic. Ported from Dart: lib/src/domain/cross… |
@@ -63,11 +64,11 @@
 | [`Dpo`](#dpo) | Oscillators & Momentum | 1 | Detrended Price Oscillator (DPO). Removes the trend by subtracting a displace… |
 | [`Drawdown Analyzer`](#drawdown-analyzer) | Other | 5 | Drawdown analyzer — compute peak-to-trough drawdowns from an equity curve or … |
 | [`Drawdown Recovery`](#drawdown-recovery) | Other | 2 | Drawdown recovery analysis — estimate recovery patterns, speeds, and probabil… |
-| [`Earnings Calendar`](#earnings-calendar) | Other | 5 | Earnings Calendar domain — pure types and transforms (H18).  This module prov… |
+| [`Earnings Calendar`](#earnings-calendar) | Other | 5 | Earnings Calendar domain — pure types and transforms (H18). |
 | [`Earnings Surprise`](#earnings-surprise) | Oscillators & Momentum | 8 | Earnings surprise tracker — record and analyze actual vs estimated EPS for po… |
 | [`Ease Of Movement`](#ease-of-movement) | Volume Indicators | 1 | Richard Arms' Ease of Movement (EOM, EMV). Highlights how easily price moves … |
-| [`Economic Calendar`](#economic-calendar) | Other | 12 | Economic calendar domain helpers (I10).  Parse, classify and filter macro-eco… |
-| [`Efficiency Ratio`](#efficiency-ratio) | Trend Indicators | 1 | Kaufman Efficiency Ratio (ER) — measures how efficiently price moves in a giv… |
+| [`Economic Calendar`](#economic-calendar) | Other | 12 | Economic calendar domain helpers (I10). |
+| [`Efficiency Ratio`](#efficiency-ratio) | Other | 1 | Kaufman Efficiency Ratio (ER) — measures how efficiently price moves in a giv… |
 | [`Efficient Frontier`](#efficient-frontier) | Other | 5 | Efficient frontier — Markowitz mean-variance portfolio optimization. Finds op… |
 | [`Elder Impulse`](#elder-impulse) | Other | 1 | Elder Impulse System (Alexander Elder, "Come Into My Trading Room"). Combines… |
 | [`Elder Ray`](#elder-ray) | Other | 1 | Elder Ray (Alexander Elder, 1989). Measures bull/bear pressure relative to an… |
@@ -75,7 +76,7 @@
 | [`Entropy`](#entropy) | Other | 6 | Entropy analysis — measures disorder/randomness in time series. Higher entrop… |
 | [`Envelope`](#envelope) | Trend Indicators | 1 | Moving Average Envelope. Symmetric upper/lower bands at a fixed percentage ab… |
 | [`Equity Curve`](#equity-curve) | Other | 3 | Build an equity curve from a list of closed trades, optionally compounding on… |
-| [`Etf Drilldown`](#etf-drilldown) | Other | 5 | ETF Constituent Drilldown domain (G18).  Provides domain logic for drilling d… |
+| [`Etf Drilldown`](#etf-drilldown) | Other | 5 | ETF Constituent Drilldown domain (G18). |
 | [`Factor Model`](#factor-model) | Other | 3 | Fama-French factor model — multi-factor attribution for portfolio returns. 3-… |
 | [`Fibonacci`](#fibonacci) | Other | 5 | Fibonacci retracement & extension calculator — compute key Fibonacci levels f… |
 | [`Fisher Transform`](#fisher-transform) | Other | 1 | Fisher Transform (John Ehlers, 2002). Applied to the median price, normalised… |
@@ -83,13 +84,12 @@
 | [`Fourier Cycles`](#fourier-cycles) | Other | 5 | Fourier cycle analysis — Discrete Fourier Transform for detecting dominant cy… |
 | [`Fractal Dimension`](#fractal-dimension) | Trend Indicators | 4 | Fractal dimension — measures market complexity and roughness. Higher fractal … |
 | [`Fractals`](#fractals) | Other | 1 | Bill Williams Fractals. A bullish fractal forms at index `i` when the low at … |
-| [`Fundamental Data`](#fundamental-data) | Other | 2 | Fundamental Data — fetches P/E, EPS, Revenue, Market Cap from Yahoo quoteSumm… |
 | [`Gap Scanner`](#gap-scanner) | Other | 8 | Gap detection scanner — identify price gaps (open vs prev close) for gap-fill… |
 | [`Garch`](#garch) | Volatility Indicators | 4 | GARCH(1,1) volatility model — Generalized Autoregressive Conditional Heterosk… |
 | [`Garman Klass`](#garman-klass) | Volatility Indicators | 6 | Garman-Klass and related intraday volatility estimators. More efficient than … |
 | [`Granger Causality`](#granger-causality) | Other | 3 | Granger causality — test whether one time series helps predict another. Uses … |
 | [`Hawkes Process`](#hawkes-process) | Volatility Indicators | 3 | Hawkes process — self-exciting point process for event clustering. Models how… |
-| [`Heatmap Drilldown`](#heatmap-drilldown) | Other | 6 | Heatmap Sector Drill-down domain helpers (G21).  When the user clicks a secto… |
+| [`Heatmap Drilldown`](#heatmap-drilldown) | Other | 6 | Heatmap Sector Drill-down domain helpers (G21). |
 | [`Heikin Ashi`](#heikin-ashi) | Other | 1 | Heikin-Ashi candle transform. Smooths price action by replacing each OHLC bar… |
 | [`Hull Ma`](#hull-ma) | Trend Indicators | 1 | Hull Moving Average — Alan Hull (2005). Smooth + responsive: HMA(n) = WMA( 2*… |
 | [`Hurst Exponent`](#hurst-exponent) | Trend Indicators | 3 | Hurst exponent — measure whether a time series is trending, mean-reverting, o… |
@@ -100,7 +100,7 @@
 | [`Insider Transactions`](#insider-transactions) | Other | 1 | Insider Transactions Analysis — pure functions to analyze insider buying/sell… |
 | [`Intraday Range`](#intraday-range) | Other | 7 | Intraday high/low distance — calculate how far the current price is from the … |
 | [`Jump Diffusion`](#jump-diffusion) | Other | 3 | Merton Jump Diffusion model — extends geometric Brownian motion with Poisson … |
-| [`Kagi`](#kagi) | Chart Types | 2 | Kagi chart computation — Q26.  Converts a price series into Kagi lines that c… |
+| [`Kagi`](#kagi) | Chart Types | 2 | Kagi chart computation — Q26. |
 | [`Kalman Filter`](#kalman-filter) | Trend Indicators | 5 | Kalman filter — adaptive price smoothing and trend estimation. Provides optim… |
 | [`Kama`](#kama) | Trend Indicators | 1 | Perry Kaufman's Adaptive Moving Average (KAMA). Reacts faster when trend is s… |
 | [`Kelly Criterion`](#kelly-criterion) | Other | 4 | Kelly criterion calculator — determine optimal position sizing based on win r… |
@@ -113,16 +113,16 @@
 | [`Ma Ribbon`](#ma-ribbon) | Trend Indicators | 3 | Moving average ribbon — compute multiple MAs (5,10,20,50,100,200) with spread… |
 | [`Macd Calculator`](#macd-calculator) | Other | 1 | MACD Calculator — Pure domain logic. Ported from Dart: lib/src/domain/macd_ca… |
 | [`Macd Method`](#macd-method) | Signal Methods | 1 | MACD Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/ma… |
-| [`Macro Dashboard`](#macro-dashboard) | Other | 6 | Macro Dashboard domain — pure regime classification and formatters (H19).  Pr… |
-| [`Market Breadth`](#market-breadth) | Trend Indicators | 2 | Market Breadth domain — pure computation layer (G23).  Aggregates signal-leve… |
-| [`Market Hours`](#market-hours) | Other | 6 | Market-hours detection for WebSocket connection gating (R24).  Determines whe… |
+| [`Macro Dashboard`](#macro-dashboard) | Other | 6 | Macro Dashboard domain — pure regime classification and formatters (H19). |
+| [`Market Breadth`](#market-breadth) | Other | 2 | Market Breadth domain — pure computation layer (G23). |
+| [`Market Hours`](#market-hours) | Other | 6 | Market-hours detection for WebSocket connection gating (R24). |
 | [`Market Impact`](#market-impact) | Other | 3 | Market impact model (Almgren-Chriss) — optimal execution with price impact. E… |
-| [`Market Regime`](#market-regime) | Trend Indicators | 10 | Market regime detection (I9).  Rule-based macro-regime classifier that labels… |
+| [`Market Regime`](#market-regime) | Other | 10 | Market regime detection (I9). |
 | [`Markov Chain`](#markov-chain) | Volatility Indicators | 6 | Markov chain model — state transition probability matrices for market regimes… |
 | [`Mass Index`](#mass-index) | Trend Indicators | 1 | Mass Index (Donald Dorsey, 1990s). Identifies trend reversals from range expa… |
-| [`Max Diversification`](#max-diversification) | Volatility Indicators | 1 | Maximum Diversification Portfolio — weights that maximize the diversification… |
+| [`Max Diversification`](#max-diversification) | Other | 1 | Maximum Diversification Portfolio — weights that maximize the diversification… |
 | [`Mean Reversion`](#mean-reversion) | Trend Indicators | 6 | Mean reversion scanner — identify assets that are far from their moving avera… |
-| [`Mfe Mae`](#mfe-mae) | Other | 1 | MFE/MAE Analysis — Max Favorable Excursion / Max Adverse Excursion.  For each… |
+| [`Mfe Mae`](#mfe-mae) | Other | 1 | MFE/MAE Analysis — Max Favorable Excursion / Max Adverse Excursion. |
 | [`Mfi Calculator`](#mfi-calculator) | Volume Indicators | 2 | MFI (Money Flow Index) — Pure domain logic. Ported from Dart: lib/src/domain/… |
 | [`Mfi Method`](#mfi-method) | Signal Methods | 1 | MFI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/mfi… |
 | [`Micho Method`](#micho-method) | Signal Methods | 1 | Micho Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/m… |
@@ -131,24 +131,24 @@
 | [`Monte Carlo`](#monte-carlo) | Other | 2 | Monte Carlo simulation — generate random portfolio outcome scenarios using hi… |
 | [`Mtf Confluence`](#mtf-confluence) | Other | 1 | Multi-Timeframe Confluence — evaluates signals across daily, weekly, and mont… |
 | [`Multi Timeframe`](#multi-timeframe) | Trend Indicators | 5 | Multi-timeframe trend — consolidate trend signals across daily, weekly, and m… |
-| [`Name Enrichment`](#name-enrichment) | Other | 5 | Company name enrichment helpers (G19).  Finance data providers return noisy, … |
-| [`News Digest`](#news-digest) | Other | 11 | News digest domain helpers (I11).  Parse RSS/Atom feeds, extract ticker menti… |
+| [`Name Enrichment`](#name-enrichment) | Other | 5 | Company name enrichment helpers (G19). |
+| [`News Digest`](#news-digest) | Other | 11 | News digest domain helpers (I11). |
 | [`Obv Calculator`](#obv-calculator) | Volume Indicators | 2 | OBV (On-Balance Volume) — Pure domain logic. Ported from Dart: lib/src/domain… |
 | [`Obv Method`](#obv-method) | Signal Methods | 1 | OBV Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/obv… |
-| [`Omega Ratio`](#omega-ratio) | Other | 2 | Omega Ratio — probability-weighted ratio of gains vs losses.  Unlike Sharpe/S… |
+| [`Omega Ratio`](#omega-ratio) | Other | 2 | Omega Ratio — probability-weighted ratio of gains vs losses. |
 | [`Optimal Turnover`](#optimal-turnover) | Other | 4 | Optimal portfolio turnover — transaction cost-aware rebalancing. Finds the cl… |
 | [`Order Flow`](#order-flow) | Volume Indicators | 5 | Order flow imbalance — buy/sell pressure from tick-level trade classification… |
 | [`Ornstein Uhlenbeck`](#ornstein-uhlenbeck) | Volatility Indicators | 4 | Ornstein-Uhlenbeck (OU) process — mean-reversion parameter estimation. Models… |
 | [`Pair Correlation`](#pair-correlation) | Statistical Analysis | 6 | Pair correlation calculator — compute Pearson correlation between ticker retu… |
 | [`Pairs Trading`](#pairs-trading) | Other | 4 | Pairs trading signals — z-score based entry/exit for cointegrated pairs. Gene… |
 | [`Parabolic Sar Calculator`](#parabolic-sar-calculator) | Other | 2 | Parabolic SAR — Pure domain logic. Ported from Dart: lib/src/domain/parabolic… |
-| [`Pattern Backtest`](#pattern-backtest) | Backtesting | 3 | Pattern backtesting engine — historical win-rate validation (I3).  Evaluates … |
-| [`Pattern Recognition`](#pattern-recognition) | Pattern Recognition | 17 | Candlestick pattern recognition — rule-based detection (I2).  Detects classic… |
+| [`Pattern Backtest`](#pattern-backtest) | Backtesting | 3 | Pattern backtesting engine — historical win-rate validation (I3). |
+| [`Pattern Recognition`](#pattern-recognition) | Pattern Recognition | 17 | Candlestick pattern recognition — rule-based detection (I2). |
 | [`Peer Valuation`](#peer-valuation) | Other | 1 | Peer Valuation — compares a target company's valuation metrics against a set … |
 | [`Percentile Rank`](#percentile-rank) | Other | 3 | Percentile Rank utilities. percentile(values, p) — linear interpolation, p in… |
 | [`Performance Attribution`](#performance-attribution) | Other | 1 | Brinson-Fachler Performance Attribution — decomposes portfolio excess return … |
 | [`Pivots`](#pivots) | Other | 1 | Floor pivot points: classic, Fibonacci, Camarilla, Woodie variants. Inputs ar… |
-| [`Point And Figure`](#point-and-figure) | Chart Types | 3 | Point & Figure (P&F) chart computation.  R8: Converts a price series into Poi… |
+| [`Point And Figure`](#point-and-figure) | Chart Types | 3 | Point & Figure (P&F) chart computation. |
 | [`Portfolio Analytics`](#portfolio-analytics) | Portfolio & Risk | 6 | Portfolio aggregations: holdings → sector allocation, position weights, top-N… |
 | [`Portfolio Benchmark`](#portfolio-benchmark) | Portfolio & Risk | 2 | Portfolio benchmark comparison — compare portfolio returns against a market i… |
 | [`Portfolio Rebalance`](#portfolio-rebalance) | Portfolio & Risk | 6 | Portfolio rebalance calculator — compute trades needed to bring a portfolio b… |
@@ -156,13 +156,13 @@
 | [`Position Sizing`](#position-sizing) | Backtesting | 6 | Position sizing helpers — risk-based, fixed-fraction, ATR-based and Kelly cri… |
 | [`Ppo`](#ppo) | Oscillators & Momentum | 1 | Percentage Price Oscillator (Gerald Appel). Same logic as MACD but expressed … |
 | [`Profit Factor`](#profit-factor) | Other | 2 | Profit factor and trade performance metrics from a list of trades. |
-| [`Range Bars`](#range-bars) | Other | 2 | Range bar chart computation.  Range bars form a new bar whenever the price ra… |
+| [`Range Bars`](#range-bars) | Other | 2 | Range bar chart computation. |
 | [`Realized Volatility`](#realized-volatility) | Volatility Indicators | 5 | Realized volatility estimators — range-based and tick-based vol measures. Par… |
 | [`Regime Switching`](#regime-switching) | Other | 4 | Regime Switching (Hamilton filter) — bull/bear state detection. Implements a … |
-| [`Relative Strength`](#relative-strength) | Other | 6 | Relative Strength Comparison domain helpers (H21).  Computes per-ticker % ret… |
-| [`Relative Volume`](#relative-volume) | Volume Indicators | 2 | Relative Volume (RVOL) — compare current volume to historical average.  RVOL … |
-| [`Renko`](#renko) | Other | 2 | Renko chart brick computation.  Converts standard OHLC candles into Renko bri… |
-| [`Resample`](#resample) | Volume Indicators | 1 | Resample candles to a coarser timeframe by bucketing on a fixed interval. Inp… |
+| [`Relative Strength`](#relative-strength) | Other | 6 | Relative Strength Comparison domain helpers (H21). |
+| [`Relative Volume`](#relative-volume) | Volume Indicators | 2 | Relative Volume (RVOL) — compare current volume to historical average. |
+| [`Renko`](#renko) | Other | 2 | Renko chart brick computation. |
+| [`Resample`](#resample) | Other | 1 | Resample candles to a coarser timeframe by bucketing on a fixed interval. Inp… |
 | [`Returns`](#returns) | Other | 6 | Returns calculations: simple, log, cumulative, and rolling. All functions ass… |
 | [`Risk Adjusted Comparison`](#risk-adjusted-comparison) | Portfolio & Risk | 1 | Risk-Adjusted Return Comparison — compare multiple assets on Sharpe, Sortino,… |
 | [`Risk Contribution`](#risk-contribution) | Portfolio & Risk | 3 | Risk contribution (Euler decomposition) — marginal and component risk. Decomp… |
@@ -171,19 +171,19 @@
 | [`Risk Reward`](#risk-reward) | Portfolio & Risk | 7 | Risk/reward ratio calculator — evaluate trade setups with entry, stop loss, a… |
 | [`Roc`](#roc) | Oscillators & Momentum | 1 | Rate of Change (ROC). Percentage form of momentum: ROC[i] = 100 * (close[i] -… |
 | [`Rolling Correlation`](#rolling-correlation) | Statistical Analysis | 1 | Rolling Correlation — sliding-window Pearson correlation between two price se… |
-| [`Rolling Sharpe`](#rolling-sharpe) | Other | 1 | Rolling Sharpe Ratio — compute Sharpe ratio over a sliding window.  Useful fo… |
+| [`Rolling Sharpe`](#rolling-sharpe) | Other | 1 | Rolling Sharpe Ratio — compute Sharpe ratio over a sliding window. |
 | [`Rolling Stats`](#rolling-stats) | Other | 5 | Rolling statistics over a numeric series: mean, sample standard deviation, va… |
 | [`Rsi Calculator`](#rsi-calculator) | Other | 2 | RSI Calculator — Pure domain logic. Ported from Dart: lib/src/domain/rsi_calc… |
 | [`Rsi Method`](#rsi-method) | Signal Methods | 1 | RSI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/rsi… |
 | [`Sar Method`](#sar-method) | Signal Methods | 1 | Parabolic SAR Method Detector — Pure domain logic. Ported from Dart: lib/src/… |
-| [`Screener Fundamentals`](#screener-fundamentals) | Other | 2 | Screener fundamental filters — pure domain logic (Q3).  Provides `matchesFund… |
+| [`Screener Fundamentals`](#screener-fundamentals) | Other | 2 | Screener fundamental filters — pure domain logic (Q3). |
 | [`Seasonality`](#seasonality) | Other | 2 | Seasonality aggregations: average daily return grouped by month (0–11) or day… |
 | [`Sector Allocation`](#sector-allocation) | Other | 6 | Sector allocation calculator — compute sector weightings and concentration me… |
-| [`Sector Rotation`](#sector-rotation) | Other | 4 | Sector Rotation domain — relative strength ranking (H20).  Pure computation l… |
+| [`Sector Rotation`](#sector-rotation) | Other | 4 | Sector Rotation domain — relative strength ranking (H20). |
 | [`Signal Aggregator`](#signal-aggregator) | Other | 2 | Signal Aggregator — runs all 12 method detectors for a ticker, then feeds res… |
-| [`Signal Dsl`](#signal-dsl) | Signal DSL | 4 | Tiny safe expression evaluator for user-authored signal rules.  Grammar (BNF-… |
-| [`Signal Strategy Io`](#signal-strategy-io) | Other | 10 | Shared signal strategy I/O (I6).  Import and export signal-DSL strategies as … |
-| [`Sma Calculator`](#sma-calculator) | Trend Indicators | 2 | SMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/sma_calc… |
+| [`Signal Dsl`](#signal-dsl) | Signal DSL | 4 | Tiny safe expression evaluator for user-authored signal rules. |
+| [`Signal Strategy Io`](#signal-strategy-io) | Other | 10 | Shared signal strategy I/O (I6). |
+| [`Sma Calculator`](#sma-calculator) | Other | 2 | SMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/sma_calc… |
 | [`Snapshot Diff`](#snapshot-diff) | Volume Indicators | 5 | Data snapshot diffing — compare two point-in-time ticker data snapshots to hi… |
 | [`Spectral Density`](#spectral-density) | Other | 3 | Spectral density estimation — periodogram and Welch's method. Identifies domi… |
 | [`Standard Deviation`](#standard-deviation) | Other | 1 | Rolling standard deviation over a window of `period` samples. Defaults to pop… |
@@ -197,27 +197,28 @@
 | [`Support Resistance`](#support-resistance) | Other | 6 | Support/resistance level finder — identify key price levels from historical d… |
 | [`Tail Index`](#tail-index) | Other | 4 | Tail index estimation (Extreme Value Theory) — Hill estimator, peaks-over-thr… |
 | [`Tail Risk`](#tail-risk) | Portfolio & Risk | 5 | Tail risk metrics — CVaR (Conditional Value at Risk) / Expected Shortfall. Me… |
+| [`Ticker Catalog`](#ticker-catalog) | Other | 3 | Static ticker catalog — offline fuzzy lookup for the ticker search box. |
 | [`Ticker Comparison`](#ticker-comparison) | Other | 5 | Ticker comparison table — side-by-side data comparison for multiple tickers a… |
-| [`Time Segmented Volume`](#time-segmented-volume) | Trend Indicators | 1 | Time-Segmented Volume (TSV) — Worden Brothers accumulation/distribution.  TSV… |
+| [`Time Segmented Volume`](#time-segmented-volume) | Volume Indicators | 1 | Time-Segmented Volume (TSV) — Worden Brothers accumulation/distribution. |
 | [`Trade Journal`](#trade-journal) | Other | 1 | Trade Journal Analytics — pure functions to analyze a user's trade log and co… |
 | [`Trade Stats`](#trade-stats) | Other | 4 | Trade performance stats — calculate key trading metrics from a history of com… |
-| [`Trend Strength`](#trend-strength) | Trend Indicators | 1 | Trend Strength Composite (TSC) — unified 0-100 trend strength score.  Combine… |
+| [`Trend Strength`](#trend-strength) | Trend Indicators | 1 | Trend Strength Composite (TSC) — unified 0-100 trend strength score. |
 | [`Trix`](#trix) | Other | 1 | TRIX (Jack Hutson, 1980s): rate of change of a triple-smoothed EMA. ema1 = EM… |
 | [`Tsi`](#tsi) | Oscillators & Momentum | 1 | True Strength Index (William Blau, 1991). Double-smoothed momentum oscillator… |
 | [`Turtle Trading`](#turtle-trading) | Trend Indicators | 3 | Turtle Trading System — Donchian breakout trend-following with position sizin… |
 | [`Ulcer Index`](#ulcer-index) | Other | 1 | Ulcer Index (Peter Martin, 1987). Measures depth and duration of drawdowns ov… |
 | [`Ultimate Oscillator`](#ultimate-oscillator) | Oscillators & Momentum | 1 | Larry Williams' Ultimate Oscillator. Combines short, medium, and long term bu… |
 | [`Var Backtest`](#var-backtest) | Backtesting | 3 | VaR backtest — Kupiec POF test and Christoffersen independence/conditional co… |
-| [`Volatility Adj Momentum`](#volatility-adj-momentum) | Oscillators & Momentum | 1 | Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR.  Standard mo… |
+| [`Volatility Adj Momentum`](#volatility-adj-momentum) | Oscillators & Momentum | 1 | Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR. |
 | [`Volatility Cone`](#volatility-cone) | Volatility Indicators | 4 | Volatility cone — term structure of realized volatility at different lookback… |
 | [`Volatility Rank`](#volatility-rank) | Volatility Indicators | 7 | Volatility rank calculator — compute and rank tickers by historical volatilit… |
-| [`Volume Price Trend`](#volume-price-trend) | Oscillators & Momentum | 1 | Volume-Price Trend (VPT) — cumulative volume-weighted price momentum.  VPT me… |
+| [`Volume Price Trend`](#volume-price-trend) | Oscillators & Momentum | 1 | Volume-Price Trend (VPT) — cumulative volume-weighted price momentum. |
 | [`Volume Profile`](#volume-profile) | Volume Indicators | 1 | Volume profile (price-by-volume): bins each candle's volume across its high-l… |
-| [`Vortex Indicator`](#vortex-indicator) | Other | 1 | Vortex Indicator (Etienne Botes & Douglas Siepman, 2009). VM+[i] = |high[i]  … |
+| [`Vortex Indicator`](#vortex-indicator) | Other | 1 | Vortex Indicator (Etienne Botes & Douglas Siepman, 2009). VM+[i] = \|high[i]  … |
 | [`Vwap Calculator`](#vwap-calculator) | Volume Indicators | 2 | VWAP Calculator — Volume-Weighted Average Price. Ported from Dart: lib/src/do… |
 | [`Vwap`](#vwap) | Volume Indicators | 6 | Volume-weighted price calculations — VWAP and TWAP from intraday price/volume… |
 | [`Walk Forward`](#walk-forward) | Other | 2 | Walk-forward analysis — out-of-sample backtest validation. Splits data into i… |
-| [`Watchlist Share`](#watchlist-share) | Other | 6 | Collaborative watchlist sharing via URL snapshots (I8).  Allows users to shar… |
+| [`Watchlist Share`](#watchlist-share) | Other | 6 | Collaborative watchlist sharing via URL snapshots (I8). |
 | [`Wavelet`](#wavelet) | Other | 5 | Wavelet decomposition — multi-resolution analysis for price series. Uses Haar… |
 | [`Williams R Calculator`](#williams-r-calculator) | Other | 2 | Williams %R — Pure domain logic. Ported from Dart: lib/src/domain/williams_pe… |
 | [`Williams R Method`](#williams-r-method) | Signal Methods | 1 | Williams %R Method Detector — Pure domain logic. Ported from Dart: lib/src/do… |
@@ -238,7 +239,7 @@ Price alert proximity check — determine how close current prices are to config
 
 | Function | Description |
 | --- | --- |
-| `calculateProximity()` | Price alert proximity check — determine how close current prices are to configured alert levels for watchlist overview display. / export interface AlertProximity { readonly ticker: string; readonly alertPrice: number; readonly currentPrice: number; readonly distancePercent: number; readonly direction: "above" | "below" | "at"; } /** Calculate distance from current price to an alert level. Returns percentage distance (positive = price above alert, negative = below). |
+| `calculateProximity()` | Price alert proximity check — determine how close current prices are to configured alert levels for watchlist overview display. |
 | `checkAlertProximity()` | Check proximity for a single ticker against a single alert. |
 | `checkMultipleAlerts()` | Check proximity for multiple alerts, return sorted by closest first. |
 | `getAlertsWithinThreshold()` | Filter alerts that are within a given proximity threshold. |
@@ -252,15 +253,15 @@ Price alert proximity check — determine how close current prices are to config
 
 **File:** `src/domain/alert-state-machine.ts`
 
-Alert State Machine — Pure domain logic. Ported from Dart: lib/src/domain/entities.dart (AlertType, TickerAlertState)  Tracks per-ticker alert state to enforce idempotent alerting: a signal only fires once until the opposite condition resets it.
+Alert State Machine — Pure domain logic. Ported from Dart: lib/src/domain/entities.dart (AlertType, TickerAlertState)
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `createAlertState()` | Alert State Machine — Pure domain logic. Ported from Dart: lib/src/domain/entities.dart (AlertType, TickerAlertState) Tracks per-ticker alert state to enforce idempotent alerting: a signal only fires once until the opposite condition resets it. / import type { ConsensusResult, MethodSignal, SignalDirection, AlertCondition, AlertRule, } from "../types/domain"; /** All supported alert event types. */ export type AlertType = | "sma200CrossUp" | "sma150CrossUp" | "sma50CrossUp" | "michoMethodBuy" | "michoMethodSell" | "rsiMethodBuy" | "rsiMethodSell" | "macdMethodBuy" | "macdMethodSell" | "bollingerMethodBuy" | "bollingerMethodSell" | "stochasticMethodBuy" | "stochasticMethodSell" | "obvMethodBuy" | "obvMethodSell" | "adxMethodBuy" | "adxMethodSell" | "cciMethodBuy" | "cciMethodSell" | "sarMethodBuy" | "sarMethodSell" | "williamsRMethodBuy" | "williamsRMethodSell" | "mfiMethodBuy" | "mfiMethodSell" | "supertrendMethodBuy" | "supertrendMethodSell" | "consensusBuy" | "consensusSell"; /** A fired alert record. */ export interface FiredAlert { readonly ticker: string; readonly alertType: AlertType; readonly direction: SignalDirection; readonly description: string; readonly firedAt: string; // ISO 8601 } /** Per-ticker alert state — tracks which alerts have already fired. */ export interface TickerAlertState { readonly ticker: string; /** Set of alert types that have already fired and not been reset. */ readonly firedAlerts: ReadonlySet<AlertType>; readonly lastEvaluatedAt: string | null; } /** Default enabled alert types for a new ticker. */ export const DEFAULT_ENABLED_ALERTS: ReadonlySet<AlertType> = new Set<AlertType>([ "michoMethodBuy", "michoMethodSell", "rsiMethodBuy", "rsiMethodSell", "macdMethodBuy", "macdMethodSell", "bollingerMethodBuy", "bollingerMethodSell", "consensusBuy", "consensusSell", ]); /** Create a fresh alert state for a ticker. |
-| `evaluateAlerts()` | Map a MethodSignal to BUY/SELL alert types. */ function methodAlertTypes(method: string): { buy: AlertType; sell: AlertType } | null { const MAP: Record<string, { buy: AlertType; sell: AlertType }> = { Micho: { buy: "michoMethodBuy", sell: "michoMethodSell" }, RSI: { buy: "rsiMethodBuy", sell: "rsiMethodSell" }, MACD: { buy: "macdMethodBuy", sell: "macdMethodSell" }, Bollinger: { buy: "bollingerMethodBuy", sell: "bollingerMethodSell" }, Stochastic: { buy: "stochasticMethodBuy", sell: "stochasticMethodSell" }, OBV: { buy: "obvMethodBuy", sell: "obvMethodSell" }, ADX: { buy: "adxMethodBuy", sell: "adxMethodSell" }, CCI: { buy: "cciMethodBuy", sell: "cciMethodSell" }, SAR: { buy: "sarMethodBuy", sell: "sarMethodSell" }, WilliamsR: { buy: "williamsRMethodBuy", sell: "williamsRMethodSell" }, MFI: { buy: "mfiMethodBuy", sell: "mfiMethodSell" }, SuperTrend: { buy: "supertrendMethodBuy", sell: "supertrendMethodSell" }, }; return MAP[method] ?? null; } /** Evaluate method signals against the current alert state. Returns new alerts that should fire and the updated state. Idempotent: a BUY alert only fires once until a SELL resets it (and vice versa). |
-| `evaluateMultiConditionRules()` | Check whether a single condition is satisfied by the current signals. */ function checkCondition( condition: AlertCondition, signals: readonly MethodSignal[], consensus: ConsensusResult | null, ): boolean { if (condition.type === "consensus") { return consensus?.direction === condition.direction; } // type === "method" if (!condition.method) return false; return signals.some((s) => s.method === condition.method && s.direction === condition.direction); } /** Fired result from a multi-condition rule. */ export interface RuleFiredAlert { readonly ruleId: string; readonly ruleName: string; readonly ticker: string; readonly direction: SignalDirection; readonly description: string; readonly firedAt: string; } /** Evaluate a set of multi-condition alert rules against current signals. Returns fired alerts for rules whose conditions are met. |
+| `createAlertState()` | Alert State Machine — Pure domain logic. Ported from Dart: lib/src/domain/entities.dart (AlertType, TickerAlertState) |
+| `evaluateAlerts()` | Map a MethodSignal to BUY/SELL alert types. */ function methodAlertTypes(method: string): { buy: AlertType; sell: AlertType } \| null { const MAP: Record<string, { buy: AlertType; sell: AlertType }> = { Micho: { buy: "michoMethodBuy", sell: "michoMethodSell" }, RSI: { buy: "rsiMethodBuy", sell: "rsiMethodSell" }, MACD: { buy: "macdMethodBuy", sell: "macdMethodSell" }, Bollinger: { buy: "bollingerMethodBuy", sell: "bollingerMethodSell" }, Stochastic: { buy: "stochasticMethodBuy", sell: "stochasticMethodSell" }, OBV: { buy: "obvMethodBuy", sell: "obvMethodSell" }, ADX: { buy: "adxMethodBuy", sell: "adxMethodSell" }, CCI: { buy: "cciMethodBuy", sell: "cciMethodSell" }, SAR: { buy: "sarMethodBuy", sell: "sarMethodSell" }, WilliamsR: { buy: "williamsRMethodBuy", sell: "williamsRMethodSell" }, MFI: { buy: "mfiMethodBuy", sell: "mfiMethodSell" }, SuperTrend: { buy: "supertrendMethodBuy", sell: "supertrendMethodSell" }, }; return MAP[method] ?? null; } |
+| `evaluateMultiConditionRules()` | Check whether a single condition is satisfied by the current signals. */ function checkCondition( condition: AlertCondition, signals: readonly MethodSignal[], consensus: ConsensusResult \| null, ): boolean { if (condition.type === "consensus") { return consensus?.direction === condition.direction; } |
 
 **Types:** `FiredAlert`, `TickerAlertState`, `RuleFiredAlert`
 
@@ -272,14 +273,14 @@ Alert State Machine — Pure domain logic. Ported from Dart: lib/src/domain/enti
 
 **File:** `src/domain/backtest-engine.ts`
 
-Backtest Engine — run method signals against historical candles.  Pure domain logic: given a set of method detectors and historical data, produce an equity curve and performance metrics.
+Backtest Engine — run method signals against historical candles.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeTradeCost()` | Backtest Engine — run method signals against historical candles. Pure domain logic: given a set of method detectors and historical data, produce an equity curve and performance metrics. / import type { DailyCandle, MethodName } from "../types/domain"; import { aggregateSignals } from "./signal-aggregator"; import type { BacktestSizingConfig, KellyInput } from "./position-sizing"; import { computeBacktestShares } from "./position-sizing"; // ── Commission & Slippage (Q8) ──────────────────────────────────────────────── export interface CommissionConfig { /** Fixed fee per trade (applies both at entry and exit). Default: 0. */ readonly fixedPerTrade?: number; /** Percentage of trade value charged per trade (e.g. 0.001 = 0.1%). Default: 0. */ readonly percentPerTrade?: number; /** Estimated slippage as a fraction of price (e.g. 0.0005 = 5 bps). Default: 0. */ readonly slippage?: number; } /** Compute total cost for entering or exiting a position. Returns a positive cost value. |
-| `runBacktest()` | Q8: Commission and slippage model. */ readonly commission?: CommissionConfig; /** Q9: Position sizing configuration. Defaults to all-in (percentage 100%). */ readonly sizing?: BacktestSizingConfig; } export interface BacktestTrade { readonly entryDate: string; readonly exitDate: string; readonly entryPrice: number; readonly exitPrice: number; readonly direction: "LONG" | "SHORT"; readonly shares: number; readonly profit: number; readonly profitPercent: number; /** Total commission + slippage paid (entry + exit). */ readonly totalCost: number; } export interface BacktestResult { readonly ticker: string; readonly trades: readonly BacktestTrade[]; readonly totalReturn: number; readonly totalReturnPercent: number; readonly winRate: number; readonly maxDrawdown: number; readonly equityCurve: readonly { date: string; equity: number }[]; } /** Run a simple consensus-based backtest. Strategy: BUY when majority of selected methods signal BUY, SELL when they signal SELL. Evaluates signals on a rolling window. |
+| `computeTradeCost()` | Backtest Engine — run method signals against historical candles. |
+| `runBacktest()` | Q8: Commission and slippage model. */ readonly commission?: CommissionConfig; /** Q9: Position sizing configuration. Defaults to all-in (percentage 100%). */ readonly sizing?: BacktestSizingConfig; } |
 
 **Types:** `CommissionConfig`, `BacktestConfig`, `BacktestTrade`, `BacktestResult`
 
@@ -295,7 +296,7 @@ Backtest performance metrics. Pure module that converts an equity curve plus tra
 
 | Function | Description |
 | --- | --- |
-| `sharpe()` | Backtest performance metrics. Pure module that converts an equity curve plus trade list into the metrics traders expect to see: total return, CAGR, max drawdown, Sharpe, win rate, profit factor. / export interface EquityPoint { readonly timestamp: number; readonly value: number; } export interface Trade { readonly entryTimestamp: number; readonly exitTimestamp: number; readonly pnl: number; } export interface BacktestMetrics { readonly totalReturn: number; readonly cagr: number; readonly maxDrawdown: number; readonly sharpe: number; readonly winRate: number; readonly profitFactor: number; readonly tradeCount: number; readonly avgTradePnl: number; } const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000; export function totalReturn(curve: readonly EquityPoint[]): number { if (curve.length < 2) return 0; const first = curve[0]!; const last = curve[curve.length - 1]!; if (first.value === 0) return 0; return last.value / first.value - 1; } export function cagr(curve: readonly EquityPoint[]): number { if (curve.length < 2) return 0; const first = curve[0]!; const last = curve[curve.length - 1]!; if (first.value <= 0) return 0; const years = (last.timestamp - first.timestamp) / MS_PER_YEAR; if (years <= 0) return 0; return Math.pow(last.value / first.value, 1 / years) - 1; } export function maxDrawdown(curve: readonly EquityPoint[]): number { let peak = -Infinity; let maxDd = 0; for (const p of curve) { if (p.value > peak) peak = p.value; if (peak > 0) { const dd = (peak - p.value) / peak; if (dd > maxDd) maxDd = dd; } } return maxDd; } /** Annualized Sharpe ratio. Caller provides the periods-per-year sampling rate (252 for daily bars, 12 for monthly, etc.). |
+| `sharpe()` | Backtest performance metrics. Pure module that converts an equity curve plus trade list into the metrics traders expect to see: total return, CAGR, max drawdown, Sharpe, win rate, profit factor. |
 | `totalReturn()` | — |
 | `cagr()` | — |
 | `maxDrawdown()` | — |
@@ -312,13 +313,13 @@ Backtest performance metrics. Pure module that converts an equity curve plus tra
 
 **File:** `src/domain/commission.ts`
 
-Commission & slippage model for backtesting.  Supports fixed per-trade fees, percentage-based fees, and slippage estimation (% of price applied to entry and exit).
+Commission & slippage model for backtesting.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `calculateCommission()` | Commission & slippage model for backtesting. Supports fixed per-trade fees, percentage-based fees, and slippage estimation (% of price applied to entry and exit). / export interface CommissionConfig { /** Fixed dollar amount per trade (applied to both entry and exit). */ readonly fixedPerTrade: number; /** Percentage of trade value as commission (e.g. 0.001 = 0.1%). */ readonly percentOfValue: number; /** Slippage as fraction of price (e.g. 0.0005 = 0.05%). */ readonly slippagePct: number; } export const DEFAULT_COMMISSION: CommissionConfig = { fixedPerTrade: 0, percentOfValue: 0.001, slippagePct: 0.0005, }; export const ZERO_COMMISSION: CommissionConfig = { fixedPerTrade: 0, percentOfValue: 0, slippagePct: 0, }; /** Calculate total commission for a single trade (entry + exit). |
+| `calculateCommission()` | Commission & slippage model for backtesting. |
 | `applySlippage()` | Apply slippage to entry/exit prices. For long trades: entry price increases, exit price decreases. For short trades: entry price decreases, exit price increases. |
 | `netTradePnl()` | Calculate net PnL for a trade after commission and slippage. |
 | `totalFees()` | Calculate total fees (commission + slippage cost) for a series of trades. |
@@ -331,13 +332,13 @@ Commission & slippage model for backtesting.  Supports fixed per-trade fees, per
 
 **File:** `src/domain/pattern-backtest.ts`
 
-Pattern backtesting engine — historical win-rate validation (I3).  Evaluates candlestick pattern detections against subsequent price action to compute win rates, average gains/losses, expectancy, and other statistics.  Works with the pattern-recognition module's `detectAllPatterns` output.  Usage: const candles = loadCandles("AAPL"); const report = backtestPatterns(candles, { holdBars: 5 }); console.log(report.summary);
+Pattern backtesting engine — historical win-rate validation (I3).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `evaluatePatternTrade()` | Pattern backtesting engine — historical win-rate validation (I3). Evaluates candlestick pattern detections against subsequent price action to compute win rates, average gains/losses, expectancy, and other statistics.  Works with the pattern-recognition module's `detectAllPatterns` output. Usage: const candles = loadCandles("AAPL"); const report = backtestPatterns(candles, { holdBars: 5 }); console.log(report.summary); / import type { PatternCandle, DetectedPattern, PatternDirection } from "./pattern-recognition"; import { detectAllPatterns } from "./pattern-recognition"; // ── Types ──────────────────────────────────────────────────────────────── export interface PatternBacktestConfig { /** Number of bars to hold after pattern detection. Default 5. */ readonly holdBars?: number; /** Minimum confidence threshold for pattern inclusion. Default 0. */ readonly minConfidence?: number; /** Optional list of pattern names to include (null = all). */ readonly includePatterns?: readonly string[] | null; } export interface PatternTradeResult { /** Pattern name (e.g. "Hammer"). */ readonly pattern: string; /** Directional bias of the pattern. */ readonly direction: PatternDirection; /** Confidence score from detection. */ readonly confidence: number; /** Index of the candle where the pattern was detected. */ readonly entryIndex: number; /** Entry price (close of pattern candle). */ readonly entryPrice: number; /** Exit price (close of candle at entryIndex + holdBars). */ readonly exitPrice: number; /** Percentage change from entry to exit. */ readonly returnPct: number; /** Whether the trade was a win (aligned with directional bias). */ readonly win: boolean; } export interface PatternStats { readonly pattern: string; readonly direction: PatternDirection; readonly occurrences: number; readonly wins: number; readonly losses: number; readonly winRate: number; readonly avgReturn: number; readonly avgWin: number; readonly avgLoss: number; readonly expectancy: number; readonly bestReturn: number; readonly worstReturn: number; } export interface PatternBacktestReport { /** Per-trade results. */ readonly trades: readonly PatternTradeResult[]; /** Per-pattern aggregated stats. */ readonly summary: readonly PatternStats[]; /** Overall win rate across all patterns. */ readonly overallWinRate: number; /** Overall average return across all trades. */ readonly overallAvgReturn: number; /** Total number of trades evaluated. */ readonly totalTrades: number; /** Configuration used. */ readonly config: Required<PatternBacktestConfig>; } // ── Defaults ───────────────────────────────────────────────────────────── const DEFAULT_HOLD_BARS = 5; const DEFAULT_MIN_CONFIDENCE = 0; // ── Core ───────────────────────────────────────────────────────────────── /** Evaluate pattern detections against subsequent price action. |
+| `evaluatePatternTrade()` | Pattern backtesting engine — historical win-rate validation (I3). |
 | `aggregatePatternStats()` | Aggregate trade results into per-pattern statistics. |
 | `backtestPatterns()` | Run a full pattern backtest on historical candle data. |
 
@@ -355,12 +356,12 @@ Position sizing helpers — risk-based, fixed-fraction, ATR-based and Kelly crit
 
 | Function | Description |
 | --- | --- |
-| `riskBasedSize()` | Position sizing helpers — risk-based, fixed-fraction, ATR-based and Kelly criterion sizing. Pure math; suitable for the screener and the backtest engine. / export interface RiskBasedSizingInput { /** Total account equity in account currency. */ readonly accountEquity: number; /** Fraction of equity to risk per trade (e.g. 0.01 for 1%). */ readonly riskPerTrade: number; /** Entry price. */ readonly entry: number; /** Stop-loss price (must differ from entry). */ readonly stopLoss: number; } /** Position size (in shares/units) such that the loss from entry to stop equals `accountEquity * riskPerTrade`. |
-| `atrBasedSize()` | ATR multiplier for stop distance. Default 2. */ readonly atrMultiplier?: number; } /** Position size based on ATR. Equivalent to risk-based sizing where stop distance is `atrMultiplier * atr`. |
+| `riskBasedSize()` | Position sizing helpers — risk-based, fixed-fraction, ATR-based and Kelly criterion sizing. Pure math; suitable for the screener and the backtest engine. |
+| `atrBasedSize()` | ATR multiplier for stop distance. Default 2. */ readonly atrMultiplier?: number; } |
 | `fixedFractionalSize()` | Fixed-fractional sizing — invest a fixed fraction of account equity. |
-| `kellyFraction()` | Win probability in [0,1]. */ readonly winRate: number; /** Average win amount (positive). */ readonly avgWin: number; /** Average loss amount (positive). */ readonly avgLoss: number; } /** Kelly fraction (in [0,1]). Returns 0 when inputs are nonsensical or the formula would suggest a negative size. The classic formula is f* = W - (1-W)/R where R = avgWin/avgLoss. |
+| `kellyFraction()` | Win probability in [0,1]. */ readonly winRate: number; /** Average win amount (positive). */ readonly avgWin: number; /** Average loss amount (positive). */ readonly avgLoss: number; } |
 | `halfKellySize()` | "Half-Kelly" sized share count — practical compromise that reduces the variance of full-Kelly sizing. |
-| `computeBacktestShares()` | For "fixed" mode: number of shares per trade. */ readonly fixedQuantity?: number; /** For "percentage" mode: fraction of equity (e.g. 0.1 = 10%). */ readonly percentOfEquity?: number; /** For "kelly" mode: Kelly fraction multiplier (e.g. 0.5 = half Kelly). */ readonly kellyMultiplier?: number; } export const DEFAULT_BACKTEST_SIZING: BacktestSizingConfig = { mode: "fixed", fixedQuantity: 100, }; /** Compute share count for a backtest trade using the configured sizing mode. |
+| `computeBacktestShares()` | For "fixed" mode: number of shares per trade. */ readonly fixedQuantity?: number; /** For "percentage" mode: fraction of equity (e.g. 0.1 = 10%). */ readonly percentOfEquity?: number; /** For "kelly" mode: Kelly fraction multiplier (e.g. 0.5 = half Kelly). */ readonly kellyMultiplier?: number; } |
 
 **Types:** `RiskBasedSizingInput`, `AtrSizingInput`, `KellyInput`, `BacktestSizingConfig`
 
@@ -376,7 +377,7 @@ VaR backtest — Kupiec POF test and Christoffersen independence/conditional cov
 
 | Function | Description |
 | --- | --- |
-| `kupiecTest()` | VaR backtest — Kupiec POF test and Christoffersen independence/conditional coverage tests. Validates whether a VaR model's violation rate is consistent with its confidence level. / export interface KupiecResult { readonly violations: number; readonly expected: number; readonly violationRate: number; readonly lrStatistic: number; // likelihood ratio test statistic readonly pValue: number; readonly reject: boolean; // true → model is rejected } export interface ChristoffersenResult { readonly independenceStat: number; readonly independencePValue: number; readonly conditionalCoverageStat: number; readonly conditionalCoveragePValue: number; readonly reject: boolean; } export interface VarBacktestResult { readonly kupiec: KupiecResult; readonly christoffersen: ChristoffersenResult; readonly summary: "adequate" | "violations_too_many" | "violations_too_few" | "clustered"; } /** Kupiec (1995) Proportion-of-Failures (POF) test. Tests H₀: observed violation rate = expected (α). LR_POF = -2 ln[(1-α)^(T-x) · α^x] + 2 ln[(1-p̂)^(T-x) · p̂^x] where x = violations, T = total obs, p̂ = x/T |
+| `kupiecTest()` | VaR backtest — Kupiec POF test and Christoffersen independence/conditional coverage tests. Validates whether a VaR model's violation rate is consistent with its confidence level. |
 | `christoffersenTest()` | Christoffersen (1998) independence and conditional coverage tests. Tests whether violations are serially independent. |
 | `varBacktest()` | Full VaR backtest combining Kupiec and Christoffersen. |
 
@@ -390,13 +391,13 @@ VaR backtest — Kupiec POF test and Christoffersen independence/conditional cov
 
 **File:** `src/domain/chart-comparison.ts`
 
-Chart comparison — normalizes multiple ticker candle series to percentage change from their respective starting prices.  Used by the comparison card to overlay multiple tickers on one chart with a common Y-axis (% return from base).
+Chart comparison — normalizes multiple ticker candle series to percentage change from their respective starting prices.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `normalizeForComparison()` | Chart comparison — normalizes multiple ticker candle series to percentage change from their respective starting prices. Used by the comparison card to overlay multiple tickers on one chart with a common Y-axis (% return from base). / import type { DailyCandle } from "../types/domain"; /** A single point in a normalized comparison series. */ export interface ComparisonPoint { readonly date: string; readonly pctChange: number; // e.g. 0.05 = +5% } /** A full normalized series for one ticker. */ export interface ComparisonSeries { readonly ticker: string; readonly points: readonly ComparisonPoint[]; } /** Normalize candle series to % change from the first common date. All series are aligned by date — only dates present in ALL series are kept. Each point's value is `(close - baseClose) / baseClose`. |
+| `normalizeForComparison()` | Chart comparison — normalizes multiple ticker candle series to percentage change from their respective starting prices. |
 | `computeComparisonStats()` | — |
 
 **Types:** `ComparisonPoint`, `ComparisonSeries`, `ComparisonStats`
@@ -407,14 +408,14 @@ Chart comparison — normalizes multiple ticker candle series to percentage chan
 
 **File:** `src/domain/kagi.ts`
 
-Kagi chart computation — Q26.  Converts a price series into Kagi lines that change direction only when price reverses by a specified threshold (fixed amount or percentage). Thick ("yang") lines represent uptrends; thin ("yin") lines represent downtrends. A shoulder/waist break flips the line weight.  Reference: Nison, Steve — "Beyond Candlesticks" (Wiley, 1994).
+Kagi chart computation — Q26.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `autoReversalThreshold()` | Kagi chart computation — Q26. Converts a price series into Kagi lines that change direction only when price reverses by a specified threshold (fixed amount or percentage). Thick ("yang") lines represent uptrends; thin ("yin") lines represent downtrends. A shoulder/waist break flips the line weight. Reference: Nison, Steve — "Beyond Candlesticks" (Wiley, 1994). / // ── Types ──────────────────────────────────────────────────────────────────── /** Line weight: yang (thick, bullish) or yin (thin, bearish). */ export type KagiWeight = "yang" | "yin"; /** A single Kagi line segment from one price to another. */ export interface KagiSegment { /** Starting price of this segment. */ readonly from: number; /** Ending price of this segment. */ readonly to: number; /** Line weight (yang = thick/bullish, yin = thin/bearish). */ readonly weight: KagiWeight; /** Index in the original price array where this segment ends. */ readonly endIndex: number; } /** Full Kagi chart output. */ export interface KagiChart { /** Ordered segments (first = oldest). */ readonly segments: readonly KagiSegment[]; /** Reversal threshold used. */ readonly reversalThreshold: number; /** Whether percentage mode was used. */ readonly isPercentage: boolean; /** Shoulder levels (local highs where weight changed to yang). */ readonly shoulders: readonly number[]; /** Waist levels (local lows where weight changed to yin). */ readonly waists: readonly number[]; } /** Options for `computeKagi()`. */ export interface KagiOptions { /** Reversal threshold. If `isPercentage` is true, this is a decimal (e.g. 0.04 = 4%). Otherwise it's an absolute price amount. / reversalThreshold?: number; /** Interpret `reversalThreshold` as a percentage of current price. / isPercentage?: boolean; } /** Input data point for Kagi computation. */ export interface KagiInput { readonly close: number; } // ── Helpers ─────────────────────────────────────────────────────────────────── /** Auto-calculate a reasonable reversal threshold as a percentage. Uses 4% as default, which works well for most daily equity charts. For low-volatility instruments, 2-3% is better; for crypto, 5-8%. |
-| `computeKagi()` | Compute a Kagi chart from a series of closing prices. Algorithm: 1. Start with the first price; direction is initially "up". 2. Continue in the current direction as long as price moves favorably. 3. When price reverses by the threshold, start a new segment. 4. When a new high exceeds the previous shoulder → switch to yang (thick). When a new low goes below the previous waist → switch to yin (thin). |
+| `autoReversalThreshold()` | Kagi chart computation — Q26. |
+| `computeKagi()` | Compute a Kagi chart from a series of closing prices. |
 
 **Types:** `KagiSegment`, `KagiChart`, `KagiOptions`, `KagiInput`
 
@@ -424,13 +425,13 @@ Kagi chart computation — Q26.  Converts a price series into Kagi lines that ch
 
 **File:** `src/domain/point-and-figure.ts`
 
-Point & Figure (P&F) chart computation.  R8: Converts a price series into Point & Figure columns of X's (up) and O's (down). Each box represents `boxSize` price units. A column reversal occurs when price moves `reversal × boxSize` in the opposite direction.  Traditional method: uses closing prices. High/Low method: uses intraday H/L. This implementation uses the traditional closing-price method by default, with opt-in H/L method.  Reference: Chartcraft & Dorsey, Wright & Associates methodology.
+Point & Figure (P&F) chart computation.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `floorBox()` | Point & Figure (P&F) chart computation. R8: Converts a price series into Point & Figure columns of X's (up) and O's (down). Each box represents `boxSize` price units. A column reversal occurs when price moves `reversal × boxSize` in the opposite direction. Traditional method: uses closing prices. High/Low method: uses intraday H/L. This implementation uses the traditional closing-price method by default, with opt-in H/L method. Reference: Chartcraft & Dorsey, Wright & Associates methodology. / // ── Types ──────────────────────────────────────────────────────────────────── /** A single P&F box (one X or one O). */ export interface PnfBox { /** Price level of this box (bottom edge = price, top edge = price + boxSize). */ readonly price: number; /** X = up, O = down. */ readonly type: "X" | "O"; } /** A column of consecutive X's or O's. */ export interface PnfColumn { /** All boxes in this column, sorted by price descending for X, ascending for O. */ readonly boxes: readonly PnfBox[]; /** Direction of this column. */ readonly direction: "X" | "O"; /** Price of the lowest box in the column. */ readonly low: number; /** Price of the highest box in the column. */ readonly high: number; /** Number of boxes in this column. */ readonly count: number; } /** Full P&F chart output. */ export interface PnfChart { /** Ordered columns (first = oldest). */ readonly columns: readonly PnfColumn[]; /** Box size used for the computation. */ readonly boxSize: number; /** Reversal count used (default 3). */ readonly reversal: number; } /** Input options for `computePnf()`. */ export interface PnfOptions { /** Fixed box size in price units. Default: ATR-based auto-sizing (1% of starting price, rounded to nearest 0.5). / boxSize?: number; /** Number of boxes required for a reversal to start a new column. / reversal?: number; /** Use High/Low method (intraday H/L) instead of closing-price method. Requires input to provide `high` and `low` fields. / useHighLow?: boolean; } /** Input data point for P&F computation. */ export interface PnfInput { readonly close: number; readonly high?: number; readonly low?: number; } // ── Helpers ─────────────────────────────────────────────────────────────────── /** Round a price down to the nearest box bottom using the given box size. e.g. price=23.7, boxSize=1 → 23; price=23.7, boxSize=0.5 → 23.5 |
+| `floorBox()` | Point & Figure (P&F) chart computation. |
 | `autoBoxSize()` | Auto-calculate a reasonable box size from the price series. Uses 1% of the median price, snapped to a "nice" number (0.05, 0.1, 0.5, 1, 5, 10, 50, 100). |
 | `computePnf()` | Compute a Point & Figure chart from a price series. |
 
@@ -496,7 +497,7 @@ Chande Momentum Oscillator (Tushar Chande, 1994). diff[i]   = close[i] - close[i
 
 | Function | Description |
 | --- | --- |
-| `computeCmo()` | Chande Momentum Oscillator (Tushar Chande, 1994). diff[i]   = close[i] - close[i-1] sumUp     = sum of positive diffs over period sumDown   = sum of |negative diffs| over period CMO       = 100 * (sumUp - sumDown) / (sumUp + sumDown), in [-100, 100] Returns null where there isn't enough history. |
+| `computeCmo()` | Chande Momentum Oscillator (Tushar Chande, 1994). diff[i]   = close[i] - close[i-1] sumUp     = sum of positive diffs over period sumDown   = sum of \|negative diffs\| over period CMO       = 100 * (sumUp - sumDown) / (sumUp + sumDown), in [-100, 100] Returns null where there isn't enough history. |
 
 ---
 
@@ -518,13 +519,13 @@ Coppock Curve (Edwin Coppock, 1962). Long-term momentum: coppock = WMA( ROC(clos
 
 **File:** `src/domain/divergence-detector.ts`
 
-Divergence Detector — detect bullish and bearish divergences between price and an oscillator (RSI, MACD histogram, etc.).  A **bullish divergence** occurs when price makes a lower low but the oscillator makes a higher low (momentum weakening to downside).  A **bearish divergence** occurs when price makes a higher high but the oscillator makes a lower high (momentum weakening to upside).  Pure function: no I/O, no DOM, no Date.now().
+Divergence Detector — detect bullish and bearish divergences between price and an oscillator (RSI, MACD histogram, etc.).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `detectDivergences()` | Divergence Detector — detect bullish and bearish divergences between price and an oscillator (RSI, MACD histogram, etc.). A **bullish divergence** occurs when price makes a lower low but the oscillator makes a higher low (momentum weakening to downside). A **bearish divergence** occurs when price makes a higher high but the oscillator makes a lower high (momentum weakening to upside). Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export type DivergenceType = "bullish" | "bearish"; export interface Divergence { readonly type: DivergenceType; /** Index of the first pivot in the candle array. */ readonly startIndex: number; /** Index of the second pivot (confirmation point). */ readonly endIndex: number; /** Price at the first pivot. */ readonly priceStart: number; /** Price at the second pivot. */ readonly priceEnd: number; /** Oscillator value at the first pivot. */ readonly oscillatorStart: number; /** Oscillator value at the second pivot. */ readonly oscillatorEnd: number; } export interface DivergenceOptions { /** Minimum number of bars between the two pivots. / readonly minDistance?: number; /** Maximum number of bars between the two pivots. / readonly maxDistance?: number; /** Number of bars on each side required to confirm a pivot. / readonly pivotStrength?: number; } /** Detect all divergences between price and the given oscillator series. |
+| `detectDivergences()` | Divergence Detector — detect bullish and bearish divergences between price and an oscillator (RSI, MACD histogram, etc.). |
 
 **Types:** `Divergence`, `DivergenceOptions`
 
@@ -554,7 +555,7 @@ Earnings surprise tracker — record and analyze actual vs estimated EPS for pos
 
 | Function | Description |
 | --- | --- |
-| `calculateSurprise()` | Earnings surprise tracker — record and analyze actual vs estimated EPS for post-earnings momentum analysis. / export interface EarningsResult { readonly ticker: string; readonly date: string; // ISO date readonly actualEps: number; readonly estimatedEps: number; readonly revenue?: number; readonly estimatedRevenue?: number; } export interface EarningsSurprise { readonly ticker: string; readonly date: string; readonly surpriseAmount: number; readonly surprisePercent: number; readonly beat: boolean; readonly revenueSurprisePercent: number | null; } /** Calculate the earnings surprise from a result. |
+| `calculateSurprise()` | Earnings surprise tracker — record and analyze actual vs estimated EPS for post-earnings momentum analysis. |
 | `batchSurprises()` | Batch calculate surprises for multiple earnings results. |
 | `beatRate()` | Get the beat rate (proportion that exceeded estimates). |
 | `averageSurprise()` | Get the average surprise percentage. |
@@ -571,7 +572,7 @@ Earnings surprise tracker — record and analyze actual vs estimated EPS for pos
 
 **File:** `src/domain/klinger-oscillator.ts`
 
-Klinger Volume Oscillator (KVO). Stephen Klinger's volume-based momentum indicator. Computes signed "volume force" and takes the difference of a fast and slow EMA of it. A signal-line EMA can be derived externally.  trend = sign((H+L+C) - prev(H+L+C)) vf    = volume * trend * 100 KVO   = EMA(vf, fast) - EMA(vf, slow)
+Klinger Volume Oscillator (KVO). Stephen Klinger's volume-based momentum indicator. Computes signed "volume force" and takes the difference of a fast and slow EMA of it. A signal-line EMA can be derived externally.
 
 **Functions:**
 
@@ -593,7 +594,7 @@ Multi-ticker momentum rank — rank tickers by rate-of-change performance over c
 
 | Function | Description |
 | --- | --- |
-| `rateOfChange()` | Multi-ticker momentum rank — rank tickers by rate-of-change performance over configurable lookback periods for relative strength comparison. / export interface MomentumRank { readonly ticker: string; readonly roc: number; // Rate of change as percentage readonly rank: number; // 1 = strongest } /** Calculate rate of change (percentage return) over a lookback period. |
+| `rateOfChange()` | Multi-ticker momentum rank — rank tickers by rate-of-change performance over configurable lookback periods for relative strength comparison. |
 | `rankByMomentum()` | Rank multiple tickers by their momentum (rate of change). Returns array sorted by strongest momentum first. |
 | `compositeMomentum()` | Compute composite momentum across multiple timeframes. Averages ROC over short, medium, and long periods. |
 | `rankByCompositeMomentum()` | Rank tickers by composite momentum (multi-timeframe). |
@@ -652,7 +653,7 @@ Rate of Change (ROC). Percentage form of momentum: ROC[i] = 100 * (close[i] - cl
 
 **File:** `src/domain/stochastic-calculator.ts`
 
-Stochastic Oscillator — Pure domain logic. Ported from Dart: lib/src/domain/stochastic_calculator.dart  %K = (close - lowestLow) / (highestHigh - lowestLow) * 100 %D = SMA(%K, smoothD)
+Stochastic Oscillator — Pure domain logic. Ported from Dart: lib/src/domain/stochastic_calculator.dart
 
 **Functions:**
 
@@ -701,7 +702,7 @@ True Strength Index (William Blau, 1991). Double-smoothed momentum oscillator: m
 
 **File:** `src/domain/ultimate-oscillator.ts`
 
-Larry Williams' Ultimate Oscillator. Combines short, medium, and long term buying-pressure / true-range averages into a single momentum value scaled 0–100.  BP = close - min(low, prevClose) TR = max(high, prevClose) - min(low, prevClose) AvgN = sum(BP, N) / sum(TR, N) UO = 100 * (4*Avg7 + 2*Avg14 + Avg28) / (4 + 2 + 1)
+Larry Williams' Ultimate Oscillator. Combines short, medium, and long term buying-pressure / true-range averages into a single momentum value scaled 0–100.
 
 **Functions:**
 
@@ -717,13 +718,13 @@ Larry Williams' Ultimate Oscillator. Combines short, medium, and long term buyin
 
 **File:** `src/domain/volatility-adj-momentum.ts`
 
-Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR.  Standard momentum (ROC) doesn't account for volatility, making cross-asset comparison unreliable. VAM divides price change by ATR to produce a volatility-normalized momentum reading.  High VAM = strong trend relative to volatility (breakout) Low VAM = price change within normal volatility range  Pure function: no I/O, no DOM, no Date.now().
+Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeVam()` | Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR. Standard momentum (ROC) doesn't account for volatility, making cross-asset comparison unreliable. VAM divides price change by ATR to produce a volatility-normalized momentum reading. High VAM = strong trend relative to volatility (breakout) Low VAM = price change within normal volatility range Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface VamPoint { readonly date: string; /** Volatility-adjusted momentum value. */ readonly value: number; } export interface VamOptions { /** Momentum lookback period (rate-of-change window). / readonly momentumPeriod?: number; /** ATR period for volatility normalization. / readonly atrPeriod?: number; } /** Compute volatility-adjusted momentum series. VAM = (Close - Close[n]) / ATR(n) |
+| `computeVam()` | Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR. |
 
 **Types:** `VamPoint`, `VamOptions`
 
@@ -733,13 +734,13 @@ Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR.  Standard mom
 
 **File:** `src/domain/volume-price-trend.ts`
 
-Volume-Price Trend (VPT) — cumulative volume-weighted price momentum.  VPT measures the relationship between volume and price direction. Unlike OBV which adds/subtracts entire volume, VPT weights volume by the percentage price change, giving a more proportional reading.  VPT = Previous VPT + Volume × ((Close - Previous Close) / Previous Close)  Rising VPT confirms uptrend with volume support. Falling VPT suggests distribution despite price holding. Divergences signal potential reversals.  Pure function: no I/O, no DOM, no Date.now().
+Volume-Price Trend (VPT) — cumulative volume-weighted price momentum.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeVpt()` | Volume-Price Trend (VPT) — cumulative volume-weighted price momentum. VPT measures the relationship between volume and price direction. Unlike OBV which adds/subtracts entire volume, VPT weights volume by the percentage price change, giving a more proportional reading. VPT = Previous VPT + Volume × ((Close - Previous Close) / Previous Close) Rising VPT confirms uptrend with volume support. Falling VPT suggests distribution despite price holding. Divergences signal potential reversals. Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface VptPoint { readonly date: string; /** Cumulative VPT value. */ readonly vpt: number; /** Signal line (EMA of VPT). */ readonly signal: number; } export interface VptOptions { /** Signal line EMA period. / readonly signalPeriod?: number; } /** Compute Volume-Price Trend series with signal line. |
+| `computeVpt()` | Volume-Price Trend (VPT) — cumulative volume-weighted price momentum. |
 
 **Types:** `VptPoint`, `VptOptions`
 
@@ -747,17 +748,34 @@ Volume-Price Trend (VPT) — cumulative volume-weighted price momentum.  VPT mea
 
 ## 🗂️ Other
 
-### Analytics
+### Adx Calculator
 
-**File:** `src/domain/analytics.ts`
+**File:** `src/domain/adx-calculator.ts`
 
-Analytics Calculators — Sharpe ratio, Sortino ratio, max drawdown, Fibonacci levels.  Pure functions for portfolio analytics.
+ADX (Average Directional Index) — Pure domain logic. Ported from Dart: lib/src/domain/adx_calculator.dart
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `dailyReturns()` | Analytics Calculators — Sharpe ratio, Sortino ratio, max drawdown, Fibonacci levels. Pure functions for portfolio analytics. / import type { DailyCandle } from "../types/domain"; /** Compute daily returns from a series of closes. |
+| `computeAdxSeries()` | — |
+| `computeAdx()` | — |
+
+**Types:** `AdxPoint`
+
+---
+
+### Analytics
+
+**File:** `src/domain/analytics.ts`
+
+Analytics Calculators — Sharpe ratio, Sortino ratio, max drawdown, Fibonacci levels.
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `dailyReturns()` | Analytics Calculators — Sharpe ratio, Sortino ratio, max drawdown, Fibonacci levels. |
 | `sharpeRatio()` | Compute annualized Sharpe ratio. Sharpe = (mean_return - risk_free_rate) / std_dev * sqrt(252) |
 | `sortinoRatio()` | Compute annualized Sortino ratio (penalizes downside deviation only). |
 | `maxDrawdown()` | Compute maximum drawdown from a price series. Returns a value between 0 and 1 (e.g. 0.25 = 25% drawdown). |
@@ -771,15 +789,32 @@ Analytics Calculators — Sharpe ratio, Sortino ratio, max drawdown, Fibonacci l
 
 **File:** `src/domain/bar-replay.ts`
 
-Bar Replay — step through historical OHLCV candles with play/pause/speed/seek.  R1: Provides a `createBarReplay()` factory for replaying a candle series at configurable speed with step controls. Pure domain logic — no DOM, no I/O.  Usage: const replay = createBarReplay(candles, { speed: 10,           // 10x speed onTick: (candle, index, total) => chart.update(candle), onComplete: () => console.log("done"), }); replay.play(); // ... later: replay.pause(); replay.seek(50); replay.setSpeed(5); replay.play(); replay.dispose(); // cancel timer on cleanup
+Bar Replay — step through historical OHLCV candles with play/pause/speed/seek.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `createBarReplay()` | Bar Replay — step through historical OHLCV candles with play/pause/speed/seek. R1: Provides a `createBarReplay()` factory for replaying a candle series at configurable speed with step controls. Pure domain logic — no DOM, no I/O. Usage: const replay = createBarReplay(candles, { speed: 10,           // 10x speed onTick: (candle, index, total) => chart.update(candle), onComplete: () => console.log("done"), }); replay.play(); // ... later: replay.pause(); replay.seek(50); replay.setSpeed(5); replay.play(); replay.dispose(); // cancel timer on cleanup / import type { Candle } from "./heikin-ashi"; export type { Candle }; // ── Public types ───────────────────────────────────────────────────────────── /** Callback invoked for each candle tick during playback or manual stepping. */ export type ReplayTickHandler = (candle: Readonly<Candle>, index: number, total: number) => void; /** Options for `createBarReplay()`. */ export interface ReplayOptions { /** Milliseconds between ticks at 1× speed. Actual interval = `intervalMs / speed`. / intervalMs?: number; /** Initial playback speed multiplier. 1 = real-time, 10 = 10× faster. / speed?: number; /** Candle index to start at (0-based). / startIndex?: number; /** Called once per tick with the current candle and its position. */ onTick: ReplayTickHandler; /** Called when the last candle has been emitted. Playback stops automatically. / onComplete?: () => void; } /** Read-only snapshot of the current replay state. */ export interface ReplayState { /** Whether playback is currently running. */ readonly isPlaying: boolean; /** Current candle index (0-based, clipped to `[0, total - 1]`). */ readonly currentIndex: number; /** Total number of candles in the series. */ readonly total: number; /** Current playback speed multiplier. */ readonly speed: number; /** Completion ratio in `[0, 1]`. `0` at index 0, `1` after the last candle. */ readonly progress: number; } /** Handle returned by `createBarReplay()`. */ export interface BarReplay { /** Start or resume playback from the current position. No-op if already playing or at end. */ play(): void; /** Pause playback. No-op if already paused. */ pause(): void; /** Advance one candle and emit `onTick`. Pauses ongoing playback before stepping. */ step(): void; /** Seek to a specific candle index without changing the playing state. Clamped to `[0, total - 1]`. Emits `onTick` for the candle at `index`. / seek(index: number): void; /** Reset to `startIndex` and pause. Emits `onTick` for the first candle if series is non-empty. */ reset(): void; /** Set the playback speed multiplier. Takes effect immediately (restarts the internal timer when playing). / setSpeed(speed: number): void; /** Returns a read-only snapshot of the current state. */ getState(): ReplayState; /** Cancel any pending timer and release references. Safe to call multiple times. */ dispose(): void; } // ── Implementation ──────────────────────────────────────────────────────────── const MIN_SPEED = 0.1; const MAX_SPEED = 100; const DEFAULT_INTERVAL_MS = 1000; /** Create a bar-replay controller for a candle series. |
+| `createBarReplay()` | Bar Replay — step through historical OHLCV candles with play/pause/speed/seek. |
 
 **Types:** `ReplayOptions`, `ReplayState`, `BarReplay`
+
+---
+
+### Base64 Url
+
+**File:** `src/domain/base64-url.ts`
+
+URL-safe Base64 encoding/decoding (RFC 4648 §5). Replaces `+` with `-`, `/` with `_`, and strips `=` padding. Works with strings (UTF-8) and `Uint8Array` payloads in any JS runtime that has `atob`/`btoa` or `Buffer`.
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `base64UrlEncodeBytes()` | — |
+| `base64UrlDecodeBytes()` | — |
+| `base64UrlEncode()` | — |
+| `base64UrlDecode()` | — |
 
 ---
 
@@ -787,13 +822,13 @@ Bar Replay — step through historical OHLCV candles with play/pause/speed/seek.
 
 **File:** `src/domain/benchmark.ts`
 
-Benchmark comparison helpers — compute the normalized "performance vs benchmark" overlay used in Portfolio and Chart cards. Pure math.  Both series are rebased to 100 at the first overlapping timestamp so a "vs SPY" overlay reads as percent return since the start.
+Benchmark comparison helpers — compute the normalized "performance vs benchmark" overlay used in Portfolio and Chart cards. Pure math.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `rebaseToHundred()` | Benchmark comparison helpers — compute the normalized "performance vs benchmark" overlay used in Portfolio and Chart cards. Pure math. Both series are rebased to 100 at the first overlapping timestamp so a "vs SPY" overlay reads as percent return since the start. / export interface SeriesPoint { readonly timestamp: number; readonly value: number; } export interface RelativePoint { readonly timestamp: number; readonly subject: number; readonly benchmark: number; /** Subject - benchmark, in percent (rebased = 100). */ readonly excessPct: number; } /** Rebase a series so the first point equals 100. |
+| `rebaseToHundred()` | Benchmark comparison helpers — compute the normalized "performance vs benchmark" overlay used in Portfolio and Chart cards. Pure math. |
 | `compareToBenchmark()` | Align two series on shared timestamps and produce a per-bar comparison. Both inputs must be sorted ascending by timestamp. |
 | `beta()` | Beta of subject returns vs benchmark returns (covariance / variance). Returns 0 when inputs are too short or benchmark variance is 0. |
 
@@ -811,7 +846,7 @@ Black-Scholes option pricing model and Greeks. Pure math — no options chain da
 
 | Function | Description |
 | --- | --- |
-| `blackScholes()` | Black-Scholes option pricing model and Greeks. Pure math — no options chain data required. / /** Cumulative standard normal distribution (Abramowitz & Stegun approximation). / function normCdf(x: number): number { const a1 = 0.254829592; const a2 = -0.284496736; const a3 = 1.421413741; const a4 = -1.453152027; const a5 = 1.061405429; const p = 0.3275911; const sign = x < 0 ? -1 : 1; const abs = Math.abs(x); const t = 1 / (1 + p * abs); const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp((-abs * abs) / 2); return 0.5 * (1 + sign * y); } /** Standard normal PDF. / function normPdf(x: number): number { return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI); } export interface BlackScholesInput { readonly S: number; // Current stock price readonly K: number; // Strike price readonly T: number; // Time to expiration (years) readonly r: number; // Risk-free rate (annual) readonly sigma: number; // Implied volatility (annual) } export interface OptionPrice { readonly call: number; readonly put: number; } export interface Greeks { readonly delta: number; readonly gamma: number; readonly theta: number; // per day readonly vega: number; // per 1% vol move readonly rho: number; // per 1% rate move } /** Calculate d1 and d2 for Black-Scholes formula. / function d1d2(input: BlackScholesInput): { d1: number; d2: number } { const { S, K, T, r, sigma } = input; if (T <= 0 || sigma <= 0 || S <= 0 || K <= 0) return { d1: 0, d2: 0 }; const d1 = (Math.log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * Math.sqrt(T)); const d2 = d1 - sigma * Math.sqrt(T); return { d1, d2 }; } /** Black-Scholes European option pricing. |
+| `blackScholes()` | Black-Scholes option pricing model and Greeks. Pure math — no options chain data required. |
 | `callGreeks()` | Calculate option Greeks for a call. |
 | `putGreeks()` | Calculate option Greeks for a put. |
 | `impliedVolatility()` | Implied volatility via bisection method. |
@@ -830,7 +865,7 @@ Causal impact analysis — simplified Bayesian structural time series. Estimates
 
 | Function | Description |
 | --- | --- |
-| `causalImpact()` | Causal impact analysis — simplified Bayesian structural time series. Estimates the causal effect of an intervention on a time series using a synthetic control approach. / export interface CausalImpactResult { readonly preIntervention: readonly number[]; readonly postIntervention: readonly number[]; readonly predicted: readonly number[]; // counterfactual (what would have happened) readonly pointEffect: readonly number[]; // observed - predicted readonly cumulativeEffect: number; readonly averageEffect: number; readonly relativeEffect: number; // % change vs counterfactual readonly significant: boolean; // effect outside credible interval } export interface CausalImpactConfig { readonly interventionIndex: number; // where intervention occurs readonly confidenceLevel?: number; // default 0.95 } /** Estimate causal impact of an intervention using synthetic control. Approach: 1. Fit a linear model on pre-intervention period using covariates 2. Predict counterfactual in post-intervention period 3. Compute difference (observed - predicted) as causal effect |
+| `causalImpact()` | Causal impact analysis — simplified Bayesian structural time series. Estimates the causal effect of an intervention on a time series using a synthetic control approach. |
 
 **Types:** `CausalImpactResult`, `CausalImpactConfig`
 
@@ -840,7 +875,7 @@ Causal impact analysis — simplified Bayesian structural time series. Estimates
 
 **File:** `src/domain/cci-calculator.ts`
 
-CCI (Commodity Channel Index) — Pure domain logic. Ported from Dart: lib/src/domain/cci_calculator.dart  CCI = (TP - SMA(TP)) / (0.015 * Mean Deviation) TP = (high + low + close) / 3
+CCI (Commodity Channel Index) — Pure domain logic. Ported from Dart: lib/src/domain/cci_calculator.dart
 
 **Functions:**
 
@@ -863,7 +898,7 @@ Bayesian changepoint detection — identifies structural breaks in time series. 
 
 | Function | Description |
 | --- | --- |
-| `bayesianChangepoints()` | Bayesian changepoint detection — identifies structural breaks in time series. Uses Bayesian Online Changepoint Detection (BOCPD) algorithm. / export interface Changepoint { readonly index: number; readonly probability: number; readonly meanBefore: number; readonly meanAfter: number; readonly direction: "up" | "down"; } export interface ChangepointResult { readonly changepoints: readonly Changepoint[]; readonly runLengthProbs: readonly number[]; // P(changepoint) at each t readonly segmentMeans: readonly number[]; } /** Bayesian changepoint detection using sliding-window Bayes factor. Compares evidence for a mean shift at each point by computing the ratio of likelihoods: split vs. no-split hypothesis. |
+| `bayesianChangepoints()` | Bayesian changepoint detection — identifies structural breaks in time series. Uses Bayesian Online Changepoint Detection (BOCPD) algorithm. |
 | `cusumChangepoints()` | Simple threshold-based changepoint detection (CUSUM-like). Faster alternative for real-time use. |
 
 **Types:** `Changepoint`, `ChangepointResult`
@@ -884,17 +919,36 @@ Connors RSI (Larry Connors). Composite of three components: 1. RSI(close, rsiPer
 
 ---
 
-### Cross Up Detector
+### Corp Actions
 
-**File:** `src/domain/cross-up-detector.ts`
+**File:** `src/domain/corp-actions.ts`
 
-Cross-Up Detector — Pure domain logic. Ported from Dart: lib/src/domain/cross_up_detector.dart  Cross-up rule: close[t-1] <= SMA[t-1] AND close[t] > SMA[t]
+Corporate Action Adjustment — pure functions for adjusting OHLCV data for stock splits and cash dividends.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `detectCrossUp()` | Cross-Up Detector — Pure domain logic. Ported from Dart: lib/src/domain/cross_up_detector.dart Cross-up rule: close[t-1] <= SMA[t-1] AND close[t] > SMA[t] / import type { DailyCandle } from "../types/domain"; import { computeSmaSeries, type SmaPoint } from "./sma-calculator"; export interface CrossUpResult { readonly isCrossUp: boolean; readonly currentClose: number; readonly previousClose: number; readonly currentSma: number; readonly previousSma: number; readonly date: string; } /** Detect whether a cross-up occurred on the latest candle for the given SMA period. Requires at least `period + 1` candles. |
+| `applySplits()` | Corporate Action Adjustment — pure functions for adjusting OHLCV data for stock splits and cash dividends. |
+| `applyDividends()` | Apply dividend adjustment to a sorted (ascending date) OHLCV series. |
+| `applyCorpActions()` | Apply all corporate action adjustments in correct order: splits first, then dividends (dividends are expressed in split-adjusted terms). |
+| `cumulativeSplitFactor()` | Compute the cumulative split factor for a series of splits. |
+
+**Types:** `SplitEvent`, `DividendEvent`, `AdjustmentOptions`
+
+---
+
+### Cross Up Detector
+
+**File:** `src/domain/cross-up-detector.ts`
+
+Cross-Up Detector — Pure domain logic. Ported from Dart: lib/src/domain/cross_up_detector.dart
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `detectCrossUp()` | Cross-Up Detector — Pure domain logic. Ported from Dart: lib/src/domain/cross_up_detector.dart |
 
 **Types:** `CrossUpResult`
 
@@ -910,9 +964,9 @@ Custom index builder — create equal-weighted or cap-weighted custom indices fr
 
 | Function | Description |
 | --- | --- |
-| `equalWeightedIndex()` | Custom index builder — create equal-weighted or cap-weighted custom indices from a basket of assets. / export interface IndexComponent { readonly ticker: string; readonly prices: readonly number[]; // daily close prices readonly marketCap?: number; // for cap-weighted } export interface IndexResult { readonly values: readonly number[]; readonly returns: readonly number[]; readonly totalReturn: number; readonly annualizedReturn: number; readonly weights: Record<string, number>; } /** Build an equal-weighted custom index from component prices. All components normalized to base 100 then averaged. |
+| `equalWeightedIndex()` | Custom index builder — create equal-weighted or cap-weighted custom indices from a basket of assets. |
 | `capWeightedIndex()` | Build a market-cap-weighted custom index. |
-| `rebalanceWeights()` | Compute daily returns from index values. / function computeReturns(values: readonly number[]): number[] { const returns: number[] = []; for (let i = 1; i < values.length; i++) { returns.push(values[i - 1]! > 0 ? (values[i]! / values[i - 1]! - 1) * 100 : 0); } return returns; } /** Rebalance index weights (recalculate from current prices and caps). |
+| `rebalanceWeights()` | Compute daily returns from index values. |
 
 **Types:** `IndexComponent`, `IndexResult`
 
@@ -928,7 +982,7 @@ Dollar-cost average (DCA) simulator — model recurring investments and calculat
 
 | Function | Description |
 | --- | --- |
-| `simulateDca()` | Dollar-cost average (DCA) simulator — model recurring investments and calculate average cost basis, total shares, and performance. / export interface DcaInvestment { readonly date: string; readonly price: number; readonly amount: number; // dollar amount invested } export interface DcaResult { readonly totalInvested: number; readonly totalShares: number; readonly averageCost: number; readonly currentValue: number; readonly gainLoss: number; readonly gainLossPercent: number; readonly investmentCount: number; } /** Simulate a DCA strategy from a list of investments and current price. |
+| `simulateDca()` | Dollar-cost average (DCA) simulator — model recurring investments and calculate average cost basis, total shares, and performance. |
 | `generateDcaSchedule()` | Generate a DCA schedule from a price history with fixed amount. |
 | `dcaVsLumpSum()` | Compare DCA vs lump-sum investment. |
 | `runningCostBasis()` | Calculate the cost basis at each investment point (running average). |
@@ -947,7 +1001,7 @@ Dividend Discount Model (DDM) — intrinsic value estimation. Implements Gordon 
 
 | Function | Description |
 | --- | --- |
-| `gordonGrowthModel()` | Dividend Discount Model (DDM) — intrinsic value estimation. Implements Gordon Growth Model and multi-stage DDM. / export interface DDMResult { readonly intrinsicValue: number; readonly dividendYield: number; readonly impliedGrowth: number; readonly marginOfSafety: number; // (intrinsic - price) / intrinsic } /** Gordon Growth Model: P = D1 / (r - g) |
+| `gordonGrowthModel()` | Dividend Discount Model (DDM) — intrinsic value estimation. Implements Gordon Growth Model and multi-stage DDM. |
 | `twoStageDDM()` | Two-stage DDM: high growth for N years, then terminal perpetuity. |
 | `hModelDDM()` | H-Model: smooth transition from high to stable growth. P = D0 * (1+g_l) / (r - g_l) + D0 * H * (g_s - g_l) / (r - g_l) where H = half-life of high-growth period. |
 | `impliedGrowthRate()` | Implied growth rate from current price and dividend. Solves P = D1 / (r - g) for g. |
@@ -967,7 +1021,7 @@ Dispersion trading — index vol vs constituent vol, implied correlation. Exploi
 
 | Function | Description |
 | --- | --- |
-| `impliedCorrelation()` | Dispersion trading — index vol vs constituent vol, implied correlation. Exploits difference between index implied vol and weighted constituent vols. / export interface DispersionMetrics { readonly indexVol: number; readonly avgConstituentVol: number; readonly impliedCorrelation: number; // ρ_impl = (σ²_idx - Σw²σ²_i) / (Σᵢ≠ⱼ wᵢwⱼσᵢσⱼ) readonly realizedCorrelation: number; readonly dispersionSpread: number; // implied - realized correlation readonly signal: "sell_correlation" | "buy_correlation" | "neutral"; } export interface ConstituentData { readonly weight: number; readonly volatility: number; // annualized vol readonly returns: readonly number[]; } /** Calculate implied correlation from index vol and constituent vols. σ²_index = Σᵢ wᵢ²σᵢ² + 2·ρ_impl · Σᵢ<ⱼ wᵢwⱼσᵢσⱼ Solving for ρ_impl: ρ_impl = (σ²_index - Σᵢ wᵢ²σᵢ²) / (2 · Σᵢ<ⱼ wᵢwⱼσᵢσⱼ) |
+| `impliedCorrelation()` | Dispersion trading — index vol vs constituent vol, implied correlation. Exploits difference between index implied vol and weighted constituent vols. |
 | `realizedCorrelation()` | Calculate realized correlation from constituent return series. |
 | `dispersionAnalysis()` | Full dispersion trading analysis. |
 | `indexVarianceFromConstituents()` | Compute index variance from constituent weights and correlation matrix. Used for "fair value" of index vol. |
@@ -986,8 +1040,8 @@ Distribution fitting tests — Kolmogorov-Smirnov and Anderson-Darling. Goodness
 
 | Function | Description |
 | --- | --- |
-| `kolmogorovSmirnov()` | Distribution fitting tests — Kolmogorov-Smirnov and Anderson-Darling. Goodness-of-fit tests for empirical distributions. / export interface GoodnessOfFitResult { readonly statistic: number; readonly criticalValue: number; // at α=0.05 readonly reject: boolean; // true if distribution is rejected readonly testName: string; } /** Kolmogorov-Smirnov test: tests whether sample comes from a reference CDF. D = max|F_n(x) - F_0(x)| |
-| `andersonDarling()` | Anderson-Darling test: weighted KS statistic emphasizing tails. A² = -n - (1/n)Σ(2i-1)[ln(F(x_i)) + ln(1-F(x_{n+1-i}))] |
+| `kolmogorovSmirnov()` | Distribution fitting tests — Kolmogorov-Smirnov and Anderson-Darling. Goodness-of-fit tests for empirical distributions. |
+| `andersonDarling()` | Anderson-Darling test: weighted KS statistic emphasizing tails. |
 | `normalCdf()` | Standard normal CDF using rational approximation (Abramowitz & Stegun). |
 | `normalityTest()` | Test whether sample is normally distributed. |
 | `exponentialTest()` | Test whether sample follows an exponential distribution. |
@@ -1000,14 +1054,14 @@ Distribution fitting tests — Kolmogorov-Smirnov and Anderson-Darling. Goodness
 
 **File:** `src/domain/dividend-analytics.ts`
 
-Dividend Analytics — pure functions for analyzing dividend history: yield calculation, growth rate (CAGR), payout consistency, and DRIP (Dividend Reinvestment Plan) simulation.  All inputs are plain data — no I/O, no fetch, no Date.now().
+Dividend Analytics — pure functions for analyzing dividend history: yield calculation, growth rate (CAGR), payout consistency, and DRIP (Dividend Reinvestment Plan) simulation.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeDividendSummary()` | Dividend Analytics — pure functions for analyzing dividend history: yield calculation, growth rate (CAGR), payout consistency, and DRIP (Dividend Reinvestment Plan) simulation. All inputs are plain data — no I/O, no fetch, no Date.now(). / export interface DividendPayment { readonly date: string; // ISO 8601 (YYYY-MM-DD) readonly amount: number; // Dividend per share } export interface DividendSummary { /** Total dividend paid over the period. */ readonly totalDividends: number; /** Current annual yield (latest 4 quarterly dividends / current price). */ readonly currentYield: number; /** Compound annual growth rate of dividends. */ readonly dividendCagr: number; /** Number of consecutive years with non-decreasing dividends. */ readonly growthStreak: number; /** Average payout frequency per year. */ readonly avgPayoutsPerYear: number; /** Number of payments in history. */ readonly paymentCount: number; } export interface DripResult { /** Final number of shares after reinvestment. */ readonly finalShares: number; /** Total dividends received (cash value). */ readonly totalDividendsReceived: number; /** Total shares purchased via DRIP. */ readonly sharesFromDrip: number; /** Final portfolio value (finalShares × endPrice). */ readonly finalValue: number; /** Value without DRIP (initialShares × endPrice + totalDividends). */ readonly valueWithoutDrip: number; /** Extra return from DRIP reinvestment. */ readonly dripBenefit: number; } /** Compute dividend summary statistics. |
-| `simulateDrip()` | Simulate Dividend Reinvestment Plan (DRIP). Must have same length as dividends. |
+| `computeDividendSummary()` | Dividend Analytics — pure functions for analyzing dividend history: yield calculation, growth rate (CAGR), payout consistency, and DRIP (Dividend Reinvestment Plan) simulation. |
+| `simulateDrip()` | Simulate Dividend Reinvestment Plan (DRIP). |
 
 **Types:** `DividendPayment`, `DividendSummary`, `DripResult`
 
@@ -1023,7 +1077,7 @@ Dividend calendar planner — track ex-dividend dates, payment schedules, and pr
 
 | Function | Description |
 | --- | --- |
-| `projectIncome()` | Dividend calendar planner — track ex-dividend dates, payment schedules, and projected annual income from holdings. / export interface DividendEntry { readonly ticker: string; readonly exDate: string; // ISO date readonly payDate: string; // ISO date readonly amount: number; // per share readonly frequency: "quarterly" | "monthly" | "semi-annual" | "annual"; } export interface DividendProjection { readonly ticker: string; readonly annualPerShare: number; readonly shares: number; readonly annualIncome: number; readonly monthlyIncome: number; readonly nextExDate: string | null; } export interface MonthlyBreakdown { readonly month: number; // 1–12 readonly total: number; readonly tickers: readonly string[]; } /** Calculate projected annual income from dividend entries and holdings. |
+| `projectIncome()` | Dividend calendar planner — track ex-dividend dates, payment schedules, and projected annual income from holdings. |
 | `totalAnnualIncome()` | Get total projected annual dividend income. |
 | `monthlyBreakdown()` | Get monthly income breakdown from dividend entries. |
 | `upcomingExDates()` | Get upcoming ex-dividend dates within N days. |
@@ -1059,7 +1113,7 @@ Drawdown analyzer — compute peak-to-trough drawdowns from an equity curve or p
 
 | Function | Description |
 | --- | --- |
-| `drawdownSeries()` | Drawdown analyzer — compute peak-to-trough drawdowns from an equity curve or price series for risk assessment. / export interface DrawdownPeriod { readonly peakIndex: number; readonly troughIndex: number; readonly recoveryIndex: number | null; // null if not recovered readonly peakValue: number; readonly troughValue: number; readonly drawdownPercent: number; readonly duration: number; // bars from peak to trough readonly recoveryDuration: number | null; // bars from trough to recovery } export interface DrawdownSummary { readonly maxDrawdown: number; readonly avgDrawdown: number; readonly currentDrawdown: number; readonly drawdownCount: number; readonly longestDuration: number; readonly isInDrawdown: boolean; } /** Calculate the drawdown series (% below running peak at each point). |
+| `drawdownSeries()` | Drawdown analyzer — compute peak-to-trough drawdowns from an equity curve or price series for risk assessment. |
 | `findDrawdownPeriods()` | Identify all drawdown periods from a value series. |
 | `drawdownSummary()` | Get a summary of drawdown characteristics. |
 | `worstDrawdowns()` | Get the worst N drawdowns. |
@@ -1073,13 +1127,13 @@ Drawdown analyzer — compute peak-to-trough drawdowns from an equity curve or p
 
 **File:** `src/domain/drawdown-recovery.ts`
 
-Drawdown recovery analysis — estimate recovery patterns, speeds, and probabilities from historical drawdown data.  Pure functions: accept price series, return recovery analytics. Complements drawdown-analyzer.ts which identifies drawdown periods.
+Drawdown recovery analysis — estimate recovery patterns, speeds, and probabilities from historical drawdown data.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `analyzeRecoveries()` | Drawdown recovery analysis — estimate recovery patterns, speeds, and probabilities from historical drawdown data. Pure functions: accept price series, return recovery analytics. Complements drawdown-analyzer.ts which identifies drawdown periods. / import { findDrawdownPeriods } from "./drawdown-analyzer.js"; /** Recovery statistics for a single drawdown event */ export interface RecoveryEvent { /** Drawdown depth as a fraction (e.g. 0.20 = 20% drawdown) */ readonly drawdownPercent: number; /** Number of bars from peak to trough */ readonly drawdownDuration: number; /** Number of bars from trough to recovery (null if not recovered) */ readonly recoveryDuration: number | null; /** Ratio of recovery duration to drawdown duration (null if not recovered) */ readonly recoveryRatio: number | null; /** Whether recovery was achieved */ readonly recovered: boolean; /** Index of peak in original series */ readonly peakIndex: number; /** Index of trough in original series */ readonly troughIndex: number; } /** Aggregate recovery statistics across all drawdown events */ export interface RecoveryAnalysis { /** All individual recovery events */ readonly events: readonly RecoveryEvent[]; /** Total number of drawdown events */ readonly totalEvents: number; /** Number of recovered drawdowns */ readonly recoveredCount: number; /** Recovery rate as fraction (0–1) */ readonly recoveryRate: number; /** Average bars to recover (recovered events only) */ readonly avgRecoveryDuration: number | null; /** Median bars to recover (recovered events only) */ readonly medianRecoveryDuration: number | null; /** Average recovery-to-drawdown ratio (recovered events only) */ readonly avgRecoveryRatio: number | null; /** Fastest recovery (fewest bars to recover, or null) */ readonly fastestRecovery: RecoveryEvent | null; /** Slowest recovery (most bars to recover, or null) */ readonly slowestRecovery: RecoveryEvent | null; /** Largest unrecovered drawdown (or null) */ readonly largestUnrecovered: RecoveryEvent | null; } /** Analyze recovery patterns from a price/value series. |
+| `analyzeRecoveries()` | Drawdown recovery analysis — estimate recovery patterns, speeds, and probabilities from historical drawdown data. |
 | `estimateRecoveryTime()` | Estimate expected recovery time for a given drawdown depth, based on historical recovery patterns. |
 
 **Types:** `RecoveryEvent`, `RecoveryAnalysis`
@@ -1090,17 +1144,17 @@ Drawdown recovery analysis — estimate recovery patterns, speeds, and probabili
 
 **File:** `src/domain/earnings-calendar.ts`
 
-Earnings Calendar domain — pure types and transforms (H18).  This module provides the domain model for earnings events and a suite of pure functions for filtering, sorting, and classifying earnings data. No API calls, no rendering — easy to test and reuse across cards and workers.
+Earnings Calendar domain — pure types and transforms (H18).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `parseEarningsResponse()` | Earnings Calendar domain — pure types and transforms (H18). This module provides the domain model for earnings events and a suite of pure functions for filtering, sorting, and classifying earnings data. No API calls, no rendering — easy to test and reuse across cards and workers. / // ─────────────────────────── Types ────────────────────────────────────────── export interface EarningsEntry { /** Ticker symbol (always uppercase) */ ticker: string; /** Company display name */ companyName: string; /** ISO 8601 date string YYYY-MM-DD */ earningsDate: string; /** Consensus EPS estimate (can be negative) */ epsEstimate: number; /** Prior-period actual EPS */ priorEps: number; /** Actual EPS surprise % (positive = beat; negative = miss; 0 if not yet reported) */ surprisePct: number; /** Whether earnings have already been reported */ reported?: boolean; /** "BMO" (before market open) or "AMC" (after market close); undefined if unknown */ timing?: "BMO" | "AMC"; } /** Subset of EarningsEntry coming from an external API response before validation. */ export interface RawEarningsItem { symbol?: string; ticker?: string; name?: string; companyName?: string; date?: string; earningsDate?: string; epsEstimate?: number | null; epsActual?: number | null; epsPrior?: number | null; priorEps?: number | null; surprisePct?: number | null; reported?: boolean; timing?: string; } // ─────────────────────────── Parsing ───────────────────────────────────────── /** Parse raw API data into a validated list of `EarningsEntry` objects. Silently drops any malformed items (missing ticker or date). |
+| `parseEarningsResponse()` | Earnings Calendar domain — pure types and transforms (H18). |
 | `sortByDate()` | Sort earnings entries by date ascending (earliest first). Preserves stable order for same-date entries. |
 | `filterUpcoming()` | Return entries with earningsDate within the next `days` calendar days from `now`. Includes today (diffDays = 0) through `days` days ahead. |
 | `getDaysUntilEarnings()` | How many calendar days until this earnings event. Returns 0 for today, negative for past events. |
-| `classifySurprise()` | Classify an earnings surprise as "beat", "miss", or "inline". "inline" means |surprisePct| <= threshold (default 2%). |
+| `classifySurprise()` | Classify an earnings surprise as "beat", "miss", or "inline". "inline" means \|surprisePct\| <= threshold (default 2%). |
 
 **Types:** `EarningsEntry`, `RawEarningsItem`
 
@@ -1110,13 +1164,13 @@ Earnings Calendar domain — pure types and transforms (H18).  This module provi
 
 **File:** `src/domain/economic-calendar.ts`
 
-Economic calendar domain helpers (I10).  Parse, classify and filter macro-economic events (FOMC, CPI, NFP, GDP, PMI, etc.).  Events come from an upstream API or RSS feed and are normalised into `EconEvent` records.  Exports: - `EventImpact` — High | Medium | Low - `EventCategory` — enum of macro categories - `parseEconEvent(raw)` — normalise a raw API record - `filterByImpact(events, min)` — keep ≥ impact - `filterByCountry(events, iso)` — keep matching ISO-3166 code - `filterByDateRange(events, from, to)` — date window - `groupByDate(events)` — Map<dateStr, EconEvent[]> - `groupByCountry(events)` — Map<iso, EconEvent[]> - `nextEvent(events, now)` — nearest future event - `classifyImpact(title)` — heuristic impact from title keywords - `classifyCategory(title)` — heuristic category - `formatSurprise(actual, forecast)` — "beat" | "miss" | "inline" - `surprisePct(actual, forecast)` — percentage surprise - `isMarketMoving(event)` — true for high-impact with surprise
+Economic calendar domain helpers (I10).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `parseEconEvent()` | Economic calendar domain helpers (I10). Parse, classify and filter macro-economic events (FOMC, CPI, NFP, GDP, PMI, etc.).  Events come from an upstream API or RSS feed and are normalised into `EconEvent` records. Exports: - `EventImpact` — High | Medium | Low - `EventCategory` — enum of macro categories - `parseEconEvent(raw)` — normalise a raw API record - `filterByImpact(events, min)` — keep ≥ impact - `filterByCountry(events, iso)` — keep matching ISO-3166 code - `filterByDateRange(events, from, to)` — date window - `groupByDate(events)` — Map<dateStr, EconEvent[]> - `groupByCountry(events)` — Map<iso, EconEvent[]> - `nextEvent(events, now)` — nearest future event - `classifyImpact(title)` — heuristic impact from title keywords - `classifyCategory(title)` — heuristic category - `formatSurprise(actual, forecast)` — "beat" | "miss" | "inline" - `surprisePct(actual, forecast)` — percentage surprise - `isMarketMoving(event)` — true for high-impact with surprise / // ── Types ───────────────────────────────────────────────────────────────── export enum EventImpact { High = "high", Medium = "medium", Low = "low", } export enum EventCategory { Employment = "employment", Inflation = "inflation", Growth = "growth", CentralBank = "central-bank", Manufacturing = "manufacturing", Housing = "housing", Consumer = "consumer", Trade = "trade", Other = "other", } export interface EconEvent { id: string; title: string; country: string; // ISO-3166-1 alpha-2 dateTime: number; // epoch ms impact: EventImpact; category: EventCategory; forecast?: number | undefined; actual?: number | undefined; previous?: number | undefined; } export interface RawEconEvent { id?: string; title?: string; country?: string; date?: string | number; impact?: string; category?: string; forecast?: number | string | null; actual?: number | string | null; previous?: number | string | null; } export type SurpriseDirection = "beat" | "miss" | "inline"; // ── Parsing ─────────────────────────────────────────────────────────────── /** Normalise a raw API record into a typed EconEvent. |
+| `parseEconEvent()` | Economic calendar domain helpers (I10). |
 | `filterByImpact()` | Keep events with impact ≥ minImpact. |
 | `filterByCountry()` | Keep events matching a specific country code (case-insensitive). |
 | `filterByDateRange()` | Keep events within a date range [from, to] (epoch ms, inclusive). |
@@ -1133,6 +1187,22 @@ Economic calendar domain helpers (I10).  Parse, classify and filter macro-econom
 
 ---
 
+### Efficiency Ratio
+
+**File:** `src/domain/efficiency-ratio.ts`
+
+Kaufman Efficiency Ratio (ER) — measures how efficiently price moves in a given direction relative to total path distance.
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `computeEfficiencyRatio()` | Kaufman Efficiency Ratio (ER) — measures how efficiently price moves in a given direction relative to total path distance. |
+
+**Types:** `EfficiencyRatioPoint`, `EfficiencyRatioOptions`
+
+---
+
 ### Efficient Frontier
 
 **File:** `src/domain/efficient-frontier.ts`
@@ -1143,11 +1213,11 @@ Efficient frontier — Markowitz mean-variance portfolio optimization. Finds opt
 
 | Function | Description |
 | --- | --- |
-| `assetStatsFromReturns()` | Efficient frontier — Markowitz mean-variance portfolio optimization. Finds optimal asset allocations that maximize return for a given risk. / export interface AssetStats { readonly ticker: string; readonly expectedReturn: number; // annualized readonly volatility: number; // annualized std dev } export interface PortfolioPoint { readonly weights: Record<string, number>; readonly expectedReturn: number; readonly volatility: number; readonly sharpeRatio: number; } /** Compute annualized return and volatility from daily returns. |
+| `assetStatsFromReturns()` | Efficient frontier — Markowitz mean-variance portfolio optimization. Finds optimal asset allocations that maximize return for a given risk. |
 | `covarianceMatrix()` | Compute covariance matrix from daily return series. Each element [i][j] is the annualized covariance between asset i and j. |
 | `portfolioVolatility()` | Portfolio volatility given weights and covariance matrix. σ_p = sqrt(w' * Σ * w) |
 | `portfolioReturn()` | Portfolio expected return given weights and per-asset returns. |
-| `efficientFrontier()` | Generate random portfolio weights that sum to 1 (long-only). / function randomWeights(n: number, seed: number): number[] { const raw: number[] = []; let s = seed; for (let i = 0; i < n; i++) { s = (s * 1664525 + 1013904223) >>> 0; raw.push(s / 0xffffffff); } const sum = raw.reduce((a, b) => a + b, 0); return raw.map((w) => w / sum); } /** Monte Carlo efficient frontier: generate random portfolios and extract the efficient frontier (highest return for each risk level). |
+| `efficientFrontier()` | Generate random portfolio weights that sum to 1 (long-only). |
 
 **Types:** `AssetStats`, `PortfolioPoint`
 
@@ -1189,13 +1259,13 @@ Elder Ray (Alexander Elder, 1989). Measures bull/bear pressure relative to an EM
 
 **File:** `src/domain/ema-calculator.ts`
 
-EMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/ema_calculator.dart  EMA(t) = close(t) * k + EMA(t-1) * (1 - k), where k = 2 / (period + 1). Seeds with SMA for the first value.
+EMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/ema_calculator.dart
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeEmaSeries()` | EMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/ema_calculator.dart EMA(t) = close(t) * k + EMA(t-1) * (1 - k), where k = 2 / (period + 1). Seeds with SMA for the first value. / import type { DailyCandle } from "../types/domain"; export interface EmaPoint { readonly date: string; readonly value: number | null; } /** Compute a rolling EMA series aligned with candles. The first `period - 1` entries have null values. Seed is SMA of first `period` closes. |
+| `computeEmaSeries()` | EMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/ema_calculator.dart |
 | `computeEma()` | Compute the current (latest) EMA value. Returns null if insufficient data. |
 
 **Types:** `EmaPoint`
@@ -1212,7 +1282,7 @@ Entropy analysis — measures disorder/randomness in time series. Higher entropy
 
 | Function | Description |
 | --- | --- |
-| `shannonEntropy()` | Entropy analysis — measures disorder/randomness in time series. Higher entropy = more random/unpredictable, lower = more ordered/predictable. / /** Shannon entropy of a binned distribution. Bins data into `bins` equal-width buckets and computes -Σ p·log2(p). |
+| `shannonEntropy()` | Entropy analysis — measures disorder/randomness in time series. Higher entropy = more random/unpredictable, lower = more ordered/predictable. |
 | `normalizedEntropy()` | Normalized Shannon entropy in [0, 1]. 0 = perfectly ordered, 1 = maximum disorder. |
 | `permutationEntropy()` | Permutation entropy (Bandt-Pompe). Embeds the time series in vectors of length `order` and counts ordinal patterns. Captures temporal structure independent of distribution. |
 | `normalizedPermutationEntropy()` | Normalized permutation entropy in [0, 1]. |
@@ -1231,7 +1301,7 @@ Build an equity curve from a list of closed trades, optionally compounding on a 
 
 | Function | Description |
 | --- | --- |
-| `buildEquityCurve()` | Build an equity curve from a list of closed trades, optionally compounding on a starting balance. Each trade has an entry/exit time, entry/exit price, and direction. / export type Side = "long" | "short"; export interface ClosedTrade { readonly entryTime: number; readonly exitTime: number; readonly entryPrice: number; readonly exitPrice: number; readonly side: Side; /** Quantity (shares/contracts). Defaults to 1. */ readonly quantity?: number; } export interface EquityPoint { readonly time: number; readonly equity: number; /** Realized PnL in absolute units at this point. */ readonly pnl: number; } export function tradePnl(trade: ClosedTrade): number { const qty = trade.quantity ?? 1; const direction = trade.side === "long" ? 1 : -1; return (trade.exitPrice - trade.entryPrice) * qty * direction; } /** Build a step equity curve. One point per closed trade, applied at the trade's exit time, in chronological order. |
+| `buildEquityCurve()` | Build an equity curve from a list of closed trades, optionally compounding on a starting balance. Each trade has an entry/exit time, entry/exit price, and direction. |
 | `tradePnl()` | — |
 | `summarizeTrades()` | — |
 
@@ -1243,13 +1313,13 @@ Build an equity curve from a list of closed trades, optionally compounding on a 
 
 **File:** `src/domain/etf-drilldown.ts`
 
-ETF Constituent Drilldown domain (G18).  Provides domain logic for drilling down from an ETF to its top holdings, computing weighted contributions to daily performance, and ranking by various criteria.  ## Workflow 1. Consumer fetches ETF holdings (ticker, weight, changePercent) from provider layer. 2. `buildEtfDrilldown(etfTicker, holdings)` produces a `EtfDrilldownResult`. 3. `topHoldingsByWeight(result, n)` / `topHoldersByContribution(result, n)` return the most significant constituents.  ## Types - `EtfHolding` — a single constituent (ticker + weight + price change). - `EtfDrilldownEntry` — enriched entry with `weightedContribution`. - `EtfDrilldownResult` — aggregate container with summary stats.
+ETF Constituent Drilldown domain (G18).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `buildEtfDrilldown()` | ETF Constituent Drilldown domain (G18). Provides domain logic for drilling down from an ETF to its top holdings, computing weighted contributions to daily performance, and ranking by various criteria. ## Workflow 1. Consumer fetches ETF holdings (ticker, weight, changePercent) from provider layer. 2. `buildEtfDrilldown(etfTicker, holdings)` produces a `EtfDrilldownResult`. 3. `topHoldingsByWeight(result, n)` / `topHoldersByContribution(result, n)` return the most significant constituents. ## Types - `EtfHolding` — a single constituent (ticker + weight + price change). - `EtfDrilldownEntry` — enriched entry with `weightedContribution`. - `EtfDrilldownResult` — aggregate container with summary stats. / // ─── types ──────────────────────────────────────────────────────────────────── /** A single ETF holding returned by the data provider. */ export interface EtfHolding { /** Ticker symbol, e.g. `"AAPL"`. */ ticker: string; /** Portfolio weight as a fraction in [0, 1]. e.g. `0.073` = 7.3 %. / weight: number; /** Today's price change as a percent (e.g. `2.5` = +2.5 %). May be negative or zero. / changePercent: number; } /** An enriched ETF holding entry with contribution analytics. */ export interface EtfDrilldownEntry { ticker: string; /** Portfolio weight [0, 1]. */ weight: number; /** Daily price change, %. */ changePercent: number; /** Contribution to the ETF's performance: `weightedContribution = weight × changePercent` / weightedContribution: number; /** Fraction of the ETF's total absolute contribution from this holding. In [0, 1].  All entries sum to 1. / attributionShare: number; } /** Aggregate result produced by `buildEtfDrilldown`. */ export interface EtfDrilldownResult { /** ETF ticker symbol, e.g. `"QQQ"`. */ etfTicker: string; /** All constituent entries, sorted by weight descending by default. */ entries: EtfDrilldownEntry[]; /** Estimated ETF daily change, % (sum of all weighted contributions). / estimatedChangePercent: number; /** Sum of all constituent weights.  Should be ≈ 1 for full coverage; may be < 1 when partial holdings are provided. / totalWeight: number; } // ─── computation ───────────────────────────────────────────────────────────── /** Enrich a raw holding with `weightedContribution`. `attributionShare` is filled in a second pass once the total is known. / function enrichHolding(h: EtfHolding): Omit<EtfDrilldownEntry, "attributionShare"> { return { ticker: h.ticker, weight: h.weight, changePercent: h.changePercent, weightedContribution: h.weight * h.changePercent, }; } /** Build an `EtfDrilldownResult` from raw ETF holdings. Holdings are sorted by `weight` descending in the result. |
+| `buildEtfDrilldown()` | ETF Constituent Drilldown domain (G18). |
 | `topHoldingsByWeight()` | Return the top `n` holdings by portfolio weight (largest first). Already sorted in `EtfDrilldownResult.entries` but this provides a convenient slice API. |
 | `topHoldersByContribution()` | Return the top `n` holdings by absolute weighted contribution (most impactful first, regardless of sign). |
 | `positiveContributors()` | Return holdings with a positive weighted contribution, sorted by contribution descending. |
@@ -1269,7 +1339,7 @@ Fama-French factor model — multi-factor attribution for portfolio returns. 3-f
 
 | Function | Description |
 | --- | --- |
-| `famaFrench3Factor()` | Fama-French factor model — multi-factor attribution for portfolio returns. 3-factor: R - Rf = α + β_mkt(Rm-Rf) + β_smb·SMB + β_hml·HML + ε / export interface FactorExposures { readonly alpha: number; // intercept (skill / mispricing) readonly betaMarket: number; // market beta readonly betaSMB: number; // size factor loading (Small Minus Big) readonly betaHML: number; // value factor loading (High Minus Low) readonly rSquared: number; // model explanatory power readonly residualVol: number; // idiosyncratic volatility } export interface FactorAttribution { readonly exposures: FactorExposures; readonly marketContribution: number; readonly smbContribution: number; readonly hmlContribution: number; readonly alphaContribution: number; readonly totalExplained: number; } /** Estimate Fama-French 3-factor exposures via OLS. |
+| `famaFrench3Factor()` | Fama-French factor model — multi-factor attribution for portfolio returns. 3-factor: R - Rf = α + β_mkt(Rm-Rf) + β_smb·SMB + β_hml·HML + ε |
 | `factorAttribution()` | Decompose returns into factor contributions. |
 | `capmBeta()` | Single-factor CAPM beta (convenience function). |
 
@@ -1287,7 +1357,7 @@ Fibonacci retracement & extension calculator — compute key Fibonacci levels fr
 
 | Function | Description |
 | --- | --- |
-| `fibRetracements()` | Fibonacci retracement & extension calculator — compute key Fibonacci levels from swing high/low points. / export interface FibLevel { readonly ratio: number; readonly label: string; readonly price: number; } export interface FibResult { readonly high: number; readonly low: number; readonly direction: "up" | "down"; readonly retracements: readonly FibLevel[]; readonly extensions: readonly FibLevel[]; } const RETRACEMENT_RATIOS = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1] as const; const EXTENSION_RATIOS = [1.0, 1.272, 1.618, 2.0, 2.618, 3.618] as const; /** Compute Fibonacci retracement levels between a swing high and low. Direction "up" means price moved from low to high (retracements are below high). Direction "down" means price moved from high to low (retracements are above low). |
+| `fibRetracements()` | Fibonacci retracement & extension calculator — compute key Fibonacci levels from swing high/low points. |
 | `fibExtensions()` | Compute Fibonacci extension levels beyond the swing range. |
 | `fibAnalysis()` | Full Fibonacci analysis (retracements + extensions). |
 | `nearestFibLevel()` | Find the nearest Fibonacci level to a given price. |
@@ -1301,7 +1371,7 @@ Fibonacci retracement & extension calculator — compute key Fibonacci levels fr
 
 **File:** `src/domain/fisher-transform.ts`
 
-Fisher Transform (John Ehlers, 2002). Applied to the median price, normalised over a `period` lookback into [-1, 1], then inverse-Fisher transformed into a near-Gaussian series. Crossover with prior bar is the standard signal.  x[i]   = 0.33 * 2 * ((median[i] - lowN) / (highN - lowN) - 0.5) + 0.67 * x[i-1] x[i]   clamped to [-0.999, 0.999] fish[i] = 0.5 * ln((1+x)/(1-x)) + 0.5 * fish[i-1]
+Fisher Transform (John Ehlers, 2002). Applied to the median price, normalised over a `period` lookback into [-1, 1], then inverse-Fisher transformed into a near-Gaussian series. Crossover with prior bar is the standard signal.
 
 **Functions:**
 
@@ -1323,7 +1393,7 @@ Fourier cycle analysis — Discrete Fourier Transform for detecting dominant cyc
 
 | Function | Description |
 | --- | --- |
-| `dft()` | Fourier cycle analysis — Discrete Fourier Transform for detecting dominant cycles in price data. / export interface FourierComponent { readonly period: number; // in bars readonly amplitude: number; readonly phase: number; // radians readonly power: number; // amplitude^2 } /** Compute the Discrete Fourier Transform of a real-valued series. Returns frequency components sorted by power (strongest first). |
+| `dft()` | Fourier cycle analysis — Discrete Fourier Transform for detecting dominant cycles in price data. |
 | `dominantCycles()` | Find the dominant cycle periods (top N by power). |
 | `spectralDensity()` | Spectral density: power at each frequency. Returns array of { period, power } sorted by period ascending. |
 | `reconstructSignal()` | Reconstruct signal from top N Fourier components. Useful for visualizing the dominant cycle overlay on price. |
@@ -1349,21 +1419,6 @@ Bill Williams Fractals. A bullish fractal forms at index `i` when the low at `i`
 
 ---
 
-### Fundamental Data
-
-**File:** `src/domain/fundamental-data.ts`
-
-Fundamental Data — fetches P/E, EPS, Revenue, Market Cap from Yahoo quoteSummary.  Uses the same YAHOO_BASE pattern as data-service.ts: dev proxy in dev mode, direct Yahoo Finance API in production.
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `fetchFundamentals()` | Fundamental Data — fetches P/E, EPS, Revenue, Market Cap from Yahoo quoteSummary. Uses the same YAHOO_BASE pattern as data-service.ts: dev proxy in dev mode, direct Yahoo Finance API in production. / import type { FundamentalData } from "../types/domain"; import { fetchWithTimeout } from "../core/fetch"; import { safeParse, YahooQuoteSummarySchema } from "../types/valibot-schemas"; const YAHOO_BASE: string = import.meta.env.DEV ? "/api/yahoo" : "https://query1.finance.yahoo.com"; /** In-memory cache to avoid redundant quoteSummary calls within a session. */ const cache = new Map<string, { data: FundamentalData; ts: number }>(); /** Cache TTL: 5 minutes (fundamentals don't change rapidly). */ const CACHE_TTL_MS = 5 * 60 * 1000; /** Fetch fundamental data for a single ticker from Yahoo Finance quoteSummary. Returns null if the request fails or the ticker has no fundamental data. |
-| `clearFundamentalsCache()` | Clear the fundamentals cache (useful for testing). |
-
----
-
 ### Gap Scanner
 
 **File:** `src/domain/gap-scanner.ts`
@@ -1374,7 +1429,7 @@ Gap detection scanner — identify price gaps (open vs prev close) for gap-fill 
 
 | Function | Description |
 | --- | --- |
-| `detectGaps()` | Gap detection scanner — identify price gaps (open vs prev close) for gap-fill trading strategies. / export interface DayData { readonly date: string; readonly open: number; readonly high: number; readonly low: number; readonly close: number; } export interface Gap { readonly date: string; readonly type: "gap-up" | "gap-down"; readonly gapSize: number; readonly gapPercent: number; readonly prevClose: number; readonly open: number; readonly filled: boolean; } /** Detect all gaps in a price series. A gap occurs when open differs significantly from previous close. |
+| `detectGaps()` | Gap detection scanner — identify price gaps (open vs prev close) for gap-fill trading strategies. |
 | `unfilledGaps()` | Get only unfilled gaps (potential future fill targets). |
 | `gapUps()` | Get gap-up events only. |
 | `gapDowns()` | Get gap-down events only. |
@@ -1397,7 +1452,7 @@ Granger causality — test whether one time series helps predict another. Uses V
 
 | Function | Description |
 | --- | --- |
-| `grangerCausality()` | Granger causality — test whether one time series helps predict another. Uses VAR(p) model and F-test for restricted vs unrestricted regression. / export interface GrangerResult { readonly fStatistic: number; readonly pValue: number; readonly lags: number; readonly reject: boolean; // true → X Granger-causes Y readonly direction: string; } export interface BidirectionalGranger { readonly xCausesY: GrangerResult; readonly yCausesX: GrangerResult; readonly feedback: boolean; // bidirectional causality } /** Test whether series X Granger-causes series Y at given lag order. H₀: Lagged X does NOT help predict Y (restricted model) H₁: Lagged X DOES help predict Y (unrestricted model) |
+| `grangerCausality()` | Granger causality — test whether one time series helps predict another. Uses VAR(p) model and F-test for restricted vs unrestricted regression. |
 | `bidirectionalGranger()` | Test bidirectional Granger causality between two series. |
 | `selectLagOrder()` | Select optimal lag order using BIC (Bayesian Information Criterion). |
 
@@ -1409,16 +1464,16 @@ Granger causality — test whether one time series helps predict another. Uses V
 
 **File:** `src/domain/heatmap-drilldown.ts`
 
-Heatmap Sector Drill-down domain helpers (G21).  When the user clicks a sector cell in the heatmap the UI zooms into that sector and shows each constituent stock as a sub-cell.  This module is purely computational: it consumes constituent data that the card has already fetched from the quote cache (no new API calls) and produces the objects needed to render the drill-down view.
+Heatmap Sector Drill-down domain helpers (G21).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeAbsoluteMove()` | Heatmap Sector Drill-down domain helpers (G21). When the user clicks a sector cell in the heatmap the UI zooms into that sector and shows each constituent stock as a sub-cell. This module is purely computational: it consumes constituent data that the card has already fetched from the quote cache (no new API calls) and produces the objects needed to render the drill-down view. / import type { ConstituentStock } from "../cards/heatmap"; // ─── types ─────────────────────────────────────────────────────────────────── export type DrilldownSortKey = "changePercent" | "weight" | "absoluteMove"; /** A constituent stock augmented with computed drill-down fields. */ export interface DrilldownEntry { readonly ticker: string; readonly name?: string | undefined; /** Daily % change, e.g. 1.5 = +1.5 %. */ readonly changePercent: number; /** Market-cap proxy weight in the sector (0–1). */ readonly weight: number; /** |Δprice × weight| — proportional move contribution. */ readonly absoluteMove: number; /** Fraction of the sector's net move attributable to this stock (0–1). */ readonly attribution: number; /** Normalised cell area in the drill-down treemap (0–1). */ readonly cellArea: number; } /** Full drill-down result for one sector. */ export interface DrilldownResult { readonly sector: string; /** Ordered entries (default: descending |absoluteMove|). */ readonly entries: readonly DrilldownEntry[]; /** Stock that contributed most to the sector move. */ readonly topContributor: string | null; /** Breadcrumb segments. */ readonly breadcrumb: readonly string[]; } // ─── helpers ───────────────────────────────────────────────────────────────── /** Compute absolute move contribution for a constituent. absoluteMove = |changePercent × weight| Weight represents the stock's share of the sector's total market cap. |
-| `buildDrilldownEntries()` | Build drill-down entries from a list of constituent stocks. - `attribution` is the stock's share of the sector's total absolute move. - `cellArea` is its weight (market-cap fraction), used to size treemap cells. - Entries with `weight <= 0` are skipped. |
-| `sortDrilldown()` | Sort drill-down entries by the given key. - "changePercent": descending % change (winners first) - "weight": descending market-cap proxy - "absoluteMove": descending absolute move contribution (default) |
-| `buildBreadcrumb()` | Build the breadcrumb for a sector drill-down. ["All Sectors", "Technology"] |
+| `computeAbsoluteMove()` | Heatmap Sector Drill-down domain helpers (G21). |
+| `buildDrilldownEntries()` | Build drill-down entries from a list of constituent stocks. |
+| `sortDrilldown()` | Sort drill-down entries by the given key. |
+| `buildBreadcrumb()` | Build the breadcrumb for a sector drill-down. |
 | `buildDrilldown()` | Full drill-down result for a sector. |
 | `computeAttributionBar()` | Produce a flat attribution bar: array of (ticker, fraction) sorted by attribution descending, ready to render as a stacked horizontal bar. |
 
@@ -1430,7 +1485,7 @@ Heatmap Sector Drill-down domain helpers (G21).  When the user clicks a sector c
 
 **File:** `src/domain/heikin-ashi.ts`
 
-Heikin-Ashi candle transform. Smooths price action by replacing each OHLC bar with a derived bar: HA close  = (O + H + L + C) / 4 HA open   = (prev HA open + prev HA close) / 2  (seed = (O0 + C0) / 2) HA high   = max(H, HA open, HA close) HA low    = min(L, HA open, HA close)  Pure transform, no time series alignment beyond the input order.
+Heikin-Ashi candle transform. Smooths price action by replacing each OHLC bar with a derived bar: HA close  = (O + H + L + C) / 4 HA open   = (prev HA open + prev HA close) / 2  (seed = (O0 + C0) / 2) HA high   = max(H, HA open, HA close) HA low    = min(L, HA open, HA close)
 
 **Functions:**
 
@@ -1446,7 +1501,7 @@ Heikin-Ashi candle transform. Smooths price action by replacing each OHLC bar wi
 
 **File:** `src/domain/ichimoku.ts`
 
-Ichimoku Kinko Hyo — five line indicator. Standard parameters (9/26/52) shift Senkou A and B forward by 26 bars and Chikou back by 26 bars.  Tenkan = (max(high, 9) + min(low, 9)) / 2 Kijun  = (max(high, 26) + min(low, 26)) / 2 SenkouA = (Tenkan + Kijun) / 2, plotted +26 bars SenkouB = (max(high, 52) + min(low, 52)) / 2, plotted +26 bars Chikou  = close, plotted -26 bars  Output is index-aligned with input (one entry per candle); shifted fields are placed at their *plotted* index (so accessing `result[i].senkouA` gives the cloud at time i, sourced from i-26).
+Ichimoku Kinko Hyo — five line indicator. Standard parameters (9/26/52) shift Senkou A and B forward by 26 bars and Chikou back by 26 bars.
 
 **Functions:**
 
@@ -1462,13 +1517,13 @@ Ichimoku Kinko Hyo — five line indicator. Standard parameters (9/26/52) shift 
 
 **File:** `src/domain/indicator-config.ts`
 
-Indicator configuration schema — per-indicator period/threshold/color (Q4 / RF9).  Provides typed configuration objects for every core technical indicator. Pure domain logic: no DOM, no fetch, no side-effects.  Usage: const config = DEFAULT_INDICATOR_CONFIGS["RSI"]; const validated = validateIndicatorConfig(config);
+Indicator configuration schema — per-indicator period/threshold/color (Q4 / RF9).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `validateIndicatorConfig()` | Indicator configuration schema — per-indicator period/threshold/color (Q4 / RF9). Provides typed configuration objects for every core technical indicator. Pure domain logic: no DOM, no fetch, no side-effects. Usage: const config = DEFAULT_INDICATOR_CONFIGS["RSI"]; const validated = validateIndicatorConfig(config); / import { DEFAULTS } from "./technical-defaults"; // ── Common types ────────────────────────────────────────────────────────────── /** CSS hex colour string (7-char #RRGGBB or 4-char #RGB). */ export type HexColor = `#${string}`; /** Shared base fields present on every indicator config. */ export interface IndicatorConfigBase { /** Whether this indicator is visible on the chart. */ readonly enabled: boolean; /** Primary line / histogram colour. */ readonly color: HexColor; } // ── Per-indicator config interfaces ────────────────────────────────────────── export interface SmaConfig extends IndicatorConfigBase { readonly type: "SMA"; /** Lookback period in bars. Range: 2–500. */ readonly period: number; } export interface EmaConfig extends IndicatorConfigBase { readonly type: "EMA"; /** Lookback period in bars. Range: 2–500. */ readonly period: number; } export interface RsiConfig extends IndicatorConfigBase { readonly type: "RSI"; /** Lookback period in bars. Range: 2–100. */ readonly period: number; /** Lower band threshold (oversold). Range: 1–49. */ readonly oversold: number; /** Upper band threshold (overbought). Range: 51–99. */ readonly overbought: number; } export interface MacdConfig extends IndicatorConfigBase { readonly type: "MACD"; /** Fast EMA period. Range: 2–50. */ readonly fastPeriod: number; /** Slow EMA period. Range: fastPeriod+1–200. */ readonly slowPeriod: number; /** Signal EMA period. Range: 2–50. */ readonly signalPeriod: number; /** Signal line colour. */ readonly signalColor: HexColor; /** Histogram colour (positive bars). */ readonly histColorPositive: HexColor; /** Histogram colour (negative bars). */ readonly histColorNegative: HexColor; } export interface BollingerConfig extends IndicatorConfigBase { readonly type: "Bollinger"; /** Lookback period in bars. Range: 2–200. */ readonly period: number; /** Standard-deviation multiplier for the bands. Range: 0.5–5.0. */ readonly multiplier: number; /** Upper band colour. */ readonly upperColor: HexColor; /** Lower band colour. */ readonly lowerColor: HexColor; } export interface StochasticConfig extends IndicatorConfigBase { readonly type: "Stochastic"; /** %K period in bars. Range: 2–100. */ readonly kPeriod: number; /** %D smoothing period. Range: 1–50. */ readonly dPeriod: number; /** Oversold threshold. Range: 1–49. */ readonly oversold: number; /** Overbought threshold. Range: 51–99. */ readonly overbought: number; /** %D signal line colour. */ readonly dColor: HexColor; } export interface AdxConfig extends IndicatorConfigBase { readonly type: "ADX"; /** Lookback period in bars. Range: 2–100. */ readonly period: number; /** Trend-strength threshold. Range: 1–99. */ readonly trendThreshold: number; } export interface AtrConfig extends IndicatorConfigBase { readonly type: "ATR"; /** Lookback period in bars. Range: 2–200. */ readonly period: number; } export interface VwapConfig extends IndicatorConfigBase { readonly type: "VWAP"; /** Reset anchor: daily, weekly, or monthly. */ readonly anchor: "daily" | "weekly" | "monthly"; } // ── Discriminated union ─────────────────────────────────────────────────────── export type IndicatorConfig = | SmaConfig | EmaConfig | RsiConfig | MacdConfig | BollingerConfig | StochasticConfig | AdxConfig | AtrConfig | VwapConfig; export type IndicatorType = IndicatorConfig["type"]; // ── Default configurations ──────────────────────────────────────────────────── export const DEFAULT_INDICATOR_CONFIGS = { SMA: { type: "SMA", period: DEFAULTS.sma200Period, enabled: true, color: "#2962ff", } satisfies SmaConfig, EMA: { type: "EMA", period: DEFAULTS.sma50Period, enabled: true, color: "#ff6d00", } satisfies EmaConfig, RSI: { type: "RSI", period: DEFAULTS.period, oversold: DEFAULTS.rsiOversold, overbought: DEFAULTS.rsiOverbought, enabled: true, color: "#7b1fa2", } satisfies RsiConfig, MACD: { type: "MACD", fastPeriod: DEFAULTS.macdFastPeriod, slowPeriod: DEFAULTS.macdSlowPeriod, signalPeriod: DEFAULTS.macdSignalPeriod, enabled: true, color: "#0288d1", signalColor: "#f57c00", histColorPositive: "#26a69a", histColorNegative: "#ef5350", } satisfies MacdConfig, Bollinger: { type: "Bollinger", period: DEFAULTS.bollingerPeriod, multiplier: DEFAULTS.bollingerMultiplier, enabled: true, color: "#1565c0", upperColor: "#1565c0", lowerColor: "#1565c0", } satisfies BollingerConfig, Stochastic: { type: "Stochastic", kPeriod: 14, dPeriod: 3, oversold: 20, overbought: 80, enabled: true, color: "#00796b", dColor: "#d32f2f", } satisfies StochasticConfig, ADX: { type: "ADX", period: DEFAULTS.period, trendThreshold: 25, enabled: true, color: "#558b2f", } satisfies AdxConfig, ATR: { type: "ATR", period: DEFAULTS.period, enabled: false, color: "#795548", } satisfies AtrConfig, VWAP: { type: "VWAP", anchor: "daily", enabled: true, color: "#e65100", } satisfies VwapConfig, } as const satisfies Record<IndicatorType, IndicatorConfig>; // ── Validation ──────────────────────────────────────────────────────────────── export interface ConfigValidationResult { readonly valid: boolean; readonly errors: readonly string[]; } const HEX_COLOR_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/; function assertPeriod(value: number, name: string, min: number, max: number): string | null { if (!Number.isInteger(value) || value < min || value > max) { return `${name} must be an integer between ${min} and ${max}, got ${value}`; } return null; } function assertColor(value: string, name: string): string | null { if (!HEX_COLOR_RE.test(value)) { return `${name} must be a valid hex color (#RGB or #RRGGBB), got "${value}"`; } return null; } function assertThreshold(value: number, name: string, min: number, max: number): string | null { if (typeof value !== "number" || value < min || value > max) { return `${name} must be between ${min} and ${max}, got ${value}`; } return null; } /** Validate an indicator config object, returning a list of constraint violations. Returns `{ valid: true, errors: [] }` when all constraints pass. |
+| `validateIndicatorConfig()` | Indicator configuration schema — per-indicator period/threshold/color (Q4 / RF9). |
 
 **Types:** `IndicatorConfigBase`, `SmaConfig`, `EmaConfig`, `RsiConfig`, `MacdConfig`, `BollingerConfig`, `StochasticConfig`, `AdxConfig`, `AtrConfig`, `VwapConfig`, `ConfigValidationResult`
 
@@ -1484,7 +1539,7 @@ Information ratio and related performance metrics. Measures risk-adjusted excess
 
 | Function | Description |
 | --- | --- |
-| `informationRatio()` | Information ratio and related performance metrics. Measures risk-adjusted excess return relative to a benchmark. / /** Information Ratio = (R_portfolio - R_benchmark) / TrackingError Higher IR = better risk-adjusted outperformance. |
+| `informationRatio()` | Information ratio and related performance metrics. Measures risk-adjusted excess return relative to a benchmark. |
 | `trackingError()` | Tracking error — annualized standard deviation of excess returns. |
 | `activeReturn()` | Active return — annualized excess return over benchmark. |
 | `treynorRatio()` | Treynor ratio = (R_portfolio - R_f) / Beta Measures excess return per unit of systematic risk. |
@@ -1498,13 +1553,13 @@ Information ratio and related performance metrics. Measures risk-adjusted excess
 
 **File:** `src/domain/insider-transactions.ts`
 
-Insider Transactions Analysis — pure functions to analyze insider buying/selling activity and compute sentiment metrics.  All inputs are pre-fetched SEC Form 4 data — no I/O, no Date.now().
+Insider Transactions Analysis — pure functions to analyze insider buying/selling activity and compute sentiment metrics.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `analyzeInsiderTransactions()` | Insider Transactions Analysis — pure functions to analyze insider buying/selling activity and compute sentiment metrics. All inputs are pre-fetched SEC Form 4 data — no I/O, no Date.now(). / export interface InsiderTransaction { readonly name: string; readonly title: string; // CEO, CFO, Director, etc. readonly date: string; // ISO date readonly type: "buy" | "sell" | "exercise"; readonly shares: number; readonly pricePerShare: number; readonly totalValue: number; } export interface InsiderSentiment { readonly totalBuys: number; readonly totalSells: number; readonly totalExercises: number; readonly buyValue: number; readonly sellValue: number; /** Buy/sell ratio by transaction count. >1 = net buying. */ readonly buySellRatio: number; /** Buy/sell ratio by dollar value. >1 = net buying. */ readonly buySellValueRatio: number; /** Net insider sentiment: -100 (all selling) to +100 (all buying). */ readonly sentimentScore: number; /** Unique insider names who bought. */ readonly uniqueBuyers: number; /** Unique insider names who sold. */ readonly uniqueSellers: number; /** Largest single transaction. */ readonly largestTransaction: InsiderTransaction; /** Most recent transaction. */ readonly mostRecent: InsiderTransaction; } /** Analyze insider transaction data and compute sentiment. |
+| `analyzeInsiderTransactions()` | Insider Transactions Analysis — pure functions to analyze insider buying/selling activity and compute sentiment metrics. |
 
 **Types:** `InsiderTransaction`, `InsiderSentiment`
 
@@ -1520,7 +1575,7 @@ Intraday high/low distance — calculate how far the current price is from the d
 
 | Function | Description |
 | --- | --- |
-| `calculateRangeDistance()` | Intraday high/low distance — calculate how far the current price is from the day's high and low, useful for timing entries. / export interface IntradayRange { readonly ticker: string; readonly high: number; readonly low: number; readonly current: number; } export interface RangeDistance { readonly ticker: string; readonly range: number; readonly distanceFromHigh: number; readonly distanceFromLow: number; readonly percentFromHigh: number; // 0–100 readonly percentFromLow: number; // 0–100 readonly positionInRange: number; // 0 = at low, 1 = at high } /** Calculate distance metrics from current price to intraday high/low. |
+| `calculateRangeDistance()` | Intraday high/low distance — calculate how far the current price is from the day's high and low, useful for timing entries. |
 | `batchRangeDistance()` | Batch calculate range distances for multiple tickers. |
 | `nearHigh()` | Get tickers near their intraday high (position > threshold). |
 | `nearLow()` | Get tickers near their intraday low (position < threshold). |
@@ -1542,7 +1597,7 @@ Merton Jump Diffusion model — extends geometric Brownian motion with Poisson j
 
 | Function | Description |
 | --- | --- |
-| `estimateJumpDiffusion()` | Merton Jump Diffusion model — extends geometric Brownian motion with Poisson jumps. Models: dS/S = (μ - λk)dt + σ dW + J dN Where N is Poisson process with intensity λ, J is log-normal jump size. / export interface JumpDiffusionParams { readonly mu: number; // drift readonly sigma: number; // diffusion volatility readonly lambda: number; // jump intensity (expected jumps per unit time) readonly jumpMean: number; // mean of log jump size readonly jumpVol: number; // volatility of log jump size } export interface JumpDiffusionResult { readonly params: JumpDiffusionParams; readonly totalVariance: number; readonly jumpContribution: number; // fraction of variance from jumps readonly expectedJumpsPerYear: number; readonly adjustedDrift: number; } /** Estimate jump diffusion parameters from returns using method of moments. Separates "normal" returns from jumps using threshold detection. |
+| `estimateJumpDiffusion()` | Merton Jump Diffusion model — extends geometric Brownian motion with Poisson jumps. Models: dS/S = (μ - λk)dt + σ dW + J dN Where N is Poisson process with intensity λ, J is log-normal jump size. |
 | `mertonCallPrice()` | Merton jump-diffusion call option price (series approximation). Extends Black-Scholes with Poisson-weighted sum. |
 | `detectJumps()` | Detect jump events in a return series. |
 
@@ -1560,7 +1615,7 @@ Kelly criterion calculator — determine optimal position sizing based on win ra
 
 | Function | Description |
 | --- | --- |
-| `kellyFraction()` | Kelly criterion calculator — determine optimal position sizing based on win rate and win/loss ratio. / export interface KellyInput { readonly winRate: number; // probability of win (0-1) readonly avgWin: number; // average win amount readonly avgLoss: number; // average loss amount (positive number) } export interface KellyResult { readonly fullKelly: number; // optimal fraction (can be >1 or negative) readonly halfKelly: number; // conservative half-Kelly readonly quarterKelly: number; // ultra-conservative quarter-Kelly readonly edge: number; // expected edge per trade readonly isPositive: boolean; // whether the system has positive expectancy } /** Calculate the Kelly fraction. Kelly% = W - (1-W)/R where W = win probability, R = win/loss ratio |
+| `kellyFraction()` | Kelly criterion calculator — determine optimal position sizing based on win rate and win/loss ratio. |
 | `kellyAnalysis()` | Full Kelly analysis from trade statistics. |
 | `kellyFromTrades()` | Calculate Kelly from a series of trade P&Ls. |
 | `kellyPositionSize()` | Calculate optimal position size in currency for a given account. |
@@ -1595,7 +1650,7 @@ Ordinary least squares linear regression on (x, y) pairs and a convenience for t
 
 | Function | Description |
 | --- | --- |
-| `regressionLine()` | Ordinary least squares linear regression on (x, y) pairs and a convenience for time-series values (uses index as x). Returns slope, intercept, r² and a function to predict y for any x. / export interface LinearRegression { readonly slope: number; readonly intercept: number; readonly r2: number; readonly predict: (x: number) => number; } export function linearRegression(xs: readonly number[], ys: readonly number[]): LinearRegression { const n = Math.min(xs.length, ys.length); if (n < 2) { return { slope: 0, intercept: ys[0] ?? 0, r2: 0, predict: (): number => ys[0] ?? 0 }; } let sumX = 0; let sumY = 0; for (let i = 0; i < n; i++) { sumX += xs[i]!; sumY += ys[i]!; } const meanX = sumX / n; const meanY = sumY / n; let num = 0; let denX = 0; let denY = 0; for (let i = 0; i < n; i++) { const dx = xs[i]! - meanX; const dy = ys[i]! - meanY; num += dx * dy; denX += dx * dx; denY += dy * dy; } const slope = denX === 0 ? 0 : num / denX; const intercept = meanY - slope * meanX; const r2 = denX === 0 || denY === 0 ? 0 : (num * num) / (denX * denY); return { slope, intercept, r2, predict: (x: number): number => slope * x + intercept, }; } /** Regression line for an evenly-spaced series; x is the index. |
+| `regressionLine()` | Ordinary least squares linear regression on (x, y) pairs and a convenience for time-series values (uses index as x). Returns slope, intercept, r² and a function to predict y for any x. |
 | `regressionChannel()` | Trend channel: regression line ± k standard deviations of residuals. |
 | `linearRegression()` | — |
 
@@ -1613,7 +1668,7 @@ Liquidity metrics — measures of market liquidity and trading costs. Includes A
 
 | Function | Description |
 | --- | --- |
-| `amihudIlliquidity()` | Liquidity metrics — measures of market liquidity and trading costs. Includes Amihud illiquidity, bid-ask spread estimators, turnover ratio. / export interface LiquidityMetrics { readonly amihudIlliquidity: number; readonly rollSpread: number; // Roll (1984) effective spread readonly turnoverRatio: number; readonly volumeWeightedLiquidity: number; readonly kyleSlambda: number; // Kyle's lambda (price impact per unit volume) } /** Amihud (2002) illiquidity ratio: average |return| / dollar volume. Higher = less liquid. |
+| `amihudIlliquidity()` | Liquidity metrics — measures of market liquidity and trading costs. Includes Amihud illiquidity, bid-ask spread estimators, turnover ratio. |
 | `rollSpread()` | Roll (1984) effective spread estimator from serial covariance of price changes. Spread = 2 * sqrt(-Cov(ΔP_t, ΔP_{t-1})) if covariance is negative. |
 | `turnoverRatio()` | Turnover ratio: total volume traded / shares outstanding. Higher = more liquid. |
 | `kyleLambda()` | Kyle's lambda — price impact coefficient. Estimated as slope of regression: ΔP = λ * signed_volume + ε. Uses absolute volume with return sign as proxy for order flow. |
@@ -1634,7 +1689,7 @@ Moving-average crossover detector. Given two pre-computed series (typically fast
 
 | Function | Description |
 | --- | --- |
-| `crossoverFlags()` | Moving-average crossover detector. Given two pre-computed series (typically fast SMA/EMA over slow SMA/EMA), emits crossover events with type "golden" (fast crosses above slow) or "death" (below). The two series are aligned by index and may contain leading nulls (warm-up period); only paired non-null bars are considered. / export type CrossKind = "golden" | "death"; export interface MaCrossEvent { readonly index: number; readonly kind: CrossKind; readonly fast: number; readonly slow: number; } export function detectMaCrossovers( fast: readonly (number | null)[], slow: readonly (number | null)[], ): MaCrossEvent[] { const n = Math.min(fast.length, slow.length); const events: MaCrossEvent[] = []; let prevSign = 0; // -1, 0, +1 for (let i = 0; i < n; i++) { const f = fast[i]; const s = slow[i]; if (f == null || s == null) continue; const diff = f - s; const sign = diff > 0 ? 1 : diff < 0 ? -1 : 0; if (prevSign !== 0 && sign !== 0 && sign !== prevSign) { events.push({ index: i, kind: sign > 0 ? "golden" : "death", fast: f, slow: s, }); } if (sign !== 0) prevSign = sign; } return events; } /** Boolean per index: true if a crossover happened at that bar. |
+| `crossoverFlags()` | Moving-average crossover detector. Given two pre-computed series (typically fast SMA/EMA over slow SMA/EMA), emits crossover events with type "golden" (fast crosses above slow) or "death" (below). The two series are aligned by index and may contain leading nulls (warm-up period); only paired non-null bars are considered. |
 | `detectMaCrossovers()` | — |
 
 **Types:** `MaCrossEvent`
@@ -1645,13 +1700,13 @@ Moving-average crossover detector. Given two pre-computed series (typically fast
 
 **File:** `src/domain/macd-calculator.ts`
 
-MACD Calculator — Pure domain logic. Ported from Dart: lib/src/domain/macd_calculator.dart  MACD Line = EMA(fast) - EMA(slow) Signal Line = EMA(signalPeriod) of MACD Line Histogram = MACD Line - Signal Line
+MACD Calculator — Pure domain logic. Ported from Dart: lib/src/domain/macd_calculator.dart
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeMacdSeries()` | MACD Calculator — Pure domain logic. Ported from Dart: lib/src/domain/macd_calculator.dart MACD Line = EMA(fast) - EMA(slow) Signal Line = EMA(signalPeriod) of MACD Line Histogram = MACD Line - Signal Line / import type { DailyCandle } from "../types/domain"; import { computeEmaSeries } from "./ema-calculator"; import { DEFAULTS } from "./technical-defaults"; export interface MacdPoint { readonly date: string; readonly macd: number | null; readonly signal: number | null; readonly histogram: number | null; } /** Compute the full MACD + Signal + Histogram series. |
+| `computeMacdSeries()` | MACD Calculator — Pure domain logic. Ported from Dart: lib/src/domain/macd_calculator.dart |
 
 **Types:** `MacdPoint`
 
@@ -1661,20 +1716,37 @@ MACD Calculator — Pure domain logic. Ported from Dart: lib/src/domain/macd_cal
 
 **File:** `src/domain/macro-dashboard.ts`
 
-Macro Dashboard domain — pure regime classification and formatters (H19).  Provides VIX/DXY-based regime classification, macro ticker definitions, and display helpers independent of any UI framework.
+Macro Dashboard domain — pure regime classification and formatters (H19).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `getMacroTicker()` | Macro Dashboard domain — pure regime classification and formatters (H19). Provides VIX/DXY-based regime classification, macro ticker definitions, and display helpers independent of any UI framework. / // ─────────────────────────── Types ────────────────────────────────────────── export type MacroRegime = "risk-on" | "risk-off" | "neutral"; export interface MacroTicker { /** Internal key (e.g. "vix") */ key: string; /** Human-readable label */ label: string; /** Market symbol used in API queries */ symbol: string; /** Optional unit suffix (e.g. "%" for yields) */ suffix?: string; /** Regime relevance: higher = more important for regime calculation */ weight: number; } export interface MacroSnapshot { /** VIX current level */ vix: number; /** DXY (US Dollar Index) 1-day change % */ dxyChangePct: number; /** 10-year yield change % (optional) */ us10yChangePct?: number; } // ─────────────────────────── Ticker catalogue ──────────────────────────────── /** Standard macro tickers shown on the Macro Dashboard card. */ export const MACRO_TICKERS: readonly MacroTicker[] = [ { key: "vix", label: "VIX", symbol: "^VIX", weight: 3 }, { key: "us10y", label: "US 10Y", symbol: "^TNX", weight: 2, suffix: "%" }, { key: "dxy", label: "DXY", symbol: "DX-Y.NYB", weight: 2 }, { key: "gold", label: "Gold", symbol: "GC=F", weight: 1 }, { key: "wti", label: "WTI", symbol: "CL=F", weight: 1 }, ]; /** Return the MacroTicker for a given key, or undefined. |
-| `classifyMacroRegime()` | Classify the macro regime from VIX level and DXY day-over-day change. Rules (in priority order): risk-off  — VIX ≥ 22  OR  DXY daily change > +0.35% risk-on   — VIX ≤ 16  AND  DXY daily change ≤ 0% neutral   — otherwise |
+| `getMacroTicker()` | Macro Dashboard domain — pure regime classification and formatters (H19). |
+| `classifyMacroRegime()` | Classify the macro regime from VIX level and DXY day-over-day change. |
 | `classifyMacroRegimeExtended()` | Extended regime classification that also factors in the 10-year yield. A sharp rise in yields (> +2% on the day) upgrades any neutral to risk-off. |
 | `formatMacroChange()` | Format a percentage change for display. Prepends "+" for positives, fixed to `decimals` places. |
 | `regimeLabel()` | Human-readable regime label for display. |
-| `regimeCssClass()` | CSS class suffix for coloring regime badges. Consumers apply "badge--risk-on" | "badge--risk-off" | "badge--neutral". |
+| `regimeCssClass()` | CSS class suffix for coloring regime badges. Consumers apply "badge--risk-on" \| "badge--risk-off" \| "badge--neutral". |
 
 **Types:** `MacroTicker`, `MacroSnapshot`
+
+---
+
+### Market Breadth
+
+**File:** `src/domain/market-breadth.ts`
+
+Market Breadth domain — pure computation layer (G23).
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `computeMarketBreadth()` | Market Breadth domain — pure computation layer (G23). |
+| `classifyBreadthCondition()` | Classify the overall breadth condition based on computed stats. |
+
+**Types:** `BreadthTicker`, `BreadthResult`
 
 ---
 
@@ -1682,13 +1754,13 @@ Macro Dashboard domain — pure regime classification and formatters (H19).  Pro
 
 **File:** `src/domain/market-hours.ts`
 
-Market-hours detection for WebSocket connection gating (R24).  Determines whether major stock exchanges are currently in trading hours to gate live WS connections (avoiding unnecessary connections and data costs outside trading hours).  Supports: NYSE/NASDAQ, LSE, TSE (Tokyo), HKEX, Euronext.  Usage: if (isMarketOpen("NYSE")) connectLiveWs(); const next = nextOpen("NYSE");
+Market-hours detection for WebSocket connection gating (R24).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `isMarketOpen()` | Market-hours detection for WebSocket connection gating (R24). Determines whether major stock exchanges are currently in trading hours to gate live WS connections (avoiding unnecessary connections and data costs outside trading hours). Supports: NYSE/NASDAQ, LSE, TSE (Tokyo), HKEX, Euronext. Usage: if (isMarketOpen("NYSE")) connectLiveWs(); const next = nextOpen("NYSE"); / // ── Types ──────────────────────────────────────────────────────────────── export interface MarketSchedule { readonly exchange: ExchangeCode; readonly name: string; /** IANA timezone identifier. */ readonly timezone: string; /** Open time in HH:MM (local). */ readonly openTime: string; /** Close time in HH:MM (local). */ readonly closeTime: string; /** Trading days (0=Sun, 1=Mon, ..., 6=Sat). */ readonly tradingDays: readonly number[]; } export type ExchangeCode = "NYSE" | "NASDAQ" | "LSE" | "TSE" | "HKEX" | "EURONEXT"; export interface MarketStatus { readonly exchange: ExchangeCode; readonly isOpen: boolean; readonly currentLocalTime: string; readonly openTime: string; readonly closeTime: string; readonly nextOpenAt: Date | null; readonly nextCloseAt: Date | null; } // ── Schedules ──────────────────────────────────────────────────────────── const WEEKDAYS = [1, 2, 3, 4, 5] as const; export const SCHEDULES: Record<ExchangeCode, MarketSchedule> = { NYSE: { exchange: "NYSE", name: "New York Stock Exchange", timezone: "America/New_York", openTime: "09:30", closeTime: "16:00", tradingDays: WEEKDAYS, }, NASDAQ: { exchange: "NASDAQ", name: "NASDAQ", timezone: "America/New_York", openTime: "09:30", closeTime: "16:00", tradingDays: WEEKDAYS, }, LSE: { exchange: "LSE", name: "London Stock Exchange", timezone: "Europe/London", openTime: "08:00", closeTime: "16:30", tradingDays: WEEKDAYS, }, TSE: { exchange: "TSE", name: "Tokyo Stock Exchange", timezone: "Asia/Tokyo", openTime: "09:00", closeTime: "15:00", tradingDays: WEEKDAYS, }, HKEX: { exchange: "HKEX", name: "Hong Kong Stock Exchange", timezone: "Asia/Hong_Kong", openTime: "09:30", closeTime: "16:00", tradingDays: WEEKDAYS, }, EURONEXT: { exchange: "EURONEXT", name: "Euronext (Paris/Amsterdam)", timezone: "Europe/Paris", openTime: "09:00", closeTime: "17:30", tradingDays: WEEKDAYS, }, }; // ── Helpers ────────────────────────────────────────────────────────────── function parseHHMM(hhmm: string): { hours: number; minutes: number } { const [h, m] = hhmm.split(":").map(Number); return { hours: h!, minutes: m! }; } function getLocalParts( date: Date, timezone: string, ): { dayOfWeek: number; hours: number; minutes: number } { const parts = new Intl.DateTimeFormat("en-US", { timeZone: timezone, weekday: "short", hour: "numeric", minute: "numeric", hour12: false, }).formatToParts(date); const weekdayStr = parts.find((p) => p.type === "weekday")?.value ?? ""; const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, }; const dayOfWeek = dayMap[weekdayStr] ?? 0; const hours = Number(parts.find((p) => p.type === "hour")?.value ?? 0); const minutes = Number(parts.find((p) => p.type === "minute")?.value ?? 0); return { dayOfWeek, hours, minutes }; } function localTimeString(hours: number, minutes: number): string { return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; } function timeToMinutes(hours: number, minutes: number): number { return hours * 60 + minutes; } // ── Core API ───────────────────────────────────────────────────────────── /** Check if a specific exchange is currently open. |
+| `isMarketOpen()` | Market-hours detection for WebSocket connection gating (R24). |
 | `marketStatus()` | Get detailed market status for an exchange. |
 | `allMarketStatuses()` | Get all exchanges and their open/closed status. |
 | `isAnyMarketOpen()` | Check if ANY market is currently open. |
@@ -1709,11 +1781,52 @@ Market impact model (Almgren-Chriss) — optimal execution with price impact. Es
 
 | Function | Description |
 | --- | --- |
-| `optimalExecution()` | Market impact model (Almgren-Chriss) — optimal execution with price impact. Estimates expected cost of executing a large order over time. / export interface MarketImpactParams { readonly totalShares: number; // order size readonly dailyVolume: number; // average daily volume readonly volatility: number; // daily return volatility readonly spread: number; // bid-ask spread readonly riskAversion: number; // trader risk aversion (λ) } export interface ExecutionSchedule { readonly periods: number; readonly tradeList: readonly number[]; // shares per period readonly expectedCost: number; // total expected cost in $ readonly varianceCost: number; // timing risk (variance of cost) readonly totalCost: number; // expected + risk penalty readonly participationRate: number; // avg % of volume } /** Almgren-Chriss optimal execution schedule. Minimizes E[cost] + λ·Var[cost] for linear temporary and permanent impact. |
-| `squareRootImpact()` | Permanent impact cost: γ * X² / 2 / function permanentImpactCost(totalShares: number, gamma: number): number { return 0.5 * gamma * totalShares ** 2; } /** Temporary impact cost: η * Σ(n_j²) / τ / function temporaryImpactCost(tradeList: readonly number[], eta: number, tau: number): number { let cost = 0; for (const n of tradeList) cost += (eta * n ** 2) / tau; return cost; } /** Timing risk: σ² * Σ(x_j² * τ_j) where x_j is remaining inventory. / function timingRisk(tradeList: readonly number[], sigma: number, tau: number): number { let risk = 0; let remaining = tradeList.reduce((s, n) => s + n, 0); for (const n of tradeList) { remaining -= n; risk += sigma ** 2 * remaining ** 2 * tau; } return risk; } /** Simple square-root market impact estimate (empirical model). Impact ≈ σ * √(Q / V) where Q = order size, V = daily volume. |
+| `optimalExecution()` | Market impact model (Almgren-Chriss) — optimal execution with price impact. Estimates expected cost of executing a large order over time. |
+| `squareRootImpact()` | Permanent impact cost: γ * X² / 2 |
 | `vwapParticipation()` | VWAP participation rate to achieve target time. |
 
 **Types:** `MarketImpactParams`, `ExecutionSchedule`
+
+---
+
+### Market Regime
+
+**File:** `src/domain/market-regime.ts`
+
+Market regime detection (I9).
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `classifyVix()` | Market regime detection (I9). |
+| `classifyBreadth()` | Classify from advance/decline ratio. - > 1.5  → RiskOn - 0.8–1.5 → Neutral - 0.4–0.8 → RiskOff - < 0.4  → Crisis |
+| `classifyYieldCurve()` | Classify from 2y–10y spread (basis points). - spread > 100  → RiskOn - 0–100         → Neutral - -50–0         → RiskOff - < -50         → Crisis |
+| `classifyDollar()` | Classify from DXY percentage change (trailing 20-day). A strengthening dollar is typically risk-off for equities. - pctChg < -2  → RiskOn  (dollar weakening) - -2 to +2     → Neutral - +2 to +5     → RiskOff (dollar strengthening) - > +5         → Crisis  (flight to safety) |
+| `trendRegime()` | Classify regime from recent price trend using simple momentum. Compares current price to the simple moving average over `span` periods. |
+| `volatilityRegime()` | Classify regime from realised volatility of daily returns. |
+| `combinedRegime()` | Combine multiple regime signals via weighted majority vote. Falls back to Neutral when signals are empty. |
+| `regimeScore()` | Compute a numeric risk score from 0 (max risk-on) to 100 (max crisis). |
+| `regimeLabel()` | Human-readable label for a regime. |
+| `regimeColor()` | CSS colour token for a regime. |
+
+**Types:** `RegimeSignal`
+
+---
+
+### Max Diversification
+
+**File:** `src/domain/max-diversification.ts`
+
+Maximum Diversification Portfolio — weights that maximize the diversification ratio.
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `maxDiversification()` | Maximum Diversification Portfolio — weights that maximize the diversification ratio. |
+
+**Types:** `MaxDivResult`
 
 ---
 
@@ -1721,13 +1834,13 @@ Market impact model (Almgren-Chriss) — optimal execution with price impact. Es
 
 **File:** `src/domain/mfe-mae.ts`
 
-MFE/MAE Analysis — Max Favorable Excursion / Max Adverse Excursion.  For each backtest trade, computes how far price moved in favor (MFE) and against (MAE) the position during the trade's lifetime.  This helps determine: - Optimal stop-loss placement (cluster MAE values) - Optimal take-profit targets (cluster MFE values) - Whether winning trades give back too much profit (MFE - final P/L gap)  Pure function: no I/O, no DOM, no Date.now().
+MFE/MAE Analysis — Max Favorable Excursion / Max Adverse Excursion.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeExcursions()` | MFE/MAE Analysis — Max Favorable Excursion / Max Adverse Excursion. For each backtest trade, computes how far price moved in favor (MFE) and against (MAE) the position during the trade's lifetime. This helps determine: - Optimal stop-loss placement (cluster MAE values) - Optimal take-profit targets (cluster MFE values) - Whether winning trades give back too much profit (MFE - final P/L gap) Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface TradeExcursion { /** Index of entry candle. */ readonly entryIndex: number; /** Index of exit candle. */ readonly exitIndex: number; /** Maximum favorable excursion as a percentage of entry price. */ readonly mfePercent: number; /** Maximum adverse excursion as a percentage of entry price (always >= 0). */ readonly maePercent: number; /** Final trade profit as a percentage of entry price. */ readonly profitPercent: number; /** Ratio of captured profit to MFE (profitPercent / mfePercent). 1.0 = perfect exit. */ readonly captureRatio: number; } export interface ExcursionTrade { /** Entry candle index in the candle array. */ readonly entryIndex: number; /** Exit candle index in the candle array. */ readonly exitIndex: number; /** Trade direction. */ readonly direction: "LONG" | "SHORT"; /** Entry price. */ readonly entryPrice: number; } export interface ExcursionSummary { /** Per-trade excursion data. */ readonly trades: readonly TradeExcursion[]; /** Average MFE across all trades (%). */ readonly avgMfe: number; /** Average MAE across all trades (%). */ readonly avgMae: number; /** Average capture ratio. */ readonly avgCaptureRatio: number; /** Suggested stop-loss level: median MAE (%). */ readonly suggestedStopLoss: number; /** Suggested take-profit level: median MFE (%). */ readonly suggestedTakeProfit: number; } /** Compute MFE/MAE for a set of trades against historical candles. |
+| `computeExcursions()` | MFE/MAE Analysis — Max Favorable Excursion / Max Adverse Excursion. |
 
 **Types:** `TradeExcursion`, `ExcursionTrade`, `ExcursionSummary`
 
@@ -1743,7 +1856,7 @@ Monte Carlo simulation — generate random portfolio outcome scenarios using his
 
 | Function | Description |
 | --- | --- |
-| `runSimulation()` | Monte Carlo simulation — generate random portfolio outcome scenarios using historical return distributions. / export interface MonteCarloConfig { readonly initialValue: number; readonly periods: number; // number of periods to simulate readonly simulations: number; // number of paths readonly meanReturn: number; // per-period mean return (decimal) readonly stdDev: number; // per-period standard deviation (decimal) readonly seed?: number; } export interface MonteCarloResult { readonly paths: readonly number[][]; // each path is array of portfolio values readonly finalValues: readonly number[]; readonly percentiles: { readonly p5: number; readonly p25: number; readonly p50: number; readonly p75: number; readonly p95: number; }; readonly probabilityOfLoss: number; readonly expectedValue: number; } /** Simple seeded PRNG (mulberry32). / function mulberry32(seed: number): () => number { let s = seed | 0; return () => { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; } /** Box-Muller transform for normal distribution. / function normalRandom(rng: () => number): number { const u1 = rng(); const u2 = rng(); return Math.sqrt(-2 * Math.log(u1 || 1e-10)) * Math.cos(2 * Math.PI * u2); } /** Compute percentile from sorted array. / function percentile(sorted: readonly number[], p: number): number { const idx = (p / 100) * (sorted.length - 1); const lower = Math.floor(idx); const upper = Math.ceil(idx); if (lower === upper) return sorted[lower]!; return sorted[lower]! + (sorted[upper]! - sorted[lower]!) * (idx - lower); } /** Run Monte Carlo simulation. |
+| `runSimulation()` | Monte Carlo simulation — generate random portfolio outcome scenarios using historical return distributions. |
 | `estimateParams()` | Estimate mean and stdDev from historical returns. |
 
 **Types:** `MonteCarloConfig`, `MonteCarloResult`
@@ -1754,13 +1867,13 @@ Monte Carlo simulation — generate random portfolio outcome scenarios using his
 
 **File:** `src/domain/mtf-confluence.ts`
 
-Multi-Timeframe Confluence — evaluates signals across daily, weekly, and monthly timeframes, producing a unified confluence score.  When all timeframes align (e.g., all bullish), the confluence score is strong. When they diverge, the score weakens. This helps filter false signals that appear on a single timeframe.
+Multi-Timeframe Confluence — evaluates signals across daily, weekly, and monthly timeframes, producing a unified confluence score.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeMtfConfluence()` | Multi-Timeframe Confluence — evaluates signals across daily, weekly, and monthly timeframes, producing a unified confluence score. When all timeframes align (e.g., all bullish), the confluence score is strong. When they diverge, the score weakens. This helps filter false signals that appear on a single timeframe. / import type { DailyCandle } from "../types/domain"; export interface MtfSignal { readonly timeframe: "daily" | "weekly" | "monthly"; readonly trend: "bullish" | "bearish" | "neutral"; readonly strength: number; // 0-100 readonly maAlignment: boolean; } export interface MtfConfluenceResult { readonly signals: readonly MtfSignal[]; readonly confluenceScore: number; // -100 (all bearish) to +100 (all bullish) readonly direction: "bullish" | "bearish" | "neutral"; readonly aligned: boolean; // true if all timeframes agree on direction } export interface MtfConfluenceOptions { /** Short MA period. Default 10. */ readonly shortMa?: number; /** Long MA period. Default 50. */ readonly longMa?: number; /** RSI period for trend strength. Default 14. */ readonly rsiPeriod?: number; } /** Compute multi-timeframe confluence from daily candle data. Internally resamples daily candles to weekly and monthly, then evaluates trend direction and strength on each timeframe via MA alignment and RSI. Requires at least 252 daily candles (1 year) for meaningful monthly signals. |
+| `computeMtfConfluence()` | Multi-Timeframe Confluence — evaluates signals across daily, weekly, and monthly timeframes, producing a unified confluence score. |
 
 **Types:** `MtfSignal`, `MtfConfluenceResult`, `MtfConfluenceOptions`
 
@@ -1770,17 +1883,17 @@ Multi-Timeframe Confluence — evaluates signals across daily, weekly, and month
 
 **File:** `src/domain/name-enrichment.ts`
 
-Company name enrichment helpers (G19).  Finance data providers return noisy, inconsistent company names:  - "Apple Inc." vs "Apple, Inc." vs "APPLE INC" - "iShares Core S&P 500 ETF" vs "ISHARES CORE S&P 500 ETF" - "Alphabet Inc. Class A" (long-form with share class)  This module provides pure, deterministic helpers to:  - `extractShortName(rawName, ticker)` — strip legal suffixes, share-class qualifiers, and excessive whitespace to produce a compact display name. - `formatDisplayName(ticker, name?)` — combine ticker + optional name in a consistent `"AAPL · Apple"` format. - `enrichWatchlistEntry(entry, rawName)` — return an updated `WatchlistEntry` with a normalised `name` field. - `buildNameMap(entries)` — build a `Map<ticker, shortName>` from an array of entries for O(1) lookup. - `normaliseCompanyName(raw)` — title-case + strip trailing punctuation.  All functions are pure and side-effect free.
+Company name enrichment helpers (G19).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `normaliseCompanyName()` | Company name enrichment helpers (G19). Finance data providers return noisy, inconsistent company names: - "Apple Inc." vs "Apple, Inc." vs "APPLE INC" - "iShares Core S&P 500 ETF" vs "ISHARES CORE S&P 500 ETF" - "Alphabet Inc. Class A" (long-form with share class) This module provides pure, deterministic helpers to: - `extractShortName(rawName, ticker)` — strip legal suffixes, share-class qualifiers, and excessive whitespace to produce a compact display name. - `formatDisplayName(ticker, name?)` — combine ticker + optional name in a consistent `"AAPL · Apple"` format. - `enrichWatchlistEntry(entry, rawName)` — return an updated `WatchlistEntry` with a normalised `name` field. - `buildNameMap(entries)` — build a `Map<ticker, shortName>` from an array of entries for O(1) lookup. - `normaliseCompanyName(raw)` — title-case + strip trailing punctuation. All functions are pure and side-effect free. / import type { WatchlistEntry } from "../types/domain"; // ─── constants ──────────────────────────────────────────────────────────────── /** Legal-entity suffixes and qualifiers to strip from company names. Ordered from longest to shortest to avoid partial matches. / const LEGAL_SUFFIXES = [ "Incorporated", "Corporation", "Holdings", "Holding", "Limited", "International", "Group", "Trust", "Fund", "Inc.", "Inc", "Corp.", "Corp", "Ltd.", "Ltd", "Co.", "Co", "PLC", "plc", "N.V.", "NV", "AG", "SA", "S.A.", "LP", "L.P.", ] as const; /** Share-class and instrument qualifiers appended by data providers. E.g. "Alphabet Inc. Class A" → strip "Class A". / const SHARE_CLASS_PATTERNS = [/\bClass\s+[A-Z]\b/g, /\bSeries\s+[A-Z]\b/g, /\b[A-Z]+\s+Shares?\b/g]; // ─── helpers ────────────────────────────────────────────────────────────────── /** Title-case a string: each word starts with an uppercase letter, the rest lowercase.  Preserves known all-caps acronyms of ≤ 4 characters (ETF, S&P). |
-| `extractShortName()` | Extract a compact short name from a raw provider name. Steps: 1. Normalise whitespace. 2. Strip share-class patterns. 3. Strip legal suffixes (comma-preceded or standalone). 4. Title-case. 5. Fall back to `ticker` when the result is empty. |
-| `formatDisplayName()` | Format a ticker and optional short name into a compact display string. Examples: - `formatDisplayName("AAPL", "Apple")` → `"AAPL · Apple"` - `formatDisplayName("AAPL")` → `"AAPL"` |
+| `normaliseCompanyName()` | Company name enrichment helpers (G19). |
+| `extractShortName()` | Extract a compact short name from a raw provider name. |
+| `formatDisplayName()` | Format a ticker and optional short name into a compact display string. |
 | `enrichWatchlistEntry()` | Return an updated `WatchlistEntry` with a normalised `name` field. |
-| `buildNameMap()` | Build a `Map<ticker, shortName>` from a list of `WatchlistEntry` objects for O(1) display-name lookup. Entries without a `name` are mapped to their ticker symbol. |
+| `buildNameMap()` | Build a `Map<ticker, shortName>` from a list of `WatchlistEntry` objects for O(1) display-name lookup. |
 
 ---
 
@@ -1788,13 +1901,13 @@ Company name enrichment helpers (G19).  Finance data providers return noisy, inc
 
 **File:** `src/domain/news-digest.ts`
 
-News digest domain helpers (I11).  Parse RSS/Atom feeds, extract ticker mentions, group articles by ticker, and perform lightweight keyword-based sentiment scoring.  Designed for the "News" card in the dashboard.  Exports: - `parseRssFeed(xml)` — parse RSS 2.0 XML into FeedItem[] - `parseAtomFeed(xml)` — parse Atom 1.0 XML into FeedItem[] - `detectFormat(xml)` — "rss" | "atom" | "unknown" - `parseFeed(xml)` — auto-detect and parse - `extractTickers(text)` — find $TICKER mentions - `groupByTicker(items)` — Map<ticker, FeedItem[]> - `scoreSentiment(text)` — numeric sentiment score - `classifySentiment(score)` — "bullish" | "bearish" | "neutral" - `deduplicateItems(items)` — remove duplicate articles - `sortByDate(items)` — newest first - `summariseDigest(items)` — aggregate stats
+News digest domain helpers (I11).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `detectFormat()` | News digest domain helpers (I11). Parse RSS/Atom feeds, extract ticker mentions, group articles by ticker, and perform lightweight keyword-based sentiment scoring.  Designed for the "News" card in the dashboard. Exports: - `parseRssFeed(xml)` — parse RSS 2.0 XML into FeedItem[] - `parseAtomFeed(xml)` — parse Atom 1.0 XML into FeedItem[] - `detectFormat(xml)` — "rss" | "atom" | "unknown" - `parseFeed(xml)` — auto-detect and parse - `extractTickers(text)` — find $TICKER mentions - `groupByTicker(items)` — Map<ticker, FeedItem[]> - `scoreSentiment(text)` — numeric sentiment score - `classifySentiment(score)` — "bullish" | "bearish" | "neutral" - `deduplicateItems(items)` — remove duplicate articles - `sortByDate(items)` — newest first - `summariseDigest(items)` — aggregate stats / // ── Types ───────────────────────────────────────────────────────────────── export interface FeedItem { id: string; title: string; link: string; pubDate: number; // epoch ms source: string; summary: string; tickers: string[]; } export type FeedFormat = "rss" | "atom" | "unknown"; export type SentimentLabel = "bullish" | "bearish" | "neutral"; export interface DigestSummary { totalItems: number; uniqueTickers: number; avgSentiment: number; label: SentimentLabel; topTickers: string[]; } // ── Feed parsing ────────────────────────────────────────────────────────── /** Detect whether an XML string is RSS 2.0, Atom, or unknown. |
+| `detectFormat()` | News digest domain helpers (I11). |
 | `parseRssFeed()` | Parse RSS 2.0 XML into FeedItem[]. Uses regex for zero-dep parsing. |
 | `parseAtomFeed()` | Parse Atom 1.0 XML into FeedItem[]. |
 | `parseFeed()` | Auto-detect format and parse. |
@@ -1814,13 +1927,13 @@ News digest domain helpers (I11).  Parse RSS/Atom feeds, extract ticker mentions
 
 **File:** `src/domain/omega-ratio.ts`
 
-Omega Ratio — probability-weighted ratio of gains vs losses.  Unlike Sharpe/Sortino which assume normal returns, Omega captures the ENTIRE return distribution. It is the ratio of the area above the threshold (gains) to the area below the threshold (losses) in the cumulative return distribution.  Omega > 1 = positive expectation at the given threshold. Omega = 1 = break-even. Omega < 1 = negative expectation.  Pure function: no I/O, no DOM, no Date.now().
+Omega Ratio — probability-weighted ratio of gains vs losses.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeOmega()` | Omega Ratio — probability-weighted ratio of gains vs losses. Unlike Sharpe/Sortino which assume normal returns, Omega captures the ENTIRE return distribution. It is the ratio of the area above the threshold (gains) to the area below the threshold (losses) in the cumulative return distribution. Omega > 1 = positive expectation at the given threshold. Omega = 1 = break-even. Omega < 1 = negative expectation. Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface OmegaResult { /** The omega ratio value. */ readonly omega: number; /** Sum of excess returns above threshold. */ readonly totalGain: number; /** Sum of shortfall below threshold (absolute value). */ readonly totalLoss: number; /** Number of return observations used. */ readonly observations: number; } export interface OmegaOptions { /** Return threshold (daily). Returns above this are "gains", below are "losses". / readonly threshold?: number; } /** Compute the Omega ratio from daily candle data. |
+| `computeOmega()` | Omega Ratio — probability-weighted ratio of gains vs losses. |
 | `omegaFromReturns()` | Compute Omega ratio from raw return series (for portfolio analytics). |
 
 **Types:** `OmegaResult`, `OmegaOptions`
@@ -1837,8 +1950,8 @@ Optimal portfolio turnover — transaction cost-aware rebalancing. Finds the clo
 
 | Function | Description |
 | --- | --- |
-| `optimalRebalance()` | Optimal portfolio turnover — transaction cost-aware rebalancing. Finds the closest rebalanced portfolio within a no-trade zone. / export interface TurnoverResult { readonly currentWeights: readonly number[]; readonly targetWeights: readonly number[]; readonly optimalWeights: readonly number[]; readonly turnover: number; // Σ|w_new - w_old| / 2 readonly transactionCost: number; readonly netBenefit: number; // expected benefit - cost } export interface RebalanceConfig { readonly costPerTrade: number; // proportional cost per unit traded readonly noTradeZone?: number; // threshold below which no trade occurs readonly maxTurnover?: number; // cap on single-period turnover } /** Calculate optimal weights minimizing tracking error to target subject to transaction cost constraints. Uses no-trade zone approach: if the deviation from target is below cost/benefit threshold, don't trade. Otherwise, trade to the zone boundary. |
-| `computeTurnover()` | Calculate one-way turnover: Σ|w_new - w_old| / 2 |
+| `optimalRebalance()` | Optimal portfolio turnover — transaction cost-aware rebalancing. Finds the closest rebalanced portfolio within a no-trade zone. |
+| `computeTurnover()` | Calculate one-way turnover: Σ\|w_new - w_old\| / 2 |
 | `breakEvenFrequency()` | Estimate break-even frequency: how often to rebalance given costs. Returns optimal rebalance period in units (e.g., days). |
 | `cumulativeTurnover()` | Cumulative turnover over a history of weight snapshots. |
 
@@ -1856,7 +1969,7 @@ Pairs trading signals — z-score based entry/exit for cointegrated pairs. Gener
 
 | Function | Description |
 | --- | --- |
-| `hedgeRatio()` | Pairs trading signals — z-score based entry/exit for cointegrated pairs. Generates trading signals from the spread between two cointegrated assets. / export interface PairsSignal { readonly spread: readonly number[]; readonly zScore: readonly number[]; readonly signals: readonly PairsTradeSignal[]; readonly hedgeRatio: number; readonly meanSpread: number; readonly spreadStd: number; } export interface PairsTradeSignal { readonly index: number; readonly action: "long-spread" | "short-spread" | "close"; readonly zScore: number; } export interface PairsConfig { readonly entryZ?: number; // z-score to enter (default 2.0) readonly exitZ?: number; // z-score to exit (default 0.5) readonly stopZ?: number; // z-score stop loss (default 3.5) readonly lookback?: number; // rolling window for mean/std (default: all) } /** Compute hedge ratio via OLS regression (Y = β·X + ε). |
+| `hedgeRatio()` | Pairs trading signals — z-score based entry/exit for cointegrated pairs. Generates trading signals from the spread between two cointegrated assets. |
 | `pairsSpread()` | Compute spread: Y - β·X. |
 | `spreadZScore()` | Compute rolling z-score of spread. |
 | `pairsSignals()` | Generate pairs trading signals from z-scores. |
@@ -1869,7 +1982,7 @@ Pairs trading signals — z-score based entry/exit for cointegrated pairs. Gener
 
 **File:** `src/domain/parabolic-sar-calculator.ts`
 
-Parabolic SAR — Pure domain logic. Ported from Dart: lib/src/domain/parabolic_sar_calculator.dart  Wilder SAR: AF starts at 0.02, increments by 0.02, max 0.20. SAR(t) = SAR(t-1) + AF * (EP - SAR(t-1))
+Parabolic SAR — Pure domain logic. Ported from Dart: lib/src/domain/parabolic_sar_calculator.dart
 
 **Functions:**
 
@@ -1886,13 +1999,13 @@ Parabolic SAR — Pure domain logic. Ported from Dart: lib/src/domain/parabolic_
 
 **File:** `src/domain/peer-valuation.ts`
 
-Peer Valuation — compares a target company's valuation metrics against a set of peer companies, computing relative rankings, z-scores, and sector medians.  All inputs are pre-fetched fundamental data — pure math, no I/O.
+Peer Valuation — compares a target company's valuation metrics against a set of peer companies, computing relative rankings, z-scores, and sector medians.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computePeerValuation()` | Peer Valuation — compares a target company's valuation metrics against a set of peer companies, computing relative rankings, z-scores, and sector medians. All inputs are pre-fetched fundamental data — pure math, no I/O. / export interface CompanyMetrics { readonly symbol: string; readonly pe: number | null; // Price/Earnings readonly ps: number | null; // Price/Sales readonly pb: number | null; // Price/Book readonly evEbitda: number | null; // EV/EBITDA readonly peg: number | null; // PEG ratio readonly dividendYield: number | null; // Dividend yield (decimal) readonly marketCap: number | null; // Market cap in USD } export interface PeerMetricComparison { readonly metric: string; readonly targetValue: number | null; readonly peerMedian: number | null; readonly peerMean: number | null; /** Percentile rank (0–100) of target among peers. Lower = cheaper for valuation ratios. */ readonly percentileRank: number | null; /** Z-score: how many std devs from peer mean. */ readonly zScore: number | null; /** Whether target appears undervalued relative to peers for this metric. */ readonly undervalued: boolean; } export interface PeerValuationResult { readonly target: string; readonly peerCount: number; readonly comparisons: readonly PeerMetricComparison[]; /** Overall valuation score: 0 (expensive) to 100 (cheap) relative to peers. */ readonly valuationScore: number; } /** Compare a target company's valuation against peers. |
+| `computePeerValuation()` | Peer Valuation — compares a target company's valuation metrics against a set of peer companies, computing relative rankings, z-scores, and sector medians. |
 
 **Types:** `CompanyMetrics`, `PeerMetricComparison`, `PeerValuationResult`
 
@@ -1918,13 +2031,13 @@ Percentile Rank utilities. percentile(values, p) — linear interpolation, p in 
 
 **File:** `src/domain/performance-attribution.ts`
 
-Brinson-Fachler Performance Attribution — decomposes portfolio excess return vs benchmark into allocation, selection, and interaction effects per sector/group.  This is the standard institutional performance attribution model. All inputs are weights and returns — pure math, no I/O.
+Brinson-Fachler Performance Attribution — decomposes portfolio excess return vs benchmark into allocation, selection, and interaction effects per sector/group.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeAttribution()` | Brinson-Fachler Performance Attribution — decomposes portfolio excess return vs benchmark into allocation, selection, and interaction effects per sector/group. This is the standard institutional performance attribution model. All inputs are weights and returns — pure math, no I/O. / export interface SectorWeight { /** Sector/group identifier. */ readonly sector: string; /** Weight in portfolio (0–1, all must sum to 1). */ readonly portfolioWeight: number; /** Weight in benchmark (0–1, all must sum to 1). */ readonly benchmarkWeight: number; /** Portfolio return for this sector (decimal, e.g., 0.05 = 5%). */ readonly portfolioReturn: number; /** Benchmark return for this sector (decimal). */ readonly benchmarkReturn: number; } export interface AttributionEffect { readonly sector: string; /** Allocation effect: over/underweight × (sector benchmark return − total benchmark return). */ readonly allocation: number; /** Selection effect: benchmark weight × (portfolio sector return − benchmark sector return). */ readonly selection: number; /** Interaction effect: (portfolio weight − benchmark weight) × (portfolio return − benchmark return). */ readonly interaction: number; /** Total effect = allocation + selection + interaction. */ readonly total: number; } export interface AttributionResult { readonly effects: readonly AttributionEffect[]; /** Total portfolio return (weighted sum). */ readonly portfolioReturn: number; /** Total benchmark return (weighted sum). */ readonly benchmarkReturn: number; /** Excess return = portfolio − benchmark. */ readonly excessReturn: number; /** Sum of all allocation effects. */ readonly totalAllocation: number; /** Sum of all selection effects. */ readonly totalSelection: number; /** Sum of all interaction effects. */ readonly totalInteraction: number; } /** Compute Brinson-Fachler performance attribution. Requirements: - At least 1 sector - Portfolio weights must sum to ~1 (tolerance ±0.01) - Benchmark weights must sum to ~1 (tolerance ±0.01) - All weights must be non-negative |
+| `computeAttribution()` | Brinson-Fachler Performance Attribution — decomposes portfolio excess return vs benchmark into allocation, selection, and interaction effects per sector/group. |
 
 **Types:** `SectorWeight`, `AttributionEffect`, `AttributionResult`
 
@@ -1956,8 +2069,8 @@ Profit factor and trade performance metrics from a list of trades.
 
 | Function | Description |
 | --- | --- |
-| `profitFactor()` | Profit factor and trade performance metrics from a list of trades. / export interface Trade { readonly pnl: number; // profit/loss amount readonly holdingPeriod?: number; // bars held } export interface ProfitFactorResult { readonly profitFactor: number; readonly totalWins: number; readonly totalLosses: number; readonly winCount: number; readonly lossCount: number; readonly winRate: number; readonly avgWin: number; readonly avgLoss: number; readonly expectancy: number; readonly payoffRatio: number; readonly largestWin: number; readonly largestLoss: number; readonly avgHoldingPeriod: number; readonly consecutiveWins: number; readonly consecutiveLosses: number; } /** Calculate profit factor = gross profit / |gross loss|. PF > 1 means net profitable. PF > 2 is strong. |
-| `equityCurve()` | Find max consecutive wins and losses. / function consecutiveStreaks(trades: readonly Trade[]): { maxConsecutiveWins: number; maxConsecutiveLosses: number; } { let maxWins = 0; let maxLosses = 0; let curWins = 0; let curLosses = 0; for (const t of trades) { if (t.pnl > 0) { curWins++; curLosses = 0; if (curWins > maxWins) maxWins = curWins; } else if (t.pnl < 0) { curLosses++; curWins = 0; if (curLosses > maxLosses) maxLosses = curLosses; } else { curWins = 0; curLosses = 0; } } return { maxConsecutiveWins: maxWins, maxConsecutiveLosses: maxLosses }; } /** Calculate equity curve from a list of trades. |
+| `profitFactor()` | Profit factor and trade performance metrics from a list of trades. |
+| `equityCurve()` | Find max consecutive wins and losses. |
 
 **Types:** `Trade`, `ProfitFactorResult`
 
@@ -1967,13 +2080,13 @@ Profit factor and trade performance metrics from a list of trades.
 
 **File:** `src/domain/range-bars.ts`
 
-Range bar chart computation.  Range bars form a new bar whenever the price range (high - low) reaches a specified amount, regardless of time. This removes time from the X-axis and focuses purely on price movement.
+Range bar chart computation.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeRangeBars()` | Range bar chart computation. Range bars form a new bar whenever the price range (high - low) reaches a specified amount, regardless of time. This removes time from the X-axis and focuses purely on price movement. / /** A single range bar with OHLC values for LWC candlestick rendering. */ export interface RangeBar { readonly time: string; readonly open: number; readonly high: number; readonly low: number; readonly close: number; } export interface RangeBarInput { readonly time: string; readonly high: number; readonly low: number; readonly open: number; readonly close: number; } /** Compute range bars from OHLC data. |
+| `computeRangeBars()` | Range bar chart computation. |
 | `suggestRangeSize()` | Suggest a range size based on average true range of the data. Uses median high-low spread. |
 
 **Types:** `RangeBar`, `RangeBarInput`
@@ -1990,7 +2103,7 @@ Regime Switching (Hamilton filter) — bull/bear state detection. Implements a s
 
 | Function | Description |
 | --- | --- |
-| `estimateRegimeParams()` | Regime Switching (Hamilton filter) — bull/bear state detection. Implements a simplified 2-state Hidden Markov Model for market regimes. / export interface RegimeParams { readonly mu: readonly [number, number]; // means for [state0, state1] readonly sigma: readonly [number, number]; // volatilities for [state0, state1] readonly transition: readonly [[number, number], [number, number]]; // P[i→j] } export interface RegimeResult { readonly params: RegimeParams; readonly smoothedProbs: readonly number[]; // P(state=1 | all data) at each t readonly filteredProbs: readonly number[]; // P(state=1 | data up to t) readonly currentRegime: number; // 0 or 1 readonly regimeLabel: readonly string[]; // "bull" or "bear" at each t } /** Gaussian PDF. / function gaussianPdf(x: number, mu: number, sigma: number): number { if (sigma <= 0) return 0; const z = (x - mu) / sigma; return Math.exp(-0.5 * z * z) / (sigma * Math.sqrt(2 * Math.PI)); } /** Estimate regime parameters using EM algorithm (Baum-Welch). Simplified: classifies returns into 2 clusters based on sign/magnitude. |
+| `estimateRegimeParams()` | Regime Switching (Hamilton filter) — bull/bear state detection. Implements a simplified 2-state Hidden Markov Model for market regimes. |
 | `hamiltonFilter()` | Hamilton filter — forward pass computing filtered probabilities. |
 | `kimSmoother()` | Kim smoother — backward pass for smoothed probabilities. |
 | `regimeSwitching()` | Full regime switching analysis. |
@@ -2003,14 +2116,14 @@ Regime Switching (Hamilton filter) — bull/bear state detection. Implements a s
 
 **File:** `src/domain/relative-strength.ts`
 
-Relative Strength Comparison domain helpers (H21).  Computes per-ticker % return series normalized to a common base date so that multiple tickers can be plotted on a single chart anchored at 0 %. A benchmark ticker (e.g. SPY) is rendered as a reference line.  Algorithm: normalized[i] = (close[i] / close[base] - 1) × 100  The "base" index is the first candle whose date >= windowStart.
+Relative Strength Comparison domain helpers (H21).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `normalizeSeries()` | Relative Strength Comparison domain helpers (H21). Computes per-ticker % return series normalized to a common base date so that multiple tickers can be plotted on a single chart anchored at 0 %. A benchmark ticker (e.g. SPY) is rendered as a reference line. Algorithm: normalized[i] = (close[i] / close[base] - 1) × 100 The "base" index is the first candle whose date >= windowStart. / import type { DailyCandle } from "../types/domain"; /** One normalised data point for a single ticker in the comparison chart. */ export interface RSPoint { /** ISO date string (YYYY-MM-DD). */ readonly date: string; /** % return relative to the base date, e.g. 12.5 means +12.5 %. */ readonly pct: number; } /** Normalised return series for one ticker over the chosen window. */ export interface RSeries { readonly ticker: string; readonly points: RSPoint[]; /** % return from base to the last available date. */ readonly totalReturn: number; /** True if this is the benchmark (reference) series. */ readonly isBenchmark: boolean; } /** Full result returned by `computeRelativeStrengths`. */ export interface RSComparisonResult { readonly series: RSeries[]; /** ISO date of the common anchor (first shared date on/after windowStart). */ readonly baseDate: string; /** Tickers ranked from highest to lowest total return. */ readonly ranked: readonly string[]; } /** Normalise a single candle array to % return vs the base date. Returns an empty array when candles contain no date >= baseDate. |
-| `windowStartDate()` | Compute a common window start date from a lookback string. Supported values: "1W", "1M", "3M", "6M", "1Y", "YTD". All arithmetic is calendar-day arithmetic; trading-day alignment is handled by `normalizeSeries` choosing the first candle on/after the date. |
+| `normalizeSeries()` | Relative Strength Comparison domain helpers (H21). |
+| `windowStartDate()` | Compute a common window start date from a lookback string. |
 | `computeRelativeStrengths()` | Compute relative strength comparison for multiple tickers. |
 | `findOutperformer()` | Return the ticker with the highest total return (excludes benchmark). Returns `null` when no non-benchmark series have data. |
 | `findUnderperformer()` | Return the ticker with the lowest total return (excludes benchmark). |
@@ -2024,16 +2137,32 @@ Relative Strength Comparison domain helpers (H21).  Computes per-ticker % return
 
 **File:** `src/domain/renko.ts`
 
-Renko chart brick computation.  Converts standard OHLC candles into Renko bricks of a fixed price size. Each brick is emitted when price moves by at least `brickSize` from the previous brick's close. Bricks have uniform height and are either "up" (close > open) or "down" (close < open).
+Renko chart brick computation.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeRenko()` | Renko chart brick computation. Converts standard OHLC candles into Renko bricks of a fixed price size. Each brick is emitted when price moves by at least `brickSize` from the previous brick's close. Bricks have uniform height and are either "up" (close > open) or "down" (close < open). / /** A single Renko brick with OHLC values for LWC candlestick rendering. */ export interface RenkoBrick { readonly time: string; readonly open: number; readonly high: number; readonly low: number; readonly close: number; } export interface RenkoInput { readonly time: string; readonly close: number; } /** Compute Renko bricks from price data. |
+| `computeRenko()` | Renko chart brick computation. |
 | `suggestBrickSize()` | Suggest a brick size based on ATR-like heuristic. Uses median absolute daily change over the data window. |
 
 **Types:** `RenkoBrick`, `RenkoInput`
+
+---
+
+### Resample
+
+**File:** `src/domain/resample.ts`
+
+Resample candles to a coarser timeframe by bucketing on a fixed interval. Inputs must be sorted ascending by `time` (ms epoch).
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `resampleCandles()` | — |
+
+**Types:** `ResampleOptions`
 
 ---
 
@@ -2060,13 +2189,13 @@ Returns calculations: simple, log, cumulative, and rolling. All functions assume
 
 **File:** `src/domain/rolling-sharpe.ts`
 
-Rolling Sharpe Ratio — compute Sharpe ratio over a sliding window.  Useful for visualizing risk-adjusted return stability over time. Pure function: no I/O, no DOM, no Date.now().
+Rolling Sharpe Ratio — compute Sharpe ratio over a sliding window.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeRollingSharpe()` | Rolling Sharpe Ratio — compute Sharpe ratio over a sliding window. Useful for visualizing risk-adjusted return stability over time. Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface RollingSharpePoint { readonly date: string; readonly value: number; } export interface RollingSharpeOptions { /** Window size in trading days. / readonly window?: number; /** Annualized risk-free rate (e.g. 0.04 for 4%). / readonly riskFreeRate?: number; } /** Compute annualized Sharpe ratio over a rolling window. Returns null if insufficient data. |
+| `computeRollingSharpe()` | Rolling Sharpe Ratio — compute Sharpe ratio over a sliding window. |
 
 **Types:** `RollingSharpePoint`, `RollingSharpeOptions`
 
@@ -2094,13 +2223,13 @@ Rolling statistics over a numeric series: mean, sample standard deviation, varia
 
 **File:** `src/domain/rsi-calculator.ts`
 
-RSI Calculator — Pure domain logic. Ported from Dart: lib/src/domain/rsi_calculator.dart  RSI = 100 - 100 / (1 + RS), where RS = avgGain / avgLoss (Wilder smoothing).
+RSI Calculator — Pure domain logic. Ported from Dart: lib/src/domain/rsi_calculator.dart
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeRsiSeries()` | RSI Calculator — Pure domain logic. Ported from Dart: lib/src/domain/rsi_calculator.dart RSI = 100 - 100 / (1 + RS), where RS = avgGain / avgLoss (Wilder smoothing). / import type { DailyCandle } from "../types/domain"; import { DEFAULTS } from "./technical-defaults"; export interface RsiPoint { readonly date: string; readonly value: number | null; } function rsi(avgGain: number, avgLoss: number): number { if (avgLoss === 0) return 100.0; const rs = avgGain / avgLoss; return 100.0 - 100.0 / (1.0 + rs); } /** Compute a rolling RSI series aligned with candles. The first `period` entries have null values (warmup). |
+| `computeRsiSeries()` | RSI Calculator — Pure domain logic. Ported from Dart: lib/src/domain/rsi_calculator.dart |
 | `computeRsi()` | Compute the current (latest) RSI value. Returns null if insufficient data. |
 
 **Types:** `RsiPoint`
@@ -2111,13 +2240,13 @@ RSI Calculator — Pure domain logic. Ported from Dart: lib/src/domain/rsi_calcu
 
 **File:** `src/domain/screener-fundamentals.ts`
 
-Screener fundamental filters — pure domain logic (Q3).  Provides `matchesFundamentalFilters` for client-side and worker-side filtering of tickers by fundamental criteria: P/E, market cap, dividend yield, sector, profit margin, price-to-book, and debt-to-equity.  All constraints are optional range filters (min/max inclusive). A ticker passes when its data satisfies every supplied constraint. If the relevant data field is absent, the filter for that field is skipped.
+Screener fundamental filters — pure domain logic (Q3).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `matchesFundamentalFilters()` | Screener fundamental filters — pure domain logic (Q3). Provides `matchesFundamentalFilters` for client-side and worker-side filtering of tickers by fundamental criteria: P/E, market cap, dividend yield, sector, profit margin, price-to-book, and debt-to-equity. All constraints are optional range filters (min/max inclusive). A ticker passes when its data satisfies every supplied constraint. If the relevant data field is absent, the filter for that field is skipped. / import type { FundamentalData } from "../types/domain"; // ── Filter parameter types ──────────────────────────────────────────────────── /** Constraints used to include or exclude tickers during fundamental screening. All fields are optional; supply only the constraints you care about. / export interface FundamentalFilterParams { /** Maximum trailing P/E ratio (e.g. 25 → exclude stocks with P/E > 25). */ readonly maxPe?: number; /** Minimum trailing P/E ratio (e.g. 5 → exclude P/E < 5). */ readonly minPe?: number; /** Minimum market cap in USD (e.g. 1e9 → large-cap only). */ readonly minMarketCap?: number; /** Maximum market cap in USD. */ readonly maxMarketCap?: number; /** Minimum trailing dividend yield as a decimal (e.g. 0.02 → ≥ 2%). */ readonly minDividendYield?: number; /** Maximum trailing dividend yield as a decimal. */ readonly maxDividendYield?: number; /** Minimum profit margin as a decimal (e.g. 0.1 → ≥ 10%). */ readonly minProfitMargin?: number; /** Maximum price-to-book ratio. */ readonly maxPriceToBook?: number; /** Maximum debt-to-equity ratio. */ readonly maxDebtToEquity?: number; /** Minimum return on equity as a decimal. */ readonly minReturnOnEquity?: number; /** Filter to a specific GICS sector string (exact, case-insensitive). */ readonly sector?: string; } // ── Sector types ────────────────────────────────────────────────────────────── /** Common GICS sector names recognised by the screener. */ export const GICS_SECTORS = [ "Technology", "Health Care", "Financials", "Consumer Discretionary", "Consumer Staples", "Industrials", "Energy", "Materials", "Utilities", "Real Estate", "Communication Services", ] as const; export type GicsSector = (typeof GICS_SECTORS)[number]; // ── Filter helper ───────────────────────────────────────────────────────────── /** Check whether a single ticker's fundamental data satisfies all supplied filter constraints.  Returns `true` when the ticker should be included in results. - If a field referenced by a constraint is absent (`undefined`), the ticker is **included** (benefit of the doubt; no data ≠ failing condition). - All supplied constraints must be satisfied simultaneously (AND logic). |
+| `matchesFundamentalFilters()` | Screener fundamental filters — pure domain logic (Q3). |
 | `applyFundamentalFilters()` | Filter a parallel list of (ticker, data) pairs by fundamental criteria. Returns only the tickers whose data passes all constraints. |
 
 **Types:** `FundamentalFilterParams`
@@ -2151,7 +2280,7 @@ Sector allocation calculator — compute sector weightings and concentration met
 
 | Function | Description |
 | --- | --- |
-| `calculateAllocations()` | Sector allocation calculator — compute sector weightings and concentration metrics for a portfolio of holdings. / export interface Holding { readonly ticker: string; readonly sector: string; readonly value: number; } export interface SectorAllocation { readonly sector: string; readonly totalValue: number; readonly weight: number; // 0–1 readonly count: number; } export interface AllocationSummary { readonly allocations: readonly SectorAllocation[]; readonly totalValue: number; readonly sectorCount: number; readonly topSector: string; readonly herfindahlIndex: number; // 0–1; higher = more concentrated } /** Calculate per-sector allocation from a list of holdings. |
+| `calculateAllocations()` | Sector allocation calculator — compute sector weightings and concentration metrics for a portfolio of holdings. |
 | `herfindahlIndex()` | Compute Herfindahl-Hirschman Index for concentration. Ranges 0–1: sum of squared weights. Higher = more concentrated. |
 | `allocationSummary()` | Get full allocation summary for a portfolio. |
 | `overweightSectors()` | Identify sectors that exceed a given weight threshold. |
@@ -2166,13 +2295,13 @@ Sector allocation calculator — compute sector weightings and concentration met
 
 **File:** `src/domain/sector-rotation.ts`
 
-Sector Rotation domain — relative strength ranking (H20).  Pure computation layer for sector ETF relative performance analysis. No API calls; operates on pre-fetched candle arrays.
+Sector Rotation domain — relative strength ranking (H20).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeReturn()` | Sector Rotation domain — relative strength ranking (H20). Pure computation layer for sector ETF relative performance analysis. No API calls; operates on pre-fetched candle arrays. / // ─────────────────────────── Catalogue ─────────────────────────────────────── /** The 11 standard SPDR sector ETFs (GICS level 1). Used as the default universe for relative-strength calculations. / export const SECTOR_ETFS = [ "XLC", // Communication Services "XLY", // Consumer Discretionary "XLP", // Consumer Staples "XLE", // Energy "XLF", // Financials "XLV", // Health Care "XLI", // Industrials "XLB", // Materials "XLRE", // Real Estate "XLK", // Technology "XLU", // Utilities ] as const; export type SectorEtf = (typeof SECTOR_ETFS)[number]; export interface SectorReturnInput { /** Sector ETF ticker */ ticker: string; /** Percentage return over the look-back window (decimal, e.g. 0.05 = +5%). Use the output of `computeReturn()` or equivalent. / periodReturn: number; } export interface SectorRankEntry extends SectorReturnInput { /** Relative return vs. the benchmark (sectorReturn - benchmarkReturn) */ relativeReturn: number; /** 1-based rank from best (1) to worst */ rank: number; /** Performance classification */ performance: "outperform" | "underperform" | "flat"; } // ─────────────────────────── Core functions ────────────────────────────────── /** Compute the simple price return over the last `days` candles. Returns 0 when insufficient data or start price is zero/non-finite. |
+| `computeReturn()` | Sector Rotation domain — relative strength ranking (H20). |
 | `computeRelativeReturn()` | Compute relative return of a sector vs. a benchmark. `rs = sectorReturn - benchmarkReturn` |
 | `classifySectorPerformance()` | Classify sector performance relative to benchmark. |
 | `rankSectors()` | Rank a list of sectors by their relative return vs. a benchmark (e.g. SPY). |
@@ -2185,13 +2314,13 @@ Sector Rotation domain — relative strength ranking (H20).  Pure computation la
 
 **File:** `src/domain/signal-aggregator.ts`
 
-Signal Aggregator — runs all 12 method detectors for a ticker, then feeds results into the consensus engine.  Pure domain logic. No side effects.
+Signal Aggregator — runs all 12 method detectors for a ticker, then feeds results into the consensus engine.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `aggregateSignals()` | Signal Aggregator — runs all 12 method detectors for a ticker, then feeds results into the consensus engine. Pure domain logic. No side effects. / import type { ConsensusResult, DailyCandle, MethodSignal, MethodWeights } from "../types/domain"; import { evaluateConsensus } from "./consensus-engine"; import { evaluate as evaluateMicho } from "./micho-method"; import { evaluate as evaluateRsi } from "./rsi-method"; import { evaluate as evaluateMacd } from "./macd-method"; import { evaluate as evaluateBollinger } from "./bollinger-method"; import { evaluate as evaluateStochastic } from "./stochastic-method"; import { evaluate as evaluateObv } from "./obv-method"; import { evaluate as evaluateAdx } from "./adx-method"; import { evaluate as evaluateCci } from "./cci-method"; import { evaluate as evaluateSar } from "./sar-method"; import { evaluate as evaluateWilliamsR } from "./williams-r-method"; import { evaluate as evaluateMfi } from "./mfi-method"; import { evaluate as evaluateSuperTrend } from "./supertrend-method"; type Detector = (ticker: string, candles: readonly DailyCandle[]) => MethodSignal | null; const DETECTORS: readonly Detector[] = [ evaluateMicho, evaluateRsi, evaluateMacd, evaluateBollinger, evaluateStochastic, evaluateObv, evaluateAdx, evaluateCci, evaluateSar, evaluateWilliamsR, evaluateMfi, evaluateSuperTrend, ]; /** Run all method detectors and return their individual signals. Null results (insufficient data) are excluded. |
+| `aggregateSignals()` | Signal Aggregator — runs all 12 method detectors for a ticker, then feeds results into the consensus engine. |
 | `aggregateConsensus()` | Run all 12 detectors and produce a consensus result. Pass optional per-method `weights` (G20) to personalise the score. |
 
 ---
@@ -2200,13 +2329,13 @@ Signal Aggregator — runs all 12 method detectors for a ticker, then feeds resu
 
 **File:** `src/domain/signal-strategy-io.ts`
 
-Shared signal strategy I/O (I6).  Import and export signal-DSL strategies as portable JSON payloads. Supports validation, versioning, checksumming, and batch operations so users can share strategies via files, URLs, or clipboard.  Exports: - `StrategyPayload` — the portable JSON envelope - `exportStrategy(name, expression, vars)` — build payload - `importStrategy(json)` — parse + validate JSON - `exportBundle(strategies)` — multi-strategy export - `importBundle(json)` — multi-strategy import - `validateExpression(expr)` — basic syntax sanity check - `validateVars(vars)` — ensure vars are number|boolean - `checksumPayload(p)` — deterministic hash for integrity - `encodeShareUrl(payload, base)` — encode to shareable URL - `decodeShareUrl(url)` — decode from URL - `payloadToClipboardText(payload)` — pretty-print for clipboard
+Shared signal strategy I/O (I6).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `exportStrategy()` | Shared signal strategy I/O (I6). Import and export signal-DSL strategies as portable JSON payloads. Supports validation, versioning, checksumming, and batch operations so users can share strategies via files, URLs, or clipboard. Exports: - `StrategyPayload` — the portable JSON envelope - `exportStrategy(name, expression, vars)` — build payload - `importStrategy(json)` — parse + validate JSON - `exportBundle(strategies)` — multi-strategy export - `importBundle(json)` — multi-strategy import - `validateExpression(expr)` — basic syntax sanity check - `validateVars(vars)` — ensure vars are number|boolean - `checksumPayload(p)` — deterministic hash for integrity - `encodeShareUrl(payload, base)` — encode to shareable URL - `decodeShareUrl(url)` — decode from URL - `payloadToClipboardText(payload)` — pretty-print for clipboard / // ── Types ───────────────────────────────────────────────────────────────── export interface StrategyPayload { version: 1; name: string; expression: string; vars: Record<string, number | boolean>; createdAt: string; // ISO 8601 checksum: string; } export interface StrategyBundle { version: 1; strategies: StrategyPayload[]; exportedAt: string; } export interface ImportResult<T> { ok: boolean; data?: T; error?: string; } // ── Export ───────────────────────────────────────────────────────────────── /** Build a portable strategy payload. |
+| `exportStrategy()` | Shared signal strategy I/O (I6). |
 | `exportBundle()` | Bundle multiple strategies into a single export. |
 | `importStrategy()` | Parse and validate a single strategy from JSON string. |
 | `importBundle()` | Import a strategy bundle from JSON string. |
@@ -2221,6 +2350,23 @@ Shared signal strategy I/O (I6).  Import and export signal-DSL strategies as por
 
 ---
 
+### Sma Calculator
+
+**File:** `src/domain/sma-calculator.ts`
+
+SMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/sma_calculator.dart
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `computeSma()` | SMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/sma_calculator.dart |
+| `computeSmaSeries()` | A single SMA data point aligned to a candle date. */ export interface SmaPoint { readonly date: string; readonly value: number \| null; } |
+
+**Types:** `SmaPoint`
+
+---
+
 ### Spectral Density
 
 **File:** `src/domain/spectral-density.ts`
@@ -2231,7 +2377,7 @@ Spectral density estimation — periodogram and Welch's method. Identifies domin
 
 | Function | Description |
 | --- | --- |
-| `periodogram()` | Spectral density estimation — periodogram and Welch's method. Identifies dominant cycles/frequencies in time series. / export interface SpectralDensity { readonly frequencies: readonly number[]; // normalized [0, 0.5] readonly power: readonly number[]; // spectral power at each freq readonly dominantFrequency: number; // frequency with max power readonly dominantPeriod: number; // 1 / dominant frequency } /** Compute raw periodogram using DFT. S(f_k) = (1/N)|Σ x_t * e^{-i2πf_k t}|² |
+| `periodogram()` | Spectral density estimation — periodogram and Welch's method. Identifies dominant cycles/frequencies in time series. |
 | `welchSpectrum()` | Welch's method: averaged periodogram with overlapping windows. Reduces variance of spectral estimate. |
 | `detectPeaks()` | Detect significant spectral peaks above noise floor. |
 
@@ -2259,13 +2405,13 @@ Rolling standard deviation over a window of `period` samples. Defaults to popula
 
 **File:** `src/domain/strategy-comparison.ts`
 
-Strategy comparison — run two backtest configurations side-by-side on the same candle data and produce comparative metrics.  Enables users to evaluate which method combination performs better over the same historical period.
+Strategy comparison — run two backtest configurations side-by-side on the same candle data and produce comparative metrics.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `compareStrategies()` | Strategy comparison — run two backtest configurations side-by-side on the same candle data and produce comparative metrics. Enables users to evaluate which method combination performs better over the same historical period. / import type { DailyCandle } from "../types/domain"; import { runBacktest, type BacktestConfig, type BacktestResult } from "./backtest-engine"; /** Input for comparing two strategies. */ export interface StrategyComparisonInput { readonly candles: readonly DailyCandle[]; readonly strategyA: BacktestConfig; readonly strategyB: BacktestConfig; } /** Comparative metrics between two backtest results. */ export interface StrategyComparisonResult { readonly resultA: BacktestResult; readonly resultB: BacktestResult; readonly delta: StrategyDelta; } /** Differences between strategy A and strategy B metrics. */ export interface StrategyDelta { /** Positive = A better. */ readonly returnDiff: number; /** Positive = A better (higher win rate). */ readonly winRateDiff: number; /** Positive = A better (lower max drawdown). */ readonly drawdownDiff: number; /** Positive = A more trades. */ readonly tradeCountDiff: number; /** Which strategy has better risk-adjusted return (higher return / max drawdown). */ readonly winner: "A" | "B" | "TIE"; } /** Compare two backtest strategies on the same candle data. Returns both full results and a delta summary. |
+| `compareStrategies()` | Strategy comparison — run two backtest configurations side-by-side on the same candle data and produce comparative metrics. |
 | `renderComparisonTable()` | Render comparison HTML table summarizing both strategies. |
 
 **Types:** `StrategyComparisonInput`, `StrategyComparisonResult`, `StrategyDelta`
@@ -2282,7 +2428,7 @@ Gain/loss streak tracker — analyze consecutive up/down days for streak detecti
 
 | Function | Description |
 | --- | --- |
-| `currentStreak()` | Gain/loss streak tracker — analyze consecutive up/down days for streak detection and pattern awareness. / export interface StreakResult { readonly ticker: string; readonly currentStreak: number; // Positive = gains, negative = losses readonly direction: "gain" | "loss" | "flat"; readonly longestGainStreak: number; readonly longestLossStreak: number; } /** Compute the current streak from a price series. Returns positive number for consecutive gains, negative for consecutive losses. |
+| `currentStreak()` | Gain/loss streak tracker — analyze consecutive up/down days for streak detection and pattern awareness. |
 | `longestGainStreak()` | Find the longest gain streak in a price series. |
 | `longestLossStreak()` | Find the longest loss streak in a price series. |
 | `analyzeStreak()` | Full streak analysis for a ticker. |
@@ -2304,7 +2450,7 @@ Support/resistance level finder — identify key price levels from historical da
 
 | Function | Description |
 | --- | --- |
-| `findSwingLows()` | Support/resistance level finder — identify key price levels from historical data using pivot points and price clustering. / export interface PriceLevel { readonly price: number; readonly type: "support" | "resistance"; readonly strength: number; // number of touches readonly firstSeen: number; // index readonly lastSeen: number; // index } /** Find local minima (swing lows) in a price series. |
+| `findSwingLows()` | Support/resistance level finder — identify key price levels from historical data using pivot points and price clustering. |
 | `findSwingHighs()` | Find local maxima (swing highs) in a price series. |
 | `clusterLevels()` | Cluster nearby price levels into zones. Levels within `tolerance` percent are merged. |
 | `findLevels()` | Find support and resistance levels from a price series. |
@@ -2325,12 +2471,30 @@ Tail index estimation (Extreme Value Theory) — Hill estimator, peaks-over-thre
 
 | Function | Description |
 | --- | --- |
-| `hillEstimator()` | Tail index estimation (Extreme Value Theory) — Hill estimator, peaks-over-threshold. Quantifies tail heaviness for risk management. / export interface TailIndexResult { readonly hillEstimator: number; // ξ (shape parameter), >0 = heavy tail readonly tailIndex: number; // α = 1/ξ (tail exponent) readonly threshold: number; // u (threshold used) readonly nExceedances: number; readonly expectedShortfall: number; // ES at given quantile } export interface PeaksOverThreshold { readonly threshold: number; readonly exceedances: readonly number[]; readonly shape: number; // ξ (GPD shape) readonly scale: number; // σ (GPD scale) readonly meanExcess: number; } /** Hill estimator for the tail index. ξ_Hill = (1/k) Σᵢ₌₁ᵏ ln(X_{(n-i+1)} / X_{(n-k)}) where X_{(i)} are order statistics and k is the number of upper order statistics used. |
-| `peaksOverThreshold()` | Peaks-over-threshold method with Generalized Pareto Distribution (GPD) fit. For exceedances y = x - u, fit GPD: F(y) = 1 - (1 + ξy/σ)^{-1/ξ} |
-| `meanExcessFunction()` | Mean excess function: E[X - u | X > u] for various thresholds. Linear mean excess plot indicates GPD tail. |
-| `gpdRiskMeasures()` | VaR and ES estimation using GPD tail model. VaR_p = u + (σ/ξ) * ((n/Nu * (1-p))^{-ξ} - 1) ES_p = VaR_p / (1-ξ) + (σ - ξu) / (1-ξ) |
+| `hillEstimator()` | Tail index estimation (Extreme Value Theory) — Hill estimator, peaks-over-threshold. Quantifies tail heaviness for risk management. |
+| `peaksOverThreshold()` | Peaks-over-threshold method with Generalized Pareto Distribution (GPD) fit. |
+| `meanExcessFunction()` | Mean excess function: E[X - u \| X > u] for various thresholds. Linear mean excess plot indicates GPD tail. |
+| `gpdRiskMeasures()` | VaR and ES estimation using GPD tail model. |
 
 **Types:** `TailIndexResult`, `PeaksOverThreshold`
+
+---
+
+### Ticker Catalog
+
+**File:** `src/domain/ticker-catalog.ts`
+
+Static ticker catalog — offline fuzzy lookup for the ticker search box.
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `getTickerCatalog()` | Static ticker catalog — offline fuzzy lookup for the ticker search box. |
+| `isSupportedSymbol()` | Symbol formats CrossTide accepts, matching the Worker's ticker guard: plain equities (`MSFT`), share classes (`BRK.B`), crypto pairs (`BTC-USD`), indices (`^GSPC`) and forex pairs (`EURUSD=X`). |
+| `searchTickerCatalog()` | Score a catalog entry against a normalized (upper-case, trimmed) query. Returns 0 when the entry does not match at all. |
+
+**Types:** `TickerCatalogEntry`
 
 ---
 
@@ -2344,7 +2508,7 @@ Ticker comparison table — side-by-side data comparison for multiple tickers ac
 
 | Function | Description |
 | --- | --- |
-| `buildComparison()` | Ticker comparison table — side-by-side data comparison for multiple tickers across various metrics. / export interface TickerMetrics { readonly ticker: string; readonly price: number; readonly changePercent: number; readonly volume: number; readonly marketCap?: number; readonly pe?: number; readonly dividendYield?: number; readonly week52High?: number; readonly week52Low?: number; } export interface ComparisonColumn { readonly key: keyof TickerMetrics; readonly label: string; } export interface ComparisonResult { readonly columns: readonly ComparisonColumn[]; readonly rows: readonly TickerMetrics[]; readonly best: ReadonlyMap<string, string>; // metric key → ticker with best value readonly worst: ReadonlyMap<string, string>; // metric key → ticker with worst value } const DEFAULT_COLUMNS: ComparisonColumn[] = [ { key: "price", label: "Price" }, { key: "changePercent", label: "Change %" }, { key: "volume", label: "Volume" }, { key: "marketCap", label: "Market Cap" }, { key: "pe", label: "P/E" }, { key: "dividendYield", label: "Div Yield" }, ]; /** Build a comparison table for the given tickers. |
+| `buildComparison()` | Ticker comparison table — side-by-side data comparison for multiple tickers across various metrics. |
 | `rankByMetric()` | Rank tickers by a specific metric (descending). |
 | `distanceFrom52WeekHigh()` | Calculate the percent distance from 52-week high. |
 | `distanceFrom52WeekLow()` | Calculate the percent distance from 52-week low. |
@@ -2358,13 +2522,13 @@ Ticker comparison table — side-by-side data comparison for multiple tickers ac
 
 **File:** `src/domain/trade-journal.ts`
 
-Trade Journal Analytics — pure functions to analyze a user's trade log and compute performance statistics.  All inputs are pre-structured trade entries — no I/O, no Date.now().
+Trade Journal Analytics — pure functions to analyze a user's trade log and compute performance statistics.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `analyzeTradeJournal()` | Trade Journal Analytics — pure functions to analyze a user's trade log and compute performance statistics. All inputs are pre-structured trade entries — no I/O, no Date.now(). / export interface TradeEntry { readonly symbol: string; readonly side: "long" | "short"; readonly entryPrice: number; readonly exitPrice: number; readonly shares: number; readonly entryDate: string; // ISO date readonly exitDate: string; // ISO date /** Optional initial risk per share (stop distance). Used for R-multiple. */ readonly riskPerShare?: number | undefined; } export interface TradeStats { readonly totalTrades: number; readonly wins: number; readonly losses: number; readonly breakeven: number; readonly winRate: number; // 0–1 readonly avgWin: number; readonly avgLoss: number; /** Profit factor = gross wins / gross losses. Infinity if no losses. */ readonly profitFactor: number; readonly totalPnl: number; readonly avgPnl: number; /** Average R-multiple (only for trades with riskPerShare). */ readonly avgRMultiple: number | null; readonly bestTrade: TradeResult; readonly worstTrade: TradeResult; /** Expectancy = (winRate × avgWin) - (lossRate × |avgLoss|) per trade. */ readonly expectancy: number; /** Max consecutive wins. */ readonly maxConsecutiveWins: number; /** Max consecutive losses. */ readonly maxConsecutiveLosses: number; } export interface TradeResult { readonly symbol: string; readonly pnl: number; readonly pnlPercent: number; readonly rMultiple: number | null; } /** Analyze an array of completed trades. |
+| `analyzeTradeJournal()` | Trade Journal Analytics — pure functions to analyze a user's trade log and compute performance statistics. |
 
 **Types:** `TradeEntry`, `TradeStats`, `TradeResult`
 
@@ -2380,7 +2544,7 @@ Trade performance stats — calculate key trading metrics from a history of comp
 
 | Function | Description |
 | --- | --- |
-| `tradePnl()` | Trade performance stats — calculate key trading metrics from a history of completed trades. / export interface Trade { readonly entryPrice: number; readonly exitPrice: number; readonly quantity: number; readonly side: "long" | "short"; } export interface TradeStats { readonly totalTrades: number; readonly winners: number; readonly losers: number; readonly winRate: number; readonly avgWin: number; readonly avgLoss: number; readonly profitFactor: number; readonly expectancy: number; readonly largestWin: number; readonly largestLoss: number; readonly netPnl: number; } /** Calculate P&L for a single trade. |
+| `tradePnl()` | Trade performance stats — calculate key trading metrics from a history of completed trades. |
 | `computeStats()` | Calculate comprehensive trade statistics. |
 | `streaks()` | Calculate consecutive wins/losses streaks. |
 | `avgReturnPercent()` | Calculate average holding return percent. |
@@ -2445,7 +2609,7 @@ Walk-forward analysis — out-of-sample backtest validation. Splits data into in
 
 | Function | Description |
 | --- | --- |
-| `walkForward()` | Walk-forward analysis — out-of-sample backtest validation. Splits data into in-sample (train) and out-of-sample (test) windows, rolls forward, and aggregates out-of-sample performance. / export interface WalkForwardWindow { readonly windowIndex: number; readonly inSampleStart: number; readonly inSampleEnd: number; readonly outOfSampleStart: number; readonly outOfSampleEnd: number; readonly inSampleReturn: number; readonly outOfSampleReturn: number; } export interface WalkForwardResult { readonly windows: readonly WalkForwardWindow[]; readonly aggregateOosReturn: number; readonly avgOosReturn: number; readonly winRate: number; readonly degradation: number; // ratio of OOS to IS performance } /** Simple strategy evaluator: buy-and-hold return over a slice. / function sliceReturn(prices: readonly number[], start: number, end: number): number { if (start >= end || start < 0 || end > prices.length) return 0; const first = prices[start]!; const last = prices[end - 1]!; return first > 0 ? (last / first - 1) * 100 : 0; } /** Run walk-forward analysis on a price series with a given strategy evaluator. |
+| `walkForward()` | Walk-forward analysis — out-of-sample backtest validation. Splits data into in-sample (train) and out-of-sample (test) windows, rolls forward, and aggregates out-of-sample performance. |
 | `anchoredWalkForward()` | Anchored walk-forward: in-sample grows (always starts at 0), out-of-sample is fixed window rolling forward. |
 
 **Types:** `WalkForwardWindow`, `WalkForwardResult`
@@ -2456,13 +2620,13 @@ Walk-forward analysis — out-of-sample backtest validation. Splits data into in
 
 **File:** `src/domain/watchlist-share.ts`
 
-Collaborative watchlist sharing via URL snapshots (I8).  Allows users to share watchlist state as compact, URL-safe snapshots with optional TTL expiry.  Watchlists are serialized to a minimal JSON envelope, compressed with base64url, and embedded in shareable URLs.  Usage: const snapshot = createWatchlistSnapshot("My List", ["AAPL","MSFT"], { notes: "Tech picks" }); const url = encodeWatchlistUrl(snapshot, "https://crosstide.app"); const decoded = decodeWatchlistUrl(url);
+Collaborative watchlist sharing via URL snapshots (I8).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `createWatchlistSnapshot()` | Collaborative watchlist sharing via URL snapshots (I8). Allows users to share watchlist state as compact, URL-safe snapshots with optional TTL expiry.  Watchlists are serialized to a minimal JSON envelope, compressed with base64url, and embedded in shareable URLs. Usage: const snapshot = createWatchlistSnapshot("My List", ["AAPL","MSFT"], { notes: "Tech picks" }); const url = encodeWatchlistUrl(snapshot, "https://crosstide.app"); const decoded = decodeWatchlistUrl(url); / import { base64UrlEncode, base64UrlDecode } from "../core/base64-url"; // ── Types ──────────────────────────────────────────────────────────────── export interface WatchlistSnapshot { /** Schema version. */ readonly v: 1; /** Watchlist display name. */ readonly name: string; /** Ordered ticker symbols. */ readonly tickers: readonly string[]; /** ISO-8601 creation timestamp. */ readonly createdAt: string; /** Optional user-provided notes. */ readonly notes?: string; /** Optional TTL in seconds from createdAt. Null = never expires. */ readonly ttlSeconds?: number; /** Deterministic checksum for integrity. */ readonly checksum: string; } export interface WatchlistImportResult { readonly ok: boolean; readonly snapshot?: WatchlistSnapshot; readonly error?: string; readonly expired?: boolean; } export interface MergeResult { /** Merged list of unique tickers preserving order. */ readonly tickers: readonly string[]; /** Tickers that were added (new). */ readonly added: readonly string[]; /** Tickers that were already present. */ readonly duplicates: readonly string[]; } // ── Constants ──────────────────────────────────────────────────────────── const URL_PARAM = "wl"; const MAX_TICKERS = 200; const MAX_NAME_LENGTH = 100; const MAX_NOTES_LENGTH = 500; // ── Checksum ───────────────────────────────────────────────────────────── /** Simple DJB2 hash for integrity validation. / function djb2(str: string): string { let hash = 5381; for (let i = 0; i < str.length; i++) { hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0; } return (hash >>> 0).toString(36); } function computeChecksum(name: string, tickers: readonly string[]): string { return djb2(`${name}|${tickers.join(",")}`); } // ── Validation ─────────────────────────────────────────────────────────── function validateTickers(tickers: readonly string[]): string | null { if (!Array.isArray(tickers)) return "tickers must be an array"; if (tickers.length === 0) return "tickers must not be empty"; if (tickers.length > MAX_TICKERS) return `tickers exceeds max of ${MAX_TICKERS}`; for (const t of tickers) { if (typeof t !== "string" || t.length === 0 || t.length > 10) { return `invalid ticker: "${String(t)}"`; } } return null; } function validateName(name: string): string | null { if (typeof name !== "string" || name.length === 0) return "name is required"; if (name.length > MAX_NAME_LENGTH) return `name exceeds max of ${MAX_NAME_LENGTH} chars`; return null; } // ── Create / Encode / Decode ───────────────────────────────────────────── /** Create a watchlist snapshot from name and tickers. |
+| `createWatchlistSnapshot()` | Collaborative watchlist sharing via URL snapshots (I8). |
 | `encodeWatchlistUrl()` | Encode a watchlist snapshot into a shareable URL. |
 | `decodeWatchlistUrl()` | Decode a watchlist snapshot from a URL. |
 | `decodeWatchlistPayload()` | Decode a raw base64url watchlist payload string. |
@@ -2483,10 +2647,10 @@ Wavelet decomposition — multi-resolution analysis for price series. Uses Haar 
 
 | Function | Description |
 | --- | --- |
-| `haarForward()` | Wavelet decomposition — multi-resolution analysis for price series. Uses Haar wavelet (simplest orthogonal wavelet) for signal decomposition. / export interface WaveletLevel { readonly level: number; readonly detail: readonly number[]; // detail coefficients (high-frequency) readonly approx: readonly number[]; // approximation coefficients (low-frequency) } export interface WaveletDecomposition { readonly levels: readonly WaveletLevel[]; readonly trend: readonly number[]; // final approximation (lowest frequency) readonly reconstructed: readonly number[]; } /** Haar wavelet forward transform — one level. Splits signal into approximation (average) and detail (difference) coefficients. |
+| `haarForward()` | Wavelet decomposition — multi-resolution analysis for price series. Uses Haar wavelet (simplest orthogonal wavelet) for signal decomposition. |
 | `haarInverse()` | Haar wavelet inverse transform — one level. |
 | `waveletDecompose()` | Multi-level Haar wavelet decomposition. Decomposes signal into `maxLevel` resolution levels. |
-| `waveletDenoise()` | Reconstruct signal from wavelet levels. / function waveletReconstruct(levels: readonly WaveletLevel[], trend: readonly number[]): number[] { let signal = trend.slice(); for (let i = levels.length - 1; i >= 0; i--) { signal = haarInverse(signal, levels[i]!.detail); } return signal; } /** Denoise signal by zeroing detail coefficients below threshold. Uses universal threshold: σ * √(2 * ln(n)). |
+| `waveletDenoise()` | Reconstruct signal from wavelet levels. |
 | `waveletEnergy()` | Extract energy at each wavelet scale — useful for identifying dominant cycles. |
 
 **Types:** `WaveletLevel`, `WaveletDecomposition`
@@ -2497,7 +2661,7 @@ Wavelet decomposition — multi-resolution analysis for price series. Uses Haar 
 
 **File:** `src/domain/williams-r-calculator.ts`
 
-Williams %R — Pure domain logic. Ported from Dart: lib/src/domain/williams_percent_r_calculator.dart  %R = (highestHigh - close) / (highestHigh - lowestLow) * -100 Range: -100 to 0. Below -80 = oversold, above -20 = overbought.
+Williams %R — Pure domain logic. Ported from Dart: lib/src/domain/williams_percent_r_calculator.dart
 
 **Functions:**
 
@@ -2514,7 +2678,7 @@ Williams %R — Pure domain logic. Ported from Dart: lib/src/domain/williams_per
 
 **File:** `src/domain/zigzag.ts`
 
-ZigZag pivot detector. Marks alternating swing highs and swing lows separated by at least `thresholdPercent` reversal from the last confirmed pivot. Used to filter out noise and identify Elliott / fib legs on a chart.  Algorithm: walk left-to-right; track the most extreme high/low since the last confirmed pivot. When the price reverses from that extreme by more than the threshold, emit the extreme as a confirmed pivot.
+ZigZag pivot detector. Marks alternating swing highs and swing lows separated by at least `thresholdPercent` reversal from the last confirmed pivot. Used to filter out noise and identify Elliott / fib legs on a chart.
 
 **Functions:**
 
@@ -2538,9 +2702,9 @@ Breakout detector — identify price breakouts above resistance or below support
 
 | Function | Description |
 | --- | --- |
-| `rollingHigh()` | Breakout detector — identify price breakouts above resistance or below support with optional volume confirmation. / export interface BreakoutCandle { readonly close: number; readonly volume: number; } export interface BreakoutEvent { readonly index: number; readonly type: "bullish" | "bearish"; readonly price: number; readonly level: number; // broken level readonly volumeRatio: number; // volume vs average readonly confirmed: boolean; // volume > threshold } /** Find the highest close in a lookback window (resistance proxy). |
+| `rollingHigh()` | Breakout detector — identify price breakouts above resistance or below support with optional volume confirmation. |
 | `rollingLow()` | Find the lowest close in a lookback window (support proxy). |
-| `detectBreakouts()` | Compute average volume over a lookback window. / function avgVolume(volumes: readonly number[], period: number, index: number): number { const start = Math.max(0, index - period); let sum = 0; let count = 0; for (let i = start; i < index; i++) { sum += volumes[i]!; count++; } return count > 0 ? sum / count : 0; } /** Detect breakout events from price/volume data. |
+| `detectBreakouts()` | Compute average volume over a lookback window. |
 | `confirmedBreakouts()` | Filter only confirmed breakouts (volume above threshold). |
 | `lastBreakout()` | Get the most recent breakout event. |
 
@@ -2558,7 +2722,7 @@ Candlestick pattern detector — identify common bullish/bearish single and mult
 
 | Function | Description |
 | --- | --- |
-| `isDoji()` | Candlestick pattern detector — identify common bullish/bearish single and multi-bar patterns from OHLC data. / export interface Candle { readonly open: number; readonly high: number; readonly low: number; readonly close: number; } export interface PatternMatch { readonly index: number; readonly pattern: string; readonly type: "bullish" | "bearish" | "neutral"; readonly confidence: number; // 0–1 } function bodySize(c: Candle): number { return Math.abs(c.close - c.open); } function range(c: Candle): number { return c.high - c.low; } function upperShadow(c: Candle): number { return c.high - Math.max(c.open, c.close); } function lowerShadow(c: Candle): number { return Math.min(c.open, c.close) - c.low; } function isBullish(c: Candle): boolean { return c.close > c.open; } function isBearish(c: Candle): boolean { return c.close < c.open; } /** Detect a Doji (very small body relative to range). |
+| `isDoji()` | Candlestick pattern detector — identify common bullish/bearish single and multi-bar patterns from OHLC data. |
 | `isHammer()` | Detect a Hammer (small body at top, long lower shadow). |
 | `isShootingStar()` | Detect a Shooting Star (small body at bottom, long upper shadow). |
 | `isEngulfing()` | Detect an Engulfing pattern (2-bar). |
@@ -2575,13 +2739,13 @@ Candlestick pattern detector — identify common bullish/bearish single and mult
 
 **File:** `src/domain/pattern-recognition.ts`
 
-Candlestick pattern recognition — rule-based detection (I2).  Detects classic candlestick patterns from OHLC data using deterministic rules.  Each detector returns a confidence score (0–1) and directional bias (bullish/bearish/neutral).  Supported single-candle patterns: - Doji, Hammer, Shooting Star, Spinning Top, Marubozu  Supported multi-candle patterns: - Engulfing (bullish/bearish), Morning Star, Evening Star, Three White Soldiers, Three Black Crows  Usage: const patterns = detectAllPatterns(candles); // → [{ name: "Hammer", type: "bullish", confidence: 0.85, index: 42 }]
+Candlestick pattern recognition — rule-based detection (I2).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `bodySize()` | Candlestick pattern recognition — rule-based detection (I2). Detects classic candlestick patterns from OHLC data using deterministic rules.  Each detector returns a confidence score (0–1) and directional bias (bullish/bearish/neutral). Supported single-candle patterns: - Doji, Hammer, Shooting Star, Spinning Top, Marubozu Supported multi-candle patterns: - Engulfing (bullish/bearish), Morning Star, Evening Star, Three White Soldiers, Three Black Crows Usage: const patterns = detectAllPatterns(candles); // → [{ name: "Hammer", type: "bullish", confidence: 0.85, index: 42 }] / // ── Types ───────────────────────────────────────────────────────────────── export interface PatternCandle { open: number; high: number; low: number; close: number; } export type PatternDirection = "bullish" | "bearish" | "neutral"; export interface DetectedPattern { /** Pattern name (e.g. "Hammer", "Engulfing"). */ name: string; /** Directional bias of the pattern. */ type: PatternDirection; /** Confidence score 0–1. */ confidence: number; /** Index in the candle array where the pattern completes. */ index: number; } // ── Candle metrics ──────────────────────────────────────────────────────── /** Absolute body size (|close - open|). |
+| `bodySize()` | Candlestick pattern recognition — rule-based detection (I2). |
 | `candleRange()` | Full candle range (high - low). |
 | `upperShadow()` | Upper shadow length. |
 | `lowerShadow()` | Lower shadow length. |
@@ -2615,7 +2779,7 @@ Portfolio aggregations: holdings → sector allocation, position weights, top-N 
 
 | Function | Description |
 | --- | --- |
-| `topConcentration()` | Portfolio aggregations: holdings → sector allocation, position weights, top-N concentration, and unrealized P/L roll-up. / export interface Holding { readonly ticker: string; readonly sector?: string; readonly quantity: number; readonly avgCost: number; readonly currentPrice: number; } export interface SectorAllocation { readonly sector: string; readonly value: number; readonly weight: number; readonly tickers: number; } export interface PositionMetric { readonly ticker: string; readonly value: number; readonly weight: number; readonly unrealizedPnl: number; readonly unrealizedReturnPct: number; } const UNCATEGORIZED = "Uncategorized"; export function positionValue(h: Holding): number { return h.quantity * h.currentPrice; } export function unrealizedPnl(h: Holding): number { return h.quantity * (h.currentPrice - h.avgCost); } export function totalValue(holdings: readonly Holding[]): number { let s = 0; for (const h of holdings) s += positionValue(h); return s; } export function sectorAllocation(holdings: readonly Holding[]): SectorAllocation[] { const total = totalValue(holdings); if (total === 0) return []; const map = new Map<string, { value: number; tickers: number }>(); for (const h of holdings) { const sec = h.sector ?? UNCATEGORIZED; const cur = map.get(sec) ?? { value: 0, tickers: 0 }; cur.value += positionValue(h); cur.tickers += 1; map.set(sec, cur); } const out: SectorAllocation[] = []; for (const [sector, info] of map) { out.push({ sector, value: info.value, weight: info.value / total, tickers: info.tickers, }); } return out.sort((a, b) => b.value - a.value); } export function positionMetrics(holdings: readonly Holding[]): PositionMetric[] { const total = totalValue(holdings); return holdings.map((h) => { const value = positionValue(h); const cost = h.quantity * h.avgCost; return { ticker: h.ticker, value, weight: total === 0 ? 0 : value / total, unrealizedPnl: unrealizedPnl(h), unrealizedReturnPct: cost === 0 ? 0 : (value - cost) / cost, }; }); } /** Concentration of the top-N holdings as a fraction of portfolio value. |
+| `topConcentration()` | Portfolio aggregations: holdings → sector allocation, position weights, top-N concentration, and unrealized P/L roll-up. |
 | `positionValue()` | — |
 | `unrealizedPnl()` | — |
 | `totalValue()` | — |
@@ -2630,13 +2794,13 @@ Portfolio aggregations: holdings → sector allocation, position weights, top-N 
 
 **File:** `src/domain/portfolio-benchmark.ts`
 
-Portfolio benchmark comparison — compare portfolio returns against a market index.  Computes relative performance metrics (alpha, tracking error, beta proxy) and generates comparison data for visualization.
+Portfolio benchmark comparison — compare portfolio returns against a market index.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeBenchmarkComparison()` | Portfolio benchmark comparison — compare portfolio returns against a market index. Computes relative performance metrics (alpha, tracking error, beta proxy) and generates comparison data for visualization. / export interface BenchmarkComparison { /** Portfolio total return (%). */ readonly portfolioReturn: number; /** Benchmark total return (%). */ readonly benchmarkReturn: number; /** Excess return = portfolio - benchmark (%). */ readonly alpha: number; /** Whether portfolio outperformed the benchmark. */ readonly outperformed: boolean; /** Benchmark ticker symbol used. */ readonly benchmarkTicker: string; } export interface ReturnSeries { readonly date: string; readonly portfolioValue: number; readonly benchmarkValue: number; } /** Supported benchmark indices. */ export const BENCHMARK_OPTIONS = [ { ticker: "SPY", label: "S&P 500 (SPY)" }, { ticker: "QQQ", label: "NASDAQ 100 (QQQ)" }, { ticker: "IWM", label: "Russell 2000 (IWM)" }, { ticker: "VTI", label: "Total Market (VTI)" }, { ticker: "AGG", label: "US Bonds (AGG)" }, ] as const; export type BenchmarkTicker = (typeof BENCHMARK_OPTIONS)[number]["ticker"]; export const DEFAULT_BENCHMARK: BenchmarkTicker = "SPY"; /** Compute portfolio vs benchmark return comparison. |
+| `computeBenchmarkComparison()` | Portfolio benchmark comparison — compare portfolio returns against a market index. |
 | `buildReturnSeries()` | Generate a normalized return series for comparison charting. Both series start at baseValue (e.g. 10000) and diverge based on daily returns. |
 
 **Types:** `BenchmarkComparison`, `ReturnSeries`
@@ -2653,7 +2817,7 @@ Portfolio rebalance calculator — compute trades needed to bring a portfolio ba
 
 | Function | Description |
 | --- | --- |
-| `calculateRebalance()` | Portfolio rebalance calculator — compute trades needed to bring a portfolio back to target allocation weights. / export interface CurrentHolding { readonly ticker: string; readonly value: number; } export interface TargetAllocation { readonly ticker: string; readonly weight: number; // 0–1, should sum to 1 } export interface RebalanceTrade { readonly ticker: string; readonly currentWeight: number; readonly targetWeight: number; readonly drift: number; // target - current (positive = buy, negative = sell) readonly tradeAmount: number; // dollar amount to trade readonly action: "buy" | "sell" | "hold"; } export interface RebalancePlan { readonly trades: readonly RebalanceTrade[]; readonly totalValue: number; readonly maxDrift: number; readonly needsRebalance: boolean; } /** Calculate rebalance trades to match target allocation. |
+| `calculateRebalance()` | Portfolio rebalance calculator — compute trades needed to bring a portfolio back to target allocation weights. |
 | `actionableTrades()` | Get only trades that require action (excludes holds). |
 | `totalBuyAmount()` | Get total buy amount needed. |
 | `totalSellAmount()` | Get total sell amount needed. |
@@ -2668,13 +2832,13 @@ Portfolio rebalance calculator — compute trades needed to bring a portfolio ba
 
 **File:** `src/domain/position-risk.ts`
 
-Position-level risk metrics — stop distance, risk percentage, portfolio heat, and risk-reward assessment per position.  Pure functions: accept position parameters, return risk metrics. Complements position-sizing.ts (how many shares) with risk analytics (how much risk a position carries).
+Position-level risk metrics — stop distance, risk percentage, portfolio heat, and risk-reward assessment per position.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computePositionRisk()` | Position-level risk metrics — stop distance, risk percentage, portfolio heat, and risk-reward assessment per position. Pure functions: accept position parameters, return risk metrics. Complements position-sizing.ts (how many shares) with risk analytics (how much risk a position carries). / /** Input describing a single position */ export interface PositionInput { /** Current entry/average price */ readonly entryPrice: number; /** Current market price */ readonly currentPrice: number; /** Stop-loss price (0 if no stop) */ readonly stopPrice: number; /** Number of shares held */ readonly shares: number; /** Optional target/take-profit price */ readonly targetPrice?: number; } /** Risk metrics for a single position */ export interface PositionRisk { /** Dollar distance from entry to stop */ readonly stopDistance: number; /** Stop distance as fraction of entry price */ readonly stopPercent: number; /** Total dollar risk (stop distance × shares) */ readonly dollarRisk: number; /** Current position value */ readonly positionValue: number; /** Unrealized P/L in dollars */ readonly unrealizedPnl: number; /** Unrealized P/L as fraction of entry value */ readonly unrealizedPnlPercent: number; /** Risk-reward ratio (reward / risk), or null if no target */ readonly riskRewardRatio: number | null; /** R-multiple: current gain expressed in units of risk */ readonly rMultiple: number; } /** Aggregate portfolio heat metrics */ export interface PortfolioHeat { /** Total dollar risk across all positions */ readonly totalDollarRisk: number; /** Portfolio heat = total risk / total equity, as fraction */ readonly heatPercent: number; /** Total portfolio value (sum of all position values) */ readonly totalValue: number; /** Number of positions analyzed */ readonly positionCount: number; /** Per-position risk as fraction of total equity */ readonly positionRisks: readonly { readonly symbol: string; readonly riskPercent: number }[]; } /** Calculate risk metrics for a single position. |
+| `computePositionRisk()` | Position-level risk metrics — stop distance, risk percentage, portfolio heat, and risk-reward assessment per position. |
 | `computePortfolioHeat()` | Calculate aggregate portfolio heat from multiple positions. |
 
 **Types:** `PositionInput`, `PositionRisk`, `PortfolioHeat`
@@ -2685,13 +2849,13 @@ Position-level risk metrics — stop distance, risk percentage, portfolio heat, 
 
 **File:** `src/domain/risk-adjusted-comparison.ts`
 
-Risk-Adjusted Return Comparison — compare multiple assets on Sharpe, Sortino, Calmar, and max drawdown metrics side-by-side.  Pure function — no I/O, no Date.now(). Accepts DailyCandle arrays.
+Risk-Adjusted Return Comparison — compare multiple assets on Sharpe, Sortino, Calmar, and max drawdown metrics side-by-side.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `compareRiskAdjusted()` | Risk-Adjusted Return Comparison — compare multiple assets on Sharpe, Sortino, Calmar, and max drawdown metrics side-by-side. Pure function — no I/O, no Date.now(). Accepts DailyCandle arrays. / import type { DailyCandle } from "../types/domain"; export interface AssetRiskMetrics { readonly symbol: string; readonly totalReturn: number; readonly annualizedReturn: number; readonly annualizedVol: number; readonly sharpe: number; readonly sortino: number; readonly calmar: number; readonly maxDrawdown: number; readonly maxDrawdownPercent: number; } export interface RiskComparisonResult { readonly assets: readonly AssetRiskMetrics[]; /** Rank of each asset by Sharpe ratio (1 = best). */ readonly sharpeRanking: readonly string[]; /** Rank of each asset by Sortino ratio (1 = best). */ readonly sortinoRanking: readonly string[]; } const TRADING_DAYS_PER_YEAR = 252; /** Compare risk-adjusted returns for multiple assets. |
+| `compareRiskAdjusted()` | Risk-Adjusted Return Comparison — compare multiple assets on Sharpe, Sortino, Calmar, and max drawdown metrics side-by-side. |
 
 **Types:** `AssetRiskMetrics`, `RiskComparisonResult`
 
@@ -2707,9 +2871,9 @@ Risk contribution (Euler decomposition) — marginal and component risk. Decompo
 
 | Function | Description |
 | --- | --- |
-| `eulerDecomposition()` | Risk contribution (Euler decomposition) — marginal and component risk. Decomposes portfolio VaR/volatility into per-asset contributions. / export interface RiskDecomposition { readonly portfolioRisk: number; readonly marginalRisk: readonly number[]; // ∂σ/∂wᵢ readonly componentRisk: readonly number[]; // wᵢ * ∂σ/∂wᵢ readonly percentContribution: readonly number[]; // component / total (sums to 1) } /** Euler risk decomposition for portfolio volatility. Portfolio variance: σ² = w'Σw Marginal contribution: MC_i = (Σw)_i / σ Component contribution: RC_i = w_i * MC_i Property: Σ RC_i = σ (Euler's theorem for homogeneous functions) |
+| `eulerDecomposition()` | Risk contribution (Euler decomposition) — marginal and component risk. Decomposes portfolio VaR/volatility into per-asset contributions. |
 | `riskParityWeights()` | Risk parity weights — find weights where all assets have equal risk contribution. Uses iterative gradient descent. |
-| `incrementalVaR()` | Incremental VaR: how much does adding asset i increase portfolio VaR? IVaR_i = z_α * MC_i * w_i where z_α is the normal quantile for VaR level |
+| `incrementalVaR()` | Incremental VaR: how much does adding asset i increase portfolio VaR? |
 
 **Types:** `RiskDecomposition`
 
@@ -2725,7 +2889,7 @@ Risk parity allocator — compute portfolio weights where each asset contributes
 
 | Function | Description |
 | --- | --- |
-| `inverseVolWeights()` | Risk parity allocator — compute portfolio weights where each asset contributes equally to total portfolio risk. / export interface RiskParityInput { readonly volatilities: readonly number[]; // annualized vol per asset (decimal) readonly labels?: readonly string[]; } export interface RiskParityResult { readonly weights: readonly number[]; readonly labels: readonly string[]; readonly riskContributions: readonly number[]; readonly portfolioVol: number; } /** Inverse-volatility weighting (simplest risk parity). Each asset weighted by 1/vol, then normalized to sum to 1. |
+| `inverseVolWeights()` | Risk parity allocator — compute portfolio weights where each asset contributes equally to total portfolio risk. |
 | `riskContributions()` | Compute risk contribution of each asset. Risk contribution = weight * volatility (simplified, assumes no correlation). |
 | `riskParityAllocate()` | Full risk parity allocation. |
 | `equalWeight()` | Equal-weight allocation for comparison. |
@@ -2739,13 +2903,13 @@ Risk parity allocator — compute portfolio weights where each asset contributes
 
 **File:** `src/domain/risk-ratios.ts`
 
-Risk-adjusted return metrics that complement Sharpe in `backtest-engine.ts`. All inputs are *period* returns (e.g. daily) and a `periodsPerYear` factor controls annualization.  - Sortino: like Sharpe but only penalizes downside deviation. - Calmar: annualized return divided by the absolute max drawdown.
+Risk-adjusted return metrics that complement Sharpe in `backtest-engine.ts`. All inputs are *period* returns (e.g. daily) and a `periodsPerYear` factor controls annualization.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `sortinoRatio()` | Risk-adjusted return metrics that complement Sharpe in `backtest-engine.ts`. All inputs are *period* returns (e.g. daily) and a `periodsPerYear` factor controls annualization. - Sortino: like Sharpe but only penalizes downside deviation. - Calmar: annualized return divided by the absolute max drawdown. / export interface RatioOptions { /** Annualization periods (default 252 trading days). */ readonly periodsPerYear?: number; /** Risk-free rate per period (default 0). */ readonly riskFreeRate?: number; /** Minimum acceptable return per period for Sortino (default 0). */ readonly mar?: number; } const DEFAULT_PPY = 252; function mean(arr: readonly number[]): number { if (arr.length === 0) return 0; let s = 0; for (const v of arr) s += v; return s / arr.length; } /** Sortino ratio: (mean - mar) / downside_dev, annualized. Returns 0 when downside deviation is zero or input is empty. |
+| `sortinoRatio()` | Risk-adjusted return metrics that complement Sharpe in `backtest-engine.ts`. All inputs are *period* returns (e.g. daily) and a `periodsPerYear` factor controls annualization. |
 | `maxDrawdown()` | Compute the maximum drawdown from an equity curve as a positive fraction (e.g. 0.25 for a 25% drawdown). |
 | `cagr()` | CAGR from an equity curve, given the number of years spanned. Returns 0 when years <= 0 or equity[0] <= 0. |
 | `calmarRatio()` | Calmar ratio: CAGR / max drawdown. Returns Infinity when there is no drawdown but a positive CAGR; returns 0 when CAGR is 0. |
@@ -2764,7 +2928,7 @@ Risk/reward ratio calculator — evaluate trade setups with entry, stop loss, an
 
 | Function | Description |
 | --- | --- |
-| `analyzeRiskReward()` | Risk/reward ratio calculator — evaluate trade setups with entry, stop loss, and target price. / export interface TradeSetup { readonly entry: number; readonly stopLoss: number; readonly target: number; readonly direction: "long" | "short"; } export interface RiskRewardAnalysis { readonly setup: TradeSetup; readonly riskPerShare: number; readonly rewardPerShare: number; readonly ratio: number; // reward / risk readonly riskPercent: number; readonly rewardPercent: number; readonly breakeven: number; readonly favorable: boolean; // ratio >= 2 } /** Calculate risk/reward analysis for a trade setup. |
+| `analyzeRiskReward()` | Risk/reward ratio calculator — evaluate trade setups with entry, stop loss, and target price. |
 | `positionSizeFromRisk()` | Calculate position size based on max risk amount. |
 | `dollarRisk()` | Calculate the dollar risk for a given position. |
 | `expectedValue()` | Expected value of a trade given win probability and R:R ratio. Returns expected $ per $1 risked. |
@@ -2786,7 +2950,7 @@ Tail risk metrics — CVaR (Conditional Value at Risk) / Expected Shortfall. Mea
 
 | Function | Description |
 | --- | --- |
-| `historicalVaR()` | Tail risk metrics — CVaR (Conditional Value at Risk) / Expected Shortfall. Measures the expected loss in the worst X% of scenarios. / /** Value at Risk (historical simulation). Returns the loss threshold at the given confidence level. |
+| `historicalVaR()` | Tail risk metrics — CVaR (Conditional Value at Risk) / Expected Shortfall. Measures the expected loss in the worst X% of scenarios. |
 | `cvar()` | Conditional Value at Risk (Expected Shortfall). Average loss in the worst (1-confidence)% of cases. CVaR is always >= VaR. |
 | `parametricVaR()` | Parametric VaR assuming normal distribution. VaR = -μ + σ * z_α |
 | `cornishFisherVaR()` | Cornish-Fisher VaR (adjusts for skewness and kurtosis). |
@@ -2800,7 +2964,7 @@ Tail risk metrics — CVaR (Conditional Value at Risk) / Expected Shortfall. Mea
 
 **File:** `src/domain/signal-dsl.ts`
 
-Tiny safe expression evaluator for user-authored signal rules.  Grammar (BNF-ish): expr   := or or     := and ('or' and)* and    := not ('and' not)* not    := 'not' not | cmp cmp    := add (('<'|'<='|'>'|'>='|'=='|'!=') add)? add    := mul (('+'|'-') mul)* mul    := unary (('*'|'/') unary)* unary  := '-' unary | call call   := IDENT '(' (expr (',' expr)*)? ')' | atom atom   := NUMBER | IDENT | '(' expr ')' | 'true' | 'false' | '[' (expr,*)? ']'  Identifiers are looked up in the supplied context (variables) or called as functions if followed by `(`. No string literals, no property access, no member chains — designed to be safe for untrusted input.  R2 extensions: - Value now includes `readonly number[]` for numeric series - Array literal syntax: `[1, 2, 3]` - Built-in array functions: range, len, at, sum, avg, map, filter, reduce - plot(name, series) — registers a named series output via PlotSink  R1 extensions: - `for IDENT in EXPR do EXPR` — map over an iterable, producing an array - `let IDENT = EXPR in EXPR` — temporary variable binding - Loop iteration limit (10_000) prevents infinite loops in untrusted input
+Tiny safe expression evaluator for user-authored signal rules.
 
 **Functions:**
 
@@ -2821,7 +2985,7 @@ Tiny safe expression evaluator for user-authored signal rules.  Grammar (BNF-ish
 
 **File:** `src/domain/adx-method.ts`
 
-ADX Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/adx_method_detector.dart  BUY: ADX > 25 AND +DI crosses above −DI. SELL: ADX > 25 AND −DI crosses above +DI.
+ADX Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/adx_method_detector.dart
 
 **Functions:**
 
@@ -2835,7 +2999,7 @@ ADX Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/adx_
 
 **File:** `src/domain/bollinger-method.ts`
 
-Bollinger Bands Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/bollinger_method_detector.dart  BUY: price crosses above lower band from below. SELL: price crosses below upper band from above.
+Bollinger Bands Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/bollinger_method_detector.dart
 
 **Functions:**
 
@@ -2849,7 +3013,7 @@ Bollinger Bands Method Detector — Pure domain logic. Ported from Dart: lib/src
 
 **File:** `src/domain/cci-method.ts`
 
-CCI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/cci_method_detector.dart  BUY: CCI exits oversold (prev < −100, curr >= −100). SELL: CCI exits overbought (prev > 100, curr <= 100).
+CCI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/cci_method_detector.dart
 
 **Functions:**
 
@@ -2863,13 +3027,13 @@ CCI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/cci_
 
 **File:** `src/domain/consensus-engine.ts`
 
-Consensus Engine — Pure domain logic. Ported from Dart: lib/src/domain/consensus_engine.dart  Consensus BUY: Micho BUY + at least one other method BUY. Consensus SELL: Micho SELL + at least one other method SELL.  Micho method is the "approved" primary method and carries 3× weight in the strength score by default. Per-method weights (G20) allow users to override this — a weight of 0 disables a method from the tally.
+Consensus Engine — Pure domain logic. Ported from Dart: lib/src/domain/consensus_engine.dart
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `evaluateConsensus()` | Consensus Engine — Pure domain logic. Ported from Dart: lib/src/domain/consensus_engine.dart Consensus BUY: Micho BUY + at least one other method BUY. Consensus SELL: Micho SELL + at least one other method SELL. Micho method is the "approved" primary method and carries 3× weight in the strength score by default. Per-method weights (G20) allow users to override this — a weight of 0 disables a method from the tally. / import type { ConsensusResult, MethodSignal, MethodWeights, SignalDirection, } from "../types/domain"; import { DEFAULT_METHOD_WEIGHTS } from "../types/domain"; const BUY_METHODS = new Set([ "Micho", "RSI", "MACD", "Bollinger", "Stochastic", "OBV", "ADX", "CCI", "SAR", "WilliamsR", "MFI", "SuperTrend", ]); /** Resolve the effective weight for a single method. Uses user-provided weights, falling back to DEFAULT_METHOD_WEIGHTS, then 1. / function resolveWeight(method: string, weights?: MethodWeights): number { if (weights && method in weights) { const w = weights[method as keyof MethodWeights]; if (w !== undefined) return w; } const d = DEFAULT_METHOD_WEIGHTS[method as keyof MethodWeights]; return d !== undefined ? d : 1; } /** Evaluate consensus from a list of method signals for a single ticker. Accepts optional per-method weights (G20); falls back to built-in defaults (Micho = 3×, all others = 1×) when omitted. |
+| `evaluateConsensus()` | Consensus Engine — Pure domain logic. Ported from Dart: lib/src/domain/consensus_engine.dart |
 
 ---
 
@@ -2877,7 +3041,7 @@ Consensus Engine — Pure domain logic. Ported from Dart: lib/src/domain/consens
 
 **File:** `src/domain/macd-method.ts`
 
-MACD Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/macd_method_detector.dart  BUY: MACD crosses above signal line. SELL: MACD crosses below signal line.
+MACD Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/macd_method_detector.dart
 
 **Functions:**
 
@@ -2891,7 +3055,7 @@ MACD Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/mac
 
 **File:** `src/domain/mfi-method.ts`
 
-MFI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/mfi_method_detector.dart  BUY: MFI exits oversold (prev < 20, curr >= 20). SELL: MFI exits overbought (prev > 80, curr <= 80).
+MFI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/mfi_method_detector.dart
 
 **Functions:**
 
@@ -2905,7 +3069,7 @@ MFI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/mfi_
 
 **File:** `src/domain/micho-method.ts`
 
-Micho Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/micho_method_detector.dart  BUY: price crosses above SMA150, within 5%, MA rising. SELL: price crosses below SMA150.
+Micho Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/micho_method_detector.dart
 
 **Functions:**
 
@@ -2919,7 +3083,7 @@ Micho Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/mi
 
 **File:** `src/domain/obv-method.ts`
 
-OBV Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/obv_method_detector.dart  BUY: OBV rising while price falling (bullish divergence). SELL: OBV falling while price rising (bearish divergence).
+OBV Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/obv_method_detector.dart
 
 **Functions:**
 
@@ -2933,7 +3097,7 @@ OBV Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/obv_
 
 **File:** `src/domain/rsi-method.ts`
 
-RSI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/rsi_method_detector.dart  BUY: RSI exits oversold (prev < 30, curr >= 30). SELL: RSI exits overbought (prev > 70, curr <= 70).
+RSI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/rsi_method_detector.dart
 
 **Functions:**
 
@@ -2947,7 +3111,7 @@ RSI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/rsi_
 
 **File:** `src/domain/sar-method.ts`
 
-Parabolic SAR Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/sar_method_detector.dart  BUY: SAR flips from downtrend to uptrend. SELL: SAR flips from uptrend to downtrend.
+Parabolic SAR Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/sar_method_detector.dart
 
 **Functions:**
 
@@ -2961,7 +3125,7 @@ Parabolic SAR Method Detector — Pure domain logic. Ported from Dart: lib/src/d
 
 **File:** `src/domain/stochastic-method.ts`
 
-Stochastic Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/stochastic_method_detector.dart  BUY: %K crosses above %D while both in oversold zone (< 20). SELL: %K crosses below %D while both in overbought zone (> 80).
+Stochastic Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/stochastic_method_detector.dart
 
 **Functions:**
 
@@ -2975,7 +3139,7 @@ Stochastic Method Detector — Pure domain logic. Ported from Dart: lib/src/doma
 
 **File:** `src/domain/supertrend-method.ts`
 
-SuperTrend Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/supertrend_method_detector.dart  BUY: SuperTrend flips from downtrend to uptrend. SELL: SuperTrend flips from uptrend to downtrend.
+SuperTrend Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/supertrend_method_detector.dart
 
 **Functions:**
 
@@ -2989,7 +3153,7 @@ SuperTrend Method Detector — Pure domain logic. Ported from Dart: lib/src/doma
 
 **File:** `src/domain/williams-r-method.ts`
 
-Williams %R Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/williams_r_method_detector.dart  BUY: %R exits oversold (prev < −80, curr >= −80). SELL: %R exits overbought (prev > −20, curr <= −20).
+Williams %R Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/williams_r_method_detector.dart
 
 **Functions:**
 
@@ -3011,7 +3175,7 @@ Autocorrelation — serial correlation analysis for price returns. Detects momen
 
 | Function | Description |
 | --- | --- |
-| `autocorrelation()` | Autocorrelation — serial correlation analysis for price returns. Detects momentum, mean reversion, and market efficiency. / /** Compute autocorrelation at a specific lag. ACF(lag) = Cov(X_t, X_{t-lag}) / Var(X_t) |
+| `autocorrelation()` | Autocorrelation — serial correlation analysis for price returns. Detects momentum, mean reversion, and market efficiency. |
 | `acf()` | Compute autocorrelation function for lags 1..maxLag. |
 | `partialAutocorrelation()` | Partial autocorrelation at a specific lag using Durbin-Levinson recursion. |
 | `pacf()` | Compute partial autocorrelation function for lags 1..maxLag. |
@@ -3030,9 +3194,9 @@ Cointegration test — Engle-Granger two-step method for pairs trading. Tests wh
 
 | Function | Description |
 | --- | --- |
-| `ols()` | Cointegration test — Engle-Granger two-step method for pairs trading. Tests whether two price series share a long-run equilibrium. / /** Ordinary least squares regression: y = alpha + beta * x + residuals. |
+| `ols()` | Cointegration test — Engle-Granger two-step method for pairs trading. Tests whether two price series share a long-run equilibrium. |
 | `adfStatistic()` | Augmented Dickey-Fuller test statistic on a series. Tests H0: unit root (non-stationary) vs H1: stationary. More negative = stronger rejection of unit root. |
-| `engleGranger()` | Critical values for ADF test (approximate, no intercept). At n=100: 1%=-3.51, 5%=-2.89, 10%=-2.58 / export const ADF_CRITICAL_VALUES = { "1%": -3.51, "5%": -2.89, "10%": -2.58, } as const; /** Engle-Granger cointegration test between two price series. Step 1: OLS regression to get spread (residuals) Step 2: ADF test on residuals |
+| `engleGranger()` | Critical values for ADF test (approximate, no intercept). At n=100: 1%=-3.51, 5%=-2.89, 10%=-2.58 |
 | `halfLife()` | Estimate mean-reversion half-life of a spread using OLS on ΔS = λ * S_{t-1}. Half-life = -ln(2) / λ |
 | `spreadZScore()` | Compute z-score of current spread value. |
 
@@ -3048,7 +3212,7 @@ Copula dependence — models joint tail dependence between assets. Supports Clay
 
 | Function | Description |
 | --- | --- |
-| `fitClayton()` | Copula dependence — models joint tail dependence between assets. Supports Clayton (lower tail) and Gumbel (upper tail) copulas. / export interface CopulaFit { readonly type: "clayton" | "gumbel" | "gaussian"; readonly theta: number; // copula parameter readonly lowerTailDep: number; // λ_L readonly upperTailDep: number; // λ_U readonly kendallTau: number; // implied rank correlation } export interface DependenceAnalysis { readonly bestFit: CopulaFit; readonly fits: readonly CopulaFit[]; readonly empiricalTailDep: { lower: number; upper: number }; } /** Fit Clayton copula parameter via Kendall's tau inversion. Clayton copula has lower tail dependence: λ_L = 2^(-1/θ). |
+| `fitClayton()` | Copula dependence — models joint tail dependence between assets. Supports Clayton (lower tail) and Gumbel (upper tail) copulas. |
 | `fitGumbel()` | Fit Gumbel copula parameter via Kendall's tau inversion. Gumbel copula has upper tail dependence: λ_U = 2 - 2^(1/θ). |
 | `fitGaussian()` | Fit Gaussian copula (no tail dependence). |
 | `dependenceAnalysis()` | Full dependence analysis: fit all copulas, select best by log-likelihood. |
@@ -3069,7 +3233,7 @@ Ticker correlation quick-check — compute Pearson correlation coefficient betwe
 
 | Function | Description |
 | --- | --- |
-| `pearsonCorrelation()` | Ticker correlation quick-check — compute Pearson correlation coefficient between two price series without needing the full correlation matrix card. / export interface CorrelationResult { readonly coefficient: number; // [-1, 1] readonly sampleSize: number; readonly interpretation: string; } /** Compute the Pearson correlation coefficient between two numeric arrays. Both arrays must be the same length and have at least 2 elements. |
+| `pearsonCorrelation()` | Ticker correlation quick-check — compute Pearson correlation coefficient between two price series without needing the full correlation matrix card. |
 | `computeReturns()` | Compute percentage returns from a price series. |
 | `interpretCorrelation()` | Interpret correlation strength. |
 | `correlationCheck()` | Full correlation check between two price series. Computes correlation on returns (not raw prices) for stationarity. |
@@ -3082,13 +3246,13 @@ Ticker correlation quick-check — compute Pearson correlation coefficient betwe
 
 **File:** `src/domain/correlation-heatmap.ts`
 
-Correlation Heatmap render-data helpers (G22).  Pure functions that transform `CorrelationResult` into display-ready structures for the heatmap renderer.  No DOM dependencies — fully testable in unit tests.
+Correlation Heatmap render-data helpers (G22).
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `rToHslColor()` | Correlation Heatmap render-data helpers (G22). Pure functions that transform `CorrelationResult` into display-ready structures for the heatmap renderer.  No DOM dependencies — fully testable in unit tests. / import type { CorrelationResult } from "./correlation-matrix"; // ─────────────────────────── Types ─────────────────────────────────────────── export interface HeatmapCell { rowId: string; colId: string; rowIndex: number; colIndex: number; /** Pearson r value in [-1, 1] */ r: number; /** Whether this is a diagonal (self-correlation) cell */ isDiagonal: boolean; /** True when |r| > warnThreshold and not diagonal */ isWarning: boolean; /** CSS hsl() color string derived from the r value */ color: string; /** Formatted display string ("—" for diagonal, "0.72" otherwise) */ display: string; } export interface HeatmapRenderData { ids: readonly string[]; cells: readonly HeatmapCell[]; /** Pairs with |r| >= warnThreshold, sorted by |r| descending */ warningPairs: readonly { tickerA: string; tickerB: string; r: number }[]; } // ─────────────────────────── Color mapping ─────────────────────────────────── /** Map Pearson r ∈ [-1, 1] to a CSS hsl() color string. Positive → red family, Negative → blue family, Zero → light grey. |
+| `rToHslColor()` | Correlation Heatmap render-data helpers (G22). |
 | `buildHeatmapRenderData()` | Build the full flat array of `HeatmapCell` objects from a `CorrelationResult`. |
 | `sliceCorrelationResult()` | Extract a 2-D sliced view of the heatmap for a subset of ticker IDs. Returns a new `CorrelationResult`-shaped object for only the requested IDs (in the order provided). |
 
@@ -3117,13 +3281,13 @@ Pearson correlation between aligned numeric series. Produces a symmetric N×N ma
 
 **File:** `src/domain/correlation-scanner.ts`
 
-Correlation scanner — scan multiple assets to find highest/lowest correlated pairs over a given lookback window.  Pure function: accepts price maps, returns ranked pair correlations. Builds on pair-correlation.ts primitives.
+Correlation scanner — scan multiple assets to find highest/lowest correlated pairs over a given lookback window.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `scanCorrelations()` | Correlation scanner — scan multiple assets to find highest/lowest correlated pairs over a given lookback window. Pure function: accepts price maps, returns ranked pair correlations. Builds on pair-correlation.ts primitives. / import { dailyReturns, pearsonCorrelation, type CorrelationPair } from "./pair-correlation.js"; /** Configuration for correlation scanning */ export interface CorrelationScanConfig { /** Minimum number of overlapping data points required (default: 30) */ readonly minOverlap: number; /** Only return pairs above this absolute correlation threshold (default: 0) */ readonly minAbsCorrelation: number; } /** A scanned pair with additional context */ export interface ScannedCorrelation extends CorrelationPair { /** Absolute value of correlation for sorting convenience */ readonly absCorrelation: number; } /** Full scan results */ export interface CorrelationScanResult { readonly pairs: readonly ScannedCorrelation[]; readonly tickerCount: number; readonly pairCount: number; readonly highestCorrelated: ScannedCorrelation | null; readonly lowestCorrelated: ScannedCorrelation | null; readonly mostNegative: ScannedCorrelation | null; } const DEFAULT_CONFIG: CorrelationScanConfig = { minOverlap: 30, minAbsCorrelation: 0, }; /** Scan all pairs of tickers for Pearson correlation on daily returns. |
+| `scanCorrelations()` | Correlation scanner — scan multiple assets to find highest/lowest correlated pairs over a given lookback window. |
 
 **Types:** `CorrelationScanConfig`, `ScannedCorrelation`, `CorrelationScanResult`
 
@@ -3139,7 +3303,7 @@ Pair correlation calculator — compute Pearson correlation between ticker retur
 
 | Function | Description |
 | --- | --- |
-| `dailyReturns()` | Pair correlation calculator — compute Pearson correlation between ticker return series for diversification analysis. / export interface CorrelationPair { readonly tickerA: string; readonly tickerB: string; readonly correlation: number; // -1 to 1 readonly sampleSize: number; } export interface CorrelationMatrix { readonly tickers: readonly string[]; readonly matrix: readonly (readonly number[])[]; } /** Calculate daily returns from a price series. |
+| `dailyReturns()` | Pair correlation calculator — compute Pearson correlation between ticker return series for diversification analysis. |
 | `pearsonCorrelation()` | Pearson correlation coefficient between two series of equal length. |
 | `tickerCorrelation()` | Compute correlation between two tickers' price series. |
 | `buildCorrelationMatrix()` | Build a full NxN correlation matrix from price data. |
@@ -3154,13 +3318,13 @@ Pair correlation calculator — compute Pearson correlation between ticker retur
 
 **File:** `src/domain/rolling-correlation.ts`
 
-Rolling Correlation — sliding-window Pearson correlation between two price series.  Useful for: - Monitoring diversification over time (rising correlation = less hedge value) - Detecting regime changes (correlation spikes during crises) - Pairs trading: tracking spread stability  Pure function: no I/O, no DOM, no Date.now().
+Rolling Correlation — sliding-window Pearson correlation between two price series.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeRollingCorrelation()` | Rolling Correlation — sliding-window Pearson correlation between two price series. Useful for: - Monitoring diversification over time (rising correlation = less hedge value) - Detecting regime changes (correlation spikes during crises) - Pairs trading: tracking spread stability Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface RollingCorrelationPoint { readonly date: string; /** Pearson correlation coefficient for the trailing window (-1 to 1). */ readonly correlation: number; } export interface RollingCorrelationOptions { /** Window size in trading days. / readonly window?: number; } /** Compute rolling Pearson correlation between two daily return series. Both candle arrays must be date-aligned (same length, same dates). Returns one correlation point per day starting from index = window. |
+| `computeRollingCorrelation()` | Rolling Correlation — sliding-window Pearson correlation between two price series. |
 
 **Types:** `RollingCorrelationPoint`, `RollingCorrelationOptions`
 
@@ -3178,26 +3342,9 @@ Adaptive RSI — RSI with a dynamically adjusted lookback period based on price 
 
 | Function | Description |
 | --- | --- |
-| `computeAdaptiveRsi()` | Adaptive RSI — RSI with a dynamically adjusted lookback period based on price efficiency (Kaufman-style). When the market is trending, the effective period shortens (more responsive); in choppy markets it lengthens (more smoothing). / import type { DailyCandle } from "../types/domain"; export interface AdaptiveRsiPoint { readonly date: string; readonly rsi: number; readonly effectivePeriod: number; } export interface AdaptiveRsiOptions { /** Shortest allowed RSI period. Default 6. */ readonly minPeriod?: number; /** Longest allowed RSI period. Default 28. */ readonly maxPeriod?: number; /** Lookback window for efficiency ratio calculation. Default 10. */ readonly erPeriod?: number; } /** Compute Adaptive RSI for a candle series. Uses the Kaufman efficiency ratio to scale the RSI period between `minPeriod` and `maxPeriod`. The efficiency ratio (|net change| / sum of |individual changes|) ranges from 0 (choppy) to 1 (trending). Requires at least `maxPeriod + erPeriod` data points. |
+| `computeAdaptiveRsi()` | Adaptive RSI — RSI with a dynamically adjusted lookback period based on price efficiency (Kaufman-style). When the market is trending, the effective period shortens (more responsive); in choppy markets it lengthens (more smoothing). |
 
 **Types:** `AdaptiveRsiPoint`, `AdaptiveRsiOptions`
-
----
-
-### Adx Calculator
-
-**File:** `src/domain/adx-calculator.ts`
-
-ADX (Average Directional Index) — Pure domain logic. Ported from Dart: lib/src/domain/adx_calculator.dart  Measures trend strength (0-100) using +DI/-DI from smoothed directional movement.
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `computeAdxSeries()` | — |
-| `computeAdx()` | — |
-
-**Types:** `AdxPoint`
 
 ---
 
@@ -3205,29 +3352,13 @@ ADX (Average Directional Index) — Pure domain logic. Ported from Dart: lib/src
 
 **File:** `src/domain/choppiness-index.ts`
 
-Choppiness Index. E.W. Dreiss's measure of whether the market is trending (low values) or choppy/ranging (high values). Scaled 0–100; values > ~61.8 typically indicate consolidation, < ~38.2 indicate trend.  TRn   = sum of true range over n bars range = max(high, n) - min(low, n) CI    = 100 * log10(TRn / range) / log10(n)
+Choppiness Index. E.W. Dreiss's measure of whether the market is trending (low values) or choppy/ranging (high values). Scaled 0–100; values > ~61.8 typically indicate consolidation, < ~38.2 indicate trend.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
 | `computeChoppinessIndex()` | — |
-
----
-
-### Efficiency Ratio
-
-**File:** `src/domain/efficiency-ratio.ts`
-
-Kaufman Efficiency Ratio (ER) — measures how efficiently price moves in a given direction relative to total path distance.  ER = |Close(t) - Close(t-n)| / Σ |Close(i) - Close(i-1)| for i=t-n+1..t  Values range from 0 (perfectly choppy/mean-reverting) to 1 (perfectly trending). Used as input for KAMA (Kaufman Adaptive Moving Average) and Adaptive RSI.
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `computeEfficiencyRatio()` | Kaufman Efficiency Ratio (ER) — measures how efficiently price moves in a given direction relative to total path distance. ER = |Close(t) - Close(t-n)| / Σ |Close(i) - Close(i-1)| for i=t-n+1..t Values range from 0 (perfectly choppy/mean-reverting) to 1 (perfectly trending). Used as input for KAMA (Kaufman Adaptive Moving Average) and Adaptive RSI. / import type { DailyCandle } from "../types/domain"; export interface EfficiencyRatioPoint { readonly date: string; readonly er: number; } export interface EfficiencyRatioOptions { /** Lookback window. Default 10. */ readonly period?: number; } /** Compute rolling Kaufman Efficiency Ratio over a candle series. Requires at least `period + 1` data points. Returns one ER value per candle starting from index `period`. |
-
-**Types:** `EfficiencyRatioPoint`, `EfficiencyRatioOptions`
 
 ---
 
@@ -3257,7 +3388,7 @@ Fractal dimension — measures market complexity and roughness. Higher fractal d
 
 | Function | Description |
 | --- | --- |
-| `higuchiFractalDimension()` | Fractal dimension — measures market complexity and roughness. Higher fractal dimension = more random/choppy; lower = more trending. / /** Higuchi fractal dimension estimate. Measures self-similarity across multiple time scales. |
+| `higuchiFractalDimension()` | Fractal dimension — measures market complexity and roughness. Higher fractal dimension = more random/choppy; lower = more trending. |
 | `boxCountingDimension()` | Box-counting fractal dimension (simplified for 1D series). Counts how many boxes of size ε are needed to cover the series. |
 | `katzFractalDimension()` | Katz fractal dimension — simple estimator using path length. FD = log(L/d) / log(L/d + log(n)) where L = total path length, d = max displacement, n = number of points |
 | `interpretFractalDimension()` | Interpret fractal dimension value. |
@@ -3282,14 +3413,14 @@ Hull Moving Average — Alan Hull (2005). Smooth + responsive: HMA(n) = WMA( 2*W
 
 **File:** `src/domain/hurst-exponent.ts`
 
-Hurst exponent — measure whether a time series is trending, mean-reverting, or random walk using Rescaled Range (R/S) analysis.  H > 0.5 → trending (persistent) H = 0.5 → random walk H < 0.5 → mean-reverting (anti-persistent)
+Hurst exponent — measure whether a time series is trending, mean-reverting, or random walk using Rescaled Range (R/S) analysis.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `hurstExponent()` | Hurst exponent — measure whether a time series is trending, mean-reverting, or random walk using Rescaled Range (R/S) analysis. H > 0.5 → trending (persistent) H = 0.5 → random walk H < 0.5 → mean-reverting (anti-persistent) / export interface HurstResult { readonly hurst: number; readonly interpretation: "trending" | "random" | "mean-reverting"; readonly confidence: "high" | "medium" | "low"; } /** Compute the Rescaled Range (R/S) for a given series. / function rescaledRange(series: readonly number[]): number { const n = series.length; if (n < 2) return 0; const mean = series.reduce((s, v) => s + v, 0) / n; // Cumulative deviations from mean const deviations: number[] = []; let cumDev = 0; for (const v of series) { cumDev += v - mean; deviations.push(cumDev); } const range = Math.max(...deviations) - Math.min(...deviations); // Standard deviation const variance = series.reduce((s, v) => s + (v - mean) ** 2, 0) / n; const stdDev = Math.sqrt(variance); return stdDev > 0 ? range / stdDev : 0; } /** Compute Hurst exponent using R/S analysis with multiple sub-periods. |
-| `isTrending()` | Simple linear regression slope. / function linearSlope(x: readonly number[], y: readonly number[]): number { const n = x.length; const sumX = x.reduce((s, v) => s + v, 0); const sumY = y.reduce((s, v) => s + v, 0); const sumXY = x.reduce((s, v, i) => s + v * y[i]!, 0); const sumX2 = x.reduce((s, v) => s + v * v, 0); const denom = n * sumX2 - sumX * sumX; return denom !== 0 ? (n * sumXY - sumX * sumY) / denom : 0; } /** Quick classification of trending behavior. |
+| `hurstExponent()` | Hurst exponent — measure whether a time series is trending, mean-reverting, or random walk using Rescaled Range (R/S) analysis. |
+| `isTrending()` | Simple linear regression slope. |
 | `isMeanReverting()` | Quick classification of mean-reverting behavior. |
 
 **Types:** `HurstResult`
@@ -3306,7 +3437,7 @@ Kalman filter — adaptive price smoothing and trend estimation. Provides optima
 
 | Function | Description |
 | --- | --- |
-| `initKalman()` | Kalman filter — adaptive price smoothing and trend estimation. Provides optimal linear filtering with dynamic noise adaptation. / export interface KalmanState { readonly x: number; // state estimate (price) readonly v: number; // velocity estimate (trend) readonly p00: number; // covariance matrix element readonly p01: number; readonly p10: number; readonly p11: number; } export interface KalmanParams { readonly processNoise: number; // Q — how much we trust the model (lower = smoother) readonly measurementNoise: number; // R — how much we trust the measurement } /** Initialize Kalman state from first observation. |
+| `initKalman()` | Kalman filter — adaptive price smoothing and trend estimation. Provides optimal linear filtering with dynamic noise adaptation. |
 | `kalmanStep()` | Single Kalman filter predict + update step. |
 | `kalmanFilter()` | Run Kalman filter over entire price series. Returns smoothed prices and velocity (trend) estimates. |
 | `adaptiveKalmanFilter()` | Adaptive Kalman filter — adjusts measurement noise based on recent innovation. |
@@ -3320,7 +3451,7 @@ Kalman filter — adaptive price smoothing and trend estimation. Provides optima
 
 **File:** `src/domain/kama.ts`
 
-Perry Kaufman's Adaptive Moving Average (KAMA). Reacts faster when trend is strong (low noise) and smooths heavily when noisy.  ER  = |close - close[n]| / sum(|close[i]-close[i-1]|, n) sc  = (ER * (fast - slow) + slow)^2     where fast = 2/(2+1), slow = 2/(30+1) KAMA = prevKAMA + sc * (close - prevKAMA)
+Perry Kaufman's Adaptive Moving Average (KAMA). Reacts faster when trend is strong (low noise) and smooths heavily when noisy.
 
 **Functions:**
 
@@ -3342,53 +3473,11 @@ Moving average ribbon — compute multiple MAs (5,10,20,50,100,200) with spread/
 
 | Function | Description |
 | --- | --- |
-| `computeRibbon()` | Moving average ribbon — compute multiple MAs (5,10,20,50,100,200) with spread/convergence metrics for trend analysis. / export interface RibbonPoint { readonly index: number; readonly values: Record<number, number>; readonly spread: number; // difference between fastest and slowest readonly aligned: "bullish" | "bearish" | "mixed"; } export interface RibbonSummary { readonly currentAlignment: "bullish" | "bearish" | "mixed"; readonly spreadPercent: number; readonly converging: boolean; readonly periods: readonly number[]; } const DEFAULT_PERIODS = [5, 10, 20, 50, 100, 200] as const; /** Compute a simple moving average at a given index. / function sma(prices: readonly number[], endIndex: number, period: number): number | null { if (endIndex < period - 1) return null; let sum = 0; for (let i = endIndex - period + 1; i <= endIndex; i++) { sum += prices[i]!; } return sum / period; } /** Compute the full ribbon for a price series. |
+| `computeRibbon()` | Moving average ribbon — compute multiple MAs (5,10,20,50,100,200) with spread/convergence metrics for trend analysis. |
 | `ribbonSummary()` | Get ribbon summary for the latest point. |
 | `findCrossovers()` | Detect ribbon crossover events (golden/death cross style). |
 
 **Types:** `RibbonPoint`, `RibbonSummary`
-
----
-
-### Market Breadth
-
-**File:** `src/domain/market-breadth.ts`
-
-Market Breadth domain — pure computation layer (G23).  Aggregates signal-level data from across a watchlist to produce breadth indicators: advance/decline ratio, % above key moving averages, and directional signal distribution.  No API calls; works on pre-fetched consensus + quote data.
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `computeMarketBreadth()` | Market Breadth domain — pure computation layer (G23). Aggregates signal-level data from across a watchlist to produce breadth indicators: advance/decline ratio, % above key moving averages, and directional signal distribution.  No API calls; works on pre-fetched consensus + quote data. / import type { SignalDirection } from "../types/domain"; // ─────────────────────────── Types ────────────────────────────────────────── export interface BreadthTicker { /** Ticker symbol */ ticker: string; /** Today's closing price */ price: number; /** Day change % (e.g. 1.5 means +1.5%). */ changePercent: number; /** Consensus signal direction */ consensus: SignalDirection; /** Whether price is above 50-day SMA (null = not available) */ aboveSma50: boolean | null; /** Whether price is above 200-day SMA (null = not available) */ aboveSma200: boolean | null; } export interface BreadthResult { /** Total number of tickers in the watchlist */ total: number; /** Number with BUY consensus */ buyCount: number; /** Number with SELL consensus */ sellCount: number; /** Number with NEUTRAL consensus */ neutralCount: number; /** Fraction [0,1] with BUY direction; 0 when total=0 */ buyPct: number; /** Fraction [0,1] with SELL direction; 0 when total=0 */ sellPct: number; /** Tickers with price > 50-day SMA as fraction [0,1]; null when no SMA data */ aboveSma50Pct: number | null; /** Tickers with price > 200-day SMA as fraction [0,1]; null when no SMA data */ aboveSma200Pct: number | null; /** Number of advancing tickers (changePercent > threshold) */ advancers: number; /** Number of declining tickers (changePercent < -threshold) */ decliners: number; /** Unchanged tickers (within threshold) */ unchanged: number; /** Advance/Decline ratio; null when decliners=0 */ adRatio: number | null; /** Up to `topN` best-performing tickers sorted by changePercent desc */ topMovers: readonly BreadthTicker[]; /** Up to `topN` worst-performing tickers sorted by changePercent asc */ topLaggards: readonly BreadthTicker[]; } // ─────────────────────────── Core function ─────────────────────────────────── /** Compute breadth statistics from a watchlist snapshot. |
-| `classifyBreadthCondition()` | Classify the overall breadth condition based on computed stats. Returns: "bullish"   — buyPct > 0.6 and aboveSma50Pct > 0.6 "bearish"   — sellPct > 0.6 and aboveSma50Pct < 0.4 "neutral"   — otherwise |
-
-**Types:** `BreadthTicker`, `BreadthResult`
-
----
-
-### Market Regime
-
-**File:** `src/domain/market-regime.ts`
-
-Market regime detection (I9).  Rule-based macro-regime classifier that labels the current environment as risk-on / risk-off / neutral using market breadth, volatility, and inter-market signals.  This is intentionally simple (no ML) so the classification is transparent and auditable.  Exports: - `Regime` — enum: RiskOn | Neutral | RiskOff | Crisis - `classifyVix(vix)` — regime from VIX level - `classifyBreadth(advDecl)` — regime from advance/decline ratio - `classifyYieldCurve(short2y, long10y)` — regime from yield spread - `classifyDollar(dxyPctChg)` — regime from DXY % change - `combinedRegime(signals)` — majority-vote ensemble - `regimeLabel(r)` — human-readable label - `regimeColor(r)` — semantic colour token - `regimeScore(signals)` — numeric risk score (0–100) - `trendRegime(prices, span)` — regime from price trend - `volatilityRegime(returns)` — regime from realised vol
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `classifyVix()` | Market regime detection (I9). Rule-based macro-regime classifier that labels the current environment as risk-on / risk-off / neutral using market breadth, volatility, and inter-market signals.  This is intentionally simple (no ML) so the classification is transparent and auditable. Exports: - `Regime` — enum: RiskOn | Neutral | RiskOff | Crisis - `classifyVix(vix)` — regime from VIX level - `classifyBreadth(advDecl)` — regime from advance/decline ratio - `classifyYieldCurve(short2y, long10y)` — regime from yield spread - `classifyDollar(dxyPctChg)` — regime from DXY % change - `combinedRegime(signals)` — majority-vote ensemble - `regimeLabel(r)` — human-readable label - `regimeColor(r)` — semantic colour token - `regimeScore(signals)` — numeric risk score (0–100) - `trendRegime(prices, span)` — regime from price trend - `volatilityRegime(returns)` — regime from realised vol / // ── Types ───────────────────────────────────────────────────────────────── export enum Regime { RiskOn = "risk-on", Neutral = "neutral", RiskOff = "risk-off", Crisis = "crisis", } export interface RegimeSignal { source: string; regime: Regime; confidence: number; // 0–1 } // ── VIX classifier ─────────────────────────────────────────────────────── /** Classify market regime from VIX level. - < 15  → RiskOn - 15–20 → Neutral - 20–30 → RiskOff - > 30  → Crisis |
-| `classifyBreadth()` | Classify from advance/decline ratio. - > 1.5  → RiskOn - 0.8–1.5 → Neutral - 0.4–0.8 → RiskOff - < 0.4  → Crisis |
-| `classifyYieldCurve()` | Classify from 2y–10y spread (basis points). - spread > 100  → RiskOn - 0–100         → Neutral - -50–0         → RiskOff - < -50         → Crisis |
-| `classifyDollar()` | Classify from DXY percentage change (trailing 20-day). A strengthening dollar is typically risk-off for equities. - pctChg < -2  → RiskOn  (dollar weakening) - -2 to +2     → Neutral - +2 to +5     → RiskOff (dollar strengthening) - > +5         → Crisis  (flight to safety) |
-| `trendRegime()` | Classify regime from recent price trend using simple momentum. Compares current price to the simple moving average over `span` periods. |
-| `volatilityRegime()` | Classify regime from realised volatility of daily returns. |
-| `combinedRegime()` | Combine multiple regime signals via weighted majority vote. Falls back to Neutral when signals are empty. |
-| `regimeScore()` | Compute a numeric risk score from 0 (max risk-on) to 100 (max crisis). |
-| `regimeLabel()` | Human-readable label for a regime. |
-| `regimeColor()` | CSS colour token for a regime. |
-
-**Types:** `RegimeSignal`
 
 ---
 
@@ -3416,7 +3505,7 @@ Mean reversion scanner — identify assets that are far from their moving averag
 
 | Function | Description |
 | --- | --- |
-| `zScore()` | Mean reversion scanner — identify assets that are far from their moving average (z-score based) for potential reversion trades. / export interface MeanReversionSignal { readonly ticker: string; readonly currentPrice: number; readonly mean: number; readonly zScore: number; readonly deviation: number; // percent from mean readonly signal: "oversold" | "overbought" | "neutral"; } /** Compute z-score of current price relative to a moving average. |
+| `zScore()` | Mean reversion scanner — identify assets that are far from their moving average (z-score based) for potential reversion trades. |
 | `deviationFromMa()` | Compute deviation from moving average in percent. |
 | `analyzeReversion()` | Analyze a single asset for mean reversion potential. |
 | `scanForReversion()` | Scan multiple assets and find mean-reversion candidates. |
@@ -3437,7 +3526,7 @@ Multi-timeframe trend — consolidate trend signals across daily, weekly, and mo
 
 | Function | Description |
 | --- | --- |
-| `detectTrend()` | Multi-timeframe trend — consolidate trend signals across daily, weekly, and monthly timeframes for confluence. / export type Timeframe = "daily" | "weekly" | "monthly"; export type TrendDirection = "up" | "down" | "neutral"; export interface TimeframeTrend { readonly timeframe: Timeframe; readonly direction: TrendDirection; readonly strength: number; // 0-100 readonly maSlope: number; // slope of primary MA } export interface MultiTrendResult { readonly trends: readonly TimeframeTrend[]; readonly consensus: TrendDirection; readonly confluenceScore: number; // 0-100 readonly aligned: boolean; } /** Determine trend direction from a price series using SMA slope. |
+| `detectTrend()` | Multi-timeframe trend — consolidate trend signals across daily, weekly, and monthly timeframes for confluence. |
 | `resampleWeekly()` | Resample daily prices to weekly closes (every 5th bar). |
 | `resampleMonthly()` | Resample daily prices to monthly closes (every 21st bar). |
 | `multiTimeframeTrend()` | Compute multi-timeframe trend analysis from daily prices. |
@@ -3447,28 +3536,11 @@ Multi-timeframe trend — consolidate trend signals across daily, weekly, and mo
 
 ---
 
-### Sma Calculator
-
-**File:** `src/domain/sma-calculator.ts`
-
-SMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/sma_calculator.dart  Computes Simple Moving Average over N trading-day closes.
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `computeSma()` | SMA Calculator — Pure domain logic. Ported from Dart: lib/src/domain/sma_calculator.dart Computes Simple Moving Average over N trading-day closes. / import type { DailyCandle } from "../types/domain"; /** Compute the SMA for the last `period` closes. Returns null if fewer than `period` candles are available. Candles must be sorted ascending by date. |
-| `computeSmaSeries()` | A single SMA data point aligned to a candle date. */ export interface SmaPoint { readonly date: string; readonly value: number | null; } /** Compute a rolling SMA series aligned with the input candles. The first `period - 1` entries will have null values. |
-
-**Types:** `SmaPoint`
-
----
-
 ### Supertrend Calculator
 
 **File:** `src/domain/supertrend-calculator.ts`
 
-SuperTrend — Pure domain logic. Ported from Dart: lib/src/domain/supertrend_calculator.dart  Uses ATR to determine trend: upper/lower bands around median price. Default: 10-period ATR, 3x multiplier.
+SuperTrend — Pure domain logic. Ported from Dart: lib/src/domain/supertrend_calculator.dart
 
 **Functions:**
 
@@ -3481,33 +3553,17 @@ SuperTrend — Pure domain logic. Ported from Dart: lib/src/domain/supertrend_ca
 
 ---
 
-### Time Segmented Volume
-
-**File:** `src/domain/time-segmented-volume.ts`
-
-Time-Segmented Volume (TSV) — Worden Brothers accumulation/distribution.  TSV compares the current close to a past close (lookback period) and multiplies by volume. It reveals whether buying or selling pressure dominates over a given timeframe. Positive TSV = accumulation, negative = distribution.  TSV(i) = Volume(i) × (Close(i) - Close(i - lookback))  The signal line is a moving average of TSV for crossover signals.  Pure function: no I/O, no DOM, no Date.now().
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `computeTsv()` | Time-Segmented Volume (TSV) — Worden Brothers accumulation/distribution. TSV compares the current close to a past close (lookback period) and multiplies by volume. It reveals whether buying or selling pressure dominates over a given timeframe. Positive TSV = accumulation, negative = distribution. TSV(i) = Volume(i) × (Close(i) - Close(i - lookback)) The signal line is a moving average of TSV for crossover signals. Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface TsvPoint { readonly date: string; /** Raw TSV value. */ readonly tsv: number; /** Signal line (SMA of TSV). */ readonly signal: number; } export interface TsvOptions { /** Price comparison lookback period. / readonly lookback?: number; /** Signal line moving average period. / readonly signalPeriod?: number; } /** Compute Time-Segmented Volume series. |
-
-**Types:** `TsvPoint`, `TsvOptions`
-
----
-
 ### Trend Strength
 
 **File:** `src/domain/trend-strength.ts`
 
-Trend Strength Composite (TSC) — unified 0-100 trend strength score.  Combines: 1. ADX component: Measures trend intensity (0-100 scaled contribution) 2. Price/MA alignment: How far price is from a key moving average 3. Directional consistency: Ratio of up-days over lookback window  A single composite score makes it easy to filter or rank assets by trend strength without manually checking multiple separate indicators.  Pure function: no I/O, no DOM, no Date.now().
+Trend Strength Composite (TSC) — unified 0-100 trend strength score.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeTrendStrength()` | Trend Strength Composite (TSC) — unified 0-100 trend strength score. Combines: 1. ADX component: Measures trend intensity (0-100 scaled contribution) 2. Price/MA alignment: How far price is from a key moving average 3. Directional consistency: Ratio of up-days over lookback window A single composite score makes it easy to filter or rank assets by trend strength without manually checking multiple separate indicators. Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface TrendStrengthPoint { readonly date: string; /** Composite trend strength: 0 = no trend, 100 = maximum trend. */ readonly strength: number; /** Trend direction: 1 = bullish, -1 = bearish, 0 = neutral. */ readonly direction: 1 | -1 | 0; } export interface TrendStrengthOptions { /** ADX computation period. / readonly adxPeriod?: number; /** Moving average period for alignment component. / readonly maPeriod?: number; /** Lookback for directional consistency. / readonly consistencyPeriod?: number; } /** Compute trend strength composite series. |
+| `computeTrendStrength()` | Trend Strength Composite (TSC) — unified 0-100 trend strength score. |
 
 **Types:** `TrendStrengthPoint`, `TrendStrengthOptions`
 
@@ -3523,7 +3579,7 @@ Turtle Trading System — Donchian breakout trend-following with position sizing
 
 | Function | Description |
 | --- | --- |
-| `donchianChannel()` | Turtle Trading System — Donchian breakout trend-following with position sizing. Based on the classic Richard Dennis turtle trader rules. / export interface TurtleConfig { readonly entryPeriod?: number; // Donchian breakout period (default 20) readonly exitPeriod?: number; // Donchian exit period (default 10) readonly atrPeriod?: number; // ATR period for sizing (default 20) readonly riskPerTrade?: number; // Fraction of equity to risk (default 0.01) readonly maxUnits?: number; // Max pyramid units (default 4) } export interface TurtleSignal { readonly index: number; readonly action: "long" | "short" | "exit-long" | "exit-short" | "add-long" | "add-short"; readonly price: number; readonly atr: number; readonly units: number; } export interface TurtleResult { readonly signals: readonly TurtleSignal[]; readonly donchianHigh: readonly number[]; readonly donchianLow: readonly number[]; readonly atr: readonly number[]; readonly positionSize: (equity: number, atr: number) => number; } /** Compute Donchian channel (highest high / lowest low over period). |
+| `donchianChannel()` | Turtle Trading System — Donchian breakout trend-following with position sizing. Based on the classic Richard Dennis turtle trader rules. |
 | `computeATR()` | Compute Average True Range. |
 | `turtleTrading()` | Run Turtle Trading system on OHLC data. |
 
@@ -3551,7 +3607,7 @@ Weighted Moving Average. Linearly weighted: most recent bar has the largest weig
 
 **File:** `src/domain/atr-calculator.ts`
 
-ATR Calculator — Average True Range. Ported from Dart: lib/src/domain/atr_calculator.dart  TR = max(high-low, |high-prevClose|, |low-prevClose|) ATR = Wilder smoothing: ATR[t] = (ATR[t-1] * (period-1) + TR[t]) / period
+ATR Calculator — Average True Range. Ported from Dart: lib/src/domain/atr_calculator.dart
 
 **Functions:**
 
@@ -3574,7 +3630,7 @@ ATR trailing stop — dynamic stop-loss levels based on Average True Range for v
 
 | Function | Description |
 | --- | --- |
-| `trueRange()` | ATR trailing stop — dynamic stop-loss levels based on Average True Range for volatility-adjusted exits. / export interface Candle { readonly high: number; readonly low: number; readonly close: number; } export interface TrailingStopResult { readonly stopLevel: number; readonly direction: "long" | "short"; readonly distance: number; // ATR distance from price readonly triggered: boolean; } /** Compute True Range for a single candle. |
+| `trueRange()` | ATR trailing stop — dynamic stop-loss levels based on Average True Range for volatility-adjusted exits. |
 | `atr()` | Compute ATR (Average True Range) over a period. |
 | `longTrailingStop()` | Compute ATR trailing stop for a long position. Stop is placed `multiplier * ATR` below the highest close. |
 | `shortTrailingStop()` | Compute ATR trailing stop for a short position. Stop is placed `multiplier * ATR` above the lowest close. |
@@ -3588,7 +3644,7 @@ ATR trailing stop — dynamic stop-loss levels based on Average True Range for v
 
 **File:** `src/domain/bollinger-calculator.ts`
 
-Bollinger Bands Calculator — Pure domain logic. Ported from Dart: lib/src/domain/bollinger_calculator.dart  Middle = SMA(period), Upper/Lower = Middle ± multiplier * stddev.
+Bollinger Bands Calculator — Pure domain logic. Ported from Dart: lib/src/domain/bollinger_calculator.dart
 
 **Functions:**
 
@@ -3626,8 +3682,8 @@ GARCH(1,1) volatility model — Generalized Autoregressive Conditional Heteroske
 
 | Function | Description |
 | --- | --- |
-| `estimateGarch()` | GARCH(1,1) volatility model — Generalized Autoregressive Conditional Heteroskedasticity. Models time-varying volatility with clustering effects. / export interface GarchParams { readonly omega: number; // long-run variance weight readonly alpha: number; // ARCH term (yesterday's squared return) readonly beta: number; // GARCH term (yesterday's variance) } export interface GarchResult { readonly params: GarchParams; readonly conditionalVol: readonly number[]; readonly longRunVol: number; readonly persistence: number; // alpha + beta (should be < 1) readonly halfLife: number; } /** Estimate GARCH(1,1) parameters using variance targeting + simplified MLE. Uses iterative approach for parameter estimation. |
-| `garchVolatility()` | GARCH(1,1) log-likelihood (Gaussian). / function garchLogLikelihood(returns: readonly number[], params: GarchParams): number { const { omega, alpha, beta } = params; const n = returns.length; let sigma2 = returns.reduce((s, r) => s + r * r, 0) / n; // initialize with sample variance let logLik = 0; for (let i = 1; i < n; i++) { sigma2 = omega + alpha * returns[i - 1]! * returns[i - 1]! + beta * sigma2; if (sigma2 <= 0) sigma2 = 0.0001; logLik += -0.5 * (Math.log(sigma2) + (returns[i]! * returns[i]!) / sigma2); } return logLik; } /** Compute conditional volatility series from GARCH parameters. |
+| `estimateGarch()` | GARCH(1,1) volatility model — Generalized Autoregressive Conditional Heteroskedasticity. Models time-varying volatility with clustering effects. |
+| `garchVolatility()` | GARCH(1,1) log-likelihood (Gaussian). |
 | `garchForecast()` | Forecast future volatility N steps ahead. |
 | `garchAnalysis()` | Full GARCH analysis. |
 
@@ -3645,7 +3701,7 @@ Garman-Klass and related intraday volatility estimators. More efficient than clo
 
 | Function | Description |
 | --- | --- |
-| `garmanKlassSingle()` | Garman-Klass and related intraday volatility estimators. More efficient than close-to-close because they use OHLC data. / export interface OHLCBar { readonly open: number; readonly high: number; readonly low: number; readonly close: number; } /** Garman-Klass volatility estimator for a single bar. Uses high, low, open, close to estimate variance more efficiently. |
+| `garmanKlassSingle()` | Garman-Klass and related intraday volatility estimators. More efficient than close-to-close because they use OHLC data. |
 | `garmanKlassVol()` | Garman-Klass annualized volatility over a series of OHLC bars. |
 | `parkinsonVol()` | Parkinson volatility estimator (uses only high and low). More efficient than close-to-close by factor of ~5. |
 | `rogersSatchellVol()` | Rogers-Satchell volatility estimator (drift-independent). |
@@ -3666,7 +3722,7 @@ Hawkes process — self-exciting point process for event clustering. Models how 
 
 | Function | Description |
 | --- | --- |
-| `fitHawkes()` | Hawkes process — self-exciting point process for event clustering. Models how past events increase probability of future events (e.g., volatility clustering). / export interface HawkesParams { readonly mu: number; // base intensity (background rate) readonly alpha: number; // excitation magnitude readonly beta: number; // decay rate (must be > alpha for stationarity) } export interface HawkesResult { readonly params: HawkesParams; readonly logLikelihood: number; readonly branchingRatio: number; // α/β — average # of children per event readonly stationaryIntensity: number; // μ / (1 - α/β) readonly halfLife: number; // ln(2)/β } /** Estimate Hawkes process parameters via maximum likelihood. Intensity: λ(t) = μ + α Σ_{t_i < t} β·exp(-β(t - t_i)) Log-likelihood: Σ ln(λ(t_i)) - ∫₀ᵀ λ(t)dt |
+| `fitHawkes()` | Hawkes process — self-exciting point process for event clustering. Models how past events increase probability of future events (e.g., volatility clustering). |
 | `simulateHawkes()` | Simulate a Hawkes process via thinning algorithm. |
 | `hawkesIntensity()` | Compute time-varying intensity of a Hawkes process at given evaluation points. |
 
@@ -3684,7 +3740,7 @@ Implied volatility surface — construct vol smile/skew from option prices. Uses
 
 | Function | Description |
 | --- | --- |
-| `impliedVolatility()` | Implied volatility surface — construct vol smile/skew from option prices. Uses Newton-Raphson for IV extraction and interpolates across strikes/expiries. / export interface OptionQuote { readonly strike: number; readonly expiry: number; // time to expiry in years readonly price: number; // market price readonly type: "call" | "put"; readonly spot: number; readonly rate: number; // risk-free rate } export interface IVPoint { readonly strike: number; readonly expiry: number; readonly iv: number; readonly moneyness: number; // strike / spot readonly delta: number; } export interface VolSurface { readonly points: readonly IVPoint[]; readonly atmVol: number; // at-the-money implied vol readonly skew: number; // slope of smile (25d put - 25d call) readonly kurtosis: number; // curvature of smile (wing vol - atm vol) readonly termStructure: readonly { expiry: number; atmVol: number }[]; } /** Extract implied volatility from an option price using Newton-Raphson. Inverts Black-Scholes to find σ such that BS(σ) = marketPrice. |
+| `impliedVolatility()` | Implied volatility surface — construct vol smile/skew from option prices. Uses Newton-Raphson for IV extraction and interpolates across strikes/expiries. |
 | `buildVolSurface()` | Build a volatility surface from multiple option quotes. |
 | `blackScholes()` | Black-Scholes option price. |
 
@@ -3718,7 +3774,7 @@ Markov chain model — state transition probability matrices for market regimes.
 
 | Function | Description |
 | --- | --- |
-| `estimateTransitionMatrix()` | Markov chain model — state transition probability matrices for market regimes. Estimates regime switching probabilities from observed state sequences. / export interface MarkovChain { readonly states: readonly string[]; readonly transitionMatrix: readonly (readonly number[])[]; // P[i][j] = P(state_j | state_i) readonly stationaryDistribution: readonly number[]; readonly meanRecurrenceTime: readonly number[]; // 1/π_i } export interface RegimeSequence { readonly states: readonly number[]; // integer state indices readonly n: number; } /** Estimate transition matrix from observed state sequence using maximum likelihood. P_ij = count(i→j) / count(i→*) |
+| `estimateTransitionMatrix()` | Markov chain model — state transition probability matrices for market regimes. Estimates regime switching probabilities from observed state sequences. |
 | `stationaryDistribution()` | Compute stationary distribution π such that πP = π. Uses power iteration. |
 | `meanRecurrenceTime()` | Compute mean first passage times from state i to state j. M_ij = expected number of steps to reach j starting from i. For recurrence: M_ii = 1/π_i |
 | `classifyRegimes()` | Classify market returns into discrete regime states. Simple threshold-based classification. |
@@ -3726,22 +3782,6 @@ Markov chain model — state transition probability matrices for market regimes.
 | `simulateMarkovChain()` | Simulate future states from a Markov chain. |
 
 **Types:** `MarkovChain`, `RegimeSequence`
-
----
-
-### Max Diversification
-
-**File:** `src/domain/max-diversification.ts`
-
-Maximum Diversification Portfolio — weights that maximize the diversification ratio.  The diversification ratio = weighted average volatility / portfolio volatility. Higher = more diversification benefit. A fully concentrated portfolio has DR = 1.  This uses iterative optimization (gradient-free) to find weights that maximize DR. Unlike mean-variance (Markowitz), this doesn't require expected return estimates — only the covariance structure matters.  Pure function: no I/O, no DOM, no Date.now().
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `maxDiversification()` | Maximum Diversification Portfolio — weights that maximize the diversification ratio. The diversification ratio = weighted average volatility / portfolio volatility. Higher = more diversification benefit. A fully concentrated portfolio has DR = 1. This uses iterative optimization (gradient-free) to find weights that maximize DR. Unlike mean-variance (Markowitz), this doesn't require expected return estimates — only the covariance structure matters. Pure function: no I/O, no DOM, no Date.now(). / export interface MaxDivResult { /** Optimal weights (same order as input tickers). */ readonly weights: readonly number[]; /** Diversification ratio of the optimal portfolio. */ readonly diversificationRatio: number; /** Portfolio volatility (annualized). */ readonly portfolioVolatility: number; /** Weighted average of individual volatilities. */ readonly weightedAvgVolatility: number; } /** Compute maximum diversification portfolio weights. All series must be the same length. |
-
-**Types:** `MaxDivResult`
 
 ---
 
@@ -3755,7 +3795,7 @@ Ornstein-Uhlenbeck (OU) process — mean-reversion parameter estimation. Models:
 
 | Function | Description |
 | --- | --- |
-| `estimateOU()` | Ornstein-Uhlenbeck (OU) process — mean-reversion parameter estimation. Models: dX = θ(μ - X)dt + σ dW Parameters: θ (speed), μ (long-run mean), σ (volatility) / export interface OUParams { readonly theta: number; // mean-reversion speed readonly mu: number; // long-run mean level readonly sigma: number; // volatility of the process readonly halfLife: number; // time to revert halfway: ln(2)/θ } export interface OUResult { readonly params: OUParams; readonly residuals: readonly number[]; readonly rSquared: number; readonly isStationary: boolean; // theta > 0 implies mean-reverting } /** Estimate OU parameters via OLS on the discrete-time AR(1) representation: X(t+1) - X(t) = a + b·X(t) + ε Then: θ = -b/Δt, μ = -a/b, σ = std(ε) * √(2θ / (1 - exp(-2θΔt))) |
+| `estimateOU()` | Ornstein-Uhlenbeck (OU) process — mean-reversion parameter estimation. Models: dX = θ(μ - X)dt + σ dW Parameters: θ (speed), μ (long-run mean), σ (volatility) |
 | `ouAnalysis()` | Full OU analysis with goodness-of-fit. |
 | `simulateOU()` | Simulate OU process forward from current value. |
 | `expectedTimeToMean()` | Expected time to mean from current level. |
@@ -3774,9 +3814,9 @@ Realized volatility estimators — range-based and tick-based vol measures. Park
 
 | Function | Description |
 | --- | --- |
-| `parkinsonVol()` | Realized volatility estimators — range-based and tick-based vol measures. Parkinson, Rogers-Satchell, and Yang-Zhang estimators. (Garman-Klass is in a separate module.) / export interface OHLCBar { readonly open: number; readonly high: number; readonly low: number; readonly close: number; } export interface VolEstimates { readonly parkinson: number; readonly rogersSatchell: number; readonly yangZhang: number; readonly closeToClose: number; // standard close-to-close vol for reference } /** Parkinson (1980) estimator — uses high-low range. More efficient than close-to-close (5x for continuous Brownian motion). σ² = (1/4n·ln2) Σ(ln(H/L))² |
-| `rogersSatchellVol()` | Rogers-Satchell (1991) — accounts for drift, uses OHLC. σ² = (1/n) Σ[ln(H/C)·ln(H/O) + ln(L/C)·ln(L/O)] |
-| `yangZhangVol()` | Yang-Zhang (2000) — combines overnight, open-to-close, and Rogers-Satchell. Most efficient for OHLC data; handles opening jumps. σ²_YZ = σ²_overnight + k·σ²_close + (1-k)·σ²_RS where k = 0.34 / (1.34 + (n+1)/(n-1)) |
+| `parkinsonVol()` | Realized volatility estimators — range-based and tick-based vol measures. Parkinson, Rogers-Satchell, and Yang-Zhang estimators. (Garman-Klass is in a separate module.) |
+| `rogersSatchellVol()` | Rogers-Satchell (1991) — accounts for drift, uses OHLC. |
+| `yangZhangVol()` | Yang-Zhang (2000) — combines overnight, open-to-close, and Rogers-Satchell. Most efficient for OHLC data; handles opening jumps. |
 | `closeToCloseVol()` | Standard close-to-close historical volatility. |
 | `allVolEstimates()` | Compute all volatility estimators for comparison. |
 
@@ -3794,9 +3834,9 @@ Volatility cone — term structure of realized volatility at different lookback 
 
 | Function | Description |
 | --- | --- |
-| `realizedVol()` | Volatility cone — term structure of realized volatility at different lookback periods compared to historical percentiles. / export interface VolatilityConePoint { readonly period: number; // lookback in days readonly current: number; // current realized vol readonly p25: number; readonly p50: number; readonly p75: number; readonly min: number; readonly max: number; } export interface VolatilityConeResult { readonly cone: readonly VolatilityConePoint[]; readonly isElevated: boolean; // current vol above p75 for shortest period readonly isDepressed: boolean; // current vol below p25 for shortest period } /** Compute annualized realized volatility from daily returns. |
+| `realizedVol()` | Volatility cone — term structure of realized volatility at different lookback periods compared to historical percentiles. |
 | `historicalVolDistribution()` | Compute historical distribution of realized vol for a given period. |
-| `buildVolatilityCone()` | Compute percentile from sorted array. / function percentile(sorted: readonly number[], p: number): number { if (sorted.length === 0) return 0; const idx = (p / 100) * (sorted.length - 1); const lower = Math.floor(idx); const upper = Math.ceil(idx); if (lower === upper) return sorted[lower]!; return sorted[lower]! + (sorted[upper]! - sorted[lower]!) * (idx - lower); } /** Build the full volatility cone across multiple periods. |
+| `buildVolatilityCone()` | Compute percentile from sorted array. |
 | `volPercentileRank()` | Get current volatility percentile rank for a given period. |
 
 **Types:** `VolatilityConePoint`, `VolatilityConeResult`
@@ -3813,7 +3853,7 @@ Volatility rank calculator — compute and rank tickers by historical volatility
 
 | Function | Description |
 | --- | --- |
-| `dailyReturns()` | Volatility rank calculator — compute and rank tickers by historical volatility (standard deviation of returns) for risk assessment. / export interface VolatilityRank { readonly ticker: string; readonly annualizedVol: number; // As percentage readonly dailyVol: number; // As percentage readonly rank: number; // 1 = most volatile } const TRADING_DAYS_PER_YEAR = 252; /** Compute daily returns from a price series. |
+| `dailyReturns()` | Volatility rank calculator — compute and rank tickers by historical volatility (standard deviation of returns) for risk assessment. |
 | `standardDeviation()` | Compute standard deviation of a numeric array. |
 | `annualizedVolatility()` | Compute annualized volatility from a price series. Returns as percentage (e.g., 25 for 25% annual vol). |
 | `dailyVolatility()` | Compute daily volatility from a price series. Returns as percentage. |
@@ -3875,30 +3915,11 @@ Chaikin Money Flow (Marc Chaikin). For each bar: MFM = ((C - L) - (H - C)) / (H 
 
 ---
 
-### Corp Actions
-
-**File:** `src/domain/corp-actions.ts`
-
-Corporate Action Adjustment — pure functions for adjusting OHLCV data for stock splits and cash dividends.  P4: All OHLCV returned as split-adjusted by default; raw optional.  **Split adjustment** multiplies historical prices by the cumulative split factor so that pre-split prices are comparable to post-split prices. Example: 2-for-1 split → divide all pre-split prices by 2, multiply all pre-split volumes by 2.  **Dividend adjustment** subtracts the dividend from all historical closes prior to the ex-dividend date using the standard backward-adjustment method, preserving the continuity of returns.  All inputs are plain data — no I/O, no fetch, no Date.now().
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `applySplits()` | Corporate Action Adjustment — pure functions for adjusting OHLCV data for stock splits and cash dividends. P4: All OHLCV returned as split-adjusted by default; raw optional. **Split adjustment** multiplies historical prices by the cumulative split factor so that pre-split prices are comparable to post-split prices. Example: 2-for-1 split → divide all pre-split prices by 2, multiply all pre-split volumes by 2. **Dividend adjustment** subtracts the dividend from all historical closes prior to the ex-dividend date using the standard backward-adjustment method, preserving the continuity of returns. All inputs are plain data — no I/O, no fetch, no Date.now(). / import type { DailyCandle } from "../types/domain"; // ── Types ──────────────────────────────────────────────────────────────────── /** A single stock split event. */ export interface SplitEvent { /** Ex-date of the split (ISO 8601 YYYY-MM-DD). */ readonly date: string; /** Number of new shares per old share (e.g. 2 for a 2-for-1 split). */ readonly numerator: number; /** Number of old shares replaced (almost always 1). */ readonly denominator: number; } /** A single cash dividend event. */ export interface DividendEvent { /** Ex-dividend date (ISO 8601 YYYY-MM-DD). Candles with date < exDate are adjusted. */ readonly date: string; /** Gross dividend amount per share (same currency as OHLCV prices). */ readonly amount: number; } /** Options controlling which adjustments to apply. */ export interface AdjustmentOptions { /** Apply split adjustments (default: true). */ readonly splits?: boolean; /** Apply dividend adjustments (default: false — split-only is the common default). */ readonly dividends?: boolean; } // ── Helpers ────────────────────────────────────────────────────────────────── /** Round to 6 decimal places to eliminate floating-point drift. */ function round6(n: number): number { return Math.round(n * 1_000_000) / 1_000_000; } // ── Core functions ──────────────────────────────────────────────────────────── /** Apply stock-split adjustment to a sorted (ascending date) OHLCV series. All candles with `date < split.date` are divided by the split ratio (`numerator / denominator`). The function applies all splits in chronological order, accumulating the adjustment factor backward. Volume is multiplied by the inverse factor to preserve turnover. |
-| `applyDividends()` | Apply dividend adjustment to a sorted (ascending date) OHLCV series. Uses the **backward adjustment** method: for each dividend event, all closes prior to the ex-dividend date are reduced by the dividend amount multiplied by the cumulative dividend-adjustment factor. This preserves the continuity of returns and is the industry-standard approach. |
-| `applyCorpActions()` | Apply all corporate action adjustments in correct order: splits first, then dividends (dividends are expressed in split-adjusted terms). |
-| `cumulativeSplitFactor()` | Compute the cumulative split factor for a series of splits. Useful when you need to convert a raw price to a split-adjusted price without iterating over the full OHLCV array (e.g., for a single current quote). Pass undefined to include all splits. |
-
-**Types:** `SplitEvent`, `DividendEvent`, `AdjustmentOptions`
-
----
-
 ### Ease Of Movement
 
 **File:** `src/domain/ease-of-movement.ts`
 
-Richard Arms' Ease of Movement (EOM, EMV). Highlights how easily price moves on a given volume. Positive when price rises with low volume; negative when it falls. Typically smoothed by an SMA.  distance = (high + low)/2 - (prevHigh + prevLow)/2 boxRatio = (volume / scale) / (high - low) EMV1     = distance / boxRatio EMV      = SMA(EMV1, period)
+Richard Arms' Ease of Movement (EOM, EMV). Highlights how easily price moves on a given volume. Positive when price rises with low volume; negative when it falls. Typically smoothed by an SMA.
 
 **Functions:**
 
@@ -3931,7 +3952,7 @@ Force Index (Alexander Elder, 1993). Combines price change and volume to gauge t
 
 **File:** `src/domain/mfi-calculator.ts`
 
-MFI (Money Flow Index) — Pure domain logic. Ported from Dart: lib/src/domain/mfi_calculator.dart  Volume-weighted RSI: MFI = 100 - 100 / (1 + positive_flow / negative_flow)
+MFI (Money Flow Index) — Pure domain logic. Ported from Dart: lib/src/domain/mfi_calculator.dart
 
 **Functions:**
 
@@ -3948,7 +3969,7 @@ MFI (Money Flow Index) — Pure domain logic. Ported from Dart: lib/src/domain/m
 
 **File:** `src/domain/obv-calculator.ts`
 
-OBV (On-Balance Volume) — Pure domain logic. Ported from Dart: lib/src/domain/obv_calculator.dart  If close > prevClose: OBV += volume If close < prevClose: OBV -= volume
+OBV (On-Balance Volume) — Pure domain logic. Ported from Dart: lib/src/domain/obv_calculator.dart
 
 **Functions:**
 
@@ -3971,7 +3992,7 @@ Order flow imbalance — buy/sell pressure from tick-level trade classification.
 
 | Function | Description |
 | --- | --- |
-| `tickRuleClassify()` | Order flow imbalance — buy/sell pressure from tick-level trade classification. Implements Lee-Ready tick rule, bulk volume classification, and VPIN. / export interface Trade { readonly price: number; readonly volume: number; readonly timestamp?: number; } export interface OrderFlowMetrics { readonly buyVolume: number; readonly sellVolume: number; readonly imbalance: number; // (buy - sell) / (buy + sell), range [-1, 1] readonly vpin: number; // volume-synchronized probability of informed trading readonly toxicity: "low" | "moderate" | "high"; } export interface FlowBucket { readonly buyVolume: number; readonly sellVolume: number; readonly imbalance: number; readonly cumulativeImbalance: number; } /** Lee-Ready tick rule: classify trades as buyer/seller-initiated. If price > previous price → buy; if price < previous → sell. If price = previous, use previous classification. |
+| `tickRuleClassify()` | Order flow imbalance — buy/sell pressure from tick-level trade classification. Implements Lee-Ready tick rule, bulk volume classification, and VPIN. |
 | `bulkVolumeClassify()` | Bulk Volume Classification (BVC) — probabilistic trade classification. Uses normalized price change to estimate buy probability. |
 | `orderFlowImbalance()` | Compute order flow imbalance metrics from classified trades. |
 | `computeVPIN()` | Volume-Synchronized Probability of Informed Trading (VPIN). Groups trades into volume buckets and measures imbalance across buckets. |
@@ -3985,32 +4006,16 @@ Order flow imbalance — buy/sell pressure from tick-level trade classification.
 
 **File:** `src/domain/relative-volume.ts`
 
-Relative Volume (RVOL) — compare current volume to historical average.  RVOL > 1.5 typically indicates unusual activity (breakout potential). RVOL < 0.5 indicates low participation (consolidation/low interest).  Pure function: no I/O, no DOM, no Date.now().
+Relative Volume (RVOL) — compare current volume to historical average.
 
 **Functions:**
 
 | Function | Description |
 | --- | --- |
-| `computeRelativeVolume()` | Relative Volume (RVOL) — compare current volume to historical average. RVOL > 1.5 typically indicates unusual activity (breakout potential). RVOL < 0.5 indicates low participation (consolidation/low interest). Pure function: no I/O, no DOM, no Date.now(). / import type { DailyCandle } from "../types/domain"; export interface RvolPoint { readonly date: string; /** Relative volume ratio (current volume / average volume). */ readonly rvol: number; /** Current bar volume. */ readonly volume: number; /** Average volume over the lookback window. */ readonly avgVolume: number; } export interface RvolOptions { /** Lookback period for average volume calculation. / readonly period?: number; } /** Compute relative volume series. Returns null if insufficient data. |
+| `computeRelativeVolume()` | Relative Volume (RVOL) — compare current volume to historical average. |
 | `detectVolumeSurges()` | Detect volume surge events (RVOL above threshold). |
 
 **Types:** `RvolPoint`, `RvolOptions`
-
----
-
-### Resample
-
-**File:** `src/domain/resample.ts`
-
-Resample candles to a coarser timeframe by bucketing on a fixed interval. Inputs must be sorted ascending by `time` (ms epoch).  Each output bar: open   = open of first candle in bucket close  = close of last candle in bucket high   = max(high) over bucket low    = min(low) over bucket volume = sum(volume) over bucket time   = bucket start (floor of first candle's time to interval)
-
-**Functions:**
-
-| Function | Description |
-| --- | --- |
-| `resampleCandles()` | — |
-
-**Types:** `ResampleOptions`
 
 ---
 
@@ -4024,13 +4029,29 @@ Data snapshot diffing — compare two point-in-time ticker data snapshots to hig
 
 | Function | Description |
 | --- | --- |
-| `diffSnapshots()` | Data snapshot diffing — compare two point-in-time ticker data snapshots to highlight what changed (price, volume, signal flips). / export interface TickerData { readonly ticker: string; readonly price: number; readonly change: number; readonly volume: number; readonly signal?: string; } export interface SnapshotDiff { readonly ticker: string; readonly priceDelta: number; readonly priceDeltaPercent: number; readonly volumeDelta: number; readonly signalChanged: boolean; readonly oldSignal?: string; readonly newSignal?: string; } export interface DiffSummary { readonly totalTickers: number; readonly priceIncreased: number; readonly priceDecreased: number; readonly unchanged: number; readonly signalFlips: number; readonly avgPriceChange: number; } /** Compute diffs between two snapshots (before and after). |
+| `diffSnapshots()` | Data snapshot diffing — compare two point-in-time ticker data snapshots to highlight what changed (price, volume, signal flips). |
 | `summarizeDiff()` | Get a summary of the diff. |
 | `getSignificantMovers()` | Filter diffs to only significant movers (above threshold %). |
 | `sortByLargestMove()` | Get diffs sorted by absolute price change descending. |
 | `getSignalFlips()` | Get only signal flip diffs. |
 
 **Types:** `TickerData`, `SnapshotDiff`, `DiffSummary`
+
+---
+
+### Time Segmented Volume
+
+**File:** `src/domain/time-segmented-volume.ts`
+
+Time-Segmented Volume (TSV) — Worden Brothers accumulation/distribution.
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `computeTsv()` | Time-Segmented Volume (TSV) — Worden Brothers accumulation/distribution. |
+
+**Types:** `TsvPoint`, `TsvOptions`
 
 ---
 
@@ -4054,7 +4075,7 @@ Volume profile (price-by-volume): bins each candle's volume across its high-low 
 
 **File:** `src/domain/vwap-calculator.ts`
 
-VWAP Calculator — Volume-Weighted Average Price. Ported from Dart: lib/src/domain/vwap_calculator.dart  Cumulative: vwap[i] = Σ(TP * volume) / Σ(volume) TP = (high + low + close) / 3
+VWAP Calculator — Volume-Weighted Average Price. Ported from Dart: lib/src/domain/vwap_calculator.dart
 
 **Functions:**
 
@@ -4077,7 +4098,7 @@ Volume-weighted price calculations — VWAP and TWAP from intraday price/volume 
 
 | Function | Description |
 | --- | --- |
-| `vwap()` | Volume-weighted price calculations — VWAP and TWAP from intraday price/volume data. / export interface PriceVolume { readonly price: number; readonly volume: number; } export interface TimedPrice { readonly price: number; readonly timestamp: number; // unix ms } export interface VwapResult { readonly vwap: number; readonly cumulativeVolume: number; readonly upperBand: number; // +1 std dev readonly lowerBand: number; // -1 std dev } /** Compute VWAP from price/volume bars. |
+| `vwap()` | Volume-weighted price calculations — VWAP and TWAP from intraday price/volume data. |
 | `runningVwap()` | Running VWAP series (cumulative at each bar). |
 | `vwapWithBands()` | VWAP with standard deviation bands. |
 | `twap()` | Compute TWAP (time-weighted average price) from timed prices. |

@@ -9,7 +9,7 @@
  * Outputs a markdown table + per-indicator detail sections to docs/INDICATORS.md.
  *
  * Usage:
- *   npx tsx scripts/generate-indicator-docs.ts
+ *   tsx scripts/generate-indicator-docs.ts
  */
 
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
@@ -80,18 +80,30 @@ function classifyCategory(filename: string, description: string): string {
 
 // ── JSDoc extraction ──────────────────────────────────────────────────────────
 
-function extractFileJsdoc(source: string): string {
-  const match = source.match(/^\/\*\*([\s\S]*?)\*\//);
-  if (!match?.[1]) return "";
-  return match[1]
+function extractSummary(jsdocBlock: string): string {
+  const lines = jsdocBlock
     .split("\n")
     .map((line) => line.replace(/^\s*\*\s?/, "").trim())
-    .filter((line) => !line.startsWith("@"))
-    .join(" ")
-    .trim();
+    .map((line) => (line === "/" ? "" : line))
+    .filter((line) => !line.startsWith("@"));
+  const paragraph: string[] = [];
+  for (const line of lines) {
+    if (line === "") {
+      if (paragraph.length > 0) break;
+      continue;
+    }
+    paragraph.push(line);
+  }
+  return paragraph.join(" ").trim();
 }
 
-function extractExportedFunctions(source: string): FunctionInfo[] {
+export function extractFileJsdoc(source: string): string {
+  const match = source.match(/^\/\*\*([\s\S]*?)\*\//);
+  if (!match?.[1]) return "";
+  return extractSummary(match[1]);
+}
+
+export function extractExportedFunctions(source: string): FunctionInfo[] {
   const results: FunctionInfo[] = [];
   const regex = /\/\*\*([\s\S]*?)\*\/\s*\nexport\s+(?:async\s+)?function\s+(\w+)/g;
   let match: RegExpExecArray | null;
@@ -99,12 +111,7 @@ function extractExportedFunctions(source: string): FunctionInfo[] {
   while ((match = regex.exec(source)) !== null) {
     const jsdocBlock = match[1] ?? "";
     const name = match[2] ?? "";
-    const description = jsdocBlock
-      .split("\n")
-      .map((line) => line.replace(/^\s*\*\s?/, "").trim())
-      .filter((line) => line && !line.startsWith("@"))
-      .join(" ")
-      .trim();
+    const description = extractSummary(jsdocBlock);
     results.push({ name, description: description || "—" });
   }
 
@@ -120,7 +127,7 @@ function extractExportedFunctions(source: string): FunctionInfo[] {
   return results;
 }
 
-function extractExportedInterfaces(source: string): string[] {
+export function extractExportedInterfaces(source: string): string[] {
   const regex = /export\s+interface\s+(\w+)/g;
   const results: string[] = [];
   let match: RegExpExecArray | null;
@@ -129,6 +136,13 @@ function extractExportedInterfaces(source: string): string[] {
     if (name) results.push(name);
   }
   return results;
+}
+
+export function escapeTableCell(value: string): string {
+  return value
+    .replace(/\|/g, "\\|")
+    .replace(/[\r\n]+/g, " ")
+    .trim();
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -176,7 +190,7 @@ function main(): void {
   const lines: string[] = [
     "# 📊 CrossTide Indicator Reference",
     "",
-    `> Auto-generated from \`src/domain/\` JSDoc on ${new Date().toISOString().slice(0, 10)}.`,
+    "> Auto-generated from `src/domain/` JSDoc.",
     `> ${indicators.length} modules | ${indicators.reduce((sum, i) => sum + i.functions.length, 0)} exported functions | ${indicators.reduce((sum, i) => sum + i.interfaces.length, 0)} interfaces`,
     "",
     "## 📋 Summary Table",
@@ -186,7 +200,9 @@ function main(): void {
   ];
 
   for (const ind of indicators) {
-    const desc = ind.description.length > 80 ? ind.description.slice(0, 77) + "…" : ind.description;
+    const desc = escapeTableCell(
+      ind.description.length > 80 ? ind.description.slice(0, 77) + "…" : ind.description,
+    );
     lines.push(
       `| [\`${ind.moduleName}\`](#${ind.moduleName.toLowerCase().replace(/ /g, "-")}) | ${ind.category} | ${ind.functions.length} | ${desc} |`,
     );
@@ -213,7 +229,7 @@ function main(): void {
         lines.push("| Function | Description |");
         lines.push("| --- | --- |");
         for (const fn of ind.functions) {
-          lines.push(`| \`${fn.name}()\` | ${fn.description} |`);
+          lines.push(`| \`${fn.name}()\` | ${escapeTableCell(fn.description)} |`);
         }
         lines.push("");
       }
@@ -233,4 +249,6 @@ function main(): void {
   );
 }
 
-main();
+if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
+  main();
+}

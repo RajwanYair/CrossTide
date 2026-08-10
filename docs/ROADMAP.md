@@ -262,7 +262,7 @@ detect.
 | D3 | Dead links unresolved | The repository now checks local Markdown targets and anchors deterministically; issue [#106](https://github.com/RajwanYair/CrossTide/issues/106) still needs owner-side closure for any external URL findings. |
 | D4 | Issue tracker drift | Contributor guidance now records #105 as complete, #103 as 57 hard orphans across `core`, `ui`, and `cards`, and #104 as the 12 duplicate-name merge track; GitHub issue closure remains owner-side. |
 | D5 | Missing ADRs | The ADR set now records split Vitest projects, Biome and ESLint roles, domain packaging, and benchmark-gated WASM. |
-| D6 | `INDICATORS.md` quality | Generated, excluded from `lint:md`, and some rows dump whole source bodies into a table cell. |
+| D6 | `INDICATORS.md` quality | The generator now emits concise first-paragraph summaries, escapes table cells, and produces deterministic output. |
 | D7 | Misleading subsystem READMEs | `docs/demos/`, `monitoring/`, `mcp-server/` describe capabilities that are code-ready but undeployed, with no status banner. |
 | P8 | README lacks proof | No live demo link or video, and its six embedded demo GIFs do not exist on disk. `scripts/record-demos.ts` exists to produce them but needs a running app. |
 
@@ -354,7 +354,7 @@ that cannot observe what it claims to observe.
 | D3 | Docs | Triage and close the dead-link issue #106 | P | P1 | S | — | 🟡 |
 | D4 | Docs | Reconcile issues #103, #104, #105 with audit reality | P | P1 | S | P10a | 🟡 |
 | D5 | Docs | ADRs 0012 to 0015: split test projects, Biome, packaging, WASM | P | P2 | M | — | ✅ |
-| D6 | Docs | Fix the `INDICATORS.md` generator emitting source bodies | Q | P2 | S | — | ⬜ |
+| D6 | Docs | Fix the `INDICATORS.md` generator emitting source bodies | Q | P2 | S | — | ✅ |
 | D7 | Docs | Status banners on undeployed subsystem READMEs | P | P2 | S | — | ⬜ |
 | P1 | Deploy | Provision Cloudflare KV and D1 namespaces | P | P0 | S | — | ⛔ |
 | P2 | Deploy | Replace placeholder IDs in `worker/wrangler.toml` | P | P0 | S | P1 | ⛔ |
