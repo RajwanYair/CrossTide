@@ -365,7 +365,7 @@ that cannot observe what it claims to observe.
 | E16 | Growth | Docker one-liner validated end to end | P | P1 | M | — | ⬜ |
 | P8 | Docs | README GIFs recorded from the live app | P | P0 | M | E15 | ⬜ |
 | C1 | CI | Remove or enforce the non-failing oxlint step | P | P0 | S | — | ✅ |
-| C2 | CI | Eliminate `npx` for declared devDependencies | P | P0 | S | — | 🟡 |
+| C2 | CI | Eliminate `npx` for declared devDependencies | P | P0 | S | — | ✅ |
 | C3 | CI | Rename the mislabelled Prettier step | P | P2 | S | — | ✅ |
 | C4 | CI | Resolve the `continue-on-error` scanners | P | P1 | S | — | ⬜ |
 | C5 | CI | Reconcile the workflow map with disk | P | P1 | S | — | ⬜ |

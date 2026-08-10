@@ -74,10 +74,9 @@ jobs:
       - name: Run Lighthouse for Web Vitals
         id: lighthouse
         run: |
-          npm install -g @lhci/cli@0.15.x
           ./node_modules/.bin/vite preview --port 4173 &
           sleep 3
-          lhci collect --url=http://localhost:4173/ --settings.preset=desktop --numberOfRuns=1 || true
+          ./node_modules/.bin/lhci collect --url=http://localhost:4173/ --settings.preset=desktop --numberOfRuns=1 || true
           if [ -f ".lighthouseci/lhr-0.json" ]; then
             LCP=$(jq '.audits["largest-contentful-paint"].numericValue // 0' .lighthouseci/lhr-0.json)
             TBT=$(jq '.audits["total-blocking-time"].numericValue // 0' .lighthouseci/lhr-0.json)

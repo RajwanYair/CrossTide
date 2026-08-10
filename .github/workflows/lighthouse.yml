@@ -29,8 +29,6 @@ jobs:
         run: ./node_modules/.bin/vite build
 
       - name: Run Lighthouse CI
-        run: |
-          npm install -g @lhci/cli@0.15.x
-          lhci autorun --config config/lighthouserc.json
+        run: ./node_modules/.bin/lhci autorun --config config/lighthouserc.json
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

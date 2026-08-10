@@ -122,7 +122,7 @@ jobs:
 
       - name: Check licenses
         run: |
-          npx license-checker --production --failOn "GPL-3.0-only;AGPL-3.0-only;GPL-3.0-or-later;AGPL-3.0-or-later" --summary || {
+          ./node_modules/.bin/license-checker --production --failOn "GPL-3.0-only;AGPL-3.0-only;GPL-3.0-or-later;AGPL-3.0-or-later" --summary || {
             echo "::error::Found disallowed licenses in production dependencies"
             exit 1
           }

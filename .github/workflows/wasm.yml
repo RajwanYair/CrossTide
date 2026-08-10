@@ -42,26 +42,22 @@ jobs:
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install AssemblyScript
-        if: steps.check.outputs.found == 'true'
-        run: npm install --save-dev assemblyscript@latest
-
       - name: Compile WASM modules
         if: steps.check.outputs.found == 'true'
         run: |
-          npx asc assembly/correlation-matrix.ts \
+          ./node_modules/.bin/asc assembly/correlation-matrix.ts \
             --outFile dist/wasm/correlation-matrix.wasm \
             --textFile dist/wasm/correlation-matrix.wat \
             --optimize --optimizeLevel 3 --shrinkLevel 2 \
             --runtime stub --exportStart _start \
             --sourceMap
-          npx asc assembly/monte-carlo.ts \
+          ./node_modules/.bin/asc assembly/monte-carlo.ts \
             --outFile dist/wasm/monte-carlo.wasm \
             --textFile dist/wasm/monte-carlo.wat \
             --optimize --optimizeLevel 3 --shrinkLevel 2 \
             --runtime stub --exportStart _start \
             --sourceMap
-          npx asc assembly/efficient-frontier.ts \
+          ./node_modules/.bin/asc assembly/efficient-frontier.ts \
             --outFile dist/wasm/efficient-frontier.wasm \
             --textFile dist/wasm/efficient-frontier.wat \
             --optimize --optimizeLevel 3 --shrinkLevel 2 \
