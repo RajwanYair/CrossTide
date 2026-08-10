@@ -16,6 +16,7 @@ import {
   DEFAULT_BENCHMARK,
 } from "../domain/portfolio-benchmark";
 import { loadHoldings } from "./portfolio-store";
+import { computePortfolioSummary } from "./portfolio";
 import type { CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
 
@@ -58,6 +59,14 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
   const metrics = positionMetrics(holdings).sort((a, b) => b.value - a.value);
   const sectors = sectorAllocation(holdings);
   const top3 = topConcentration(holdings, 3);
+  const incomeSummary = computePortfolioSummary(
+    holdings.map((holding) => ({
+      ticker: holding.ticker,
+      shares: holding.quantity,
+      avgCost: holding.avgCost,
+      currentPrice: holding.currentPrice,
+    })),
+  );
 
   const totalPnl = metrics.reduce((s, m) => s + m.unrealizedPnl, 0);
   const totalCost = holdings.reduce((s, h) => s + h.quantity * h.avgCost, 0);
@@ -102,6 +111,10 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
         <div class="portfolio-summary-stat">
           <span class="stat-label">Top-3 Concentration</span>
           <span class="stat-value">${fmt(top3 * 100, 1)}%</span>
+        </div>
+        <div class="portfolio-summary-stat">
+          <span class="stat-label">Projected Annual Income</span>
+          <span class="stat-value">${fmtCurrency(incomeSummary.projectedAnnualIncome)}</span>
         </div>
       </div>
 

@@ -107,4 +107,11 @@ describe("portfolio-card (CardModule)", () => {
     portfolioCard.mount(container, { route: "portfolio", params: {} });
     expect(container.textContent).toContain("Positions");
   });
+
+  it("shows projected annual income", async () => {
+    const { default: portfolioCard } = await import("../../../src/cards/portfolio-card");
+    portfolioCard.mount(container, { route: "portfolio", params: {} });
+    expect(container.textContent).toContain("Projected Annual Income");
+    expect(container.textContent).toContain("$0.00");
+  });
 });
