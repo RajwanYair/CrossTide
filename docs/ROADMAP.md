@@ -183,8 +183,8 @@ relative TypeScript imports from `src/main.ts` and `src/sw.ts`, normalizes runti
 non-destructive default disposition. Layer barrels with no importers remain
 visible in the output and are not treated as application features.
 
-The verified list, to be transcribed into the tracking file under P10a, grouped by
-the surface each module should attach to.
+The verified list is recorded in [REACHABILITY.md](REACHABILITY.md), grouped by
+module path with importers, category, and disposition.
 
 **`src/core` — 38 hard orphans**
 
@@ -371,7 +371,7 @@ that cannot observe what it claims to observe.
 | C5 | CI | Reconcile the workflow map with disk | P | P1 | S | — | ✅ |
 | C6 | CI | Single documented rule for config file placement | Q | P2 | S | — | ✅ |
 | R1 | Refactor | Sub-directory taxonomy for domain, core, and ui | Q | P0 | L | — | ⬜ |
-| P10a | Stitch | Disposition record for all 319 unreachable modules | Q | P0 | M | R1 | 🟡 |
+| P10a | Stitch | Disposition record for all 319 unreachable modules | Q | P0 | M | R1 | ✅ |
 | P10b | Stitch | Wire core hard orphans: watchlist, session, diagnostics | Q | P0 | L | P10a | ⬜ |
 | P10c | Stitch | Wire ui hard orphans and decide the `<ct-*>` component fate | Q | P0 | M | P10a | ⬜ |
 | P10d | Stitch | Register `news-feed-card`, promote portfolio orphans | Q | P1 | M | P10a | 🟡 |

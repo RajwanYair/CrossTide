@@ -1,0 +1,167 @@
+/**
+ * Build a deterministic source reachability inventory from the application entry points.
+ */
+import { readdirSync, readFileSync } from "node:fs";
+import { dirname, extname, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const SRC_ROOT = resolve(ROOT, "src");
+const REPORT_PATH = resolve(ROOT, "docs/REACHABILITY.md");
+const ENTRY_POINTS = [resolve(SRC_ROOT, "main.ts"), resolve(SRC_ROOT, "sw.ts")];
+const IMPORT_PATTERN = /(?:from\s+|import\s*\(\s*|import\s*)["']([^"']+)["']/g;
+
+function sourceFiles(directory) {
+  const files = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = resolve(directory, entry.name);
+    if (entry.isDirectory()) files.push(...sourceFiles(path));
+    else if (extname(entry.name) === ".ts" && !entry.name.endsWith(".d.ts")) files.push(path);
+  }
+  return files.sort();
+}
+
+function resolveImport(source, specifier) {
+  if (!specifier.startsWith(".")) return undefined;
+  const base = resolve(dirname(source), specifier.replace(/\.js$/u, ""));
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, resolve(base, "index.ts")];
+  return candidates.find((candidate) => candidate.endsWith(".ts") && sourceFileExists(candidate));
+}
+
+function sourceFileExists(path) {
+  try {
+    return readFileSync(path, "utf8") !== undefined;
+  } catch {
+    return false;
+  }
+}
+
+function relativeSource(path) {
+  return relative(ROOT, path).replaceAll("\\", "/");
+}
+
+function defaultDisposition(path, hardOrphan) {
+  if (path.startsWith("src/domain/")) return "PUBLISH";
+  if (path.includes("/_experimental/")) return "DEFER";
+  if (hardOrphan) return "WIRE";
+  return "PUBLISH";
+}
+
+/**
+ * Analyze source imports reachable from `src/main.ts` and `src/sw.ts`.
+ *
+ * The result intentionally excludes test-only imports: a module referenced only
+ * by its test remains visible as an orphan and cannot be mistaken for shipped code.
+ */
+export function buildInventory() {
+  const files = sourceFiles(SRC_ROOT);
+  const fileSet = new Set(files);
+  const graph = new Map(files.map((file) => [file, new Set()]));
+  const reverse = new Map(files.map((file) => [file, new Set()]));
+
+  for (const file of files) {
+    const source = readFileSync(file, "utf8");
+    for (const match of source.matchAll(IMPORT_PATTERN)) {
+      const target = resolveImport(file, match[1]);
+      if (target && fileSet.has(target)) {
+        graph.get(file).add(target);
+        reverse.get(target).add(file);
+      }
+    }
+  }
+
+  const reachable = new Set();
+  const pending = [...ENTRY_POINTS.filter((entry) => fileSet.has(entry))];
+  while (pending.length > 0) {
+    const current = pending.pop();
+    if (reachable.has(current)) continue;
+    reachable.add(current);
+    for (const target of graph.get(current)) pending.push(target);
+  }
+
+  const modules = files.map((file) => {
+    const importers = [...reverse.get(file)].map(relativeSource).sort();
+    const path = relativeSource(file);
+    const isReachable = reachable.has(file);
+    const hardOrphan = !isReachable && importers.length === 0;
+    const barrelOnly =
+      !isReachable &&
+      importers.length > 0 &&
+      importers.every((importer) => importer.endsWith("/index.ts"));
+    return {
+      path,
+      reachable: isReachable,
+      importers,
+      category: isReachable
+        ? "REACHABLE"
+        : hardOrphan
+          ? "HARD_ORPHAN"
+          : barrelOnly
+            ? "BARREL_ONLY"
+            : "UNREACHABLE",
+      disposition: defaultDisposition(path, hardOrphan),
+    };
+  });
+
+  const unreachable = modules.filter((module) => !module.reachable);
+  return {
+    entryPoints: ENTRY_POINTS.map(relativeSource),
+    totals: {
+      sourceModules: modules.length,
+      reachable: reachable.size,
+      unreachable: unreachable.length,
+      hardOrphans: modules.filter((module) => module.category === "HARD_ORPHAN").length,
+      barrelOnly: modules.filter((module) => module.category === "BARREL_ONLY").length,
+    },
+    modules,
+  };
+}
+
+/** Render the non-reachable modules as an auditable disposition table. */
+export function renderDispositionReport(inventory) {
+  const unreachable = inventory.modules.filter((module) => !module.reachable);
+  const lines = [
+    "# Reachability Disposition Record",
+    "",
+    "> Generated from `src/main.ts` and `src/sw.ts` by `scripts/reachability-inventory.mjs`.",
+    "> Every module not reachable from those entry points appears exactly once below.",
+    "",
+    `- Source modules: ${inventory.totals.sourceModules}`,
+    `- Reachable modules: ${inventory.totals.reachable}`,
+    `- Unreachable modules: ${inventory.totals.unreachable}`,
+    `- Hard orphans: ${inventory.totals.hardOrphans}`,
+    `- Barrel-only modules: ${inventory.totals.barrelOnly}`,
+    "",
+    "| Module | Category | Importers | Disposition |",
+    "| --- | --- | --- | --- |",
+  ];
+
+  for (const module of unreachable) {
+    lines.push(
+      `| \`${module.path}\` | ${module.category} | ${module.importers.join("<br>") || "-"} | ${module.disposition} |`,
+    );
+  }
+
+  return `${lines.join("\n")}\n`;
+}
+
+const inventory = buildInventory();
+if (process.argv.includes("--json")) {
+  process.stdout.write(`${JSON.stringify(inventory, null, 2)}\n`);
+} else if (process.argv.includes("--markdown")) {
+  process.stdout.write(renderDispositionReport(inventory));
+} else if (process.argv.includes("--check-markdown")) {
+  const expected = renderDispositionReport(inventory);
+  const actual = readFileSync(REPORT_PATH, "utf8");
+  if (actual !== expected) {
+    process.stderr.write(`Reachability report is stale: ${relative(ROOT, REPORT_PATH)}\n`);
+    process.exitCode = 1;
+  } else {
+    process.stdout.write(`Reachability report is current: ${relative(ROOT, REPORT_PATH)}\n`);
+  }
+} else {
+  process.stdout.write(
+    `Reachability: ${inventory.totals.reachable}/${inventory.totals.sourceModules} reachable; ` +
+      `${inventory.totals.hardOrphans} hard orphans; ${inventory.totals.barrelOnly} barrel-only\n`,
+  );
+}

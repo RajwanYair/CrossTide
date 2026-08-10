@@ -72,6 +72,7 @@
     "typecheck": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit",
     "check:bundle": "node scripts/check-bundle-size.mjs",
     "check:reachability": "node scripts/reachability-inventory.mjs --json",
+    "check:reachability:report": "node scripts/reachability-inventory.mjs --check-markdown",
     "check:doc-facts": "node scripts/check-doc-facts.mjs",
     "check:md-links": "node scripts/check-markdown-links.mjs",
     "check:wasm": "node scripts/check-wasm-size.mjs",
