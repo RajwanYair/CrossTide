@@ -89,6 +89,12 @@ import { openShortcutsDialog } from "./ui/shortcuts-dialog";
 import { updateFreshnessIndicator } from "./ui/freshness-indicator";
 import { initSidebarToggle } from "./ui/sidebar";
 import { initCardPrefetchOnIntent } from "./ui/card-prefetch";
+import { applyEnhancedFocus } from "./ui/a11y-aaa";
+import { onSwipe } from "./ui/mobile-ux";
+import "./ui/chart-frame";
+import "./ui/empty-state";
+import "./ui/filter-bar";
+import "./ui/stat-grid";
 
 const cardHandles = new Map<RouteName, CardHandle>();
 const cardContainers: Partial<Record<RouteName, string>> = {
@@ -392,6 +398,14 @@ function main(): void {
 
   initEnhancedContrast(); // Q6: restore [data-contrast="aaa"] from localStorage
   loadPersistedPalette(); // C2: restore color-blind palette from localStorage
+  const removeEnhancedFocus = applyEnhancedFocus();
+  const removeMobileSwipe = onSwipe(document.body, (event) => {
+    if (event.direction !== "right") return;
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+    if (window.matchMedia("(max-width: 767px)").matches && sidebarToggle) {
+      sidebarToggle.click();
+    }
+  });
 
   // Subscribe BEFORE initRouter(): it dispatches the initial route
   // synchronously, and a handler added afterwards would miss it — leaving a
@@ -411,6 +425,8 @@ function main(): void {
 
   initRouter();
   window.addEventListener("pagehide", stopPerfObserver, { once: true });
+  window.addEventListener("pagehide", removeEnhancedFocus, { once: true });
+  window.addEventListener("pagehide", removeMobileSwipe, { once: true });
   initOfflineIndicator();
   initCardCollapse();
   initDashboardStats();

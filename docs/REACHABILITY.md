@@ -4,9 +4,9 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 517
-- Reachable modules: 208
-- Unreachable modules: 309
-- Hard orphans: 55
+- Reachable modules: 214
+- Unreachable modules: 303
+- Hard orphans: 49
 - Barrel-only modules: 239
 
 | Module | Category | Importers | Disposition |
@@ -283,26 +283,21 @@
 | `src/providers/index.ts` | HARD_ORPHAN | - | WIRE |
 | `src/providers/polygon-provider.ts` | BARREL_ONLY | src/providers/index.ts | PUBLISH |
 | `src/types/index.ts` | HARD_ORPHAN | - | WIRE |
-| `src/ui/a11y-aaa.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/a11y.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/abort-helpers.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/anchor-tooltip.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/aria-live.ts` | UNREACHABLE | src/ui/a11y.ts<br>src/ui/index.ts | PUBLISH |
 | `src/ui/card-width.ts` | HARD_ORPHAN | - | WIRE |
-| `src/ui/chart-frame.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/clipboard.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/color-blend.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/color-scale.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/container-query.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/contrast.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/drawing.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
-| `src/ui/empty-state.ts` | HARD_ORPHAN | - | WIRE |
-| `src/ui/filter-bar.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/focus-trap.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/freshness.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/index.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/keymap-formatter.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
-| `src/ui/mobile-ux.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/multi-sparkline.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/popover.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/range-bar.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
@@ -312,7 +307,6 @@
 | `src/ui/screen-reader-audit.ts` | UNREACHABLE | src/ui/screen-reader-audit.ts | PUBLISH |
 | `src/ui/scroll-driven.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/sparkbar.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
-| `src/ui/stat-grid.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/svg-path.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/text-highlight.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/text-truncate.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
