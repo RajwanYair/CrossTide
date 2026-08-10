@@ -259,7 +259,7 @@ detect.
 | ID | Gap | Detail |
 |---|---|---|
 | D2 | No doc-fact gate | Nothing prevents a number in Markdown from drifting from code. Recurrence is certain without automation. |
-| D3 | Dead links unresolved | Issue [#106](https://github.com/RajwanYair/CrossTide/issues/106) is open from the monthly link-check workflow and was never triaged. |
+| D3 | Dead links unresolved | The repository now checks local Markdown targets and anchors deterministically; issue [#106](https://github.com/RajwanYair/CrossTide/issues/106) still needs owner-side closure for any external URL findings. |
 | D4 | Issue tracker drift | [#105](https://github.com/RajwanYair/CrossTide/issues/105) is complete but open; [#103](https://github.com/RajwanYair/CrossTide/issues/103) says 52 where the audit finds 57. |
 | D5 | Missing ADRs | The 11 ADRs stop before the split-Vitest-projects, Biome-over-Prettier, domain-packaging, and WASM decisions. |
 | D6 | `INDICATORS.md` quality | Generated, excluded from `lint:md`, and some rows dump whole source bodies into a table cell. |
@@ -351,7 +351,7 @@ that cannot observe what it claims to observe.
 |---|---|---|:---:|:---:|:---:|---|:---:|
 | D1 | Docs | Correct every drifted fact listed in §4.1 | P | P0 | S | — | ✅ |
 | D2 | Docs | Doc-fact gate asserting Markdown counts against code | P | P1 | M | D1 | ⬜ |
-| D3 | Docs | Triage and close the dead-link issue #106 | P | P1 | S | — | ⬜ |
+| D3 | Docs | Triage and close the dead-link issue #106 | P | P1 | S | — | 🟡 |
 | D4 | Docs | Reconcile issues #103, #104, #105 with audit reality | P | P1 | S | P10a | ⬜ |
 | D5 | Docs | ADRs 0012 to 0015: split test projects, Biome, packaging, WASM | P | P2 | M | — | ⬜ |
 | D6 | Docs | Fix the `INDICATORS.md` generator emitting source bodies | Q | P2 | S | — | ⬜ |

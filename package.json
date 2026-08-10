@@ -73,6 +73,7 @@
     "check:bundle": "node scripts/check-bundle-size.mjs",
     "check:reachability": "node scripts/reachability-inventory.mjs --json",
     "check:doc-facts": "node scripts/check-doc-facts.mjs",
+    "check:md-links": "node scripts/check-markdown-links.mjs",
     "check:wasm": "node scripts/check-wasm-size.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:supply-chain": "npm audit --omit=dev --audit-level=high && npm audit signatures",
