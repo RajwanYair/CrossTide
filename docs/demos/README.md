@@ -2,6 +2,9 @@
 
 Animated GIF demos for the README, recorded via Playwright against the live dev server.
 
+> **Status: Code-ready, not published.** The recording pipeline is available locally,
+> but demo artifacts are git-ignored and the README currently has no verified live demo.
+
 ## 🔄 Pipeline
 
 ```mermaid

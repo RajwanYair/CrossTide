@@ -2,6 +2,9 @@
 
 Uptime Kuma instance deployed on Fly.io for monitoring CrossTide API health.
 
+> **Status: Configuration only, not verified live.** `fly.toml` and the monitor plan are
+> ready, but no public status page or deployed monitoring instance is currently verified.
+
 ## 🔄 Pipeline
 
 ```mermaid

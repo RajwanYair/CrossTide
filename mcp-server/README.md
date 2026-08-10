@@ -2,6 +2,9 @@
 
 [Model Context Protocol](https://modelcontextprotocol.io) server that exposes CrossTide's financial analysis API to AI agents (Claude, GPT, etc.).
 
+> **Status: Code-ready, local use only.** The server builds and can connect to a local
+> Worker; a public Worker endpoint is not configured or verified yet.
+
 ## 🔄 How it works
 
 ```mermaid
