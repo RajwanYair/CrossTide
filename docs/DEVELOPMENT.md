@@ -39,8 +39,8 @@ Opens at `http://localhost:5173` with HMR.
 | `npm run lint:html`     | HTMLHint check                        |
 | `npm run lint:md`       | Markdownlint check                    |
 | `npm run typecheck`     | TypeScript strict check               |
-| `npm run format`        | Prettier format                       |
-| `npm run format:check`  | Prettier verify                       |
+| `npm run format`        | Biome auto-format                     |
+| `npm run format:check`  | Biome format check                    |
 | `npm run build`         | Production build                      |
 | `npm run check:bundle`  | Verify bundle < 250 KB gzip           |
 | `npm run ci`            | Full CI pipeline (all of the above)   |
@@ -60,6 +60,8 @@ src/
 worker/       ← Hono on Cloudflare Workers (API backend)
 tests/        ← Unit, browser, and E2E tests
 ```
+
+Configuration placement is documented in [`config/README.md`](../config/README.md).
 
 ## 🚪 Import Rules
 
@@ -120,7 +122,7 @@ All must pass before merge:
 - Stylelint: zero CSS warnings
 - HTMLHint: zero issues
 - Markdownlint: zero violations
-- Prettier: formatted
+- Biome: formatted clean
 - Tests: all pass, 90%+ coverage
 - Build: successful
 - Bundle: under 250 KB gzip
@@ -144,4 +146,4 @@ type(scope): lowercase subject, ≤72 chars
 
 Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `ci`
 
-Enforced by commitlint via husky pre-commit hook.
+Enforced by commitlint via simple-git-hooks pre-commit hook.
