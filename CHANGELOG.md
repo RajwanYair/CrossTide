@@ -10,6 +10,12 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [11.44.4] — 2026-08-10
+
+### 🔄 Changed
+
+- **Sprint delivery completed:** deterministic CI tools, scanner policies, workflow documentation, and configuration placement rules are now documented and enforced.
+
 ## [11.44.3] — 2026-08-02
 
 ### 🔄 Changed

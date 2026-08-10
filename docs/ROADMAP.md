@@ -1,6 +1,6 @@
 # CrossTide — Consolidated Master Roadmap v12
 
-> **Date:** 10 August 2026 · **Current release:** v11.44.3
+> **Date:** 10 August 2026 · **Current release:** v11.44.4
 > **Supersedes:** Strategic Roadmap v11 (2 Aug 2026), v10, v9, v8, v6.
 > Archived predecessors remain readable at `docs/ROADMAP-v9-archive.md`,
 > `docs/ROADMAP-v8-archive.md`, `docs/ROADMAP-v6-archive.md`.
@@ -79,7 +79,7 @@ this table is stale and is corrected under §4.
 
 | Metric | Verified value | Source of truth |
 |---|---|---|
-| Release | v11.44.3 | `package.json` |
+| Release | v11.44.4 | `package.json` |
 | Source modules under `src/` | 517 TypeScript files | file walk |
 | Domain modules | 220, plus `_experimental/` | `src/domain/*.ts` |
 | Core modules | 139 | `src/core/*.ts` |
@@ -89,7 +89,7 @@ this table is stale and is corrected under §4.
 | Worker route files | 45 | `worker/routes/*.ts` |
 | Registered Worker routes | 56 | `worker/index.ts` |
 | OpenAPI documented routes | 56 of 56, `KNOWN_GAP` empty | `tests/unit/worker/openapi-drift.test.ts` |
-| Test files | 654 | `tests/**/*.{test,spec}.ts` |
+| Test files | 656 | `tests/**/*.{test,spec}.ts` |
 | Coverage | 93.05% stmt · 83.86% branch · 94.95% func · 94.85% line | `npm run test:coverage` |
 | Bundle | 212.6 KB gzip, cap 250 KB | `npm run check:bundle` |
 | Service worker precache | 50 entries, 941.3 KB | `scripts/workbox-inject.mjs` |
@@ -249,8 +249,8 @@ detect.
 | `.github/CONTRIBUTING.md` | "#103 — one of the 52 orphaned _domain_ modules, unreachable from any barrel" | Wrong layer and count: 57 hard orphans in `core`, `ui`, `cards`; the domain barrel is complete |
 | `.github/copilot-instructions.md` | "Do NOT speculatively load `src/domain/indicators/` (218 files)" | That directory does not exist; domain is flat with 221 files |
 | `.github/copilot-instructions.md` | "`src/cards/` (54 files)" | 52 |
-| `.github/AGENTS.md` | "Tests: 629 files / 7198 tests" | 654 test files |
-| `docs/ARCHITECTURE.md` | "Vitest unit tests (629 files / 7,198 tests)" | 654 test files |
+| `.github/AGENTS.md` | "Tests: 629 files / 7198 tests" | 656 test files |
+| `docs/ARCHITECTURE.md` | "Vitest unit tests (629 files / 7,198 tests)" | 656 test files |
 | `README.md` | Embeds six demo GIFs from `docs/demos/` | **All six are missing.** `docs/demos/` holds only a README, so the landing page renders six broken images |
 | Prior roadmap | "158 KB bundle", "608 tests" | 212.6 KB, 652 test files |
 

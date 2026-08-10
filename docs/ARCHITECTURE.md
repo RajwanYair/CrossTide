@@ -1,6 +1,6 @@
 # 🏗️ Architecture
 
-> **Last updated:** v11.44.3 (August 2026)
+> **Last updated:** v11.44.4 (August 2026)
 
 CrossTide Web is a browser-based stock monitoring dashboard built with vanilla TypeScript and Vite.
 It follows a strict layered architecture, keeps the production bundle small, and ships as a
@@ -163,7 +163,7 @@ CrossTide/
 ├── packages/
 │   └── domain/         @crosstide/domain — src/domain built as a zero-dependency npm package
 ├── docs/               Roadmap, contributing guidelines, architecture
-├── tests/unit/         Vitest unit tests (654 test files)
+├── tests/unit/         Vitest unit tests (656 test files)
 └── public/             Static assets, PWA manifest, 404.html
 ```
 
@@ -240,7 +240,7 @@ Local and CI both enforce, with **zero waivers**:
 - 0 HTMLHint findings (`npm run lint:html`)
 - 0 markdownlint findings (`npm run lint:md`)
 - Biome clean (`npm run format:check`)
-- All unit tests pass across 654 test files (`npm test`), v8 coverage thresholds met
+- All unit tests pass across 656 test files (`npm test`), v8 coverage thresholds met
 - 15+ Playwright E2E flows + axe a11y audit pass
 - Lighthouse CI budgets met
 - Production build under 250 KB gzipped JS (`npm run check:bundle`)
