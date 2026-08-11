@@ -4,9 +4,9 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 517
-- Reachable modules: 223
-- Unreachable modules: 294
-- Hard orphans: 40
+- Reachable modules: 225
+- Unreachable modules: 292
+- Hard orphans: 38
 - Barrel-only modules: 239
 
 | Module | Category | Importers | Disposition |
@@ -62,13 +62,11 @@
 | `src/core/promise-pool.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/public-api.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/push-notifications.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/recent-tickers.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/request-logger.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/retry-backoff.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/route-guards.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/safe-json.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/screener-worker.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/search-history.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/seedrandom.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/shortcut-customization.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/speculation-rules.ts` | HARD_ORPHAN | - | WIRE |

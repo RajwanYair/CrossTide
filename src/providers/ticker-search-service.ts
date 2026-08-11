@@ -12,6 +12,7 @@
 import type { SearchResult } from "./types";
 import { getChain } from "./provider-registry";
 import { getApiClient } from "../core/worker-api-client";
+import { recordSearch } from "../core/search-history";
 
 const DEFAULT_LIMIT = 8;
 
@@ -27,6 +28,7 @@ export async function searchTickers(
 ): Promise<readonly SearchResult[]> {
   const q = query.trim();
   if (!q) return [];
+  recordSearch(q);
 
   const viaWorker = await getApiClient().search({ q, limit });
   if (viaWorker.ok && viaWorker.value.results.length > 0) {

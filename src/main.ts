@@ -80,6 +80,7 @@ import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { initPlausible } from "./core/plausible";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
 import { searchTickers } from "./providers/ticker-search-service";
+import { recordTickerView } from "./core/recent-tickers";
 import { isSupportedSymbol } from "./domain/ticker-catalog";
 import { createAutocomplete } from "./ui/ticker-autocomplete";
 import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
@@ -503,6 +504,7 @@ function main(): void {
       showToast({ message: `Invalid ticker: ${t}`, type: "error" });
       return;
     }
+    recordTickerView(t);
     if (config.watchlist.some((e) => e.ticker === t)) {
       showToast({ message: `${t} already in watchlist`, type: "warning" });
       return;

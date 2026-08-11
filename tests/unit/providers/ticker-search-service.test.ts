@@ -5,6 +5,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 const workerSearch = vi.fn();
 const chainSearch = vi.fn();
+const recordSearch = vi.fn();
 
 vi.mock("../../../src/core/worker-api-client", () => ({
   getApiClient: () => ({ search: workerSearch }),
@@ -12,6 +13,10 @@ vi.mock("../../../src/core/worker-api-client", () => ({
 
 vi.mock("../../../src/providers/provider-registry", () => ({
   getChain: () => ({ search: chainSearch }),
+}));
+
+vi.mock("../../../src/core/search-history", () => ({
+  recordSearch,
 }));
 
 const { searchTickers } = await import("../../../src/providers/ticker-search-service");
@@ -43,6 +48,7 @@ describe("searchTickers", () => {
     await expect(searchTickers("aapl")).resolves.toEqual([
       { symbol: "AAPL", name: "Apple Inc.", exchange: "NASDAQ", type: "stock" },
     ]);
+    expect(recordSearch).toHaveBeenCalledWith("aapl");
     expect(chainSearch).not.toHaveBeenCalled();
   });
 
