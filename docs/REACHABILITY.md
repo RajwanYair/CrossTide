@@ -4,9 +4,9 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 517
-- Reachable modules: 222
-- Unreachable modules: 295
-- Hard orphans: 41
+- Reachable modules: 223
+- Unreachable modules: 294
+- Hard orphans: 40
 - Barrel-only modules: 239
 
 | Module | Category | Importers | Disposition |
@@ -62,7 +62,6 @@
 | `src/core/promise-pool.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/public-api.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/push-notifications.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/quote-staleness.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/recent-tickers.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/request-logger.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/retry-backoff.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |

@@ -6,6 +6,7 @@
  */
 
 export type FreshnessLevel = "fresh" | "stale" | "expired";
+import { checkStaleness } from "./quote-staleness";
 
 export interface FreshnessStatus {
   readonly ticker: string;
@@ -37,18 +38,18 @@ export function getFreshness(ticker: string, now = Date.now()): FreshnessStatus 
   }
 
   const ageMs = now - lastFetchedAt;
-  let level: FreshnessLevel;
+  const level: FreshnessLevel = checkStaleness(ticker, lastFetchedAt, now, {
+    freshMs: STALE_THRESHOLD_MS - 1,
+    staleMs: EXPIRED_THRESHOLD_MS - 1,
+  }).status;
   let label: string;
 
-  if (ageMs < STALE_THRESHOLD_MS) {
-    level = "fresh";
+  if (level === "fresh") {
     label = "Live";
-  } else if (ageMs < EXPIRED_THRESHOLD_MS) {
-    level = "stale";
+  } else if (level === "stale") {
     const mins = Math.floor(ageMs / 60_000);
     label = `${mins}m ago`;
   } else {
-    level = "expired";
     const mins = Math.floor(ageMs / 60_000);
     label = mins >= 60 ? `${Math.floor(mins / 60)}h ago` : `${mins}m ago`;
   }
