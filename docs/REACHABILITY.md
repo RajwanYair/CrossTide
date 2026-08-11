@@ -4,10 +4,10 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 517
-- Reachable modules: 226
-- Unreachable modules: 291
-- Hard orphans: 37
-- Barrel-only modules: 239
+- Reachable modules: 228
+- Unreachable modules: 289
+- Hard orphans: 36
+- Barrel-only modules: 238
 
 | Module | Category | Importers | Disposition |
 | --- | --- | --- | --- |
@@ -276,7 +276,6 @@
 | `src/ui/abort-helpers.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/anchor-tooltip.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/aria-live.ts` | UNREACHABLE | src/ui/a11y.ts<br>src/ui/index.ts | PUBLISH |
-| `src/ui/clipboard.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/color-blend.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/color-scale.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/container-query.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
@@ -298,7 +297,6 @@
 | `src/ui/svg-path.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/text-highlight.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/text-truncate.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
-| `src/ui/ticker-context-menu.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/treemap-layout.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/uplot-helpers.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/widget.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |

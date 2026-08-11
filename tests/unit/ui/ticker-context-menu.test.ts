@@ -5,6 +5,7 @@ import {
   showTickerMenu,
   hideTickerMenu,
   getRegisteredActions,
+  bindTickerContextMenu,
 } from "../../../src/ui/ticker-context-menu";
 
 describe("ticker-context-menu", () => {
@@ -90,5 +91,21 @@ describe("ticker-context-menu", () => {
     const actions = [{ id: "test", label: "Test", handler: vi.fn() }];
     registerTickerActions(actions);
     expect(getRegisteredActions()).toEqual(actions);
+  });
+
+  it("opens for a ticker row and removes the delegated listener", () => {
+    const root = document.createElement("tbody");
+    root.innerHTML = `<tr data-ticker="AAPL"><td>AAPL</td></tr>`;
+    document.body.appendChild(root);
+    const removeBinding = bindTickerContextMenu(root);
+    const event = new MouseEvent("contextmenu", { bubbles: true, clientX: 20, clientY: 30 });
+    root.querySelector("td")?.dispatchEvent(event);
+    expect(document.querySelector<HTMLElement>(".ticker-context-menu")?.style.display).toBe(
+      "block",
+    );
+    removeBinding();
+    hideTickerMenu();
+    root.querySelector("td")?.dispatchEvent(event);
+    expect(document.querySelector<HTMLElement>(".ticker-context-menu")?.style.display).toBe("none");
   });
 });

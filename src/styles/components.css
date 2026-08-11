@@ -1817,6 +1817,50 @@
       }
     }
   }
+
+  /* ── Ticker context menu ──────────────────────────────────────────── */
+  .ticker-context-menu {
+    position: fixed;
+    z-index: 1000;
+    min-width: 11rem;
+    padding: var(--sp-xs);
+    margin: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    color: var(--text-primary);
+  }
+
+  .context-menu-header {
+    padding: var(--sp-sm) var(--sp-md);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .context-menu-item {
+    display: flex;
+    width: 100%;
+    min-height: 2rem;
+    align-items: center;
+    gap: var(--sp-sm);
+    padding: var(--sp-sm) var(--sp-md);
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: start;
+  }
+
+  .context-menu-item:hover,
+  .context-menu-item:focus-visible {
+    background: var(--bg-card-hover);
+    outline: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------

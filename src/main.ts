@@ -93,6 +93,12 @@ import { initSidebarToggle } from "./ui/sidebar";
 import { initCardPrefetchOnIntent } from "./ui/card-prefetch";
 import { applyEnhancedFocus } from "./ui/a11y-aaa";
 import { onSwipe } from "./ui/mobile-ux";
+import {
+  bindTickerContextMenu,
+  initTickerContextMenu,
+  registerTickerActions,
+} from "./ui/ticker-context-menu";
+import { copyToClipboard } from "./ui/clipboard";
 import "./ui/chart-frame";
 import "./ui/empty-state";
 import "./ui/filter-bar";
@@ -435,6 +441,29 @@ function main(): void {
   initDashboardStats();
   initPlausible(); // R14: privacy-respecting Plausible analytics
   checkWhatsNew();
+  const cleanupTickerContextMenu = initTickerContextMenu();
+  registerTickerActions([
+    {
+      id: "chart",
+      label: "View chart",
+      handler: (ticker): void => navigateToPath("chart", { symbol: ticker }),
+    },
+    {
+      id: "copy",
+      label: "Copy ticker",
+      handler: (ticker): void => {
+        void copyToClipboard(ticker).then((result) => {
+          if (result.ok) showToast({ message: `${ticker} copied to clipboard`, type: "success" });
+        });
+      },
+    },
+  ]);
+  const watchlistBody = document.getElementById("watchlist-body");
+  const removeTickerContextMenuBinding = watchlistBody
+    ? bindTickerContextMenu(watchlistBody)
+    : (): void => undefined;
+  window.addEventListener("pagehide", cleanupTickerContextMenu, { once: true });
+  window.addEventListener("pagehide", removeTickerContextMenuBinding, { once: true });
   refreshWatchlist(config, new Map());
 
   // Mount instrument filter bar (B12)

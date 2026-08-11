@@ -116,6 +116,21 @@ export function hideTickerMenu(): void {
   hide();
 }
 
+/** Bind the menu to ticker rows beneath a stable container. */
+export function bindTickerContextMenu(root: HTMLElement): () => void {
+  function onContextMenu(e: MouseEvent): void {
+    const row = (e.target as Element).closest<HTMLElement>("[data-ticker]");
+    if (!row || !root.contains(row)) return;
+    const ticker = row.dataset["ticker"];
+    if (!ticker) return;
+    e.preventDefault();
+    showTickerMenu(ticker, e.clientX, e.clientY);
+  }
+
+  root.addEventListener("contextmenu", onContextMenu);
+  return (): void => root.removeEventListener("contextmenu", onContextMenu);
+}
+
 /**
  * Initialize the ticker context menu system.
  * Returns a cleanup function.
