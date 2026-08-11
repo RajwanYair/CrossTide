@@ -76,15 +76,14 @@
         <h1>CrossTide</h1>
         <span class="header-tagline">12-Method Consensus Dashboard</span>
       </div>
-      <div
+      <output
         id="market-status"
         class="status-badge"
-        role="status"
         aria-live="polite"
         aria-label="Market status"
       >
         --
-      </div>
+      </output>
     </header>
     <div id="app-body">
       <nav id="app-nav" role="navigation" aria-label="Main navigation">
@@ -125,6 +124,7 @@
             <div class="card-header">
               <h2>Watchlist</h2>
               <div class="card-actions">
+                <label for="add-ticker" class="sr-only">Add ticker symbol</label>
                 <input
                   id="add-ticker"
                   type="text"
@@ -143,19 +143,18 @@
               </div>
             </div>
             <div id="watchlist-table-container">
-              <div
+              <fieldset
                 id="instrument-filter-bar"
                 class="instrument-filter-bar"
-                role="group"
-                aria-label="Filter by instrument type"
-              ></div>
-              <div
+              >
+                <legend class="sr-only">Filter by instrument type</legend>
+              </fieldset>
+              <output
                 id="sort-live"
-                role="status"
                 aria-live="polite"
                 aria-atomic="true"
                 class="sr-only"
-              ></div>
+              ></output>
               <table id="watchlist-table">
                 <thead id="watchlist-head">
                   <tr>
@@ -348,22 +347,22 @@
                 </select>
               </div>
               <div class="setting-group">
-                <label>Watchlist</label>
+                <span class="setting-label">Watchlist</span>
                 <button id="btn-export" type="button">Export JSON</button>
                 <button id="btn-import" type="button">Import JSON</button>
                 <button id="btn-clear" type="button" class="btn-danger">Clear All</button>
               </div>
               <div class="setting-group">
-                <label>Full data export (C7)</label>
+                <span class="setting-label">Full data export (C7)</span>
                 <button id="btn-export-full-json" type="button">Export all (JSON)</button>
                 <button id="btn-export-full-csv" type="button">Export all (CSV)</button>
               </div>
               <div class="setting-group">
-                <label>Cache</label>
+                <span class="setting-label">Cache</span>
                 <button id="btn-clear-cache" type="button">Clear Cache</button>
               </div>
               <div class="setting-group hidden" id="pwa-install-group">
-                <label>Install App</label>
+                <span class="setting-label">Install App</span>
                 <button id="btn-install-pwa" type="button" class="btn-accent">
                   Install CrossTide
                 </button>

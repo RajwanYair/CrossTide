@@ -237,7 +237,8 @@
     display: none;
   }
 
-  .setting-group label {
+  .setting-group label,
+  .setting-group .setting-label {
     min-width: 100px;
     font-weight: 500;
     color: var(--text-secondary);

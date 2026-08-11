@@ -21,6 +21,7 @@ const REACHABILITY_GATE_BASELINE = {
 };
 const ENTRY_POINTS = [resolve(SRC_ROOT, "main.ts"), resolve(SRC_ROOT, "sw.ts")];
 const IMPORT_PATTERN = /(?:from\s+|import\s*\(\s*|import\s*)["']([^"']+)["']/g;
+const compareStrings = (left, right) => left.localeCompare(right);
 
 function sourceFiles(directory) {
   const files = [];
@@ -29,7 +30,7 @@ function sourceFiles(directory) {
     if (entry.isDirectory()) files.push(...sourceFiles(path));
     else if (extname(entry.name) === ".ts" && !entry.name.endsWith(".d.ts")) files.push(path);
   }
-  return files.sort();
+  return files.sort(compareStrings);
 }
 
 function resolveImport(source, specifier) {
@@ -91,7 +92,7 @@ export function buildInventory() {
   }
 
   const modules = files.map((file) => {
-    const importers = [...reverse.get(file)].map(relativeSource).sort();
+    const importers = [...reverse.get(file)].map(relativeSource).sort(compareStrings);
     const path = relativeSource(file);
     const isReachable = reachable.has(file);
     const hardOrphan = !isReachable && importers.length === 0;
@@ -99,17 +100,15 @@ export function buildInventory() {
       !isReachable &&
       importers.length > 0 &&
       importers.every((importer) => importer.endsWith("/index.ts"));
+    let category = "UNREACHABLE";
+    if (isReachable) category = "REACHABLE";
+    else if (hardOrphan) category = "HARD_ORPHAN";
+    else if (barrelOnly) category = "BARREL_ONLY";
     return {
       path,
       reachable: isReachable,
       importers,
-      category: isReachable
-        ? "REACHABLE"
-        : hardOrphan
-          ? "HARD_ORPHAN"
-          : barrelOnly
-            ? "BARREL_ONLY"
-            : "UNREACHABLE",
+      category,
       disposition: defaultDisposition(path, hardOrphan),
     };
   });

@@ -12,7 +12,8 @@ const IGNORED = new Set([
   "test-results",
   "playwright-report",
 ]);
-const LINK_PATTERN = /\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/gu;
+const LINK_PATTERN = /\]\(([^)\s]+)/gu;
+const compareStrings = (left, right) => left.localeCompare(right);
 
 function markdownFiles(directory) {
   const files = [];
@@ -22,11 +23,13 @@ function markdownFiles(directory) {
     if (entry.isDirectory()) files.push(...markdownFiles(path));
     else if (extname(entry.name) === ".md") files.push(path);
   }
-  return files.sort();
+  return files.sort(compareStrings);
 }
 
 function slugify(heading) {
-  return heading
+  let cleanHeading = heading.trim();
+  while (cleanHeading.endsWith("#")) cleanHeading = cleanHeading.slice(0, -1).trimEnd();
+  return cleanHeading
     .toLowerCase()
     .replace(/[`*_~]/gu, "")
     .replace(/[^\p{Letter}\p{Number}\s-]/gu, "")
@@ -36,9 +39,11 @@ function slugify(heading) {
 
 function headings(source) {
   return new Set(
-    [...source.matchAll(/^#{1,6}\s+(.+)$/gmu)].map((match) =>
-      slugify(match[1].replace(/\s+#+\s*$/u, "")),
-    ),
+    source
+      .split("\n")
+      .map((line) => line.match(/^#{1,6} +(.+)$/u))
+      .filter((match) => match !== null)
+      .map((match) => slugify(match[1])),
   );
 }
 
@@ -46,9 +51,8 @@ function checkTarget(sourceFile, target, documents) {
   if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/iu.test(target)) return undefined;
   const [pathPart, fragment] = target.split("#", 2);
   const normalizedPath = decodeURIComponent(pathPart ?? "");
-  const targetFile = normalizedPath
-    ? resolve(normalizedPath.startsWith("/") ? ROOT : dirname(sourceFile), normalizedPath)
-    : sourceFile;
+  const targetDirectory = normalizedPath.startsWith("/") ? ROOT : dirname(sourceFile);
+  const targetFile = normalizedPath ? resolve(targetDirectory, normalizedPath) : sourceFile;
   if (!existsSync(targetFile) && !documents.has(targetFile)) {
     return `missing target ${target}`;
   }

@@ -30,7 +30,7 @@ function countTests() {
 
 function countRegisteredCards() {
   const registry = readFileSync(resolve(ROOT, "src/cards/registry.ts"), "utf8");
-  return [...registry.matchAll(/\n\s*route:\s*["']([^"']+)["']/gu)].length;
+  return [...registry.matchAll(/route:\s*["']([^"']+)["']/gu)].length;
 }
 
 /** Derive facts used by the canonical documentation. */
@@ -56,29 +56,38 @@ export function validateDocumentFacts() {
   const facts = collectDocumentedFacts();
   const roadmap = readFileSync(resolve(ROOT, "docs/ROADMAP.md"), "utf8");
   const architecture = readFileSync(resolve(ROOT, "docs/ARCHITECTURE.md"), "utf8");
+  const escapedVersion = facts.version.replaceAll(".", "\\.");
   const checks = [
-    [
-      roadmap,
-      "roadmap version",
-      new RegExp(`Current release:.*v${facts.version.replaceAll(".", "\\.")}`),
-    ],
+    [roadmap, "roadmap version", new RegExp(String.raw`Current release:.*v${escapedVersion}`)],
     [
       roadmap,
       "roadmap source modules",
-      new RegExp(`Source modules under.*\\| ${facts.sourceModules} TypeScript files`),
+      new RegExp(String.raw`Source modules under.*\| ${facts.sourceModules} TypeScript files`),
     ],
-    [roadmap, "roadmap domain modules", new RegExp(`Domain modules.*\\| ${facts.domainModules},`)],
-    [roadmap, "roadmap core modules", new RegExp(`Core modules.*\\| ${facts.coreModules} `)],
-    [roadmap, "roadmap ui modules", new RegExp(`UI modules.*\\| ${facts.uiModules} `)],
-    [roadmap, "roadmap card files", new RegExp(`Card files.*\\| ${facts.cardFiles} `)],
+    [
+      roadmap,
+      "roadmap domain modules",
+      new RegExp(String.raw`Domain modules.*\| ${facts.domainModules},`),
+    ],
+    [
+      roadmap,
+      "roadmap core modules",
+      new RegExp(String.raw`Core modules.*\| ${facts.coreModules} `),
+    ],
+    [roadmap, "roadmap ui modules", new RegExp(String.raw`UI modules.*\| ${facts.uiModules} `)],
+    [roadmap, "roadmap card files", new RegExp(String.raw`Card files.*\| ${facts.cardFiles} `)],
     [
       roadmap,
       "roadmap registered cards",
-      new RegExp(`Registered card routes.*\\| ${facts.registeredCards} `),
+      new RegExp(String.raw`Registered card routes.*\| ${facts.registeredCards} `),
     ],
-    [roadmap, "roadmap test files", new RegExp(`Test files.*\\| ${facts.testFiles} `)],
-    [architecture, "architecture version", new RegExp(`v${facts.version.replaceAll(".", "\\.")}`)],
-    [architecture, "architecture test files", new RegExp(`${facts.testFiles} test files`)],
+    [roadmap, "roadmap test files", new RegExp(String.raw`Test files.*\| ${facts.testFiles} `)],
+    [architecture, "architecture version", new RegExp(String.raw`v${escapedVersion}`)],
+    [
+      architecture,
+      "architecture test files",
+      new RegExp(String.raw`${facts.testFiles} test files`),
+    ],
   ];
   for (const [document, label, pattern] of checks) requireFact(document, label, pattern);
   return facts;
