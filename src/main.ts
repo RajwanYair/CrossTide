@@ -75,6 +75,7 @@ import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initOfflineIndicator } from "./ui/offline-indicator";
 import { initCardCollapse } from "./ui/card-collapse";
+import { applyAllCardWidths } from "./ui/card-width";
 import { initDashboardStats } from "./ui/dashboard-stats";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { initPlausible } from "./core/plausible";
@@ -157,6 +158,7 @@ async function activateCard(
     onError: (err) => console.error("Card error:", route, err),
   });
   cardHandles.set(route, handle);
+  applyAllCardWidths();
 }
 
 function main(): void {
