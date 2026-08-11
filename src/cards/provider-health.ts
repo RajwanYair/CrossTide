@@ -5,10 +5,15 @@
  */
 import type { ProviderHealth } from "../providers/types";
 import { patchDOM } from "../core/patch-dom";
+import type { ProviderUsageEntry } from "../core/provider-usage";
+import type { RateLimitInfo } from "../core/rate-limit-tracker";
 
 export interface ProviderHealthSnapshot {
   readonly providers: readonly ProviderHealth[];
   readonly lastRefreshAt: number; // Unix ms
+  readonly usage?: readonly ProviderUsageEntry[];
+  readonly rateLimits?: readonly RateLimitInfo[];
+  readonly failoverCount?: number;
 }
 
 /**
@@ -93,6 +98,11 @@ export function renderProviderHealth(
       </thead>
       <tbody>${rows}</tbody>
     </table>
+    <div class="provider-diagnostics" aria-label="Provider Diagnostics">
+      <span>API calls: ${snapshot.usage?.reduce((total, entry) => total + entry.calls, 0) ?? 0}</span>
+      <span>Rate windows: ${snapshot.rateLimits?.length ?? 0}</span>
+      <span>Failovers: ${snapshot.failoverCount ?? 0}</span>
+    </div>
   `,
   );
 }

@@ -31,6 +31,22 @@ vi.mock("../../../src/cards/provider-health-monitor", () => ({
   checkHealthTransition: vi.fn(),
 }));
 
+vi.mock("../../../src/core/provider-usage", () => ({
+  getAllProviderUsage: vi.fn(() => [
+    { provider: "yahoo", calls: 3, errors: 0, lastCallAt: 0, avgLatencyMs: 25 },
+  ]),
+}));
+
+vi.mock("../../../src/core/rate-limit-tracker", () => ({
+  getAllRateLimits: vi.fn(() => [
+    { provider: "yahoo", requestsInWindow: 2, capacity: 60, usagePercent: 3 },
+  ]),
+}));
+
+vi.mock("../../../src/core/failover-log", () => ({
+  getFailoverLog: vi.fn(() => []),
+}));
+
 describe("provider-health-card (CardModule)", () => {
   let container: HTMLElement;
 
@@ -100,6 +116,14 @@ describe("provider-health-card (CardModule)", () => {
     providerHealthCard.mount(container, { route: "provider-health", params: {} });
     // The rendered HTML should contain some indicator of health state
     expect(container.innerHTML.length).toBeGreaterThan(50);
+  });
+
+  it("shows provider diagnostics summaries", async () => {
+    const { default: providerHealthCard } = await import("../../../src/cards/provider-health-card");
+    providerHealthCard.mount(container, { route: "provider-health", params: {} });
+    expect(container.textContent).toContain("API calls: 3");
+    expect(container.textContent).toContain("Rate windows: 1");
+    expect(container.textContent).toContain("Failovers: 0");
   });
 
   it("calls checkHealthTransition on each refresh", async () => {

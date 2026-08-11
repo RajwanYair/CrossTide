@@ -4,9 +4,9 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 517
-- Reachable modules: 219
-- Unreachable modules: 298
-- Hard orphans: 44
+- Reachable modules: 222
+- Unreachable modules: 295
+- Hard orphans: 41
 - Barrel-only modules: 239
 
 | Module | Category | Importers | Disposition |
@@ -36,7 +36,6 @@
 | `src/core/easing.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/event-bus.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/export-image.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/failover-log.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/fetch-dedup.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/font-loader.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/full-backup.ts` | HARD_ORPHAN | - | WIRE |
@@ -61,11 +60,9 @@
 | `src/core/plugin-integrity.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/portfolio-store.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/promise-pool.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/provider-usage.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/public-api.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/push-notifications.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/quote-staleness.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/rate-limit-tracker.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/recent-tickers.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/request-logger.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/retry-backoff.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
