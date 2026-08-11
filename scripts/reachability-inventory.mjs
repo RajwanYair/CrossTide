@@ -16,6 +16,9 @@ const REACHABLE_COVERAGE_BASELINE = {
   lines: 91.6,
   maxUnmeasuredModules: 38,
 };
+const REACHABILITY_GATE_BASELINE = {
+  maxHardOrphans: 44,
+};
 const ENTRY_POINTS = [resolve(SRC_ROOT, "main.ts"), resolve(SRC_ROOT, "sw.ts")];
 const IMPORT_PATTERN = /(?:from\s+|import\s*\(\s*|import\s*)["']([^"']+)["']/g;
 
@@ -209,6 +212,23 @@ export function validateReachableCoverage(result) {
   return failures;
 }
 
+/** Validate that unreachable-module debt does not grow without a disposition. */
+export function validateReachabilityGate(inventory) {
+  const failures = [];
+  if (inventory.totals.hardOrphans > REACHABILITY_GATE_BASELINE.maxHardOrphans) {
+    failures.push(
+      `hard orphans ${inventory.totals.hardOrphans} > ${REACHABILITY_GATE_BASELINE.maxHardOrphans} baseline`,
+    );
+  }
+  const allowedDispositions = new Set(["WIRE", "PUBLISH", "PROMOTE", "MERGE", "DEFER"]);
+  for (const module of inventory.modules) {
+    if (!module.reachable && !allowedDispositions.has(module.disposition)) {
+      failures.push(`${module.path} has invalid disposition ${module.disposition}`);
+    }
+  }
+  return failures;
+}
+
 const inventory = buildInventory();
 if (process.argv.includes("--json")) {
   process.stdout.write(`${JSON.stringify(inventory, null, 2)}\n`);
@@ -222,6 +242,14 @@ if (process.argv.includes("--json")) {
     process.exitCode = 1;
   } else {
     process.stdout.write(`Reachability report is current: ${relative(ROOT, REPORT_PATH)}\n`);
+  }
+} else if (process.argv.includes("--reachability-gate")) {
+  const failures = validateReachabilityGate(inventory);
+  if (failures.length > 0) {
+    process.stderr.write(`${failures.join("\n")}\n`);
+    process.exitCode = 1;
+  } else {
+    process.stdout.write("Reachability gate passed.\n");
   }
 } else if (process.argv.includes("--reachable-coverage")) {
   const coverageSummary = JSON.parse(readFileSync(COVERAGE_PATH, "utf8"));

@@ -7,6 +7,7 @@ import {
   buildInventory,
   calculateReachableCoverage,
   renderDispositionReport,
+  validateReachabilityGate,
   validateReachableCoverage,
 } from "../../../scripts/reachability-inventory.mjs";
 
@@ -48,6 +49,18 @@ describe("buildInventory", () => {
 
     expect(rows).toHaveLength(inventory.totals.unreachable);
     expect(rows.every((row) => /\| (WIRE|PUBLISH|PROMOTE|MERGE|DEFER) \|$/u.test(row))).toBe(true);
+  });
+
+  it("fails when hard-orphan debt grows beyond the ratchet", () => {
+    const inventory = buildInventory();
+
+    expect(validateReachabilityGate(inventory)).toEqual([]);
+    expect(
+      validateReachabilityGate({
+        ...inventory,
+        totals: { ...inventory.totals, hardOrphans: 45 },
+      }),
+    ).toEqual(["hard orphans 45 > 44 baseline"]);
   });
 
   it("aggregates coverage over reachable modules and reports unmeasured modules", () => {
