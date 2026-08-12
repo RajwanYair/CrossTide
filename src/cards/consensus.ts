@@ -31,8 +31,32 @@ export function renderConsensus(
 
   const allMethods: readonly MethodSignal[] = [...result.buyMethods, ...result.sellMethods];
   const grid = renderMethodGrid(allMethods, result.direction);
+  const explanation = renderExplanation(result);
 
-  patchDOM(container, header + grid);
+  patchDOM(container, header + explanation + grid);
+}
+
+function renderExplanation(result: ConsensusResult): string {
+  const explanation = result.explanation ?? {
+    evaluatedAt: "unknown",
+    inputMethods: [...result.buyMethods, ...result.sellMethods].map((signal) => signal.method),
+    methodWeights: {},
+    limitations: ["Explanation metadata is unavailable for this result"],
+  };
+  const weights = Object.entries(explanation.methodWeights)
+    .map(([method, weight]) => `<li>${escapeHtml(method)}: ${weight}</li>`)
+    .join("");
+  const limitations = explanation.limitations
+    .map((limitation) => `<li>${escapeHtml(limitation)}</li>`)
+    .join("");
+
+  return `<details class="consensus-explanation">
+    <summary>How this signal was calculated</summary>
+    <p>Evaluated ${escapeHtml(explanation.evaluatedAt)}</p>
+    <p>Methods evaluated: ${explanation.inputMethods.length}</p>
+    ${weights ? `<div><strong>Weights</strong><ul>${weights}</ul></div>` : ""}
+    ${limitations ? `<div><strong>Limitations</strong><ul>${limitations}</ul></div>` : ""}
+  </details>`;
 }
 
 function renderMethodGrid(methods: readonly MethodSignal[], overall: SignalDirection): string {

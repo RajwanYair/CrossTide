@@ -16,6 +16,7 @@ import {
   showNotification,
 } from "../core/notifications";
 import { playAlertSound } from "../core/alert-sound";
+import { isNotificationEnabled } from "../core/notification-prefs";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate } from "../ui/delegate";
 import type { CardModule } from "./registry";
@@ -46,7 +47,7 @@ export function pushAlert(alert: AlertRecord): void {
   saveAlerts(alerts);
 
   // Fire browser notification if permission granted
-  if (getNotificationPermission() === "granted") {
+  if (isNotificationEnabled("signalFlips") && getNotificationPermission() === "granted") {
     showNotification(`${alert.ticker} — ${alert.direction}`, {
       body: alert.description,
       tag: `alert-${alert.ticker}-${alert.firedAt}`,
@@ -54,7 +55,7 @@ export function pushAlert(alert: AlertRecord): void {
   }
 
   // Play audible chime
-  playAlertSound();
+  if (isNotificationEnabled("signalFlips")) playAlertSound();
 }
 
 function renderPermissionUI(container: HTMLElement): void {

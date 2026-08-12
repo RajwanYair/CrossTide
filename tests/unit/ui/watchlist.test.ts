@@ -10,6 +10,10 @@ import {
   bindWatchlistReorder,
 } from "../../../src/ui/watchlist";
 import type { AppConfig, ConsensusResult } from "../../../src/types/domain";
+import { clearPins, pinTicker } from "../../../src/core/ticker-pinning";
+import { clearSelection, selectTicker } from "../../../src/core/ticker-selection";
+import { setTickerTag, removeTickerTag } from "../../../src/core/ticker-tags";
+import { setTickerNote, deleteTickerNote } from "../../../src/core/ticker-notes";
 
 function makeConfig(tickers: string[]): AppConfig {
   return {
@@ -226,6 +230,43 @@ describe("setSortColumn + sort behavior", () => {
     expect(rows[0]!.textContent).toContain("HIGH");
     expect(rows[1]!.textContent).toContain("MID");
     expect(rows[2]!.textContent).toContain("LOW");
+  });
+
+  it("keeps pinned tickers ahead of sorted rows", () => {
+    clearPins();
+    pinTicker("LOW");
+    setSortColumn("ticker");
+    renderWatchlist(makeConfig(["HIGH", "LOW", "MID"]), new Map());
+    const rows = document.querySelectorAll("#watchlist-body tr[data-ticker]");
+    expect(rows[0]?.getAttribute("data-ticker")).toBe("LOW");
+    clearPins();
+  });
+
+  it("renders the batch selection state on ticker rows", () => {
+    clearSelection();
+    selectTicker("AAPL");
+    renderWatchlist(makeConfig(["AAPL"]), new Map());
+    const button = document.querySelector<HTMLButtonElement>('[data-action="select"]');
+    expect(button?.getAttribute("aria-pressed")).toBe("true");
+    clearSelection();
+  });
+
+  it("renders a persisted ticker tag", () => {
+    removeTickerTag("AAPL");
+    setTickerTag("AAPL", { color: "green", label: "Bullish" });
+    renderWatchlist(makeConfig(["AAPL"]), new Map());
+    expect(document.querySelector(".ticker-tag")?.textContent).toBe("Bullish");
+    removeTickerTag("AAPL");
+  });
+
+  it("exposes a persisted ticker note on the row", () => {
+    deleteTickerNote("AAPL");
+    setTickerNote("AAPL", "Review earnings");
+    renderWatchlist(makeConfig(["AAPL"]), new Map());
+    expect(document.querySelector("tr[data-ticker]")?.getAttribute("title")).toBe(
+      "Review earnings",
+    );
+    deleteTickerNote("AAPL");
   });
 
   it("renders aria-sort attributes on headers", () => {

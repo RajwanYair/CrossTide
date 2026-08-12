@@ -31,7 +31,7 @@ You own capability detection, progressive enhancement, and real-browser validati
 2. Detect capabilities instead of user agents.
 3. Preserve a graceful fallback for unsupported APIs.
 4. Keep `.browserslistrc`, `playwright.config.ts`, `vitest.browser.config.ts` and
-   `eslint.config.mjs → settings.browsers` in sync when targets change.
+  `.browserslistrc` in sync when targets change.
 5. Re-run the affected project locally with
    `./node_modules/.bin/playwright test --project=<name>` — never `npx playwright`.
 
@@ -52,7 +52,7 @@ before blaming the browser:
 Visual baselines are platform-scoped (`*-linux.png`) and must come from CI:
 `gh workflow run ci.yml --ref main -f update_snapshots=true`, then
 `gh run download <id> -n visual-snapshots`. Never commit `*-win32.png`.
-4. Keep browser targets synchronized across Browserslist, Playwright, Vitest, ESLint, and VS Code.
+4. Keep browser targets synchronized across Browserslist, Playwright, Vitest, Oxlint, and VS Code.
 5. Run the focused browser test, then the affected cross-browser project matrix.
 
 Use the Playwright MCP server for exploratory browser inspection; keep deterministic assertions in repository tests.

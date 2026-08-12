@@ -19,7 +19,7 @@ npm run lint            # 0 errors, 0 warnings, 0 suppressions
 npm run lint:css        # Stylelint 0 warnings
 npm run lint:html       # HTMLHint pass
 npm run lint:md         # markdownlint 0 errors
-npm run format:check    # Prettier exit 0
+npm run format:check    # Biome exit 0
 npm run test:coverage   # ≥90% stmt/line/fn, ≥80% branch
 npm run build           # Successful Vite + Workbox build
 npm run check:bundle    # <250 KB gzip
@@ -34,7 +34,7 @@ Or run all in one shot:
 npm run ci
 ```
 
-**Hard rules (enforced by CI and ESLint):**
+**Hard rules (enforced by CI and Oxlint/typecheck):**
 
 - No `// eslint-disable` or `/* eslint-disable */` anywhere in `src/`, `worker/`, or `tests/`
 - No `@ts-ignore` or `@ts-expect-error` in `src/` or `worker/`
@@ -144,7 +144,7 @@ git push origin main --tags
 ## 8 · 🚫 Reject Conditions (auto-block)
 
 - Any quality gate above is non-zero
-- New `eslint-disable` / `@ts-ignore` introduced
+- New suppressions such as `eslint-disable` / `@ts-ignore` introduced
 - New runtime dependency without an accompanying ADR
 - Bundle gzip exceeds 250 KB
 - Coverage drops below threshold (90 / 80)

@@ -5,11 +5,13 @@
  * Uses the default export's fetch handler directly so tests don't need
  * a Miniflare / Cloudflare runtime. All routes are pure HTTP logic.
  */
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import worker from "../../../worker/index";
 import { checkRateLimit } from "../../../worker/rate-limit";
 import { getAllowedOrigin } from "../../../worker/cors";
 import { withSecurityHeaders, _getSecurityHeaders } from "../../../worker/security";
+import type { ChartResponse } from "../../../worker/routes/chart";
+import type { MarketDataEnvelope } from "../../../src/types/market-data";
 
 // Minimal Env object for tests — use "production" so routes exercise real
 // validation logic instead of the fixture pass-through (isPreviewEnvironment).
@@ -55,9 +57,9 @@ describe("GET /api/chart", () => {
   it("returns candles for AAPL", async () => {
     const res = await worker.fetch(makeRequest("GET", "/api/chart?ticker=AAPL&range=1mo"), ENV);
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { ticker: string; candles: unknown[] };
-    expect(body.ticker).toBe("AAPL");
-    expect(body.candles.length).toBeGreaterThan(0);
+    const body = (await res.json()) as MarketDataEnvelope<ChartResponse>;
+    expect(body.data.ticker).toBe("AAPL");
+    expect(body.data.candles.length).toBeGreaterThan(0);
   });
 
   it("returns 400 for missing ticker", async () => {
@@ -81,15 +83,15 @@ describe("GET /api/chart", () => {
   it("returns deterministic candles (same seed = same result)", async () => {
     const r1 = await worker.fetch(makeRequest("GET", "/api/chart?ticker=TSLA&range=1mo"), ENV);
     const r2 = await worker.fetch(makeRequest("GET", "/api/chart?ticker=TSLA&range=1mo"), ENV);
-    const b1 = (await r1.json()) as { candles: Array<{ close: number }> };
-    const b2 = (await r2.json()) as { candles: Array<{ close: number }> };
-    expect(b1.candles[0]?.close).toBe(b2.candles[0]?.close);
+    const b1 = (await r1.json()) as MarketDataEnvelope<ChartResponse>;
+    const b2 = (await r2.json()) as MarketDataEnvelope<ChartResponse>;
+    expect(b1.data.candles[0]?.close).toBe(b2.data.candles[0]?.close);
   });
 
   it("OHLCV shape is correct", async () => {
     const res = await worker.fetch(makeRequest("GET", "/api/chart?ticker=GOOGL&range=5d"), ENV);
-    const body = (await res.json()) as { candles: Array<Record<string, unknown>> };
-    const candle = body.candles[0];
+    const body = (await res.json()) as MarketDataEnvelope<ChartResponse>;
+    const candle = body.data.candles[0];
     expect(candle).toHaveProperty("date");
     expect(candle).toHaveProperty("open");
     expect(candle).toHaveProperty("high");
@@ -148,19 +150,21 @@ describe("POST /api/screener", () => {
     const body = JSON.stringify({ tickers: ["AAPL", "MSFT", "TSLA"] });
     const res = await worker.fetch(makeRequest("POST", "/api/screener", { body }), ENV);
     expect(res.status).toBe(200);
-    const data = (await res.json()) as { rows: Array<{ ticker: string; rsi: number }> };
-    expect(data.rows.length).toBeGreaterThan(0);
-    expect(data.rows[0]).toHaveProperty("ticker");
-    expect(data.rows[0]).toHaveProperty("rsi");
-    expect(data.rows[0]).toHaveProperty("adx");
-    expect(data.rows[0]).toHaveProperty("consensus");
+    const data = (await res.json()) as {
+      data: { rows: Array<{ ticker: string; rsi: number }> };
+    };
+    expect(data.data.rows.length).toBeGreaterThan(0);
+    expect(data.data.rows[0]).toHaveProperty("ticker");
+    expect(data.data.rows[0]).toHaveProperty("rsi");
+    expect(data.data.rows[0]).toHaveProperty("adx");
+    expect(data.data.rows[0]).toHaveProperty("consensus");
   });
 
   it("filters by minRsi", async () => {
     const body = JSON.stringify({ tickers: ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN"], minRsi: 70 });
     const res = await worker.fetch(makeRequest("POST", "/api/screener", { body }), ENV);
-    const data = (await res.json()) as { rows: Array<{ rsi: number }> };
-    for (const row of data.rows) {
+    const data = (await res.json()) as { data: { rows: Array<{ rsi: number }> } };
+    for (const row of data.data.rows) {
       expect(row.rsi).toBeGreaterThanOrEqual(70);
     }
   });

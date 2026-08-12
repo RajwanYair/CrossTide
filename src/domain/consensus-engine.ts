@@ -11,7 +11,9 @@
  */
 import type {
   ConsensusResult,
+  ConsensusExplanation,
   MethodSignal,
+  MethodName,
   MethodWeights,
   SignalDirection,
 } from "../types/domain";
@@ -91,11 +93,36 @@ export function evaluateConsensus(
     strength = 0;
   }
 
+  const inputMethods = [...new Set(signals.map((signal) => signal.method))];
+  const methodWeights: Partial<Record<MethodName, number>> = {};
+  for (const method of BUY_METHODS) {
+    methodWeights[method as keyof typeof methodWeights] = resolveWeight(method, weights);
+  }
+  const evaluatedAt = signals.reduce(
+    (latest, signal) => (signal.evaluatedAt > latest ? signal.evaluatedAt : latest),
+    "",
+  );
+  const limitations: string[] = ["Consensus uses technical signals and is not financial advice."];
+  if (signals.length === 0) limitations.push("No method signals were available.");
+  if (!michoEnabled)
+    limitations.push("Micho is disabled, so BUY and SELL consensus cannot trigger.");
+  if (michoEnabled && direction === "NEUTRAL") {
+    limitations.push("A Micho signal and at least one active supporting method are required.");
+  }
+
+  const explanation: ConsensusExplanation = {
+    evaluatedAt,
+    inputMethods,
+    methodWeights,
+    limitations,
+  };
+
   return {
     ticker,
     direction,
     buyMethods: buySignals,
     sellMethods: sellSignals,
     strength,
+    explanation,
   };
 }

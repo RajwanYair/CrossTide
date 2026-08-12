@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { formatRelativeTime, _clearRelativeTimeCache } from "../../../src/ui/relative-time";
+import { setLocale } from "../../../src/core/i18n";
 
 const NOW = Date.UTC(2025, 5, 15, 12, 0, 0); // 2025-06-15 12:00 UTC
 const opt = { now: NOW, locale: "en-US" };
 
 beforeEach(() => {
   _clearRelativeTimeCache();
+  setLocale("en-US");
 });
 
 describe("relative-time", () => {
@@ -50,5 +52,12 @@ describe("relative-time", () => {
   it("different year includes year", () => {
     const out = formatRelativeTime(Date.UTC(2024, 2, 5), opt);
     expect(out).toMatch(/2024/);
+  });
+
+  it("uses the active locale when no locale option is provided", () => {
+    setLocale("de-DE");
+
+    const out = formatRelativeTime(NOW - 5 * 60_000, { now: NOW });
+    expect(out).toMatch(/5 Min\.|vor 5/);
   });
 });

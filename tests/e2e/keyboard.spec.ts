@@ -51,4 +51,17 @@ test.describe("Keyboard shortcuts", () => {
     const focused = page.locator(":focus");
     await expect(focused).not.toHaveCount(0);
   });
+
+  test("heatmap tiles activate from the keyboard", async ({ page }) => {
+    await page.goto("/heatmap");
+    await waitForAppReady(page);
+
+    const tile = page.locator('.heatmap-tile[data-symbol="Technology"]');
+    await expect(tile).toBeVisible();
+    await tile.focus();
+    await expect(tile).toBeFocused();
+    await tile.press("Enter");
+
+    await expect(page.locator(".heatmap-drill-table")).toBeVisible();
+  });
 });

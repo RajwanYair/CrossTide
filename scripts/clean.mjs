@@ -1,9 +1,22 @@
 /**
- * Clean build artifacts (dist, coverage).
+ * Clean reproducible build, test, documentation, and local runtime artifacts.
  */
 import { rmSync } from "node:fs";
 
-for (const dir of ["dist", "coverage"]) {
+const generatedDirectories = [
+  "dist",
+  "coverage",
+  "test-results",
+  "playwright-report",
+  ".playwright-mcp",
+  ".vitest-attachments",
+  "docs-site/.astro",
+  "docs-site/dist",
+  "mcp-server/dist",
+  "worker/.wrangler",
+];
+
+for (const dir of generatedDirectories) {
   rmSync(dir, { recursive: true, force: true });
 }
-console.log("Removed dist/ and coverage/.");
+console.log(`Removed ${generatedDirectories.length} generated directories.`);

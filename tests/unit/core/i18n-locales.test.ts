@@ -1,5 +1,5 @@
 /**
- * M6: i18n locale expansion tests — verify ES/DE/ZH dictionaries
+ * M6: i18n locale expansion tests — verify supported dictionaries
  * integrate with the i18n-catalog system and format correctly.
  */
 import { describe, it, expect, beforeEach } from "vitest";
@@ -17,19 +17,35 @@ import "../../../src/locales/es";
 import "../../../src/locales/de";
 import "../../../src/locales/zh";
 import "../../../src/locales/he";
+import en from "../../../src/locales/en";
+import es from "../../../src/locales/es";
+import de from "../../../src/locales/de";
+import zh from "../../../src/locales/zh";
+import he from "../../../src/locales/he";
+import ja from "../../../src/locales/ja";
+import { LOCALE_LABELS, SUPPORTED_LOCALES } from "../../../src/locales";
+import { formatCurrency, formatDate, formatNumber } from "../../../src/core/i18n";
 
 describe("i18n locale expansion", () => {
   beforeEach(() => {
     setLocale("en");
   });
 
-  it("registers all 5 locales", () => {
+  it("registers every supported locale", () => {
     const locales = getRegisteredLocales();
-    expect(locales).toContain("en");
-    expect(locales).toContain("es");
-    expect(locales).toContain("de");
-    expect(locales).toContain("zh");
-    expect(locales).toContain("he");
+    expect(locales).toEqual(expect.arrayContaining(SUPPORTED_LOCALES));
+  });
+
+  it("exposes the supported locale barrel contract", () => {
+    expect(SUPPORTED_LOCALES).toEqual(["en", "es", "de", "zh", "he", "ja"]);
+    expect(LOCALE_LABELS.ja).toBe("日本語");
+  });
+
+  it("keeps every supported catalog key-complete with English", () => {
+    const englishKeys = Object.keys(en).sort();
+    for (const catalog of [es, de, zh, he, ja]) {
+      expect(Object.keys(catalog).sort()).toEqual(englishKeys);
+    }
   });
 
   describe("English (en)", () => {
@@ -136,6 +152,13 @@ describe("i18n locale expansion", () => {
     it("translates error messages", () => {
       setLocale("he");
       expect(t("error.network")).toBe("שגיאת רשת. בדוק את החיבור שלך.");
+    });
+
+    it("formats numbers, currency, and dates using the Hebrew locale", () => {
+      setLocale("he-IL");
+      expect(formatNumber(1234567.89)).toContain("1,234,567.89");
+      expect(formatCurrency(49.99, "ILS")).toContain("₪");
+      expect(formatDate(new Date("2025-01-15T00:00:00Z"), "medium")).toContain("2025");
     });
   });
 

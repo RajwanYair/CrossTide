@@ -25,7 +25,7 @@ import { cagr } from "../domain/risk-ratios";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
-import type { CardContext, CardModule } from "./registry";
+import type { CardContext, CardHandle, CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
 import { renderPerformanceMetrics } from "./performance-metrics";
 import { createDelegate } from "../ui/delegate";
@@ -159,7 +159,8 @@ type Candle = {
   volume: number;
 };
 
-function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): void {
+function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): CardHandle {
+  let disposed = false;
   let fastPeriod = 10;
   let slowPeriod = 30;
   let ticker = initialTicker;
@@ -172,6 +173,7 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
   async function loadCandles(): Promise<void> {
     try {
       const data = await fetchTickerData(ticker, getNavigationSignal());
+      if (disposed) return;
       if (data.candles.length >= 30) {
         CANDLES = data.candles.map(
           (c: {
@@ -202,6 +204,7 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
   }
 
   const run = async (): Promise<void> => {
+    if (disposed) return;
     const resultEl = container.querySelector<HTMLElement>("#backtest-result");
     if (resultEl) patchDOM(resultEl, `<p class="empty-state">Computing…</p>`);
 
@@ -243,6 +246,7 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
     } else {
       // Direct fallback (worker not available)
       const { runSmaCrossoverLocal } = await import("../core/backtest-worker-fallback");
+      if (disposed) return;
       const local = runSmaCrossoverLocal(CANDLES, fastPeriod, slowPeriod, initialCapital);
       trades = local.trades;
       equityPoints = local.equityPoints;
@@ -380,6 +384,7 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
   };
 
   const onRun = async (): Promise<void> => {
+    if (disposed) return;
     // Read ticker
     const newTicker = tickerInput.value.trim().toUpperCase() || "AAPL";
     tickerInput.value = newTicker;
@@ -400,31 +405,44 @@ function renderBacktestCard(container: HTMLElement, initialTicker = "AAPL"): voi
       ticker = newTicker;
       patchDOM(sourceHint, `Loading real data for <strong>${ticker}</strong>…`);
       await loadCandles();
+      if (disposed) return;
       updateSourceHint();
     }
 
     void run();
   };
 
-  createDelegate(container, {
+  const delegate = createDelegate(container, {
     "run-backtest": () => void onRun(),
   });
 
   // Initial load: fetch real data then run
   void loadCandles().then(() => {
+    if (disposed) return;
     updateSourceHint();
     void run();
   });
+
+  return {
+    dispose(): void {
+      disposed = true;
+      delegate.dispose();
+    },
+  };
 }
 
 const backtestCard: CardModule = {
   mount(container, ctx) {
     const ticker = ctx.params["symbol"] ?? "AAPL";
-    renderBacktestCard(container, ticker);
+    let currentHandle = renderBacktestCard(container, ticker);
     return {
       update(newCtx: CardContext): void {
+        currentHandle.dispose?.();
         const t = newCtx.params["symbol"] ?? "AAPL";
-        renderBacktestCard(container, t);
+        currentHandle = renderBacktestCard(container, t);
+      },
+      dispose(): void {
+        currentHandle.dispose?.();
       },
     };
   },

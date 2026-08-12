@@ -24,7 +24,7 @@ for related issues that this PR does not close.
 ## ✅ Quality Gate Checklist
 
 - [ ] `tsc --noEmit` — **zero type errors**
-- [ ] `eslint . --max-warnings 0` — **zero warnings** (no `eslint-disable` added)
+- [ ] `npm run lint` — **zero Oxlint errors** (no suppressions added)
 - [ ] `vitest run` — all tests pass, coverage thresholds met
 - [ ] `vite build` succeeds
 - [ ] Bundle size budget respected (`scripts/check-bundle-size.mjs`)
@@ -34,7 +34,7 @@ for related issues that this PR does not close.
 
 - [ ] No hardcoded API keys, tokens, or secrets
 - [ ] No `eval()` or `innerHTML` with unsanitized user data
-- [ ] No new `eslint-disable`, `@ts-ignore`, or `@ts-expect-error` lines
+- [ ] No new lint/type suppressions such as `eslint-disable`, `@ts-ignore`, or `@ts-expect-error`
 - [ ] Worker routes validate all inputs at the boundary (Valibot schema)
 - [ ] No new `console.log` calls (use `worker/logger.ts` or `console.warn`/`console.error`)
 

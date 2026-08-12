@@ -15,6 +15,7 @@ export interface SectorData {
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
 import type { ConstituentStock } from "../types/domain";
+import { computeHeatmap } from "./heatmap-layout";
 
 export type { ConstituentStock };
 
@@ -28,6 +29,18 @@ export type SortKey = "changePercent" | "weight" | "absoluteMove";
 export interface HeatmapOptions {
   readonly width?: number;
   readonly height?: number;
+}
+
+/** Global heatmap asset classes supported by the overview selector. */
+export type HeatmapAssetClass = "stocks" | "fx" | "futures" | "crypto";
+
+/** A top-level tile used by the global heatmap overview. */
+export interface GlobalHeatmapItem {
+  readonly symbol: string;
+  readonly name: string;
+  readonly group: string;
+  readonly weight: number;
+  readonly changePercent: number;
 }
 
 /**
@@ -76,31 +89,116 @@ export function renderHeatmap(
 
   const width = options?.width ?? 600;
   const height = options?.height ?? 400;
-  const totalArea = width * height;
-  const layout = computeHeatmapLayout(sectors, totalArea);
+  const layout = computeHeatmap(
+    sectors.map((sector) => ({
+      ticker: sector.sector,
+      weight: sector.marketCap,
+      changePct: sector.changePercent,
+    })),
+    { x: 0, y: 0, width, height },
+  );
 
-  // Simple row-based strip layout (squarified treemap is overkill for DOM)
   const tiles = layout.map((item) => {
-    const tileWidth = Math.max(40, (item.area / height) | 0);
-    const sign = item.changePercent >= 0 ? "+" : "";
-    return `<div class="heatmap-tile ${changeColor(item.changePercent)}"
-      style="width:${tileWidth}px;height:${height}px;flex-shrink:1"
-      role="img" aria-label="${escapeAttr(item.sector)} ${sign}${item.changePercent.toFixed(1)}%"
-      data-sector="${escapeAttr(item.sector)}">
-      <span class="heatmap-label">${escapeHtml(item.sector)}</span>
-      <span class="heatmap-pct">${sign}${item.changePercent.toFixed(1)}%</span>
+    const sign = item.changePct >= 0 ? "+" : "";
+    return `<div class="heatmap-tile ${changeColor(item.changePct)}"
+      style="left:${item.x}px;top:${item.y}px;width:${item.w}px;height:${item.h}px"
+      role="img" aria-label="${escapeAttr(item.ticker)} ${sign}${item.changePct.toFixed(1)}%"
+      data-sector="${escapeAttr(item.ticker)}">
+      <span class="heatmap-label">${escapeHtml(item.ticker)}</span>
+      <span class="heatmap-pct">${sign}${item.changePct.toFixed(1)}%</span>
     </div>`;
   });
 
   patchDOM(
     container,
     `
-    <div class="heatmap-grid" role="img" aria-label="Sector Heatmap"
-         style="display:flex;width:${width}px;height:${height}px;overflow:hidden">
+        <div class="heatmap-grid" role="img" aria-label="Sector Heatmap"
+          style="position:relative;width:${width}px;height:${height}px;overflow:hidden">
       ${tiles.join("")}
     </div>
     <p class="text-secondary">${sectors.length} sectors</p>
   `,
+  );
+}
+
+/** Render a TradingView-style global asset-class heatmap overview. */
+export function renderGlobalHeatmap(
+  container: HTMLElement,
+  assetClass: HeatmapAssetClass,
+  items: readonly GlobalHeatmapItem[],
+  options?: HeatmapOptions,
+): void {
+  if (items.length === 0) {
+    patchDOM(container, `<p class="empty-state">No ${assetClass} data available.</p>`);
+    return;
+  }
+
+  const width = options?.width ?? 760;
+  const height = options?.height ?? 420;
+  const layout = computeHeatmap(
+    items.map((item) => ({
+      ticker: item.symbol,
+      weight: item.weight,
+      changePct: item.changePercent,
+    })),
+    { x: 0, y: 0, width, height },
+  );
+  const itemBySymbol = new Map(items.map((item) => [item.symbol, item]));
+  const groups = [...new Set(items.map((item) => item.group))];
+  const tiles = layout
+    .map((item) => {
+      const data = itemBySymbol.get(item.ticker);
+      if (!data) return "";
+      const sign = data.changePercent >= 0 ? "+" : "";
+      return `<button class="heatmap-tile ${changeColor(data.changePercent)}"
+        style="left:${item.x}px;top:${item.y}px;width:${item.w}px;height:${item.h}px"
+        data-action="heatmap-tile" data-symbol="${escapeAttr(data.symbol)}"
+        aria-label="${escapeAttr(`${data.name}, ${sign}${data.changePercent.toFixed(2)} percent, ${data.group}`)}">
+        <span class="heatmap-label">${escapeHtml(data.symbol)}</span>
+        <span class="heatmap-name">${escapeHtml(data.name)}</span>
+        <span class="heatmap-pct">${sign}${data.changePercent.toFixed(2)}%</span>
+      </button>`;
+    })
+    .join("");
+
+  const labels: Record<HeatmapAssetClass, string> = {
+    stocks: "Global stocks",
+    fx: "Foreign exchange",
+    futures: "Futures",
+    crypto: "Crypto",
+  };
+
+  patchDOM(
+    container,
+    `<div class="heatmap-overview">
+      <nav class="heatmap-class-tabs" aria-label="Asset class">
+        ${Object.entries({ stocks: "Stocks", fx: "FX", futures: "Futures", crypto: "Crypto" })
+          .map(
+            ([key, label]) =>
+              `<button class="btn-sort${key === assetClass ? " sort-active" : ""}"
+                data-action="heatmap-class" data-heatmap-class="${key}">${label}</button>`,
+          )
+          .join("")}
+      </nav>
+      <div class="heatmap-overview-head">
+        <div>
+          <p class="eyebrow">Market map</p>
+          <h2>${labels[assetClass]}</h2>
+          <p class="text-secondary">Area represents relative size · color shows daily change</p>
+        </div>
+        <span class="heatmap-snapshot">Delayed snapshot · ${items.length} instruments</span>
+      </div>
+      <div class="heatmap-grid heatmap-global-grid" role="group" aria-label="${labels[assetClass]} heatmap"
+        style="position:relative;width:${width}px;height:${height}px;overflow:hidden">${tiles}</div>
+      <div class="heatmap-footer">
+        <span class="text-secondary">Groups: ${groups.map(escapeHtml).join(" · ")}</span>
+        <span class="heatmap-legend" aria-label="Daily change legend">
+          <span class="heatmap-legend-swatch heatmap-strong-down"></span><span>-3%</span>
+          <span class="heatmap-legend-swatch heatmap-flat"></span><span>0%</span>
+          <span class="heatmap-legend-swatch heatmap-strong-up"></span><span>+3%</span>
+        </span>
+      </div>
+    </div>`,
   );
 }
 

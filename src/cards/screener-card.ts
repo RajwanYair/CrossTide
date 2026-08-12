@@ -6,7 +6,7 @@
  */
 import type { CardModule } from "./registry";
 import { PRESET_FILTERS, type PresetFilter } from "./preset-filters";
-import { applyFilters, renderScreenerResults } from "./screener";
+import { renderScreenerResults } from "./screener";
 import { getScreenerData } from "./screener-data";
 import {
   loadVisibleColumns,
@@ -16,6 +16,7 @@ import {
 } from "./screener-columns";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate } from "../ui/delegate";
+import { runScreenerAsync } from "../core/screener-worker";
 
 function renderPresetButtonsHtml(): string {
   return `<div class="screener-presets">${PRESET_FILTERS.map(
@@ -36,12 +37,27 @@ const screenerCard: CardModule = {
     // Column toggle section
     const visibleCols = loadVisibleColumns();
     let activePreset: PresetFilter | null = null;
+    let renderVersion = 0;
 
     const rerender = (): void => {
       if (!activePreset) return;
       const inputs = getScreenerData();
-      const rows = applyFilters(inputs, activePreset.filters);
-      renderScreenerResults(resultsSection, rows, visibleCols, inputs);
+      const filters = activePreset.filters;
+      const version = ++renderVersion;
+      patchDOM(
+        resultsSection,
+        `<p class="loading-state">Screening ${inputs.length} tickers...</p>`,
+      );
+      void runScreenerAsync(inputs, filters)
+        .then((rows) => {
+          if (version !== renderVersion) return;
+          renderScreenerResults(resultsSection, rows, visibleCols, inputs);
+        })
+        .catch((error: unknown) => {
+          if (version !== renderVersion) return;
+          const message = error instanceof Error ? error.message : "Unable to screen tickers";
+          patchDOM(resultsSection, `<p class="error-state">${message}</p>`);
+        });
     };
 
     const togglePanel = renderColumnToggles(
@@ -77,9 +93,7 @@ const screenerCard: CardModule = {
             .forEach((b) => b.classList.remove("active"));
           target.classList.add("active");
           // Apply filter against live data and render
-          const inputs = getScreenerData();
-          const rows = applyFilters(inputs, preset.filters);
-          renderScreenerResults(resultsSection, rows, visibleCols, inputs);
+          rerender();
         },
       },
       { eventTypes: ["click"] },

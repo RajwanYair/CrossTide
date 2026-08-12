@@ -93,12 +93,15 @@ const YahooOhlcvSchema = object({
 
 const YahooMetaSchema = object({
   regularMarketPrice: optional(number()),
+  regularMarketTime: optional(number()),
   previousClose: optional(number()),
   symbol: optional(string()),
   shortName: optional(string()),
   longName: optional(string()),
   instrumentType: optional(string()),
   sector: optional(string()),
+  exchangeTimezoneName: optional(string()),
+  marketState: optional(string()),
 });
 
 const YahooResultSchema = object({

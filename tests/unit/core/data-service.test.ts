@@ -26,6 +26,9 @@ function yahooResponse(opts: {
   n?: number;
   instrumentType?: string;
   sector?: string;
+  timezone?: string;
+  marketState?: string;
+  regularMarketTime?: number;
   withNulls?: boolean;
 }): Record<string, unknown> {
   const n = opts.n ?? 10;
@@ -53,6 +56,11 @@ function yahooResponse(opts: {
             symbol: "TEST",
             ...(opts.instrumentType !== undefined && { instrumentType: opts.instrumentType }),
             ...(opts.sector !== undefined && { sector: opts.sector }),
+            ...(opts.timezone !== undefined && { exchangeTimezoneName: opts.timezone }),
+            ...(opts.marketState !== undefined && { marketState: opts.marketState }),
+            ...(opts.regularMarketTime !== undefined && {
+              regularMarketTime: opts.regularMarketTime,
+            }),
           },
           timestamp: timestamps,
           indicators: {
@@ -91,7 +99,34 @@ describe("fetchTickerData", () => {
     expect(data.price).toBeGreaterThan(0);
     expect(data.candles.length).toBeGreaterThan(0);
     expect(data.sector).toBe("Technology");
+    expect(data.provenance?.source).toBe("Yahoo Finance");
+    expect(data.dataStatus).toBe("live");
     expect(data.error).toBeUndefined();
+  });
+
+  it("propagates provider metadata into the provenance contract", async () => {
+    mockFetch.mockResolvedValue(
+      makeResponse(
+        yahooResponse({
+          n: 10,
+          timezone: "America/New_York",
+          marketState: "REGULAR",
+          regularMarketTime: 1736942400,
+        }),
+      ),
+    );
+
+    const data = await fetchTickerData("AAPL");
+
+    expect(data.provenance).toMatchObject({
+      source: "Yahoo Finance",
+      asOf: "2025-01-15T12:00:00.000Z",
+      timezone: "America/New_York",
+      coverage: "Historical OHLCV candles (1Y)",
+      marketStatus: "REGULAR",
+      adjustmentPolicy: "Yahoo Finance provider adjustment policy applies",
+      limitations: ["Historical candles may be delayed or incomplete outside regular sessions."],
+    });
   });
 
   it("populates closes30d with up to 30 values", async () => {
@@ -192,13 +227,20 @@ describe("fetchTickerData", () => {
   it("falls back to the Worker provider chain when Yahoo fails", async () => {
     mockFetch.mockRejectedValueOnce(new Error("Yahoo unavailable")).mockResolvedValueOnce(
       makeResponse({
-        ticker: "AAPL",
-        currency: "USD",
-        source: "massive",
-        candles: [
-          { date: "2026-07-28", open: 100, high: 105, low: 99, close: 104, volume: 1_000 },
-          { date: "2026-07-29", open: 104, high: 108, low: 103, close: 107, volume: 1_200 },
-        ],
+        schemaVersion: "1",
+        kind: "chart",
+        status: "live",
+        data: {
+          ticker: "AAPL",
+          currency: "USD",
+          source: "massive",
+          candles: [
+            { date: "2026-07-28", open: 100, high: 105, low: 99, close: 104, volume: 1_000 },
+            { date: "2026-07-29", open: 104, high: 108, low: 103, close: 107, volume: 1_200 },
+          ],
+        },
+        provenance: { source: "massive", fetchedAt: "2026-07-29T00:00:00.000Z" },
+        warnings: [],
       }),
     );
 
@@ -206,6 +248,8 @@ describe("fetchTickerData", () => {
 
     expect(data.error).toBeUndefined();
     expect(data.price).toBe(107);
+    expect(data.provenance?.source).toBe("massive");
+    expect(data.dataStatus).toBe("live");
     expect(mockFetch).toHaveBeenCalledTimes(2);
     expect(String(mockFetch.mock.calls[1]?.[0])).toContain("/api/chart?ticker=AAPL");
   });
@@ -213,10 +257,19 @@ describe("fetchTickerData", () => {
   it("does not present Worker demo candles as live data", async () => {
     mockFetch.mockRejectedValueOnce(new Error("Yahoo unavailable")).mockResolvedValueOnce(
       makeResponse({
-        ticker: "AAPL",
-        currency: "USD",
-        source: "demo",
-        candles: [{ date: "2026-07-29", open: 100, high: 105, low: 99, close: 104, volume: 1_000 }],
+        schemaVersion: "1",
+        kind: "chart",
+        status: "demo",
+        data: {
+          ticker: "AAPL",
+          currency: "USD",
+          source: "demo",
+          candles: [
+            { date: "2026-07-29", open: 100, high: 105, low: 99, close: 104, volume: 1_000 },
+          ],
+        },
+        provenance: { source: "demo", fetchedAt: "2026-07-29T00:00:00.000Z" },
+        warnings: [],
       }),
     );
 

@@ -13,6 +13,8 @@
 import { createCrossTabSync, type CrossTabSync } from "./broadcast-channel";
 import type { ShareState } from "./share-state";
 
+const SHARE_CHANNEL_NAME = "crosstide-share-sync";
+
 export interface CrossTabShareSync {
   /**
    * Register a callback invoked when another tab broadcasts a share-state.
@@ -34,7 +36,7 @@ export interface CrossTabShareSync {
  * Wraps `createCrossTabSync` with ShareState-typed helpers.
  */
 export function createCrossTabShareSync(): CrossTabShareSync {
-  const sync: CrossTabSync = createCrossTabSync();
+  const sync: CrossTabSync = createCrossTabSync(SHARE_CHANNEL_NAME);
 
   return {
     onShareState(handler: (state: ShareState) => void): () => void {

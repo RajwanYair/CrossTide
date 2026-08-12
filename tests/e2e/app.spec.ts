@@ -82,7 +82,74 @@ test("watchlist table skeleton is present", async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
-// Flow 6: Settings page renders interactive controls
+// Flow 6: Chart route exposes an explicit no-data state offline
+// ---------------------------------------------------------------------------
+test("chart route shows a no-data state when providers are unavailable", async ({ page }) => {
+  await page.route("**/api/**", (route) => route.abort());
+  await page.route("**/query1.finance.yahoo.com/**", (route) => route.abort());
+
+  await page.goto("/chart/AAPL");
+  await waitForAppReady(page);
+
+  const chart = page.locator("#view-chart");
+  await expect(chart).toHaveClass(/active/);
+  await expect(chart.locator(".empty-state")).toContainText("No chart data for AAPL");
+});
+
+test("offline journey state announces stale data and clears on reconnect", async ({ page }) => {
+  await page.goto("/watchlist");
+  await waitForAppReady(page);
+
+  await page.evaluate(() => window.dispatchEvent(new Event("offline")));
+  const banner = page.locator("#offline-indicator");
+  await expect(banner).toContainText("You are offline");
+  await expect(banner).toContainText("data may be stale");
+
+  await page.evaluate(() => window.dispatchEvent(new Event("online")));
+  await expect(banner).toHaveClass(/offline-banner--exit/);
+});
+
+// ---------------------------------------------------------------------------
+// Flow 7: Consensus route exposes an explicit limitation when no signal exists
+// ---------------------------------------------------------------------------
+test("consensus route shows a no-data state for an unpopulated symbol", async ({ page }) => {
+  await page.goto("/consensus/AAPL");
+  await waitForAppReady(page);
+
+  const consensus = page.locator("#view-consensus");
+  await expect(consensus).toHaveClass(/active/);
+  await expect(consensus.locator(".empty-state")).toContainText("No consensus data for AAPL");
+});
+
+// ---------------------------------------------------------------------------
+// Flow 8: Watchlist and share route state survive the session boundary
+// ---------------------------------------------------------------------------
+test("watchlist ticker survives reload", async ({ page }) => {
+  await page.goto("/watchlist");
+  await waitForAppReady(page);
+  await page.locator("#add-ticker").fill("MSFT");
+  await page.locator("#add-ticker").press("Escape");
+  await page.locator("#add-ticker").press("Enter");
+  await expect(page.locator('#watchlist-body tr[data-ticker="MSFT"]')).toBeVisible();
+
+  await page.reload();
+  await waitForAppReady(page);
+  await expect(page.locator('#watchlist-body tr[data-ticker="MSFT"]')).toBeVisible();
+});
+
+test("share shortcut creates a restorable route token", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/chart/AAPL");
+  await waitForAppReady(page);
+  await page.keyboard.press("Shift+s");
+
+  const sharedUrl = await page.evaluate(() => navigator.clipboard.readText());
+  expect(sharedUrl).toContain("?s=");
+  expect(sharedUrl).toContain("chart");
+});
+
+// ---------------------------------------------------------------------------
+// Flow 9: Settings page renders interactive controls
 // ---------------------------------------------------------------------------
 test("settings page has theme selector and action buttons", async ({ page }) => {
   await page.goto("/settings");
@@ -94,7 +161,7 @@ test("settings page has theme selector and action buttons", async ({ page }) => 
 });
 
 // ---------------------------------------------------------------------------
-// Flow 7: Settings theme selector changes value
+// Flow 10: Settings theme selector changes value
 // ---------------------------------------------------------------------------
 test("theme selector can be changed to light", async ({ page }) => {
   await page.goto("/settings");
@@ -104,15 +171,16 @@ test("theme selector can be changed to light", async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
-// Flow 8: Direct URL navigation to a view works
+// Flow 11: Protected direct URL navigation redirects to settings
 // ---------------------------------------------------------------------------
-test("navigating directly to /alerts shows the alerts section", async ({ page }) => {
+test("navigating directly to /alerts redirects unauthenticated users", async ({ page }) => {
   await page.goto("/alerts");
-  await expect(page.locator("#view-alerts")).toHaveClass(/active/);
+  await expect(page).toHaveURL(/\/settings$/);
+  await expect(page.locator("#view-settings")).toHaveClass(/active/);
 });
 
 // ---------------------------------------------------------------------------
-// Flow 9: Keyboard shortcut Ctrl+K opens command palette
+// Flow 12: Keyboard shortcut Ctrl+K opens command palette
 // ---------------------------------------------------------------------------
 test("Ctrl+K opens the command palette", async ({ page }) => {
   await page.goto("/");
@@ -125,7 +193,7 @@ test("Ctrl+K opens the command palette", async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
-// Flow 10: Accessibility — no critical violations on initial load
+// Flow 13: Accessibility — no critical violations on initial load
 // ---------------------------------------------------------------------------
 test("no critical accessibility violations on the watchlist page", async ({ page }) => {
   await page.goto("/watchlist");
@@ -149,7 +217,7 @@ test("no critical accessibility violations on the watchlist page", async ({ page
 });
 
 // ---------------------------------------------------------------------------
-// Flow 11: Accessibility — settings page passes axe
+// Flow 14: Accessibility — settings page passes axe
 // ---------------------------------------------------------------------------
 test("no critical accessibility violations on the settings page", async ({ page }) => {
   await page.goto("/settings");
@@ -167,7 +235,7 @@ test("no critical accessibility violations on the settings page", async ({ page 
 });
 
 // ---------------------------------------------------------------------------
-// Flow 12: Accessibility — consensus page passes axe
+// Flow 15: Accessibility — consensus page passes axe
 // ---------------------------------------------------------------------------
 test("no critical accessibility violations on the consensus page", async ({ page }) => {
   await page.goto("/consensus");
@@ -188,7 +256,7 @@ test("no critical accessibility violations on the consensus page", async ({ page
 });
 
 // ---------------------------------------------------------------------------
-// Flow 13: Footer is visible on all pages
+// Flow 16: Footer is visible on all pages
 // ---------------------------------------------------------------------------
 test("footer with status indicators is present", async ({ page }) => {
   await page.goto("/");
@@ -198,7 +266,7 @@ test("footer with status indicators is present", async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
-// Flow 14: App has proper meta tags for SEO
+// Flow 17: App has proper meta tags for SEO
 // ---------------------------------------------------------------------------
 test("app includes essential meta tags", async ({ page }) => {
   await page.goto("/");
@@ -209,7 +277,7 @@ test("app includes essential meta tags", async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
-// Flow 15: Service worker registers without errors
+// Flow 18: Service worker registers without errors
 // ---------------------------------------------------------------------------
 test("service worker registers successfully", async ({ page }) => {
   await page.goto("/");

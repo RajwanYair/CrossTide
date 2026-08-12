@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "npx vite preview --port 4173",
+      "startServerCommand": "npm run preview -- --port 4173",
       "startServerReadyPattern": "Local.*4173|localhost.*4173",
       "startServerReadyTimeout": 30000,
       "url": ["http://localhost:4173/"],
@@ -21,7 +21,7 @@
     "assert": {
       "assertions": {
         "categories:performance": [
-          "warn",
+          "error",
           {
             "minScore": 0.6
           }
@@ -53,25 +53,31 @@
         "largest-contentful-paint": [
           "error",
           {
-            "maxNumericValue": 2500
+            "maxNumericValue": 1800
           }
         ],
         "total-blocking-time": [
-          "warn",
+          "error",
           {
-            "maxNumericValue": 1500
+            "maxNumericValue": 200
+          }
+        ],
+        "interaction-to-next-paint": [
+          "error",
+          {
+            "maxNumericValue": 200
           }
         ],
         "cumulative-layout-shift": [
           "error",
           {
-            "maxNumericValue": 0.1
+            "maxNumericValue": 0.05
           }
         ],
         "interactive": [
-          "warn",
+          "error",
           {
-            "maxNumericValue": 5000
+            "maxNumericValue": 500
           }
         ]
       }

@@ -1,4 +1,4 @@
-# ADR-0013: Divide Formatting and Linting Between Biome and ESLint
+# ADR-0013: Divide Formatting and Linting Between Biome and Oxlint
 
 ## Status
 
@@ -10,7 +10,7 @@ The repository needs fast, deterministic formatting and type-aware JavaScript an
 
 ## Decision
 
-Biome owns formatting and basic syntax/style formatting checks. ESLint owns semantic, import-direction, compatibility, and project-specific lint rules. Stylelint, HTMLHint, and markdownlint retain ownership of their respective file formats.
+Biome owns formatting and basic syntax/style checks. Oxlint, with its TypeScript 7-aware checker, owns JavaScript and TypeScript linting. The architecture checker owns import direction, while Stylelint, HTMLHint, and markdownlint retain ownership of their respective file formats.
 
 Declared tools are invoked from the lockfile-installed binaries; CI installs with `npm ci --ignore-scripts`.
 
@@ -18,11 +18,13 @@ Declared tools are invoked from the lockfile-installed binaries; CI installs wit
 
 - `npm run format:check` is the formatting contract.
 - `npm run lint` is the JavaScript and TypeScript lint contract.
+- TypeScript validation uses the native TypeScript compiler; no linter integration may depend on the removed compiler API.
 - Markdown is formatted and linted by markdownlint, not Biome.
 - Rules are not duplicated across formatters and linters.
 
 ## Related
 
 - `biome.json`
-- `eslint.config.mjs`
+- `package.json`
+- `scripts/arch-check.mjs`
 - `package.json`

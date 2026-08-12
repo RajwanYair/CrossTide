@@ -1,9 +1,14 @@
-# ☁️ Cloudflare Resource Provisioning Guide
+# Cloudflare Resource Provisioning Guide
 
 This document walks through creating all Cloudflare resources required by CrossTide and
 wiring their IDs into `worker/wrangler.toml`.
 
-## 🚀 Provisioning workflow
+## Provisioning Workflow
+
+![CrossTide market data and deployment flow](assets/data-deployment-flow.svg)
+
+_The visual separates local behavior checks from deployment evidence: a green local build does
+not prove that production bindings exist._
 
 ```mermaid
 flowchart TD
@@ -16,7 +21,18 @@ flowchart TD
   S6 --> Verify([curl /api/health])
 ```
 
-## 📋 Prerequisites
+### Provisioning Inputs And Outputs
+
+```mermaid
+flowchart LR
+  Inputs[Account + auth<br/>binding IDs + secrets] --> Config[worker/wrangler.toml<br/>and .dev.vars]
+  Config --> Validate[wrangler validation<br/>and local dev]
+  Validate --> Deploy[Worker + Pages deploy]
+  Deploy --> Evidence[health endpoint<br/>headers + frontend shell]
+  Deploy --> Failure[blocked or degraded state]
+```
+
+## Prerequisites
 
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is sufficient)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
@@ -29,7 +45,7 @@ flowchart TD
 
 ---
 
-## 🗄️ Step 1 — KV Namespace (QUOTE_CACHE)
+## Step 1 — KV Namespace (QUOTE_CACHE)
 
 Caches quote, chart, and search responses with market-hours-aware TTLs.
 
@@ -54,7 +70,7 @@ preview_id = "def456..."  # replace PLACEHOLDER_KV_PREVIEW_ID
 
 ---
 
-## 🗃️ Step 2 — D1 Database (DB)
+## Step 2 — D1 Database (DB)
 
 Stores user watchlists, portfolios, alert rules, and CSP violation reports.
 
@@ -74,14 +90,14 @@ database_id = "ghi789..."   # replace PLACEHOLDER_D1_DATABASE_ID
 migrations_dir = "migrations"
 ```
 
-### 📈 Apply migrations
+### Apply Migrations
 
 ```powershell
 # Staging / preview
 ./node_modules/.bin/wrangler d1 migrations apply crosstide-db --env staging
 
 # Production
-npx wrangler d1 migrations apply crosstide-db
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db
 ```
 
 Migration files live in `worker/migrations/`:
@@ -103,7 +119,7 @@ curl http://localhost:8787/api/migrations/status
 
 ---
 
-## 🚦 Step 3 — Rate Limiter (RATE_LIMITER)
+## Step 3 — Rate Limiter (RATE_LIMITER)
 
 The `[[unsafe.bindings]]` block for the Rate Limiting API does **not** require a separate
 create step — Cloudflare provisions it automatically on `wrangler deploy`. The `namespace_id`
@@ -113,7 +129,7 @@ No action required — the binding in `worker/wrangler.toml` is ready as-is.
 
 ---
 
-## 🔌 Step 4 — Durable Object (TICKER_FANOUT)
+## Step 4 — Durable Object (TICKER_FANOUT)
 
 The `TickerFanout` Durable Object class is declared in `worker/index.ts` and exported via
 `[[durable_objects]]` + `[[migrations]]` in `worker/wrangler.toml`. Cloudflare creates the
@@ -121,7 +137,7 @@ namespace automatically on first `wrangler deploy`. No separate provisioning ste
 
 ---
 
-## 💻 Step 5 — Local development
+## Step 5 — Local Development
 
 ```powershell
 # Copy the example file
@@ -138,7 +154,7 @@ The worker runs at `http://localhost:8787`. Vite proxies `/api/*` to it when run
 
 ---
 
-## 🚀 Step 6 — Deploy
+## Step 6 — Deploy
 
 ```powershell
 # Deploy worker
@@ -153,7 +169,7 @@ npm run build
 
 ---
 
-## 🌐 Environment matrix
+## Environment Matrix
 
 | Env          | KV Binding | D1 Binding | Data source  |
 | ------------ | :--------: | :--------: | ------------ |

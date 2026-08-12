@@ -80,4 +80,15 @@ describe("rebalance-card", () => {
     const html = container.innerHTML;
     expect(html.match(/Balanced|Rebalance needed/)).toBeTruthy();
   });
+
+  it("does not render after disposal while the async load is pending", async () => {
+    const mod = await import("../../../src/cards/rebalance-card");
+    const handle = mod.default.mount(container, { route: "rebalance", params: {} });
+
+    expect(handle?.dispose).toBeTypeOf("function");
+    handle?.dispose?.();
+    await Promise.resolve();
+
+    expect(container.innerHTML).toBe("");
+  });
 });

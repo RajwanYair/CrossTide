@@ -5,6 +5,7 @@
  */
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForAppReady } from "./app-ready";
 
 const ALL_ROUTES = [
   "/watchlist",
@@ -32,26 +33,36 @@ const ALL_ROUTES = [
   "/strategy-comparison",
 ];
 
+const THEMES = ["dark", "light", "high-contrast"] as const;
+
 for (const route of ALL_ROUTES) {
-  test(`WCAG 2.2 AA: ${route} has no serious/critical violations`, async ({ page }) => {
-    await page.goto(route);
-    await page.waitForTimeout(500); // allow cards to render
+  for (const theme of THEMES) {
+    test(`WCAG 2.2 AA: ${route} has no serious/critical violations in ${theme} theme`, async ({
+      page,
+    }) => {
+      await page.goto(route);
+      await waitForAppReady(page);
+      await page.evaluate((selectedTheme) => {
+        document.documentElement.dataset["theme"] = selectedTheme;
+      }, theme);
+      await page.waitForTimeout(500); // allow async cards and theme styles to settle
 
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag22aa"])
-      .analyze();
+      const results = await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag22aa"])
+        .analyze();
 
-    const serious = results.violations.filter(
-      (v) => v.impact === "serious" || v.impact === "critical",
-    );
+      const serious = results.violations.filter(
+        (v) => v.impact === "serious" || v.impact === "critical",
+      );
 
-    if (serious.length > 0) {
-      const summary = serious
-        .map((v) => `[${v.impact}] ${v.id}: ${v.description} (${v.nodes.length} nodes)`)
-        .join("\n");
-      expect(serious, `Route ${route} has violations:\n${summary}`).toHaveLength(0);
-    }
-  });
+      if (serious.length > 0) {
+        const summary = serious
+          .map((v) => `[${v.impact}] ${v.id}: ${v.description} (${v.nodes.length} nodes)`)
+          .join("\n");
+        expect(serious, `Route ${route} (${theme}) has violations:\n${summary}`).toHaveLength(0);
+      }
+    });
+  }
 }
 
 test("all views have proper heading hierarchy", async ({ page }) => {

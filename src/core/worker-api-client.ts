@@ -12,6 +12,7 @@
 
 import type { Result } from "./result";
 import { ok, err } from "./result";
+import { resolveWorkerBaseUrl } from "./worker-config";
 
 // ---------------------------------------------------------------------------
 // Endpoint request / response shapes
@@ -115,17 +116,6 @@ export interface WorkerApiClient {
 
 type FetchFn = typeof fetch;
 
-function normalizeBaseUrl(base: string): string {
-  // In development we intentionally use a relative base ("/api/worker").
-  // Normalize it to an absolute URL so all engines (notably WebKit) resolve
-  // request URLs identically.
-  if (/^https?:\/\//i.test(base)) return base;
-  if (typeof window !== "undefined" && typeof window.location?.origin === "string") {
-    return new URL(base, window.location.origin).toString();
-  }
-  return base;
-}
-
 function buildUrl(base: string, path: string, query?: Record<string, string>): string {
   const url = new URL(path, base.endsWith("/") ? base : base + "/");
   if (query) {
@@ -191,7 +181,10 @@ export function createApiClient(
 ): WorkerApiClient {
   const fetchFn = options.fetchFn ?? fetch;
   const signal = options.signal;
-  const resolvedBaseUrl = normalizeBaseUrl(baseUrl);
+  const resolvedBaseUrl = resolveWorkerBaseUrl(
+    baseUrl,
+    typeof window !== "undefined" ? window.location?.origin : undefined,
+  );
 
   return {
     async health(): Promise<Result<HealthResponse>> {

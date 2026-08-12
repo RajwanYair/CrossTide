@@ -64,22 +64,46 @@ describe("handleQuote", () => {
   it("returns demo quote when no KV binding", async () => {
     const res = await handleQuote("AAPL", makeEnv());
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { ticker: string; source: string };
-    expect(body.ticker).toBe("AAPL");
-    expect(body.source).toBe("demo");
+    const body = (await res.json()) as { status: string; data: { ticker: string } };
+    expect(body.data.ticker).toBe("AAPL");
+    expect(body.status).toBe("demo");
   });
 
   it("returns cached quote when available", async () => {
-    const cached = { ticker: "MSFT", price: 400, source: "yahoo" };
+    const cached = {
+      schemaVersion: "1",
+      kind: "quote",
+      status: "live",
+      data: { ticker: "MSFT", price: 400 },
+      provenance: { source: "yahoo", fetchedAt: "2026-08-12T12:00:00.000Z" },
+      warnings: [],
+    };
     const kv: KvStore = {
       get: vi.fn().mockResolvedValue(JSON.stringify(cached)),
       put: vi.fn().mockResolvedValue(undefined),
     };
     const res = await handleQuote("MSFT", makeEnv(kv));
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { source: string };
-    expect(body.source).toBe("cache");
+    const body = (await res.json()) as { status: string; provenance: { source: string } };
+    expect(body.status).toBe("cached");
+    expect(body.provenance.source).toBe("cache");
     expect(kv.get).toHaveBeenCalledWith("quote:MSFT", "text");
+  });
+
+  it("migrates legacy raw cached quotes into the canonical envelope", async () => {
+    const kv: KvStore = {
+      get: vi.fn().mockResolvedValue(JSON.stringify({ ticker: "MSFT", price: 400 })),
+      put: vi.fn().mockResolvedValue(undefined),
+    };
+    const res = await handleQuote("MSFT", makeEnv(kv));
+    const body = (await res.json()) as {
+      schemaVersion: string;
+      data: { ticker: string };
+      warnings: string[];
+    };
+    expect(body.schemaVersion).toBe("1");
+    expect(body.data.ticker).toBe("MSFT");
+    expect(body.warnings).toContain("Legacy cache entry migrated to schema version 1");
   });
 
   it("fetches from yahoo and caches result", async () => {
@@ -93,9 +117,9 @@ describe("handleQuote", () => {
     );
     const res = await handleQuote("AAPL", makeEnv(kv));
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { source: string; ticker: string };
-    expect(body.source).toBe("yahoo");
-    expect(body.ticker).toBe("AAPL");
+    const body = (await res.json()) as { status: string; data: { ticker: string } };
+    expect(body.status).toBe("live");
+    expect(body.data.ticker).toBe("AAPL");
     expect(kv.put).toHaveBeenCalled();
   });
 
@@ -122,7 +146,7 @@ describe("handleQuote", () => {
   it("normalizes symbol to uppercase", async () => {
     const res = await handleQuote("aapl", makeEnv());
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { ticker: string };
-    expect(body.ticker).toBe("AAPL");
+    const body = (await res.json()) as { data: { ticker: string } };
+    expect(body.data.ticker).toBe("AAPL");
   });
 });

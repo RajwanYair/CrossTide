@@ -90,13 +90,21 @@ describe("handleChart", () => {
   });
 
   it("returns cached data without fetching upstream", async () => {
-    const cached = { ticker: "AAPL", currency: "USD", candles: [], source: "yahoo" };
+    const cached = {
+      schemaVersion: "1",
+      kind: "chart",
+      status: "live",
+      data: { ticker: "AAPL", currency: "USD", candles: [] },
+      provenance: { source: "yahoo", fetchedAt: "2026-08-12T12:00:00.000Z" },
+      warnings: [],
+    };
     mockKvStore.get.mockResolvedValue(JSON.stringify(cached));
 
     const res = await handleChart(makeUrl({ ticker: "AAPL" }), makeEnv());
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect((body as { source: string }).source).toBe("cache");
+    expect((body as { status: string; provenance: { source: string } }).status).toBe("cached");
+    expect((body as { provenance: { source: string } }).provenance.source).toBe("cache");
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -104,8 +112,8 @@ describe("handleChart", () => {
     const res = await handleChart(makeUrl({ ticker: "AAPL" }), makeEnv());
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect((body as { source: string }).source).toBe("yahoo");
-    expect((body as { ticker: string }).ticker).toBe("AAPL");
+    expect((body as { status: string; data: { ticker: string } }).status).toBe("live");
+    expect((body as { data: { ticker: string } }).data.ticker).toBe("AAPL");
     expect(mockKvStore.put).toHaveBeenCalledOnce();
   });
 
@@ -113,8 +121,8 @@ describe("handleChart", () => {
     const res = await handleChart(makeUrl({ ticker: "MSFT", range: "1y" }), makeEnv(false));
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect((body as { source: string }).source).toBe("demo");
-    expect((body as { ticker: string }).ticker).toBe("MSFT");
+    expect((body as { status: string; data: { ticker: string } }).status).toBe("demo");
+    expect((body as { data: { ticker: string } }).data.ticker).toBe("MSFT");
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -124,7 +132,7 @@ describe("handleChart", () => {
     expect(res.status).toBe(200);
     expect(res.headers.get("X-Data-Source")).toBe("demo-fallback");
     const body = await res.json();
-    expect((body as { source: string }).source).toBe("demo");
+    expect((body as { provenance: { source: string } }).provenance.source).toBe("demo");
   });
 
   it("falls back to Massive for daily history", async () => {
@@ -146,9 +154,22 @@ describe("handleChart", () => {
       makeUrl({ ticker: "AAPL", range: "1mo", interval: "1d" }),
       makeEnvWith({ MASSIVE_KEY: "test-key" }),
     );
-    const body = (await res.json()) as { source: string; candles: unknown[] };
-    expect(body.source).toBe("massive");
-    expect(body.candles).toHaveLength(1);
+    const body = (await res.json()) as {
+      provenance: {
+        source: string;
+        coverage: string;
+        adjustmentPolicy: string;
+        limitations: string[];
+      };
+      data: { candles: unknown[] };
+    };
+    expect(body.provenance.source).toBe("massive");
+    expect(body.provenance.coverage).toBe("Historical OHLCV candles");
+    expect(body.provenance.adjustmentPolicy).toContain("Provider-adjusted");
+    expect(body.provenance.limitations).toContain(
+      "Trading-calendar gaps and provider coverage vary by instrument",
+    );
+    expect(body.data.candles).toHaveLength(1);
     expect(res.headers.get("X-Data-Source")).toBe("massive-fallback");
   });
 
@@ -171,9 +192,9 @@ describe("handleChart", () => {
       makeUrl({ ticker: "AAPL", range: "1mo", interval: "1d" }),
       makeEnvWith({ MASSIVE_KEY: "test-key" }),
     );
-    const body = (await res.json()) as { source: string };
+    const body = (await res.json()) as { provenance: { source: string } };
     expect(res.status).toBe(200);
-    expect(body.source).toBe("massive");
+    expect(body.provenance.source).toBe("massive");
   });
 
   it("falls back to Alpha Vantage for daily history", async () => {
@@ -201,9 +222,12 @@ describe("handleChart", () => {
       makeUrl({ ticker: "AAPL", range: "1mo", interval: "1d" }),
       makeEnvWith({ ALPHA_VANTAGE_KEY: "test-key" }),
     );
-    const body = (await res.json()) as { source: string; candles: unknown[] };
-    expect(body.source).toBe("alpha-vantage");
-    expect(body.candles).toHaveLength(1);
+    const body = (await res.json()) as {
+      provenance: { source: string };
+      data: { candles: unknown[] };
+    };
+    expect(body.provenance.source).toBe("alpha-vantage");
+    expect(body.data.candles).toHaveLength(1);
     expect(res.headers.get("X-Data-Source")).toBe("alpha-vantage-fallback");
   });
 
@@ -211,13 +235,13 @@ describe("handleChart", () => {
     const res = await handleChart(makeUrl({ ticker: "TSLA", range: "5d" }), makeEnv());
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(Array.isArray((body as { candles: unknown[] }).candles)).toBe(true);
+    expect(Array.isArray((body as { data: { candles: unknown[] } }).data.candles)).toBe(true);
   });
 
   it("normalizes ticker to uppercase", async () => {
     const res = await handleChart(makeUrl({ ticker: "aapl" }), makeEnv(false));
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect((body as { ticker: string }).ticker).toBe("AAPL");
+    expect((body as { data: { ticker: string } }).data.ticker).toBe("AAPL");
   });
 });

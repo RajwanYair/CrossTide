@@ -53,7 +53,6 @@ const CATALOG: readonly TickerCatalogEntry[] = [
   { symbol: "CRM", name: "Salesforce, Inc.", exchange: "NYSE", type: "stock" },
   { symbol: "NFLX", name: "Netflix, Inc.", exchange: "NASDAQ", type: "stock" },
   { symbol: "AMD", name: "Advanced Micro Devices, Inc.", exchange: "NASDAQ", type: "stock" },
-  { symbol: "INTC", name: "Intel Corporation", exchange: "NASDAQ", type: "stock" },
   { symbol: "QCOM", name: "QUALCOMM Incorporated", exchange: "NASDAQ", type: "stock" },
   { symbol: "TXN", name: "Texas Instruments Incorporated", exchange: "NASDAQ", type: "stock" },
   { symbol: "MU", name: "Micron Technology, Inc.", exchange: "NASDAQ", type: "stock" },

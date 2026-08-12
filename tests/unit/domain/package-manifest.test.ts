@@ -67,6 +67,12 @@ describe("@crosstide/domain package manifest", () => {
     expect(entry?.import).toMatch(/^\.\/dist\//u);
     expect(entry?.types).toMatch(/^\.\/dist\//u);
   });
+
+  it("keeps browser-only helpers behind an explicit subpath", () => {
+    const browser = pkg.exports?.["./browser"] as { types?: string; import?: string } | undefined;
+    expect(browser?.import).toBe("./dist/browser.js");
+    expect(browser?.types).toBe("./dist/types/domain/browser-index.d.ts");
+  });
 });
 
 describe("domain layer purity", () => {

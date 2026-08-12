@@ -44,6 +44,14 @@ export interface MethodSignal {
   readonly evaluatedAt: string; // ISO 8601
 }
 
+/** Explainability metadata for a consensus decision. */
+export interface ConsensusExplanation {
+  readonly evaluatedAt: string;
+  readonly inputMethods: readonly MethodName[];
+  readonly methodWeights: Readonly<Partial<Record<MethodName, number>>>;
+  readonly limitations: readonly string[];
+}
+
 /** Consensus evaluation result for one ticker. */
 export interface ConsensusResult {
   readonly ticker: string;
@@ -51,6 +59,7 @@ export interface ConsensusResult {
   readonly buyMethods: readonly MethodSignal[];
   readonly sellMethods: readonly MethodSignal[];
   readonly strength: number; // 0–1 ratio of buy or sell signals to total
+  readonly explanation: ConsensusExplanation;
 }
 
 /** SMA periods the app monitors. */

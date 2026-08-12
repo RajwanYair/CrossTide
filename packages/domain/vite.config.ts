@@ -15,9 +15,12 @@ import { defineConfig } from "vite";
 export default defineConfig({
   build: {
     lib: {
-      entry: fileURLToPath(new URL("../../src/domain/index.ts", import.meta.url)),
+      entry: {
+        index: fileURLToPath(new URL("../../src/domain/index.ts", import.meta.url)),
+        browser: fileURLToPath(new URL("../../src/domain/browser-index.ts", import.meta.url)),
+      },
       formats: ["es"],
-      fileName: (): string => "index.js",
+      fileName: (_format, entryName): string => `${entryName}.js`,
     },
     outDir: "dist",
     emptyOutDir: true,

@@ -8,11 +8,11 @@ import {
 describe("check-doc-facts", () => {
   it("derives current source facts", () => {
     expect(collectDocumentedFacts()).toMatchObject({
-      sourceModules: 517,
-      domainModules: 220,
-      coreModules: 139,
-      uiModules: 75,
-      cardFiles: 52,
+      sourceModules: 523,
+      domainModules: 222,
+      coreModules: 140,
+      uiModules: 76,
+      cardFiles: 53,
       registeredCards: 25,
     });
   });

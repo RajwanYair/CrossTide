@@ -2,9 +2,9 @@
  * Vitest browser-mode configuration.  (G17)
  *
  * Runs tests in tests/browser/ inside a real Chromium instance via Playwright.
- * Requires: `npx playwright install chromium` (one-time setup).
+ * Requires: `npm exec -- playwright install chromium` (one-time setup).
  *
- * Run with: npx vitest run --config vitest.browser.config.ts
+ * Run with: npm exec -- vitest run --config vitest.browser.config.ts
  *       or: npm run test:browser
  *
  * Optional env flags:

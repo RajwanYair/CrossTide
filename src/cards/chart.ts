@@ -40,13 +40,13 @@ export function renderChart(container: HTMLElement, options: ChartOptions): void
       <span class="text-secondary">${candles.length} candles</span>
     </div>
     <div class="chart-canvas" data-ticker="${escapeHtml(ticker)}" style="width:${width}px;height:${height}px;">
-      ${renderOhlcTable(candles.slice(-10))}
+      ${renderOhlcTable(candles.slice(-10), ticker)}
     </div>
   `,
   );
 }
 
-function renderOhlcTable(candles: readonly DailyCandle[]): string {
+function renderOhlcTable(candles: readonly DailyCandle[], ticker: string): string {
   const rows = candles
     .map(
       (c) =>
@@ -61,7 +61,7 @@ function renderOhlcTable(candles: readonly DailyCandle[]): string {
     )
     .join("");
 
-  return `<table class="ohlc-table">
+  return `<table class="ohlc-table" aria-label="Recent OHLCV data for ${escapeHtml(ticker)}">
     <thead><tr><th>Date</th><th>O</th><th>H</th><th>L</th><th>C</th><th>Vol</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;

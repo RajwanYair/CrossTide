@@ -19,7 +19,7 @@ Perform a security review of CrossTide against the OWASP Top 10:2021.
 Run these first — all must exit 0 before proceeding:
 
 ```powershell
-npm run lint                              # ESLint security rules
+npm run lint                              # Oxlint TypeScript 7-aware rules
 npm run typecheck                         # type safety
 npm audit --omit=dev --audit-level=high   # CVE scan
 npm audit signatures                      # registry signature check

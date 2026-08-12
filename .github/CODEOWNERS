@@ -5,7 +5,7 @@
 # Default owner for everything not matched below
 * @RajwanYair
 
-# Layer-specific ownership (mirrors ESLint import direction enforcement)
+# Layer-specific ownership (mirrors architecture-check import direction enforcement)
 /src/domain/    @RajwanYair
 /src/core/      @RajwanYair
 /src/providers/ @RajwanYair
@@ -25,7 +25,6 @@
 /vitest.config.ts       @RajwanYair
 /tsconfig.json          @RajwanYair
 /tsconfig.sw.json       @RajwanYair
-/eslint.config.mjs      @RajwanYair
 /package.json           @RajwanYair
 /package-lock.json      @RajwanYair
 /wrangler.toml          @RajwanYair

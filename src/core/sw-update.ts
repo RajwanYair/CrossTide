@@ -6,6 +6,8 @@
  * (toast, banner, etc.) and decides when to activate the new worker.
  */
 
+import { recordPerformanceTrace } from "./perf-metrics";
+
 export interface SwUpdateHandle {
   /** Tell the waiting worker to skipWaiting. Returns false if none is waiting. */
   applyUpdate(): boolean;
@@ -66,12 +68,14 @@ export function activateServiceWorkerUpdate(
 ): void {
   let activated = false;
   let timer: ReturnType<typeof setTimeout> | null = null;
+  const updateStartedAt = performance.now();
 
   const finish = (): void => {
     if (activated) return;
     activated = true;
     if (timer !== null) clearTimeout(timer);
     handle.dispose();
+    recordPerformanceTrace("serviceWorkerUpdateMs", performance.now() - updateStartedAt);
     onActivated();
   };
 

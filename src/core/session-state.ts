@@ -50,12 +50,20 @@ export function restoreSessionState(maxAgeMs: number = 30 * 60 * 1000): SessionS
  * Clear saved session state.
  */
 export function clearSessionState(): void {
-  sessionStorage.removeItem(STORAGE_KEY);
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage may be blocked in private browsing.
+  }
 }
 
 /**
  * Check if there is a saved session state.
  */
 export function hasSessionState(): boolean {
-  return sessionStorage.getItem(STORAGE_KEY) !== null;
+  try {
+    return sessionStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
 }

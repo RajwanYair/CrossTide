@@ -43,11 +43,8 @@
     "**/playwright-report": true,
     "**/.wrangler": true,
     "**/.astro": true,
-    "**/package-lock.json": true,
-    "docs/ROADMAP-v*-archive.md": true
+    "**/package-lock.json": true
   },
-  // Watching these trees keeps a file handle per entry and is the single largest
-  // source of VS Code CPU/memory cost in this repo.
   "files.watcherExclude": {
     "**/node_modules/**": true,
     "**/dist/**": true,
@@ -66,7 +63,6 @@
   "typescript.preferences.includePackageJsonAutoImports": "off",
   "typescript.disableAutomaticTypeAcquisition": true,
   "javascript.preferences.includePackageJsonAutoImports": "off",
-  "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "css.validate": false,
@@ -76,7 +72,6 @@
   "html.validate.styles": true,
   "html.format.wrapLineLength": 120,
   "html.customData": ["./config/html-custom-data.json"],
-  // GitHub Copilot
   "github.copilot.enable": {
     "*": true
   },
@@ -93,19 +88,6 @@
     ".github/agents": true
   },
   "chat.todoListTool.enabled": true,
-  "chat.tools.terminal.autoApprove": {
-    "npm run typecheck": true,
-    "npm run lint": true,
-    "npm run lint:all": true,
-    "npm run test": true,
-    "npm run test:fast": true,
-    "npm run build": true,
-    "npm run check:bundle": true,
-    "npm run audit:jsdoc": true,
-    "git status": true,
-    "git diff": true,
-    "git log": true
-  },
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
       "text": "Use Conventional Commits: type(scope): lowercase subject, no trailing period, max 72 chars. Types: feat fix docs refactor test chore perf ci. Scopes: domain worker cards core ui ci docs screener portfolio alerts consensus watchlist chart."
@@ -116,8 +98,6 @@
       "file": ".github/copilot-instructions.md"
     }
   ],
-  // Without this, generated tests land in the wrong Vitest project and fail on
-  // missing DOM globals or the outbound-fetch guard.
   "github.copilot.chat.testGeneration.instructions": [
     {
       "file": ".github/instructions/tests.instructions.md"
@@ -125,7 +105,7 @@
   ],
   "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
     {
-      "text": "Summarize what changed and why, grouped by layer (domain/worker/cards/core/ui/ci). Call out any quality-gate impact: coverage thresholds, bundle size, or new tests. Keep it factual and short; no marketing language."
+      "text": "Summarize what changed and why, grouped by layer (domain/worker/cards/core/ui/ci). Call out quality-gate impact: coverage thresholds, bundle size, or new tests. Keep it factual and short; no marketing language."
     }
   ],
   "coverage-gutters.coverageBaseDir": "coverage",

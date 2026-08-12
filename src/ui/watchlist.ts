@@ -16,6 +16,10 @@ import {
   toggleGroupCollapsed,
   renderGroupHeader,
 } from "./watchlist-groups";
+import { sortWithPinnedFirst } from "../core/ticker-pinning";
+import { isTickerSelected } from "../core/ticker-selection";
+import { getTickerTag, tagColorToCss } from "../core/ticker-tags";
+import { getTickerNote } from "../core/ticker-notes";
 
 export interface WatchlistQuote {
   ticker: string;
@@ -92,7 +96,7 @@ function sortEntries(
         return 0;
     }
   });
-  return sorted;
+  return sortWithPinnedFirst(sorted, (entry) => entry.ticker);
 }
 
 function renderSortIndicator(_column: SortColumn): string {
@@ -210,9 +214,15 @@ function renderRow(ticker: string, quote: WatchlistQuote | null): string {
   const range52w = quote ? render52wRange(quote.price, quote.low52w, quote.high52w) : "--";
   const volumeBar = quote ? renderVolumeBar(quote.volume, quote.avgVolume) : "";
   const freshness = renderFreshnessBadge(getFreshness(ticker));
+  const selected = isTickerSelected(ticker);
+  const tag = getTickerTag(ticker);
+  const note = getTickerNote(ticker);
+  const tagMarkup = tag
+    ? `<span class="ticker-tag" style="color:${tagColorToCss(tag.color)}" title="${escapeHtml(tag.label)}">${escapeHtml(tag.label)}</span>`
+    : "";
 
-  return `<tr data-ticker="${ticker}" draggable="true">
-    <td><strong>${ticker}</strong>${quote?.name ? `<br><span class="ticker-name">${quote.name}</span>` : ""}${instrumentTypeBadge(quote?.instrumentType)} ${freshness}</td>
+  return `<tr data-ticker="${ticker}" draggable="true"${note ? ` title="${escapeHtml(note)}"` : ""}>
+    <td><button type="button" data-action="select" data-ticker="${ticker}" aria-pressed="${selected}" title="${selected ? "Deselect" : "Select"} ${ticker}">${selected ? "Selected" : "Select"}</button> <strong>${ticker}</strong>${tagMarkup}${quote?.name ? `<br><span class="ticker-name">${quote.name}</span>` : ""}${instrumentTypeBadge(quote?.instrumentType)} ${freshness}</td>
     <td class="font-mono">${price}</td>
     <td class="${changeClass} font-mono">${change}</td>
     <td>${consensus}</td>
@@ -221,6 +231,19 @@ function renderRow(ticker: string, quote: WatchlistQuote | null): string {
     <td>${range52w}</td>
     <td><button class="ticker-remove" data-action="remove" data-ticker="${ticker}" title="Remove ${ticker}">&times;</button></td>
   </tr>`;
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/gu, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "'": "&#39;",
+      '"': "&quot;",
+    };
+    return entities[character] ?? character;
+  });
 }
 
 function renderBadge(direction: SignalDirection): string {

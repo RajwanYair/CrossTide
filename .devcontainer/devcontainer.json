@@ -9,13 +9,29 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "github.copilot-chat",
+        "biomejs.biome",
         "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
         "stylelint.vscode-stylelint",
-        "vitest.explorer"
+        "DavidAnson.vscode-markdownlint",
+        "vitest.explorer",
+        "ms-playwright.playwright",
+        "github.vscode-github-actions",
+        "akamud.vscode-caniuse",
+        "kwesinavilot.baseline-lens",
+        "webben.browserslist",
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        "42crunch.vscode-openapi",
+        "htmlhint.vscode-htmlhint",
+        "unifiedjs.vscode-mdx",
+        "sonarsource.sonarlint-vscode",
+        "ryanluker.vscode-coverage-gutters",
+        "streetsidesoftware.code-spell-checker",
+        "usernamehw.errorlens"
       ],
       "settings": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "biomejs.biome",
         "editor.formatOnSave": true
       }
     }

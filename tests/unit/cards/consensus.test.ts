@@ -79,6 +79,27 @@ describe("renderConsensus", () => {
     expect(container.querySelector(".method-indicator.sell")).not.toBeNull();
   });
 
+  it("renders calculation inputs, weights, and limitations", () => {
+    const result: ConsensusResult = {
+      ticker: "AAPL",
+      direction: "BUY",
+      strength: 0.6,
+      buyMethods: [makeSignal("RSI", "BUY")],
+      sellMethods: [],
+      explanation: {
+        evaluatedAt: "2026-08-12T12:00:00.000Z",
+        inputMethods: ["RSI"],
+        methodWeights: { RSI: 1.5 },
+        limitations: ["Requires at least 151 candles"],
+      },
+    };
+    renderConsensus(container, "AAPL", result);
+    expect(container.querySelector(".consensus-explanation")).not.toBeNull();
+    expect(container.innerHTML).toContain("Methods evaluated: 1");
+    expect(container.innerHTML).toContain("RSI: 1.5");
+    expect(container.innerHTML).toContain("Requires at least 151 candles");
+  });
+
   it("shows empty methods message when no signals", () => {
     const result: ConsensusResult = {
       ticker: "AAPL",

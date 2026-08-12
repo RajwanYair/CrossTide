@@ -9,6 +9,7 @@ import {
   buildPath,
   getCurrentRoute,
   getCurrentRouteInfo,
+  isValidRouteName,
   onRouteChange,
   defineRoute,
   getRouteLoadResult,
@@ -19,6 +20,7 @@ import {
 import { listCards } from "../../../src/cards/registry";
 
 function setupDOM(): void {
+  localStorage.setItem("crosstide-passkey-id", "test-credential");
   document.body.innerHTML = `
     <nav>
       <a class="nav-link" data-route="watchlist" href="/watchlist">Watchlist</a>
@@ -86,6 +88,13 @@ describe("initRouter", () => {
   });
 });
 
+describe("isValidRouteName", () => {
+  it("accepts registered routes and rejects persisted unknown values", () => {
+    expect(isValidRouteName("chart")).toBe(true);
+    expect(isValidRouteName("not-a-route")).toBe(false);
+  });
+});
+
 describe("navigateTo / navigateToPath", () => {
   beforeEach(() => {
     _resetRouterForTests();
@@ -112,6 +121,13 @@ describe("navigateTo / navigateToPath", () => {
     navigateToPath("settings", {}, { replace: true });
     expect(window.location.pathname).toBe("/settings");
     expect(window.history.length).toBe(before);
+  });
+
+  it("redirects protected routes when no passkey is stored", () => {
+    localStorage.removeItem("crosstide-passkey-id");
+    initRouter();
+    navigateTo("portfolio");
+    expect(window.location.pathname).toBe("/settings");
   });
 });
 

@@ -36,7 +36,7 @@ jobs:
           node --version
           ./node_modules/.bin/tsc --version
           ./node_modules/.bin/vitest --version
-          ./node_modules/.bin/eslint --version
+          ./node_modules/.bin/oxlint --version
           ./node_modules/.bin/vite --version
 
       - name: Quick sanity (typecheck only)

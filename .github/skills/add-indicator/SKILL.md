@@ -17,7 +17,7 @@ A method almost always wraps a calculator. Build the calculator first.
 
 ## 1️⃣ Step 1 — Purity Constraints
 
-`src/domain/` is pure. These are enforced by `node scripts/arch-check.mjs --strict` and the ESLint globals config, both of which run in `npm run ci`.
+`src/domain/` is pure. These are enforced by `node scripts/arch-check.mjs --strict` and the Oxlint/typecheck gates, both of which run in `npm run ci`.
 
 - No `document`, `window`, `navigator`, `localStorage`, `fetch`, `indexedDB`
 - No `Date.now()` — accept `now: number` as a parameter

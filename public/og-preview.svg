@@ -1,59 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">CrossTide market intelligence</title>
+  <desc id="desc">Privacy-first stock analysis with explainable consensus signals, offline support, and interactive charts.</desc>
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0d1117"/>
-      <stop offset="100%" style="stop-color:#161b22"/>
+      <stop offset="0%" style="stop-color:#07111f"/>
+      <stop offset="100%" style="stop-color:#123d45"/>
     </linearGradient>
     <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#3fb950"/>
-      <stop offset="100%" style="stop-color:#58a6ff"/>
+      <stop offset="0%" style="stop-color:#14b8a6"/>
+      <stop offset="100%" style="stop-color:#22d3ee"/>
     </linearGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#b9f5f0" stroke-opacity="0.08"/>
+    </pattern>
   </defs>
 
   <!-- Background -->
   <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
 
   <!-- Decorative chart lines -->
   <polyline points="80,480 180,430 260,445 340,390 420,405 500,340 580,360 660,300 740,320 820,270 900,290 980,230 1060,250 1120,210"
-    fill="none" stroke="#3fb950" stroke-width="3" opacity="0.4"/>
+    fill="none" stroke="#14b8a6" stroke-width="3" opacity="0.55"/>
   <polyline points="80,520 180,500 260,510 340,480 420,495 500,450 580,465 660,420 740,438 820,400 900,415 980,370 1060,385 1120,345"
-    fill="none" stroke="#58a6ff" stroke-width="2" opacity="0.25"/>
+    fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.32"/>
 
   <!-- Top accent bar -->
   <rect x="80" y="100" width="120" height="4" rx="2" fill="url(#accent)"/>
 
   <!-- Logo / title -->
-  <text x="80" y="200" font-family="system-ui,-apple-system,sans-serif" font-size="72"
-    font-weight="700" fill="#e6edf3" letter-spacing="-2">CrossTide</text>
+  <text x="80" y="200" font-family="'Aptos Display','Segoe UI',sans-serif" font-size="72"
+    font-weight="750" fill="#e6fbff" letter-spacing="-1">CrossTide</text>
 
   <!-- Tagline -->
-  <text x="82" y="255" font-family="system-ui,-apple-system,sans-serif" font-size="28"
-    fill="#8b949e" letter-spacing="0.5">Privacy-First Stock Analysis Dashboard</text>
+  <text x="82" y="255" font-family="'Aptos','Segoe UI',sans-serif" font-size="28"
+    fill="#b9e8ed" letter-spacing="0.5">Privacy-first market intelligence</text>
 
   <!-- Feature pills -->
-  <rect x="80" y="310" width="200" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <rect x="80" y="310" width="200" height="40" rx="20" fill="#123b43" stroke="#4bbfb5" stroke-opacity="0.45" stroke-width="1"/>
   <text x="180" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
-    font-size="16" fill="#3fb950">✓ 12 Signal Methods</text>
+    font-size="16" fill="#b9f5f0">12 signal methods</text>
 
-  <rect x="298" y="310" width="190" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <rect x="298" y="310" width="190" height="40" rx="20" fill="#123b43" stroke="#4bbfb5" stroke-opacity="0.45" stroke-width="1"/>
   <text x="393" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
-    font-size="16" fill="#58a6ff">✓ Offline-First PWA</text>
+    font-size="16" fill="#b9f5f0">offline-first PWA</text>
 
-  <rect x="506" y="310" width="170" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <rect x="506" y="310" width="170" height="40" rx="20" fill="#123b43" stroke="#4bbfb5" stroke-opacity="0.45" stroke-width="1"/>
   <text x="591" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
-    font-size="16" fill="#e6edf3">✓ No Account Needed</text>
+    font-size="16" fill="#b9f5f0">no account needed</text>
 
-  <rect x="694" y="310" width="160" height="40" rx="20" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+  <rect x="694" y="310" width="160" height="40" rx="20" fill="#123b43" stroke="#4bbfb5" stroke-opacity="0.45" stroke-width="1"/>
   <text x="774" y="336" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif"
-    font-size="16" fill="#e6edf3">✓ MIT Open Source</text>
+    font-size="16" fill="#b9f5f0">MIT open source</text>
 
   <!-- URL badge -->
   <text x="80" y="560" font-family="system-ui,-apple-system,sans-serif" font-size="22"
-    fill="#656d76">crosstide.pages.dev</text>
+    fill="#82b7c1">crosstide.pages.dev</text>
 
   <!-- Right side stats -->
   <text x="1100" y="200" text-anchor="end" font-family="system-ui,-apple-system,sans-serif"
-    font-size="20" fill="#8b949e">TypeScript 6.0 · 158 KB</text>
+    font-size="20" fill="#b9e8ed">TypeScript 6 · &lt;250 KB gzip</text>
   <text x="1100" y="230" text-anchor="end" font-family="system-ui,-apple-system,sans-serif"
-    font-size="20" fill="#8b949e">5,700+ tests · 50+ indicators</text>
+    font-size="20" fill="#b9e8ed">25 route cards · 80+ indicators</text>
 </svg>

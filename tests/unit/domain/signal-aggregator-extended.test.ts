@@ -2,6 +2,7 @@
  * Integration-style test: signal aggregator + consensus across various scenarios.
  */
 import { describe, it, expect } from "vitest";
+import fc from "fast-check";
 import { aggregateSignals, aggregateConsensus } from "../../../src/domain/signal-aggregator";
 import { makeCandles } from "../../helpers/candle-factory";
 
@@ -55,5 +56,28 @@ describe("signal-aggregator extended", () => {
       expect(s.evaluatedAt).toBeTypeOf("string");
       expect(s.evaluatedAt.length).toBeGreaterThan(0);
     }
+  });
+
+  it("keeps consensus strength finite and explanation methods aligned", () => {
+    fc.assert(
+      fc.property(
+        fc.array(fc.integer({ min: 1, max: 100 }), { minLength: 151, maxLength: 220 }),
+        (increments) => {
+          let price = 100;
+          const closes = increments.map((increment) => {
+            price += increment - 50;
+            return Math.max(1, price);
+          });
+          const signals = aggregateSignals("TEST", makeCandles(closes));
+          const result = aggregateConsensus("TEST", makeCandles(closes));
+          const methods = signals.map((signal) => signal.method);
+
+          expect(Number.isFinite(result.strength)).toBe(true);
+          expect(result.strength).toBeGreaterThanOrEqual(0);
+          expect(result.strength).toBeLessThanOrEqual(1);
+          expect(result.explanation.inputMethods).toEqual(methods);
+        },
+      ),
+    );
   });
 });

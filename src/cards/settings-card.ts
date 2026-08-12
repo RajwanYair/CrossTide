@@ -11,6 +11,7 @@ import {
 } from "../core/finnhub-stream-manager";
 import { hydrateCardSettings, updateCardSettingsSignal } from "../core/card-settings-signal";
 import { initSettingsSearch } from "../ui/settings-search";
+import { updateNotificationPrefs } from "../core/notification-prefs";
 import type { CardModule } from "./registry";
 
 const settingsCard: CardModule = {
@@ -62,6 +63,9 @@ const settingsCard: CardModule = {
       onRefreshIntervalChange(ms) {
         const latest = loadConfig();
         saveConfig({ ...latest, refreshIntervalMs: ms });
+      },
+      onNotificationPrefsChange(updates) {
+        updateNotificationPrefs(updates);
       },
     });
     const cleanupSearch = initSettingsSearch(container);

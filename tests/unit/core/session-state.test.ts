@@ -84,4 +84,19 @@ describe("session-state", () => {
     sessionStorage.setItem("crosstide-session-state", "not json{{{");
     expect(restoreSessionState()).toBeNull();
   });
+
+  it("degrades safely when storage is blocked", async () => {
+    const { clearSessionState, hasSessionState } = await loadModule();
+    vi.stubGlobal("sessionStorage", {
+      getItem: () => {
+        throw new Error("storage blocked");
+      },
+      removeItem: () => {
+        throw new Error("storage blocked");
+      },
+    });
+
+    expect(() => clearSessionState()).not.toThrow();
+    expect(hasSessionState()).toBe(false);
+  });
 });

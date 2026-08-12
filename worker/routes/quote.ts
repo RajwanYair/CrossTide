@@ -13,6 +13,7 @@ import { fetchMassiveQuote } from "../providers/massive.js";
 import { fetchAlphaVantageQuote } from "../providers/alpha-vantage.js";
 import { kvGet, kvPut, quoteTtl } from "../kv-cache.js";
 import type { Env } from "../index.js";
+import { createMarketDataEnvelope, type MarketDataEnvelope } from "../../src/types/market-data.js";
 
 const TICKER_RE = /^[A-Z0-9.\-^]{1,12}$/;
 
@@ -26,9 +27,18 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
 
   // Try KV cache
   if (env.QUOTE_CACHE) {
-    const cached = await kvGet<YahooQuoteResult>(env.QUOTE_CACHE, cacheKey);
+    const cached = normalizeCachedQuote(
+      await kvGet<MarketDataEnvelope<YahooQuoteResult> | YahooQuoteResult>(
+        env.QUOTE_CACHE,
+        cacheKey,
+      ),
+    );
     if (cached) {
-      return json({ ...cached, source: "cache" }, 200, "public, max-age=15");
+      return json(
+        { ...cached, status: "cached", provenance: { ...cached.provenance, source: "cache" } },
+        200,
+        "public, max-age=15",
+      );
     }
   }
 
@@ -37,8 +47,9 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
     try {
       const quote = await fetchYahooQuote(ticker);
       const ttl = quoteTtl(quote.marketState);
-      await kvPut(env.QUOTE_CACHE, cacheKey, quote, ttl);
-      return json({ ...quote, source: "yahoo" }, 200, `public, max-age=${Math.min(ttl, 30)}`);
+      const envelope = quoteEnvelope(quote, "yahoo");
+      await kvPut(env.QUOTE_CACHE, cacheKey, envelope, ttl);
+      return json(envelope, 200, `public, max-age=${Math.min(ttl, 30)}`);
     } catch (error) {
       const tickerNotFound = error instanceof YahooApiError && error.status === 404;
       // Yahoo failed — try Finnhub as fallback
@@ -65,12 +76,9 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
             source: "finnhub",
           };
           const ttl = quoteTtl("REGULAR");
-          await kvPut(env.QUOTE_CACHE, cacheKey, mapped, ttl);
-          return json(
-            { ...mapped, source: "finnhub" },
-            200,
-            `public, max-age=${Math.min(ttl, 30)}`,
-          );
+          const envelope = quoteEnvelope(mapped, "finnhub");
+          await kvPut(env.QUOTE_CACHE, cacheKey, envelope, ttl);
+          return json(envelope, 200, `public, max-age=${Math.min(ttl, 30)}`);
         } catch {
           // Finnhub failed — try the remaining providers.
         }
@@ -102,12 +110,9 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
             source: "massive",
           };
           const ttl = quoteTtl("CLOSED");
-          await kvPut(env.QUOTE_CACHE, cacheKey, mapped, ttl);
-          return json(
-            { ...mapped, source: "massive" },
-            200,
-            `public, max-age=${Math.min(ttl, 30)}`,
-          );
+          const envelope = quoteEnvelope(mapped, "massive");
+          await kvPut(env.QUOTE_CACHE, cacheKey, envelope, ttl);
+          return json(envelope, 200, `public, max-age=${Math.min(ttl, 30)}`);
         } catch {
           // Massive failed — try the low-quota Alpha Vantage fallback.
         }
@@ -137,12 +142,9 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
             source: "alpha-vantage",
           };
           const ttl = quoteTtl("CLOSED");
-          await kvPut(env.QUOTE_CACHE, cacheKey, mapped, ttl);
-          return json(
-            { ...mapped, source: "alpha-vantage" },
-            200,
-            `public, max-age=${Math.min(ttl, 30)}`,
-          );
+          const envelope = quoteEnvelope(mapped, "alpha-vantage");
+          await kvPut(env.QUOTE_CACHE, cacheKey, envelope, ttl);
+          return json(envelope, 200, `public, max-age=${Math.min(ttl, 30)}`);
         } catch {
           // All configured providers failed.
         }
@@ -154,7 +156,60 @@ export async function handleQuote(symbol: string, env: Env): Promise<Response> {
   }
 
   // Fallback demo quote
-  return json(generateDemoQuote(ticker), 200, "public, max-age=60");
+  return json(
+    createMarketDataEnvelope(
+      "quote",
+      generateDemoQuote(ticker),
+      {
+        source: "demo",
+        fetchedAt: new Date().toISOString(),
+        timezone: "UTC",
+        attribution: "CrossTide demo data",
+        coverage: "Synthetic quote for local development and preview",
+        marketStatus: "DEMO",
+        adjustmentPolicy: "Synthetic values are not adjusted market data",
+        limitations: [
+          "Demo values are deterministic placeholders and must not inform investment decisions",
+        ],
+      },
+      "demo",
+    ),
+    200,
+    "public, max-age=60",
+  );
+}
+
+function quoteEnvelope(
+  quote: YahooQuoteResult,
+  source: string,
+): MarketDataEnvelope<YahooQuoteResult> {
+  return createMarketDataEnvelope("quote", quote, {
+    source,
+    fetchedAt: new Date().toISOString(),
+    timezone: "America/New_York",
+    attribution: source === "yahoo" ? "Yahoo Finance" : source,
+    coverage: "Real-time quote snapshot",
+    marketStatus: quote.marketState,
+    adjustmentPolicy:
+      "Quote values are provider-reported; corporate-action policy may vary by provider",
+    limitations: ["Coverage and delay depend on the selected provider and instrument"],
+  });
+}
+
+function normalizeCachedQuote(
+  value: MarketDataEnvelope<YahooQuoteResult> | YahooQuoteResult | null,
+): MarketDataEnvelope<YahooQuoteResult> | null {
+  if (!value) return null;
+  if ("schemaVersion" in value && value.schemaVersion === "1" && "data" in value) {
+    return value;
+  }
+  return createMarketDataEnvelope(
+    "quote",
+    value,
+    { source: "cache", fetchedAt: new Date().toISOString() },
+    "cached",
+    ["Legacy cache entry migrated to schema version 1"],
+  );
 }
 
 function generateDemoQuote(ticker: string): Record<string, unknown> {

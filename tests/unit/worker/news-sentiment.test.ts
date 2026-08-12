@@ -117,10 +117,21 @@ describe("handleNewsSentiment", () => {
     });
     const res = await handleNewsSentiment(req);
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { results: { score: number; label: string }[] };
-    expect(body.results).toHaveLength(2);
-    expect(body.results[0]!.label).toBe("bullish");
-    expect(body.results[1]!.label).toBe("bearish");
+    const body = (await res.json()) as {
+      schemaVersion: string;
+      kind: string;
+      data: { results: { score: number; label: string }[] };
+      provenance: { attribution: string; limitations: string[] };
+    };
+    expect(body.schemaVersion).toBe("1");
+    expect(body.kind).toBe("derived");
+    expect(body.data.results).toHaveLength(2);
+    expect(body.data.results[0]!.label).toBe("bullish");
+    expect(body.data.results[1]!.label).toBe("bearish");
+    expect(body.provenance.attribution).toBe("CrossTide local sentiment model");
+    expect(body.provenance.limitations).toContain(
+      "Scores are heuristic and are not investment advice",
+    );
   });
 
   it("returns 405 for non-POST", async () => {

@@ -10,13 +10,17 @@ const NODE_ONLY_SUITES = [
   "tests/unit/mcp/**/*.test.ts",
 ];
 
+const TEST_POOL = process.env["VITEST_POOL"] === "forks" ? "forks" : "threads";
+const MAX_TEST_WORKERS = process.env["VITEST_MAX_WORKERS"] ?? "87.5%";
+
 export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify("test"),
   },
   test: {
     globals: true,
-    pool: "forks",
+    pool: TEST_POOL,
+    maxWorkers: MAX_TEST_WORKERS,
     testTimeout: 10000,
     hookTimeout: 10000,
     projects: [

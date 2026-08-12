@@ -23,13 +23,13 @@ flowchart LR
 ```bash
 # Prerequisites
 npm run dev                          # Start dev server on :5173
-npx playwright install chromium      # Ensure browser is installed
+playwright install chromium          # Ensure browser is installed
 
 # Record all demos
-npx tsx scripts/record-demos.ts
+tsx scripts/record-demos.ts
 
 # Record a single demo
-npx tsx scripts/record-demos.ts consensus
+tsx scripts/record-demos.ts consensus
 ```
 
 ## 💼 Available Demos

@@ -1,11 +1,11 @@
-# 📡 CrossTide Uptime Monitoring (K17)
+# CrossTide Uptime Monitoring (K17)
 
 Uptime Kuma instance deployed on Fly.io for monitoring CrossTide API health.
 
 > **Status: Configuration only, not verified live.** `fly.toml` and the monitor plan are
 > ready, but no public status page or deployed monitoring instance is currently verified.
 
-## 🔄 Pipeline
+## Pipeline
 
 ```mermaid
 flowchart LR
@@ -16,7 +16,7 @@ flowchart LR
   Status --> Badge["README badge\n/api/badge/1/status"]
 ```
 
-## 🎯 Monitored Endpoints
+## Monitored Endpoints
 
 | Endpoint                     | Interval | Expected                       |
 | ---------------------------- | -------- | ------------------------------ |
@@ -24,7 +24,7 @@ flowchart LR
 | `GET /api/quote?ticker=AAPL` | 120s     | HTTP 200, valid JSON           |
 | `GET /` (SPA)                | 300s     | HTTP 200, `<title>` present    |
 
-## 🚀 Deployment
+## Deployment
 
 ```bash
 # First-time setup
@@ -37,7 +37,7 @@ flyctl deploy --config fly.toml
 # https://crosstide-status.fly.dev/status/crosstide
 ```
 
-## ⚙️ Initial Configuration
+## Initial Configuration
 
 After first deploy, visit `https://crosstide-status.fly.dev` to:
 
@@ -50,7 +50,7 @@ After first deploy, visit `https://crosstide-status.fly.dev` to:
    https://crosstide-status.fly.dev/api/badge/1/status
    ```
 
-## 🏷️ README Badge
+## README Badge
 
 Add to README.md:
 

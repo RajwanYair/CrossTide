@@ -86,6 +86,7 @@ describe("screener-card (CardModule)", () => {
 
     const btn = container.querySelector<HTMLButtonElement>(".preset-btn");
     btn?.click();
+    await Promise.resolve();
 
     // After clicking a preset, the results section should have content
     const results = container.querySelector(".screener-results");

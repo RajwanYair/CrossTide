@@ -1,14 +1,14 @@
-# 🛠️ Development Guide
+# Development Guide
 
 Quick-start for contributors to get CrossTide running locally.
 
-## 📋 Prerequisites
+## Prerequisites
 
-- **Node.js** 20+ (LTS)
+- **Node.js** 20.19.0+ (LTS)
 - **npm** 10+
 - **Git** 2.40+
 
-## ⚙️ Setup
+## Setup
 
 ```bash
 git clone https://github.com/RajwanYair/CrossTide.git
@@ -16,7 +16,7 @@ cd CrossTide
 npm ci
 ```
 
-## 🖥️ Development Server
+## Development Server
 
 ```bash
 npm run dev
@@ -24,7 +24,7 @@ npm run dev
 
 Opens at `http://localhost:5173` with HMR.
 
-## 📜 Available Scripts
+## Available Scripts
 
 | Script                  | Purpose                               |
 | ----------------------- | ------------------------------------- |
@@ -34,7 +34,7 @@ Opens at `http://localhost:5173` with HMR.
 | `npm run test:coverage` | Tests with coverage report            |
 | `npm run test:browser`  | Browser tests (Vitest + real browser) |
 | `npm run test:e2e`      | End-to-end tests (Playwright)         |
-| `npm run lint`          | ESLint check                          |
+| `npm run lint`          | Oxlint TypeScript 7 check             |
 | `npm run lint:css`      | Stylelint check                       |
 | `npm run lint:html`     | HTMLHint check                        |
 | `npm run lint:md`       | Markdownlint check                    |
@@ -45,12 +45,12 @@ Opens at `http://localhost:5173` with HMR.
 | `npm run check:bundle`  | Verify bundle < 250 KB gzip           |
 | `npm run ci`            | Full CI pipeline (all of the above)   |
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 src/
   types/      ← Shared interfaces (no imports from other layers)
-  domain/     ← Pure functions (no DOM, no fetch, no side effects)
+  domain/     ← Analytical functions; pure boundary enforced, browser helpers under A04 split
   core/       ← State, signals, config, fetch wrappers
   providers/  ← Data provider adapters (Yahoo, Finnhub, etc.)
   cards/      ← Route cards (CardModule pattern)
@@ -63,9 +63,9 @@ tests/        ← Unit, browser, and E2E tests
 
 Configuration placement is documented in [`config/README.md`](../config/README.md).
 
-## 🚪 Import Rules
+## Import Rules
 
-Imports flow **downward only** (enforced by ESLint):
+Imports flow **downward only** (enforced by architecture checks and Oxlint):
 
 ```mermaid
 flowchart LR
@@ -78,15 +78,24 @@ flowchart LR
 
 Never import upward. Domain must never import from core, cards, or ui.
 
-## 🧩 Adding Features
+## Adding Features
+
+![CrossTide contributor delivery loop](assets/contributor-loop.svg)
+
+_A good contribution starts with a bounded issue and ends with reproducible acceptance
+evidence._
+
+When changing a route, provider, package export, widget, MCP tool, or deployment mode,
+review [docs/CAPABILITY_MATRIX.md](CAPABILITY_MATRIX.md) and update its classification,
+evidence, and customer-facing limitation in the same change when needed.
 
 ```mermaid
 flowchart TD
   Start([New feature]) --> Choice{What kind?}
 
-  Choice -->|Indicator| I1["src/domain/indicators/&lt;name&gt;.ts\n(pure fn, DailyCandle[] in)"]
+  Choice -->|Indicator| I1["src/domain/&lt;name&gt;.ts\n(pure fn, DailyCandle[] in)"]
   I1 --> I2["tests/unit/domain/ + makeCandles()"]
-  I2 --> I3["Export from indicators/index.ts"]
+  I2 --> I3["Export from src/domain/index.ts"]
 
   Choice -->|Card| C1["src/cards/&lt;name&gt;-card.ts\n(CardModule export)"]
   C1 --> C2["Register in cards/registry.ts"]
@@ -102,9 +111,27 @@ flowchart TD
   W3 --> Gate
 ```
 
-## ☁️ Worker Development
+### 🔁 Contribution inputs and evidence
+
+```mermaid
+flowchart LR
+  Issue[GitHub Issue<br/>owner + acceptance] --> Change[Focused code change]
+  Change --> Narrow[Narrow test or check]
+  Narrow --> Full[Full quality gates]
+  Full --> PR[Pull request evidence]
+  PR --> Decision{Acceptance met?}
+  Decision -->|yes| Roadmap[Update roadmap status]
+  Decision -->|no| Change
+```
+
+## Worker Development
 
 The Cloudflare Worker (API) lives in `worker/`:
+
+![CrossTide market data and deployment flow](assets/data-deployment-flow.svg)
+
+_Local fixtures prove behavior; provisioned Cloudflare resources are required for production
+evidence._
 
 ```bash
 ./node_modules/.bin/wrangler dev          # Local worker dev server
@@ -113,12 +140,12 @@ The Cloudflare Worker (API) lives in `worker/`:
 
 Requires a `.dev.vars` file with API keys (see `.dev.vars.example`).
 
-## ✅ Quality Gates
+## Quality Gates
 
 All must pass before merge:
 
 - TypeScript: zero errors
-- ESLint: zero warnings
+- Oxlint: zero errors
 - Stylelint: zero CSS warnings
 - HTMLHint: zero issues
 - Markdownlint: zero violations
@@ -138,7 +165,7 @@ flowchart LR
 
 Run `npm run ci` to verify all gates locally.
 
-## 📝 Commit Convention
+## Commit Convention
 
 ```text
 type(scope): lowercase subject, ≤72 chars

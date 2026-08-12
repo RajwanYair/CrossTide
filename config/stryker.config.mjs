@@ -4,7 +4,7 @@
  * Targets src/domain/ — the pure-logic hot path where mutations are most
  * meaningful. Uses the TypeScript checker and Vitest runner.
  *
- * Run:  npx stryker run --configFile config/stryker.config.mjs
+ * Run:  npm exec -- stryker run --configFile config/stryker.config.mjs
  */
 import os from "os";
 import path from "path";

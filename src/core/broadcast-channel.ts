@@ -51,7 +51,7 @@ function makeSenderId(): string {
  * Create a cross-tab sync object backed by the BroadcastChannel API.
  * If the API is unavailable, returns a safe no-op implementation.
  */
-export function createCrossTabSync(): CrossTabSync {
+export function createCrossTabSync(channelName: string = CHANNEL_NAME): CrossTabSync {
   // Graceful degradation for environments without BroadcastChannel
   if (typeof BroadcastChannel === "undefined") {
     return {
@@ -62,7 +62,7 @@ export function createCrossTabSync(): CrossTabSync {
   }
 
   const senderId = makeSenderId();
-  const channel = new BroadcastChannel(CHANNEL_NAME);
+  const channel = new BroadcastChannel(channelName);
   const configHandlers = new Set<(cfg: unknown) => void>();
 
   channel.addEventListener("message", (ev: MessageEvent<CrossTabMessage>) => {

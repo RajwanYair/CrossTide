@@ -1,6 +1,8 @@
 # 🔌 MCP Servers — CrossTide
 
-This repository is compatible with VS Code's current MCP server model. No committed workspace `mcp.json` is required — developer-specific servers belong in the user profile.
+This repository is compatible with VS Code's current MCP server model. Shared
+team servers are committed in `.vscode/mcp.json`; developer-specific servers
+belong in the user profile.
 
 ## 📍 Placement Policy
 

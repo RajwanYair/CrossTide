@@ -60,7 +60,20 @@ describe("handleFundamentals", () => {
     const res = await handleFundamentals("AAPL", makeEnv());
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect((body as { source: string }).source).toBe("cache");
+    const envelope = body as {
+      schemaVersion: string;
+      kind: string;
+      status: string;
+      provenance: { source: string; coverage: string; limitations: string[] };
+    };
+    expect(envelope.schemaVersion).toBe("1");
+    expect(envelope.kind).toBe("fundamentals");
+    expect(envelope.status).toBe("cached");
+    expect(envelope.provenance.source).toBe("cache");
+    expect(envelope.provenance.coverage).toBe("Company valuation and financial metrics");
+    expect(envelope.provenance.limitations).toContain(
+      "Metric availability varies by instrument and reporting history",
+    );
     expect(fetchYahooFundamentals).not.toHaveBeenCalled();
   });
 
@@ -68,8 +81,13 @@ describe("handleFundamentals", () => {
     const res = await handleFundamentals("AAPL", makeEnv());
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect((body as { source: string }).source).toBe("yahoo");
-    expect((body as { symbol: string }).symbol).toBe("AAPL");
+    const envelope = body as {
+      data: YahooFundamentals;
+      provenance: { source: string; adjustmentPolicy: string };
+    };
+    expect(envelope.provenance.source).toBe("yahoo");
+    expect(envelope.provenance.adjustmentPolicy).toContain("reporting periods may be delayed");
+    expect(envelope.data.symbol).toBe("AAPL");
     expect(mockKvStore.put).toHaveBeenCalledOnce();
     expect(fetchYahooFundamentals).toHaveBeenCalledWith("AAPL");
   });
@@ -83,7 +101,7 @@ describe("handleFundamentals", () => {
     const res = await handleFundamentals("MSFT", makeEnv(false));
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect((body as { source: string }).source).toBe("yahoo");
+    expect((body as { provenance: { source: string } }).provenance.source).toBe("yahoo");
     expect(mockKvStore.put).not.toHaveBeenCalled();
   });
 
@@ -100,7 +118,7 @@ describe("handleFundamentals", () => {
   it("includes expected fundamental fields in response", async () => {
     const res = await handleFundamentals("AAPL", makeEnv(false));
     const body = await res.json();
-    const data = body as YahooFundamentals & { source: string };
+    const data = (body as { data: YahooFundamentals }).data;
     expect(typeof data.trailingPE).toBe("number");
     expect(typeof data.eps).toBe("number");
     expect(typeof data.marketCap).toBe("number");

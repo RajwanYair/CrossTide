@@ -120,7 +120,7 @@ describe("watchlist URL encoding (D5)", () => {
   });
 
   it("round-trips a large realistic watchlist", () => {
-    const tickers = ["AAPL", "MSFT", "GOOG", "AMZN", "META", "TSLA", "NVDA", "AMD", "INTC", "NFLX"];
+    const tickers = ["AAPL", "MSFT", "GOOG", "AMZN", "META", "TSLA", "NVDA", "AMD", "ORCL", "NFLX"];
     const url = encodeWatchlistUrl(tickers, "http://localhost/");
     expect(decodeWatchlistUrl(url)).toEqual(tickers);
   });

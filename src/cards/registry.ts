@@ -24,6 +24,13 @@ export interface CardHandle {
   readonly dispose?: () => void;
 }
 
+export interface CardLifecycleStore {
+  readonly get: (route: RouteName) => CardHandle | undefined;
+  readonly set: (route: RouteName, handle: CardHandle) => void;
+  readonly disposeInactive: (activeRoute: RouteName) => void;
+  readonly disposeAll: () => void;
+}
+
 export type CardModule = {
   readonly mount: (container: HTMLElement, ctx: CardContext) => CardHandle | void;
 };
@@ -210,6 +217,40 @@ export function loadCard(route: RouteName): Promise<CardModule> {
     cache.set(route, p);
   }
   return p;
+}
+
+/** Create the runtime store that owns mounted card handles. */
+export function createCardLifecycleStore(): CardLifecycleStore {
+  const handles = new Map<RouteName, CardHandle>();
+  let activeRoute: RouteName | undefined;
+  let disposed = false;
+
+  function dispose(route: RouteName): void {
+    handles.get(route)?.dispose?.();
+    handles.delete(route);
+  }
+
+  return {
+    get: (route) => handles.get(route),
+    set: (route, handle): void => {
+      if (disposed || (activeRoute !== undefined && route !== activeRoute)) {
+        handle.dispose?.();
+        return;
+      }
+      handles.set(route, handle);
+    },
+    disposeInactive(route): void {
+      activeRoute = route;
+      for (const route of handles.keys()) {
+        if (route !== activeRoute) dispose(route);
+      }
+    },
+    disposeAll(): void {
+      disposed = true;
+      activeRoute = undefined;
+      for (const route of handles.keys()) dispose(route);
+    },
+  };
 }
 
 /** Test-only: clear the load cache. */

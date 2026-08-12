@@ -1,13 +1,12 @@
-# 🏗️ Architecture
+# Architecture
 
-> **Last updated:** v11.44.4 (August 2026)
+> **Last updated:** v11.44.6 (12 August 2026)
 
 CrossTide Web is a browser-based stock monitoring dashboard built with vanilla TypeScript and Vite.
-It follows a strict layered architecture, keeps the production bundle small, and ships as a
-self-contained offline-first PWA with real-time streaming, multi-provider data, and Web Worker
-compute offload.
+It follows a strict layered architecture, keeps the production bundle small, and ships as an
+offline-first PWA with real-time streaming, multi-provider data, and Web Worker compute offload.
 
-## 🧱 Layered architecture
+## Layered Architecture
 
 ```mermaid
 flowchart TD
@@ -28,8 +27,10 @@ flowchart TD
   HonoWorker --> Core
 ```
 
-**Dependency rule:** each layer may only import from layers below it. The domain layer is pure
-(zero side effects, no DOM access). Web Workers share the domain and core layers.
+**Dependency rule:** each layer may only import from layers below it. The domain import boundary
+is enforced, and the analytical modules are designed to be pure. Browser-capable helpers are
+published through the domain package's explicit `./browser` subpath, separate from its portable
+root entry. Web Workers share the domain and core layers.
 
 The rule is enforced by `node scripts/arch-check.mjs --strict` in CI. Its `ALLOWED_CROSS_LAYER`
 set holds the three deliberate exceptions — `cards->ui`, `core->cards`, `core->ui` — and nothing
@@ -37,11 +38,52 @@ may be added to it to accommodate a module: an entry that names a category rathe
 file repeals the rule it sits inside. `domain->core` and `domain->cards` were on that list once,
 and three domain modules had drifted outward behind them.
 
-Because the domain layer imports nothing but itself and `src/types`, it can be built as a
-standalone, dependency-free npm package — see `packages/domain/`. Pointing a bundler at the layer
-is the sharpest available purity check, since the compiler has to follow every import outward.
+![CrossTide layered architecture](assets/architecture-layers.svg)
 
-## 🔄 Runtime data flow
+_Read the layers left to right: contracts become calculations, calculations become data, and
+cards turn the result into a customer-facing surface._
+
+### Customer-facing runtime map
+
+```mermaid
+flowchart LR
+  Visitor([Customer]) --> Surface[Cards and charts]
+  Surface --> State[Signals and local state]
+  State --> Cache[(Offline cache)]
+  State --> API[Cloudflare Worker API]
+  API --> Sources[Market data providers]
+  State --> Compute[Domain calculations]
+  Compute --> Surface
+  Cache -. reconnect .-> State
+  style Visitor fill:#0f766e,color:#fff,stroke:#0f766e
+  style Surface fill:#2563eb,color:#fff,stroke:#2563eb
+  style Compute fill:#d97706,color:#fff,stroke:#d97706
+```
+
+This is the product boundary in one view: the customer interacts with cards, while caching,
+provider access, and numerical computation stay behind the UI contract.
+
+### Inputs, Boundaries, And Outputs
+
+```mermaid
+flowchart LR
+  Input[External input<br/>URL, user action, provider payload] --> Boundary{Boundary validation}
+  Boundary -->|accepted| State[Core state and cache]
+  Boundary -->|rejected| Error[Typed error state]
+  State --> Calculation[Pure domain calculation]
+  Calculation --> Output[Card output<br/>fresh, stale, empty, or error]
+  Error --> Output
+```
+
+The important distinction is between an input and a trusted value. URL parameters, user values,
+and provider responses are untrusted until the owning boundary validates them. Domain functions
+then receive typed values and return deterministic results; cards decide how to present the result.
+
+The domain layer imports only itself and `src/types`, so its dependency boundary can be checked as
+a standalone package — see `packages/domain/`. The current package build also includes browser-
+capable helpers; the portable/browser barrel split remains an A04 acceptance item.
+
+## Runtime Data Flow
 
 ```mermaid
 sequenceDiagram
@@ -76,7 +118,7 @@ sequenceDiagram
   SW->>Core: Background Sync / cache response
 ```
 
-## 🔗 URL sharing flow (D5)
+## URL Sharing Flow (D5)
 
 ```mermaid
 sequenceDiagram
@@ -98,7 +140,7 @@ sequenceDiagram
   UI-->>Recipient: auto-import tickers + toast confirmation
 ```
 
-## ✨ Key product features (v11.44)
+## Key Product Features (v11.44)
 
 | Feature                    | Implementation                                                                |
 | -------------------------- | ----------------------------------------------------------------------------- |
@@ -137,19 +179,19 @@ sequenceDiagram
 | Indicator docs             | 48 MDX reference pages in `docs-site/src/content/docs/indicators/`            |
 | URL state sharing          | `src/core/share-state.ts` — base64-URL encoded watchlist snapshot             |
 | Data export                | JSON, CSV, XLSX export via `src/core/data-export.ts`                          |
-| 10 data providers          | Yahoo, Finnhub, Alpha Vantage, Polygon, Tiingo, Stooq, CoinGecko + chain      |
+| 16 data providers          | Yahoo, Finnhub, Massive, Alpha Vantage, Polygon, Tiingo, Stooq, CoinGecko, Frankfurter, FRED + chain |
 
 ## 📁 Directory layout
 
 ```text
 CrossTide/
 ├── src/
-│   ├── domain/         pure calculators (212 modules — indicators, consensus, backtest, risk, …)
-│   ├── core/           signals, cache, config, fetch, idb, telemetry, passkey, i18n (138 modules)
+│   ├── domain/         pure calculators (220 modules — indicators, consensus, backtest, risk, …)
+│   ├── core/           signals, cache, config, fetch, idb, telemetry, passkey, i18n (139 modules)
 │   ├── providers/      market-data adapters (Yahoo, Finnhub, Alpha Vantage, Polygon, Tiingo,
 │   │                   Stooq, CoinGecko) + provider-chain failover + circuit breaker
-│   ├── cards/          composable UI cards — 51 card components, lazy-loaded via registry
-│   ├── ui/             DOM helpers, router, toast, modal, command palette, a11y (70 modules)
+│   ├── cards/          composable UI cards — 52 card files, lazy-loaded via registry
+│   ├── ui/             DOM helpers, router, toast, modal, command palette, a11y (75 modules)
 │   ├── types/          shared interfaces + Valibot schemas for all provider boundaries
 │   ├── styles/         design tokens, base, responsive, components, palettes
 │   └── main.ts         bootstrap: router, signals, keyboard, palette, cards, telemetry
@@ -163,7 +205,7 @@ CrossTide/
 ├── packages/
 │   └── domain/         @crosstide/domain — src/domain built as a zero-dependency npm package
 ├── docs/               Roadmap, contributing guidelines, architecture
-├── tests/unit/         Vitest unit tests (656 test files)
+├── tests/unit/         Vitest unit tests (679 test files)
 └── public/             Static assets, PWA manifest, 404.html
 ```
 
@@ -179,7 +221,7 @@ CrossTide/
 
 All other functionality is hand-written TypeScript — no framework runtime.
 
-## 🧰 Tooling — single source of truth
+## Tooling — Single Source Of Truth
 
 | Concern        | File                            | Notes                                                               |
 | -------------- | ------------------------------- | ------------------------------------------------------------------- |
@@ -187,7 +229,7 @@ All other functionality is hand-written TypeScript — no framework runtime.
 | Bundler        | `vite.config.ts`                | Vite 8, oxc minifier, ES2022                                        |
 | Tests (unit)   | `vitest.config.ts`              | split `node` / `happy-dom` projects, v8 coverage, 90% thresholds    |
 | Tests (E2E)    | `playwright.config.ts`          | Chromium, 15+ critical flows + axe-core                             |
-| Linting (TS)   | `eslint.config.mjs`             | ESLint 10 flat + typescript-eslint 8 + import-x, `--max-warnings 0` |
+| Linting (TS)   | `package.json`                  | Oxlint 1 + `oxlint-tsgolint`, TypeScript 7 type-aware checks       |
 | Linting (CSS)  | `config/.stylelintrc.json`      | inline rule set                                                     |
 | Linting (HTML) | `config/.htmlhintrc`            | inline rule set                                                     |
 | Linting (MD)   | `config/.markdownlint.json`     | `default: true`, allow common HTML elements                         |
@@ -199,7 +241,7 @@ The repo is fully self-contained: `git clone` → `npm ci` → `npm run ci` work
 
 Git hooks are configured via `simple-git-hooks`:
 
-- **pre-commit**: `lint-staged` runs ESLint + Biome on staged files
+- **pre-commit**: `lint-staged` runs Oxlint + Biome on staged files
 - **commit-msg**: `commitlint` enforces [Conventional Commits](https://www.conventionalcommits.org/)
 
 ## 🚀 CI / CD
@@ -230,17 +272,17 @@ flowchart LR
   Weekly --> Dependabot["dependabot.yml\ngrouped update PRs"]
 ```
 
-## ✅ Quality gates
+## Quality Gates
 
 Local and CI both enforce, with **zero waivers**:
 
 - 0 TypeScript errors (`npm run typecheck`)
-- 0 ESLint warnings (`npm run lint`)
+- 0 Oxlint errors (`npm run lint`)
 - 0 Stylelint warnings (`npm run lint:css`)
 - 0 HTMLHint findings (`npm run lint:html`)
 - 0 markdownlint findings (`npm run lint:md`)
 - Biome clean (`npm run format:check`)
-- All unit tests pass across 656 test files (`npm test`), v8 coverage thresholds met
+- All unit tests pass across 679 test files (`npm test`), current coverage thresholds met
 - 15+ Playwright E2E flows + axe a11y audit pass
 - Lighthouse CI budgets met
 - Production build under 250 KB gzipped JS (`npm run check:bundle`)

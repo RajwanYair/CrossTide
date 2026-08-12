@@ -78,17 +78,28 @@ describe("handlePortfolioAnalytics", () => {
     );
     expect(res.status).toBe(200);
     const body = (await res.json()) as {
-      holdings: unknown[];
-      totalValue: number;
-      totalPnl: number;
-      herfindahlIndex: number;
+      kind: string;
+      provenance: { coverage: string; limitations: string[] };
+      data: {
+        holdings: unknown[];
+        totalValue: number;
+        totalPnl: number;
+        herfindahlIndex: number;
+      };
     };
-    expect(body.holdings).toHaveLength(2);
+    expect(body.kind).toBe("derived");
+    expect(body.provenance.coverage).toBe(
+      "Portfolio valuation, profit/loss, and concentration metrics",
+    );
+    expect(body.provenance.limitations).toContain(
+      "Valuation depends on the quote source and may be stale",
+    );
+    expect(body.data.holdings).toHaveLength(2);
     // AAPL: 10 * 200 = 2000, cost = 10 * 150 = 1500, pnl = 500
     // GOOG: 5 * 180 = 900, cost = 5 * 160 = 800, pnl = 100
-    expect(body.totalValue).toBeCloseTo(2900, 0);
-    expect(body.totalPnl).toBeCloseTo(600, 0);
-    expect(body.herfindahlIndex).toBeGreaterThan(0);
+    expect(body.data.totalValue).toBeCloseTo(2900, 0);
+    expect(body.data.totalPnl).toBeCloseTo(600, 0);
+    expect(body.data.herfindahlIndex).toBeGreaterThan(0);
   });
 
   it("computes allocation weights that sum to 1", async () => {
@@ -101,8 +112,8 @@ describe("handlePortfolioAnalytics", () => {
       }),
       makeEnv(),
     );
-    const body = (await res.json()) as { holdings: Array<{ weight: number }> };
-    const totalWeight = body.holdings.reduce((s, h) => s + h.weight, 0);
+    const body = (await res.json()) as { data: { holdings: Array<{ weight: number }> } };
+    const totalWeight = body.data.holdings.reduce((s, h) => s + h.weight, 0);
     expect(totalWeight).toBeCloseTo(1, 4);
   });
 

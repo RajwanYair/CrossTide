@@ -5,17 +5,20 @@
  * Runs the full 12-method consensus engine on fetched candle data.
  */
 import type { DailyCandle, ConsensusResult, InstrumentType, MethodWeights } from "../types/domain";
+import type { MarketDataEnvelope } from "../types/market-data";
 import { aggregateConsensus } from "../domain/signal-aggregator";
+import { validateOhlcv } from "../domain/validate-ohlcv";
 import { fetchWithTimeout } from "./fetch";
 import { safeParse, YahooChartSchema } from "../types/valibot-schemas";
 import { markFetched } from "./data-freshness";
+import { resolveWorkerBaseUrl } from "./worker-config";
 
 /**
  * Base URL for Yahoo Finance requests.
  *
  * In dev mode, requests go through the Vite dev-server proxy (/api/yahoo/*)
- * which uses https-proxy-agent to honour HTTPS_PROXY env vars — required on
- * corporate networks behind a firewall.  The proxy also avoids CSP
+ * which uses https-proxy-agent when HTTP(S)_PROXY is provided by the host. The
+ * proxy also avoids CSP
  * connect-src violations since the browser only sees a same-origin request.
  *
  * In production, Yahoo Finance v8 chart API returns
@@ -26,14 +29,6 @@ const WORKER_BASE: string =
   typeof __WORKER_BASE_URL__ !== "undefined"
     ? __WORKER_BASE_URL__
     : "https://worker.crosstide.pages.dev";
-
-function resolveWorkerBase(base: string): string {
-  if (/^https?:\/\//i.test(base)) return base;
-  if (typeof window !== "undefined" && typeof window.location?.origin === "string") {
-    return new URL(base, window.location.origin).toString();
-  }
-  return base;
-}
 
 declare const __WORKER_BASE_URL__: string | undefined;
 
@@ -55,6 +50,12 @@ export interface TickerData {
   sector?: string;
   /** Company / fund display name from Yahoo Finance `shortName` / `longName`. */
   name?: string;
+  /** Provenance and freshness metadata for the candles used by this result. */
+  provenance?: MarketDataEnvelope<unknown>["provenance"];
+  /** Delivery state reported by the provider envelope. */
+  dataStatus?: MarketDataEnvelope<unknown>["status"];
+  /** Provider warnings that may affect interpretation. */
+  dataWarnings?: readonly string[];
   error?: string;
 }
 
@@ -74,12 +75,19 @@ interface CandleResult {
   sector: string | undefined;
   /** Company/fund display name from Yahoo Finance `shortName` (may be absent). */
   name: string | undefined;
+  provenance: MarketDataEnvelope<unknown>["provenance"];
+  status: MarketDataEnvelope<unknown>["status"];
+  warnings: readonly string[];
 }
 
-interface WorkerChartResponse {
+interface WorkerChartData {
   readonly ticker?: string;
   readonly source?: string;
   readonly candles?: readonly unknown[];
+}
+
+interface WorkerChartResponse extends Omit<MarketDataEnvelope<WorkerChartData>, "data"> {
+  readonly data: WorkerChartData;
 }
 
 /**
@@ -153,6 +161,23 @@ async function fetchYahooCandles(
     instrumentType: parseInstrumentType(result.meta?.instrumentType),
     sector: result.meta?.sector,
     name: result.meta?.shortName ?? result.meta?.longName,
+    provenance: {
+      source: "Yahoo Finance",
+      fetchedAt: new Date().toISOString(),
+      ...(result.meta?.regularMarketTime !== undefined && {
+        asOf: new Date(result.meta.regularMarketTime * 1000).toISOString(),
+      }),
+      ...(result.meta?.exchangeTimezoneName !== undefined && {
+        timezone: result.meta.exchangeTimezoneName,
+      }),
+      attribution: "Yahoo Finance",
+      coverage: `Historical OHLCV candles (${timeframe.label})`,
+      ...(result.meta?.marketState !== undefined && { marketStatus: result.meta.marketState }),
+      adjustmentPolicy: "Yahoo Finance provider adjustment policy applies",
+      limitations: ["Historical candles may be delayed or incomplete outside regular sessions."],
+    },
+    status: "live",
+    warnings: [],
   };
 }
 
@@ -191,18 +216,21 @@ async function fetchWorkerCandles(
     range: timeframe.range,
     interval: timeframe.interval,
   });
-  const base = resolveWorkerBase(WORKER_BASE).replace(/\/$/, "");
+  const base = resolveWorkerBaseUrl(
+    WORKER_BASE,
+    typeof window !== "undefined" ? window.location?.origin : undefined,
+  ).replace(/\/$/, "");
   const response = await fetchWithTimeout(
     `${base}/api/chart?${query.toString()}`,
     {},
     15000,
     signal,
   );
-  const data = (await response.json()) as WorkerChartResponse;
-  if (data.source === "demo" || !Array.isArray(data.candles)) {
+  const envelope = (await response.json()) as WorkerChartResponse;
+  if (envelope.data.source === "demo" || !Array.isArray(envelope.data.candles)) {
     throw new Error(`Worker returned no live provider data for ${ticker}`);
   }
-  const candles = data.candles.map(parseWorkerCandle);
+  const candles = envelope.data.candles.map(parseWorkerCandle);
   if (candles.some((candle) => candle === null)) {
     throw new Error(`Worker returned invalid candle data for ${ticker}`);
   }
@@ -211,6 +239,9 @@ async function fetchWorkerCandles(
     instrumentType: undefined,
     sector: undefined,
     name: undefined,
+    provenance: envelope.provenance,
+    status: envelope.status,
+    warnings: envelope.warnings,
   };
 }
 
@@ -220,11 +251,17 @@ async function fetchCandles(
   timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
 ): Promise<CandleResult> {
   try {
-    return await fetchYahooCandles(ticker, signal, timeframe);
+    const result = await fetchYahooCandles(ticker, signal, timeframe);
+    const quality = validateOhlcv(result.candles);
+    if (!quality.valid) throw new Error(`Yahoo returned invalid candle data for ${ticker}`);
+    return result;
   } catch (primaryError) {
     if (signal?.aborted) throw primaryError;
     try {
-      return await fetchWorkerCandles(ticker, signal, timeframe);
+      const result = await fetchWorkerCandles(ticker, signal, timeframe);
+      const quality = validateOhlcv(result.candles);
+      if (!quality.valid) throw new Error(`Worker returned invalid candle data for ${ticker}`);
+      return result;
     } catch {
       throw primaryError;
     }
@@ -242,7 +279,8 @@ export async function fetchTickerData(
   timeframe?: TimeframePreset,
 ): Promise<TickerData> {
   try {
-    const { candles, instrumentType, sector, name } = await fetchCandles(ticker, signal, timeframe);
+    const { candles, instrumentType, sector, name, provenance, status, warnings } =
+      await fetchCandles(ticker, signal, timeframe);
 
     if (candles.length === 0) {
       return emptyData(ticker, "No candle data available");
@@ -294,6 +332,9 @@ export async function fetchTickerData(
       ...(instrumentType !== undefined && { instrumentType }),
       ...(sector !== undefined && { sector }),
       ...(name !== undefined && { name }),
+      provenance,
+      dataStatus: status,
+      dataWarnings: warnings,
     };
   } catch (err) {
     return emptyData(ticker, err instanceof Error ? err.message : String(err));

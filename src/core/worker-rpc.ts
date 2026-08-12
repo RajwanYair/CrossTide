@@ -12,6 +12,8 @@
  *   serveWorkerRpc<ComputeApi>({ runBacktest, ... });
  */
 
+import { recordPerformanceTrace } from "./perf-metrics";
+
 // ── message shapes ──────────────────────────────────────────────────────────
 
 export interface RpcRequest {
@@ -85,9 +87,13 @@ export function createWorkerClient<Api extends WorkerApi>(worker: Worker): Worke
       return new Promise((resolve, reject) => {
         const id = nextId++;
         pending.set(id, {
-          resolve: (v) => resolve(v as Awaited<ReturnType<Api[K]>>),
+          resolve: (v) => {
+            recordPerformanceTrace("workerTransferMs", performance.now() - startedAt);
+            resolve(v as Awaited<ReturnType<Api[K]>>);
+          },
           reject,
         });
+        const startedAt = performance.now();
         const req: RpcRequest = {
           __rpc: true,
           id,
@@ -105,9 +111,13 @@ export function createWorkerClient<Api extends WorkerApi>(worker: Worker): Worke
       return new Promise((resolve, reject) => {
         const id = nextId++;
         pending.set(id, {
-          resolve: (v) => resolve(v as Awaited<ReturnType<Api[K]>>),
+          resolve: (v) => {
+            recordPerformanceTrace("workerTransferMs", performance.now() - startedAt);
+            resolve(v as Awaited<ReturnType<Api[K]>>);
+          },
           reject,
         });
+        const startedAt = performance.now();
         const req: RpcRequest = {
           __rpc: true,
           id,

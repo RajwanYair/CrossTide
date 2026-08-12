@@ -4,7 +4,13 @@
  * G21: Clicking a sector tile drills down into constituent stocks.
  * Shows attribution bar, breadcrumb, and sort controls.
  */
-import { renderHeatmap, renderSectorDrillDown, type SectorDataWithConstituents } from "./heatmap";
+import {
+  renderGlobalHeatmap,
+  renderSectorDrillDown,
+  type GlobalHeatmapItem,
+  type HeatmapAssetClass,
+  type SectorDataWithConstituents,
+} from "./heatmap";
 import type { CardModule } from "./registry";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
 
@@ -101,41 +107,126 @@ const MOCK_SECTORS: readonly SectorDataWithConstituents[] = [
   { sector: "Materials", marketCap: 1_200, changePercent: 0.6, tickerCount: 9, constituents: [] },
 ];
 
+const GLOBAL_HEATMAPS: Readonly<Record<HeatmapAssetClass, readonly GlobalHeatmapItem[]>> = {
+  stocks: MOCK_SECTORS.map((sector) => ({
+    symbol: sector.sector,
+    name: sector.sector,
+    group: "US sectors",
+    weight: sector.marketCap,
+    changePercent: sector.changePercent,
+  })),
+  fx: [
+    { symbol: "EURUSD", name: "Euro / US Dollar", group: "Majors", weight: 4, changePercent: 0.24 },
+    {
+      symbol: "USDJPY",
+      name: "US Dollar / Yen",
+      group: "Majors",
+      weight: 3.4,
+      changePercent: -0.31,
+    },
+    {
+      symbol: "GBPUSD",
+      name: "British Pound / US Dollar",
+      group: "Majors",
+      weight: 2.8,
+      changePercent: 0.18,
+    },
+    {
+      symbol: "AUDUSD",
+      name: "Australian Dollar / US Dollar",
+      group: "Commodity FX",
+      weight: 2.1,
+      changePercent: -0.52,
+    },
+    {
+      symbol: "USDCAD",
+      name: "US Dollar / Canadian Dollar",
+      group: "Commodity FX",
+      weight: 1.9,
+      changePercent: 0.41,
+    },
+    {
+      symbol: "USDCHF",
+      name: "US Dollar / Swiss Franc",
+      group: "Majors",
+      weight: 1.7,
+      changePercent: -0.12,
+    },
+  ],
+  futures: [
+    { symbol: "ES", name: "S&P 500", group: "Equity index", weight: 4, changePercent: 0.62 },
+    { symbol: "NQ", name: "Nasdaq 100", group: "Equity index", weight: 3.7, changePercent: 1.14 },
+    { symbol: "YM", name: "Dow Jones", group: "Equity index", weight: 2.6, changePercent: 0.28 },
+    { symbol: "CL", name: "Crude Oil", group: "Energy", weight: 2.2, changePercent: -1.34 },
+    { symbol: "GC", name: "Gold", group: "Metals", weight: 2, changePercent: 0.47 },
+    { symbol: "ZB", name: "US Treasury Bond", group: "Rates", weight: 1.6, changePercent: -0.22 },
+  ],
+  crypto: [
+    { symbol: "BTC", name: "Bitcoin", group: "Large cap", weight: 5, changePercent: 2.31 },
+    { symbol: "ETH", name: "Ethereum", group: "Large cap", weight: 3.8, changePercent: 1.74 },
+    { symbol: "SOL", name: "Solana", group: "Layer 1", weight: 2.7, changePercent: -0.82 },
+    { symbol: "BNB", name: "BNB", group: "Large cap", weight: 2.1, changePercent: 0.38 },
+    { symbol: "XRP", name: "XRP", group: "Payments", weight: 1.8, changePercent: -1.23 },
+    { symbol: "ADA", name: "Cardano", group: "Layer 1", weight: 1.3, changePercent: 0.66 },
+  ],
+};
+
 const heatmapCard: CardModule = {
   mount(container) {
     let delegate: DelegateHandle | null = null;
+    let activeClass: HeatmapAssetClass = "stocks";
+    let renderedWidth = -1;
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => {
+            const width = Math.max(container.clientWidth || 600, 320);
+            if (width !== renderedWidth) showOverview();
+          })
+        : null;
 
     function showOverview(): void {
       delegate?.dispose();
-      renderHeatmap(container, MOCK_SECTORS, {
-        width: container.clientWidth || 600,
-        height: 320,
+      const width = Math.max(container.clientWidth || 600, 320);
+      renderGlobalHeatmap(container, activeClass, GLOBAL_HEATMAPS[activeClass], {
+        width,
+        height: width < 560 ? 360 : 420,
       });
-
-      // Add data-action to each sector tile for delegation
-      container.querySelectorAll<HTMLElement>("[data-sector]").forEach((tile) => {
-        tile.style.cursor = "pointer";
-        tile.setAttribute("data-action", "drill-sector");
-      });
+      renderedWidth = width;
 
       delegate = createDelegate(
         container,
         {
-          "drill-sector": (target) => {
-            const sectorName = target.dataset["sector"];
+          "heatmap-class": (target) => {
+            activeClass = target.dataset["heatmapClass"] as HeatmapAssetClass;
+            showOverview();
+          },
+          "heatmap-tile": (target, event) => {
+            if (event.type === "keydown") {
+              const keyboardEvent = event as KeyboardEvent;
+              if (keyboardEvent.key !== "Enter" && keyboardEvent.key !== " ") return;
+              keyboardEvent.preventDefault();
+            }
+            if (activeClass !== "stocks") return;
+            const sectorName = target.dataset["symbol"];
             const sectorData = MOCK_SECTORS.find((s) => s.sector === sectorName);
             if (sectorData) {
               delegate?.dispose();
-              renderSectorDrillDown(container, sectorData, showOverview);
+              delegate = renderSectorDrillDown(container, sectorData, showOverview);
             }
           },
         },
-        { eventTypes: ["click"] },
+        { eventTypes: ["click", "keydown"] },
       );
     }
 
     showOverview();
-    return { dispose: () => delegate?.dispose() };
+    resizeObserver?.observe(container);
+    return {
+      dispose: () => {
+        delegate?.dispose();
+        resizeObserver?.disconnect();
+      },
+    };
   },
 };
 

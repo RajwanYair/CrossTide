@@ -35,7 +35,10 @@ FROM node:24-slim AS runtime
 WORKDIR /app
 
 # Install wrangler globally for miniflare
-RUN npm install -g wrangler@4
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl \
+  && rm -rf /var/lib/apt/lists/* \
+  && npm install -g wrangler@4
 
 # Copy Worker source + wrangler config
 COPY worker/ worker/

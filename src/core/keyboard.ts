@@ -4,8 +4,11 @@
  * Registers global keyboard shortcuts and dispatches to handlers.
  * Ignores key events when the user is typing in an input/textarea.
  */
+import { getBinding } from "./shortcut-customization";
 
 export interface Shortcut {
+  /** Stable action id used to resolve an optional persisted custom binding. */
+  readonly action?: string;
   readonly key: string; // e.g. "r", "/", "?", "Escape"
   readonly ctrl?: boolean;
   readonly shift?: boolean;
@@ -61,7 +64,24 @@ export function createShortcutManager(): ShortcutRegistry {
 
   return {
     register(shortcut: Shortcut): () => void {
-      const combo = comboKey(shortcut.key, shortcut.ctrl, shortcut.shift, shortcut.alt);
+      const binding = shortcut.action
+        ? getBinding({
+            action: shortcut.action,
+            description: shortcut.description,
+            defaultBinding: {
+              key: shortcut.key,
+              ...(shortcut.ctrl ? { ctrl: true } : {}),
+              ...(shortcut.shift ? { shift: true } : {}),
+              ...(shortcut.alt ? { alt: true } : {}),
+            },
+          })
+        : {
+            key: shortcut.key,
+            ctrl: shortcut.ctrl,
+            shift: shortcut.shift,
+            alt: shortcut.alt,
+          };
+      const combo = comboKey(binding.key, binding.ctrl, binding.shift, binding.alt);
       shortcuts.set(combo, shortcut);
       return (): void => {
         shortcuts.delete(combo);

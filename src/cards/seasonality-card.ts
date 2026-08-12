@@ -10,7 +10,7 @@ import { seasonalityByMonth, seasonalityByDayOfWeek } from "../domain/seasonalit
 import { fetchTickerData } from "../core/data-service";
 import { getNavigationSignal } from "../ui/router";
 import { patchDOM } from "../core/patch-dom";
-import type { CardModule, CardContext } from "./registry";
+import type { CardModule, CardContext, CardHandle } from "./registry";
 
 /** Convert candles to daily returns for the seasonality engine. */
 function candlesToReturns(candles: readonly DailyCandle[]): DailyReturn[] {
@@ -101,25 +101,38 @@ function renderSeasonality(
 }
 
 const seasonalityCard: CardModule = {
-  mount(container, ctx) {
+  mount(container, ctx): CardHandle {
+    let disposed = false;
+    let requestId = 0;
     const ticker = ctx.params["symbol"] ?? "";
     renderSeasonality(container, ticker, []);
 
-    if (ticker) {
-      void fetchTickerData(ticker, getNavigationSignal()).then((data) => {
-        renderSeasonality(container, ticker, data.candles);
-      });
+    async function load(nextTicker: string): Promise<void> {
+      const currentRequest = ++requestId;
+      try {
+        const data = await fetchTickerData(nextTicker, getNavigationSignal());
+        if (disposed || currentRequest !== requestId) return;
+        renderSeasonality(container, nextTicker, data.candles);
+      } catch {
+        if (disposed || currentRequest !== requestId) return;
+        patchDOM(
+          container,
+          `<p class="error">Unable to load seasonality data for ${escapeHtml(nextTicker)}.</p>`,
+        );
+      }
     }
+
+    if (ticker) void load(ticker);
 
     return {
       update(newCtx: CardContext): void {
         const t = newCtx.params["symbol"] ?? "";
         renderSeasonality(container, t, []);
-        if (t) {
-          void fetchTickerData(t, getNavigationSignal()).then((data) => {
-            renderSeasonality(container, t, data.candles);
-          });
-        }
+        if (t) void load(t);
+      },
+      dispose(): void {
+        disposed = true;
+        requestId++;
       },
     };
   },

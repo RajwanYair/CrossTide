@@ -8,8 +8,9 @@
  *
  * POST /api/news/sentiment
  * Body: { texts: string[] }
- * Response: { results: SentimentResult[] }
+ * Response: versioned derived-output envelope containing results.
  */
+import { createMarketDataEnvelope } from "../../src/types/market-data.js";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -267,8 +268,14 @@ export async function handleNewsSentiment(request: Request): Promise<Response> {
   const validTexts = texts.filter((t): t is string => typeof t === "string").slice(0, 50);
   const results = analyzeBatch(validTexts);
 
-  return new Response(JSON.stringify({ results } satisfies SentimentResponse), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return Response.json(
+    createMarketDataEnvelope("derived", { results } satisfies SentimentResponse, {
+      source: "crosstide-sentiment",
+      fetchedAt: new Date().toISOString(),
+      timezone: "UTC",
+      attribution: "CrossTide local sentiment model",
+      coverage: "Sentiment scores for submitted text",
+      limitations: ["Scores are heuristic and are not investment advice"],
+    }),
+  );
 }

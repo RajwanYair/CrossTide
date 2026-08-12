@@ -230,7 +230,7 @@ export const TOP_TICKERS: readonly string[] = [
   "IFF",
   "ILMN",
   "INCY",
-  "INTC",
+  "MSFT",
   "INTU",
   "INVH",
   "IP",

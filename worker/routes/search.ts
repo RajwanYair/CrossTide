@@ -54,7 +54,6 @@ const CATALOGUE: readonly SearchHit[] = [
   { ticker: "AMD", name: "Advanced Micro Devices, Inc.", exchange: "NASDAQ", type: "EQUITY" },
   { ticker: "NFLX", name: "Netflix, Inc.", exchange: "NASDAQ", type: "EQUITY" },
   { ticker: "CRM", name: "Salesforce, Inc.", exchange: "NYSE", type: "EQUITY" },
-  { ticker: "INTC", name: "Intel Corporation", exchange: "NASDAQ", type: "EQUITY" },
   { ticker: "IBM", name: "International Business Machines", exchange: "NYSE", type: "EQUITY" },
   { ticker: "ORCL", name: "Oracle Corporation", exchange: "NYSE", type: "EQUITY" },
   { ticker: "QCOM", name: "Qualcomm Incorporated", exchange: "NASDAQ", type: "EQUITY" },

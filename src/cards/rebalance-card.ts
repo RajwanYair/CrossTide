@@ -13,7 +13,7 @@ import {
   type RebalancePlan,
 } from "../domain/portfolio-rebalance";
 import { loadHoldings } from "./portfolio-store";
-import type { CardModule } from "./registry";
+import type { CardHandle, CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
 
 // ── Default target allocations (user can override via settings) ───────────────
@@ -95,8 +95,9 @@ function renderRebalance(container: HTMLElement, plan: RebalancePlan): void {
   );
 }
 
-async function mount(container: HTMLElement): Promise<void> {
+async function mount(container: HTMLElement, isDisposed: () => boolean): Promise<void> {
   const holdings = await loadHoldings();
+  if (isDisposed()) return;
 
   const currentHoldings: CurrentHolding[] = holdings.map((h) => ({
     ticker: h.ticker,
@@ -107,17 +108,25 @@ async function mount(container: HTMLElement): Promise<void> {
   const targets = DEFAULT_TARGETS;
 
   if (!validateTargets(targets)) {
+    if (isDisposed()) return;
     patchDOM(container, `<p class="empty-state">Target allocations must sum to 100%.</p>`);
     return;
   }
 
   const plan = calculateRebalance(currentHoldings, targets);
+  if (isDisposed()) return;
   renderRebalance(container, plan);
 }
 
 const cardModule: CardModule = {
-  mount(container) {
-    void mount(container);
+  mount(container): CardHandle {
+    let disposed = false;
+    void mount(container, () => disposed);
+    return {
+      dispose() {
+        disposed = true;
+      },
+    };
   },
 };
 

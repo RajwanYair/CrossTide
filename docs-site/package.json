@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro sync && tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.0.1",
@@ -16,12 +16,11 @@
     "cookie": "^2.0.1"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
     "katex": "^0.18.1",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.35.3",
-    "typescript": "^6.0.3",
+    "typescript": "7.0.2",
     "unist-util-visit": "^5.0.0"
   }
 }

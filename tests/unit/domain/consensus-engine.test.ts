@@ -94,6 +94,14 @@ describe("evaluateConsensus", () => {
     const result = evaluateConsensus("MSFT", []);
     expect(result.ticker).toBe("MSFT");
   });
+
+  it("explains inputs, weights, timestamp, and neutral limitations", () => {
+    const result = evaluateConsensus("AAPL", [makeSignal("Micho", "BUY")]);
+    expect(result.explanation.inputMethods).toEqual(["Micho"]);
+    expect(result.explanation.methodWeights.Micho).toBe(3);
+    expect(result.explanation.evaluatedAt).toBe("2024-01-15");
+    expect(result.explanation.limitations.join(" ")).toMatch(/supporting method/i);
+  });
 });
 
 // ── G20: per-method weights ────────────────────────────────────────────────

@@ -17,7 +17,8 @@ services:
     ports:
       - "${PORT:-8787}:8787"
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       - ENVIRONMENT=self-hosted
       - API_VERSION=1

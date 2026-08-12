@@ -5,7 +5,7 @@ description: Add a CrossTide chart to any page with one module script and a cust
 
 ## Overview
 
-CrossTide ships a standalone ES module bundle, `widget.mjs`, that auto-registers
+CrossTide provides a preview standalone ES module bundle, `widget.mjs`, that auto-registers
 three custom elements:
 
 - `<crosstide-chart>` (OHLCV candles)
@@ -37,8 +37,9 @@ leak into them.
 <crosstide-consensus ticker="AAPL"></crosstide-consensus>
 ```
 
-The element fetches data from `https://worker.crosstide.pages.dev/api/chart` by
-default. If you self-host the Worker, set `api-base` to your own origin.
+The element uses the configured Worker origin by default. The public Worker origin in the
+examples is a preview deployment and may require your own deployment or `api-base` override.
+If you self-host the Worker, set `api-base` to your own origin.
 
 ## Attributes
 
@@ -52,7 +53,7 @@ default. If you self-host the Worker, set `api-base` to your own origin.
 | `theme` | `auto` | `dark`, `light`, or follow `prefers-color-scheme` |
 | `height` | `300` | Widget height in pixels |
 | `show-volume` | `true` | Render the volume strip under candles |
-| `api-base` | `https://worker.crosstide.pages.dev` | Override the Worker origin |
+| `api-base` | Preview Worker origin | Override the Worker origin |
 
 ### `crosstide-quote`
 
@@ -61,7 +62,7 @@ default. If you self-host the Worker, set `api-base` to your own origin.
 | `ticker` | `AAPL` | Symbol to quote |
 | `theme` | `auto` | `dark`, `light`, or follow `prefers-color-scheme` |
 | `show-change` | `true` | Toggle day change + percent display |
-| `api-base` | `https://worker.crosstide.pages.dev` | Override the Worker origin |
+| `api-base` | Preview Worker origin | Override the Worker origin |
 
 ### `crosstide-consensus`
 
@@ -69,7 +70,7 @@ default. If you self-host the Worker, set `api-base` to your own origin.
 | --- | --- | --- |
 | `ticker` | `AAPL` | Symbol to evaluate |
 | `theme` | `auto` | `dark`, `light`, or follow `prefers-color-scheme` |
-| `api-base` | `https://worker.crosstide.pages.dev` | Override the Worker origin |
+| `api-base` | Preview Worker origin | Override the Worker origin |
 
 ## Self-hosted Worker
 

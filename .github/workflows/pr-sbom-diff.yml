@@ -36,11 +36,14 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
 
       - name: Generate PR-head SBOM (CycloneDX JSON)
         run: |
-          npm install --package-lock-only --ignore-scripts --silent
-          npx @cyclonedx/cyclonedx-npm \
+          ./node_modules/.bin/cyclonedx-npm \
             --output-format JSON \
             --output-file sbom.json \
             --package-lock-only \

@@ -23,12 +23,19 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-const barrel = readFileSync(join(DOMAIN_DIR, "index.ts"), "utf8");
-const modules = walk(DOMAIN_DIR).filter((f) => !f.endsWith("/index.ts"));
+const barrelFiles = walk(DOMAIN_DIR).filter((f) =>
+  ["index.ts", "browser-index.ts"].includes(basename(f)),
+);
+const modules = walk(DOMAIN_DIR).filter(
+  (f) => !["index.ts", "browser-index.ts"].includes(basename(f)),
+);
 
 /** Specifiers the barrel re-exports from, e.g. `./rsi` or `./indicators/adx`. */
 const reExported = new Set(
-  [...barrel.matchAll(/from\s+"\.\/([^"]+)"/g)].map((m) => basename(m[1] ?? "")),
+  barrelFiles.flatMap((file) => {
+    const barrel = readFileSync(file, "utf8");
+    return [...barrel.matchAll(/from\s+"\.\/([^\"]+)"/g)].map((m) => basename(m[1] ?? ""));
+  }),
 );
 
 describe("domain barrel completeness", () => {

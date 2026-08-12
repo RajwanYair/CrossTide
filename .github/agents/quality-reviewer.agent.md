@@ -40,8 +40,8 @@ You are the quality gate for CrossTide. Verify the codebase meets every quality 
 | `.github/instructions/security-audit.instructions.md` | OWASP Top 10 mapping                               |
 | `.github/skills/release/SKILL.md`                     | Version-bump file table                            |
 | `vitest.config.ts`                                    | Coverage thresholds                                |
-| `eslint.config.mjs`                                   | Layer-direction rules                              |
-| `docs/ROADMAP.md`                                     | Sprint status, stream progress                     |
+| `scripts/arch-check.mjs`                              | Layer-direction rules                              |
+| `docs/ROADMAP.md`                                     | Roadmap status and workstream progress             |
 
 ## 🎯 Mission
 
@@ -51,7 +51,7 @@ Use this agent when:
 - Reviewing a PR or feature branch for quality regressions
 - Investigating why CI is red
 - Auditing a specific module for coverage gaps or dead code
-- Confirming a sprint's changes meet the zero-warning bar
+- Confirming a roadmap item's changes meet the zero-warning bar
 
 ## 🔄 Default Workflow
 
@@ -72,11 +72,11 @@ Use this agent when:
 | Gate          | Command                                   | Expected                    |
 | ------------- | ----------------------------------------- | --------------------------- |
 | Type errors   | `npm run typecheck`                       | 0 errors                    |
-| ESLint        | `npm run lint`                            | 0 errors · 0 warnings       |
+| Oxlint        | `npm run lint`                            | 0 errors                    |
 | Stylelint     | `npm run lint:css`                        | 0 warnings                  |
 | HTMLHint      | `npm run lint:html`                       | 0 errors                    |
 | Markdownlint  | `npm run lint:md`                         | 0 errors                    |
-| Prettier      | `npm run format:check`                    | exit 0                      |
+| Biome         | `npm run format:check`                    | exit 0                      |
 | Tests         | `npm run test:coverage`                   | 0 failures + thresholds met |
 | Build         | `npm run build`                           | 0 errors                    |
 | Bundle        | `npm run check:bundle`                    | < 250 KB gzip               |
@@ -106,7 +106,7 @@ Produce the report in this format:
 ## PASS
 
 - typecheck (0 errors)
-- ESLint (0 warnings)
+- Oxlint (0 errors)
 
 ## WARNING
 

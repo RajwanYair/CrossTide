@@ -16,6 +16,7 @@ import { fetchMassiveHistory } from "../providers/massive.js";
 import { fetchAlphaVantageHistory } from "../providers/alpha-vantage.js";
 import { kvGet, kvPut, chartTtl } from "../kv-cache.js";
 import type { Env } from "../index.js";
+import { createMarketDataEnvelope, type MarketDataEnvelope } from "../../src/types/market-data.js";
 
 export interface CandleRecord {
   date: string;
@@ -34,7 +35,6 @@ export interface ChartResponse {
   ticker: string;
   currency: string;
   candles: CandleRecord[];
-  source: "yahoo" | "finnhub" | "massive" | "stooq" | "alpha-vantage" | "cache" | "demo";
 }
 
 const RANGE_DAYS: Record<string, number> = {
@@ -72,9 +72,15 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
   // Try KV cache first
   const cacheKey = `chart:${ticker}:${range}:${interval}`;
   if (env.QUOTE_CACHE) {
-    const cached = await kvGet<ChartResponse>(env.QUOTE_CACHE, cacheKey);
+    const cached = normalizeCachedChart(
+      await kvGet<ChartResponse | MarketDataEnvelope<ChartResponse>>(env.QUOTE_CACHE, cacheKey),
+    );
     if (cached) {
-      return json({ ...cached, source: "cache" as const }, 200, "public, max-age=60");
+      return json(
+        { ...cached, status: "cached", provenance: { ...cached.provenance, source: "cache" } },
+        200,
+        "public, max-age=60",
+      );
     }
   }
 
@@ -83,7 +89,7 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
     // ── Yahoo Finance (primary) ────────────────────────────────────────────
     try {
       const result = await fetchYahooChart(ticker, range, interval);
-      const body: ChartResponse = { ...result, source: "yahoo" };
+      const body = chartEnvelope(result, "yahoo");
 
       const ttl = chartTtl(range);
       await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
@@ -97,12 +103,14 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
     if (env.FINNHUB_KEY) {
       try {
         const result = await fetchFinnhubCandles(ticker, range, interval, env.FINNHUB_KEY);
-        const body: ChartResponse = {
-          ticker: result.ticker,
-          currency: "USD",
-          candles: result.candles.map((c) => ({ ...c })),
-          source: "finnhub",
-        };
+        const body = chartEnvelope(
+          {
+            ticker: result.ticker,
+            currency: "USD",
+            candles: result.candles.map((c) => ({ ...c })),
+          },
+          "finnhub",
+        );
 
         const ttl = chartTtl(range);
         await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
@@ -120,12 +128,14 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
     if (massiveKey && interval === "1d") {
       try {
         const candles = await fetchMassiveHistory(ticker, RANGE_DAYS[range] ?? 365, massiveKey);
-        const body: ChartResponse = {
-          ticker,
-          currency: "USD",
-          candles: candles.map((c) => ({ ...c })),
-          source: "massive",
-        };
+        const body = chartEnvelope(
+          {
+            ticker,
+            currency: "USD",
+            candles: candles.map((c) => ({ ...c })),
+          },
+          "massive",
+        );
         const ttl = chartTtl(range);
         await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
         const response = json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
@@ -139,12 +149,14 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
     // ── Stooq EOD history (tertiary, daily only) ───────────────────────────
     try {
       const result = await fetchStooqHistory(ticker, range);
-      const body: ChartResponse = {
-        ticker: result.ticker,
-        currency: "USD",
-        candles: result.candles.map((c) => ({ ...c })),
-        source: "stooq",
-      };
+      const body = chartEnvelope(
+        {
+          ticker: result.ticker,
+          currency: "USD",
+          candles: result.candles.map((c) => ({ ...c })),
+        },
+        "stooq",
+      );
 
       const ttl = chartTtl(range);
       await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
@@ -164,12 +176,14 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
           RANGE_DAYS[range] ?? 365,
           env.ALPHA_VANTAGE_KEY,
         );
-        const body: ChartResponse = {
-          ticker,
-          currency: "USD",
-          candles: candles.map((c) => ({ ...c })),
-          source: "alpha-vantage",
-        };
+        const body = chartEnvelope(
+          {
+            ticker,
+            currency: "USD",
+            candles: candles.map((c) => ({ ...c })),
+          },
+          "alpha-vantage",
+        );
         const ttl = chartTtl(range);
         await kvPut(env.QUOTE_CACHE, cacheKey, body, ttl);
         const response = json(body, 200, `public, max-age=${Math.min(ttl, 300)}`);
@@ -180,20 +194,59 @@ export async function handleChart(url: URL, env: Env): Promise<Response> {
       }
     }
 
-    const response = json(generateDemoResponse(ticker, range), 200, "public, max-age=60");
+    const response = json(
+      chartEnvelope(generateDemoResponse(ticker, range), "demo", "demo"),
+      200,
+      "public, max-age=60",
+    );
     response.headers.set("X-Data-Source", "demo-fallback");
     return response;
   }
 
   // No KV binding — local dev / preview: serve demo data
-  return json(generateDemoResponse(ticker, range), 200, "public, max-age=300");
+  return json(
+    chartEnvelope(generateDemoResponse(ticker, range), "demo", "demo"),
+    200,
+    "public, max-age=300",
+  );
 }
 
 // ── Demo data fallback ──────────────────────────────────────────────────────
 
 function generateDemoResponse(ticker: string, range: string): ChartResponse {
   const days = RANGE_DAYS[range] ?? 365;
-  return { ticker, currency: "USD", candles: generateCandles(ticker, days), source: "demo" };
+  return { ticker, currency: "USD", candles: generateCandles(ticker, days) };
+}
+
+function chartEnvelope(
+  chart: ChartResponse,
+  source: string,
+  status: "live" | "demo" = "live",
+): MarketDataEnvelope<ChartResponse> {
+  return createMarketDataEnvelope(
+    "chart",
+    chart,
+    {
+      source,
+      fetchedAt: new Date().toISOString(),
+      timezone: "America/New_York",
+      attribution: source === "yahoo" ? "Yahoo Finance" : source,
+      coverage: "Historical OHLCV candles",
+      adjustmentPolicy: "Provider-adjusted historical prices; splits and dividends may be included",
+      limitations: ["Trading-calendar gaps and provider coverage vary by instrument"],
+    },
+    status,
+  );
+}
+
+function normalizeCachedChart(
+  value: ChartResponse | MarketDataEnvelope<ChartResponse> | null,
+): MarketDataEnvelope<ChartResponse> | null {
+  if (!value) return null;
+  if ("schemaVersion" in value && value.schemaVersion === "1" && "data" in value) {
+    return value;
+  }
+  return chartEnvelope(value, "cache", "cached");
 }
 
 /** Mulberry32 PRNG — deterministic, seedable. */

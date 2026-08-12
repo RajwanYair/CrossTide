@@ -116,9 +116,9 @@ describe("multi-chart-layout card", () => {
   it("dispose() removes style element", () => {
     const handle = multiChartLayoutCard.mount(container, { route: "multi-chart", params: {} });
     // Style is injected
-    expect(document.getElementById("multi-chart-styles")).not.toBeNull();
+    expect(document.querySelector('style[data-ct-scope="multi-chart-styles"]')).not.toBeNull();
     handle?.dispose?.();
-    expect(document.getElementById("multi-chart-styles")).toBeNull();
+    expect(document.querySelector('style[data-ct-scope="multi-chart-styles"]')).toBeNull();
   });
 
   it("renders 'No data' SVG text when no cache data for ticker", () => {
@@ -162,8 +162,7 @@ describe("multi-chart-layout card", () => {
     multiChartLayoutCard.mount(container, { route: "multi-chart", params: {} });
     const path = container.querySelector<SVGPathElement>("path");
     expect(path).not.toBeNull();
-    // Bearish color should include the bearish CSS variable
-    expect(path!.getAttribute("stroke")).toContain("bearish");
+    expect(path!.getAttribute("stroke")).toBe("#ef5350");
   });
 
   it("renders price label when prices exist", () => {

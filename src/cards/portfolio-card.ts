@@ -20,7 +20,7 @@ import { computePortfolioSummary } from "./portfolio";
 import { getSummary as getNetWorthSummary } from "../core/net-worth";
 import { getJournal } from "../core/trade-journal";
 import { checkAllTargets, getAllTargets, getHitTargets } from "../core/price-targets";
-import type { CardModule } from "./registry";
+import type { CardHandle, CardModule } from "./registry";
 import { patchDOM } from "../core/patch-dom";
 
 // ── Demo holdings (shown when IDB is empty / first visit) ────────────────────
@@ -239,15 +239,21 @@ function renderPortfolio(container: HTMLElement, holdings: readonly Holding[]): 
 }
 
 const portfolioCard: CardModule = {
-  mount(container, _ctx) {
+  mount(container, _ctx): CardHandle {
+    let disposed = false;
     // Load user holdings from IDB; fall back to demo if empty
     void loadHoldings().then((persisted) => {
+      if (disposed) return;
       const holdings: readonly Holding[] = persisted.length > 0 ? persisted : DEMO_HOLDINGS;
       renderPortfolio(container, holdings);
     });
     // Render demo immediately while IDB loads (avoids blank flash)
     renderPortfolio(container, DEMO_HOLDINGS);
-    return {};
+    return {
+      dispose() {
+        disposed = true;
+      },
+    };
   },
 };
 

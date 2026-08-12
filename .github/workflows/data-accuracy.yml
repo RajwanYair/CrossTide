@@ -3,7 +3,7 @@
 # Compares production API prices against Yahoo Finance reference data for
 # 10 benchmark tickers. Detects data staleness, drift, and API regressions.
 #
-# Roadmap: Q24 — Data accuracy verification CI
+# Roadmap: D06/D07 — Data accuracy verification CI
 # =============================================================================
 name: Data Accuracy
 

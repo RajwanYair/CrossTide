@@ -2,6 +2,9 @@
 
 Thank you for your interest in contributing!
 
+Documentation ownership, canonical purposes, and generated-fact refresh triggers
+are maintained in [`docs/OWNERSHIP.md`](../docs/OWNERSHIP.md).
+
 ## 🛠️ Development Setup
 
 ### 📦 Option A: Dev Container (recommended)
@@ -25,7 +28,7 @@ npm run dev      # http://localhost:5173
 ## 📋 Code Standards
 
 - Follow TypeScript strict mode — `tsc --noEmit` must pass with zero errors
-- Run `npm run lint:all` before committing (ESLint + Stylelint + HTMLHint + markdownlint +
+- Run `npm run lint:all` before committing (Oxlint + Stylelint + HTMLHint + markdownlint +
   Biome format + file-header audit + WCAG contrast)
 - Run `npm run format` to auto-format with Biome (Biome does not format markdown —
   `npm run lint:md` owns that)
@@ -191,10 +194,10 @@ newcomers:
 
 - [#104](https://github.com/RajwanYair/CrossTide/issues/104) — disambiguate one of the 12
   duplicate-named domain modules.
-- [#103](https://github.com/RajwanYair/CrossTide/issues/103) — wire up one of the 57 orphaned
-  modules in `core`, `ui`, and `cards`. They are tested but imported by nothing, so they never
-  execute in the running app. Per `docs/ROADMAP.md` §3.4 these are wired, promoted, or merged —
-  never deleted.
+- [#103](https://github.com/RajwanYair/CrossTide/issues/103) — wire up one of the 7 hard-orphaned
+  modules in `core` and `cards`. They are tested but imported by nothing, so they never execute
+  in the running app. Per `docs/ROADMAP.md` §3.4 these are wired, promoted, or merged — never
+  deleted.
 - [#105](https://github.com/RajwanYair/CrossTide/issues/105) — complete: all 56 registered
   Worker routes are documented and `KNOWN_GAP` is empty. Close this issue rather than starting
   another documentation tranche.

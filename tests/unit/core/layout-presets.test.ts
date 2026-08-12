@@ -93,6 +93,22 @@ describe("layout-presets", () => {
     expect(mod2.getPreset("Persist")).not.toBeNull();
   });
 
+  it("discards malformed persisted presets", async () => {
+    localStorage.setItem(
+      "crosstide-layout-presets",
+      JSON.stringify([{ name: "Valid", cards: ["chart"], createdAt: 1 }, { name: 42 }]),
+    );
+    const { getPresets } = await loadModule();
+    expect(getPresets()).toEqual([{ name: "Valid", cards: ["chart"], createdAt: 1 }]);
+  });
+
+  it("rejects blank renamed preset names", async () => {
+    const { savePreset, renamePreset, getPreset } = await loadModule();
+    savePreset("Original", ["chart"]);
+    expect(renamePreset("Original", "   ")).toBe(false);
+    expect(getPreset("Original")).not.toBeNull();
+  });
+
   it("caps at MAX_PRESETS", async () => {
     const { savePreset, getPresets, getMaxPresets } = await loadModule();
     const max = getMaxPresets();

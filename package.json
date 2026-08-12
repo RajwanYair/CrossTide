@@ -1,6 +1,6 @@
 {
   "name": "crosstide",
-  "version": "11.44.4",
+  "version": "11.44.6",
   "description": "CrossTide Web — browser-based stock monitoring dashboard with 12-method consensus signals, interactive charting, and offline-first PWA.",
   "keywords": [
     "stock-market",
@@ -35,9 +35,7 @@
   "exports": {
     ".": "./src/main.ts",
     "./core": "./src/core/index.ts",
-    "./domain": "./src/domain/index.ts",
-    "./cards": "./src/cards/index.ts",
-    "./ui": "./src/ui/index.ts"
+    "./domain": "./src/domain/index.ts"
   },
   "homepage": "https://github.com/RajwanYair/CrossTide",
   "repository": {
@@ -61,33 +59,41 @@
     "test:e2e": "playwright test",
     "test:browser": "vitest run --config vitest.browser.config.ts",
     "lhci": "lhci autorun --config config/lighthouserc.json",
-    "lint": "eslint . --max-warnings 0 --cache --cache-location node_modules/.cache/eslint/",
-    "lint:nocache": "eslint . --max-warnings 0",
+    "lint": "oxlint --type-aware --quiet --tsconfig tsconfig.json src worker tests scripts",
+    "lint:nocache": "oxlint --type-aware --quiet --tsconfig tsconfig.json src worker tests scripts",
     "lint:css": "stylelint \"src/**/*.css\" --config config/.stylelintrc.json --max-warnings 0",
     "lint:html": "htmlhint index.html --config config/.htmlhintrc",
-    "lint:md": "markdownlint-cli2 --config config/.markdownlint.json \"**/*.md\" \"#**/node_modules/**\" \"#dist\" \"#coverage\" \"#build\" \"#test-results\" \"#playwright-report\" \"#docs/INDICATORS.md\" \"#docs/ROADMAP-v6-archive.md\" \"#docs/ROADMAP-v8-archive.md\" \"#docs/ROADMAP-v9-archive.md\"",
+    "lint:md": "markdownlint-cli2 --config config/.markdownlint.json \"**/*.md\" \"#**/node_modules/**\" \"#dist\" \"#coverage\" \"#build\" \"#test-results\" \"#playwright-report\" \"#docs/INDICATORS.md\"",
     "lint:all": "npm run lint && npm run lint:css && npm run lint:html && npm run lint:md && npm run format:check && npm run audit:headers && npm run check:contrast",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "typecheck": "tsc --noEmit && tsc --project tsconfig.sw.json --noEmit",
     "check:bundle": "node scripts/check-bundle-size.mjs",
+    "check:bundle-secrets": "node scripts/check-bundle-secrets.mjs",
+    "check:domain-purity": "node scripts/check-domain-purity.mjs",
+    "check:fork-config": "node scripts/check-fork-config.mjs",
     "check:reachability": "node scripts/reachability-inventory.mjs --json",
     "check:reachability:report": "node scripts/reachability-inventory.mjs --check-markdown",
     "check:reachability:gate": "node scripts/reachability-inventory.mjs --reachability-gate",
     "check:reachable-coverage": "node scripts/reachability-inventory.mjs --reachable-coverage",
-    "check:repo-contracts": "npm run check:doc-facts && npm run check:md-links && npm run check:reachability:report && npm run check:reachability:gate && npm run check:wasm && node scripts/arch-check.mjs --strict",
+    "check:repo-contracts": "npm run check:doc-facts && npm run check:doc-ownership && npm run check:public-exports && npm run check:roadmap-priorities && npm run check:md-links && npm run check:reachability:report && npm run check:reachability:gate && npm run check:wasm && npm run check:workflow-policy && npm run check:fork-config && npm run check:domain-purity && node scripts/arch-check.mjs --strict",
     "check:doc-facts": "node scripts/check-doc-facts.mjs",
+    "check:doc-ownership": "node scripts/check-doc-ownership.mjs",
+    "check:public-exports": "node scripts/check-public-exports.mjs",
+    "check:roadmap-priorities": "node scripts/check-roadmap-priorities.mjs",
     "check:md-links": "node scripts/check-markdown-links.mjs",
     "check:wasm": "node scripts/check-wasm-size.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
-    "check:supply-chain": "npm audit --omit=dev --audit-level=high && npm audit signatures",
+    "check:workflow-policy": "node scripts/check-workflow-policy.mjs",
+    "check:supply-chain": "npm run audit:dependencies && npm audit signatures",
+    "audit:dependencies": "node scripts/audit-dependencies.mjs",
     "gen:csp": "node scripts/gen-csp.mjs",
     "gen:api-types": "node --experimental-strip-types scripts/gen-openapi-client.mjs",
     "check:api-types": "npm run gen:api-types && git diff --exit-code -- src/core/api-types.ts",
     "gen:indicator-docs": "tsx scripts/generate-indicator-docs.ts",
     "audit:jsdoc": "node scripts/audit-jsdoc.mjs",
     "audit:headers": "node scripts/audit-file-headers.mjs",
-    "ci": "npm run typecheck && npm run lint:all && npm run check:repo-contracts && npm run check:api-types && npm run test:coverage && npm run check:reachable-coverage && npm run build:only && npm run check:bundle",
+    "ci": "npm run typecheck && npm run lint:all && npm run check:repo-contracts && npm run check:api-types && npm run test:coverage && npm run check:reachable-coverage && npm run build:only && npm run check:bundle && npm run check:bundle-secrets && npm run check:supply-chain",
     "test:mutate": "stryker run --configFile config/stryker.config.mjs",
     "cap:sync": "cap sync",
     "cap:android": "cap open android",
@@ -104,7 +110,7 @@
   },
   "lint-staged": {
     "*.{ts,mjs}": [
-      "eslint --max-warnings 0 --no-warn-ignored --fix",
+      "oxlint --type-aware --quiet --tsconfig tsconfig.json --fix",
       "biome format --no-errors-on-unmatched --write"
     ],
     "*.css": [
@@ -121,19 +127,17 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@biomejs/biome": "^2.5.6",
+    "@capacitor/cli": "^8.4.2",
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
     "@cyclonedx/cyclonedx-npm": "^6.0.0",
-    "@eslint/js": "^10.0.1",
     "@lhci/cli": "^0.15.1",
+    "@playwright/mcp": "^0.0.78",
     "@playwright/test": "^1.62.0",
     "@vitest/browser": "^4.1.10",
     "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
-    "assemblyscript": "^0.28.10",
-    "eslint": "^10.8.0",
-    "eslint-plugin-compat": "^7.0.2",
-    "eslint-plugin-import-x": "^4.17.1",
+    "assemblyscript": "^0.28.20",
     "fast-check": "^4.9.0",
     "happy-dom": "^20.11.1",
     "htmlhint": "^1.9.2",
@@ -141,12 +145,13 @@
     "license-checker": "^25.0.1",
     "lint-staged": "^17.2.0",
     "markdownlint-cli2": "^0.23.2",
+    "oxlint": "^1.78.0",
+    "oxlint-tsgolint": "^7.0.2001",
     "playwright": "^1.62.0",
     "postcss": "^8.5.25",
     "simple-git-hooks": "^2.13.1",
     "stylelint": "^17.14.1",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.65.0",
+    "typescript": "7.0.2",
     "vite": "^8.0.10",
     "vitest": "^4.1.10",
     "workbox-background-sync": "^7.4.0",
@@ -159,7 +164,6 @@
     "wrangler": "^4.115.0"
   },
   "dependencies": {
-    "@capacitor/cli": "^8.4.2",
     "@capacitor/core": "^8.4.2",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.2",
@@ -177,5 +181,8 @@
     "simple-git-hooks": true,
     "unrs-resolver": true,
     "workerd": true
+  },
+  "overrides": {
+    "typescript": "7.0.2"
   }
 }

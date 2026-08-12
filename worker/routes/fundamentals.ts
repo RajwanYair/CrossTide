@@ -7,6 +7,7 @@
 import type { Env } from "../index.js";
 import { kvGet, kvPut } from "../kv-cache.js";
 import { fetchYahooFundamentals, type YahooFundamentals } from "../providers/yahoo.js";
+import { createMarketDataEnvelope, type MarketDataEnvelope } from "../../src/types/market-data.js";
 
 const FUNDAMENTALS_TTL = 3600; // 1 hour
 
@@ -17,7 +18,7 @@ export async function handleFundamentals(symbol: string, env: Env): Promise<Resp
   if (env.QUOTE_CACHE) {
     const cached = await kvGet<YahooFundamentals>(env.QUOTE_CACHE, key);
     if (cached) {
-      return Response.json({ ...cached, source: "cache" });
+      return Response.json(fundamentalsEnvelope(cached, "cache", "cached"));
     }
   }
 
@@ -29,7 +30,7 @@ export async function handleFundamentals(symbol: string, env: Env): Promise<Resp
       await kvPut(env.QUOTE_CACHE, key, data, FUNDAMENTALS_TTL);
     }
 
-    return Response.json({ ...data, source: "yahoo" });
+    return Response.json(fundamentalsEnvelope(data, "yahoo"));
   } catch {
     // Return empty fundamentals on error
     return Response.json(
@@ -37,4 +38,25 @@ export async function handleFundamentals(symbol: string, env: Env): Promise<Resp
       { status: 502 },
     );
   }
+}
+
+function fundamentalsEnvelope(
+  data: YahooFundamentals,
+  source: string,
+  status: "live" | "cached" = "live",
+): MarketDataEnvelope<YahooFundamentals> {
+  return createMarketDataEnvelope(
+    "fundamentals",
+    data,
+    {
+      source,
+      fetchedAt: new Date().toISOString(),
+      timezone: "America/New_York",
+      attribution: source === "yahoo" ? "Yahoo Finance" : source,
+      coverage: "Company valuation and financial metrics",
+      adjustmentPolicy: "Provider-reported accounting values; reporting periods may be delayed",
+      limitations: ["Metric availability varies by instrument and reporting history"],
+    },
+    status,
+  );
 }

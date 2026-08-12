@@ -30,7 +30,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - run: npm ci --ignore-scripts
 
       - name: Check AssemblyScript sources exist
         id: check

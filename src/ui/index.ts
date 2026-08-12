@@ -3,6 +3,11 @@
  *
  * The outermost layer and the only one permitted to touch the DOM directly.
  */
+import "./chart-frame";
+import "./empty-state";
+import "./filter-bar";
+import "./stat-grid";
+
 export {
   initRouter,
   navigateTo,
@@ -64,6 +69,19 @@ export {
 export type { RGB, WcagLevel, WcagSize } from "./contrast";
 export { classifyFreshness, ageBetween, formatAge, freshnessLabel } from "./freshness";
 export type { FreshnessBucket, FreshnessConfig } from "./freshness";
+export {
+  defineRoute,
+  registerRouteLoader,
+  getRouteLoader,
+  onRouteNavigated,
+} from "./route-loader";
+export type {
+  LoaderContext,
+  RouteLoader,
+  RouteLoaderState,
+  DefinedRoute,
+  DefineRouteOptions,
+} from "./route-loader";
 
 export {
   emptyDrawingState,
@@ -133,6 +151,7 @@ export type { AriaLivePoliteness } from "./aria-live";
 
 export { createPwaInstallManager } from "./pwa-install";
 export type { PwaInstallManager } from "./pwa-install";
+export { restoreActiveLayoutPreset } from "./layout-presets";
 export {
   CrosstideChartElement,
   CrosstideQuoteElement,

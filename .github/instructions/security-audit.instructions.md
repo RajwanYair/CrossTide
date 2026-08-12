@@ -17,7 +17,7 @@ Harvested from FamilyDashBoard sibling project — adapted to CrossTide's worker
 
 ## 📅 Last full audit
 
-- **Release**: pending v12.0.0
+- **Release**: v11.44.6
 - **Auditor**: self
 - **Date**: TBD
 

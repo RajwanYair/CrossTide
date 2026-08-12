@@ -494,6 +494,10 @@ export interface DrawingToolHandle {
   dispose(): void;
 }
 
+export interface DrawingToolOptions {
+  readonly onChange?: () => void;
+}
+
 interface MountState {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -506,7 +510,10 @@ interface MountState {
 }
 
 /** Mount a drawing-tool canvas overlay inside `container`. */
-export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
+export function mountDrawingTools(
+  container: HTMLElement,
+  options: DrawingToolOptions = {},
+): DrawingToolHandle {
   const canvas = document.createElement("canvas");
   canvas.style.cssText = "position:absolute;top:0;left:0;pointer-events:none;z-index:10;";
   container.style.position ||= "relative";
@@ -677,6 +684,7 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
       }
 
       render();
+      options.onChange?.();
     }
   }
 
@@ -703,6 +711,7 @@ export function mountDrawingTools(container: HTMLElement): DrawingToolHandle {
       state.pendingPoint = null;
       state.pendingPoints = [];
       render();
+      options.onChange?.();
     },
     setDrawings(drawings: readonly Drawing[]): void {
       state.drawings = [...drawings];

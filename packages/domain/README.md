@@ -4,9 +4,9 @@ The analysis engine behind [CrossTide](https://github.com/RajwanYair/CrossTide),
 standalone package: 200+ technical indicators, 12-method consensus scoring, portfolio analytics
 and risk metrics.
 
-**Zero runtime dependencies.** Every module is a pure function — no DOM, no `fetch`, no
-`Date.now()`, no `Math.random()`. The same code runs unchanged in a browser, in Node, in a
-Cloudflare Worker, or in a Web Worker, and the purity is enforced in CI by
+**Zero runtime dependencies.** The indicator, consensus, portfolio, and risk modules are pure
+functions with no DOM or network imports. Browser-only helpers are exposed through an explicit
+subpath and are not part of the portable analytical core. Layer direction is enforced in CI by
 `scripts/arch-check.mjs` rather than by convention.
 
 ## Install
@@ -31,8 +31,10 @@ const consensus = aggregateConsensus(candles);
 ```
 
 Indicators take `DailyCandle[]` or plain number arrays and return plain values — there is no
-client to construct and no state to thread through. The package exports 688 symbols; editor
-autocomplete over the shipped TSDoc is the practical reference.
+client to construct and no state to thread through. The package's root entry exports the portable
+analytical core; editor autocomplete over the shipped TSDoc is the practical reference. Browser-only
+helpers, including ONNX model loading, are available from the explicit `@crosstide/domain/browser`
+entry and are not included in the portable bundle.
 
 ## What is in it
 

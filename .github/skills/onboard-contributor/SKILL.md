@@ -30,7 +30,7 @@ Node 24 is required. `npm install` runs `prepare`, which installs the git hooks 
 
 ## 2️⃣ Step 2 — Learn the Layer Rule
 
-Imports flow in exactly one direction. ESLint and `scripts/arch-check.mjs` enforce it.
+Imports flow in exactly one direction. Oxlint and `scripts/arch-check.mjs` enforce it.
 
 ```text
 types ← domain ← core ← providers ← cards ← ui

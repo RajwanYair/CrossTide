@@ -41,9 +41,15 @@ function headings(source) {
   return new Set(
     source
       .split("\n")
-      .map((line) => line.match(/^#{1,6} +(.+)$/u))
-      .filter((match) => match !== null)
-      .map((match) => slugify(match[1])),
+      .map((line) => {
+        let markerLength = 0;
+        while (markerLength < line.length && line[markerLength] === "#") markerLength += 1;
+        return markerLength >= 1 && markerLength <= 6 && line[markerLength] === " "
+          ? line.slice(markerLength + 1)
+          : null;
+      })
+      .filter((heading) => heading !== null)
+      .map((heading) => slugify(heading)),
   );
 }
 

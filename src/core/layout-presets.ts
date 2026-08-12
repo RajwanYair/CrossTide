@@ -15,11 +15,25 @@ const MAX_PRESETS = 20;
 
 let cache: LayoutPreset[] | null = null;
 
+function isLayoutPreset(value: unknown): value is LayoutPreset {
+  if (typeof value !== "object" || value === null) return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate["name"] === "string" &&
+    candidate["name"].trim().length > 0 &&
+    Array.isArray(candidate["cards"]) &&
+    candidate["cards"].every((card) => typeof card === "string") &&
+    typeof candidate["createdAt"] === "number" &&
+    Number.isFinite(candidate["createdAt"])
+  );
+}
+
 function load(): LayoutPreset[] {
   if (cache !== null) return cache;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    cache = raw ? (JSON.parse(raw) as LayoutPreset[]) : [];
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    cache = Array.isArray(parsed) ? parsed.filter(isLayoutPreset) : [];
   } catch {
     cache = [];
   }
@@ -83,10 +97,11 @@ export function deletePreset(name: string): boolean {
 export function renamePreset(oldName: string, newName: string): boolean {
   const presets = load();
   const preset = presets.find((p) => p.name === oldName);
-  if (!preset) return false;
-  if (presets.some((p) => p.name === newName)) return false;
+  const trimmed = newName.trim();
+  if (!preset || !trimmed) return false;
+  if (presets.some((p) => p.name === trimmed)) return false;
   const idx = presets.indexOf(preset);
-  presets[idx] = { ...preset, name: newName.trim() };
+  presets[idx] = { ...preset, name: trimmed };
   save(presets);
   return true;
 }

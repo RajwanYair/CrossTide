@@ -102,6 +102,7 @@ function renderStatsTable(
 }
 
 function mount(container: HTMLElement, ctx: CardContext): CardHandle {
+  let disposed = false;
   const initialSymbol = ctx.params["symbol"] ?? "";
   patchDOM(
     container,
@@ -109,7 +110,7 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
     <h2>Chart Comparison</h2>
     <div class="comparison-input-row">
       <label for="comparison-tickers">Tickers (comma-separated):</label>
-      <input id="comparison-tickers" type="text" placeholder="AAPL, MSFT, GOOGL" class="input" value="${initialSymbol ? initialSymbol + ", SPY" : ""}" />
+      <input id="comparison-tickers" type="text" placeholder="AAPL, MSFT, GOOGL" class="input" data-action="compare-input" value="${initialSymbol ? initialSymbol + ", SPY" : ""}" />
       <button id="btn-compare" class="btn btn-sm" data-action="compare">Compare</button>
     </div>
     <div id="comparison-output" class="comparison-output"></div>
@@ -121,6 +122,7 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
   const output = container.querySelector<HTMLElement>("#comparison-output")!;
 
   async function runComparison(): Promise<void> {
+    if (disposed) return;
     const raw = input.value.trim();
     if (!raw) return;
 
@@ -150,6 +152,7 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
           };
         }),
       );
+      if (disposed) return;
 
       const tickerCandles = new Map<string, readonly DailyCandle[]>();
       for (const r of results) {
@@ -169,29 +172,35 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
       const series = normalizeForComparison(tickerCandles);
       patchDOM(output, renderSvgChart(series) + renderStatsTable(series));
     } catch (err) {
+      if (disposed) return;
       patchDOM(output, `<p class="error">Error: ${escapeHtml((err as Error).message)}</p>`);
       showToast({ message: "Comparison failed", type: "error" });
     } finally {
-      btn.disabled = false;
-      btn.textContent = "Compare";
+      if (!disposed) {
+        btn.disabled = false;
+        btn.textContent = "Compare";
+      }
     }
   }
 
   // Event delegation for compare button
-  const delegate = createDelegate(container, {
-    compare: () => void runComparison(),
-  });
-
-  // Enter key in input triggers comparison
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") void runComparison();
-  });
+  const delegate = createDelegate(
+    container,
+    {
+      compare: () => void runComparison(),
+      "compare-input": (_target, event) => {
+        if ((event as KeyboardEvent).key === "Enter") void runComparison();
+      },
+    },
+    { eventTypes: ["click", "keydown"] },
+  );
 
   // Auto-run if symbol was provided
   if (initialSymbol) void runComparison();
 
   return {
     update(newCtx: CardContext): void {
+      if (disposed) return;
       const t = newCtx.params["symbol"] ?? "";
       if (t) {
         input.value = `${t}, SPY`;
@@ -199,6 +208,7 @@ function mount(container: HTMLElement, ctx: CardContext): CardHandle {
       }
     },
     dispose(): void {
+      disposed = true;
       delegate.dispose();
     },
   };

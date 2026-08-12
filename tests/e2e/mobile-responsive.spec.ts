@@ -6,6 +6,7 @@
  * Runs on mobile-chrome and mobile-safari projects.
  */
 import { test, expect } from "@playwright/test";
+import { waitForAppReady } from "./app-ready";
 
 const MOBILE_ROUTES = [
   "/watchlist",
@@ -60,6 +61,17 @@ test.describe("Mobile responsive layout", () => {
 
     // Allow some small icon buttons but most should be 44px+
     expect(smallTargets).toBeLessThan(buttons.length * 0.3);
+  });
+
+  test("heatmap tile opens its drill-down on touch", async ({ page }) => {
+    await page.goto("/heatmap");
+    await waitForAppReady(page);
+
+    const tile = page.locator('.heatmap-tile[data-symbol="Technology"]');
+    await expect(tile).toBeVisible();
+    await tile.tap();
+
+    await expect(page.locator(".heatmap-drill-table")).toBeVisible();
   });
 
   test("watchlist table is scrollable on mobile", async ({ page }) => {

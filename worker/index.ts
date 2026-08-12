@@ -89,6 +89,13 @@ import type { DurableObjectNamespace } from "./ticker-fanout.js";
 // class to be exported from the entrypoint module (this file) — a
 // re-export-only import doesn't satisfy that, so it must be re-exported here.
 export { TickerFanout } from "./ticker-fanout.js";
+export { createMarketDataEnvelope } from "./contracts.js";
+export type {
+  MarketDataKind,
+  MarketDataStatus,
+  MarketDataProvenance,
+  MarketDataEnvelope,
+} from "./contracts.js";
 
 export interface KVNamespace {
   get(key: string, type: "text"): Promise<string | null>;

@@ -28,11 +28,11 @@ Confirm `vX.Y.Z` appears consistently in all of:
 
 ```powershell
 npm run typecheck       # tsc + sw + worker — 0 errors
-npm run lint            # ESLint 0 warnings
+ npm run lint            # Oxlint 0 errors
 npm run lint:css        # Stylelint 0 warnings
 npm run lint:html       # HTMLHint pass
 npm run lint:md         # markdownlint 0 errors
-npm run format:check    # Prettier exit 0
+npm run format:check    # Biome exit 0
 npm run test:coverage   # ≥90/80 thresholds
 npm run build           # Vite + Workbox build
 npm run check:bundle    # < 250 KB gzip

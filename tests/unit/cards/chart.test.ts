@@ -42,6 +42,13 @@ describe("renderChart", () => {
     expect(rows.length).toBe(10);
   });
 
+  it("names the DOM data alternative for assistive technology", () => {
+    renderChart(container, { ticker: "AAPL", candles: [makeCandle("2025-01-01", 100)] });
+    expect(container.querySelector(".ohlc-table")?.getAttribute("aria-label")).toBe(
+      "Recent OHLCV data for AAPL",
+    );
+  });
+
   it("shows candle count", () => {
     const candles = [makeCandle("2025-01-01", 100), makeCandle("2025-01-02", 102)];
     renderChart(container, { ticker: "AAPL", candles });

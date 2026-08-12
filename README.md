@@ -12,21 +12,46 @@ interactive charting, and offline-first PWA support.
 [![Release](https://img.shields.io/github/v/release/RajwanYair/CrossTide?logo=github)](https://github.com/RajwanYair/CrossTide/releases/latest)
 [![Uptime](https://img.shields.io/badge/Uptime-Monitored-brightgreen?logo=upptime)](https://crosstide-uptime.fly.dev/status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript)](tsconfig.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7.0.2-blue?logo=typescript)](tsconfig.json)
 [![Bundle](https://img.shields.io/badge/Bundle-%3C250KB_gzip-brightgreen)](scripts/check-bundle-size.mjs)
 [![Install Size](https://img.shields.io/badge/Install%20Size-~4.2MB-informational)](package.json)
-[![SLSA 3](https://img.shields.io/badge/SLSA-Level_3-green?logo=sigstore)](https://github.com/RajwanYair/CrossTide/attestations)
 [![WCAG 2.2 AA](https://img.shields.io/badge/WCAG-2.2%20AA-blueviolet)](tests/e2e/wcag-audit.spec.ts)
 [![Docs](https://img.shields.io/badge/Docs-Indicator%20Reference-blue)](https://rajwanyair.github.io/CrossTide/docs/)
 [![Architecture](https://img.shields.io/badge/Architecture-Diagram-orange)](docs/ARCHITECTURE.md)
 [![FRED API](https://img.shields.io/badge/FRED-Economic%20Overlay-informational)](worker/routes/fred.ts)
 [![Discussions](https://img.shields.io/github/discussions/RajwanYair/CrossTide?logo=github)](https://github.com/RajwanYair/CrossTide/discussions)
 
-> ⚠️ **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
+> **Disclaimer**: CrossTide is for informational and educational purposes only. It is NOT financial advice.
+
+Support classifications for the PWA, Worker API, domain package, MCP server, widgets,
+and hosting modes are maintained in [docs/CAPABILITY_MATRIX.md](docs/CAPABILITY_MATRIX.md).
+The layered product boundary is defined in [ADR-0016](docs/adr/0016-product-boundary.md).
+Operator authentication, deployment prerequisites, and durable toolchain learnings are
+maintained in [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ---
 
-## ✨ Features
+## From Market Data to Signal
+
+```mermaid
+flowchart LR
+  A([Market data]) --> B[Validated providers]
+  B --> C[(Local cache)]
+  C --> D[Pure indicators]
+  D --> E{Consensus engine}
+  E --> F[Charts and watchlists]
+  E --> G[Alerts and backtests]
+  C -. offline .-> F
+  style A fill:#0f766e,color:#fff,stroke:#0f766e
+  style E fill:#d97706,color:#fff,stroke:#d97706
+  style F fill:#2563eb,color:#fff,stroke:#2563eb
+  style G fill:#2563eb,color:#fff,stroke:#2563eb
+```
+
+The app keeps the customer journey visible: data is validated at the edge, cached locally,
+computed through side-effect-free indicators, and presented as explainable signals in the UI.
+
+## Features
 
 | Category | Highlights |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,15 +63,15 @@ interactive charting, and offline-first PWA support.
 | **Market Intelligence** | Heatmap, sector rotation, relative strength, market breadth, correlation matrix, seasonality patterns |
 | **Alerts** | Price/indicator alerts with browser notifications, alert history, signal DSL for custom conditions |
 | **Data Providers** | Yahoo Finance, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko, Frankfurter, and FRED with automatic failover and health reporting |
-| **Embeddable Widgets** | Ship a standalone `<script type="module">` bundle with `<crosstide-chart>`, `<crosstide-quote>`, and `<crosstide-consensus>` custom elements backed by Worker APIs |
+| **Embeddable Widgets (Preview)** | Standalone `<script type="module">` bundle with `<crosstide-chart>`, `<crosstide-quote>`, and `<crosstide-consensus>` custom elements backed by a configurable Worker API |
 | **PWA / Offline** | Service worker with Workbox, IndexedDB caching, background sync, installable on mobile |
-| **Accessibility** | WCAG 2.2 AA verified on all 23 routes (contrast, target size, error suggestion), keyboard nav, color-blind palettes, skip links, opt-in AAA enhanced-contrast mode |
-| **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, view transitions, < 2s LCP |
-| **i18n** | English, Hebrew (RTL), with expansion to ES/DE/ZH |
+| **Accessibility** | WCAG 2.2 AA verified on all 25 routes (contrast, target size, error suggestion), keyboard nav, color-blind palettes, skip links, opt-in AAA enhanced-contrast mode |
+| **Performance** | < 250 KB gzipped, virtual scrolling, lazy-loaded cards, and view transitions |
+| **i18n** | English, Spanish, German, Chinese, Hebrew (RTL), and Japanese |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 npm install
@@ -57,25 +82,26 @@ No provider key is required for local development. Optional server-side fallback
 without exposing secrets to the browser:
 
 ```powershell
-npx wrangler secret put FINNHUB_KEY
-npx wrangler secret put MASSIVE_KEY
-npx wrangler secret put ALPHA_VANTAGE_KEY
+./node_modules/.bin/wrangler secret put FINNHUB_KEY
+./node_modules/.bin/wrangler secret put MASSIVE_KEY
+./node_modules/.bin/wrangler secret put ALPHA_VANTAGE_KEY
 ```
 
 Massive and Alpha Vantage free tiers provide delayed/end-of-day equity fallbacks. Frankfurter is
 a no-key, open-source reference-rate fallback for forex; it does not provide executable bid/ask
 prices.
 
-## 🔌 Embeddable Widget
+## Embeddable Widget
 
-CrossTide now ships a standalone `dist/widget.mjs` bundle for third-party sites. The bundle
+CrossTide provides a preview standalone `dist/widget.mjs` bundle for third-party sites. The bundle
 auto-registers three custom elements:
 
 - `<crosstide-chart>` for OHLCV candles
 - `<crosstide-quote>` for a compact real-time quote tape/badge
 - `<crosstide-consensus>` for the consensus direction + score badge
 
-All widgets call the production Worker by default.
+Widgets use the configured Worker endpoint by default; production endpoint availability is not
+part of the verified local support contract.
 
 ```html
 <script
@@ -101,31 +127,23 @@ Quote attributes: `ticker`, `theme`, `show-change`, `api-base`.
 Consensus attributes: `ticker`, `theme`, `api-base`.
 Set `api-base` when you want widgets to call a self-hosted Worker instead of the public one.
 
-## 🎬 Demo
+## Demo
 
-<!-- R12: GIF demos — recorded from the live app, stored in docs/demos/ -->
+Interactive recordings are planned for the live-demo milestone. The recording
+workflow and shot list are documented in [docs/demos/README.md](docs/demos/README.md);
+the repository does not reference placeholder media that is not checked in.
 
-| Feature | Demo |
-| ------------------------------------ | --------------------------------------------- |
-| **Consensus Signal Engine** | ![Consensus demo](docs/demos/consensus.gif) |
-| **Candlestick Chart + Indicators** | ![Chart demo](docs/demos/chart.gif) |
-| **Bar Replay (historical playback)** | ![Bar Replay demo](docs/demos/bar-replay.gif) |
-| **Screener — 10K tickers** | ![Screener demo](docs/demos/screener.gif) |
-| **Signal DSL with `plot()`** | ![Signal DSL demo](docs/demos/signal-dsl.gif) |
-| **Macro Dashboard (FRED overlay)** | ![Macro demo](docs/demos/macro-dashboard.gif) |
+Run `npm run dev` to explore all card views locally. Preview fixture mode requires
+no API key.
 
-> Demos are recorded at 1× speed against live Yahoo Finance data.
-> 💡 Run `npm run dev` to explore all cards interactively — no API key required for the
-> preview fixture mode.
-
-## 📸 Screenshots
+## Screenshots
 
 > 💡 Run `npm run dev` to explore all card views interactively. Screenshots are generated
 > from the live app during each release cycle.
 
-### 🗂️ Card Gallery
+### Card Gallery
 
-CrossTide ships with **23 route cards**, each accessible from the sidebar navigation:
+CrossTide ships with **25 registered route cards**, each accessible from the sidebar navigation:
 
 | Card | Description |
 | ------------------- | ----------------------------------------------------------------------- |
@@ -153,18 +171,18 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | Provider Health | Data provider latency, error rates, and uptime monitor |
 | Settings | Theme, API keys, export/import, locale, a11y |
 
-## 🤔 Why CrossTide?
+## Why CrossTide?
 
-| | CrossTide | TradingView | Yahoo Finance | Finviz | StockCharts |
+| | CrossTide (verified) | TradingView | Yahoo Finance | Finviz | StockCharts |
 | -------------------------------- | :-------------: | :---------: | :-----------: | :-----: | :---------: |
 | **Free & open source** | ✅ | ❌ | ❌ | Partial | ❌ |
 | **Self-hostable / offline PWA** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **No account required** | ✅ | ❌ | ❌ | ✅ | ❌ |
 | **12-method consensus signals** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **Custom signal DSL + `plot()`** | ✅ | Pine Script | ❌ | ❌ | ❌ |
-| **Bar Replay (tick-by-tick)** | ✅ | ✅ (paid) | ❌ | ❌ | ❌ |
+| **Bar Replay (tick-by-tick)** | Not supported | ✅ (paid) | ❌ | ❌ | ❌ |
 | **< 250 KB gzip bundle** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Native iOS / Android** | ✅ (Capacitor) | ✅ | ✅ | ❌ | ❌ |
+| **Native iOS / Android** | Preview (Capacitor; smoke evidence pending) | ✅ | ✅ | ❌ | ❌ |
 | **Strategy backtesting** | ✅ | ✅ | ❌ | ❌ | ✅ (paid) |
 | **Accessibility WCAG 2.2 AA** | ✅ | ❌ | Partial | ❌ | ❌ |
 | **FRED macro overlay** | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -173,7 +191,7 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | **OTel distributed tracing** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **80+ technical indicators** | ✅ | ✅ | ❌ | Partial | ✅ |
 
-## 🛠️ Scripts
+## Scripts
 
 | Command | Description |
 | ------------------------ | -------------------------------------------------------------------- |
@@ -184,26 +202,26 @@ CrossTide ships with **23 route cards**, each accessible from the sidebar naviga
 | `npm test` | Run unit tests |
 | `npm run test:fast` | Unit tests on the threads pool (local iteration) |
 | `npm run test:coverage` | Tests with v8 coverage |
-| `npm run lint` | ESLint |
-| `npm run lint:all` | ESLint + Stylelint + HTMLHint + markdownlint |
+| `npm run lint` | Oxlint with TypeScript 7 type-aware checks |
+| `npm run lint:all` | Oxlint + Stylelint + HTMLHint + markdownlint |
 | `npm run format` | Biome auto-format |
 | `npm run ci` | Full CI pipeline (typecheck + lint + test + build + bundle check) |
 
-## 🧰 Tech Stack
+## Tech Stack
 
-- **TypeScript 6.0** strict mode (`exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`,
+- **TypeScript 7.0.2** strict mode (`exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`,
   `forceConsistentCasingInFileNames`, `verbatimModuleSyntax`).
 - **Vite 8** build tool (oxc minifier, ES2022 target).
 - **Vitest 4.1** testing — split `node` / `happy-dom` projects so DOM-free suites skip browser
   emulation, v8 coverage, 90% statement / 80% branch / 90% function / 90% line thresholds.
-- **ESLint 10** flat config + **typescript-eslint 8**.
+- **Oxlint 1** with `oxlint-tsgolint` for TypeScript 7-aware checks.
 - **Biome 2** code formatting (100× faster than Prettier).
 - **Stylelint 17**, **HTMLHint 1.9**, **markdownlint-cli2** for non-TS assets.
 - **Vanilla CSS** with custom properties (dark/light themes), no UI framework — pure TypeScript + DOM APIs.
 
-## 📱 Native Mobile (Capacitor)
+## Native Mobile (Capacitor)
 
-CrossTide can be packaged as a native iOS/Android app via Capacitor:
+CrossTide has preview native iOS/Android packaging via Capacitor:
 
 ```bash
 npm run build         # Build the web app
@@ -214,7 +232,7 @@ npm run cap:ios       # Open in Xcode
 
 Native features: splash screen, status bar theming, secure local storage via `@capacitor/preferences`.
 
-## 🔌 Worker API
+## Worker API
 
 The Cloudflare Worker (`worker/`) provides:
 
@@ -222,12 +240,12 @@ The Cloudflare Worker (`worker/`) provides:
 | ---------------------- | ------ | ----------------------------------------------- |
 | `/api/yahoo/quote` | GET | Proxied stock quotes with KV caching |
 | `/api/yahoo/chart` | GET | Historical OHLCV data with TTL cache |
-| `/api/ws/:symbol` | GET | WebSocket upgrade → Durable Object fan-out (R3) |
-| `/api/news/sentiment` | POST | NLP sentiment scoring for financial text (R5) |
-| `/api/alerts/evaluate` | POST | Manual trigger for server-side alert eval (R7) |
-| `scheduled` (cron) | — | Auto-evaluates alert rules every 5 min (R7) |
+| `/api/ws/:symbol` | GET | WebSocket upgrade → Durable Object fan-out |
+| `/api/news/sentiment` | POST | NLP sentiment scoring for financial text |
+| `/api/alerts/evaluate` | POST | Manual trigger for server-side alert evaluation |
+| `scheduled` (cron) | — | Auto-evaluates alert rules every 5 min |
 
-## 🚢 Release & Deployment
+## Release & Deployment
 
 - Tag `vX.Y.Z` on `main` triggers `.github/workflows/release.yml`, which:
   1. Re-runs typecheck, lint, tests, and build.
@@ -236,14 +254,14 @@ The Cloudflare Worker (`worker/`) provides:
 - Push to `main` also triggers `.github/workflows/pages.yml`, deploying the
   current build to GitHub Pages.
 
-## 🏗️ Architecture
+## Architecture
 
 ```text
 src/
   domain/   Pure calculators (80+ indicators, consensus, backtest, risk)
   core/     Signals, cache, config, fetch, idb, i18n, storage-manager
   providers/ Market-data adapters (Yahoo, Finnhub, Massive, Stooq, Alpha Vantage, CoinGecko)
-  cards/    Composable UI cards — 23 route cards, lazy-loaded via registry
+  cards/    Composable UI cards — 25 registered route cards, lazy-loaded via registry
   ui/       Router, toast, modal, command palette, a11y, view transitions
   types/    Shared interfaces + Valibot schemas
   styles/   Design tokens, base, responsive, components, color-blind palettes
@@ -261,8 +279,8 @@ flowchart TD
 
   subgraph Edge["Cloudflare Edge"]
     Worker["Worker (Hono)"]
-    DO["Durable Object — WebSocket fan-out (R3)"]
-    Cron["Cron Trigger (R7) — Alert Evaluation"]
+    DO["Durable Object — WebSocket fan-out"]
+    Cron["Cron Trigger — Alert Evaluation"]
     KV["KV Cache"]
     D1["D1 Database"]
     RL["Rate Limiter"]
@@ -336,11 +354,11 @@ Consensus:   Micho Method + >=1 confirming method = BUY
 
 | Problem | Cause | Fix |
 | -------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `ERR_CERT_AUTHORITY_INVALID` in dev | Corporate MITM proxy | Set `HTTPS_PROXY=http://proxy-dmz.intel.com:912` before `npm run dev` |
+| `ERR_CERT_AUTHORITY_INVALID` in dev | Optional network proxy or TLS inspection | Set `HTTPS_PROXY` and, if needed, `HTTP_PROXY` in your environment before `npm run dev`; leave them unset for direct access |
 | CSP blocks fetch requests in dev | Hitting Yahoo directly instead of Vite proxy | Ensure `import.meta.env.DEV` routes through `/api/yahoo` (already default) |
 | Firefox/WebKit Playwright tests fail to start | Browser engines not installed | Run `./node_modules/.bin/playwright install firefox webkit` |
 | `@starting-style` / `@scope` shown as unknown in VS Code | CSS language service needs custom data | Verify `css.customData` points to `./config/css-custom-data.json` in `.vscode/settings.json` |
-| Tests timeout behind corporate firewall | npm registry unreachable | Configure `.npmrc` with `proxy` and `https-proxy` |
+| Tests timeout behind a firewall | npm registry unreachable | Configure npm's `proxy` and `https-proxy` settings, or export `HTTP_PROXY` and `HTTPS_PROXY`; no proxy is required on open networks |
 | Build exceeds 250 KB budget | New dependency added | Check `npm run check:bundle` and tree-shake or lazy-load the addition |
 
 ## 💬 Community

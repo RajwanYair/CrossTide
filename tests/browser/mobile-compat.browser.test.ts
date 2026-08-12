@@ -109,6 +109,17 @@ describe("Network Information API detection", () => {
   it("navigator.onLine is available", () => {
     expect(typeof navigator.onLine).toBe("boolean");
   });
+
+  it("reduced-data preference is optional and safe to inspect", () => {
+    const connection = (navigator as unknown as { connection?: { saveData?: unknown } }).connection;
+    const saveData = connection?.saveData;
+    expect(saveData === undefined || typeof saveData === "boolean").toBe(true);
+  });
+
+  it("battery API is optional and safe to detect", () => {
+    const getBattery = (navigator as unknown as { getBattery?: unknown }).getBattery;
+    expect(getBattery === undefined || typeof getBattery === "function").toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------

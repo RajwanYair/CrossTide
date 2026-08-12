@@ -2,6 +2,7 @@
  * Cross-Tab Share Sync (B11) tests
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { createCrossTabSync } from "../../../src/core/broadcast-channel";
 import { createCrossTabShareSync } from "../../../src/core/cross-tab-share";
 
 // ── BroadcastChannel mock (same pattern as broadcast-channel.test.ts) ─────────
@@ -81,6 +82,20 @@ describe("createCrossTabShareSync", () => {
     tab1.broadcastShareState({ symbol: "MSFT" });
     expect(received).toHaveLength(0);
     tab1.destroy();
+  });
+
+  it("keeps share-state isolated from config synchronization", () => {
+    const configSync = createCrossTabSync();
+    const shareSync = createCrossTabShareSync();
+    const received: unknown[] = [];
+
+    configSync.onConfigChange((cfg) => received.push(cfg));
+    shareSync.broadcastShareState({ symbol: "AAPL" });
+
+    expect(received).toHaveLength(0);
+
+    configSync.destroy();
+    shareSync.destroy();
   });
 
   it("supports multiple receivers", () => {

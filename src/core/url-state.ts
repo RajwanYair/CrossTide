@@ -96,14 +96,14 @@ export interface UrlStateListener {
  *
  * Safe to call in non-browser environments (no-op, returns a no-op remover).
  */
-export function onUrlStateChange(handler: (state: ShareState) => void): UrlStateListener {
+export function onUrlStateChange(handler: (state: ShareState | null) => void): UrlStateListener {
   if (typeof window === "undefined") {
     return { remove: () => undefined };
   }
 
   function listener(): void {
     const state = readCurrentUrlState();
-    if (state) handler(state);
+    handler(state);
   }
 
   window.addEventListener("popstate", listener);

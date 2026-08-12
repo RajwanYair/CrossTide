@@ -9,6 +9,8 @@
  * previous fixed-position approach on older browsers.
  */
 
+import { closePopover, openPopover, supportsPopover } from "./popover";
+
 export type ToastType = "info" | "success" | "warning" | "error";
 
 export interface ToastOptions {
@@ -28,13 +30,6 @@ const DEFAULT_DURATION = 4000;
 
 let container: HTMLElement | null = null;
 const activeToasts: ActiveToast[] = [];
-
-function supportsPopover(el: HTMLElement): el is HTMLElement & {
-  showPopover(): void;
-  hidePopover(): void;
-} {
-  return typeof (el as unknown as { showPopover?: unknown }).showPopover === "function";
-}
 
 function ensureContainer(): HTMLElement {
   if (container && document.body.contains(container)) return container;
@@ -58,12 +53,8 @@ function dismiss(toast: ActiveToast): void {
   const onEnd = (): void => {
     toast.el.remove();
     // G9: hide the popover container once all toasts are gone.
-    if (activeToasts.length === 0 && container && supportsPopover(container)) {
-      try {
-        container.hidePopover();
-      } catch {
-        // hidePopover throws if the element is not currently shown — ignore.
-      }
+    if (activeToasts.length === 0 && container && supportsPopover()) {
+      closePopover(container);
     }
   };
   if (typeof toast.el.getAnimations === "function" && toast.el.getAnimations().length > 0) {
@@ -92,12 +83,8 @@ export function showToast(options: ToastOptions): () => void {
   parent.appendChild(el);
 
   // G9: show the container popover when the first toast arrives.
-  if (activeToasts.length === 0 && supportsPopover(parent)) {
-    try {
-      parent.showPopover();
-    } catch {
-      // showPopover throws if already shown — safe to ignore.
-    }
+  if (activeToasts.length === 0 && supportsPopover()) {
+    openPopover(parent);
   }
 
   const timer = duration > 0 ? setTimeout(() => dismiss(toast), duration) : null;

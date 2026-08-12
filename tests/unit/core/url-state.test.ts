@@ -177,6 +177,32 @@ describe("onUrlStateChange", () => {
     listener.remove();
   });
 
+  it("reports null when back navigation clears share state", () => {
+    const token = encodeShareState({ symbol: "NVDA" });
+    setWindowLocation(`http://localhost/?s=${token}`);
+    const listeners: EventListenerOrEventListenerObject[] = [];
+    Object.defineProperty(globalThis, "window", {
+      value: {
+        addEventListener: vi.fn((_e: string, fn: EventListenerOrEventListenerObject) =>
+          listeners.push(fn),
+        ),
+        removeEventListener: vi.fn(),
+      },
+      writable: true,
+      configurable: true,
+    });
+
+    const handler = vi.fn();
+    const listener = onUrlStateChange(handler);
+    setWindowLocation("http://localhost/chart");
+    for (const currentListener of listeners) {
+      if (typeof currentListener === "function") currentListener(new PopStateEvent("popstate"));
+    }
+
+    expect(handler).toHaveBeenLastCalledWith(null);
+    listener.remove();
+  });
+
   it("remove() calls removeEventListener", () => {
     const removeEventListener = vi.fn();
     Object.defineProperty(globalThis, "window", {

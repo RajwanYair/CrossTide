@@ -8,10 +8,13 @@ import {
   getCardEntry,
   listCards,
   loadCard,
+  createCardLifecycleStore,
   _resetRegistryCacheForTests,
   type CardModule,
   type CardContext,
+  type CardHandle,
 } from "../../../src/cards/registry";
+import { buildPath, getCurrentRouteInfo } from "../../../src/ui/router";
 
 // Stub dynamic-import resolution inside the registry for unit tests.
 // We mock at the module level so the registry's import() calls resolve
@@ -128,6 +131,26 @@ describe("E2E card matrix", () => {
   });
 });
 
+describe("router parity", () => {
+  it("round-trips every registered route through the router", () => {
+    for (const card of listCards()) {
+      const path = buildPath(card.route);
+      window.history.replaceState({}, "", path);
+      expect(getCurrentRouteInfo().name, card.route).toBe(card.route);
+    }
+  });
+});
+
+describe("view container parity", () => {
+  it("has an index view container for every registered card", () => {
+    const html = readFileSync(resolve(process.cwd(), "index.html"), "utf8");
+    const missing = listCards()
+      .map((card) => card.viewId)
+      .filter((viewId) => !html.includes(`id="${viewId}"`));
+    expect(missing).toEqual([]);
+  });
+});
+
 describe("getCardEntry", () => {
   it("finds entry by route", () => {
     const entry = getCardEntry("settings");
@@ -204,5 +227,69 @@ describe("loadCard", () => {
     const mod = await loadCard("watchlist");
     expect(typeof mod.mount).toBe("function");
     vi.restoreAllMocks();
+  });
+});
+
+describe("card lifecycle store", () => {
+  it("disposes inactive handles and removes them from the store", () => {
+    const store = createCardLifecycleStore();
+    const disposeWatchlist = vi.fn();
+    const disposeChart = vi.fn();
+    store.set("watchlist", { dispose: disposeWatchlist });
+    store.set("chart", { dispose: disposeChart });
+
+    store.disposeInactive("chart");
+
+    expect(disposeWatchlist).toHaveBeenCalledOnce();
+    expect(disposeChart).not.toHaveBeenCalled();
+    expect(store.get("watchlist")).toBeUndefined();
+    expect(store.get("chart")).toBeDefined();
+  });
+
+  it("removes inactive handles without a dispose hook", () => {
+    const store = createCardLifecycleStore();
+    const handleWithoutDispose: CardHandle = { update: vi.fn() };
+    store.set("watchlist", handleWithoutDispose);
+
+    store.disposeInactive("chart");
+
+    expect(store.get("watchlist")).toBeUndefined();
+  });
+
+  it("disposes every active handle on shutdown", () => {
+    const store = createCardLifecycleStore();
+    const disposeWatchlist = vi.fn();
+    const disposeChart = vi.fn();
+    store.set("watchlist", { dispose: disposeWatchlist });
+    store.set("chart", { dispose: disposeChart });
+
+    store.disposeAll();
+
+    expect(disposeWatchlist).toHaveBeenCalledOnce();
+    expect(disposeChart).toHaveBeenCalledOnce();
+    expect(store.get("watchlist")).toBeUndefined();
+    expect(store.get("chart")).toBeUndefined();
+  });
+
+  it("disposes a late handle mounted for an inactive route", () => {
+    const store = createCardLifecycleStore();
+    const disposeLateHandle = vi.fn();
+
+    store.disposeInactive("chart");
+    store.set("watchlist", { dispose: disposeLateHandle });
+
+    expect(disposeLateHandle).toHaveBeenCalledOnce();
+    expect(store.get("watchlist")).toBeUndefined();
+  });
+
+  it("disposes a handle that resolves after shutdown", () => {
+    const store = createCardLifecycleStore();
+    const disposeLateHandle = vi.fn();
+
+    store.disposeAll();
+    store.set("chart", { dispose: disposeLateHandle });
+
+    expect(disposeLateHandle).toHaveBeenCalledOnce();
+    expect(store.get("chart")).toBeUndefined();
   });
 });

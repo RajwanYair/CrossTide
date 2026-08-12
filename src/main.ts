@@ -16,10 +16,18 @@ import {
   hasStoredConfig,
 } from "./core/config";
 import { createCrossTabSync } from "./core/broadcast-channel";
+import { createCrossTabShareSync } from "./core/cross-tab-share";
 import { registerServiceWorker } from "./core/sw-register";
 import { activateServiceWorkerUpdate, watchServiceWorkerUpdates } from "./core/sw-update";
 import { createShortcutManager } from "./core/keyboard";
-import { initRouter, navigateTo, navigateToPath, onRouteChange, type RouteName } from "./ui/router";
+import {
+  initRouter,
+  isValidRouteName,
+  navigateTo,
+  navigateToPath,
+  onRouteChange,
+  type RouteName,
+} from "./ui/router";
 import { detectPreferredTheme, initTheme } from "./ui/theme";
 import { getThemeOverride, initAutoThemeSync, setThemeOverride } from "./ui/auto-theme-sync";
 import { initEnhancedContrast } from "./core/contrast-preference";
@@ -32,7 +40,7 @@ import {
   getSortConfig,
   type WatchlistQuote,
 } from "./ui/watchlist";
-import { loadCard, type CardHandle, type CardContext } from "./cards/registry";
+import { createCardLifecycleStore, loadCard, type CardContext } from "./cards/registry";
 import { mountWithBoundary } from "./ui/error-boundary";
 import { showToast } from "./ui/toast";
 import { openPalette, isPaletteOpen } from "./ui/palette-overlay";
@@ -47,9 +55,11 @@ import { setScreenerData } from "./cards/screener-data";
 import { setBreadthData } from "./cards/market-breadth-data";
 import { computeRsiSeries } from "./domain/rsi-calculator";
 import { computeSma } from "./domain/sma-calculator";
-import type { InstrumentType, ConsensusResult } from "./types/domain";
+import type { ConsensusResult } from "./types";
+import type { InstrumentType } from "./types/domain";
 import type { ScreenerInput } from "./cards/screener";
 import { buildShareUrl, readShareUrl, encodeWatchlistUrl } from "./core/share-state";
+import { onUrlStateChange, readCurrentUrlState } from "./core/url-state";
 import {
   mountInstrumentFilterBar,
   applyInstrumentFilter,
@@ -63,14 +73,18 @@ import {
   type ExtendedPaletteName,
 } from "./ui/palette-switcher";
 import { exportFullDataJson, exportFullDataCsv } from "./core/data-export";
+import { collectFullBackup } from "./core/full-backup";
+import { captureElementAsSvg, downloadSvg } from "./core/export-image";
+import { attachScrollProgress } from "./ui/scroll-driven";
 import { downloadFile, downloadCompressedFile } from "./core/export-import";
 import { exportWatchlist } from "./core/watchlist-export";
 import { parseTickersFromText } from "./core/watchlist-import";
 import { recordAdd, recordRemove } from "./core/watchlist-history";
+import { toggleTickerSelection } from "./core/ticker-selection";
 import { restoreSessionState, saveSessionState } from "./core/session-state";
 import { watchlistStore } from "./core/watchlist-store";
 import { estimateLocalStorageUsage, updateStorageSize } from "./core/cache-stats";
-import { initPerfObserver } from "./core/perf-metrics";
+import { initPerfObserver, recordPerformanceTrace } from "./core/perf-metrics";
 import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initOfflineIndicator } from "./ui/offline-indicator";
@@ -80,17 +94,26 @@ import { initDashboardStats } from "./ui/dashboard-stats";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
 import { initPlausible } from "./core/plausible";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
-import { searchTickers } from "./providers/ticker-search-service";
+import { searchTickers } from "./providers";
 import { recordTickerView } from "./core/recent-tickers";
 import { isSupportedSymbol } from "./domain/ticker-catalog";
 import { createAutocomplete } from "./ui/ticker-autocomplete";
 import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
+import { waitForFont } from "./core/font-loader";
+import {
+  buildPrefetchRules,
+  injectSpeculationRules,
+  linkPrefetchFallback,
+  removeSpeculationRules,
+  speculationRulesSupported,
+} from "./core/speculation-rules";
 import { evaluateAlertRules } from "./core/alert-rules-evaluator";
 import { checkWhatsNew } from "./core/whats-new";
 import { openShortcutsDialog } from "./ui/shortcuts-dialog";
 import { updateFreshnessIndicator } from "./ui/freshness-indicator";
 import { initSidebarToggle } from "./ui/sidebar";
 import { initCardPrefetchOnIntent } from "./ui/card-prefetch";
+import { restoreActiveLayoutPreset } from "./ui/layout-presets";
 import { applyEnhancedFocus } from "./ui/a11y-aaa";
 import { onSwipe } from "./ui/mobile-ux";
 import {
@@ -104,7 +127,7 @@ import "./ui/empty-state";
 import "./ui/filter-bar";
 import "./ui/stat-grid";
 
-const cardHandles = new Map<RouteName, CardHandle>();
+const cardHandles = createCardLifecycleStore();
 const cardContainers: Partial<Record<RouteName, string>> = {
   consensus: "consensus-container",
   chart: "chart-container",
@@ -160,9 +183,11 @@ async function activateCard(
     existing.update?.(ctx);
     return;
   }
+  const cardLoadStartedAt = performance.now();
   const handle = await mountWithBoundary(el, ctx, () => loadCard(route), {
     onError: (err) => console.error("Card error:", route, err),
   });
+  recordPerformanceTrace("cardLoadMs", performance.now() - cardLoadStartedAt);
   cardHandles.set(route, handle);
   applyAllCardWidths();
 }
@@ -173,14 +198,52 @@ function main(): void {
   let refreshTimer: ReturnType<typeof setTimeout> | null = null;
   const savedSession = restoreSessionState();
   if (savedSession?.selectedTicker) selectedTickerStore.set(savedSession.selectedTicker);
+  const sharedUrlState = readCurrentUrlState();
+  if (sharedUrlState?.symbol) selectedTickerStore.set(sharedUrlState.symbol);
+  if (
+    !sharedUrlState &&
+    savedSession &&
+    isValidRouteName(savedSession.route) &&
+    window.location.pathname.endsWith("/")
+  ) {
+    navigateToPath(savedSession.route, {}, { replace: true });
+  }
   for (const entry of config.watchlist) watchlistStore.actions.addTicker(entry.ticker);
   const stopPerfObserver = initPerfObserver();
 
   // H3: eager-prefetch card chunks on hover/focus intent.
   initCardPrefetchOnIntent();
 
+  // G16: expose font readiness for consumers that need to defer measurement.
+  void waitForFont("Inter Variable").then((loaded) => {
+    document.documentElement.dataset["fontReady"] = String(loaded);
+  });
+
+  // H3: prefetch route documents where the browser supports the API.
+  const routeHrefs = [...document.querySelectorAll<HTMLAnchorElement>("a[data-route]")]
+    .map((link) => link.getAttribute("href"))
+    .filter((href): href is string => href !== null && href.length > 0);
+  if (routeHrefs.length > 0) {
+    if (speculationRulesSupported()) {
+      injectSpeculationRules(buildPrefetchRules(routeHrefs), "app-routes");
+    } else {
+      linkPrefetchFallback(routeHrefs);
+    }
+  }
+
   // ── B11: Cross-tab BroadcastChannel sync ──────────────────────────────────
   const crossTabSync = createCrossTabSync();
+  const crossTabShare = createCrossTabShareSync();
+  const removeUrlStateListener = onUrlStateChange((state) => {
+    selectedTickerStore.set(state?.symbol ?? "");
+  });
+  const removeShareStateListener = crossTabShare.onShareState((state) => {
+    if (state.symbol) selectedTickerStore.set(state.symbol);
+    if (state.card && typeof state.card === "string") {
+      const route = state.card as RouteName;
+      navigateTo(route);
+    }
+  });
 
   /** Save config locally + broadcast to other open tabs + resync stream subscriptions. */
   function saveAndBroadcast(cfg: typeof config): void {
@@ -375,7 +438,7 @@ function main(): void {
       updateStatus("All fetches failed — check network");
       showToast({
         message:
-          "Could not fetch market data. If you are behind a corporate firewall, ensure your browser proxy is configured (the app fetches Yahoo Finance directly from the browser). Check the browser console (F12) for details.",
+          "Could not fetch market data. If your network requires a proxy, configure it for your browser or development environment. Check the browser console (F12) for details.",
         type: "error",
         durationMs: 12000,
       });
@@ -407,6 +470,7 @@ function main(): void {
 
   initEnhancedContrast(); // Q6: restore [data-contrast="aaa"] from localStorage
   loadPersistedPalette(); // C2: restore color-blind palette from localStorage
+  restoreActiveLayoutPreset();
   const removeEnhancedFocus = applyEnhancedFocus();
   const removeMobileSwipe = onSwipe(document.body, (event) => {
     if (event.direction !== "right") return;
@@ -422,6 +486,7 @@ function main(): void {
   let currentRoute: RouteName = "watchlist";
   onRouteChange((route, info) => {
     currentRoute = route;
+    cardHandles.disposeInactive(route);
     saveSessionState({
       route,
       selectedTicker: selectedTickerStore.peek() ?? "",
@@ -433,12 +498,24 @@ function main(): void {
   });
 
   initRouter();
+  window.addEventListener("pagehide", () => cardHandles.disposeAll(), { once: true });
   window.addEventListener("pagehide", stopPerfObserver, { once: true });
   window.addEventListener("pagehide", removeEnhancedFocus, { once: true });
   window.addEventListener("pagehide", removeMobileSwipe, { once: true });
+  window.addEventListener("pagehide", () => removeSpeculationRules("app-routes"), {
+    once: true,
+  });
+  window.addEventListener("pagehide", removeUrlStateListener.remove, { once: true });
   initOfflineIndicator();
   initCardCollapse();
   initDashboardStats();
+  const appMain = document.getElementById("app-main");
+  const removeScrollProgress = appMain
+    ? attachScrollProgress(appMain, (progress) => {
+        appMain.style.setProperty("--scroll-progress", String(progress));
+      })
+    : (): void => undefined;
+  window.addEventListener("pagehide", removeScrollProgress, { once: true });
   initPlausible(); // R14: privacy-respecting Plausible analytics
   checkWhatsNew();
   const cleanupTickerContextMenu = initTickerContextMenu();
@@ -464,6 +541,8 @@ function main(): void {
     : (): void => undefined;
   window.addEventListener("pagehide", cleanupTickerContextMenu, { once: true });
   window.addEventListener("pagehide", removeTickerContextMenuBinding, { once: true });
+  window.addEventListener("pagehide", removeShareStateListener, { once: true });
+  window.addEventListener("pagehide", () => crossTabShare.destroy(), { once: true });
   refreshWatchlist(config, new Map());
 
   // Mount instrument filter bar (B12)
@@ -583,6 +662,14 @@ function main(): void {
   const tbody = document.getElementById("watchlist-body");
   tbody?.addEventListener("click", (e) => {
     const target = e.target as HTMLElement;
+    if (target.dataset["action"] === "select") {
+      const ticker = target.dataset["ticker"];
+      if (ticker) {
+        toggleTickerSelection(ticker);
+        refreshWatchlist(config, buildQuotesMap());
+      }
+      return;
+    }
     if (target.dataset["action"] === "remove") {
       const ticker = target.dataset["ticker"];
       if (ticker) {
@@ -710,6 +797,13 @@ function main(): void {
     showToast({ message: `Exported ${config.watchlist.length} tickers`, type: "success" });
   });
 
+  document.getElementById("btn-export-image")?.addEventListener("click", () => {
+    const table = document.getElementById("watchlist-table");
+    if (!table) return;
+    downloadSvg(captureElementAsSvg(table), "crosstide-watchlist.svg");
+    showToast({ message: "Watchlist image exported", type: "success" });
+  });
+
   // Import watchlist
   document.getElementById("btn-import")?.addEventListener("click", () => {
     const input = document.createElement("input");
@@ -795,7 +889,7 @@ function main(): void {
 
   // Full-data export (C7)
   document.getElementById("btn-export-full-json")?.addEventListener("click", () => {
-    const json = exportFullDataJson({ watchlist: config.watchlist });
+    const json = exportFullDataJson(collectFullBackup());
     downloadFile(
       json,
       `crosstide-export-${new Date().toISOString().slice(0, 10)}.json`,
@@ -806,7 +900,7 @@ function main(): void {
 
   // Compressed export (G11) — .json.gz via Compression Streams API
   document.getElementById("btn-export-gz")?.addEventListener("click", () => {
-    const json = exportFullDataJson({ watchlist: config.watchlist });
+    const json = exportFullDataJson(collectFullBackup());
     void downloadCompressedFile(
       json,
       `crosstide-export-${new Date().toISOString().slice(0, 10)}.json.gz`,
@@ -815,7 +909,7 @@ function main(): void {
   });
 
   document.getElementById("btn-export-full-csv")?.addEventListener("click", () => {
-    const csv = exportFullDataCsv({ watchlist: config.watchlist });
+    const csv = exportFullDataCsv(collectFullBackup());
     downloadFile(csv, `crosstide-export-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv");
     showToast({ message: "Full data exported as CSV", type: "success" });
   });
@@ -1009,6 +1103,7 @@ function main(): void {
 
   // Ctrl+K / Cmd+K → open palette
   shortcuts.register({
+    action: "open-palette",
     key: "k",
     ctrl: true,
     description: "Open command palette",
@@ -1017,21 +1112,29 @@ function main(): void {
 
   // "/" → focus search (when palette not open)
   shortcuts.register({
+    action: "focus-search",
     key: "/",
     description: "Focus ticker search",
     handler: () => autocompleteHandle?.focus(),
   });
 
   // "r" → refresh data
-  shortcuts.register({ key: "r", description: "Refresh data", handler: () => void refreshData() });
+  shortcuts.register({
+    action: "refresh-data",
+    key: "r",
+    description: "Refresh data",
+    handler: () => void refreshData(),
+  });
 
   // Shift+S → copy share link
   shortcuts.register({
+    action: "copy-share-link",
     key: "s",
     shift: true,
     description: "Copy share link for current view",
     handler: () => {
       const shareUrl = buildShareUrl(window.location.pathname, { card: currentRoute });
+      crossTabShare.broadcastShareState({ card: currentRoute });
       const fullUrl = window.location.origin + shareUrl;
       void navigator.clipboard
         .writeText(fullUrl)
@@ -1046,6 +1149,7 @@ function main(): void {
 
   // "?" → show shortcuts help
   shortcuts.register({
+    action: "show-shortcuts",
     key: "?",
     shift: true,
     description: "Show keyboard shortcuts",
@@ -1056,6 +1160,7 @@ function main(): void {
 
   // Escape → close palette if open, otherwise blur the focused input
   shortcuts.register({
+    action: "close-overlay",
     key: "Escape",
     description: "Close palette or unfocus input",
     handler: () => {
@@ -1209,11 +1314,13 @@ function main(): void {
     scheduleRefresh();
     startStreamIfKeySet();
   });
+  recordPerformanceTrace("startupMs", performance.now() - startupStartedAt);
 }
 
 // P15: Kick off polyfill loading before the app mounts.
 // On Chrome 131+ the dynamic import is never fetched (native Temporal exists).
 void ensureTemporal();
+const startupStartedAt = performance.now();
 main();
 
 // ── A17: Telemetry — analytics + error tracking + web vitals ──────────────

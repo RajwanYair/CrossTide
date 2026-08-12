@@ -1,6 +1,6 @@
 # 🤖 CrossTide — Custom Copilot Agents
 
-> Version: v11.44.4 · Tests: 656 files · Coverage: ≥90% stmt/line/fn · ≥80% branch
+> Version: v11.44.6 · Tests: 679 files · Coverage: ≥90% stmt/line/fn · ≥80% branch
 
 Custom agent modes for VS Code GitHub Copilot. Each agent loads only the files it needs.
 Global rules (coding conventions, commit format, quality gates) are in `copilot-instructions.md`.
@@ -55,7 +55,7 @@ instructions: |
   - Export from src/domain/index.ts barrel — never skip this step
   - Tests use makeCandles() from tests/helpers/candle-factory.ts
 
-  DO NOT READ: src/cards/, src/ui/, worker/, src/domain/indicators/ unless targeting a specific file
+  DO NOT READ: src/cards/, src/ui/, worker/, src/domain/ unless targeting a specific file
 tools:
   - read_file
   - grep_search
@@ -84,7 +84,7 @@ instructions: |
   - Response.json(data) — never new Response(JSON.stringify(data))
   - Mock globalThis.fetch in tests — NEVER make real network calls
 
-  DO NOT READ: src/domain/indicators/ (large, irrelevant), src/cards/ (irrelevant)
+  DO NOT READ: src/domain/ (large, irrelevant), src/cards/ (irrelevant)
 tools:
   - read_file
   - grep_search
@@ -106,7 +106,7 @@ instructions: |
   You are a specialist in CrossTide's quality gates and CI pipeline.
 
   READ FIRST: .github/copilot-instructions.md (Quality Gates section)
-  CANONICAL FILES: .github/workflows/ci.yml, vitest.config.ts, eslint.config.mjs
+  CANONICAL FILES: .github/workflows/ci.yml, vitest.config.ts, package.json
 
   QUICK REMINDERS:
   - Full CI: npm run ci
@@ -144,7 +144,7 @@ instructions: |
   - Web Components: <ct-data-table>, <ct-stat-grid>, <ct-chart-frame>, <ct-filter-bar>, <ct-empty-state>
   - Cards may NOT import from src/ui/ (except router types)
 
-  DO NOT READ: src/domain/indicators/ (large directory, irrelevant to cards)
+  DO NOT READ: src/domain/ (large directory, irrelevant to cards)
 tools:
   - read_file
   - create_file
@@ -200,7 +200,7 @@ instructions: |
     - .browserslistrc (target browsers — canonical source)
     - playwright.config.ts (E2E browser projects)
     - vitest.browser.config.ts (unit browser-mode instances)
-    - eslint.config.mjs settings.browsers array (must mirror .browserslistrc)
+    - .browserslistrc remains the browser-target source of truth for compatibility checks
     - .vscode/settings.json browser-compatibility-checker.browserList (must mirror .browserslistrc)
 
   QUICK REMINDERS (full rules in browser.instructions.md):
@@ -210,7 +210,7 @@ instructions: |
   - E2E cross-browser tests go in tests/e2e/ and run on ALL Playwright projects
   - When adding a new browser target, update ALL four canonical files above
 
-  DO NOT READ: src/domain/indicators/ (irrelevant), src/cards/ (irrelevant)
+  DO NOT READ: src/domain/ (irrelevant), src/cards/ (irrelevant)
 tools:
   - read_file
   - grep_search

@@ -8,12 +8,18 @@
 import type { Env } from "../index.js";
 import { kvGet, kvPut } from "../kv-cache.js";
 import { fetchYahooFundamentals, type YahooFundamentals } from "../providers/yahoo.js";
+import { createMarketDataEnvelope, type MarketDataEnvelope } from "../../src/types/market-data.js";
 
 const FUNDAMENTALS_TTL = 3600; // 1 hour
 const MAX_BATCH = 20;
 const SYMBOL_RE = /^[A-Z0-9.^=-]{1,20}$/;
 
 interface BatchResult {
+  readonly results: Record<string, YahooFundamentals & { readonly source: string }>;
+  readonly errors: readonly string[];
+}
+
+interface BatchEnvelopeData {
   readonly results: Record<string, YahooFundamentals & { readonly source: string }>;
   readonly errors: readonly string[];
 }
@@ -98,5 +104,16 @@ export async function handleFundamentalsBatch(req: Request, env: Env): Promise<R
   }
 
   const response: BatchResult = { results, errors };
-  return Response.json(response);
+  return Response.json(
+    createMarketDataEnvelope<BatchEnvelopeData>(
+      "fundamentals",
+      response,
+      {
+        source: "yahoo",
+        fetchedAt: new Date().toISOString(),
+      },
+      errors.length > 0 ? "partial" : "live",
+      errors.length > 0 ? [`Failed symbols: ${errors.join(", ")}`] : [],
+    ),
+  );
 }

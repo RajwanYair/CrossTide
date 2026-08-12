@@ -3,6 +3,7 @@
  * "3d ago", "2w ago", "Mar 5". Uses `Intl.RelativeTimeFormat` for the
  * shorthand units and locale-aware dates beyond a week.
  */
+import { getLocale } from "../core/i18n";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -46,7 +47,7 @@ const getDateFmt = (locale: string, sameYear: boolean): Intl.DateTimeFormat => {
 
 export function formatRelativeTime(time: number, options: RelativeTimeOptions = {}): string {
   const now = options.now ?? Date.now();
-  const locale = options.locale ?? "en-US";
+  const locale = options.locale ?? getLocale();
   const numeric = options.numeric ?? "auto";
   const diff = time - now; // negative = past
   const abs = Math.abs(diff);

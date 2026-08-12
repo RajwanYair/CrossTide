@@ -1,0 +1,43 @@
+Test loading failed: Error: Process exited with code 1: Traceback (most recent call last):
+  File "<string>", line 200, in <module>
+    valid_tests, invalid_tests = discover_tests(start_directory, pattern)
+                                 ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 159, in discover_tests
+    tests = get_tests(defaultTestLoader.discover(start_directory, pattern=pattern))
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python314\Lib\unittest\loader.py", line 341, in discover
+    raise ImportError('Start directory is not importable: %r' % start_dir)
+ImportError: Start directory is not importable: 'c:\\Users\\ryair\\Documents\\GitHub\\CrossTide\\unittests'
+
+Error: Process exited with code 1: Traceback (most recent call last):
+  File "<string>", line 200, in <module>
+    valid_tests, invalid_tests = discover_tests(start_directory, pattern)
+                                 ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 159, in discover_tests
+    tests = get_tests(defaultTestLoader.discover(start_directory, pattern=pattern))
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python314\Lib\unittest\loader.py", line 341, in discover
+    raise ImportError('Start directory is not importable: %r' % start_dir)
+ImportError: Start directory is not importable: 'c:\\Users\\ryair\\Documents\\GitHub\\CrossTide\\unittests'
+
+    at ChildProcess.<anonymous> (c:\Users\ryair\.vscode\extensions\littlefoxteam.vscode-python-test-adapter-0.8.2\out\src\processRunner.js:27:32)
+    at Object.onceWrapper (node:events:631:26)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at maybeClose (node:internal/child_process:1124:16)
+    at Process.ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+
+Stacktrace:
+    at S.syncTopLevel (c:\Users\ryair\.vscode\extensions\ms-vscode.test-adapter-converter-0.2.1\out\extension.js:6:3)
+    at Lp.value (c:\Users\ryair\.vscode\extensions\ms-vscode.test-adapter-converter-0.2.1\out\extension.js:3:4541)
+    at T._deliver (file:///c:/Program%20Files/Microsoft%20VS%20Code/df53daabb1/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:431:3244)
+    at T.fire (file:///c:/Program%20Files/Microsoft%20VS%20Code/df53daabb1/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:431:3562)
+    at Lp.value (c:\Users\ryair\.vscode\extensions\hbenl.vscode-test-explorer-2.22.1\out\hub\testHub.js:53:43)
+    at T._deliver (file:///c:/Program%20Files/Microsoft%20VS%20Code/df53daabb1/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:431:3244)
+    at T._deliverQueue (file:///c:/Program%20Files/Microsoft%20VS%20Code/df53daabb1/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:431:3333)
+    at T.fire (file:///c:/Program%20Files/Microsoft%20VS%20Code/df53daabb1/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:431:3667)
+    at PythonTestAdapter.<anonymous> (c:\Users\ryair\.vscode\extensions\littlefoxteam.vscode-python-test-adapter-0.8.2\out\src\pythonTestAdapter.js:89:35)
+    at Generator.throw (<anonymous>)
+    at rejected (c:\Users\ryair\.vscode\extensions\littlefoxteam.vscode-python-test-adapter-0.8.2\node_modules\tslib\tslib.js:115:69)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)

@@ -17,6 +17,9 @@
  * New: `navigateToPath`, `getCurrentRouteInfo`.
  */
 
+import { evaluateGuards } from "../core/route-guards";
+import { navigateWithApi } from "../core/navigation-api";
+
 export type RouteName =
   | "watchlist"
   | "consensus"
@@ -80,6 +83,11 @@ const VALID_ROUTES = new Set<RouteName>([
   "rebalance",
   "news-feed",
 ]);
+
+/** Return whether an external route value is one of the registered routes. */
+export function isValidRouteName(route: string): route is RouteName {
+  return VALID_ROUTES.has(route as RouteName);
+}
 
 interface RoutePattern {
   readonly name: RouteName;
@@ -325,7 +333,12 @@ export function navigateToPath(
   if (typeof window === "undefined") return;
   // G8: use Navigation API when available so `navigate` event fires
   if ("navigation" in window) {
-    void window.navigation.navigate(url, { history: opts.replace ? "replace" : "push" });
+    if (opts.replace) {
+      window.history.replaceState({ route, params }, "", url);
+      handleRoute();
+    } else {
+      navigateWithApi(url);
+    }
   } else {
     if (opts.replace) window.history.replaceState({ route, params }, "", url);
     else window.history.pushState({ route, params }, "", url);
@@ -361,6 +374,16 @@ function fireLoaders(info: RouteInfo, signal: AbortSignal): void {
 function handleRoute(): void {
   abortNavigation();
   const info = getCurrentRouteInfo();
+  const guard = evaluateGuards(info.name);
+  if (!guard.allowed) {
+    window.history.replaceState(
+      { route: guard.redirect, params: {} },
+      "",
+      buildPath(guard.redirect),
+    );
+    handleRoute();
+    return;
+  }
   fireLoaders(info, _navController.signal);
   activateViewWithTransition(info.name);
   for (const fn of listeners) fn(info.name, info);
@@ -403,7 +426,11 @@ function activateViewWithTransition(route: RouteName): void {
     const transition = document.startViewTransition(() => activateView(route)) as
       | ViewTransition
       | undefined;
-    if (transition !== undefined) void transition.finished.catch(() => undefined);
+    if (transition !== undefined) {
+      void transition.ready.catch(() => undefined);
+      void transition.updateCallbackDone.catch(() => undefined);
+      void transition.finished.catch(() => undefined);
+    }
   } else {
     activateView(route);
   }
@@ -440,6 +467,12 @@ function onNavigateEvent(e: NavigateEvent): void {
   const url = new URL(e.destination.url);
   if (url.origin !== window.location.origin) return;
   const info = parsePath(url.pathname);
+  const guard = evaluateGuards(info.name);
+  if (!guard.allowed) {
+    e.preventDefault();
+    navigateToPath(guard.redirect, {}, { replace: true });
+    return;
+  }
   e.intercept({
     handler(): Promise<void> {
       abortNavigation();

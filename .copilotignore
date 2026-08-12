@@ -18,7 +18,4 @@ mcp-server/dist/
 # Large generated/archival files — high token cost, low answer value.
 package-lock.json
 docs-site/package-lock.json
-docs/ROADMAP-v6-archive.md
-docs/ROADMAP-v8-archive.md
-docs/ROADMAP-v9-archive.md
 docs/INDICATORS.md

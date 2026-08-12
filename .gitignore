@@ -42,9 +42,13 @@ worker/**/*.log
 # VS Code local secrets
 .vscode/mcp.local.json
 
+# Gemini CLI local configuration and credentials
+.gemini/
+
 # Playwright outputs
 test-results/
 playwright-report/
+.playwright-mcp/
 
 # Vitest browser-mode outputs
 .vitest-attachments/

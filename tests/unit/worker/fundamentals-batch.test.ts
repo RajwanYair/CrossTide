@@ -42,10 +42,16 @@ describe("handleFundamentalsBatch", () => {
   it("returns fundamentals for multiple symbols", async () => {
     const res = await handleFundamentalsBatch(makeReq({ symbols: ["AAPL", "MSFT"] }), makeEnv());
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { results: Record<string, unknown>; errors: string[] };
-    expect(body.results.AAPL).toBeDefined();
-    expect(body.results.MSFT).toBeDefined();
-    expect(body.errors).toHaveLength(0);
+    const body = (await res.json()) as {
+      schemaVersion: string;
+      kind: string;
+      data: { results: Record<string, unknown>; errors: string[] };
+    };
+    expect(body.schemaVersion).toBe("1");
+    expect(body.kind).toBe("fundamentals");
+    expect(body.data.results.AAPL).toBeDefined();
+    expect(body.data.results.MSFT).toBeDefined();
+    expect(body.data.errors).toHaveLength(0);
   });
 
   it("rejects missing symbols array", async () => {
@@ -73,21 +79,21 @@ describe("handleFundamentalsBatch", () => {
       key.includes("AAPL") ? Promise.resolve(JSON.stringify(cached)) : Promise.resolve(null),
     );
     const res = await handleFundamentalsBatch(makeReq({ symbols: ["AAPL"] }), makeEnv());
-    const body = (await res.json()) as { results: Record<string, { source: string }> };
-    expect(body.results.AAPL.source).toBe("cache");
+    const body = (await res.json()) as { data: { results: Record<string, { source: string }> } };
+    expect(body.data.results.AAPL.source).toBe("cache");
   });
 
   it("filters out invalid symbols", async () => {
     const res = await handleFundamentalsBatch(makeReq({ symbols: ["AAPL", "!!!"] }), makeEnv());
-    const body = (await res.json()) as { results: Record<string, unknown> };
-    expect(body.results.AAPL).toBeDefined();
-    expect(body.results["!!!"]).toBeUndefined();
+    const body = (await res.json()) as { data: { results: Record<string, unknown> } };
+    expect(body.data.results.AAPL).toBeDefined();
+    expect(body.data.results["!!!"]).toBeUndefined();
   });
 
   it("limits batch to 20 symbols", async () => {
     const symbols = Array.from({ length: 30 }, (_, i) => `SYM${i}`);
     const res = await handleFundamentalsBatch(makeReq({ symbols }), makeEnv());
-    const body = (await res.json()) as { results: Record<string, unknown> };
-    expect(Object.keys(body.results).length).toBeLessThanOrEqual(20);
+    const body = (await res.json()) as { data: { results: Record<string, unknown> } };
+    expect(Object.keys(body.data.results).length).toBeLessThanOrEqual(20);
   });
 });

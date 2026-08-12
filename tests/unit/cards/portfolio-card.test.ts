@@ -89,6 +89,26 @@ describe("portfolio-card (CardModule)", () => {
     expect(container.textContent).toContain("CUSTOM2");
   });
 
+  it("does not replace the view after disposal while IDB is pending", async () => {
+    let resolveHoldings: ((holdings: Holding[]) => void) | undefined;
+    const { loadHoldings } = await import("../../../src/cards/portfolio-store");
+    (loadHoldings as ReturnType<typeof vi.fn>).mockImplementationOnce(
+      () => new Promise<Holding[]>((resolve) => (resolveHoldings = resolve)),
+    );
+
+    const { default: portfolioCard } = await import("../../../src/cards/portfolio-card");
+    const handle = portfolioCard.mount(container, { route: "portfolio", params: {} });
+    handle?.dispose?.();
+    resolveHoldings?.([
+      { ticker: "LATE", sector: "Test", quantity: 1, avgCost: 1, currentPrice: 2 },
+    ]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(container.textContent).not.toContain("LATE");
+    expect(container.textContent).toContain("AAPL");
+  });
+
   it("returns a CardHandle object", async () => {
     const { default: portfolioCard } = await import("../../../src/cards/portfolio-card");
     const handle = portfolioCard.mount(container, { route: "portfolio", params: {} });

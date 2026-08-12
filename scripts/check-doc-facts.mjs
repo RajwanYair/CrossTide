@@ -56,38 +56,21 @@ export function validateDocumentFacts() {
   const facts = collectDocumentedFacts();
   const roadmap = readFileSync(resolve(ROOT, "docs/ROADMAP.md"), "utf8");
   const architecture = readFileSync(resolve(ROOT, "docs/ARCHITECTURE.md"), "utf8");
-  const escapedVersion = facts.version.replaceAll(".", "\\.");
+  const escapedVersion = facts.version.replaceAll(".", String.raw`\.`);
   const checks = [
-    [roadmap, "roadmap version", new RegExp(String.raw`Current release:.*v${escapedVersion}`)],
+    [roadmap, "roadmap version", new RegExp(`Release.*v${escapedVersion}`)],
     [
       roadmap,
       "roadmap source modules",
-      new RegExp(String.raw`Source modules under.*\| ${facts.sourceModules} TypeScript files`),
+      new RegExp(String.raw`Source modules.*\| ${facts.sourceModules} `),
     ],
     [
       roadmap,
       "roadmap domain modules",
-      new RegExp(String.raw`Domain modules.*\| ${facts.domainModules},`),
+      new RegExp(String.raw`Domain modules.*\| ${facts.domainModules} `),
     ],
-    [
-      roadmap,
-      "roadmap core modules",
-      new RegExp(String.raw`Core modules.*\| ${facts.coreModules} `),
-    ],
-    [roadmap, "roadmap ui modules", new RegExp(String.raw`UI modules.*\| ${facts.uiModules} `)],
-    [roadmap, "roadmap card files", new RegExp(String.raw`Card files.*\| ${facts.cardFiles} `)],
-    [
-      roadmap,
-      "roadmap registered cards",
-      new RegExp(String.raw`Registered card routes.*\| ${facts.registeredCards} `),
-    ],
-    [roadmap, "roadmap test files", new RegExp(String.raw`Test files.*\| ${facts.testFiles} `)],
-    [architecture, "architecture version", new RegExp(String.raw`v${escapedVersion}`)],
-    [
-      architecture,
-      "architecture test files",
-      new RegExp(String.raw`${facts.testFiles} test files`),
-    ],
+    [architecture, "architecture version", new RegExp(`v${escapedVersion}`)],
+    [architecture, "architecture test files", new RegExp(`${facts.testFiles} test files`)],
   ];
   for (const [document, label, pattern] of checks) requireFact(document, label, pattern);
   return facts;

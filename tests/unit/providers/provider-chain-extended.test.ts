@@ -53,6 +53,14 @@ describe("provider-chain (extended)", () => {
       await chain.getQuote("AAPL");
       expect(p1.getQuote).toHaveBeenCalledTimes(1);
       expect(p2.getQuote).toHaveBeenCalledTimes(0);
+      expect(chain.getDiagnostics?.()).toEqual({
+        operation: "quote",
+        selectedProvider: "p1",
+        attemptedProviders: ["p1"],
+        fallbackUsed: false,
+        degraded: false,
+        warnings: [],
+      });
     });
 
     it("falls back to second provider when first fails", async () => {
@@ -62,6 +70,12 @@ describe("provider-chain (extended)", () => {
       const q = await chain.getQuote("AAPL");
       expect(q.ticker).toBe("AAPL");
       expect(p2.getQuote).toHaveBeenCalledTimes(1);
+      expect(chain.getDiagnostics?.()).toMatchObject({
+        selectedProvider: "p2",
+        attemptedProviders: ["p1", "p2"],
+        fallbackUsed: true,
+        degraded: true,
+      });
     });
 
     it("skips unavailable providers and tries next healthy one", async () => {
@@ -85,6 +99,11 @@ describe("provider-chain (extended)", () => {
       const p2 = makeProvider("p2", true, new Error("p2 fail"));
       const chain = createProviderChain([p1, p2]);
       await expect(chain.getQuote("AAPL")).rejects.toThrow();
+      expect(chain.getDiagnostics?.()).toMatchObject({
+        selectedProvider: null,
+        attemptedProviders: ["p1", "p2"],
+        degraded: true,
+      });
     });
 
     it("throws when empty provider list", () => {

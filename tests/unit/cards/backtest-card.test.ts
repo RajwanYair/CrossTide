@@ -95,12 +95,26 @@ describe("backtest-card (CardModule)", () => {
     backtestCard.mount(container, { route: "backtest", params: {} });
 
     // Wait for initial load to settle
-    await new Promise<void>((r) => setTimeout(r, 10));
+    await vi.waitFor(
+      () => {
+        expect(container.querySelector("#backtest-result")?.textContent).toContain(
+          "Backtest Performance",
+        );
+      },
+      { timeout: 1_000 },
+    );
 
     const runBtn = container.querySelector<HTMLButtonElement>("[data-action='run-backtest']");
     runBtn?.click();
 
-    await new Promise<void>((r) => setTimeout(r, 10));
+    await vi.waitFor(
+      () => {
+        expect(container.querySelector("#backtest-result")?.textContent).toContain(
+          "Backtest Performance",
+        );
+      },
+      { timeout: 1_000 },
+    );
 
     // runBacktestAsync should be called (either in initial load or after run button)
     expect((runBacktestAsync as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThanOrEqual(

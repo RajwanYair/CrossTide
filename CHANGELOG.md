@@ -10,6 +10,19 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [11.44.6] — 2026-08-12
+
+### 🔄 Changed
+
+- **Release quality:** heatmap keyboard and mobile activation, card lifecycle disposal, performance-budget observability, documentation facts, and formatting are now covered by the release gates.
+- **Toolchain audit:** direct dependencies were checked against live npm metadata; the installed versions are current, while npm audit still reports unresolved upstream range advisories.
+
+## [11.44.5] — 2026-08-12
+
+### 🔄 Changed
+
+- **Release quality and roadmap delivery advanced:** card lifecycle disposal, active-locale formatting, typed performance budgets, truthful capability documentation, deterministic replay coverage, and the reachable-coverage ratchet are now verified by the repository gates.
+
 ## [11.44.4] — 2026-08-10
 
 ### 🔄 Changed

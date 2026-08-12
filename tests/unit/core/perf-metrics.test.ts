@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
 beforeEach(() => {
   vi.resetModules();
@@ -44,6 +46,15 @@ describe("perf-metrics", () => {
     expect(getPerfMetrics().lastRenderMs).toBe(8);
   });
 
+  it("records named application performance traces", async () => {
+    const { recordPerformanceTrace, getPerfMetrics, resetCustomMetrics } = await loadModule();
+    recordPerformanceTrace("cardLoadMs", 42);
+    recordPerformanceTrace("workerTransferMs", -1);
+    expect(getPerfMetrics().traces).toMatchObject({ cardLoadMs: 42, workerTransferMs: 0 });
+    resetCustomMetrics();
+    expect(getPerfMetrics().traces.cardLoadMs).toBe(0);
+  });
+
   it("formatMetric formats ms values", async () => {
     const { formatMetric } = await loadModule();
     expect(formatMetric(1234, "ms")).toBe("1234 ms");
@@ -78,5 +89,80 @@ describe("perf-metrics", () => {
     const cleanup = initPerfObserver();
     expect(typeof cleanup).toBe("function");
     cleanup(); // should not throw
+  });
+
+  it("records INP and the longest long task from observer entries", async () => {
+    type ObserverCallback = (list: { getEntries: () => PerformanceEntry[] }) => void;
+    const observers: Array<{ type: string; callback: ObserverCallback }> = [];
+    class MockPerformanceObserver {
+      private readonly callback: ObserverCallback;
+
+      constructor(callback: ObserverCallback) {
+        this.callback = callback;
+      }
+
+      observe(options: { type: string }): void {
+        observers.push({ type: options.type, callback: this.callback });
+      }
+
+      disconnect(): void {}
+    }
+
+    vi.stubGlobal("PerformanceObserver", MockPerformanceObserver);
+    const { initPerfObserver, getPerfMetrics } = await loadModule();
+    const cleanup = initPerfObserver();
+    observers
+      .find((observer) => observer.type === "event")
+      ?.callback({ getEntries: () => [{ duration: 140 } as PerformanceEntry] });
+    observers
+      .find((observer) => observer.type === "longtask")
+      ?.callback({ getEntries: () => [{ duration: 280 } as PerformanceEntry] });
+
+    expect(getPerfMetrics()).toMatchObject({ inp: 140, longTaskMs: 280 });
+    cleanup();
+    vi.unstubAllGlobals();
+  });
+
+  it("evaluates shared budgets and leaves missing probes unmeasured", async () => {
+    const { evaluatePerformanceBudgets } = await loadModule();
+    const results = evaluatePerformanceBudgets({ lcp: 1_700, inp: 240 });
+
+    expect(results.find((result) => result.metric === "lcp")).toMatchObject({ status: "pass" });
+    expect(results.find((result) => result.metric === "inp")).toMatchObject({ status: "fail" });
+    expect(results.find((result) => result.metric === "cls")).toMatchObject({
+      status: "unmeasured",
+    });
+  });
+
+  it("keeps every shared budget assigned to a Lighthouse assertion or probe", async () => {
+    const { PERFORMANCE_BUDGETS } = await loadModule();
+    const config = JSON.parse(
+      readFileSync(resolve(process.cwd(), "config/lighthouserc.json"), "utf8"),
+    ) as {
+      ci: { assert: { assertions: Record<string, [string, { maxNumericValue?: number }]> } };
+    };
+    const lighthouseMetricByBudgetMetric: Readonly<Record<string, string>> = {
+      lcp: "largest-contentful-paint",
+      inp: "interaction-to-next-paint",
+      cls: "cumulative-layout-shift",
+      longTaskMs: "total-blocking-time",
+      routeTransitionMs: "interactive",
+    };
+    const probeOnlyMetrics = ["workerP95Ms", "cacheHitRate", "websocketRecoveryMs", "memoryMb"];
+
+    for (const budget of PERFORMANCE_BUDGETS) {
+      const assertionName = lighthouseMetricByBudgetMetric[budget.metric];
+      if (assertionName) {
+        expect(config.ci.assert.assertions[assertionName]?.[1].maxNumericValue).toBe(
+          budget.maximum,
+        );
+      } else {
+        expect(probeOnlyMetrics).toContain(budget.metric);
+      }
+    }
+
+    expect(new Set([...Object.keys(lighthouseMetricByBudgetMetric), ...probeOnlyMetrics])).toEqual(
+      new Set(PERFORMANCE_BUDGETS.map((budget) => budget.metric)),
+    );
   });
 });

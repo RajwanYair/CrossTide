@@ -151,6 +151,13 @@ export type {
 } from "./storage-pressure";
 export { observeWebVitals, makeBeaconReporter } from "./web-vitals";
 export type { VitalName, VitalReport, VitalHandler, VitalsObserver } from "./web-vitals";
+export { createMarketDataEnvelope } from "../types/market-data";
+export type {
+  MarketDataKind,
+  MarketDataStatus,
+  MarketDataProvenance,
+  MarketDataEnvelope,
+} from "../types/market-data";
 export { createAnalyticsClient } from "./analytics-client";
 export type { AnalyticsConfig, AnalyticsClient } from "./analytics-client";
 export {

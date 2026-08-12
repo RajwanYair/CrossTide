@@ -15,6 +15,8 @@
     "github.vscode-pull-request-github",
     "42crunch.vscode-openapi",
     "htmlhint.vscode-htmlhint",
+    "unifiedjs.vscode-mdx",
+    "sonarsource.sonarlint-vscode",
     "ryanluker.vscode-coverage-gutters",
     "streetsidesoftware.code-spell-checker",
     "usernamehw.errorlens"

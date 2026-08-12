@@ -8,9 +8,12 @@ import { test, expect } from "@playwright/test";
 import { waitForAppReady } from "./app-ready";
 
 const VIEWPORTS = {
+  narrow: { width: 320, height: 568 },
   mobile: { width: 375, height: 812 },
   tablet: { width: 768, height: 1024 },
+  laptop: { width: 1366, height: 768 },
   desktop: { width: 1440, height: 900 },
+  wide: { width: 1920, height: 1080 },
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -83,6 +86,42 @@ test("tap navigation works on mobile viewport", async ({ page }) => {
       await link.click();
       await expect(page.locator("#view-settings")).toHaveClass(/active/);
     }
+  }
+});
+
+test("narrow mobile navigation exposes every primary route", async ({ page }) => {
+  await page.setViewportSize(VIEWPORTS.narrow);
+  await page.goto("/");
+  await waitForAppReady(page);
+
+  const toggle = page.locator("#sidebar-toggle");
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+
+  const nav = page.locator("#app-nav");
+  await expect(nav).toHaveClass(/sidebar-open/);
+  for (const route of ["watchlist", "chart", "settings"]) {
+    const link = nav.locator(`a[data-route="${route}"]`);
+    await expect(link).toBeVisible();
+    await expect
+      .poll(async () => {
+        const box = await link.boundingBox();
+        return box === null ? null : box.x >= 0 && box.x + box.width <= VIEWPORTS.narrow.width;
+      })
+      .toBe(true);
+  }
+});
+
+test("narrow mobile header controls stay within the viewport", async ({ page }) => {
+  await page.setViewportSize(VIEWPORTS.narrow);
+  await page.goto("/");
+  await waitForAppReady(page);
+
+  for (const selector of ["#app-header", "#sidebar-toggle", ".header-brand", "#market-status"]) {
+    const box = await page.locator(selector).boundingBox();
+    expect(box, `${selector} should be rendered`).not.toBeNull();
+    expect(box?.x).toBeGreaterThanOrEqual(0);
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(VIEWPORTS.narrow.width);
   }
 });
 

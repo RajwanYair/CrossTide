@@ -65,9 +65,22 @@ describe("handleQuote — Finnhub fallback", () => {
 
     const res = await handleQuote("AAPL", makeEnv({ FINNHUB_KEY: "test-key" }));
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { source: string; price: number };
-    expect(body.source).toBe("finnhub");
-    expect(body.price).toBe(150.0);
+    const body = (await res.json()) as {
+      data: { price: number };
+      provenance: {
+        source: string;
+        coverage: string;
+        marketStatus: string;
+        limitations: string[];
+      };
+    };
+    expect(body.provenance.source).toBe("finnhub");
+    expect(body.provenance.coverage).toBe("Real-time quote snapshot");
+    expect(body.provenance.marketStatus).toBe("REGULAR");
+    expect(body.provenance.limitations).toContain(
+      "Coverage and delay depend on the selected provider and instrument",
+    );
+    expect(body.data.price).toBe(150.0);
     expect(callCount).toBeGreaterThanOrEqual(2);
   });
 
@@ -107,9 +120,14 @@ describe("handleQuote — Finnhub fallback", () => {
     );
 
     const res = await handleQuote("AAPL", makeEnv({ MASSIVE_KEY: "test-key" }));
-    const body = (await res.json()) as { source: string; price: number };
+    const body = (await res.json()) as {
+      provenance: { source: string; coverage: string; adjustmentPolicy: string };
+      data: { price: number };
+    };
     expect(res.status).toBe(200);
-    expect(body).toMatchObject({ source: "massive", price: 104 });
+    expect(body).toMatchObject({ provenance: { source: "massive" }, data: { price: 104 } });
+    expect(body.provenance.coverage).toBe("Real-time quote snapshot");
+    expect(body.provenance.adjustmentPolicy).toContain("corporate-action policy");
   });
 
   it("continues to Massive when Yahoo does not know the ticker", async () => {
@@ -128,9 +146,9 @@ describe("handleQuote — Finnhub fallback", () => {
     );
 
     const res = await handleQuote("AAPL", makeEnv({ MASSIVE_KEY: "test-key" }));
-    const body = (await res.json()) as { source: string };
+    const body = (await res.json()) as { provenance: { source: string } };
     expect(res.status).toBe(200);
-    expect(body.source).toBe("massive");
+    expect(body.provenance.source).toBe("massive");
   });
 
   it("falls back to Alpha Vantage when earlier providers fail", async () => {
@@ -155,8 +173,8 @@ describe("handleQuote — Finnhub fallback", () => {
     );
 
     const res = await handleQuote("AAPL", makeEnv({ ALPHA_VANTAGE_KEY: "test-key" }));
-    const body = (await res.json()) as { source: string; price: number };
+    const body = (await res.json()) as { provenance: { source: string }; data: { price: number } };
     expect(res.status).toBe(200);
-    expect(body).toMatchObject({ source: "alpha-vantage", price: 104 });
+    expect(body).toMatchObject({ provenance: { source: "alpha-vantage" }, data: { price: 104 } });
   });
 });

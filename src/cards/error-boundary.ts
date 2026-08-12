@@ -1,98 +1,146 @@
 /**
- * Error boundary for card mount and update (P8).
- *
- * Wraps CardModule mount/update/dispose calls so a single card crash cannot
- * take down the entire application. On failure the card's container shows an
- * inline error message with a retry action that re-mounts the card without a
- * full page reload.
+ * Canonical error boundary for card mount, update, and lazy-load failures.
  */
-import type { CardModule, CardContext, CardHandle } from "./registry";
+import type { CardContext, CardHandle, CardModule } from "./registry";
 
-const MAX_RETRIES = 3;
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export interface ErrorBoundaryOptions {
+  /** Maximum automatic retries before showing a manual retry button. */
+  readonly maxRetries?: number;
+  /** Optional callback when an error is captured. */
+  readonly onError?: (error: unknown, ctx: CardContext) => void;
 }
 
-function renderErrorFallback(
-  container: HTMLElement,
-  err: unknown,
-  attempt: number,
-  onRetry: () => void,
-): void {
-  const msg = err instanceof Error ? err.message : typeof err === "string" ? err : "Unknown error";
-  const canRetry = attempt < MAX_RETRIES;
-  const retryHtml = canRetry
-    ? `<button class="btn btn--sm btn--secondary" data-action="retry" type="button">
-         Retry${attempt > 0 ? ` (${String(attempt)}/${String(MAX_RETRIES)})` : ""}
-       </button>`
-    : `<p class="error-hint">Maximum retries reached. <a href="" onclick="event.preventDefault();window.location.reload()">Reload page</a></p>`;
+const DEFAULT_MAX_RETRIES = 1;
 
-  container.innerHTML = `
-    <div class="card card--error" role="alert">
-      <div class="card-header">
-        <h2 class="card-title">Something went wrong</h2>
-      </div>
-      <div class="card-body">
-        <p class="error-message">${escapeHtml(msg)}</p>
-        ${retryHtml}
-      </div>
-    </div>`;
+/** Wrap a card module with isolated fallback and retry behavior. */
+export function withErrorBoundary(mod: CardModule, options: ErrorBoundaryOptions = {}): CardModule {
+  const maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
 
-  if (canRetry) {
-    container.querySelector<HTMLButtonElement>("[data-action='retry']")?.addEventListener(
-      "click",
-      () => {
-        onRetry();
-      },
-      { once: true },
-    );
-  }
-}
+  function mount(container: HTMLElement, ctx: CardContext): CardHandle {
+    let handle: CardHandle | void;
+    let retries = 0;
 
-/**
- * Wraps a CardModule so that `mount` and `update` are guarded by try-catch.
- * Thrown errors render an error fallback in the card's container. The fallback
- * includes a Retry button that re-calls `mount` — no full page reload needed.
- */
-export function withErrorBoundary(card: CardModule): CardModule {
-  return {
-    mount(container: HTMLElement, ctx: CardContext): CardHandle | void {
-      let attempt = 0;
+    function renderFallback(error: unknown): void {
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "An unexpected error occurred";
+      container.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.className = "error-boundary";
+      wrapper.setAttribute("role", "alert");
 
-      function tryMount(): CardHandle | void {
-        try {
-          const handle = card.mount(container, ctx);
-          if (!handle) return handle;
+      const msg = document.createElement("p");
+      msg.className = "error-boundary__message";
+      msg.textContent = `Something went wrong: ${message}`;
+      wrapper.appendChild(msg);
 
-          const wrapped: CardHandle = {
-            ...(handle.update != null && {
-              update: (nextCtx: CardContext): void => {
-                try {
-                  handle.update!(nextCtx);
-                } catch (err) {
-                  console.error("[error-boundary] card update failed:", err);
-                  attempt++;
-                  renderErrorFallback(container, err, attempt, () => {
-                    attempt++;
-                    tryMount();
-                  });
-                }
-              },
-            }),
-            ...(handle.dispose != null && { dispose: handle.dispose }),
-          };
-          return wrapped;
-        } catch (err) {
-          console.error("[error-boundary] card mount failed:", err);
-          renderErrorFallback(container, err, attempt, () => {
-            attempt++;
-            tryMount();
-          });
+      const btn = document.createElement("button");
+      btn.className = "error-boundary__retry";
+      btn.type = "button";
+      btn.textContent = "Retry";
+      btn.addEventListener("click", () => {
+        retries = 0;
+        tryMount();
+      });
+      wrapper.appendChild(btn);
+      container.appendChild(wrapper);
+    }
+
+    function tryMount(): void {
+      try {
+        container.innerHTML = "";
+        handle = mod.mount(container, ctx);
+      } catch (error: unknown) {
+        options.onError?.(error, ctx);
+        if (retries < maxRetries) {
+          retries++;
+          tryMount();
+        } else {
+          renderFallback(error);
         }
       }
+    }
 
-      return tryMount();
-    },
-  };
+    tryMount();
+
+    return {
+      update(newCtx: CardContext): void {
+        try {
+          handle?.update?.(newCtx);
+        } catch (error: unknown) {
+          options.onError?.(error, newCtx);
+          renderFallback(error);
+        }
+      },
+      dispose(): void {
+        try {
+          handle?.dispose?.();
+        } catch {
+          // Disposal must not take down sibling cards.
+        }
+      },
+    };
+  }
+
+  return { mount };
+}
+
+/** Wrap a lazy card loader and mount it with the canonical card boundary. */
+export async function mountWithBoundary(
+  container: HTMLElement,
+  ctx: CardContext,
+  loader: () => Promise<CardModule>,
+  options: ErrorBoundaryOptions = {},
+): Promise<CardHandle> {
+  const maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
+  let retries = 0;
+
+  async function attempt(): Promise<CardHandle> {
+    try {
+      const mod = await loader();
+      return (
+        withErrorBoundary(mod, options).mount(container, ctx) ?? {
+          update(): void {},
+          dispose(): void {},
+        }
+      );
+    } catch (error: unknown) {
+      options.onError?.(error, ctx);
+      if (retries < maxRetries) {
+        retries++;
+        return attempt();
+      }
+
+      container.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.className = "error-boundary";
+      wrapper.setAttribute("role", "alert");
+      const msg = document.createElement("p");
+      msg.className = "error-boundary__message";
+      msg.textContent = `Failed to load card: ${ctx.route}`;
+      wrapper.appendChild(msg);
+      const btn = document.createElement("button");
+      btn.className = "error-boundary__retry";
+      btn.type = "button";
+      btn.textContent = "Retry";
+      btn.addEventListener("click", () => {
+        retries = 0;
+        void attempt();
+      });
+      wrapper.appendChild(btn);
+      container.appendChild(wrapper);
+
+      return {
+        update(): void {},
+        dispose(): void {
+          container.innerHTML = "";
+        },
+      };
+    }
+  }
+
+  return attempt();
 }

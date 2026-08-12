@@ -49,18 +49,18 @@ describe("Ticker navigation — route params", () => {
   describe("navigateToPath with symbol param", () => {
     it("chart route carries the symbol param", () => {
       initRouter();
-      navigateToPath("chart", { symbol: "INTC" });
+      navigateToPath("chart", { symbol: "MSFT" });
       const info = getCurrentRouteInfo();
       expect(info.name).toBe("chart");
-      expect(info.params["symbol"]).toBe("INTC");
+      expect(info.params["symbol"]).toBe("MSFT");
     });
 
     it("consensus route carries the symbol param", () => {
       initRouter();
-      navigateToPath("consensus", { symbol: "INTC" });
+      navigateToPath("consensus", { symbol: "MSFT" });
       const info = getCurrentRouteInfo();
       expect(info.name).toBe("consensus");
-      expect(info.params["symbol"]).toBe("INTC");
+      expect(info.params["symbol"]).toBe("MSFT");
     });
 
     it("backtest route carries the symbol param", () => {
@@ -103,12 +103,12 @@ describe("Ticker navigation — route params", () => {
   });
 
   describe("buildPath generates correct URLs with symbol", () => {
-    it("builds /chart/INTC", () => {
-      expect(buildPath("chart", { symbol: "INTC" })).toBe("/chart/INTC");
+    it("builds /chart/MSFT", () => {
+      expect(buildPath("chart", { symbol: "MSFT" })).toBe("/chart/MSFT");
     });
 
-    it("builds /consensus/INTC", () => {
-      expect(buildPath("consensus", { symbol: "INTC" })).toBe("/consensus/INTC");
+    it("builds /consensus/MSFT", () => {
+      expect(buildPath("consensus", { symbol: "MSFT" })).toBe("/consensus/MSFT");
     });
 
     it("builds /backtest/TSLA", () => {
@@ -134,11 +134,11 @@ describe("Ticker navigation — route params", () => {
   });
 
   describe("URL parsing extracts symbol", () => {
-    it("parses /consensus/INTC", () => {
-      gotoPath("/consensus/INTC");
+    it("parses /consensus/MSFT", () => {
+      gotoPath("/consensus/MSFT");
       const info = getCurrentRouteInfo();
       expect(info.name).toBe("consensus");
-      expect(info.params["symbol"]).toBe("INTC");
+      expect(info.params["symbol"]).toBe("MSFT");
     });
 
     it("parses /backtest/AAPL", () => {
@@ -183,15 +183,15 @@ describe("selectedTickerStore integration", () => {
   });
 
   it("stores the selected ticker", () => {
-    selectedTickerStore.set("INTC");
-    expect(selectedTickerStore.peek()).toBe("INTC");
+    selectedTickerStore.set("MSFT");
+    expect(selectedTickerStore.peek()).toBe("MSFT");
   });
 
   it("updates when a new ticker is selected", () => {
     selectedTickerStore.set("AAPL");
     expect(selectedTickerStore.peek()).toBe("AAPL");
-    selectedTickerStore.set("INTC");
-    expect(selectedTickerStore.peek()).toBe("INTC");
+    selectedTickerStore.set("MSFT");
+    expect(selectedTickerStore.peek()).toBe("MSFT");
   });
 
   it("can be cleared", () => {
@@ -215,8 +215,8 @@ describe("Card context receives symbol from route", () => {
     onRouteChange((_route, info) => {
       captured.push(info?.params["symbol"] ?? "");
     });
-    navigateToPath("consensus", { symbol: "INTC" });
-    expect(captured).toContain("INTC");
+    navigateToPath("consensus", { symbol: "MSFT" });
+    expect(captured).toContain("MSFT");
   });
 
   it("onRouteChange callback receives symbol param for chart", () => {

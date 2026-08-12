@@ -10,6 +10,7 @@ import { renderChart } from "./chart";
 import { renderFundamentalsOverlay } from "./fundamental-overlay";
 import { attachLwChart, type LwChartHandle } from "./lw-chart";
 import { mountDrawingTools, type DrawingToolHandle } from "./drawing-tools";
+import { attachDrawingHistory, type DrawingHistoryHandle } from "./drawing-history";
 import { saveDrawings, loadDrawings } from "./drawing-persistence";
 import { runBacktestAsync } from "../core/backtest-worker";
 import { fetchTickerData } from "../core/data-service";
@@ -20,6 +21,9 @@ import { showToast } from "../ui/toast";
 import { getNavigationSignal } from "../ui/router";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate } from "../ui/delegate";
+import { captureElementAsPng, downloadBlob } from "../core/export-image";
+import { renderDataMetadata } from "./data-metadata";
+import { recordPerformanceTrace } from "../core/perf-metrics";
 import type { CardModule, CardContext } from "./registry";
 import type { BacktestConfig } from "../domain/backtest-engine";
 import type { DailyCandle } from "../types/domain";
@@ -80,6 +84,7 @@ async function renderChartWithData(
   lwHandle: { current: LwChartHandle | null },
   timeframe: TimeframePreset = DEFAULT_TIMEFRAME,
   drawingRef?: { current: DrawingToolHandle | null; ticker: string },
+  historyRef?: { current: DrawingHistoryHandle | null },
   useHeikinAshi = false,
 ): Promise<void> {
   // Dispose previous LWC instance before re-rendering
@@ -103,6 +108,22 @@ async function renderChartWithData(
 
     // Re-render the HTML header with real data
     renderChart(container, { ticker, candles });
+    if (data.provenance && data.dataStatus) {
+      const chartHeader = container.querySelector<HTMLElement>(".chart-header");
+      if (chartHeader) {
+        chartHeader.insertAdjacentHTML(
+          "afterend",
+          renderDataMetadata({
+            schemaVersion: "1",
+            kind: "chart",
+            status: data.dataStatus,
+            data: data.candles,
+            provenance: data.provenance,
+            warnings: data.dataWarnings ?? [],
+          }),
+        );
+      }
+    }
 
     // Fetch and render fundamental data overlay (non-blocking)
     const signal = getNavigationSignal();
@@ -126,15 +147,24 @@ async function renderChartWithData(
     if (canvasEl && candles.length > 0) {
       canvasEl.textContent = "";
       canvasEl.style.height = "400px";
-      lwHandle.current = await attachLwChart(canvasEl, { ticker, candles });
+      const chartRenderStartedAt = performance.now();
+      try {
+        lwHandle.current = await attachLwChart(canvasEl, { ticker, candles });
 
-      // Mount drawing tools overlay and restore persisted drawings
-      if (drawingRef) {
-        drawingRef.current?.dispose();
-        const drawingHandle = mountDrawingTools(canvasEl);
-        const saved = loadDrawings(ticker);
-        if (saved.length > 0) drawingHandle.setDrawings(saved);
-        drawingRef.current = drawingHandle;
+        // Mount drawing tools overlay and restore persisted drawings
+        if (drawingRef) {
+          drawingRef.current?.dispose();
+          historyRef?.current?.dispose();
+          const drawingHandle = mountDrawingTools(canvasEl, {
+            onChange: () => historyRef?.current?.snapshot(),
+          });
+          const saved = loadDrawings(ticker);
+          if (saved.length > 0) drawingHandle.setDrawings(saved);
+          drawingRef.current = drawingHandle;
+          if (historyRef) historyRef.current = attachDrawingHistory(drawingHandle);
+        }
+      } finally {
+        recordPerformanceTrace("chartRenderMs", performance.now() - chartRenderStartedAt);
       }
     }
   } catch (err) {
@@ -151,6 +181,7 @@ const chartCard: CardModule = {
       current: null,
       ticker,
     };
+    const historyRef: { current: DrawingHistoryHandle | null } = { current: null };
     let activeTimeframe: TimeframePreset = DEFAULT_TIMEFRAME;
     let heikinAshiMode = false;
 
@@ -175,6 +206,13 @@ const chartCard: CardModule = {
     haBtn.title = "Toggle Heikin-Ashi candles";
     haBtn.dataset["action"] = "toggle-ha";
     tfBar.appendChild(haBtn);
+
+    const exportBtn = document.createElement("button");
+    exportBtn.className = "btn btn-sm timeframe-btn";
+    exportBtn.textContent = "Export PNG";
+    exportBtn.title = "Export chart as PNG";
+    exportBtn.dataset["action"] = "export-chart";
+    tfBar.appendChild(exportBtn);
 
     container.prepend(tfBar);
 
@@ -234,7 +272,15 @@ const chartCard: CardModule = {
         if (drawingRef.current && drawingRef.ticker) {
           saveDrawings(drawingRef.ticker, drawingRef.current.getDrawings());
         }
-        void renderChartWithData(container, ticker, lwHandle, preset, drawingRef, heikinAshiMode);
+        void renderChartWithData(
+          container,
+          ticker,
+          lwHandle,
+          preset,
+          drawingRef,
+          historyRef,
+          heikinAshiMode,
+        );
       },
       "toggle-ha": (el) => {
         heikinAshiMode = !heikinAshiMode;
@@ -245,10 +291,31 @@ const chartCard: CardModule = {
           lwHandle,
           activeTimeframe,
           drawingRef,
+          historyRef,
           heikinAshiMode,
         );
       },
       "run-backtest": () => runBacktest(),
+      "export-chart": () => {
+        const chart = container.querySelector<HTMLElement>(".chart-canvas");
+        if (!chart || !ticker) return;
+        exportBtn.disabled = true;
+        void captureElementAsPng(chart)
+          .then((blob) => {
+            if (!blob) {
+              showToast({ message: "Chart export unavailable", type: "error" });
+              return;
+            }
+            downloadBlob(blob, `crosstide-${ticker.toLowerCase()}-chart.png`);
+            showToast({ message: "Chart image exported", type: "success" });
+          })
+          .catch(() => {
+            showToast({ message: "Chart export failed", type: "error" });
+          })
+          .finally(() => {
+            exportBtn.disabled = false;
+          });
+      },
     });
 
     void renderChartWithData(
@@ -257,6 +324,7 @@ const chartCard: CardModule = {
       lwHandle,
       activeTimeframe,
       drawingRef,
+      historyRef,
       heikinAshiMode,
     );
     renderBacktestUI(container, ticker);
@@ -276,6 +344,7 @@ const chartCard: CardModule = {
           lwHandle,
           activeTimeframe,
           drawingRef,
+          historyRef,
           heikinAshiMode,
         );
         renderBacktestUI(container, t);
@@ -288,6 +357,8 @@ const chartCard: CardModule = {
           drawingRef.current.dispose();
           drawingRef.current = null;
         }
+        historyRef.current?.dispose();
+        historyRef.current = null;
         lwHandle.current?.dispose();
         lwHandle.current = null;
       },

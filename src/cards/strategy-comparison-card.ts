@@ -173,6 +173,7 @@ function mount(
   ctx: CardContext,
 ): { update(ctx: CardContext): void; dispose(): void } {
   const initialTicker = ctx.params["symbol"] ?? "AAPL";
+  let disposed = false;
   let ticker = initialTicker;
   let candles: Candle[] = syntheticCandles(500);
   const capital = 10_000;
@@ -209,6 +210,7 @@ function mount(
   async function loadCandles(): Promise<void> {
     try {
       const data = await fetchTickerData(ticker, getNavigationSignal());
+      if (disposed) return;
       if (data.candles.length >= 30) {
         candles = data.candles.map((c) => ({
           date: c.date,
@@ -224,12 +226,14 @@ function mount(
         sourceHint.textContent = `Synthetic data (fetch returned < 30 candles)`;
       }
     } catch {
+      if (disposed) return;
       candles = syntheticCandles(500);
       sourceHint.textContent = `Synthetic data (fetch failed)`;
     }
   }
 
   function runComparison(): void {
+    if (disposed) return;
     const aFast = parseInt(
       container.querySelector<HTMLInputElement>("#cmp-a-fast")?.value ?? "10",
       10,
@@ -286,6 +290,7 @@ function mount(
       }
     },
     dispose(): void {
+      disposed = true;
       delegate.dispose();
     },
   };

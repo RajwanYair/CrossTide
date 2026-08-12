@@ -78,6 +78,13 @@ export { evaluate as evaluateMicho } from "./micho-method";
 export { evaluate as evaluateRsi } from "./rsi-method";
 export { evaluate as evaluateMacd } from "./macd-method";
 export { evaluate as evaluateBollinger } from "./bollinger-method";
+export { createMarketDataEnvelope } from "../types/market-data";
+export type {
+  MarketDataKind,
+  MarketDataStatus,
+  MarketDataProvenance,
+  MarketDataEnvelope,
+} from "../types/market-data";
 export { evaluate as evaluateStochastic } from "./stochastic-method";
 export { evaluate as evaluateObv } from "./obv-method";
 export { evaluate as evaluateAdx } from "./adx-method";
@@ -537,27 +544,6 @@ export type { EaseOfMovementOptions } from "./ease-of-movement";
 /** Kaufman Adaptive Moving Average (KAMA). */
 export { computeKama } from "./kama";
 export type { KamaOptions } from "./kama";
-
-// ── ML / ONNX inference ──────────────────────────────────────────────────
-
-/** ONNX Runtime helpers — model loading, tensor preprocessing, inference. */
-export {
-  onnxSupported,
-  preprocessCandles,
-  softmax,
-  argmax,
-  topK,
-  buildInputTensor,
-  createModelLoader,
-} from "./_experimental/onnx-patterns";
-export type {
-  OnnxCandle,
-  ModelLoaderOptions,
-  ModelSession,
-  TopKResult,
-  TensorSpec,
-  OrtLike,
-} from "./_experimental/onnx-patterns";
 
 /** ONNX pipeline — model versioning, normalization, metrics. */
 export {
@@ -1276,6 +1262,8 @@ export type { KupiecResult, ChristoffersenResult, VarBacktestResult } from "./va
 /** Chart comparison — normalizes multiple ticker candle series to percentage change from their respective starting prices. */
 export { normalizeForComparison, computeComparisonStats } from "./chart-comparison";
 export type { ComparisonPoint, ComparisonSeries, ComparisonStats } from "./chart-comparison";
+export { validateOhlcv } from "./validate-ohlcv";
+export type { OhlcvQualityIssue, OhlcvQualityOptions, OhlcvQualityReport } from "./validate-ohlcv";
 /** Earnings Calendar domain — pure types and transforms (H18). */
 export { parseEarningsResponse, filterUpcoming, getDaysUntilEarnings } from "./earnings-calendar";
 export type { EarningsEntry, RawEarningsItem } from "./earnings-calendar";

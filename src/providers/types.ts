@@ -39,6 +39,16 @@ export interface ProviderHealth {
   readonly requestCapacity?: number;
 }
 
+/** Outcome of the most recent provider-chain operation. */
+export interface ProviderDiagnostics {
+  readonly operation: "quote" | "history" | "search" | null;
+  readonly selectedProvider: string | null;
+  readonly attemptedProviders: readonly string[];
+  readonly fallbackUsed: boolean;
+  readonly degraded: boolean;
+  readonly warnings: readonly string[];
+}
+
 /** Canonical data provider interface. */
 export interface MarketDataProvider {
   readonly name: string;
@@ -54,4 +64,7 @@ export interface MarketDataProvider {
 
   /** Check if the provider is reachable. */
   health(): ProviderHealth;
+
+  /** Return diagnostics from the most recent operation, when available. */
+  readonly getDiagnostics?: () => ProviderDiagnostics;
 }

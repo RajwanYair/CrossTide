@@ -3,19 +3,15 @@
 > Generated from `src/main.ts` and `src/sw.ts` by `scripts/reachability-inventory.mjs`.
 > Every module not reachable from those entry points appears exactly once below.
 
-- Source modules: 517
-- Reachable modules: 228
-- Unreachable modules: 289
-- Hard orphans: 36
-- Barrel-only modules: 238
+- Source modules: 523
+- Reachable modules: 265
+- Unreachable modules: 258
+- Hard orphans: 8
+- Barrel-only modules: 233
 
 | Module | Category | Importers | Disposition |
 | --- | --- | --- | --- |
-| `src/cards/drawing-history.ts` | HARD_ORPHAN | - | WIRE |
-| `src/cards/error-boundary.ts` | HARD_ORPHAN | - | WIRE |
-| `src/cards/heatmap-layout.ts` | HARD_ORPHAN | - | WIRE |
 | `src/cards/index.ts` | HARD_ORPHAN | - | WIRE |
-| `src/cards/indicator-config.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/ai-disclaimer.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/api-types.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/background-fetch.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
@@ -25,9 +21,7 @@
 | `src/core/chunk-array.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/compress.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/crdt-sync.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/cross-tab-share.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/csp-builder.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/css-scope.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/csv.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/date-format.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/deep-clone.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
@@ -35,25 +29,18 @@
 | `src/core/disposable.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/easing.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/event-bus.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/export-image.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/fetch-dedup.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/font-loader.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/full-backup.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/fuzzy-match.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/idb-migrations.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/index.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/layout-presets.ts` | HARD_ORPHAN | - | WIRE |
+| `src/core/index.ts` | PUBLIC_ENTRY | - | PUBLISH |
 | `src/core/lru-cache.ts` | UNREACHABLE | src/core/cache-manager.ts<br>src/core/index.ts | PUBLISH |
 | `src/core/messages.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/multi-chart-sync.ts` | UNREACHABLE | src/core/multi-timeframe-panel.ts | PUBLISH |
 | `src/core/multi-timeframe-panel.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/navigation-api.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/notification-prefs.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/og-image.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/once-memoize.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/opfs-storage.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/optimistic.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/passkey.ts` | UNREACHABLE | src/core/index.ts<br>src/core/route-guards.ts | PUBLISH |
 | `src/core/pick-omit.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/plugin-api.ts` | UNREACHABLE | src/core/plugin-api.ts | PUBLISH |
 | `src/core/plugin-contracts.ts` | HARD_ORPHAN | - | WIRE |
@@ -64,32 +51,23 @@
 | `src/core/push-notifications.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/request-logger.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/retry-backoff.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/route-guards.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/safe-json.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/screener-worker.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/seedrandom.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/shortcut-customization.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/speculation-rules.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/sri.ts` | UNREACHABLE | src/core/index.ts<br>src/core/plugin-integrity.ts | PUBLISH |
 | `src/core/storage-manager.ts` | UNREACHABLE | src/core/storage-manager.ts | PUBLISH |
 | `src/core/sync-queue.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/tauri-bridge.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/throttle-debounce.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/ticker-notes.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/ticker-pinning.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/ticker-selection.ts` | HARD_ORPHAN | - | WIRE |
-| `src/core/ticker-tags.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/tier-policy.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/timezone.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/token-bucket.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/transferable-ohlc.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/url-builder.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/url-state.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/uuid.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/webauthn.ts` | HARD_ORPHAN | - | WIRE |
 | `src/core/ws-fanout.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/xlsx-export.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/domain/_experimental/onnx-patterns.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
+| `src/domain/_experimental/onnx-patterns.ts` | UNREACHABLE | src/domain/browser-index.ts | PUBLISH |
 | `src/domain/_experimental/onnx-pipeline.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/ad-line.ts` | UNREACHABLE | src/domain/chaikin-oscillator.ts<br>src/domain/index.ts | PUBLISH |
 | `src/domain/adaptive-rsi.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
@@ -107,6 +85,7 @@
 | `src/domain/black-scholes.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/branded.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/breakout-detector.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
+| `src/domain/browser-index.ts` | HARD_ORPHAN | - | PUBLISH |
 | `src/domain/candlestick-patterns.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/causal-impact.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/chaikin-money-flow.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
@@ -165,7 +144,7 @@
 | `src/domain/hurst-exponent.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/ichimoku.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/implied-volatility.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
-| `src/domain/index.ts` | HARD_ORPHAN | - | PUBLISH |
+| `src/domain/index.ts` | PUBLIC_ENTRY | - | PUBLISH |
 | `src/domain/indicator-config.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/information-ratio.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/insider-transactions.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
@@ -265,13 +244,6 @@
 | `src/domain/wavelet.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/wma.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
 | `src/domain/zigzag.ts` | BARREL_ONLY | src/domain/index.ts | PUBLISH |
-| `src/providers/alpha-vantage-provider.ts` | BARREL_ONLY | src/providers/index.ts | PUBLISH |
-| `src/providers/circuit-breaker.ts` | BARREL_ONLY | src/providers/index.ts | PUBLISH |
-| `src/providers/coingecko-provider.ts` | BARREL_ONLY | src/providers/index.ts | PUBLISH |
-| `src/providers/health-stats.ts` | BARREL_ONLY | src/providers/index.ts | PUBLISH |
-| `src/providers/index.ts` | HARD_ORPHAN | - | WIRE |
-| `src/providers/polygon-provider.ts` | BARREL_ONLY | src/providers/index.ts | PUBLISH |
-| `src/types/index.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/a11y.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/abort-helpers.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/anchor-tooltip.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
@@ -286,17 +258,14 @@
 | `src/ui/index.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/keymap-formatter.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/multi-sparkline.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
-| `src/ui/popover.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/range-bar.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/relative-time.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
-| `src/ui/route-loader.ts` | HARD_ORPHAN | - | WIRE |
+| `src/ui/route-loader.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/scale-linear.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/screen-reader-audit.ts` | UNREACHABLE | src/ui/screen-reader-audit.ts | PUBLISH |
-| `src/ui/scroll-driven.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/sparkbar.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/svg-path.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/text-highlight.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/text-truncate.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
 | `src/ui/treemap-layout.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |
-| `src/ui/uplot-helpers.ts` | HARD_ORPHAN | - | WIRE |
 | `src/ui/widget.ts` | BARREL_ONLY | src/ui/index.ts | PUBLISH |

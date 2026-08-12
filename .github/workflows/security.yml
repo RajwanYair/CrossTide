@@ -54,7 +54,7 @@ jobs:
 
       - name: Install PR deps and capture list
         run: |
-          npm ci --omit=dev
+          npm ci --ignore-scripts --omit=dev
           npm ls --depth=0 --json > deps-pr.json
 
       - name: Checkout base branch
@@ -65,7 +65,7 @@ jobs:
 
       - name: Install base deps
         working-directory: base-branch
-        run: npm ci --omit=dev
+        run: npm ci --ignore-scripts --omit=dev
 
       - name: Capture base dependency list
         working-directory: base-branch

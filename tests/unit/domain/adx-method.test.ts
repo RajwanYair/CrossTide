@@ -17,8 +17,8 @@ describe("adx-method evaluate", () => {
 
   it("populates all MethodSignal fields", () => {
     const closes = Array.from({ length: 40 }, (_, i) => 100 + i);
-    const result = evaluate("INTC", makeCandles(closes));
-    expect(result!.ticker).toBe("INTC");
+    const result = evaluate("MSFT", makeCandles(closes));
+    expect(result!.ticker).toBe("MSFT");
     expect(result!.method).toBe("ADX");
     expect(result!.evaluatedAt).toBeTypeOf("string");
   });

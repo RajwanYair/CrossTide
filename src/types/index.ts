@@ -13,11 +13,19 @@ export type {
   AlertRecord,
   Holding,
   MethodWeights,
+  ConsensusExplanation,
   CardId,
   CardSettingsMap,
 } from "./domain";
 export type { SignalDirection, MethodName, SmaPeriod } from "./domain";
 export { SMA_PERIODS, DEFAULT_METHOD_WEIGHTS } from "./domain";
+export { createMarketDataEnvelope } from "./market-data";
+export type {
+  MarketDataKind,
+  MarketDataStatus,
+  MarketDataProvenance,
+  MarketDataEnvelope,
+} from "./market-data";
 
 export {
   Brands,

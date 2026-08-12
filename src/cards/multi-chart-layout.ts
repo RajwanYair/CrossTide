@@ -13,6 +13,8 @@ import { getGlobalChartSyncBus } from "../ui/chart-sync";
 import { loadConfig } from "../core/config";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
+import { injectScopedStyles, removeScopedStyles } from "../core/css-scope";
+import { priceRangeFromData, sparklineColor } from "../ui/uplot-helpers";
 
 const STORAGE_KEY = "crosstide-multi-chart";
 const PANEL_COUNT = 4;
@@ -101,9 +103,10 @@ function renderSparklineSvg(points: PanelDataPoint[], width: number, height: num
   }
 
   const closes = points.map((p) => p.close);
-  const min = Math.min(...closes);
-  const max = Math.max(...closes);
-  const range = max - min || 1;
+  const priceRange = priceRangeFromData(closes);
+  const min = priceRange.paddedMin;
+  const max = priceRange.paddedMax;
+  const range = max - min;
   const pad = 6;
 
   const toX = (i: number): number => pad + (i / (points.length - 1)) * (width - pad * 2);
@@ -115,8 +118,7 @@ function renderSparklineSvg(points: PanelDataPoint[], width: number, height: num
 
   const last = closes[closes.length - 1] ?? 0;
   const first = closes[0] ?? 0;
-  const isUp = last >= first;
-  const strokeColor = isUp ? "var(--color-bullish, #22c55e)" : "var(--color-bearish, #ef4444)";
+  const strokeColor = sparklineColor(first, last);
 
   return `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" class="multi-chart-svg">
     <path d="${pathD}" stroke="${strokeColor}" stroke-width="1.5" fill="none" vector-effect="non-scaling-stroke"/>
@@ -189,7 +191,6 @@ function buildLayoutHtml(state: MultiChartState, availableTickers: string[]): st
 // ── Styles ──────────────────────────────────────────────────────────────────
 
 const STYLES = `
-<style id="multi-chart-styles">
   .mc-toolbar {
     display: flex;
     align-items: center;
@@ -278,14 +279,15 @@ const STYLES = `
     .mc-grid--1\\+3 { grid-template-columns: 1fr; grid-template-rows: none; }
     .mc-panel--large { grid-row: auto; }
   }
-</style>`;
+`;
 
 // ── Mount ──────────────────────────────────────────────────────────────────
 
 function mount(container: HTMLElement): CardHandle {
   // Inject styles once
-  if (!document.getElementById("multi-chart-styles")) {
-    container.insertAdjacentHTML("beforebegin", STYLES);
+  const scopeSelector = container.id ? `#${container.id}` : "body";
+  if (!document.querySelector('style[data-ct-scope="multi-chart-styles"]')) {
+    injectScopedStyles(scopeSelector, STYLES, "multi-chart-styles");
   }
 
   let state = loadState();
@@ -371,9 +373,7 @@ function mount(container: HTMLElement): CardHandle {
       // Unsubscribe all panels from the bus
       delegate.dispose();
       panelIds.forEach((id) => bus.unsubscribe(id));
-      if (document.getElementById("multi-chart-styles")) {
-        document.getElementById("multi-chart-styles")?.remove();
-      }
+      removeScopedStyles("multi-chart-styles");
     },
   };
 }

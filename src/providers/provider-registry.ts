@@ -11,7 +11,13 @@
  * a key is supplied via `configureFinnhub(apiKey)`. Yahoo Finance is the
  * default primary source via CORS proxy.
  */
-import type { MarketDataProvider, ProviderHealth, Quote, SearchResult } from "./types";
+import type {
+  MarketDataProvider,
+  ProviderDiagnostics,
+  ProviderHealth,
+  Quote,
+  SearchResult,
+} from "./types";
 import type { DailyCandle } from "../types/domain";
 import { createCircuitBreaker } from "../core/circuit-breaker";
 import type { CircuitBreaker } from "../core/circuit-breaker";
@@ -35,6 +41,7 @@ export interface HealthSnapshot {
     breakerFailures: number;
   }>;
   readonly capturedAt: number;
+  readonly diagnostics: ProviderDiagnostics;
 }
 
 /** Wrap a provider so every call goes through its circuit breaker. */
@@ -92,7 +99,7 @@ function ensureChain(): MarketDataProvider {
 
 // Bootstrap: always add Yahoo as the primary provider; Stooq as EOD history fallback
 (function initRegistry(): void {
-  // In dev, route through the Vite proxy to avoid CORS issues behind corporate firewalls.
+  // In dev, route through the Vite proxy to avoid browser CORS issues.
   // The Vite dev server forwards /api/yahoo/* to query1.finance.yahoo.com via Node.js,
   // which honours HTTP_PROXY / HTTPS_PROXY env vars.
   const yahooBase = import.meta.env.DEV ? "/api/yahoo" : undefined;
@@ -162,5 +169,16 @@ export function getHealthSnapshot(): HealthSnapshot {
       breakerFailures: snap.failures,
     };
   });
-  return { entries, capturedAt: Date.now() };
+  return {
+    entries,
+    capturedAt: Date.now(),
+    diagnostics: ensureChain().getDiagnostics?.() ?? {
+      operation: null,
+      selectedProvider: null,
+      attemptedProviders: [],
+      fallbackUsed: false,
+      degraded: false,
+      warnings: [],
+    },
+  };
 }

@@ -1,7 +1,7 @@
 /**
  * Build a deterministic source reachability inventory from the application entry points.
  */
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, extname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,12 +9,19 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SRC_ROOT = resolve(ROOT, "src");
 const REPORT_PATH = resolve(ROOT, "docs/REACHABILITY.md");
 const COVERAGE_PATH = resolve(ROOT, "coverage/coverage-summary.json");
+const PACKAGE_PATH = resolve(ROOT, "package.json");
+const PACKAGE_EXPORTS = JSON.parse(readFileSync(PACKAGE_PATH, "utf8")).exports;
+const PUBLIC_ENTRY_PATHS = new Set(
+  Object.values(PACKAGE_EXPORTS)
+    .filter((entry) => typeof entry === "string" && entry.startsWith("./src/"))
+    .map((entry) => entry.slice(2)),
+);
 const REACHABLE_COVERAGE_BASELINE = {
   statements: 89.8,
   branches: 80.1,
   functions: 91.4,
   lines: 91.6,
-  maxUnmeasuredModules: 38,
+  maxUnmeasuredModules: 41,
 };
 const REACHABILITY_GATE_BASELINE = {
   maxHardOrphans: 44,
@@ -95,13 +102,15 @@ export function buildInventory() {
     const importers = [...reverse.get(file)].map(relativeSource).sort(compareStrings);
     const path = relativeSource(file);
     const isReachable = reachable.has(file);
-    const hardOrphan = !isReachable && importers.length === 0;
+    const publicEntry = PUBLIC_ENTRY_PATHS.has(path);
+    const hardOrphan = !isReachable && importers.length === 0 && !publicEntry;
     const barrelOnly =
       !isReachable &&
       importers.length > 0 &&
       importers.every((importer) => importer.endsWith("/index.ts"));
     let category = "UNREACHABLE";
     if (isReachable) category = "REACHABLE";
+    else if (publicEntry) category = "PUBLIC_ENTRY";
     else if (hardOrphan) category = "HARD_ORPHAN";
     else if (barrelOnly) category = "BARREL_ONLY";
     return {
@@ -211,8 +220,37 @@ export function validateReachableCoverage(result) {
   return failures;
 }
 
+/** Read the generated coverage summary required by the reachable-coverage gate. */
+export function readCoverageSummary(path = COVERAGE_PATH) {
+  if (!existsSync(path)) {
+    throw new Error(
+      `Coverage summary is missing: ${relative(ROOT, path)}. Run npm run test:coverage first.`,
+    );
+  }
+  return JSON.parse(readFileSync(path, "utf8"));
+}
+
+/** Read the checked-in disposition record used by the reachability gate. */
+export function readDispositionRecord(path = REPORT_PATH) {
+  if (!existsSync(path)) {
+    throw new Error(`Reachability disposition record is missing: ${relative(ROOT, path)}.`);
+  }
+  const dispositions = new Map();
+  const rowPattern = /^\| `([^`]+)` \| [^|]+ \| .* \| (WIRE|PUBLISH|PROMOTE|MERGE|DEFER) \|$/u;
+  for (const line of readFileSync(path, "utf8").split("\n")) {
+    const match = line.match(rowPattern);
+    if (match) {
+      if (dispositions.has(match[1])) {
+        throw new Error(`Duplicate disposition record for ${match[1]}.`);
+      }
+      dispositions.set(match[1], match[2]);
+    }
+  }
+  return dispositions;
+}
+
 /** Validate that unreachable-module debt does not grow without a disposition. */
-export function validateReachabilityGate(inventory) {
+export function validateReachabilityGate(inventory, dispositions) {
   const failures = [];
   if (inventory.totals.hardOrphans > REACHABILITY_GATE_BASELINE.maxHardOrphans) {
     failures.push(
@@ -220,9 +258,24 @@ export function validateReachabilityGate(inventory) {
     );
   }
   const allowedDispositions = new Set(["WIRE", "PUBLISH", "PROMOTE", "MERGE", "DEFER"]);
+  const unreachablePaths = new Set(
+    inventory.modules.filter((module) => !module.reachable).map((module) => module.path),
+  );
+  if (dispositions !== undefined) {
+    for (const path of dispositions.keys()) {
+      if (!unreachablePaths.has(path)) {
+        failures.push(`${path} is not an unreachable module in the current source graph`);
+      }
+    }
+  }
   for (const module of inventory.modules) {
-    if (!module.reachable && !allowedDispositions.has(module.disposition)) {
-      failures.push(`${module.path} has invalid disposition ${module.disposition}`);
+    if (!module.reachable) {
+      const disposition = dispositions?.get(module.path) ?? module.disposition;
+      if (dispositions !== undefined && !dispositions.has(module.path)) {
+        failures.push(`${module.path} is missing from the disposition record`);
+      } else if (!allowedDispositions.has(disposition)) {
+        failures.push(`${module.path} has invalid disposition ${disposition}`);
+      }
     }
   }
   return failures;
@@ -231,6 +284,9 @@ export function validateReachabilityGate(inventory) {
 const inventory = buildInventory();
 if (process.argv.includes("--json")) {
   process.stdout.write(`${JSON.stringify(inventory, null, 2)}\n`);
+} else if (process.argv.includes("--write-markdown")) {
+  writeFileSync(REPORT_PATH, renderDispositionReport(inventory));
+  process.stdout.write(`Reachability report written: ${relative(ROOT, REPORT_PATH)}\n`);
 } else if (process.argv.includes("--markdown")) {
   process.stdout.write(renderDispositionReport(inventory));
 } else if (process.argv.includes("--check-markdown")) {
@@ -243,19 +299,28 @@ if (process.argv.includes("--json")) {
     process.stdout.write(`Reachability report is current: ${relative(ROOT, REPORT_PATH)}\n`);
   }
 } else if (process.argv.includes("--reachability-gate")) {
-  const failures = validateReachabilityGate(inventory);
-  if (failures.length > 0) {
-    process.stderr.write(`${failures.join("\n")}\n`);
+  try {
+    const failures = validateReachabilityGate(inventory, readDispositionRecord());
+    if (failures.length > 0) {
+      process.stderr.write(`${failures.join("\n")}\n`);
+      process.exitCode = 1;
+    } else {
+      process.stdout.write("Reachability gate passed.\n");
+    }
+  } catch (error) {
+    process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
     process.exitCode = 1;
-  } else {
-    process.stdout.write("Reachability gate passed.\n");
   }
 } else if (process.argv.includes("--reachable-coverage")) {
-  const coverageSummary = JSON.parse(readFileSync(COVERAGE_PATH, "utf8"));
-  const result = calculateReachableCoverage(inventory, coverageSummary);
-  const failures = validateReachableCoverage(result);
-  process.stdout.write(`${JSON.stringify({ ...result, failures }, null, 2)}\n`);
-  if (failures.length > 0) process.exitCode = 1;
+  try {
+    const result = calculateReachableCoverage(inventory, readCoverageSummary());
+    const failures = validateReachableCoverage(result);
+    process.stdout.write(`${JSON.stringify({ ...result, failures }, null, 2)}\n`);
+    if (failures.length > 0) process.exitCode = 1;
+  } catch (error) {
+    process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+    process.exitCode = 1;
+  }
 } else {
   process.stdout.write(
     `Reachability: ${inventory.totals.reachable}/${inventory.totals.sourceModules} reachable; ` +

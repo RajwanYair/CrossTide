@@ -50,11 +50,11 @@ Load **only** the instruction file that matches the layer you are modifying:
 | Pre-release gate        | `.github/instructions/pre-release.instructions.md`    | `CHANGELOG.md`, `package.json`     |
 | Security audit          | `.github/instructions/security-audit.instructions.md` | `worker/**`, `src/core/**`         |
 
-**Do NOT speculatively load** `src/domain/indicators/` (218 files), `src/cards/` (54 files), or `tests/unit/` for unrelated tasks. Use `grep_search` or `semantic_search` to find specific files.
+**Do NOT speculatively load** `src/domain/` (220 flat modules), `src/cards/` (52 files), or `tests/unit/` for unrelated tasks. Use `grep_search` or `semantic_search` to find specific files.
 
 ---
 
-## 🏗️ Layer Architecture (ESLint-enforced import direction)
+## 🏗️ Layer Architecture (architecture-check enforced import direction)
 
 ```text
 types ← domain ← core ← providers ← cards ← ui
@@ -111,7 +111,7 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 | Gate          | Command                                   | Requirement                    |
 | ------------- | ----------------------------------------- | ------------------------------ |
 | Type check    | `npm run typecheck`                       | Zero errors                    |
-| ESLint        | `npm run lint`                            | Zero warnings (cached)         |
+| Oxlint        | `npm run lint`                            | Zero errors                    |
 | Stylelint     | `npm run lint:css`                        | Zero warnings                  |
 | Format        | `npm run format:check`                    | Exit 0 (Biome, not Prettier)   |
 | File headers  | `npm run audit:headers`                   | 100% — every file has a docblock |
@@ -124,7 +124,7 @@ Scopes: `domain` `worker` `cards` `core` `ui` `ci` `docs` `screener` `portfolio`
 
 Run all: `npm run ci`
 
-> `lint` writes a cache to `node_modules/.cache/eslint/` (38s → 3.4s on re-run).
+> Oxlint uses native parallel execution and TypeScript 7-aware checks.
 > Use `lint:nocache` to force a full pass. `ci` calls `build:only` because
 > `typecheck` has already run in the same pipeline.
 
@@ -281,5 +281,6 @@ The most-used endpoints:
 | GET    | `/api/ws/:symbol`           | WebSocket ticker fan-out (DO)   |
 | GET    | `/openapi.json`             | OpenAPI spec                    |
 
-29 routes are registered but not yet in the spec — the backlog is pinned in
-`KNOWN_GAP` and tracked in issue #105. That list may only shrink.
+All 56 registered routes are documented. `KNOWN_GAP` in
+`tests/unit/worker/openapi-drift.test.ts` is now an empty ratchet — it may only
+stay empty, so a newly registered undocumented route fails immediately.

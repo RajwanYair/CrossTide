@@ -10,10 +10,10 @@ CrossTide targets progressive enhancement across all major browsers — never br
 
 | File                                      | Purpose                                                                       |
 | ----------------------------------------- | ----------------------------------------------------------------------------- |
-| `.browserslistrc`                         | Authoritative browser target list (Autoprefixer, Babel, ESLint compat plugin) |
+| `.browserslistrc`                         | Authoritative browser target list (Autoprefixer and compatibility tooling)     |
 | `playwright.config.ts`                    | E2E browser project definitions                                               |
 | `vitest.browser.config.ts`                | Vitest browser-mode instances                                                 |
-| `eslint.config.mjs` → `settings.browsers` | ESLint `compat/compat` browser list                                           |
+| `package.json` → `lint`                   | Oxlint TypeScript 7 lint command                                                |
 
 **When adding a new browser target, update ALL four files.**
 

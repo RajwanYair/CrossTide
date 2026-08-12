@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 610" role="img" aria-labelledby="title desc">
+  <title id="title">CrossTide market data and deployment flow</title>
+  <desc id="desc">Market inputs enter the Cloudflare Worker, pass validation and caching, reach providers and domain calculations, and render in cards. The same deployment path is checked by health probes.</desc>
+  <style>
+    .bg { fill: #f4fbfa; }
+    .source { fill: #0f766e; }
+    .process { fill: #0e7490; }
+    .output { fill: #1d4ed8; }
+    .check { fill: #b45309; }
+    .box { stroke: #d7f4ef; stroke-width: 2; rx: 16; }
+    .text { fill: #fff; font: 700 21px 'Aptos Display', 'Segoe UI', sans-serif; }
+    .small { fill: #dff8f4; font: 500 15px 'Aptos', 'Segoe UI', sans-serif; }
+    .label { fill: #164e63; font: 700 16px 'Aptos', 'Segoe UI', sans-serif; }
+    .arrow { fill: none; stroke: #0e7490; stroke-width: 3; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e" />
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="610" rx="18" />
+  <text class="label" x="60" y="55" font-size="26">From market input to trusted view</text>
+  <text class="label" x="60" y="87">Each boundary has a checkable input, output, and failure state.</text>
+  <rect class="box source" x="60" y="150" width="210" height="110" />
+  <text class="text" x="165" y="195" text-anchor="middle">Market input</text>
+  <text class="small" x="165" y="225" text-anchor="middle">quote, chart, search</text>
+  <rect class="box process" x="330" y="150" width="210" height="110" />
+  <text class="text" x="435" y="195" text-anchor="middle">Worker boundary</text>
+  <text class="small" x="435" y="225" text-anchor="middle">Valibot + rate limit</text>
+  <rect class="box process" x="600" y="150" width="210" height="110" />
+  <text class="text" x="705" y="195" text-anchor="middle">Cache/provider</text>
+  <text class="small" x="705" y="225" text-anchor="middle">KV + fallback chain</text>
+  <rect class="box process" x="870" y="150" width="270" height="110" />
+  <text class="text" x="1005" y="195" text-anchor="middle">Domain calculation</text>
+  <text class="small" x="1005" y="225" text-anchor="middle">pure indicators + signals</text>
+  <path class="arrow" d="M270 205 H325" />
+  <path class="arrow" d="M540 205 H595" />
+  <path class="arrow" d="M810 205 H865" />
+  <rect class="box output" x="240" y="390" width="250" height="110" />
+  <text class="text" x="365" y="435" text-anchor="middle">Card output</text>
+  <text class="small" x="365" y="465" text-anchor="middle">loading, fresh, stale, error</text>
+  <path class="arrow" d="M1005 260 V330 H365 V385" />
+  <rect class="box check" x="650" y="390" width="300" height="110" />
+  <text class="text" x="800" y="435" text-anchor="middle">Deployment evidence</text>
+  <text class="small" x="800" y="465" text-anchor="middle">build + health + security headers</text>
+  <path class="arrow" d="M705 260 V330 H800 V385" />
+  <text class="label" x="60" y="560">Local fixtures prove behavior; production data requires provisioned Cloudflare resources.</text>
+</svg>

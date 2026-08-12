@@ -1,9 +1,12 @@
-# 📜 Architecture Decision Records
+# Architecture Decision Records
 
 This directory contains Architecture Decision Records (ADRs) for CrossTide.
 Each ADR documents a significant technical decision, its context, and consequences.
 
-## 🔄 Lifecycle
+## Lifecycle
+
+_Use an ADR when a choice changes a boundary, contract, dependency, or long-lived operational
+tradeoff._
 
 ```mermaid
 stateDiagram-v2
@@ -17,7 +20,19 @@ stateDiagram-v2
   Deprecated --> [*]
 ```
 
-## 📑 Index
+### Decision Inputs And Outputs
+
+```mermaid
+flowchart LR
+  Trigger[Recurring problem<br/>or consequential choice] --> Draft[Context + options + tradeoffs]
+  Draft --> Review[Review with affected owners]
+  Review --> Decision{Decision}
+  Decision --> Accepted[Accepted ADR<br/>implementation follows]
+  Decision --> Rejected[Rejected ADR<br/>reason retained]
+  Accepted --> Superseded[Superseded when evidence changes]
+```
+
+## Index
 
 | #    | Title                                      | Status      | Date       |
 | ---- | ------------------------------------------ | ----------- | ---------- |
@@ -36,3 +51,6 @@ stateDiagram-v2
 | 0013 | Divide formatting and linting tooling      | ✅ Accepted | 2026-05-04 |
 | 0014 | Keep the domain layer publishable           | ✅ Accepted | 2026-05-04 |
 | 0015 | Gate WASM adoption with benchmarks          | ✅ Accepted | 2026-05-04 |
+| 0016 | Layered product boundary                    | Accepted | 2026-08-11 |
+| 0017 | CrossTide threat model baseline             | Proposed | 2026-08-11 |
+| 0018 | AI feature boundary                         | Accepted | 2026-08-12 |

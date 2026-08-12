@@ -6,7 +6,12 @@
  */
 import { createWorkerClient, type WorkerClient } from "./worker-rpc";
 import type { ComputeApi } from "./compute-worker";
-import type { ScreenerInput, ScreenerFilter, ScreenerRow } from "../cards/screener";
+import {
+  applyFilters,
+  type ScreenerInput,
+  type ScreenerFilter,
+  type ScreenerRow,
+} from "../cards/screener";
 
 let _worker: Worker | null = null;
 let _client: WorkerClient<ComputeApi> | null = null;
@@ -30,7 +35,6 @@ export async function runScreenerAsync(
   filters: readonly ScreenerFilter[],
 ): Promise<ScreenerRow[]> {
   if (typeof Worker === "undefined") {
-    const { applyFilters } = await import("../cards/screener");
     return applyFilters(inputs, filters);
   }
   return getClient().call("runScreener", inputs, filters);

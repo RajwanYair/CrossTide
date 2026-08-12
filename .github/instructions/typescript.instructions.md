@@ -27,7 +27,7 @@ description: "Use when: editing any TypeScript source, worker routes, scripts, o
 - All user-supplied data (URL params, API responses, form inputs) validated at system boundaries.
 - **No `console.log`** — use `console.warn` / `console.error`, or `worker/logger.ts` in Workers.
 
-## 🏗️ Architecture Layers (ESLint-enforced import direction)
+## 🏗️ Architecture Layers (architecture-check enforced import direction)
 
 ```text
 types ← domain ← core ← providers ← cards ← ui

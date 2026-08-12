@@ -34,7 +34,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build PR branch
         run: ./node_modules/.bin/vite build
@@ -53,7 +53,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           git checkout ${{ github.event.pull_request.base.sha }}
-          npm ci
+          npm ci --ignore-scripts
           ./node_modules/.bin/vite build
 
       - name: Measure base bundle size
@@ -72,9 +72,12 @@ jobs:
       - name: Run Lighthouse for Web Vitals
         id: lighthouse
         run: |
-          ./node_modules/.bin/vite preview --port 4173 &
-          sleep 3
-          ./node_modules/.bin/lhci collect --url=http://localhost:4173/ --settings.preset=desktop --numberOfRuns=1 || true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git checkout "${{ github.event.pull_request.head.sha }}"
+            npm ci --ignore-scripts
+            ./node_modules/.bin/vite build
+          fi
+          ./node_modules/.bin/lhci autorun --config=config/lighthouserc.json
           if [ -f ".lighthouseci/lhr-0.json" ]; then
             LCP=$(jq '.audits["largest-contentful-paint"].numericValue // 0' .lighthouseci/lhr-0.json)
             TBT=$(jq '.audits["total-blocking-time"].numericValue // 0' .lighthouseci/lhr-0.json)
@@ -87,13 +90,9 @@ jobs:
             echo "cls=$CLS" >> "$GITHUB_OUTPUT"
             echo "perf=$PERF" >> "$GITHUB_OUTPUT"
           else
-            echo "lcp=0" >> "$GITHUB_OUTPUT"
-            echo "tbt=0" >> "$GITHUB_OUTPUT"
-            echo "inp=0" >> "$GITHUB_OUTPUT"
-            echo "cls=0" >> "$GITHUB_OUTPUT"
-            echo "perf=0" >> "$GITHUB_OUTPUT"
+            echo "::error::Lighthouse did not produce a report"
+            exit 1
           fi
-          kill %1 2>/dev/null || true
 
       - name: Compare and comment
         if: github.event_name == 'pull_request'
@@ -140,7 +139,7 @@ jobs:
               '|--------|-------|--------|',
               `| LCP | ${lcp} ms | 2500 ms |`,
               `| INP | ${inp} ms | 200 ms |`,
-              `| TBT | ${tbt} ms | 300 ms |`,
+              `| TBT | ${tbt} ms | 200 ms |`,
               `| CLS | ${cls} | 0.1 |`,
               `| Perf Score | ${perfPct} | 90% |`,
               '',

@@ -11,3 +11,5 @@ export { saveDrawings, loadDrawings, clearAllSavedDrawings } from "./drawing-per
 
 export { mountDrawingTools } from "./drawing-tools";
 export type { DrawingToolHandle, DrawingToolMode, Drawing, Point } from "./drawing-tools";
+
+export { renderDataMetadata } from "./data-metadata";

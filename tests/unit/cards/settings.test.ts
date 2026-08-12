@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderSettings } from "../../../src/cards/settings";
 import type { AppConfig } from "../../../src/types/domain";
+import { resetAllBindings } from "../../../src/core/shortcut-customization";
 
 function makeConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   return {
@@ -23,6 +24,7 @@ describe("renderSettings", () => {
   beforeEach(() => {
     container = document.createElement("div");
     document.body.appendChild(container);
+    resetAllBindings();
     vi.clearAllMocks();
   });
 
@@ -75,6 +77,18 @@ describe("renderSettings", () => {
     renderSettings(container, makeConfig(), callbacks);
     (container.querySelector("[data-action='clear-cache']") as HTMLButtonElement).click();
     expect(callbacks.onClearCache).toHaveBeenCalled();
+  });
+
+  it("persists a shortcut captured in the settings editor", () => {
+    renderSettings(container, makeConfig(), callbacks);
+    const input = container.querySelector<HTMLInputElement>("[data-shortcut='refresh-data']");
+    expect(input).not.toBeNull();
+    input?.dispatchEvent(new KeyboardEvent("keydown", { key: "f", ctrlKey: true, bubbles: true }));
+    expect(input?.value).toBe("Ctrl+F");
+    renderSettings(container, makeConfig(), callbacks);
+    expect(container.querySelector<HTMLInputElement>("[data-shortcut='refresh-data']")?.value).toBe(
+      "Ctrl+F",
+    );
   });
 
   describe("Finnhub API key inputs", () => {

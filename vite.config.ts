@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { HttpsProxyAgent } from "https-proxy-agent";
+import { getConfiguredWorkerBaseUrl } from "./src/core/worker-config";
 
 const pkg = JSON.parse(readFileSync("package.json", "utf-8")) as {
   version: string;
@@ -11,8 +12,9 @@ const pkg = JSON.parse(readFileSync("package.json", "utf-8")) as {
 // Locally the app is served from the root path.
 const isCI = process.env["GITHUB_ACTIONS"] === "true";
 const BASE = process.env["VITE_BASE"] ?? (isCI ? "/CrossTide/" : "/");
+const WORKER_BASE_URL = getConfiguredWorkerBaseUrl(process.env["VITE_WORKER_BASE_URL"], isCI);
 
-// Corporate proxy agent — used by Vite's http-proxy to tunnel outbound requests
+// Optional proxy agent. Hosts can provide HTTP(S)_PROXY through their environment.
 const PROXY_URL = process.env["HTTPS_PROXY"] || process.env["HTTP_PROXY"] || "";
 const proxyAgent = PROXY_URL ? new HttpsProxyAgent(PROXY_URL) : undefined;
 
@@ -27,10 +29,7 @@ export default defineConfig({
     __PLAUSIBLE_SITE__: JSON.stringify(process.env["VITE_PLAUSIBLE_SITE"] ?? ""),
     __GLITCHTIP_DSN__: JSON.stringify(process.env["VITE_GLITCHTIP_DSN"] ?? ""),
     // E2: Worker API base URL — in dev, route through Vite proxy to avoid CORS/firewall
-    __WORKER_BASE_URL__: JSON.stringify(
-      process.env["VITE_WORKER_BASE_URL"] ??
-        (isCI ? "https://worker.crosstide.pages.dev" : "/api/worker"),
-    ),
+    __WORKER_BASE_URL__: JSON.stringify(WORKER_BASE_URL),
   },
   build: {
     target: "es2022",
@@ -55,8 +54,8 @@ export default defineConfig({
     strictPort: false,
     open: true,
     // Proxy external APIs through the Vite dev server to avoid CORS and external
-    // CORS-proxy dependencies. Node.js honours HTTPS_PROXY / HTTP_PROXY env vars
-    // when using https-proxy-agent (useful behind corporate firewalls).
+    // CORS-proxy dependencies. The agent is only enabled when HTTP(S)_PROXY is
+    // present, so direct network access remains the default.
     proxy: {
       "/api/yahoo": {
         target: "https://query1.finance.yahoo.com",

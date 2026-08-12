@@ -6,6 +6,7 @@
  */
 import type { Env } from "../index.js";
 import { kvGet, kvPut } from "../kv-cache.js";
+import { createMarketDataEnvelope } from "../../src/types/market-data.js";
 
 const QUOTE_TTL = 300; // 5 min
 
@@ -72,6 +73,7 @@ export async function handlePortfolioAnalytics(request: Request, env: Env): Prom
   // Fetch quotes for all symbols
   const symbols = holdings.map((h) => h.symbol);
   const prices = new Map<string, number>();
+  let dataSource = "yahoo";
 
   try {
     // Try batch quote
@@ -83,6 +85,7 @@ export async function handlePortfolioAnalytics(request: Request, env: Env): Prom
     }
 
     if (cached) {
+      dataSource = "cache";
       for (const [sym, price] of Object.entries(cached)) {
         prices.set(sym, price);
       }
@@ -165,7 +168,21 @@ export async function handlePortfolioAnalytics(request: Request, env: Env): Prom
     herfindahlIndex: round6(hhi),
   };
 
-  return Response.json(response);
+  return Response.json(
+    createMarketDataEnvelope(
+      "derived",
+      response,
+      {
+        source: dataSource,
+        fetchedAt: new Date().toISOString(),
+        timezone: "UTC",
+        attribution: "CrossTide portfolio analytics",
+        coverage: "Portfolio valuation, profit/loss, and concentration metrics",
+        limitations: ["Valuation depends on the quote source and may be stale"],
+      },
+      dataSource === "cache" ? "cached" : "live",
+    ),
+  );
 }
 
 function round6(n: number): number {

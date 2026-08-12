@@ -184,8 +184,10 @@ const correlationMatrixCard: CardModule = {
     let excludeCrypto = false;
     let series: TickerSeries[] | null = null;
     let abortController: AbortController | null = null;
+    let disposed = false;
 
     function rerender(): void {
+      if (disposed) return;
       renderContent(container, { period, excludeCrypto, series, loading: false, error: null });
     }
 
@@ -216,6 +218,7 @@ const correlationMatrixCard: CardModule = {
       const tickers = config.watchlist.map((e) => e.ticker);
 
       if (tickers.length === 0) {
+        if (disposed) return;
         series = [];
         rerender();
         return;
@@ -236,12 +239,12 @@ const correlationMatrixCard: CardModule = {
             loaded.push(entry);
           }
         }
-        if (!ac.signal.aborted) {
+        if (!disposed && !ac.signal.aborted) {
           series = loaded;
           rerender();
         }
       } catch {
-        if (!ac.signal.aborted) {
+        if (!disposed && !ac.signal.aborted) {
           renderContent(container, {
             period,
             excludeCrypto,
@@ -257,6 +260,7 @@ const correlationMatrixCard: CardModule = {
 
     return {
       dispose(): void {
+        disposed = true;
         abortController?.abort();
         delegate.dispose();
       },

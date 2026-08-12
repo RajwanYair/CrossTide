@@ -53,7 +53,7 @@
       "context_files": [
         ".github/workflows/ci.yml",
         "vitest.config.ts",
-        "eslint.config.mjs",
+        "package.json",
         ".github/instructions/pre-release.instructions.md"
       ],
       "description": "CI, lint, typecheck, coverage, bundle size, pre-release gates."

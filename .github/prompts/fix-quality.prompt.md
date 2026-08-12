@@ -7,7 +7,7 @@ tools: ["read_file", "grep_search", "replace_string_in_file", "run_in_terminal",
 
 # 🛠️ Fix Quality Issues — CrossTide
 
-Scan and fix quality issues that are **not** covered by ESLint or `tsc`. For lint/type errors, run `/fix-ci` first.
+Scan and fix quality issues that are **not** covered by Oxlint or `tsc`. For lint/type errors, run `/fix-ci` first.
 
 ## ♿ Accessibility Fixes
 

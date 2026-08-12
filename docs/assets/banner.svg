@@ -3,9 +3,9 @@
   <desc id="ctDesc">CrossTide — Catch the cross. Ride the tide. A privacy-first, offline-capable financial analysis dashboard.</desc>
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#050b16" />
-      <stop offset="55%" stop-color="#07202f" />
-      <stop offset="100%" stop-color="#082a3a" />
+      <stop offset="0%" stop-color="#07111f" />
+      <stop offset="58%" stop-color="#0b2633" />
+      <stop offset="100%" stop-color="#123d45" />
     </linearGradient>
     <linearGradient id="waveGradA" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#0891b2" stop-opacity="0.55" />
@@ -19,10 +19,16 @@
       <stop offset="0%" stop-color="#e6fbff" />
       <stop offset="100%" stop-color="#7dd3e8" />
     </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#b9f5f0" stroke-opacity="0.08" />
+    </pattern>
   </defs>
 
   <!-- background -->
   <rect x="0" y="0" width="1200" height="300" rx="12" fill="url(#bgGrad)" />
+  <rect x="0" y="0" width="1200" height="300" rx="12" fill="url(#grid)" />
+  <rect x="70" y="62" width="176" height="28" rx="14" fill="#b9f5f0" fill-opacity="0.12" stroke="#b9f5f0" stroke-opacity="0.28" />
+  <text x="158" y="81" text-anchor="middle" font-family="'Aptos', 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#b9f5f0" letter-spacing="1.4">MARKET INTELLIGENCE</text>
 
   <!-- tide layers -->
   <path d="M0,235 C150,195 300,275 450,225 C600,175 750,255 900,205 C1050,155 1150,215 1200,195 L1200,300 L0,300 Z" fill="url(#waveGradA)" />
@@ -55,7 +61,7 @@
   </g>
 
   <!-- wordmark -->
-  <text x="70" y="150" font-family="'Segoe UI', 'Inter', Arial, sans-serif" font-size="72" font-weight="700" fill="url(#textGrad)" letter-spacing="1">CrossTide</text>
-  <text x="72" y="192" font-family="'Segoe UI', 'Inter', Arial, sans-serif" font-size="24" font-weight="400" fill="#9fd8e6" letter-spacing="0.5">Catch the cross. Ride the tide.</text>
-  <text x="72" y="228" font-family="'Segoe UI', 'Inter', Arial, sans-serif" font-size="16" font-weight="400" fill="#5f93a3">Privacy-first · Offline-first PWA · 12-method consensus signals</text>
+  <text x="70" y="153" font-family="'Aptos Display', 'Segoe UI', sans-serif" font-size="72" font-weight="750" fill="url(#textGrad)" letter-spacing="-1">CrossTide</text>
+  <text x="72" y="194" font-family="'Aptos', 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#b9e8ed">Catch the cross. Ride the tide.</text>
+  <text x="72" y="230" font-family="'Aptos', 'Segoe UI', sans-serif" font-size="15" font-weight="500" fill="#82b7c1">Privacy-first  ·  Offline-first PWA  ·  Explainable signals</text>
 </svg>

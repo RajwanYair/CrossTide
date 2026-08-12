@@ -17,21 +17,21 @@ describe("withErrorBoundary", () => {
   });
 
   it("renders error fallback when mount throws", () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const onError = vi.fn();
     const card: CardModule = {
       mount: () => {
         throw new Error("mount failed");
       },
     };
     const el = document.createElement("div");
-    withErrorBoundary(card).mount(el, ctx);
+    withErrorBoundary(card, { maxRetries: 0, onError }).mount(el, ctx);
     expect(el.innerHTML).toContain("mount failed");
-    expect(el.innerHTML).toContain("card--error");
-    expect(errorSpy).toHaveBeenCalledOnce();
+    expect(el.innerHTML).toContain("error-boundary");
+    expect(onError).toHaveBeenCalledOnce();
   });
 
   it("renders error fallback when update throws", () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const onError = vi.fn();
     const card: CardModule = {
       mount: () => ({
         update: () => {
@@ -40,10 +40,10 @@ describe("withErrorBoundary", () => {
       }),
     };
     const el = document.createElement("div");
-    const handle = withErrorBoundary(card).mount(el, ctx);
+    const handle = withErrorBoundary(card, { maxRetries: 0, onError }).mount(el, ctx);
     handle?.update?.(ctx);
     expect(el.innerHTML).toContain("update failed");
-    expect(errorSpy).toHaveBeenCalledOnce();
+    expect(onError).toHaveBeenCalledOnce();
   });
 
   it("preserves dispose from wrapped handle", () => {
@@ -56,22 +56,22 @@ describe("withErrorBoundary", () => {
   });
 
   it("handles non-Error thrown values", () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const onError = vi.fn();
     const card: CardModule = {
       mount: () => {
         throw "string error";
       },
     };
     const el = document.createElement("div");
-    withErrorBoundary(card).mount(el, ctx);
+    withErrorBoundary(card, { maxRetries: 0, onError }).mount(el, ctx);
     expect(el.innerHTML).toContain("string error");
-    expect(errorSpy).toHaveBeenCalledOnce();
+    expect(onError).toHaveBeenCalledOnce();
   });
 
-  it("does not wrap when card returns void", () => {
+  it("returns a stable handle when card returns void", () => {
     const card: CardModule = { mount: () => {} };
     const el = document.createElement("div");
     const result = withErrorBoundary(card).mount(el, ctx);
-    expect(result).toBeUndefined();
+    expect(result).toBeDefined();
   });
 });

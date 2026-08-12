@@ -10,6 +10,7 @@
 import { fetchFinnhubNews, FinnhubApiError } from "../providers/finnhub.js";
 import { kvGet, kvPut } from "../kv-cache.js";
 import type { Env } from "../index.js";
+import { createMarketDataEnvelope, type MarketDataEnvelope } from "../../src/types/market-data.js";
 
 const TICKER_RE = /^[A-Z0-9.\-^]{1,12}$/;
 const NEWS_CACHE_TTL = 600; // 10 minutes
@@ -32,6 +33,8 @@ export interface NewsArticle {
   category: string;
   image: string;
 }
+
+type NewsEnvelope = MarketDataEnvelope<NewsResponse>;
 
 export async function handleNews(url: URL, env: Env): Promise<Response> {
   const ticker = (url.searchParams.get("ticker") ?? "").toUpperCase();
@@ -57,7 +60,11 @@ export async function handleNews(url: URL, env: Env): Promise<Response> {
   if (env.QUOTE_CACHE) {
     const cached = await kvGet<NewsResponse>(env.QUOTE_CACHE, cacheKey);
     if (cached) {
-      return json({ ...cached, source: "cache" as const }, 200, "public, max-age=120");
+      return json(
+        newsEnvelope({ ...cached, source: "cache" }, "cache", "cached"),
+        200,
+        "public, max-age=120",
+      );
     }
   }
 
@@ -84,7 +91,7 @@ export async function handleNews(url: URL, env: Env): Promise<Response> {
       await kvPut(env.QUOTE_CACHE, cacheKey, body, NEWS_CACHE_TTL);
     }
 
-    return json(body, 200, "public, max-age=120");
+    return json(newsEnvelope(body, "finnhub"), 200, "public, max-age=120");
   } catch (err) {
     if (err instanceof FinnhubApiError) {
       return json(
@@ -94,6 +101,26 @@ export async function handleNews(url: URL, env: Env): Promise<Response> {
     }
     return json({ error: "Internal error fetching news" }, 500);
   }
+}
+
+function newsEnvelope(
+  data: NewsResponse,
+  source: string,
+  status: "live" | "cached" = "live",
+): NewsEnvelope {
+  return createMarketDataEnvelope(
+    "news",
+    data,
+    {
+      source,
+      fetchedAt: new Date().toISOString(),
+      timezone: "UTC",
+      attribution: source === "finnhub" ? "Finnhub" : source,
+      coverage: "Company news within the requested date range",
+      limitations: ["Headline coverage and publication timestamps depend on the provider"],
+    },
+    status,
+  );
 }
 
 function json(body: unknown, status: number, cacheControl?: string): Response {

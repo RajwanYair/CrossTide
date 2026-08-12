@@ -1,6 +1,6 @@
 # =============================================================================
 # CI — CrossTide — Unified quality gate
-# Typecheck · ESLint · Stylelint · Vitest (Node 24) · Security · Build
+# Typecheck · Oxlint · Stylelint · Vitest (Node 24) · Security · Build
 # Runs on every push to main and all pull requests.
 # =============================================================================
 name: CI
@@ -62,7 +62,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Validate PR commits
         run: ./node_modules/.bin/commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
@@ -81,15 +81,12 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: TypeScript check
         run: npm run typecheck
 
-      - name: oxlint (fast Rust pre-pass, errors only)
-        run: npx oxlint --quiet src tests || true
-
-      - name: ESLint
+      - name: Oxlint (TypeScript 7)
         run: npm run lint
 
       - name: Stylelint
@@ -101,7 +98,7 @@ jobs:
       - name: Markdownlint
         run: npm run lint:md
 
-      - name: Prettier check
+      - name: Biome format check
         run: npm run format:check
 
       - name: Forbid focused/skipped tests
@@ -134,6 +131,9 @@ jobs:
 
       - name: Security audit
         run: npm audit --omit=dev --audit-level=high
+
+      - name: Registry signature audit
+        run: npm audit signatures
 
       - name: Scan for hardcoded secrets
         run: |
@@ -175,8 +175,7 @@ jobs:
 
       - name: Generate SBOM (CycloneDX)
         run: |
-          npm install --package-lock-only --ignore-scripts --silent
-          npx @cyclonedx/cyclonedx-npm \
+          ./node_modules/.bin/cyclonedx-npm \
             --output-format JSON \
             --output-file sbom.json \
             --package-lock-only \
@@ -221,7 +220,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Cache Playwright browsers
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -279,7 +278,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Download dist
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -288,7 +287,7 @@ jobs:
           path: dist/
 
       - name: Run Lighthouse CI
-        run: npx @lhci/cli@0.15.x autorun --config config/lighthouserc.json
+        run: ./node_modules/.bin/lhci autorun --config config/lighthouserc.json
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
@@ -338,7 +337,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Start worker (wrangler dev)
         run: ./node_modules/.bin/wrangler dev worker/index.ts --port 8787 > wrangler-dev.log 2>&1 &

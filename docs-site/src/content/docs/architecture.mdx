@@ -3,6 +3,10 @@ title: Architecture
 description: CrossTide codebase overview — layers, modules, and data flow.
 ---
 
+Supported, preview, package-only, dormant, and blocked surfaces are classified in the
+[capability matrix](/CrossTide/docs/CAPABILITY_MATRIX.md).
+The layered product boundary is defined in [ADR-0016](/CrossTide/docs/adr/0016-product-boundary.md).
+
 ## 🏗 Layer Diagram
 
 ```mermaid
@@ -10,7 +14,7 @@ flowchart TB
   subgraph UI["🎨 UI Layer — src/ui/* + src/cards/*"]
     direction LR
     Router["Router"]
-    Cards["23 Route Cards"]
+    Cards["24 Route Cards"]
   end
   subgraph Core["⚙️ Core Utilities — src/core/*"]
     direction LR

@@ -9,6 +9,16 @@ import { patchDOM } from "../core/patch-dom";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
 import { getLocale, setLocale } from "../core/i18n";
 import { SUPPORTED_LOCALES, LOCALE_LABELS } from "../locales";
+import { renderIndicatorConfigPanel } from "./indicator-config";
+import { getNotificationPrefs } from "../core/notification-prefs";
+import {
+  formatBinding,
+  getAllCustomBindings,
+  resetBinding,
+  setCustomBinding,
+  type ShortcutBinding,
+} from "../core/shortcut-customization";
+import { getActivePreset, getPresets, savePreset, setActivePreset } from "../core/layout-presets";
 
 const METHOD_NAMES = [
   "Micho",
@@ -44,6 +54,7 @@ export interface SettingsCallbacks {
   ) => void;
   /** Called when user changes auto-refresh interval. */
   onRefreshIntervalChange?: (ms: number) => void;
+  onNotificationPrefsChange?: (updates: Partial<ReturnType<typeof getNotificationPrefs>>) => void;
 }
 
 const CARD_SETTINGS_OPTIONS: ReadonlyArray<{ id: CardId; label: string }> = [
@@ -58,6 +69,27 @@ const CARD_SETTINGS_OPTIONS: ReadonlyArray<{ id: CardId; label: string }> = [
   { id: "risk", label: "Risk" },
 ];
 
+const SHORTCUT_DEFS = [
+  {
+    action: "open-palette",
+    label: "Open command palette",
+    defaultBinding: { key: "k", ctrl: true },
+  },
+  { action: "focus-search", label: "Focus ticker search", defaultBinding: { key: "/" } },
+  { action: "refresh-data", label: "Refresh data", defaultBinding: { key: "r" } },
+  {
+    action: "copy-share-link",
+    label: "Copy share link",
+    defaultBinding: { key: "s", shift: true },
+  },
+  {
+    action: "show-shortcuts",
+    label: "Show keyboard shortcuts",
+    defaultBinding: { key: "?", shift: true },
+  },
+  { action: "close-overlay", label: "Close overlay", defaultBinding: { key: "Escape" } },
+] as const;
+
 export function renderSettings(
   container: HTMLElement,
   config: AppConfig,
@@ -70,6 +102,7 @@ export function renderSettings(
       return "";
     }
   })();
+  const notificationPrefs = getNotificationPrefs();
 
   patchDOM(
     container,
@@ -117,6 +150,14 @@ export function renderSettings(
       <button data-action="clear-cache" type="button">Clear Cache</button>
     </div>
     <div class="setting-group">
+      <label>Notifications</label>
+      ${renderNotificationPreference("priceAlerts", "Price alerts", notificationPrefs.priceAlerts)}
+      ${renderNotificationPreference("signalFlips", "Signal flips", notificationPrefs.signalFlips)}
+      ${renderNotificationPreference("providerFailovers", "Provider failovers", notificationPrefs.providerFailovers)}
+      ${renderNotificationPreference("dataStale", "Stale data", notificationPrefs.dataStale)}
+      ${renderNotificationPreference("earningsReminders", "Earnings reminders", notificationPrefs.earningsReminders)}
+    </div>
+    <div class="setting-group">
       <label>About</label>
       <span class="text-secondary">CrossTide — 12-method consensus engine</span>
     </div>
@@ -128,6 +169,12 @@ export function renderSettings(
       </select>
       <div id="card-settings-panel"></div>
     </div>
+    <div class="setting-group">
+      <label>Indicator Parameters</label>
+      <div id="indicator-config-panel"></div>
+    </div>
+    ${renderLayoutPresetsSection()}
+    ${renderShortcutsSection()}
     <div class="setting-group">
       <label for="finnhub-key-input">
         Finnhub API Key
@@ -210,6 +257,38 @@ export function renderSettings(
           if (!isNaN(ms)) callbacks.onRefreshIntervalChange?.(ms);
         }
       },
+      "layout-preset-select": (target) => {
+        const name = (target as HTMLSelectElement).value || null;
+        setActivePreset(name);
+      },
+      "layout-preset-save": () => {
+        const input = container.querySelector<HTMLInputElement>("#layout-preset-name");
+        const name = input?.value.trim() ?? "";
+        if (!name) return;
+        savePreset(
+          name,
+          CARD_SETTINGS_OPTIONS.map((option) => option.id),
+        );
+        setActivePreset(name);
+      },
+      "layout-preset-clear": () => {
+        setActivePreset(null);
+        const select = container.querySelector<HTMLSelectElement>("#layout-preset-select");
+        if (select) select.value = "";
+      },
+      "notification-pref-change": (target) => {
+        const input = target as HTMLInputElement;
+        const category = input.dataset["category"] as keyof ReturnType<typeof getNotificationPrefs>;
+        if (category) callbacks.onNotificationPrefsChange?.({ [category]: input.checked });
+      },
+      "reset-shortcut": (target) => {
+        const action = target.dataset["actionId"];
+        if (!action) return;
+        resetBinding(action);
+        const input = container.querySelector<HTMLInputElement>(`[data-shortcut="${action}"]`);
+        const def = SHORTCUT_DEFS.find((shortcut) => shortcut.action === action);
+        if (input && def) input.value = formatBinding(def.defaultBinding);
+      },
       "card-picker-change": () => {
         const next = picker?.value as CardId;
         if (!CARD_SETTINGS_OPTIONS.some((o) => o.id === next)) return;
@@ -250,6 +329,22 @@ export function renderSettings(
     { eventTypes: ["input", "change"] },
   );
 
+  const shortcutKeydown = (event: KeyboardEvent): void => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) || !target.dataset["shortcut"]) return;
+    if (["Control", "Shift", "Alt", "Meta"].includes(event.key)) return;
+    const binding: ShortcutBinding = {
+      key: event.key,
+      ...(event.ctrlKey || event.metaKey ? { ctrl: true } : {}),
+      ...(event.shiftKey ? { shift: true } : {}),
+      ...(event.altKey ? { alt: true } : {}),
+    };
+    setCustomBinding(target.dataset["shortcut"], binding);
+    target.value = formatBinding(binding);
+    event.preventDefault();
+  };
+  container.addEventListener("keydown", shortcutKeydown);
+
   // G24: Per-card settings picker + dynamic section
   const picker = container.querySelector<HTMLSelectElement>("#card-settings-picker");
   const panel = container.querySelector<HTMLElement>("#card-settings-panel");
@@ -272,13 +367,62 @@ export function renderSettings(
   }
 
   rerenderCardSettingsPanel();
+  const indicatorPanel = container.querySelector<HTMLElement>("#indicator-config-panel");
+  const disposeIndicatorPanel = indicatorPanel
+    ? renderIndicatorConfigPanel(indicatorPanel)
+    : undefined;
 
   return {
     dispose(): void {
       delegate.dispose();
       inputDelegate.dispose();
+      container.removeEventListener("keydown", shortcutKeydown);
+      disposeIndicatorPanel?.();
     },
   };
+}
+
+function renderShortcutsSection(): string {
+  const custom = getAllCustomBindings();
+  const rows = SHORTCUT_DEFS.map((shortcut) => {
+    const binding = custom.get(shortcut.action) ?? shortcut.defaultBinding;
+    return `<div class="shortcut-row">
+      <label for="shortcut-${shortcut.action}">${shortcut.label}</label>
+      <input id="shortcut-${shortcut.action}" class="shortcut-binding" type="text" readonly
+        data-shortcut="${shortcut.action}" value="${escapeAttr(formatBinding(binding))}" />
+      <button type="button" data-action="reset-shortcut" data-action-id="${shortcut.action}">Reset</button>
+    </div>`;
+  }).join("");
+  return `<div class="setting-group">
+    <label>Keyboard Shortcuts</label>
+    <div class="shortcut-list">${rows}</div>
+  </div>`;
+}
+
+function renderLayoutPresetsSection(): string {
+  const active = getActivePreset();
+  const options = getPresets()
+    .map(
+      (preset) =>
+        `<option value="${escapeAttr(preset.name)}"${preset.name === active ? " selected" : ""}>${escapeHtml(preset.name)}</option>`,
+    )
+    .join("");
+  return `<div class="setting-group">
+    <label for="layout-preset-select">Dashboard layout preset</label>
+    <select id="layout-preset-select" data-action="layout-preset-select">
+      <option value="">No active preset</option>
+      ${options}
+    </select>
+    <div class="setting-inline">
+      <input id="layout-preset-name" type="text" maxlength="60" placeholder="Preset name" />
+      <button data-action="layout-preset-save" type="button">Save</button>
+      <button data-action="layout-preset-clear" type="button">Clear</button>
+    </div>
+  </div>`;
+}
+
+function renderNotificationPreference(category: string, label: string, checked: boolean): string {
+  return `<label class="setting-inline"><input type="checkbox" data-action="notification-pref-change" data-category="${category}"${checked ? " checked" : ""} /> <span>${label}</span></label>`;
 }
 
 const REFRESH_OPTIONS: ReadonlyArray<{ ms: number; label: string }> = [
@@ -334,6 +478,14 @@ function escapeAttr(s: string): string {
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function renderCardSettingsPanel(cardId: CardId, settings: CardSettingsMap | undefined): string {

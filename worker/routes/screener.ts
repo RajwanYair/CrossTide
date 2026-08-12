@@ -13,12 +13,13 @@
  *  }
  *
  * Response:
- *  { rows: ScreenerRow[] }
+ *  versioned derived-output envelope containing rows
  *
  * Values are deterministically seeded per ticker so the API is stable across
  * deployments without external data. In production, replace with real indicators
  * computed from live or cached candle data.
  */
+import { createMarketDataEnvelope } from "../../src/types/market-data.js";
 
 export interface ScreenerParams {
   tickers: string[];
@@ -144,8 +145,14 @@ export async function handleScreener(request: Request): Promise<Response> {
     });
 
   const responseBody: ScreenerResponse = { rows };
-  return new Response(JSON.stringify(responseBody), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return Response.json(
+    createMarketDataEnvelope("derived", responseBody, {
+      source: "crosstide-screener",
+      fetchedAt: new Date().toISOString(),
+      timezone: "UTC",
+      attribution: "CrossTide screener calculations",
+      coverage: "Deterministic technical metrics for the submitted tickers",
+      limitations: ["Results use generated inputs until provider-backed screening is enabled"],
+    }),
+  );
 }

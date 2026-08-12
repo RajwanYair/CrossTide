@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   formatPrice,
   formatCompact,
@@ -6,9 +6,14 @@ import {
   formatChange,
   _clearFormatterCache,
 } from "../../../src/ui/number-format";
+import { setLocale } from "../../../src/core/i18n";
 
 beforeEach(() => {
   _clearFormatterCache();
+});
+
+afterEach(() => {
+  setLocale("en-US");
 });
 
 describe("number-format", () => {
@@ -63,5 +68,11 @@ describe("number-format", () => {
     const en = formatPrice(1234.56, { locale: "en-US" });
     const de = formatPrice(1234.56, { locale: "de-DE" });
     expect(en).not.toBe(de);
+  });
+
+  it("uses the active locale when no locale option is provided", () => {
+    setLocale("de-DE");
+
+    expect(formatPrice(1234.56)).toBe("1.234,56");
   });
 });

@@ -3,6 +3,7 @@
  * compact figures. Built on `Intl.NumberFormat`; cached per locale +
  * options to avoid repeated construction in hot render paths.
  */
+import { getLocale } from "../core/i18n";
 
 const cache = new Map<string, Intl.NumberFormat>();
 
@@ -23,12 +24,10 @@ export interface FormatOptions {
   readonly maxDigits?: number;
 }
 
-const DEFAULT_LOCALE = "en-US";
-
 /** Price with adaptive precision: < $1 shows 4 decimals, otherwise 2. */
 export function formatPrice(value: number, options: FormatOptions = {}): string {
   if (!Number.isFinite(value)) return "—";
-  const locale = options.locale ?? DEFAULT_LOCALE;
+  const locale = options.locale ?? getLocale();
   const min = options.minDigits ?? (Math.abs(value) < 1 ? 4 : 2);
   const max = options.maxDigits ?? min;
   if (options.currency) {
@@ -48,7 +47,7 @@ export function formatPrice(value: number, options: FormatOptions = {}): string 
 /** Compact volume / market cap: 1.2K, 3.4M, 5.6B. */
 export function formatCompact(value: number, options: FormatOptions = {}): string {
   if (!Number.isFinite(value)) return "—";
-  const locale = options.locale ?? DEFAULT_LOCALE;
+  const locale = options.locale ?? getLocale();
   return fmt(locale, {
     notation: "compact",
     maximumFractionDigits: options.maxDigits ?? 2,
@@ -64,7 +63,7 @@ export function formatPercent(
   options: FormatOptions & { readonly signed?: boolean } = {},
 ): string {
   if (!Number.isFinite(fraction)) return "—";
-  const locale = options.locale ?? DEFAULT_LOCALE;
+  const locale = options.locale ?? getLocale();
   const formatted = fmt(locale, {
     style: "percent",
     minimumFractionDigits: options.minDigits ?? 2,

@@ -1,12 +1,16 @@
 /**
  * Reachability inventory tests - keep stitching metrics tied to the source graph.
  */
-import { resolve } from "node:path";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   buildInventory,
   calculateReachableCoverage,
   renderDispositionReport,
+  readCoverageSummary,
+  readDispositionRecord,
   validateReachabilityGate,
   validateReachableCoverage,
 } from "../../../scripts/reachability-inventory.mjs";
@@ -92,8 +96,78 @@ describe("buildInventory", () => {
       "functions 80.00% < 91.4% baseline",
       "lines 80.00% < 91.6% baseline",
     ]);
-    expect(validateReachableCoverage({ ...result, unmeasuredModules: 39 })).toContain(
-      "unmeasured modules 39 > 38 baseline",
+    expect(validateReachableCoverage({ ...result, unmeasuredModules: 42 })).toContain(
+      "unmeasured modules 42 > 41 baseline",
     );
+  });
+});
+
+describe("readCoverageSummary", () => {
+  it("reports the prerequisite when generated coverage is absent", () => {
+    expect(() => readCoverageSummary(resolve("coverage/missing-summary.json"))).toThrow(
+      /Coverage summary is missing: coverage[\\/]missing-summary\.json\. Run npm run test:coverage first\./u,
+    );
+  });
+});
+
+describe("readDispositionRecord", () => {
+  it("rejects duplicate module rows", () => {
+    const directory = mkdtempSync(join(tmpdir(), "crosstide-reachability-"));
+    const path = join(directory, "reachability.md");
+    writeFileSync(
+      path,
+      [
+        "| Module | Category | Importers | Disposition |",
+        "| --- | --- | --- | --- |",
+        "| `src/core/example.ts` | HARD_ORPHAN | - | WIRE |",
+        "| `src/core/example.ts` | HARD_ORPHAN | - | DEFER |",
+      ].join("\n"),
+    );
+
+    try {
+      expect(() => readDispositionRecord(path)).toThrow(
+        "Duplicate disposition record for src/core/example.ts.",
+      );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("validateReachabilityGate", () => {
+  it("rejects an unreachable module absent from the checked-in record", () => {
+    const inventory = {
+      totals: { hardOrphans: 0 },
+      modules: [{ path: "src/core/new-orphan.ts", reachable: false, disposition: "WIRE" }],
+    };
+
+    expect(validateReachabilityGate(inventory, new Map())).toEqual([
+      "src/core/new-orphan.ts is missing from the disposition record",
+    ]);
+  });
+
+  it("rejects a disposition for a module no longer in the unreachable graph", () => {
+    const inventory = {
+      totals: { hardOrphans: 0 },
+      modules: [{ path: "src/core/current-orphan.ts", reachable: false, disposition: "WIRE" }],
+    };
+
+    expect(
+      validateReachabilityGate(
+        inventory,
+        new Map([
+          ["src/core/current-orphan.ts", "WIRE"],
+          ["src/core/removed-module.ts", "DEFER"],
+        ]),
+      ),
+    ).toEqual([
+      "src/core/removed-module.ts is not an unreachable module in the current source graph",
+    ]);
+  });
+
+  it("reads the generated disposition record", () => {
+    const record = readDispositionRecord();
+    expect(record.get("src/core/ai-disclaimer.ts")).toBe("WIRE");
+    expect(record.size).toBeGreaterThan(200);
   });
 });
