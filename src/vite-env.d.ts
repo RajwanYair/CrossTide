@@ -11,6 +11,7 @@ declare module "@fontsource-variable/inter" {}
 // "navigation" in window narrowing works correctly in both branches.
 interface Window {
   navigation?: Navigation;
+  __crosstidePerformanceMetrics?: () => import("./core/perf-metrics").PerfMetrics;
 }
 
 // H7: Background Fetch API — minimal type stubs (not yet in lib.dom.d.ts).

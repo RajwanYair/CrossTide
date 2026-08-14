@@ -41,7 +41,31 @@
     --font-size-lg: 1rem;
     --font-size-xl: 1.25rem;
     --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
     --line-height: 1.5;
+    --line-height-tight: 1.25;
+    --line-height-relaxed: 1.7;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-feature-numeric: "tnum" 1, "zero" 1;
+
+    /* Elevation and stacking stay semantic so themes and overlays remain predictable. */
+    --elevation-0: none;
+    --elevation-1: 0 1px 2px rgb(0, 0, 0, 0.24);
+    --elevation-2: 0 2px 8px rgb(0, 0, 0, 0.28);
+    --elevation-3: 0 4px 12px rgb(0, 0, 0, 0.32);
+    --elevation-4: 0 8px 24px rgb(0, 0, 0, 0.4);
+    --elevation-5: 0 16px 48px rgb(0, 0, 0, 0.48);
+    --z-base: 0;
+    --z-raised: 10;
+    --z-sidebar: 100;
+    --z-header: 200;
+    --z-dropdown: 300;
+    --z-backdrop: 400;
+    --z-modal: 500;
+    --z-toast: 600;
+    --z-tour: 700;
 
     /* Borders */
     --radius-sm: 4px;
@@ -49,8 +73,9 @@
     --radius-lg: 12px;
 
     /* Transitions */
-    --transition-fast: 150ms ease;
-    --transition-normal: 250ms ease;
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --transition-fast: 150ms var(--ease-standard);
+    --transition-normal: 250ms var(--ease-standard);
   }
 }
 
@@ -74,6 +99,11 @@
     --danger-hover: #a40e26;
     --badge-fg-blend: #000;
     --badge-fg-blend-amt: 35%;
+    --elevation-1: 0 1px 2px rgb(31, 35, 40, 0.08);
+    --elevation-2: 0 2px 8px rgb(31, 35, 40, 0.1);
+    --elevation-3: 0 4px 12px rgb(31, 35, 40, 0.12);
+    --elevation-4: 0 8px 24px rgb(31, 35, 40, 0.16);
+    --elevation-5: 0 16px 48px rgb(31, 35, 40, 0.2);
   }
 
   /* ── Color-blind palettes (C2) — override signal / accent tokens ─────── */

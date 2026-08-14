@@ -12,6 +12,16 @@ export interface HealthResponse {
   readonly environment: string;
 }
 
+export interface MetricsResponse {
+  readonly schemaVersion: "1";
+  readonly generatedAt: string;
+  readonly requestCount: number;
+  readonly requestP95Ms: unknown;
+  readonly cacheHitRate: unknown;
+  readonly websocketRecoveryMs: unknown;
+  readonly limitations: string[];
+}
+
 export interface CandleRecord {
   readonly date: string;
   readonly open: number;
@@ -103,6 +113,11 @@ export interface ApiRoutes {
   readonly getHealth: {
     readonly request: never;
     readonly response: HealthResponse;
+  };
+  /** GET /api/metrics */
+  readonly getMetrics: {
+    readonly request: never;
+    readonly response: MetricsResponse;
   };
   /** GET /api/chart */
   readonly getChart: {

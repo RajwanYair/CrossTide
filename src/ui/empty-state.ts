@@ -95,8 +95,15 @@ class CtEmptyState extends HTMLElement {
       ? `<p class="ct-es-desc">${escapeHtml(this._description)}</p>`
       : "";
 
+    let stateAttributes = "";
+    if (this._variant === "loading") {
+      stateAttributes = ` role="status" aria-live="polite" aria-busy="true"`;
+    } else if (this._variant === "error") {
+      stateAttributes = ` role="alert"`;
+    }
+
     this.innerHTML = [
-      `<div class="ct-es ct-es--${this._variant}" role="status" aria-live="polite">`,
+      `<div class="ct-es ct-es--${this._variant}"${stateAttributes}>`,
       icon,
       titleHtml,
       descHtml,

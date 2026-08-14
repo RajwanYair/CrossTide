@@ -14,6 +14,8 @@ interface CacheEntry<T> {
 
 const L2_PREFIX = "ct_cache_";
 
+import { recordCacheHit, recordCacheMiss } from "./cache-stats";
+
 export class TieredCache {
   private readonly l1 = new Map<string, CacheEntry<unknown>>();
 
@@ -21,7 +23,10 @@ export class TieredCache {
     // L1 hit
     const l1Entry = this.l1.get(key) as CacheEntry<T> | undefined;
     if (l1Entry) {
-      if (Date.now() <= l1Entry.expiresAt) return l1Entry.value;
+      if (Date.now() <= l1Entry.expiresAt) {
+        recordCacheHit();
+        return l1Entry.value;
+      }
       this.l1.delete(key);
     }
 
@@ -33,6 +38,7 @@ export class TieredCache {
         if (Date.now() <= entry.expiresAt) {
           // Promote to L1
           this.l1.set(key, entry);
+          recordCacheHit();
           return entry.value;
         }
         localStorage.removeItem(L2_PREFIX + key);
@@ -41,6 +47,7 @@ export class TieredCache {
       // localStorage unavailable or corrupt — ignore
     }
 
+    recordCacheMiss();
     return null;
   }
 

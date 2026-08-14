@@ -17,6 +17,7 @@ export interface PerfMetrics {
   readonly fetchCount: number;
   readonly avgFetchLatencyMs: number;
   readonly lastRenderMs: number;
+  readonly workerP95Ms: number | null;
   readonly traces: Readonly<Record<PerformanceTraceMetric, number>>;
 }
 
@@ -25,6 +26,7 @@ export type PerformanceTraceMetric =
   | "cardLoadMs"
   | "chartRenderMs"
   | "workerTransferMs"
+  | "websocketRecoveryMs"
   | "serviceWorkerUpdateMs";
 
 export type PerformanceBudgetMetric =
@@ -91,11 +93,14 @@ let domContentLoaded: number | null = null;
 let fetchCount = 0;
 let totalFetchLatency = 0;
 let lastRenderMs = 0;
+const workerTransferSamples: number[] = [];
+const MAX_WORKER_TRANSFER_SAMPLES = 100;
 const traces: Record<PerformanceTraceMetric, number> = {
   startupMs: 0,
   cardLoadMs: 0,
   chartRenderMs: 0,
   workerTransferMs: 0,
+  websocketRecoveryMs: 0,
   serviceWorkerUpdateMs: 0,
 };
 
@@ -116,7 +121,19 @@ export function recordRenderTime(ms: number): void {
 
 /** Record the latest duration for a named application performance trace. */
 export function recordPerformanceTrace(metric: PerformanceTraceMetric, durationMs: number): void {
-  traces[metric] = Math.max(0, durationMs);
+  const duration = Math.max(0, durationMs);
+  traces[metric] = duration;
+  if (metric === "workerTransferMs") {
+    workerTransferSamples.push(duration);
+    if (workerTransferSamples.length > MAX_WORKER_TRANSFER_SAMPLES) workerTransferSamples.shift();
+  }
+}
+
+function calculateP95(samples: readonly number[]): number | null {
+  if (samples.length === 0) return null;
+  const sorted = [...samples].sort((a, b) => a - b);
+  const index = Math.max(0, Math.ceil(sorted.length * 0.95) - 1);
+  return sorted[index] ?? null;
 }
 
 /**
@@ -134,6 +151,7 @@ export function getPerfMetrics(): PerfMetrics {
     fetchCount,
     avgFetchLatencyMs: fetchCount > 0 ? totalFetchLatency / fetchCount : 0,
     lastRenderMs,
+    workerP95Ms: calculateP95(workerTransferSamples),
     traces: { ...traces },
   };
 }
@@ -248,5 +266,6 @@ export function resetCustomMetrics(): void {
   fetchCount = 0;
   totalFetchLatency = 0;
   lastRenderMs = 0;
+  workerTransferSamples.length = 0;
   for (const metric of Object.keys(traces) as PerformanceTraceMetric[]) traces[metric] = 0;
 }

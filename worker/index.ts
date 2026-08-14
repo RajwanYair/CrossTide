@@ -83,6 +83,7 @@ import { handleStoreKey, handleListKeys, handleDeleteKey, handleGetKey } from ".
 import { createLogger } from "./logger.js";
 import { createTracer } from "./telemetry.js";
 import { getTickerStub } from "./ticker-fanout.js";
+import { handleMetrics, recordRequestDuration } from "./routes/metrics.js";
 import type { DurableObjectNamespace } from "./ticker-fanout.js";
 
 // wrangler.toml's [durable_objects] binding requires the Durable Object
@@ -221,7 +222,9 @@ app.use("*", async (c, next) => {
     route: new URL(c.req.url).pathname,
   });
   await next();
-  logger.info("request", { status: c.res.status, latencyMs: Date.now() - start });
+  const latencyMs = Date.now() - start;
+  recordRequestDuration(latencyMs);
+  logger.info("request", { status: c.res.status, latencyMs });
 });
 
 // ── Rate limiting (exempt: OPTIONS handled above) ─────────────────────────────
@@ -309,6 +312,7 @@ app.get("/api/search", (c) => {
 });
 
 app.get("/api/health", (c) => Promise.resolve(handleHealth(c.env)));
+app.get("/api/metrics", () => handleMetrics());
 
 app.get("/api/fundamentals/:symbol", (c) => handleFundamentals(c.req.param("symbol"), c.env));
 

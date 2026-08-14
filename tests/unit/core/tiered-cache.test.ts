@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { TieredCache } from "../../../src/core/tiered-cache";
+import { getCacheStats, resetCacheStats } from "../../../src/core/cache-stats";
 
 function createStorageMock(): Storage {
   const store = new Map<string, string>();
@@ -30,6 +31,7 @@ describe("TieredCache", () => {
 
   beforeEach(() => {
     vi.stubGlobal("localStorage", createStorageMock());
+    resetCacheStats();
     cache = new TieredCache();
   });
 
@@ -39,6 +41,7 @@ describe("TieredCache", () => {
 
   it("returns null for missing key", () => {
     expect(cache.get("nope")).toBeNull();
+    expect(getCacheStats()).toMatchObject({ hits: 0, misses: 1, hitRate: 0 });
   });
 
   it("set and get round-trip from L1", () => {
@@ -59,6 +62,7 @@ describe("TieredCache", () => {
     // Create a new cache instance (L1 is empty)
     const cache2 = new TieredCache();
     expect(cache2.get<{ a: number }>("k")).toEqual({ a: 1 });
+    expect(getCacheStats()).toMatchObject({ hits: 1, misses: 0, hitRate: 1 });
   });
 
   it("evicts expired entries from L1", () => {

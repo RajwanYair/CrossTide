@@ -52,6 +52,25 @@ export const OPENAPI_SPEC = {
         },
       },
     },
+    "/api/metrics": {
+      get: {
+        operationId: "getMetrics",
+        summary: "Worker performance metrics",
+        description:
+          "Returns process-local request p95 data for production probes. Browser-owned cache and WebSocket metrics are explicitly reported as null.",
+        tags: ["System"],
+        responses: {
+          "200": {
+            description: "Worker metrics snapshot",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/MetricsResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
     "/api/chart": {
       get: {
         operationId: "getChart",
@@ -1636,6 +1655,27 @@ export const OPENAPI_SPEC = {
           version: { type: "string" },
           timestamp: { type: "string", format: "date-time" },
           environment: { type: "string" },
+        },
+      },
+      MetricsResponse: {
+        type: "object",
+        required: [
+          "schemaVersion",
+          "generatedAt",
+          "requestCount",
+          "requestP95Ms",
+          "cacheHitRate",
+          "websocketRecoveryMs",
+          "limitations",
+        ],
+        properties: {
+          schemaVersion: { type: "string", enum: ["1"] },
+          generatedAt: { type: "string", format: "date-time" },
+          requestCount: { type: "integer", minimum: 0 },
+          requestP95Ms: { type: ["number", "null"], minimum: 0 },
+          cacheHitRate: { type: ["number", "null"], minimum: 0, maximum: 1 },
+          websocketRecoveryMs: { type: ["number", "null"], minimum: 0 },
+          limitations: { type: "array", items: { type: "string" } },
         },
       },
       CandleRecord: {

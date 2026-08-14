@@ -4,6 +4,7 @@
  * lifecycle callbacks. The class accepts an injectable WebSocket
  * constructor for tests.
  */
+import { recordPerformanceTrace } from "./perf-metrics";
 
 export type WSEventHandler = (ev: { type: string; data?: unknown }) => void;
 
@@ -68,6 +69,7 @@ export function createReconnectingWS(url: string, options: ReconnectOptions = {}
   let attempt = 0;
   let closedByUser = false;
   let timer: ReturnType<typeof setTimeout> | null = null;
+  let recoveryStartedAt: number | null = null;
 
   const emit = (type: string, data?: unknown): void => {
     for (const h of handlers[type] ?? []) h({ type, data });
@@ -82,6 +84,10 @@ export function createReconnectingWS(url: string, options: ReconnectOptions = {}
     }
     ws = new Impl(url);
     ws.addEventListener("open", () => {
+      if (recoveryStartedAt !== null) {
+        recordPerformanceTrace("websocketRecoveryMs", performance.now() - recoveryStartedAt);
+        recoveryStartedAt = null;
+      }
       attempt = 0;
       while (queue.length > 0) {
         const msg = queue.shift();
@@ -96,6 +102,7 @@ export function createReconnectingWS(url: string, options: ReconnectOptions = {}
     ws.addEventListener("close", () => {
       emit("close");
       if (closedByUser) return;
+      recoveryStartedAt ??= performance.now();
       const delay = nextBackoff(attempt, options);
       attempt++;
       timer = setTimeout(connect, delay);

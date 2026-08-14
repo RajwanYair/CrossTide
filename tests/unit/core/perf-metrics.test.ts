@@ -55,6 +55,16 @@ describe("perf-metrics", () => {
     expect(getPerfMetrics().traces.cardLoadMs).toBe(0);
   });
 
+  it("calculates worker transfer p95 from bounded samples", async () => {
+    const { recordPerformanceTrace, getPerfMetrics, resetCustomMetrics } = await loadModule();
+    for (const duration of [10, 30, 20, 40, 50, 60, 70, 80, 90, 100]) {
+      recordPerformanceTrace("workerTransferMs", duration);
+    }
+    expect(getPerfMetrics().workerP95Ms).toBe(100);
+    resetCustomMetrics();
+    expect(getPerfMetrics().workerP95Ms).toBeNull();
+  });
+
   it("formatMetric formats ms values", async () => {
     const { formatMetric } = await loadModule();
     expect(formatMetric(1234, "ms")).toBe("1234 ms");

@@ -6,6 +6,10 @@ This is the repository-level record of external tool access, deployment
 credentials, optional provider secrets, and durable engineering learnings.
 It intentionally records capability and scope, never secret values.
 
+Use [the operations rehearsal record](OPERATIONS-REHEARSAL.md) to capture
+fresh-machine recovery evidence. The checklist is intentionally separate from
+this runbook so incomplete rehearsals cannot be mistaken for verified claims.
+
 ## Verification Snapshot
 
 Last checked: 2026-08-12 on Windows, branch `main`.

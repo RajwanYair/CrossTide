@@ -30,14 +30,14 @@ the next work from the current roadmap statuses and verified local evidence.
 |---:|---|---|---|---|
 | 1 | P04 | Rehearse the Docker self-hosting path on a clean machine | Blocked locally | Docker build, health, restart, persistence, and shutdown report |
 | 2 | P05 | Rehearse rollback, backup, restore, migration, incident, and provider-outage runbooks | In progress | Fresh-machine rehearsal records evidence for each procedure |
-| 3 | A05 | Validate the hybrid rendering decision with representative workflow measurements | In progress | ADR records repeatable LCP, INP, CLS, scripting, memory, and accessibility evidence |
-| 4 | A06 | Standardize card lifecycle and disposal behavior | In progress | Registry lifecycle tests cover mount, inactive disposal, shutdown, and failed loads |
-| 5 | U06 | Complete locale, RTL, number, date, and timezone support | In progress | Locale catalog, RTL, and formatter tests pass for all supported locales |
-| 6 | F01 | Make performance budgets observable in CI and probes | In progress | Budget drift tests and metric-specific executable gate pass |
-| 7 | F02 | Capture startup, lazy-load, chart, worker, and service-worker measurements | Pending F01 evidence | Desktop, mobile, and low-end profiles produce repeatable reports |
-| 8 | U03 | Complete heatmap keyboard, accessibility, resize, and touch behavior | In progress | Browser interaction and accessibility checks pass on supported viewports |
-| 9 | D06 | Validate OHLCV gaps, corporate actions, duplicates, currency, and calendars | In progress | Domain checks reject or visibly mark invalid market data |
-| 10 | D07 | Validate indicator and backtest semantics against published references and invariants | In progress | Numerical review records tolerances, edge cases, and known limitations |
+| 3 | A05 | Validate the hybrid rendering decision with representative workflow measurements | Verified | ADR records repeatable LCP, INP, CLS, scripting, memory, and accessibility evidence |
+| 4 | A06 | Standardize card lifecycle and disposal behavior | Verified | Registry lifecycle tests cover mount, inactive disposal, shutdown, and failed loads |
+| 5 | U06 | Complete locale, RTL, number, date, and timezone support | Verified | Locale catalog, RTL, and formatter tests pass for all supported locales |
+| 6 | F01 | Make performance budgets observable in CI and probes | In progress | Repository gate and Chromium probe evaluate canonical browser budgets; `/api/metrics` exposes process-local Worker request p95 for production probes; browser cache and WebSocket metrics remain explicitly unmeasured |
+| 7 | F02 | Capture startup, lazy-load, chart, worker, and service-worker measurements | In progress | `npm run test:e2e:performance:profiles` attaches profile-labeled startup, card-load, chart-render, Worker-transfer, and service-worker measurements for Chromium, mobile Chrome, and Android Galaxy; optimization and broader comparison remain |
+| 8 | U03 | Complete heatmap keyboard, accessibility, resize, and touch behavior | Verified | Full supported Playwright matrix passes: 155 heatmap-focused keyboard, accessibility, resize, navigation, and touch tests across desktop, mobile, tablet, and Android projects |
+| 9 | D06 | Validate OHLCV gaps, corporate actions, duplicates, currency, and calendars | Verified | Domain checks reject or visibly mark invalid market data |
+| 10 | D07 | Validate indicator and backtest semantics against published references and invariants | Verified | Numerical property and financial-invariant suites pass |
 
 U07, D03, and D04 are excluded because their acceptance evidence is complete. P01-P03,
 P06, S01, E02, and rank 48-50 backlog tasks remain externally blocked.

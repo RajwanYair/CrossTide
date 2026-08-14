@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { nextBackoff, createReconnectingWS } from "../../../src/core/reconnecting-ws";
+import { getPerfMetrics, resetCustomMetrics } from "../../../src/core/perf-metrics";
 
 class FakeWS {
   static instances: FakeWS[] = [];
@@ -24,6 +25,10 @@ class FakeWS {
 }
 
 describe("reconnecting-ws", () => {
+  beforeEach(() => {
+    resetCustomMetrics();
+  });
+
   it("nextBackoff grows exponentially", () => {
     const r = (): number => 0; // no jitter
     expect(nextBackoff(0, { random: r })).toBe(500);
@@ -96,6 +101,25 @@ describe("reconnecting-ws", () => {
     first.fire("close");
     vi.advanceTimersByTime(1000);
     expect(FakeWS.instances.length).toBe(2);
+    vi.useRealTimers();
+  });
+
+  it("records recovery duration after a server-initiated close", () => {
+    FakeWS.instances = [];
+    vi.useFakeTimers();
+    createReconnectingWS("wss://x", {
+      WebSocketImpl: FakeWS as unknown as typeof WebSocket,
+      random: () => 0,
+    });
+    const first = FakeWS.instances[0]!;
+    first.readyState = 1;
+    first.fire("open");
+    first.fire("close");
+    vi.advanceTimersByTime(500);
+    const recovered = FakeWS.instances[1]!;
+    recovered.readyState = 1;
+    recovered.fire("open");
+    expect(getPerfMetrics().traces.websocketRecoveryMs).toBeGreaterThanOrEqual(0);
     vi.useRealTimers();
   });
 

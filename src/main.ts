@@ -84,7 +84,7 @@ import { toggleTickerSelection } from "./core/ticker-selection";
 import { restoreSessionState, saveSessionState } from "./core/session-state";
 import { watchlistStore } from "./core/watchlist-store";
 import { estimateLocalStorageUsage, updateStorageSize } from "./core/cache-stats";
-import { initPerfObserver, recordPerformanceTrace } from "./core/perf-metrics";
+import { getPerfMetrics, initPerfObserver, recordPerformanceTrace } from "./core/perf-metrics";
 import { createPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initOfflineIndicator } from "./ui/offline-indicator";
@@ -163,13 +163,6 @@ async function activateCard(
   const el = document.getElementById(containerId);
   if (!el) return;
 
-  // K6: Ensure card containers are ARIA live regions so screen readers
-  // announce content updates (data refreshes, loading states).
-  if (!el.hasAttribute("aria-live")) {
-    el.setAttribute("aria-live", "polite");
-    el.setAttribute("aria-atomic", "false");
-  }
-
   // Inject selected ticker as symbol fallback when not already in route params
   const enrichedParams: Record<string, string> = { ...params };
   if (!enrichedParams["symbol"]) {
@@ -193,6 +186,7 @@ async function activateCard(
 }
 
 function main(): void {
+  window.__crosstidePerformanceMetrics = getPerfMetrics;
   let config = loadConfig();
   let tickerDataCache = new Map<string, TickerData>();
   let refreshTimer: ReturnType<typeof setTimeout> | null = null;

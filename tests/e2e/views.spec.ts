@@ -7,6 +7,7 @@
  */
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForAppReady } from "./app-ready";
 
 // ── Portfolio view ────────────────────────────────────────────────────────
 
@@ -25,7 +26,19 @@ test("portfolio view renders via direct URL", async ({ page }) => {
 
 test("heatmap view activates from nav link", async ({ page }) => {
   await page.goto("/");
-  await page.locator('a[data-route="heatmap"]').click();
+  await waitForAppReady(page);
+  const heatmapLink = page.locator('a[data-route="heatmap"]');
+  const linkBox = await heatmapLink.boundingBox();
+  const viewport = page.viewportSize();
+  if (
+    linkBox === null ||
+    viewport === null ||
+    linkBox.x < 0 ||
+    linkBox.x + linkBox.width > viewport.width
+  ) {
+    await page.locator("#sidebar-toggle").click();
+  }
+  await heatmapLink.click();
   await expect(page.locator("#view-heatmap")).toHaveClass(/active/);
 });
 
@@ -116,7 +129,12 @@ test("no critical a11y violations on the portfolio page", async ({ page }) => {
 
 test("no critical a11y violations on the heatmap page", async ({ page }) => {
   await page.goto("/heatmap");
-  await page.waitForLoadState("domcontentloaded");
+  await waitForAppReady(page);
+  await page.waitForTimeout(350);
+  const viewport = page.viewportSize();
+  if (viewport !== null) {
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+  }
 
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa"])

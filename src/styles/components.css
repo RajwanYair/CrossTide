@@ -167,7 +167,7 @@
   .empty-state {
     padding: var(--sp-xl);
     text-align: center;
-    color: var(--text-muted);
+    color: var(--text-primary);
     font-style: italic;
   }
 
@@ -430,7 +430,7 @@
     border-radius: var(--radius-lg);
     background: var(--bg-card);
     color: var(--text);
-    box-shadow: 0 16px 48px rgb(0, 0, 0, 0.4);
+    box-shadow: var(--elevation-5);
     padding: 0;
     width: min(560px, 90vw);
     max-height: min(420px, 70vh);
@@ -566,7 +566,7 @@
   }
 
   .heatmap-tile:hover {
-    opacity: 0.85;
+    opacity: 1;
   }
 
   .heatmap-global-grid .heatmap-tile {
@@ -577,7 +577,7 @@
 
   .heatmap-global-grid .heatmap-tile:hover,
   .heatmap-global-grid .heatmap-tile:focus-visible {
-    opacity: 0.86;
+    opacity: 1;
     outline: 2px solid var(--accent);
     outline-offset: -2px;
     z-index: 1;
@@ -588,6 +588,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: #fff;
+  }
+
+  [data-theme="light"] .heatmap-snapshot {
+    color: #57606a;
   }
 
   .heatmap-label {
@@ -662,6 +667,11 @@
     background: var(--accent);
     color: var(--bg-app);
     border-color: var(--accent);
+  }
+
+  [data-theme="light"] .btn-sort:hover,
+  [data-theme="light"] .btn-sort.sort-active {
+    color: #fff;
   }
 
   .heatmap-drill-table {
@@ -1501,7 +1511,7 @@
     background: var(--color-surface, #1e1e2e);
     border: 1px solid var(--color-border, #3a3a5c);
     border-radius: var(--radius, 8px);
-    box-shadow: 0 8px 32px rgb(0, 0, 0, 0.5);
+    box-shadow: var(--elevation-4);
     color: var(--color-text, #e2e8f0);
     max-width: 320px;
     min-width: 240px;
@@ -1895,14 +1905,14 @@
   /* ── Ticker context menu ──────────────────────────────────────────── */
   .ticker-context-menu {
     position: fixed;
-    z-index: 1000;
+    z-index: var(--z-dropdown);
     min-width: 11rem;
     padding: var(--sp-xs);
     margin: 0;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--elevation-4);
     color: var(--text-primary);
   }
 

@@ -45,6 +45,14 @@ LCP, INP, CLS, scripting time, chart update time, memory after route disposal, k
 completion, and screen-reader-visible status. A rendering change needs a repeatable
 benchmark, an accessibility check, and a migration estimate before adoption.
 
+The repeatable Chromium benchmark is `npm run test:e2e:performance`. It exercises the
+three workflows, records LCP, INP, CLS, longest main-thread task, heap memory when the
+browser exposes it, route transition time, and serious/critical axe violations. The
+cross-profile comparison is `npm run test:e2e:performance:profiles`; it runs serially
+on Chromium, mobile Chrome landscape, and Android Galaxy so CPU contention does not
+distort the measurements. Each Playwright report attaches
+`hybrid-rendering-measurements.json` with the profile name.
+
 ## Consequences
 
 - New cards must keep interactive controls and state in DOM/Web Components.

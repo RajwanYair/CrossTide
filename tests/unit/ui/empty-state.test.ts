@@ -25,8 +25,8 @@ describe("ct-empty-state", () => {
 
     const container = el.querySelector(".ct-es--empty");
     expect(container).not.toBeNull();
-    expect(container!.getAttribute("role")).toBe("status");
-    expect(container!.getAttribute("aria-live")).toBe("polite");
+    expect(container!.getAttribute("role")).toBeNull();
+    expect(container!.getAttribute("aria-live")).toBeNull();
 
     document.body.removeChild(el);
   });
@@ -50,6 +50,7 @@ describe("ct-empty-state", () => {
     expect(el.querySelector(".ct-es--loading")).not.toBeNull();
     expect(el.querySelector(".ct-es-spinner")).not.toBeNull();
     expect(el.querySelector('[role="status"]')).not.toBeNull();
+    expect(el.querySelector(".ct-es--loading")?.getAttribute("aria-busy")).toBe("true");
 
     document.body.removeChild(el);
   });
@@ -63,6 +64,7 @@ describe("ct-empty-state", () => {
     expect(el.querySelector(".ct-es--error")).not.toBeNull();
     expect(el.querySelector(".ct-es-icon--error")).not.toBeNull();
     expect(el.querySelector(".ct-es-title")!.textContent).toBe("Something went wrong");
+    expect(el.querySelector(".ct-es--error")?.getAttribute("role")).toBe("alert");
 
     document.body.removeChild(el);
   });

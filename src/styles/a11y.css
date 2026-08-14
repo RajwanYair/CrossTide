@@ -112,6 +112,7 @@
   /* ── ARIA current page indicator (J11) ── */
   .nav-link[aria-current="page"] {
     border-bottom: 2px solid var(--color-accent, #4d90fe);
+    color: var(--accent);
     font-weight: 600;
   }
 

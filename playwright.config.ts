@@ -53,14 +53,17 @@ export default defineConfig({
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
+      testIgnore: [/mobile-responsive\.spec\.ts$/, /tablet-responsive\.spec\.ts$/],
     },
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
+      testIgnore: [/mobile-responsive\.spec\.ts$/, /tablet-responsive\.spec\.ts$/],
     },
     {
       name: "edge",
       use: { ...devices["Desktop Edge"] },
+      testIgnore: [/mobile-responsive\.spec\.ts$/, /tablet-responsive\.spec\.ts$/],
     },
     // ── Mobile viewports ──────────────────────────────────────────
     deviceProject("mobile-chrome", { ...devices["Pixel 7"] }, /mobile-responsive\.spec\.ts$/),

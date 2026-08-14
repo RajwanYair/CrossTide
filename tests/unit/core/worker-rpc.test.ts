@@ -3,6 +3,7 @@
  * fake Worker objects that echo messages synchronously.
  */
 import { describe, it, expect, beforeEach } from "vitest";
+import { getPerfMetrics, resetCustomMetrics } from "../../../src/core/perf-metrics";
 import {
   createWorkerClient,
   serveWorkerRpc,
@@ -80,6 +81,10 @@ function makeErrorWorker(): FakeWorker {
 // ── tests ─────────────────────────────────────────────────────────────────────
 
 describe("createWorkerClient", () => {
+  beforeEach(() => {
+    resetCustomMetrics();
+  });
+
   it("sends a correctly shaped RpcRequest", async () => {
     const w = makeSuccessWorker();
     const client = createWorkerClient<CalcApi>(w as unknown as Worker);
@@ -97,6 +102,7 @@ describe("createWorkerClient", () => {
     const client = createWorkerClient<CalcApi>(w as unknown as Worker);
     const result = await client.call("add", 10, 5);
     expect(result).toBe(15);
+    expect(getPerfMetrics().workerP95Ms).not.toBeNull();
   });
 
   it("rejects when worker returns ok: false", async () => {
