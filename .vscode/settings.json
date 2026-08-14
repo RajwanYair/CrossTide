@@ -2,38 +2,41 @@
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.biome": "explicit"
   },
-  "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+  "editor.quickSuggestions": {
+    "strings": true,
+    "comments": true,
+    "other": true
   },
-  "[css]": {
-    "editor.defaultFormatter": "biomejs.biome"
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": true,
+  "editor.renderWhitespace": "selection",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.cursorBlinking": "smooth",
+  "editor.linkedEditing": true,
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor"
   },
-  "[html]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "typescript.tsdk": "./node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "npm.packageManager": "npm",
-  "npm.autoDetect": "on",
-  "eslint.useFlatConfig": true,
-  "markdownlint.config": {
-    "extends": "./config/.markdownlint.json"
-  },
-  "stylelint.configFile": "./config/.stylelintrc.json",
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/coverage": true,
-    "**/build": true,
-    "**/test-results": true,
-    "**/playwright-report": true,
-    "**/.wrangler": true
-  },
+  "workbench.startupEditor": "readme",
+  "explorer.autoReveal": false,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.fetchOnPull": true,
+  "terminal.integrated.tabs.enabled": true,
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.enablePersistentSessions": true,
+  "search.followSymlinks": false,
+  "search.useIgnoreFiles": true,
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
@@ -43,7 +46,18 @@
     "**/playwright-report": true,
     "**/.wrangler": true,
     "**/.astro": true,
-    "**/package-lock.json": true
+    "**/package-lock.json": true,
+    "**/.git": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/build": true,
+    "**/test-results": true,
+    "**/playwright-report": true,
+    "**/.wrangler": true,
+    "**/.astro": true
   },
   "files.watcherExclude": {
     "**/node_modules/**": true,
@@ -57,23 +71,34 @@
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true
   },
-  "search.followSymlinks": false,
-  "search.useIgnoreFiles": true,
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsserver.maxTsServerMemory": 6144,
   "typescript.preferences.includePackageJsonAutoImports": "off",
   "typescript.disableAutomaticTypeAcquisition": true,
   "javascript.preferences.includePackageJsonAutoImports": "off",
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
+  "npm.packageManager": "npm",
+  "npm.autoDetect": "on",
+  "eslint.useFlatConfig": true,
   "css.validate": false,
   "css.customData": ["./config/css-custom-data.json"],
   "stylelint.validate": ["css"],
+  "stylelint.configFile": "./config/.stylelintrc.json",
   "html.validate.scripts": true,
   "html.validate.styles": true,
   "html.format.wrapLineLength": 120,
   "html.customData": ["./config/html-custom-data.json"],
+  "markdownlint.config": {
+    "extends": "./config/.markdownlint.json"
+  },
+  "coverage-gutters.coverageBaseDir": "coverage",
+  "coverage-gutters.coverageFileNames": ["lcov.info"],
   "github.copilot.enable": {
-    "*": true
+    "*": true,
+    "markdown": true,
+    "plaintext": false,
+    "scminput": true,
+    "yaml": true
   },
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
   "github.copilot.chat.codesearch.enabled": true,
@@ -108,9 +133,6 @@
       "text": "Summarize what changed and why, grouped by layer (domain/worker/cards/core/ui/ci). Call out quality-gate impact: coverage thresholds, bundle size, or new tests. Keep it factual and short; no marketing language."
     }
   ],
-  "coverage-gutters.coverageBaseDir": "coverage",
-  "coverage-gutters.coverageFileNames": ["lcov.info"],
-  // Browser Compatibility Checker — align with .browserslistrc targets; exclude non-browser code
   "browser-compatibility-checker.browserList": [
     "chrome",
     "edge",

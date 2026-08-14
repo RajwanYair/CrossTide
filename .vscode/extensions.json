@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "github.copilot",
     "github.copilot-chat",
     "biomejs.biome",
     "dbaeumer.vscode-eslint",
@@ -19,7 +20,9 @@
     "sonarsource.sonarlint-vscode",
     "ryanluker.vscode-coverage-gutters",
     "streetsidesoftware.code-spell-checker",
-    "usernamehw.errorlens"
+    "usernamehw.errorlens",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml"
   ],
-  "unwantedRecommendations": ["esbenp.prettier-vscode"]
+  "unwantedRecommendations": ["esbenp.prettier-vscode", "ms-vscode.vscode-typescript-next"]
 }
