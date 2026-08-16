@@ -6,6 +6,7 @@ export interface OhlcvQualityIssue {
     | "invalid-value"
     | "invalid-range"
     | "duplicate-date"
+    | "duplicate-candle"
     | "out-of-order"
     | "gap"
     | "currency-mismatch"
@@ -83,6 +84,19 @@ export function validateOhlcv(
           code: "out-of-order",
           date: candle.date,
           message: "Candle dates must be ascending",
+        });
+      if (
+        candle.date !== previous.date &&
+        candle.open === previous.open &&
+        candle.high === previous.high &&
+        candle.low === previous.low &&
+        candle.close === previous.close &&
+        candle.volume === previous.volume
+      )
+        issues.push({
+          code: "duplicate-candle",
+          date: candle.date,
+          message: "Candle values are identical to the previous day's candle",
         });
       const gapDays = calendarDaysBetween(previous.date, candle.date);
       if (gapDays > maxTradingGapDays)

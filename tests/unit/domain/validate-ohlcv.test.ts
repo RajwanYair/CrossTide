@@ -45,6 +45,19 @@ describe("validateOhlcv", () => {
     expect(report.issues[0]?.code).toBe("currency-mismatch");
   });
 
+  it("reports a duplicate candle when consecutive days share identical OHLCV values", () => {
+    const report = validateOhlcv([
+      candle("2026-08-10", 10),
+      candle("2026-08-11", 10),
+      candle("2026-08-12", 12),
+    ]);
+    expect(report.valid).toBe(false);
+    expect(report.issues).toContainEqual(
+      expect.objectContaining({ code: "duplicate-candle", date: "2026-08-11" }),
+    );
+    expect(report.issues.some((issue) => issue.date === "2026-08-12")).toBe(false);
+  });
+
   it.each([
     { field: "splitFactor", value: 0, code: "invalid-split" },
     { field: "splitFactor", value: Number.NaN, code: "invalid-split" },

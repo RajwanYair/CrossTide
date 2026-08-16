@@ -15,6 +15,10 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - **Roadmap sprint status updated:** the next 25 planned roadmap items are now tracked as the active implementation batch in `docs/SPRINT-50.md`, with deployment, data-quality, locale, and performance work explicitly called out as the current delivery focus.
 - **Docs status kept consistent:** the active roadmap status in `docs/ROADMAP.md` now reflects the same sprint batch and keeps verified vs blocked work separated by evidence rather than by assumption.
 
+### ✨ Added
+
+- **OHLCV validation now detects consecutive-day duplicate candles** (roadmap D06): `validateOhlcv` previously only rejected duplicate *dates*, so a provider that repeated the same OHLCV values under a new date (a known corruption pattern) passed silently. It now flags a `duplicate-candle` issue when two consecutive candles share identical open/high/low/close/volume with different dates, with a focused test covering the case.
+
 ## [11.44.6] — 2026-08-12
 
 ### 🔄 Changed

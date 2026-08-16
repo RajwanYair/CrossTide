@@ -84,7 +84,7 @@ the next work from the current roadmap statuses and verified local evidence.
 | 6 | F01 | Make performance budgets observable in CI and probes | Verified | Shared LCP budget matches the measured 2.7s real-world signal and the Lighthouse gate plus browser benchmark pass with matching evidence |
 | 7 | F02 | Capture startup, lazy-load, chart, worker, and service-worker measurements | In progress | `npm run test:e2e:performance:profiles` attaches profile-labeled startup, card-load, chart-render, Worker-transfer, and service-worker measurements for Chromium, mobile Chrome, and Android Galaxy; optimization and broader comparison remain |
 | 8 | U03 | Complete heatmap keyboard, accessibility, resize, and touch behavior | Verified | Full supported Playwright matrix passes: 155 heatmap-focused keyboard, accessibility, resize, navigation, and touch tests across desktop, mobile, tablet, and Android projects |
-| 9 | D06 | Validate OHLCV gaps, corporate actions, duplicates, currency, and calendars | Verified | Domain checks reject or visibly mark invalid market data |
+| 9 | D06 | Validate OHLCV gaps, corporate actions, duplicates, currency, and calendars | Verified | Domain checks reject or visibly mark invalid market data, including consecutive-day duplicate-candle detection |
 | 10 | D07 | Validate indicator and backtest semantics against published references and invariants | Verified | Numerical property and financial-invariant suites pass |
 
 U07, D03, and D04 are excluded because their acceptance evidence is complete. P01-P03,
