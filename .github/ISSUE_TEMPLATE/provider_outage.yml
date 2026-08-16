@@ -1,0 +1,58 @@
+name: Provider Outage
+description: Report an upstream data provider or Worker outage affecting many users, not just one endpoint response
+title: "[Outage]: "
+labels: ["outage", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for a **sustained** outage (provider down, Worker returning 5xx broadly,
+        WebSocket fan-out not delivering updates) affecting many symbols or users. For a
+        single broken endpoint response, use the **API / Data Source Issue** template.
+        For a wrong-but-available value, use the **Data Quality Report** template.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected Surface
+      options:
+        - Yahoo Finance (quote, chart, fundamentals, earnings)
+        - Finnhub
+        - CoinGecko (crypto)
+        - ECB / Yahoo Forex
+        - FRED (market breadth / VIX)
+        - Cloudflare Worker (all routes / 5xx)
+        - WebSocket ticker fan-out (Durable Object)
+        - Cloudflare Pages (frontend unreachable)
+        - MCP server
+        - Other / Unknown
+    validations:
+      required: true
+  - type: input
+    id: started
+    attributes:
+      label: When did you first notice this? (UTC time, best guess)
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Is it every symbol/route, or a specific subset (e.g. only crypto, only one region)?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Response status codes, error messages, or a `curl` output against `/api/health` if you can get one.
+      placeholder: |
+        curl -s https://crosstide.pages.dev/api/health
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked the [status/health endpoint](https://crosstide.pages.dev/api/health) or a recent Smoke Test run
+          required: false

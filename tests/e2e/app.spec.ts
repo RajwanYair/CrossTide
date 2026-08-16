@@ -171,10 +171,10 @@ test("share shortcut creates a restorable route token", async ({ page, context }
 test("settings page has theme selector and action buttons", async ({ page }) => {
   await page.goto("/settings");
   await expect(page.locator("#theme-select")).toBeVisible();
-  await expect(page.locator("#btn-export")).toBeVisible();
-  await expect(page.locator("#btn-import")).toBeVisible();
-  await expect(page.locator("#btn-clear")).toBeVisible();
-  await expect(page.locator("#btn-clear-cache")).toBeVisible();
+  await expect(page.locator("[data-action='export']")).toBeVisible();
+  await expect(page.locator("[data-action='import']")).toBeVisible();
+  await expect(page.locator("[data-action='clear-watchlist']")).toBeVisible();
+  await expect(page.locator("[data-action='clear-cache']")).toBeVisible();
 });
 
 // ---------------------------------------------------------------------------

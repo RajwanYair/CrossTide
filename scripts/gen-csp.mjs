@@ -27,7 +27,7 @@ const PROVIDER_ORIGINS = [
 
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'wasm-unsafe-eval'",
+  "script-src 'self' 'wasm-unsafe-eval' blob:",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",

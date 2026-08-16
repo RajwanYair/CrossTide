@@ -96,4 +96,25 @@ describe("portfolio-rebalance", () => {
     expect(plan.totalValue).toBe(0);
     expect(plan.needsRebalance).toBe(false);
   });
+
+  it("explanation reports the largest drift and its threshold", () => {
+    const plan = calculateRebalance(holdings, targets);
+    expect(plan.explanation.driftThreshold).toBe(0.02);
+    expect(plan.explanation.largestDrift?.ticker).toBe("AAPL");
+    expect(plan.explanation.untrackedHoldings).toEqual([]);
+  });
+
+  it("explanation flags holdings with no target allocation", () => {
+    const plan = calculateRebalance(holdings, [{ ticker: "AAPL", weight: 1 }]);
+    expect(plan.explanation.untrackedHoldings).toEqual(["MSFT", "GOOG"]);
+    expect(plan.explanation.limitations[0]).toMatch(/no target weight/u);
+  });
+
+  it("explanation reports a limitation and null largestDrift for an empty portfolio", () => {
+    const plan = calculateRebalance([], targets);
+    expect(plan.explanation.largestDrift).toBeNull();
+    expect(plan.explanation.limitations).toContain(
+      "Portfolio has no value — no trades can be computed.",
+    );
+  });
 });

@@ -19,7 +19,11 @@ information architecture and review triggers.
 | `docs/demos/README.md` | Developer experience maintainers | Demo recording and fixture workflow | Demo script or fixture contract change |
 | `docs/CAPABILITY_MATRIX.md` | Product maintainers | Supported, preview, dormant, and blocked feature status | Route, package, provider, or support-status change |
 | `docs/PACKAGE_CONTRACTS.md` | Architecture maintainers | Public, runtime-only, and experimental package boundaries | Export, barrel, widget, MCP, or Worker API change |
+| `docs/API_VERSIONING.md` | Architecture maintainers | Real per-surface version state and bump policy for OpenAPI, envelopes, MCP tools, widgets, and packages | Any surface's version field changes, or a new consumer needs one |
 | `docs/SECRET_LIFECYCLE.md` | Security and operations maintainers | Secret storage, rotation, and fork portability | Secret, binding, proxy, or provider configuration change |
+| `docs/DEPRECATION_POLICY.md` | Repository maintainers | Deprecation and migration policy for routes, providers, indicators, packages, widgets, and config | Breaking-change or removal-horizon policy change |
+| `docs/DATA_RETENTION.md` | Security and operations maintainers | D1 and telemetry retention, deletion, export, and consent behavior | New user-data table, retention window, or telemetry sink change |
+| `docs/USER_FEEDBACK_PLAN.md` | Product maintainers | External usability recruitment, consent, and findings protocol | Journey, recruitment, or consent-policy change |
 | `docs/adr/NNNN-*.md` | Decision owner named in each ADR | One durable architecture or security decision | Evidence or decision-status change |
 | `docs-site/src/content/docs/*.mdx` | Documentation maintainers | Public user and contributor documentation | Public feature, API, or support-claim change |
 | `.github/CONTRIBUTING.md` | Repository maintainers | Contribution policy and merge gates | Policy, gate, or branch workflow change |

@@ -233,9 +233,8 @@ describe("settings — Finnhub API key", () => {
 
   it("saves Finnhub key on button click", () => {
     renderSettings(container, makeConfig(), cbs);
-    const input = container.querySelector("#finnhub-key") as HTMLInputElement;
-    const btn = container.querySelector("#btn-save-finnhub") as HTMLButtonElement;
-    if (!input || !btn) return; // skip if UI element not rendered
+    const input = container.querySelector("#finnhub-key-input") as HTMLInputElement;
+    const btn = container.querySelector("[data-action='finnhub-save']") as HTMLButtonElement;
     input.value = "test_key_123";
     btn.click();
     expect(cbs.onFinnhubKeyChange).toHaveBeenCalledWith("test_key_123");
@@ -243,8 +242,8 @@ describe("settings — Finnhub API key", () => {
 
   it("clears Finnhub key on clear button click", () => {
     renderSettings(container, makeConfig(), cbs);
-    const btn = container.querySelector("#btn-clear-finnhub") as HTMLButtonElement;
-    if (!btn) return;
+    const btn = container.querySelector("[data-action='finnhub-clear']") as HTMLButtonElement;
+    btn.removeAttribute("disabled");
     btn.click();
     expect(cbs.onFinnhubKeyChange).toHaveBeenCalledWith(null);
   });
@@ -263,8 +262,7 @@ describe("settings — export gz button", () => {
 
   it("calls onExportGz callback when gz export button is clicked", () => {
     renderSettings(container, makeConfig(), cbs);
-    const btn = container.querySelector("#btn-export-gz") as HTMLButtonElement;
-    if (!btn) return;
+    const btn = container.querySelector("[data-action='export-gz']") as HTMLButtonElement;
     btn.click();
     expect(cbs.onExportGz).toHaveBeenCalledOnce();
   });
@@ -292,8 +290,7 @@ describe("settings — method weights", () => {
 
   it("resets weights to defaults on button click", () => {
     renderSettings(container, makeConfig(), cbs);
-    const btn = container.querySelector("#btn-reset-weights") as HTMLButtonElement;
-    if (!btn) return;
+    const btn = container.querySelector("[data-action='reset-weights']") as HTMLButtonElement;
     btn.click();
     expect(cbs.onMethodWeightsChange).toHaveBeenCalled();
   });

@@ -30,6 +30,10 @@ export interface SignalDslScriptResponse {
   result: ScriptResult;
 }
 
+/** S05: reject oversized payloads before they reach the parser/evaluator. */
+const MAX_EXPRESSION_LENGTH = 2_000;
+const MAX_SCRIPT_LENGTH = 10_000;
+
 const BUILTIN_FUNCS: Readonly<Record<string, (...args: Value[]) => Value>> = {
   abs: (x) => Math.abs(Number(x)),
   min: (a, b) => Math.min(Number(a), Number(b)),
@@ -83,6 +87,12 @@ export async function handleSignalDslExecute(request: Request): Promise<Response
       headers: { "Content-Type": "application/json" },
     });
   }
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    return new Response(
+      JSON.stringify({ error: `expression exceeds maximum length of ${MAX_EXPRESSION_LENGTH}` }),
+      { status: 413, headers: { "Content-Type": "application/json" } },
+    );
+  }
 
   try {
     const vars = parseVars(payload.vars);
@@ -135,6 +145,12 @@ export async function handleSignalDslExecuteScript(request: Request): Promise<Re
       status: 400,
       headers: { "Content-Type": "application/json" },
     });
+  }
+  if (script.length > MAX_SCRIPT_LENGTH) {
+    return new Response(
+      JSON.stringify({ error: `script exceeds maximum length of ${MAX_SCRIPT_LENGTH}` }),
+      { status: 413, headers: { "Content-Type": "application/json" } },
+    );
   }
 
   try {

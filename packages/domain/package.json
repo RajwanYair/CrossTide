@@ -1,6 +1,6 @@
 {
   "name": "@crosstide/domain",
-  "version": "11.44.6",
+  "version": "12.0.0",
   "description": "Pure TypeScript financial analysis engine — 200+ technical indicators, consensus scoring, portfolio analytics and risk metrics with zero runtime dependencies.",
   "keywords": [
     "technical-analysis",

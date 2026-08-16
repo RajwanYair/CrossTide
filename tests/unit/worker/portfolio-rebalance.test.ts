@@ -58,6 +58,34 @@ describe("handlePortfolioRebalance", () => {
     expect(body.error).toContain("sum to 1");
   });
 
+  it("returns 413 when holdings exceed the maximum count (S05)", async () => {
+    const holdings = Array.from({ length: 501 }, (_, i) => ({
+      ticker: `T${i}`,
+      value: 1,
+    }));
+    const res = await handlePortfolioRebalance(
+      makeRequest({ holdings, targets: [{ ticker: "T0", weight: 1 }] }),
+      makeEnv(),
+    );
+    expect(res.status).toBe(413);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toContain("holdings");
+  });
+
+  it("returns 413 when targets exceed the maximum count (S05)", async () => {
+    const targets = Array.from({ length: 501 }, (_, i) => ({
+      ticker: `T${i}`,
+      weight: 1 / 501,
+    }));
+    const res = await handlePortfolioRebalance(
+      makeRequest({ holdings: [{ ticker: "T0", value: 1000 }], targets }),
+      makeEnv(),
+    );
+    expect(res.status).toBe(413);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toContain("targets");
+  });
+
   it("computes rebalance plan for balanced portfolio", async () => {
     const res = await handlePortfolioRebalance(
       makeRequest({

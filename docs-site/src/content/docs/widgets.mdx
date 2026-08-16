@@ -16,6 +16,28 @@ These are the smallest way to reuse CrossTide surfaces outside the full
 application shell. All widgets use closed Shadow DOM so host-page CSS cannot
 leak into them.
 
+## Versioning
+
+Each element exposes its widget contract version two ways: a static property
+(`CrosstideChartElement.version`) and a `data-widget-version` attribute set on
+the element itself once connected. Check either before relying on a specific
+attribute set. Breaking attribute changes follow
+[`docs/DEPRECATION_POLICY.md`](https://github.com/RajwanYair/CrossTide/blob/main/docs/DEPRECATION_POLICY.md)
+with a minimum two-minor-release notice window.
+
+```js
+console.log(document.querySelector("crosstide-chart").dataset.widgetVersion);
+```
+
+## Theming
+
+Theming is **attribute-only** — set `theme="dark" | "light" | "auto"`. Because
+the widgets render into a **closed** Shadow DOM, host-page CSS (including CSS
+custom properties declared on an ancestor) cannot penetrate the shadow
+boundary to restyle internals; there is no `--ct-*` custom-property override
+surface today. If you need colors that don't match either built-in palette,
+open an issue using the `feature_request` template describing the use case.
+
 ## Quick Start
 
 ```html
@@ -95,12 +117,42 @@ If you self-host the Worker, set `api-base` to your own origin.
 The widget trims trailing slashes from `api-base`, so both
 `https://quotes.example.com` and `https://quotes.example.com/` are valid.
 
+### Content Security Policy
+
+A host page embedding the widget script and pointing `api-base` at a
+self-hosted Worker needs both of these in its own CSP, adjusted to the actual
+origins used:
+
+```http
+script-src 'self' https://rajwanyair.github.io
+connect-src 'self' https://your-worker.example.com
+```
+
+The widget makes no other outbound requests; it does not load fonts, images,
+or third-party scripts of its own.
+
 ## Accessibility & Behavior
 
-- The widget renders into a **closed Shadow DOM** for style isolation.
+- The widget renders into a **closed Shadow DOM** for style isolation. Closed mode
+  only restricts the host page's *JavaScript* access via `element.shadowRoot`
+  (which returns `null`) — it does not remove shadow content from the
+  accessibility tree, so screen readers still see everything below (roadmap E03).
 - The chart canvas exposes `role="img"` and an `aria-label` with the ticker symbol.
+- The quote and consensus widgets render into a `role="group"` container with an
+  `aria-label` summarizing the current value (e.g. `"AAPL quote"`,
+  `"AAPL consensus: BUY"`) and `aria-live="polite"`, so a value change on the next
+  poll/attribute update is announced without requiring focus to move.
+- Every widget's loading placeholder uses `role="status"` + `aria-live="polite"`;
+  every error placeholder uses `role="alert"` (implicitly assertive), so loading
+  and failure transitions are both announced.
 - Network failures render an inline alert state instead of failing silently.
 - Resizing the host container triggers a redraw through `ResizeObserver`.
+- **Test coverage note:** because the Shadow DOM is closed, `tests/unit/ui/widget.test.ts`
+  cannot assert on shadow-internal ARIA attributes from outside the element (there
+  is no supported way to pierce a closed shadow root from test code, and there
+  should not be — that would defeat the point of closing it). The ARIA attributes
+  above are verified by reading the source and by browser-based accessibility
+  tooling, not by a unit test that reaches into the shadow tree.
 
 ## Current Scope
 

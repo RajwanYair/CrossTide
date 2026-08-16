@@ -9,9 +9,21 @@
  *   ticker   — optional, filters by ticker symbol
  *   since    — optional, ISO 8601 lower bound for fired_at
  *   limit    — optional, max results (default 50, max 200)
+ *
+ * Also implements S04's remaining data-retention gap: a scheduled purge of
+ * rows past the documented 180-day retention window (see
+ * `docs/DATA_RETENTION.md`), and self-service export/delete endpoints so a
+ * user's `alert_history` no longer requires an operator running a manual
+ * `wrangler d1 execute` query.
  */
 
 import type { D1Database, D1PreparedStatement } from "../index.js";
+
+/** Documented retention window — see docs/DATA_RETENTION.md. */
+export const ALERT_HISTORY_RETENTION_DAYS = 180;
+
+/** Hard cap on export size — same abuse-control posture as the 200-row query cap. */
+const EXPORT_ROW_CAP = 10_000;
 
 export interface AlertHistoryRow {
   id: string;
@@ -90,6 +102,60 @@ export async function queryAlertHistory(
 }
 
 /**
+ * Export the full alert history for a user, up to `EXPORT_ROW_CAP` rows.
+ * Unlike `queryAlertHistory` this has no default 50/200 pagination cap —
+ * it is meant for a one-shot self-service data export, not a UI list view.
+ */
+export async function exportAlertHistoryForUser(
+  db: D1Database,
+  userId: string,
+): Promise<AlertHistoryRow[]> {
+  const stmt: D1PreparedStatement = db
+    .prepare(
+      "SELECT id, rule_id, user_id, ticker, condition, value, fired_at FROM alert_history WHERE user_id = ? ORDER BY fired_at DESC LIMIT ?",
+    )
+    .bind(userId, EXPORT_ROW_CAP);
+  const result = await stmt.all<AlertHistoryRow>();
+  return result.results;
+}
+
+/**
+ * Delete every `alert_history` row for a user — the self-service equivalent
+ * of the operator-run `DELETE FROM alert_history WHERE user_id = ?` query
+ * documented in docs/DATA_RETENTION.md.
+ */
+export async function deleteAlertHistoryForUser(db: D1Database, userId: string): Promise<number> {
+  const result = await db.prepare("DELETE FROM alert_history WHERE user_id = ?").bind(userId).run();
+  return typeof result.meta.changes === "number" ? result.meta.changes : 0;
+}
+
+/**
+ * Delete every `alert_history` row older than the retention window.
+ * Called from the Worker's `scheduled()` handler on a daily cron — see
+ * `worker/index.ts` and `worker/wrangler.toml`'s `[triggers]` section.
+ */
+export async function purgeExpiredAlertHistory(
+  db: D1Database,
+  retentionDays: number = ALERT_HISTORY_RETENTION_DAYS,
+): Promise<number> {
+  const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000).toISOString();
+  const result = await db
+    .prepare("DELETE FROM alert_history WHERE fired_at < ?")
+    .bind(cutoff)
+    .run();
+  return typeof result.meta.changes === "number" ? result.meta.changes : 0;
+}
+
+function toCsv(rows: readonly AlertHistoryRow[]): string {
+  const header = "id,rule_id,user_id,ticker,condition,value,fired_at";
+  const escape = (v: string): string => (/[",\n]/u.test(v) ? `"${v.replaceAll('"', '""')}"` : v);
+  const lines = rows.map((r) =>
+    [r.id, r.rule_id, r.user_id, r.ticker, escape(r.condition), r.value, r.fired_at].join(","),
+  );
+  return [header, ...lines].join("\n");
+}
+
+/**
  * HTTP handler for GET /api/alerts/history.
  */
 export async function handleAlertHistory(url: URL, env: { DB?: D1Database }): Promise<Response> {
@@ -116,6 +182,78 @@ export async function handleAlertHistory(url: URL, env: { DB?: D1Database }): Pr
   const result = await queryAlertHistory(env.DB, { userId, ticker, since, limit });
 
   return new Response(JSON.stringify(result), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/**
+ * HTTP handler for GET /api/alerts/history/export — self-service data export
+ * (S04). Returns JSON by default, or CSV with `?format=csv`.
+ */
+export async function handleAlertHistoryExport(
+  url: URL,
+  env: { DB?: D1Database },
+): Promise<Response> {
+  if (!env.DB) {
+    return new Response(JSON.stringify({ error: "Database not available" }), {
+      status: 503,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const userId = url.searchParams.get("user_id");
+  if (!userId) {
+    return new Response(JSON.stringify({ error: "user_id query parameter is required" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const rows = await exportAlertHistoryForUser(env.DB, userId);
+
+  if (url.searchParams.get("format") === "csv") {
+    return new Response(toCsv(rows), {
+      status: 200,
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="alert-history-${userId}.csv"`,
+      },
+    });
+  }
+
+  return new Response(JSON.stringify({ history: rows, count: rows.length }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/**
+ * HTTP handler for DELETE /api/alerts/history — self-service deletion (S04).
+ * Deletes all rows for the given `user_id`; there is no partial-delete mode.
+ */
+export async function handleAlertHistoryDelete(
+  url: URL,
+  env: { DB?: D1Database },
+): Promise<Response> {
+  if (!env.DB) {
+    return new Response(JSON.stringify({ error: "Database not available" }), {
+      status: 503,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const userId = url.searchParams.get("user_id");
+  if (!userId) {
+    return new Response(JSON.stringify({ error: "user_id query parameter is required" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const deleted = await deleteAlertHistoryForUser(env.DB, userId);
+
+  return new Response(JSON.stringify({ deleted }), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });

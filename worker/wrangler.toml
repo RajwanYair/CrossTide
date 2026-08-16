@@ -69,5 +69,10 @@ new_classes = ["TickerFanout"]
 
 # R7: Cron trigger for server-side alert evaluation.
 # Runs every 5 minutes during typical market hours (Mon-Fri 13:30-20:00 UTC).
+# Q15: Nightly R2 OHLCV archival at 00:00 UTC — the scheduled() handler already
+# branched on this cron string, but it was never registered here, so archival
+# never actually ran despite CHANGELOG.md documenting it as "cron-driven".
+# S04: Daily alert_history retention purge at 03:00 UTC (past the documented
+# 180-day retention window — see docs/DATA_RETENTION.md).
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["*/5 * * * *", "0 0 * * *", "0 3 * * *"]

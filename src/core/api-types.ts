@@ -161,6 +161,18 @@ export interface ApiRoutes {
     readonly request: never;
     readonly response: AlertHistoryResponse;
   };
+  /** DELETE /api/alerts/history */
+  readonly deleteAlertHistory: {
+    readonly request: never;
+    readonly response: {
+      readonly deleted: number;
+    };
+  };
+  /** GET /api/alerts/history/export */
+  readonly exportAlertHistory: {
+    readonly request: never;
+    readonly response: AlertHistoryResponse;
+  };
   /** GET /api/quote/{symbol} */
   readonly getQuote: {
     readonly request: never;

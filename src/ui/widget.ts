@@ -22,6 +22,14 @@
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
+/**
+ * Widget contract version (roadmap E03) — bump per `docs/DEPRECATION_POLICY.md`
+ * whenever an attribute is added, renamed, or removed. Exposed as a static
+ * property and a `data-widget-version` DOM attribute so a host page can check
+ * compatibility without parsing the bundle.
+ */
+export const WIDGET_CONTRACT_VERSION = "1.0.0";
+
 interface CandleData {
   readonly time: number;
   readonly open: number;
@@ -117,6 +125,8 @@ function makeStyle(cssText: string): HTMLStyleElement {
 function makeLoading(message: string): HTMLDivElement {
   const el = document.createElement("div");
   el.className = "ct-loading";
+  el.setAttribute("role", "status");
+  el.setAttribute("aria-live", "polite");
   el.textContent = message;
   return el;
 }
@@ -258,6 +268,7 @@ const CHART_BOOTSTRAP_CSS = `
 `;
 
 export class CrosstideChartElement extends HTMLElement {
+  static readonly version = WIDGET_CONTRACT_VERSION;
   static readonly observedAttributes = [
     "ticker",
     "interval",
@@ -275,6 +286,7 @@ export class CrosstideChartElement extends HTMLElement {
 
   constructor() {
     super();
+    this.setAttribute("data-widget-version", WIDGET_CONTRACT_VERSION);
     this.#shadow = this.attachShadow({ mode: "closed" });
     this.#shadow.replaceChildren(makeStyle(CHART_BOOTSTRAP_CSS), makeLoading("Loading chart..."));
   }
@@ -391,6 +403,7 @@ export class CrosstideChartElement extends HTMLElement {
 }
 
 export class CrosstideQuoteElement extends HTMLElement {
+  static readonly version = WIDGET_CONTRACT_VERSION;
   static readonly observedAttributes = ["ticker", "theme", "api-base", "show-change"];
 
   #shadow: ShadowRoot;
@@ -398,6 +411,7 @@ export class CrosstideQuoteElement extends HTMLElement {
 
   constructor() {
     super();
+    this.setAttribute("data-widget-version", WIDGET_CONTRACT_VERSION);
     this.#shadow = this.attachShadow({ mode: "closed" });
     this.#showLoading();
   }
@@ -483,6 +497,9 @@ export class CrosstideQuoteElement extends HTMLElement {
 
     const wrap = document.createElement("div");
     wrap.className = "ct-wrap";
+    wrap.setAttribute("role", "group");
+    wrap.setAttribute("aria-label", `${quote.ticker} quote`);
+    wrap.setAttribute("aria-live", "polite");
 
     const symbol = document.createElement("span");
     symbol.className = "ct-symbol";
@@ -542,6 +559,7 @@ export class CrosstideQuoteElement extends HTMLElement {
 }
 
 export class CrosstideConsensusElement extends HTMLElement {
+  static readonly version = WIDGET_CONTRACT_VERSION;
   static readonly observedAttributes = ["ticker", "theme", "api-base"];
 
   #shadow: ShadowRoot;
@@ -549,6 +567,7 @@ export class CrosstideConsensusElement extends HTMLElement {
 
   constructor() {
     super();
+    this.setAttribute("data-widget-version", WIDGET_CONTRACT_VERSION);
     this.#shadow = this.attachShadow({ mode: "closed" });
     this.#showLoading();
   }
@@ -653,6 +672,9 @@ export class CrosstideConsensusElement extends HTMLElement {
 
     const wrap = document.createElement("div");
     wrap.className = "ct-wrap";
+    wrap.setAttribute("role", "group");
+    wrap.setAttribute("aria-label", `${row.ticker} consensus: ${direction}`);
+    wrap.setAttribute("aria-live", "polite");
 
     const label = document.createElement("span");
     label.className = "ct-label";

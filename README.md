@@ -207,7 +207,6 @@ CrossTide ships with **25 registered route cards**, each accessible from the sid
 | **Custom signal DSL + `plot()`** | ✅ | Pine Script | ❌ | ❌ | ❌ |
 | **Bar Replay (tick-by-tick)** | Not supported | ✅ (paid) | ❌ | ❌ | ❌ |
 | **< 250 KB gzip bundle** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Native iOS / Android** | Preview (Capacitor; smoke evidence pending) | ✅ | ✅ | ❌ | ❌ |
 | **Strategy backtesting** | ✅ | ✅ | ❌ | ❌ | ✅ (paid) |
 | **Accessibility WCAG 2.2 AA** | ✅ | ❌ | Partial | ❌ | ❌ |
 | **FRED macro overlay** | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -243,19 +242,6 @@ CrossTide ships with **25 registered route cards**, each accessible from the sid
 - **Biome 2** code formatting (100× faster than Prettier).
 - **Stylelint 17**, **HTMLHint 1.9**, **markdownlint-cli2** for non-TS assets.
 - **Vanilla CSS** with custom properties (dark/light themes), no UI framework — pure TypeScript + DOM APIs.
-
-## Native Mobile (Capacitor)
-
-CrossTide has preview native iOS/Android packaging via Capacitor:
-
-```bash
-npm run build         # Build the web app
-npm run cap:sync      # Copy dist/ to native projects
-npm run cap:android   # Open in Android Studio
-npm run cap:ios       # Open in Xcode
-```
-
-Native features: splash screen, status bar theming, secure local storage via `@capacitor/preferences`.
 
 ## Worker API
 
@@ -297,9 +283,8 @@ worker/     Cloudflare Worker API proxy + security headers
 
 ```mermaid
 flowchart TD
-  subgraph Client["Browser (PWA) / Native (Capacitor)"]
+  subgraph Client["Browser (PWA)"]
     SPA["Vite SPA"]
-    Native["iOS / Android"]
   end
 
   subgraph Edge["Cloudflare Edge"]
@@ -323,7 +308,6 @@ flowchart TD
   end
 
   SPA -- "REST / WebSocket" --> Worker
-  Native -- "REST / WebSocket" --> Worker
   Worker --> DO
   Worker --> Cron
   Worker --> KV

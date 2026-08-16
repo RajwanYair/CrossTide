@@ -18,7 +18,7 @@ const API_CONNECT_SRC =
 function buildCsp(): string {
   const directives: Array<[string, string]> = [
     ["default-src", "'self'"],
-    ["script-src", "'self'"],
+    ["script-src", "'self' blob:"],
     ["style-src", "'self' 'unsafe-inline'"],
     ["img-src", "'self' data: blob:"],
     ["font-src", "'self' data:"],

@@ -37,7 +37,13 @@ import { handleNewsSentiment } from "./routes/news-sentiment.js";
 import { handleNews } from "./routes/news.js";
 import { handleScheduledAlertEval } from "./routes/alert-eval.js";
 import { dispatchWebhooks } from "./routes/webhook-dispatch.js";
-import { handleAlertHistory, insertAlertHistory } from "./routes/alert-history.js";
+import {
+  handleAlertHistory,
+  handleAlertHistoryExport,
+  handleAlertHistoryDelete,
+  insertAlertHistory,
+  purgeExpiredAlertHistory,
+} from "./routes/alert-history.js";
 import { handleEarningsCalendar } from "./routes/earnings-calendar.js";
 import { handleMigrationStatus } from "./routes/migrations.js";
 import { handleBatchQuotes } from "./routes/batch-quotes.js";
@@ -381,6 +387,9 @@ app.post("/api/signal-dsl/execute-script", async (c) => handleSignalDslExecuteSc
 
 // ── Alert history query (R7 completion) ───────────────────────────────────────
 app.get("/api/alerts/history", (c) => handleAlertHistory(new URL(c.req.url), c.env));
+// ── Alert history self-service export/delete (S04) ───────────────────────────
+app.get("/api/alerts/history/export", (c) => handleAlertHistoryExport(new URL(c.req.url), c.env));
+app.delete("/api/alerts/history", (c) => handleAlertHistoryDelete(new URL(c.req.url), c.env));
 
 // ── R5: News sentiment NLP scoring ────────────────────────────────────────────
 app.post("/api/news/sentiment", async (c) => handleNewsSentiment(c.req.raw));
@@ -435,6 +444,11 @@ export default {
     // Q15: Nightly R2 archival (runs on the 0:00 UTC cron, not every 5 min)
     if (_event.cron === "0 0 * * *" || _event.cron === "0 0 * * 1-5") {
       ctx.waitUntil(archiveTopTickers(env).then(() => {}));
+    }
+
+    // S04: Daily alert_history retention purge (past the documented 180-day window)
+    if (_event.cron === "0 3 * * *" && env.DB) {
+      ctx.waitUntil(purgeExpiredAlertHistory(env.DB).then(() => {}));
     }
 
     const fired = await handleScheduledAlertEval(env);

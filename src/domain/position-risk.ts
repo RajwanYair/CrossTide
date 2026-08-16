@@ -39,6 +39,17 @@ export interface PositionRisk {
   readonly riskRewardRatio: number | null;
   /** R-multiple: current gain expressed in units of risk */
   readonly rMultiple: number;
+  /** Assumptions and caveats behind the figures above */
+  readonly explanation: PositionRiskExplanation;
+}
+
+/** Explains the assumptions behind a single position's risk metrics. */
+export interface PositionRiskExplanation {
+  /** Whether a stop-loss price was supplied (no stop means dollarRisk is always 0). */
+  readonly hasStop: boolean;
+  /** Whether a target/take-profit price was supplied. */
+  readonly hasTarget: boolean;
+  readonly limitations: readonly string[];
 }
 
 /** Aggregate portfolio heat metrics */
@@ -53,6 +64,19 @@ export interface PortfolioHeat {
   readonly positionCount: number;
   /** Per-position risk as fraction of total equity */
   readonly positionRisks: readonly { readonly symbol: string; readonly riskPercent: number }[];
+  /** Assumptions and caveats behind the aggregate figures above */
+  readonly explanation: PortfolioHeatExplanation;
+}
+
+/** Explains the assumptions behind aggregate portfolio heat metrics. */
+export interface PortfolioHeatExplanation {
+  /** Total equity used as the risk denominator. */
+  readonly totalEquity: number;
+  /** Symbols supplied that were excluded for invalid input (entry/current price or shares <= 0). */
+  readonly excludedPositions: readonly string[];
+  /** Symbol carrying the largest share of total portfolio risk, or null with no valid positions. */
+  readonly largestRiskContributor: { readonly symbol: string; readonly riskPercent: number } | null;
+  readonly limitations: readonly string[];
 }
 
 /**
@@ -81,6 +105,14 @@ export function computePositionRisk(position: PositionInput): PositionRisk | nul
 
   const rMultiple = stopDistance > 0 ? (currentPrice - entryPrice) / stopDistance : 0;
 
+  const hasStop = stopPrice > 0;
+  const hasTarget = targetPrice !== undefined && targetPrice > 0;
+  const limitations: string[] = [];
+  if (!hasStop)
+    limitations.push("No stop-loss price was supplied — dollarRisk and stopPercent are 0.");
+  if (!hasTarget)
+    limitations.push("No target price was supplied — riskRewardRatio is unavailable.");
+
   return {
     stopDistance,
     stopPercent,
@@ -90,6 +122,7 @@ export function computePositionRisk(position: PositionInput): PositionRisk | nul
     unrealizedPnlPercent,
     riskRewardRatio,
     rMultiple,
+    explanation: { hasStop, hasTarget, limitations },
   };
 }
 
@@ -109,10 +142,14 @@ export function computePortfolioHeat(
   let totalDollarRisk = 0;
   let totalValue = 0;
   const positionRisks: { symbol: string; riskPercent: number }[] = [];
+  const excludedPositions: string[] = [];
 
   for (const [symbol, pos] of positions) {
     const risk = computePositionRisk(pos);
-    if (!risk) continue;
+    if (!risk) {
+      excludedPositions.push(symbol);
+      continue;
+    }
 
     totalDollarRisk += risk.dollarRisk;
     totalValue += risk.positionValue;
@@ -127,11 +164,24 @@ export function computePortfolioHeat(
   // Sort by risk descending
   positionRisks.sort((a, b) => b.riskPercent - a.riskPercent);
 
+  const limitations: string[] = [];
+  if (excludedPositions.length > 0) {
+    limitations.push(
+      `${excludedPositions.length} position(s) had invalid input (entry/current price or shares <= 0) and were excluded: ${excludedPositions.join(", ")}.`,
+    );
+  }
+
   return {
     totalDollarRisk,
     heatPercent: totalDollarRisk / totalEquity,
     totalValue,
     positionCount: positionRisks.length,
     positionRisks,
+    explanation: {
+      totalEquity,
+      excludedPositions,
+      largestRiskContributor: positionRisks[0] ?? null,
+      limitations,
+    },
   };
 }

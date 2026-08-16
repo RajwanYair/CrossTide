@@ -83,6 +83,18 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
+      - name: Verify reproducible install (S06)
+        # The install step above must never silently rewrite the committed
+        # lockfile — if it does, package-lock.json does not actually pin the
+        # tree it claims to, and a clean install is not reproducible from
+        # source control alone.
+        run: |
+          if ! git diff --exit-code -- package-lock.json; then
+            echo "::error file=package-lock.json::the install step modified the committed lockfile — install is not reproducible from source control"
+            exit 1
+          fi
+          echo "Reproducible install verified: the lockfile was not modified by the install step"
+
       - name: TypeScript check
         run: npm run typecheck
 
@@ -106,6 +118,13 @@ jobs:
 
       - name: Unit tests
         run: npm run test:coverage
+
+      - name: MCP server health check (P06)
+        # The MCP server is a local stdio process with no production HTTP
+        # endpoint, so smoke.yml cannot probe it. This is the only check that
+        # exercises the actual server wiring (tool registration, request
+        # handlers) end to end via the real MCP stdio transport.
+        run: npm run check:mcp-health
 
       - name: Build
         run: ./node_modules/.bin/vite build

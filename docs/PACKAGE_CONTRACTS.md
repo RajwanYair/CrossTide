@@ -5,20 +5,21 @@
 
 CrossTide has multiple consumers. This document separates stable public contracts
 from application wiring and experimental code so an export is not mistaken for a
-supported feature.
+supported feature. Actual per-surface version state and bump policy are recorded
+in [`docs/API_VERSIONING.md`](API_VERSIONING.md) rather than duplicated here.
 
 ## Public Contracts
 
 | Contract | Entry point | Intended consumers | Stability |
 |---|---|---|---|
 | Application shell | `src/main.ts` | SPA runtime | Runtime entry point; not a library API |
-| Domain calculations and types | `packages/domain` and `src/domain/index.ts` | Node, browser, Worker, Web Worker | Versioned package contract |
+| Domain calculations and types | `packages/domain` and `src/domain/index.ts` | Node, browser, Worker, Web Worker | Package contract; not yet independently versioned (see `docs/API_VERSIONING.md`) |
 | Core portable utilities | `src/core/index.ts` exports listed in `package.json` | Application and approved package consumers | Stable only when documented here |
 | Card modules | `src/cards/index.ts` | Application card registry and approved integrations | Runtime entry point; card lifecycle is not a stable package API |
 | UI utilities | `src/ui/index.ts` | SPA runtime and approved integrations | Runtime entry point; DOM contracts are not stable package APIs |
-| Worker HTTP API | `worker/routes/openapi.ts` and `/openapi.json` | Browser, widgets, MCP, external clients | Versioned OpenAPI contract |
-| Embeddable widgets | `widget.mjs` custom elements | Host pages | Versioned widget attributes and events |
-| MCP tools | `mcp-server/src/tool-manifest.ts` | MCP clients | Tool schema contract |
+| Worker HTTP API | `worker/routes/openapi.ts` and `/openapi.json` | Browser, widgets, MCP, external clients | OpenAPI document exists but `info.version` is static; envelope `schemaVersion` is the versioned part |
+| Embeddable widgets | `widget.mjs` custom elements | Host pages | Versioned via `WIDGET_CONTRACT_VERSION` / `data-widget-version` |
+| MCP tools | `mcp-server/src/tool-manifest.ts` | MCP clients | Tool schema contract; versioned at the server level only |
 
 ### Package Export Inventory
 

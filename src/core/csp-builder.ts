@@ -48,7 +48,7 @@ export function buildCsp(options: CspOptions = {}): string {
   const nonce = options.nonce ? [`'nonce-${options.nonce}'`] : [];
   const directives: Record<string, string> = {
     "default-src": "'self'",
-    "script-src": joinSources(["'self'"], nonce, options.scriptSrc ?? []),
+    "script-src": joinSources(["'self'", "blob:"], nonce, options.scriptSrc ?? []),
     "style-src": joinSources(["'self'", "'unsafe-inline'"], options.styleSrc ?? []),
     "img-src": joinSources(["'self'", "data:", "blob:"], options.imgSrc ?? []),
     "font-src": "'self' data:",

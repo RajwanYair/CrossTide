@@ -36,6 +36,9 @@ export interface ErrorMessage {
 export type WsOutbound = QuoteMessage | ErrorMessage;
 export type WsInbound = SubscribeMessage;
 
+/** S05: cap concurrent subscribers per ticker to bound fan-out cost and memory. */
+const MAX_SESSIONS_PER_TICKER = 1_000;
+
 // ── Durable Object class ──────────────────────────────────────────────────────
 
 export class TickerFanout {
@@ -68,6 +71,9 @@ export class TickerFanout {
     const upgrade = request.headers.get("Upgrade");
     if (upgrade !== "websocket") {
       return new Response("Expected WebSocket", { status: 426 });
+    }
+    if (this.sessions.size >= MAX_SESSIONS_PER_TICKER) {
+      return new Response("Too many subscribers for this ticker", { status: 503 });
     }
 
     const pair = new WebSocketPair();

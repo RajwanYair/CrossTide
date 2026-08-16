@@ -146,7 +146,13 @@ export type { RiskBasedSizingInput, AtrSizingInput, KellyInput } from "./positio
 
 /** Position-level risk metrics — stop distance, R-multiple, portfolio heat. */
 export { computePositionRisk, computePortfolioHeat } from "./position-risk";
-export type { PositionInput, PositionRisk, PortfolioHeat } from "./position-risk";
+export type {
+  PositionInput,
+  PositionRisk,
+  PortfolioHeat,
+  PositionRiskExplanation,
+  PortfolioHeatExplanation,
+} from "./position-risk";
 
 // ── Branded types ────────────────────────────────────────────────────────
 
@@ -1315,6 +1321,7 @@ export type {
   TargetAllocation,
   RebalanceTrade,
   RebalancePlan,
+  RebalanceExplanation,
 } from "./portfolio-rebalance";
 /** Relative Strength Comparison domain helpers (H21). */
 export {

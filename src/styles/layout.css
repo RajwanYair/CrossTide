@@ -120,6 +120,13 @@
       color var(--transition-fast);
   }
 
+  /* Nav links are real <a href> elements; a route visited earlier in the same
+     session falls back to the browser's default (low-contrast) visited-link
+     color unless explicitly overridden here. */
+  .nav-link:visited {
+    color: var(--text-secondary);
+  }
+
   .nav-icon {
     display: inline-grid;
     place-items: center;
@@ -141,6 +148,10 @@
 
   .nav-link.active {
     background: var(--bg-app);
+    color: var(--accent);
+  }
+
+  .nav-link.active:visited {
     color: var(--accent);
   }
 

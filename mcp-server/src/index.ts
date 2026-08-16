@@ -20,31 +20,8 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { isToolName, parseToolArgs, TOOLS } from "./tool-manifest.js";
-
-const API_BASE = process.env.CROSSTIDE_API_URL ?? "http://localhost:8787";
-
-async function callApi(path: string): Promise<unknown> {
-  const url = `${API_BASE}${path}`;
-  const res = await fetch(url, {
-    headers: { "User-Agent": "CrossTide-MCP/0.1.0" },
-  });
-  if (!res.ok) {
-    throw new Error(`API error ${res.status}: ${await res.text()}`);
-  }
-  return res.json();
-}
-
-async function postApi(path: string, body: unknown): Promise<unknown> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "User-Agent": "CrossTide-MCP/0.1.0" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    throw new Error(`API error ${res.status}: ${await res.text()}`);
-  }
-  return res.json();
-}
+import { checkToolRateLimit } from "./rate-limit.js";
+import { callApi, postApi } from "./api-client.js";
 
 /**
  * Arguments arrive from an MCP client that may ignore the advertised schema, so
@@ -108,6 +85,17 @@ async function main(): Promise<void> {
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
+    if (!checkToolRateLimit(name)) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error: rate limit exceeded for tool '${name}' — slow down and retry shortly`,
+          },
+        ],
+        isError: true,
+      };
+    }
     try {
       const result = await handleTool(name, (args as Record<string, unknown>) ?? {});
       return { content: [{ type: "text", text: result }] };

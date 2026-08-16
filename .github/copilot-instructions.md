@@ -251,7 +251,7 @@ Run all: `npm run ci`
 
 ## 🔌 Worker API
 
-The Worker registers **56 routes**. `worker/routes/openapi.ts` is the contract —
+The Worker registers **58 routes**. `worker/routes/openapi.ts` is the contract —
 `scripts/gen-openapi-client.mjs` derives `src/core/api-types.ts` from it, and
 `tests/unit/worker/openapi-drift.test.ts` fails if a newly registered route is
 not documented there. Adding a route means editing the spec in the same commit.
@@ -271,6 +271,8 @@ The most-used endpoints:
 | GET    | `/api/forex/:pair`          | Forex rate (ECB/Yahoo)          |
 | GET    | `/api/seasonality/:symbol`  | Monthly return seasonality      |
 | GET    | `/api/alerts/history`       | Alert fire history (D1)         |
+| GET    | `/api/alerts/history/export`| Self-service history export (S04) |
+| DELETE | `/api/alerts/history`       | Self-service history deletion (S04) |
 | GET    | `/api/migrations/status`    | D1 migration status             |
 | POST   | `/api/market-breadth`       | NYSE/NASDAQ breadth indicators  |
 | POST   | `/api/screener`             | Technical screener              |
@@ -281,6 +283,6 @@ The most-used endpoints:
 | GET    | `/api/ws/:symbol`           | WebSocket ticker fan-out (DO)   |
 | GET    | `/openapi.json`             | OpenAPI spec                    |
 
-All 56 registered routes are documented. `KNOWN_GAP` in
+All 58 registered routes are documented. `KNOWN_GAP` in
 `tests/unit/worker/openapi-drift.test.ts` is now an empty ratchet — it may only
 stay empty, so a newly registered undocumented route fails immediately.

@@ -19,6 +19,35 @@ You will receive a response within 7 days.
 | 10.x           | ❌ End of life |
 | < 10.x         | ❌ End of life |
 
+### Release Cadence And Support Horizon
+
+- CrossTide ships releases on a **rolling basis** rather than a fixed calendar
+  schedule — a version is cut when the [`release`](../.github/skills/release/SKILL.md)
+  checklist and pre-release gate pass, not on a fixed cadence like "every two weeks".
+- **Only the current major version line receives fixes.** When a new major ships,
+  the previous major moves to End of Life immediately — there is no overlapping
+  support window today. Track this table (not a separate policy page) as the single
+  source of truth for what is currently supported.
+- Security fixes land as a patch release on the current major only. A vulnerability
+  affecting an EOL major is not backported; upgrading to current is the remediation.
+- Breaking changes to routes, packages, widgets, or config follow
+  [`docs/DEPRECATION_POLICY.md`](../docs/DEPRECATION_POLICY.md) — deprecation notice
+  and a removal horizon precede removal outside of a P0 security exception.
+
+### Coordinated Disclosure Timeline
+
+1. **Day 0:** Report received via private advisory. Acknowledged within 7 days (see
+   above).
+2. **Triage:** Maintainer confirms severity and affected versions, and proposes a
+   fix timeline back to the reporter.
+3. **Fix and patch release:** A patch ships on the current major. Advisory stays
+   private until the fix is released.
+4. **Public disclosure:** The advisory is published after the patch release, crediting
+   the reporter unless they request otherwise. Typical total time from report to
+   public disclosure is target 30 days for high/critical severity; there is no fixed
+   embargo beyond that without reporter agreement, since a small maintainer team
+   cannot commit to a longer guaranteed embargo.
+
 ## 🏗️ Security Design
 
 ### Architecture Boundaries

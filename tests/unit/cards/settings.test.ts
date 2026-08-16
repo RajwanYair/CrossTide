@@ -79,6 +79,30 @@ describe("renderSettings", () => {
     expect(callbacks.onClearCache).toHaveBeenCalled();
   });
 
+  it("renders the analytics opt-out toggle unchecked by default (G05)", () => {
+    renderSettings(container, makeConfig(), callbacks);
+    const toggle = container.querySelector<HTMLInputElement>("#telemetry-optout-toggle");
+    expect(toggle).not.toBeNull();
+    expect(toggle?.checked).toBe(false);
+  });
+
+  it("persists the analytics opt-out preference when the toggle changes (G05)", () => {
+    renderSettings(container, makeConfig(), callbacks);
+    const toggle = container.querySelector<HTMLInputElement>("#telemetry-optout-toggle")!;
+    toggle.checked = true;
+    toggle.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(localStorage.getItem("crosstide:telemetry-opt-out")).toBe("1");
+
+    // Re-rendering should reflect the persisted preference.
+    renderSettings(container, makeConfig(), callbacks);
+    const reloaded = container.querySelector<HTMLInputElement>("#telemetry-optout-toggle");
+    expect(reloaded?.checked).toBe(true);
+
+    // Clean up so the preference does not leak into other tests.
+    reloaded!.checked = false;
+    reloaded!.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+
   it("persists a shortcut captured in the settings editor", () => {
     renderSettings(container, makeConfig(), callbacks);
     const input = container.querySelector<HTMLInputElement>("[data-shortcut='refresh-data']");

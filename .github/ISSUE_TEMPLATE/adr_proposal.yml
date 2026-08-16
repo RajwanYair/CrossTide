@@ -1,0 +1,63 @@
+name: Architecture Decision Proposal (ADR)
+description: Propose a durable architecture, boundary, or dependency decision for review
+title: "[ADR]: "
+labels: ["adr", "architecture", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when a choice changes a boundary, contract, dependency, or long-lived
+        operational tradeoff — see `docs/adr/README.md` for the lifecycle. This issue
+        starts the discussion; the accepted decision is recorded as
+        `docs/adr/NNNN-title.md` once merged.
+  - type: input
+    id: title
+    attributes:
+      label: Proposed Decision Title
+      placeholder: "Use X for Y"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What recurring problem or consequential choice forces this decision now?
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options Considered
+      description: List at least two options with their tradeoffs, even if one is clearly favored.
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Proposed Decision
+    validations:
+      required: true
+  - type: textarea
+    id: consequences
+    attributes:
+      label: Consequences
+      description: What does this make easier or harder? What follow-up work does it create?
+    validations:
+      required: true
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Primary Layer Affected
+      options:
+        - types
+        - domain
+        - core
+        - providers
+        - cards / ui
+        - worker
+        - packages
+        - widgets / MCP
+        - infrastructure / CI
+        - cross-cutting
+    validations:
+      required: true

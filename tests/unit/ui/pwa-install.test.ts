@@ -2,7 +2,7 @@
  * PWA install manager tests (C8).
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createPwaInstallManager } from "../../../src/ui/pwa-install";
+import { createPwaInstallManager, getPwaInstallManager } from "../../../src/ui/pwa-install";
 
 function storageMock(): Storage {
   const store = new Map<string, string>();
@@ -136,5 +136,42 @@ describe("createPwaInstallManager", () => {
     Object.defineProperty(event, "preventDefault", { value: vi.fn(), writable: true });
     window.dispatchEvent(event);
     expect(cb).not.toHaveBeenCalled();
+  });
+
+  it("offReady() unregisters a callback so it no longer fires", () => {
+    const cb = vi.fn();
+    const mgr = createPwaInstallManager();
+    mgr.onReady(cb);
+    mgr.offReady(cb);
+    const event = new Event("beforeinstallprompt");
+    Object.defineProperty(event, "preventDefault", { value: vi.fn(), writable: true });
+    window.dispatchEvent(event);
+    expect(cb).not.toHaveBeenCalled();
+    mgr.destroy();
+  });
+
+  it("offInstalled() unregisters a callback so it no longer fires", () => {
+    const cb = vi.fn();
+    const mgr = createPwaInstallManager();
+    mgr.onInstalled(cb);
+    mgr.offInstalled(cb);
+    window.dispatchEvent(new Event("appinstalled"));
+    expect(cb).not.toHaveBeenCalled();
+    mgr.destroy();
+  });
+});
+
+describe("getPwaInstallManager", () => {
+  beforeEach(() => {
+    vi.stubGlobal("localStorage", storageMock());
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it("returns the same instance across multiple calls", () => {
+    expect(getPwaInstallManager()).toBe(getPwaInstallManager());
   });
 });

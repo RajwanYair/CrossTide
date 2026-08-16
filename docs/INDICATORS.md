@@ -1,7 +1,7 @@
 # 📊 CrossTide Indicator Reference
 
 > Auto-generated from `src/domain/` JSDoc.
-> 217 modules | 677 exported functions | 353 interfaces
+> 218 modules | 679 exported functions | 361 interfaces
 
 ## 📋 Summary Table
 
@@ -176,7 +176,7 @@
 | [`Rsi Calculator`](#rsi-calculator) | Other | 2 | RSI Calculator — Pure domain logic. Ported from Dart: lib/src/domain/rsi_calc… |
 | [`Rsi Method`](#rsi-method) | Signal Methods | 1 | RSI Method Detector — Pure domain logic. Ported from Dart: lib/src/domain/rsi… |
 | [`Sar Method`](#sar-method) | Signal Methods | 1 | Parabolic SAR Method Detector — Pure domain logic. Ported from Dart: lib/src/… |
-| [`Screener Fundamentals`](#screener-fundamentals) | Other | 2 | Screener fundamental filters — pure domain logic (Q3). |
+| [`Screener Fundamentals`](#screener-fundamentals) | Other | 3 | Screener fundamental filters — pure domain logic (Q3). |
 | [`Seasonality`](#seasonality) | Other | 2 | Seasonality aggregations: average daily return grouped by month (0–11) or day… |
 | [`Sector Allocation`](#sector-allocation) | Other | 6 | Sector allocation calculator — compute sector weightings and concentration me… |
 | [`Sector Rotation`](#sector-rotation) | Other | 4 | Sector Rotation domain — relative strength ranking (H20). |
@@ -208,6 +208,7 @@
 | [`Turtle Trading`](#turtle-trading) | Trend Indicators | 3 | Turtle Trading System — Donchian breakout trend-following with position sizin… |
 | [`Ulcer Index`](#ulcer-index) | Other | 1 | Ulcer Index (Peter Martin, 1987). Measures depth and duration of drawdowns ov… |
 | [`Ultimate Oscillator`](#ultimate-oscillator) | Oscillators & Momentum | 1 | Larry Williams' Ultimate Oscillator. Combines short, medium, and long term bu… |
+| [`Validate Ohlcv`](#validate-ohlcv) | Other | 1 | Validate OHLCV quality before prices reach calculations or views. |
 | [`Var Backtest`](#var-backtest) | Backtesting | 3 | VaR backtest — Kupiec POF test and Christoffersen independence/conditional co… |
 | [`Volatility Adj Momentum`](#volatility-adj-momentum) | Oscillators & Momentum | 1 | Volatility-Adjusted Momentum (VAM) — momentum normalized by ATR. |
 | [`Volatility Cone`](#volatility-cone) | Volatility Indicators | 4 | Volatility cone — term structure of realized volatility at different lookback… |
@@ -282,7 +283,7 @@ Backtest Engine — run method signals against historical candles.
 | `computeTradeCost()` | Backtest Engine — run method signals against historical candles. |
 | `runBacktest()` | Q8: Commission and slippage model. */ readonly commission?: CommissionConfig; /** Q9: Position sizing configuration. Defaults to all-in (percentage 100%). */ readonly sizing?: BacktestSizingConfig; } |
 
-**Types:** `CommissionConfig`, `BacktestConfig`, `BacktestTrade`, `BacktestResult`
+**Types:** `CommissionConfig`, `BacktestConfig`, `BacktestTrade`, `BacktestExplanation`, `BacktestResult`
 
 ---
 
@@ -2248,8 +2249,9 @@ Screener fundamental filters — pure domain logic (Q3).
 | --- | --- |
 | `matchesFundamentalFilters()` | Screener fundamental filters — pure domain logic (Q3). |
 | `applyFundamentalFilters()` | Filter a parallel list of (ticker, data) pairs by fundamental criteria. Returns only the tickers whose data passes all constraints. |
+| `explainFundamentalFilters()` | Explainability result for a single ticker's fundamental filter evaluation. */ export interface FundamentalFilterExplanation { readonly passed: boolean; /** Supplied constraints whose data was present and satisfied. */ readonly matchedFilters: readonly string[]; /** Supplied constraints whose data was present and violated — causes exclusion. */ readonly failedFilters: readonly string[]; /** Supplied constraints whose backing data field was absent (benefit of the doubt). */ readonly skippedFilters: readonly string[]; } |
 
-**Types:** `FundamentalFilterParams`
+**Types:** `FundamentalFilterParams`, `FundamentalFilterExplanation`
 
 ---
 
@@ -2583,6 +2585,22 @@ Ulcer Index (Peter Martin, 1987). Measures depth and duration of drawdowns over 
 
 ---
 
+### Validate Ohlcv
+
+**File:** `src/domain/validate-ohlcv.ts`
+
+Validate OHLCV quality before prices reach calculations or views.
+
+**Functions:**
+
+| Function | Description |
+| --- | --- |
+| `validateOhlcv()` | — |
+
+**Types:** `OhlcvQualityIssue`, `OhlcvQualityOptions`, `OhlcvQualityReport`
+
+---
+
 ### Vortex Indicator
 
 **File:** `src/domain/vortex-indicator.ts`
@@ -2824,7 +2842,7 @@ Portfolio rebalance calculator — compute trades needed to bring a portfolio ba
 | `sharesToTrade()` | Calculate the number of shares to trade given a price. |
 | `validateTargets()` | Validate that target allocations sum to approximately 1. |
 
-**Types:** `CurrentHolding`, `TargetAllocation`, `RebalanceTrade`, `RebalancePlan`
+**Types:** `CurrentHolding`, `TargetAllocation`, `RebalanceTrade`, `RebalancePlan`, `RebalanceExplanation`
 
 ---
 
@@ -2841,7 +2859,7 @@ Position-level risk metrics — stop distance, risk percentage, portfolio heat, 
 | `computePositionRisk()` | Position-level risk metrics — stop distance, risk percentage, portfolio heat, and risk-reward assessment per position. |
 | `computePortfolioHeat()` | Calculate aggregate portfolio heat from multiple positions. |
 
-**Types:** `PositionInput`, `PositionRisk`, `PortfolioHeat`
+**Types:** `PositionInput`, `PositionRisk`, `PositionRiskExplanation`, `PortfolioHeat`, `PortfolioHeatExplanation`
 
 ---
 

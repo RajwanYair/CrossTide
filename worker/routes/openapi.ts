@@ -341,6 +341,92 @@ export const OPENAPI_SPEC = {
           },
         },
       },
+      delete: {
+        operationId: "deleteAlertHistory",
+        summary: "Self-service alert history deletion (S04)",
+        description:
+          "Deletes every alert_history row for the given user_id. This is the self-service equivalent of the operator-run DELETE query documented in docs/DATA_RETENTION.md — there is no partial-delete mode.",
+        tags: ["Alerts"],
+        parameters: [
+          {
+            name: "user_id",
+            in: "query",
+            required: true,
+            description: "User ID whose alert history rows should be deleted",
+            schema: { type: "string", minLength: 1 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Number of rows deleted",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: { deleted: { type: "integer" } },
+                  required: ["deleted"],
+                },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "503": {
+            description: "Database not available",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/alerts/history/export": {
+      get: {
+        operationId: "exportAlertHistory",
+        summary: "Self-service alert history export (S04)",
+        description:
+          "Exports up to 10,000 alert_history rows for the given user_id as JSON (default) or CSV (?format=csv). Closes the previously-documented gap in docs/DATA_RETENTION.md where no bulk export existed.",
+        tags: ["Alerts"],
+        parameters: [
+          {
+            name: "user_id",
+            in: "query",
+            required: true,
+            description: "User ID to export history for",
+            schema: { type: "string", minLength: 1 },
+          },
+          {
+            name: "format",
+            in: "query",
+            required: false,
+            description: "Response format",
+            schema: { type: "string", enum: ["json", "csv"], default: "json" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Alert history export",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/AlertHistoryResponse" },
+              },
+              "text/csv": { schema: { type: "string" } },
+            },
+          },
+          "400": { $ref: "#/components/responses/BadRequest" },
+          "429": { $ref: "#/components/responses/RateLimited" },
+          "503": {
+            description: "Database not available",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
     },
     "/api/quote/{symbol}": {
       get: {

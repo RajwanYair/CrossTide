@@ -296,4 +296,12 @@ describe("handleSignalDslExecuteScript", () => {
     );
     expect(res.status).toBe(400);
   });
+
+  it("returns 413 when script exceeds the maximum length (S05)", async () => {
+    const oversized = `let x = 1\n${"x = x + 1\n".repeat(2_000)}`;
+    const res = await handleSignalDslExecuteScript(makeReq({ script: oversized }));
+    expect(res.status).toBe(413);
+    const json = (await res.json()) as { error: string };
+    expect(json.error).toMatch(/maximum length/i);
+  });
 });

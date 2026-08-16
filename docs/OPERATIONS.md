@@ -11,6 +11,11 @@ capture fresh-machine recovery evidence. The checklist is intentionally separate
 from the runbook above it so incomplete rehearsals cannot be mistaken for
 verified claims.
 
+Run `npm run resolve-blockers` for an interactive, read-only-by-default check of
+every row below plus the GitHub Actions secrets and optional provider keys —
+it never reads or stores a secret itself; every credential-entering step hands
+the terminal to the vendor's own CLI (`wrangler`/`npm`/`gh`/`flyctl`).
+
 ## Verification Snapshot
 
 Last checked: 2026-08-12 on Windows, branch `main`.
@@ -29,7 +34,6 @@ Last checked: 2026-08-12 on Windows, branch `main`.
 | Context7 MCP | `CONTEXT7_API_KEY` when required by the service | Passed through `.vscode/mcp.json`; local environment value not present | Higher-rate/current library documentation retrieval | Add the key only through the user environment if the service requires it |
 | Playwright MCP and browser tests | Local browser process, no account | Configured and local-only | Browser inspection and E2E tests | Install browsers with the lockfile-pinned Playwright binary |
 | CrossTide MCP server | `CROSSTIDE_API_URL`, no credential by default | Built for local Worker at `http://localhost:8787` | AI-agent access to CrossTide tools | Start the Worker first; add authentication before exposing it beyond localhost |
-| Capacitor iOS / Android | Apple Developer and Google Play credentials | Not assessed on this workstation | Native signing and store release | Keep signing material outside the repo and configure CI only when native release begins |
 
 ## Repeat-issue guardrails
 
@@ -65,7 +69,6 @@ These are the actual missing operational pieces found during the review:
 2. The Fly CLI is not installed, and `monitoring/README.md` says the Uptime Kuma deployment is not verified.
 3. Production provider fallbacks, telemetry, and source-map upload are optional and currently unconfigured locally.
 4. The MCP server is intentionally local-only; it must not be exposed publicly without an authentication and authorization design.
-5. Native app signing credentials are not represented in the repository and must remain external to it.
 
 No end-user authentication is missing from the current web product: it is designed as a no-account PWA with local state. Adding accounts, shared portfolios, or protected server resources requires a new threat model and ADR before implementation.
 

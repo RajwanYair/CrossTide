@@ -8,6 +8,10 @@ import type { Env } from "../index.js";
 
 const TICKER_RE = /^[A-Z0-9.^=-]{1,20}$/;
 
+/** S05: cap array sizes to bound compute cost per request. */
+const MAX_HOLDINGS = 500;
+const MAX_TARGETS = 500;
+
 interface HoldingInput {
   readonly ticker: string;
   readonly value: number;
@@ -65,9 +69,18 @@ export async function handlePortfolioRebalance(request: Request, _env: Env): Pro
   if (!Array.isArray(body.holdings) || body.holdings.length === 0) {
     return Response.json({ error: "holdings array required" }, { status: 400 });
   }
+  if (body.holdings.length > MAX_HOLDINGS) {
+    return Response.json(
+      { error: `Maximum ${MAX_HOLDINGS} holdings per request` },
+      { status: 413 },
+    );
+  }
 
   if (!Array.isArray(body.targets) || body.targets.length === 0) {
     return Response.json({ error: "targets array required" }, { status: 400 });
+  }
+  if (body.targets.length > MAX_TARGETS) {
+    return Response.json({ error: `Maximum ${MAX_TARGETS} targets per request` }, { status: 413 });
   }
 
   const holdings: HoldingInput[] = [];

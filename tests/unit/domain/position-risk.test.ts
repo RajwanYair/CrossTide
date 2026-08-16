@@ -61,6 +61,16 @@ describe("computePositionRisk", () => {
     expect(result!.stopDistance).toBe(0);
     expect(result!.dollarRisk).toBe(0);
     expect(result!.rMultiple).toBe(0);
+    expect(result!.explanation.hasStop).toBe(false);
+    expect(result!.explanation.limitations[0]).toMatch(/no stop-loss/iu);
+  });
+
+  it("explanation reports hasStop/hasTarget without limitations when both are supplied", () => {
+    const pos: PositionInput = { ...basePosition, targetPrice: 130 };
+    const result = computePositionRisk(pos);
+    expect(result!.explanation.hasStop).toBe(true);
+    expect(result!.explanation.hasTarget).toBe(true);
+    expect(result!.explanation.limitations).toEqual([]);
   });
 
   it("handles losing position correctly", () => {
@@ -113,5 +123,17 @@ describe("computePortfolioHeat", () => {
     ]);
     const result = computePortfolioHeat(positions, 100_000);
     expect(result!.positionCount).toBe(1);
+  });
+
+  it("explanation lists excluded positions and the largest risk contributor", () => {
+    const positions = new Map<string, PositionInput>([
+      ["VALID", { entryPrice: 100, currentPrice: 110, stopPrice: 90, shares: 50 }],
+      ["INVALID", { entryPrice: 0, currentPrice: 110, stopPrice: 90, shares: 50 }],
+    ]);
+    const result = computePortfolioHeat(positions, 100_000);
+    expect(result!.explanation.excludedPositions).toEqual(["INVALID"]);
+    expect(result!.explanation.largestRiskContributor?.symbol).toBe("VALID");
+    expect(result!.explanation.totalEquity).toBe(100_000);
+    expect(result!.explanation.limitations[0]).toMatch(/invalid input/iu);
   });
 });

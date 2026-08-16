@@ -1,0 +1,70 @@
+name: Data Quality Report
+description: Report stale, incorrect, missing, or implausible market data
+title: "[Data]: "
+labels: ["data-quality", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template when a value shown in the app looks wrong, stale, or
+        implausible — not for a broken endpoint or provider outage (use the
+        **API / Data Source Issue** template for those).
+  - type: input
+    id: ticker
+    attributes:
+      label: Ticker / Symbol
+      placeholder: "AAPL, BTC, EURUSD, ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: card
+    attributes:
+      label: Affected Card / View
+      options:
+        - Watchlist
+        - Chart
+        - Consensus
+        - Screener
+        - Portfolio / Rebalance
+        - Risk
+        - Heatmap
+        - Fundamentals
+        - Earnings
+        - Seasonality
+        - Backtest
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What value did you expect, and from what source?
+      description: Compare against a source you trust (broker, exchange, another site) and link it if possible.
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What value did CrossTide show?
+      description: Include the timestamp shown in the UI, if any.
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Stale data (timestamp older than expected)
+        - Incorrect value
+        - Missing data (empty state shown when data should exist)
+        - Implausible value (e.g. price spike, negative volume)
+        - Corporate action not reflected (split, dividend)
+        - Calendar / timezone mismatch
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Screenshots, network tab response, or a link to the exact route (share URL) help triage fastest.

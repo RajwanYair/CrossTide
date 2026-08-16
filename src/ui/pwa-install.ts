@@ -22,8 +22,12 @@ export interface PwaInstallManager {
   prompt(): Promise<"accepted" | "dismissed" | "unavailable">;
   /** Register a callback that fires when the prompt becomes available. */
   onReady(cb: () => void): void;
+  /** Unregister a callback previously passed to `onReady`. */
+  offReady(cb: () => void): void;
   /** Register a callback that fires after successful installation. */
   onInstalled(cb: () => void): void;
+  /** Unregister a callback previously passed to `onInstalled`. */
+  offInstalled(cb: () => void): void;
   /** Persist the user's dismiss decision (hides button for this device). */
   dismiss(): void;
   /** Whether the user previously dismissed (persisted in localStorage). */
@@ -85,8 +89,18 @@ export function createPwaInstallManager(): PwaInstallManager {
       readyCbs.push(cb);
     },
 
+    offReady(cb: () => void): void {
+      const i = readyCbs.indexOf(cb);
+      if (i !== -1) readyCbs.splice(i, 1);
+    },
+
     onInstalled(cb: () => void): void {
       installedCbs.push(cb);
+    },
+
+    offInstalled(cb: () => void): void {
+      const i = installedCbs.indexOf(cb);
+      if (i !== -1) installedCbs.splice(i, 1);
     },
 
     dismiss(): void {
@@ -108,4 +122,18 @@ export function createPwaInstallManager(): PwaInstallManager {
       installedCbs.length = 0;
     },
   };
+}
+
+let _singleton: PwaInstallManager | null = null;
+
+/**
+ * A single, page-lifetime `PwaInstallManager` shared across every consumer
+ * (the settings card, and any other route that offers an install control).
+ * `beforeinstallprompt` fires once per page load, so all consumers must
+ * observe the same captured event rather than each registering their own
+ * independent listener.
+ */
+export function getPwaInstallManager(): PwaInstallManager {
+  _singleton ??= createPwaInstallManager();
+  return _singleton;
 }

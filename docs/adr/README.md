@@ -54,3 +54,7 @@ flowchart LR
 | 0016 | Layered product boundary                    | Accepted | 2026-08-11 |
 | 0017 | CrossTide threat model baseline             | Proposed | 2026-08-11 |
 | 0018 | AI feature boundary                         | Accepted | 2026-08-12 |
+| 0019 | Hybrid rendering strategy                   | Accepted | 2026-08-12 |
+| 0020 | Research indicator evaluation criteria      | Accepted | 2026-08-16 |
+| 0021 | Framework/storage/hosting reassessment criteria | Accepted | 2026-08-16 |
+| 0022 | WebLLM/local embeddings/Signal DSL assistance evaluation | Accepted | 2026-08-16 |

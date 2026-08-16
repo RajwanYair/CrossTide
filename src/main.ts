@@ -68,32 +68,22 @@ import {
   getInstrumentFilter,
 } from "./ui/instrument-filter";
 import { bindSortableTable } from "./ui/sortable";
-import {
-  loadPersistedPalette,
-  applyPalette,
-  VALID_PALETTES,
-  type ExtendedPaletteName,
-} from "./ui/palette-switcher";
-import { exportFullDataJson, exportFullDataCsv } from "./core/data-export";
-import { collectFullBackup } from "./core/full-backup";
-import { captureElementAsSvg, downloadSvg } from "./core/export-image";
+import { loadPersistedPalette, applyPalette, VALID_PALETTES } from "./ui/palette-switcher";
 import { attachScrollProgress } from "./ui/scroll-driven";
-import { downloadFile, downloadCompressedFile } from "./core/export-import";
-import { exportWatchlist } from "./core/watchlist-export";
-import { parseTickersFromText } from "./core/watchlist-import";
 import { recordAdd, recordRemove } from "./core/watchlist-history";
 import { toggleTickerSelection } from "./core/ticker-selection";
 import { restoreSessionState, saveSessionState } from "./core/session-state";
 import { watchlistStore } from "./core/watchlist-store";
 import { estimateLocalStorageUsage, updateStorageSize } from "./core/cache-stats";
 import { getPerfMetrics, initPerfObserver, recordPerformanceTrace } from "./core/perf-metrics";
-import { createPwaInstallManager } from "./ui/pwa-install";
+import { getPwaInstallManager } from "./ui/pwa-install";
 import { createOnboardingTour, DEFAULT_TOUR_STEPS } from "./ui/onboarding-tour";
 import { initOfflineIndicator } from "./ui/offline-indicator";
 import { initCardCollapse } from "./ui/card-collapse";
 import { applyAllCardWidths } from "./ui/card-width";
 import { initDashboardStats } from "./ui/dashboard-stats";
 import { initTelemetry, getTelemetry } from "./core/telemetry";
+import { initTelemetryPreference } from "./core/telemetry-preference";
 import { initPlausible } from "./core/plausible";
 import { createStreamManager, getStoredFinnhubKey } from "./core/finnhub-stream-manager";
 import { searchTickers } from "./providers";
@@ -102,13 +92,7 @@ import { isSupportedSymbol } from "./domain/ticker-catalog";
 import { createAutocomplete } from "./ui/ticker-autocomplete";
 import { bindHoverZoom, setHoverQuotes } from "./ui/watchlist-hover-zoom";
 import { waitForFont } from "./core/font-loader";
-import {
-  buildPrefetchRules,
-  injectSpeculationRules,
-  linkPrefetchFallback,
-  removeSpeculationRules,
-  speculationRulesSupported,
-} from "./core/speculation-rules";
+import { linkPrefetchFallback } from "./core/speculation-rules";
 import { evaluateAlertRules } from "./core/alert-rules-evaluator";
 import { checkWhatsNew } from "./core/whats-new";
 import { openShortcutsDialog } from "./ui/shortcuts-dialog";
@@ -154,6 +138,7 @@ const cardContainers: Partial<Record<RouteName, string>> = {
   comparison: "comparison-container",
   rebalance: "rebalance-container",
   "news-feed": "news-feed-container",
+  settings: "settings-container",
 };
 
 async function activateCard(
@@ -216,15 +201,19 @@ function main(): void {
   });
 
   // H3: prefetch route documents where the browser supports the API.
+  // Speculation Rules only ships an *inline* `<script type="speculationrules">`
+  // form in current browsers — external `src` (required to stay CSP-compliant
+  // without 'unsafe-inline', since rule content is built from live DOM state
+  // and can't be pinned to a static hash) reports "External speculation rules
+  // are not yet supported." `injectSpeculationRules` still implements the
+  // spec-correct, CSP-safe blob: URL approach for when that lands, but until
+  // then every browser falls back to the universally-supported, CSP-neutral
+  // `<link rel="prefetch">` path.
   const routeHrefs = [...document.querySelectorAll<HTMLAnchorElement>("a[data-route]")]
     .map((link) => link.getAttribute("href"))
     .filter((href): href is string => href !== null && href.length > 0);
   if (routeHrefs.length > 0) {
-    if (speculationRulesSupported()) {
-      injectSpeculationRules(buildPrefetchRules(routeHrefs), "app-routes");
-    } else {
-      linkPrefetchFallback(routeHrefs);
-    }
+    linkPrefetchFallback(routeHrefs);
   }
 
   // ── B11: Cross-tab BroadcastChannel sync ──────────────────────────────────
@@ -315,6 +304,16 @@ function main(): void {
     const el = document.getElementById("sync-status");
     if (el) el.textContent = text;
   }
+
+  // The Settings card (`settings-card.ts`) saves config changes directly via
+  // `saveConfig()`, bypassing this closure's local `config` copy. It dispatches
+  // this event after any mutation so the in-memory copy — and anything that
+  // reads it later, like the watchlist render and the refresh-interval timer —
+  // stays correct instead of silently reverting on the next scheduled refresh.
+  window.addEventListener("crosstide:config-changed", () => {
+    config = loadConfig();
+    refreshWatchlist(config, buildQuotesMap());
+  });
 
   async function refreshData(): Promise<void> {
     const tickers = config.watchlist.map((e) => e.ticker);
@@ -498,9 +497,6 @@ function main(): void {
   window.addEventListener("pagehide", stopPerfObserver, { once: true });
   window.addEventListener("pagehide", removeEnhancedFocus, { once: true });
   window.addEventListener("pagehide", removeMobileSwipe, { once: true });
-  window.addEventListener("pagehide", () => removeSpeculationRules("app-routes"), {
-    once: true,
-  });
   window.addEventListener("pagehide", removeUrlStateListener.remove, { once: true });
   initOfflineIndicator();
   initCardCollapse();
@@ -756,159 +752,10 @@ function main(): void {
     });
   }
 
-  // Theme change
-  const themeSelect = document.getElementById("theme-select") as HTMLSelectElement | null;
-  themeSelect?.addEventListener("change", () => {
-    const theme = themeSelect.value as "dark" | "light";
-    setThemeOverride(theme); // stops auto-sync from overwriting the choice
-    config = { ...config, theme };
-    saveAndBroadcast(config);
-  });
-
-  // Color-blind palette change (C2)
-  const paletteSelect = document.getElementById("palette-select") as HTMLSelectElement | null;
-  if (paletteSelect) {
-    // Sync select to currently loaded palette
-    paletteSelect.value = document.documentElement.dataset["palette"] ?? "default";
-    paletteSelect.addEventListener("change", () => {
-      applyPalette(paletteSelect.value as ExtendedPaletteName);
-    });
-  }
-
-  // Export watchlist
-  document.getElementById("btn-export")?.addEventListener("click", () => {
-    const content = exportWatchlist(
-      config.watchlist.map((entry) => ({ ticker: entry.ticker })),
-      "json",
-    );
-    const blob = new Blob([content], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "crosstide-watchlist.json";
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast({ message: `Exported ${config.watchlist.length} tickers`, type: "success" });
-  });
-
-  document.getElementById("btn-export-image")?.addEventListener("click", () => {
-    const table = document.getElementById("watchlist-table");
-    if (!table) return;
-    downloadSvg(captureElementAsSvg(table), "crosstide-watchlist.svg");
-    showToast({ message: "Watchlist image exported", type: "success" });
-  });
-
-  // Import watchlist
-  document.getElementById("btn-import")?.addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json,.json";
-    input.addEventListener("change", () => {
-      const file = input.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        try {
-          const rawText = String(reader.result);
-          let parsed: unknown[];
-          try {
-            const decoded: unknown = JSON.parse(rawText);
-            if (!Array.isArray(decoded)) throw new Error("Expected an array");
-            parsed = decoded;
-          } catch {
-            parsed = parseTickersFromText(rawText);
-          }
-          const cleaned: { ticker: string; addedAt: string }[] = [];
-          const now = new Date().toISOString();
-          for (const raw of parsed) {
-            const ticker =
-              typeof raw === "string"
-                ? raw
-                : typeof raw === "object" && raw !== null && "ticker" in raw
-                  ? typeof raw.ticker === "string"
-                    ? raw.ticker
-                    : null
-                  : null;
-            if (ticker && /^[A-Z][A-Z0-9.-]{0,9}$/.test(ticker.toUpperCase())) {
-              cleaned.push({ ticker: ticker.toUpperCase(), addedAt: now });
-            }
-          }
-          if (cleaned.length === 0) {
-            showToast({ message: "No valid tickers found", type: "warning" });
-            return;
-          }
-          const seen = new Set(config.watchlist.map((e) => e.ticker));
-          const merged = [...config.watchlist];
-          let added = 0;
-          for (const e of cleaned) {
-            if (!seen.has(e.ticker)) {
-              merged.push(e);
-              watchlistStore.actions.addTicker(e.ticker);
-              recordAdd(e.ticker);
-              seen.add(e.ticker);
-              added++;
-            }
-          }
-          config = { ...config, watchlist: merged };
-          saveAndBroadcast(config);
-          refreshWatchlist(config, new Map());
-          showToast({
-            message: `Imported ${added} new ticker(s) — fetching data…`,
-            type: "success",
-          });
-          void refreshData();
-        } catch (err) {
-          showToast({ message: `Import failed: ${(err as Error).message}`, type: "error" });
-        }
-      });
-      reader.readAsText(file);
-    });
-    input.click();
-  });
-
-  // Clear all
-  document.getElementById("btn-clear")?.addEventListener("click", () => {
-    if (config.watchlist.length === 0) return;
-    config = { ...config, watchlist: [] };
-    saveAndBroadcast(config);
-    refreshWatchlist(config, new Map());
-    showToast({ message: "Watchlist cleared", type: "warning" });
-  });
-
-  // Clear cache
-  document.getElementById("btn-clear-cache")?.addEventListener("click", () => {
-    localStorage.removeItem("crosstide-cache");
-    showToast({ message: "Cache cleared", type: "info" });
-  });
-
-  // Full-data export (C7)
-  document.getElementById("btn-export-full-json")?.addEventListener("click", () => {
-    const json = exportFullDataJson(collectFullBackup());
-    downloadFile(
-      json,
-      `crosstide-export-${new Date().toISOString().slice(0, 10)}.json`,
-      "application/json",
-    );
-    showToast({ message: "Full data exported as JSON", type: "success" });
-  });
-
-  // Compressed export (G11) — .json.gz via Compression Streams API
-  document.getElementById("btn-export-gz")?.addEventListener("click", () => {
-    const json = exportFullDataJson(collectFullBackup());
-    void downloadCompressedFile(
-      json,
-      `crosstide-export-${new Date().toISOString().slice(0, 10)}.json.gz`,
-      "application/json",
-    ).then(() => showToast({ message: "Full data exported as .json.gz", type: "success" }));
-  });
-
-  document.getElementById("btn-export-full-csv")?.addEventListener("click", () => {
-    const csv = exportFullDataCsv(collectFullBackup());
-    downloadFile(csv, `crosstide-export-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv");
-    showToast({ message: "Full data exported as CSV", type: "success" });
-  });
+  // Theme, palette, export/import/clear, and full-data-export controls are
+  // owned by the Settings card (`src/cards/settings-card.ts`) — it dispatches
+  // "crosstide:config-changed" after any mutation so this closure's `config`
+  // and the rendered watchlist stay in sync (see the listener below).
 
   // --- Command Palette & Keyboard Shortcuts ---
   const shortcuts = createShortcutManager();
@@ -1199,29 +1046,12 @@ function main(): void {
   void appCache; // retain reference
 
   // ── C8: PWA install prompt ─────────────────────────────────────────────────
-  const pwaInstall = createPwaInstallManager();
-  const pwaGroup = document.getElementById("pwa-install-group");
-  function showPwaInstallGroup(): void {
-    pwaGroup?.classList.remove("hidden");
-  }
-  function hidePwaInstallGroup(): void {
-    pwaGroup?.classList.add("hidden");
-  }
-  pwaInstall.onReady(showPwaInstallGroup);
-  pwaInstall.onInstalled(() => {
-    hidePwaInstallGroup();
+  // The install/dismiss UI itself lives in the Settings card (`settings.ts`),
+  // which shares this same manager instance. main() only needs the app-wide
+  // "installed" toast, which should fire regardless of the active route.
+  getPwaInstallManager().onInstalled(() => {
     showToast({ message: "CrossTide installed as an app!", type: "success" });
   });
-  document.getElementById("btn-install-pwa")?.addEventListener("click", () => {
-    void pwaInstall.prompt().then((outcome) => {
-      if (outcome === "accepted") hidePwaInstallGroup();
-    });
-  });
-  document.getElementById("btn-dismiss-pwa")?.addEventListener("click", () => {
-    pwaInstall.dismiss();
-    hidePwaInstallGroup();
-  });
-  void pwaInstall; // retain reference
 
   // ── C9: Onboarding tour — show on first visit ──────────────────────────────
   const tour = createOnboardingTour(DEFAULT_TOUR_STEPS);
@@ -1330,6 +1160,7 @@ main();
 // ── A17: Telemetry — analytics + error tracking + web vitals ──────────────
 // Env-gated: no-op unless VITE_PLAUSIBLE_URL / VITE_GLITCHTIP_DSN are set.
 const telemetry = initTelemetry();
+initTelemetryPreference(); // G05: apply a stored opt-out before the first event fires
 telemetry.pageview(); // initial pageview
 
 // Register PWA service worker.

@@ -133,6 +133,39 @@ jobs:
             exit 1
           fi
 
+      - name: App shell (index.html)
+        if: ${{ env.HAS_PROD_DEPLOY == 'true' || github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "Testing: $BASE_URL/"
+          response=$(curl -sf -w "\n%{http_code}" "$BASE_URL/")
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+          echo "Status: $http_code"
+          if echo "$body" | grep -qi '<div id="app-body"'; then
+            echo "✓ App shell root element present"
+          else
+            echo "::warning::App shell root element not found in response body"
+          fi
+          if [ "$http_code" != "200" ]; then
+            echo "::error::App shell returned $http_code"
+            exit 1
+          fi
+
+      - name: WebSocket ticker fan-out route (P06)
+        if: ${{ env.HAS_PROD_DEPLOY == 'true' || github.event_name == 'workflow_dispatch' }}
+        run: |
+          # A plain GET without the WebSocket upgrade handshake must be rejected with
+          # 426 Upgrade Required — this confirms the Durable Object route is deployed
+          # and reachable without needing a full WebSocket client in CI.
+          echo "Testing: $BASE_URL/api/ws/AAPL"
+          http_code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/api/ws/AAPL")
+          echo "Status: $http_code"
+          if [ "$http_code" != "426" ]; then
+            echo "::error::Expected 426 Upgrade Required from ws route, got $http_code"
+            exit 1
+          fi
+          echo "✓ WebSocket route reachable and correctly rejects non-upgrade requests"
+
       - name: Summary
         if: always()
         run: |

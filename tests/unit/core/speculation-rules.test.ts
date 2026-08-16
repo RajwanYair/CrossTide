@@ -110,10 +110,9 @@ describe("injectSpeculationRules (supported)", () => {
     expect(el!.type).toBe("speculationrules");
   });
 
-  it("script textContent is valid JSON of the rules", () => {
-    const rules = buildPrefetchRules(["/chart"]);
-    const el = injectSpeculationRules(rules);
-    expect(JSON.parse(el!.textContent!)).toEqual(rules);
+  it("script src is a blob: URL", () => {
+    const el = injectSpeculationRules({ prefetch: [{ urls: ["/a"] }] });
+    expect(el!.src).toMatch(/^blob:/);
   });
 
   it("uses the provided id attribute", () => {

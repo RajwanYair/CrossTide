@@ -101,4 +101,12 @@ describe("handleSignalDslExecute", () => {
     const res = await handleSignalDslExecute(makeRequest({ expression: "undefined_var > 0" }));
     expect(res.status).toBe(400);
   });
+
+  it("returns 413 when expression exceeds the maximum length (S05)", async () => {
+    const oversized = `${"1 + ".repeat(1_000)}1`;
+    const res = await handleSignalDslExecute(makeRequest({ expression: oversized }));
+    expect(res.status).toBe(413);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toMatch(/maximum length/i);
+  });
 });

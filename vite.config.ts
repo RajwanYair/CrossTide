@@ -83,7 +83,7 @@ export default defineConfig({
       // In dev all API requests go through the Vite proxy (/api/*), so connect-src
       // only needs 'self'. External URLs kept for WebSocket (Finnhub).
       "Content-Security-Policy":
-        "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://worker.crosstide.pages.dev wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+        "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://worker.crosstide.pages.dev wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
       "Referrer-Policy": "strict-origin-when-cross-origin",
@@ -115,7 +115,7 @@ export default defineConfig({
     headers: {
       // Mirrors public/_headers — source of truth: src/core/csp-builder.ts
       "Content-Security-Policy":
-        "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests",
+        "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests",
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
       "Referrer-Policy": "strict-origin-when-cross-origin",

@@ -23,6 +23,9 @@
 
 const SCRIPT_ATTR = "data-ct-speculation";
 
+/** Tracks the Blob URL behind each injected script so it can be revoked on removal. */
+const blobUrlsById = new Map<string, string>();
+
 // ─── types ────────────────────────────────────────────────────────────────────
 
 /** A single speculation source entry. */
@@ -62,6 +65,12 @@ let _idCounter = 0;
 /**
  * Inject a `<script type="speculationrules">` element into `<head>`.
  *
+ * Content is served from a same-origin `blob:` URL rather than inline
+ * `textContent` — the strict CSP (`script-src 'self' ... blob:`, no
+ * `'unsafe-inline'`) blocks inline speculation-rules scripts entirely, which
+ * previously made this feature silently non-functional and logged a CSP
+ * violation on every page load.
+ *
  * @param rules  Speculation rules object.
  * @param id     Optional stable id for later removal.  Auto-generated if omitted.
  * @returns The injected `<script>` element (or `null` when unsupported).
@@ -74,10 +83,17 @@ export function injectSpeculationRules(
 
   const el = document.createElement("script");
   el.type = "speculationrules";
-  el.textContent = JSON.stringify(rules);
 
   const resolvedId = id ?? `ct-sr-${++_idCounter}`;
   el.setAttribute(SCRIPT_ATTR, resolvedId);
+
+  const blob = new Blob([JSON.stringify(rules)], { type: "application/speculationrules+json" });
+  const blobUrl = URL.createObjectURL(blob);
+  // Revoke any previous blob URL registered under the same id before replacing it.
+  const previous = blobUrlsById.get(resolvedId);
+  if (previous) URL.revokeObjectURL(previous);
+  blobUrlsById.set(resolvedId, blobUrl);
+  el.src = blobUrl;
 
   document.head.appendChild(el);
   return el;
@@ -91,7 +107,17 @@ export function injectSpeculationRules(
  */
 export function removeSpeculationRules(id?: string): void {
   const selector = id ? `script[${SCRIPT_ATTR}="${id}"]` : `script[${SCRIPT_ATTR}]`;
-  document.querySelectorAll(selector).forEach((el) => el.remove());
+  document.querySelectorAll(selector).forEach((el) => {
+    const elId = el.getAttribute(SCRIPT_ATTR);
+    if (elId) {
+      const blobUrl = blobUrlsById.get(elId);
+      if (blobUrl) {
+        URL.revokeObjectURL(blobUrl);
+        blobUrlsById.delete(elId);
+      }
+    }
+    el.remove();
+  });
 }
 
 // ─── convenience builders ─────────────────────────────────────────────────────

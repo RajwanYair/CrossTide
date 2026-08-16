@@ -3,6 +3,7 @@ import {
   CrosstideChartElement,
   CrosstideConsensusElement,
   CrosstideQuoteElement,
+  WIDGET_CONTRACT_VERSION,
 } from "../../../src/ui/widget.js";
 
 // Register the element if not already
@@ -28,6 +29,16 @@ describe("CrosstideChartElement", () => {
   it("registers quote and consensus elements", () => {
     expect(customElements.get("crosstide-quote")).toBe(CrosstideQuoteElement);
     expect(customElements.get("crosstide-consensus")).toBe(CrosstideConsensusElement);
+  });
+
+  it("exposes a widget contract version for host-page compatibility checks (E03)", () => {
+    expect(CrosstideChartElement.version).toBe(WIDGET_CONTRACT_VERSION);
+    expect(CrosstideQuoteElement.version).toBe(WIDGET_CONTRACT_VERSION);
+    expect(CrosstideConsensusElement.version).toBe(WIDGET_CONTRACT_VERSION);
+
+    const el = document.createElement("crosstide-chart") as CrosstideChartElement;
+    document.body.appendChild(el);
+    expect(el.getAttribute("data-widget-version")).toBe(WIDGET_CONTRACT_VERSION);
   });
 
   it("should observe the correct attributes", () => {

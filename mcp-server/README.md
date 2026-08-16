@@ -70,3 +70,28 @@ Add to `claude_desktop_config.json`:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `CROSSTIDE_API_URL` | `http://localhost:8787` | Worker API base URL |
+| `CROSSTIDE_API_TOKEN` | unset | Optional bearer token sent as `Authorization: Bearer <token>` on every request to `CROSSTIDE_API_URL` (roadmap E04) |
+
+## Authorization And Rate Limiting (roadmap E04)
+
+- **Transport trust boundary:** the server speaks stdio to a single local agent
+  process (Claude Desktop, etc.) — there is no multi-tenant request boundary to
+  authorize inside the MCP protocol itself. Treat `CROSSTIDE_API_URL` the same
+  way you would treat any other credential-adjacent config: point it at a
+  Worker you trust, not an arbitrary third party's deployment.
+- **Per-tool rate limiting:** `src/rate-limit.ts` enforces a 30-calls-per-minute
+  token bucket per tool name as defense-in-depth against a looping or
+  misbehaving agent, independent of the Worker's own IP-based rate limiter
+  (`worker/rate-limit.ts`) that every underlying HTTP call still passes through.
+- **Optional bearer-token auth.** Set `CROSSTIDE_API_TOKEN` and every request
+  to `CROSSTIDE_API_URL` carries `Authorization: Bearer <token>`. The MCP
+  server only sends this header — the Worker route layer does not itself
+  validate a bearer token today, so this is only useful once `CROSSTIDE_API_URL`
+  sits behind infrastructure (a reverse proxy, Cloudflare Access, etc.) that
+  checks it. If you expose `CROSSTIDE_API_URL` over a network the MCP process
+  doesn't fully control, put that infrastructure in front of it rather than
+  assuming the token alone authenticates the request.
+- **Error format:** every tool failure (validation, rate limit, or upstream
+  HTTP error) returns MCP's standard `{ content: [{ type: "text", ... }],
+  isError: true }` shape rather than throwing, so a client can distinguish a
+  tool-level failure from a transport-level one.

@@ -73,6 +73,23 @@ it in the test.
 5. Ensure all quality gates pass: `npm run ci`, then request review in the PR.
 6. Update the roadmap index only after the issue/PR status changes; do not use it as a
   substitute for an issue or PR.
+7. If the change is user-visible (feature, fix, deprecation) add a `CHANGELOG.md` entry
+  under `[Unreleased]` in the same PR — do not defer changelog updates to release day.
+  A deprecation or removal follows the template in
+  [`docs/DEPRECATION_POLICY.md`](../docs/DEPRECATION_POLICY.md).
+
+## 🌱 Good First Issues And Review Expectations
+
+- Issues labeled `good-first-issue` are scoped to a single file or a small, well-tested
+  surface and include a concrete acceptance checklist — look there first if you are new.
+- If no `good-first-issue` exists, a `docs`- or `chore`-scoped issue is usually the next
+  smallest starting point; avoid picking up a `P0`-labeled roadmap item as a first PR.
+- Maintainers aim to leave a first review comment (approval, changes requested, or a
+  clarifying question) within 5 business days of a PR being opened and marked ready for
+  review. If you have not heard back after that window, a polite ping on the PR is fine.
+- Non-code contributions are welcome: documentation fixes, translation additions under
+  `src/locales/`, and test coverage for existing behavior all follow the same PR process
+  above without requiring a large feature scope.
 
 ## 🐞 Reporting Issues
 

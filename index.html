@@ -41,7 +41,7 @@
     <!-- warnings with zero protective effect.                               -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://query1.finance.yahoo.com https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://finnhub.io https://query1.finance.yahoo.com https://www.alphavantage.co https://api.coingecko.com wss://ws.finnhub.io; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
     />
     <title>CrossTide</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -328,46 +328,7 @@
           <div class="card">
             <div class="card-header"><h2>Settings</h2></div>
             <div id="settings-container">
-              <div class="setting-group">
-                <label for="theme-select">Theme</label>
-                <select id="theme-select">
-                  <option value="dark" selected>Dark</option>
-                  <option value="light">Light</option>
-                </select>
-              </div>
-              <div class="setting-group">
-                <label for="palette-select">Color palette</label>
-                <select id="palette-select">
-                  <option value="default" selected>Default</option>
-                  <option value="deuteranopia">Deuteranopia (red-green safe)</option>
-                  <option value="protanopia">Protanopia (red-blind safe)</option>
-                  <option value="tritanopia">Tritanopia (blue-yellow safe)</option>
-                  <option value="high-contrast">High contrast</option>
-                </select>
-              </div>
-              <div class="setting-group">
-                <span class="setting-label">Watchlist</span>
-                <button id="btn-export" type="button">Export JSON</button>
-                <button id="btn-export-image" type="button">Export image</button>
-                <button id="btn-import" type="button">Import JSON</button>
-                <button id="btn-clear" type="button" class="btn-danger">Clear All</button>
-              </div>
-              <div class="setting-group">
-                <span class="setting-label">Full data export (C7)</span>
-                <button id="btn-export-full-json" type="button">Export all (JSON)</button>
-                <button id="btn-export-full-csv" type="button">Export all (CSV)</button>
-              </div>
-              <div class="setting-group">
-                <span class="setting-label">Cache</span>
-                <button id="btn-clear-cache" type="button">Clear Cache</button>
-              </div>
-              <div class="setting-group hidden" id="pwa-install-group">
-                <span class="setting-label">Install App</span>
-                <button id="btn-install-pwa" type="button" class="btn-accent">
-                  Install CrossTide
-                </button>
-                <button id="btn-dismiss-pwa" type="button" class="btn-ghost btn-sm">Not now</button>
-              </div>
+              <p class="empty-state">Loading settings…</p>
             </div>
           </div>
         </section>

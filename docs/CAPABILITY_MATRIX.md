@@ -14,9 +14,8 @@
 | Local fixture mode | Shipped | Preview fixtures and local development scripts | Fixtures are not live market data |
 | `@crosstide/domain` publication | Blocked | Package build exists; publication credentials are unavailable | Consumers cannot install a verified registry release yet |
 | MCP server | Preview | `mcp-server/README.md` and MCP tool manifest | Public Worker endpoint and production authorization are not verified |
-| Capacitor native packaging | Preview | Capacitor configuration and sync scripts | Mobile release smoke evidence is not yet complete |
 | Offline PWA shell and cached workflows | Shipped | Service worker and browser tests | Live provider requests remain unavailable offline |
-| External-user usability evidence | Blocked | No validated external-user feedback loop | Product claims remain maintainer-verified until testing occurs |
+| External-user usability evidence | Blocked | Recruitment/consent/session protocol defined in [`docs/USER_FEEDBACK_PLAN.md`](USER_FEEDBACK_PLAN.md); no round has run yet | Product claims remain maintainer-verified until testing occurs |
 
 ## Hosting Modes
 

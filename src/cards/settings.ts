@@ -5,6 +5,9 @@ import type { AppConfig, CardId, CardSettingsMap, MethodWeights } from "../types
 import { DEFAULT_METHOD_WEIGHTS } from "../types/domain";
 import { FINNHUB_KEY_STORAGE } from "../core/finnhub-stream-manager";
 import { isEnhancedContrast, setEnhancedContrast } from "../core/contrast-preference";
+import { isTelemetryOptedOut, setTelemetryOptOut } from "../core/telemetry-preference";
+import { getActivePalette, PALETTE_LABELS, VALID_PALETTES } from "../ui/palette-switcher";
+import { getPwaInstallManager } from "../ui/pwa-install";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate, type DelegateHandle } from "../ui/delegate";
 import { getLocale, setLocale } from "../core/i18n";
@@ -40,9 +43,17 @@ export interface SettingsCallbacks {
   onExport: () => void;
   /** Called when user requests a gzip-compressed export (G11). */
   onExportGz?: () => void;
+  /** Called when user exports the watchlist as an SVG image. */
+  onExportImage?: () => void;
+  /** Called when user exports a full application backup as JSON. */
+  onExportFullJson?: () => void;
+  /** Called when user exports a full application backup as CSV. */
+  onExportFullCsv?: () => void;
   onImport: () => void;
   onClearWatchlist: () => void;
   onClearCache: () => void;
+  /** Called when user selects a color-blind / high-contrast palette. */
+  onPaletteChange?: (palette: ReturnType<typeof getActivePalette>) => void;
   /** Called when user saves or clears the Finnhub API key. */
   onFinnhubKeyChange?: (apiKey: string | null) => void;
   /** Called when user changes per-method consensus weights (G20). */
@@ -116,10 +127,23 @@ export function renderSettings(
       </select>
     </div>
     <div class="setting-group">
+      <label for="palette-select">Color palette</label>
+      <select id="palette-select" data-action="palette-change">
+        ${VALID_PALETTES.map((p) => `<option value="${p}"${p === getActivePalette() ? " selected" : ""}>${PALETTE_LABELS[p]}</option>`).join("")}
+      </select>
+    </div>
+    <div class="setting-group">
       <label for="contrast-toggle">Enhanced contrast</label>
       <label class="setting-inline">
         <input id="contrast-toggle" type="checkbox" data-action="contrast-change"${isEnhancedContrast() ? " checked" : ""} />
         <span class="text-secondary">Raise text contrast to WCAG AAA (7:1)</span>
+      </label>
+    </div>
+    <div class="setting-group">
+      <label for="telemetry-optout-toggle">Anonymous analytics</label>
+      <label class="setting-inline">
+        <input id="telemetry-optout-toggle" type="checkbox" data-action="telemetry-optout-change"${isTelemetryOptedOut() ? " checked" : ""} />
+        <span class="text-secondary">Opt out of anonymous usage analytics and error reporting (see docs/DATA_RETENTION.md)</span>
       </label>
     </div>
     <div class="setting-group">
@@ -141,9 +165,20 @@ export function renderSettings(
     <div class="setting-group">
       <label>Actions</label>
       <button data-action="export" type="button">Export JSON</button>
-      <button data-action="export-gz" type="button">Export .json.gz</button>
+      <button data-action="export-image" type="button">Export image</button>
       <button data-action="import" type="button">Import JSON</button>
       <button data-action="clear-watchlist" type="button" class="btn-danger">Clear All</button>
+    </div>
+    <div class="setting-group">
+      <label>Full data export (C7)</label>
+      <button data-action="export-full-json" type="button">Export all (JSON)</button>
+      <button data-action="export-gz" type="button">Export all (.json.gz)</button>
+      <button data-action="export-full-csv" type="button">Export all (CSV)</button>
+    </div>
+    <div class="setting-group${getPwaInstallManager().isAvailable() ? "" : " hidden"}" id="pwa-install-group">
+      <label>Install App</label>
+      <button data-action="install-pwa" type="button" class="btn-accent">Install CrossTide</button>
+      <button data-action="dismiss-pwa" type="button" class="btn-ghost btn-sm">Not now</button>
     </div>
     <div class="setting-group">
       <label>Cache</label>
@@ -202,6 +237,18 @@ export function renderSettings(
 
   const themeSelect = container.querySelector<HTMLSelectElement>("#theme-select");
   const localeSelect = container.querySelector<HTMLSelectElement>("#locale-select");
+  const paletteSelect = container.querySelector<HTMLSelectElement>("#palette-select");
+
+  // C8: PWA install prompt — shared singleton so the state survives repeated mounts.
+  const pwaInstall = getPwaInstallManager();
+  function showPwaInstallGroup(): void {
+    container.querySelector("#pwa-install-group")?.classList.remove("hidden");
+  }
+  function hidePwaInstallGroup(): void {
+    container.querySelector("#pwa-install-group")?.classList.add("hidden");
+  }
+  pwaInstall.onReady(showPwaInstallGroup);
+  pwaInstall.onInstalled(hidePwaInstallGroup);
 
   // Delegated button actions
   const keyInput = container.querySelector<HTMLInputElement>("#finnhub-key-input");
@@ -212,9 +259,26 @@ export function renderSettings(
     {
       export: () => callbacks.onExport(),
       "export-gz": () => callbacks.onExportGz?.(),
+      "export-image": () => callbacks.onExportImage?.(),
+      "export-full-json": () => callbacks.onExportFullJson?.(),
+      "export-full-csv": () => callbacks.onExportFullCsv?.(),
       import: () => callbacks.onImport(),
       "clear-watchlist": () => callbacks.onClearWatchlist(),
       "clear-cache": () => callbacks.onClearCache(),
+      "palette-change": () => {
+        if (paletteSelect) {
+          callbacks.onPaletteChange?.(paletteSelect.value as ReturnType<typeof getActivePalette>);
+        }
+      },
+      "install-pwa": () => {
+        void pwaInstall.prompt().then((outcome) => {
+          if (outcome === "accepted") hidePwaInstallGroup();
+        });
+      },
+      "dismiss-pwa": () => {
+        pwaInstall.dismiss();
+        hidePwaInstallGroup();
+      },
       "reset-weights": () => {
         for (const method of METHOD_NAMES) {
           const slider = container.querySelector<HTMLInputElement>(`#weight-${method}`);
@@ -249,6 +313,10 @@ export function renderSettings(
       "contrast-change": () => {
         const toggle = container.querySelector<HTMLInputElement>("#contrast-toggle");
         if (toggle) setEnhancedContrast(toggle.checked);
+      },
+      "telemetry-optout-change": () => {
+        const toggle = container.querySelector<HTMLInputElement>("#telemetry-optout-toggle");
+        if (toggle) setTelemetryOptOut(toggle.checked);
       },
       "refresh-interval-change": () => {
         const select = container.querySelector<HTMLSelectElement>("#refresh-interval-select");
@@ -378,6 +446,8 @@ export function renderSettings(
       inputDelegate.dispose();
       container.removeEventListener("keydown", shortcutKeydown);
       disposeIndicatorPanel?.();
+      pwaInstall.offReady(showPwaInstallGroup);
+      pwaInstall.offInstalled(hidePwaInstallGroup);
     },
   };
 }

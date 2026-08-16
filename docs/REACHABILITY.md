@@ -4,10 +4,10 @@
 > Every module not reachable from those entry points appears exactly once below.
 
 - Source modules: 523
-- Reachable modules: 265
-- Unreachable modules: 258
+- Reachable modules: 266
+- Unreachable modules: 257
 - Hard orphans: 8
-- Barrel-only modules: 233
+- Barrel-only modules: 232
 
 | Module | Category | Importers | Disposition |
 | --- | --- | --- | --- |
@@ -56,7 +56,6 @@
 | `src/core/sri.ts` | UNREACHABLE | src/core/index.ts<br>src/core/plugin-integrity.ts | PUBLISH |
 | `src/core/storage-manager.ts` | UNREACHABLE | src/core/storage-manager.ts | PUBLISH |
 | `src/core/sync-queue.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
-| `src/core/tauri-bridge.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/throttle-debounce.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/tier-policy.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |
 | `src/core/timezone.ts` | BARREL_ONLY | src/core/index.ts | PUBLISH |

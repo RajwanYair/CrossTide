@@ -121,4 +121,17 @@ describe("TickerFanout", () => {
     obj.webSocketError(mockWs);
     // No throw
   });
+
+  it("rejects new WebSocket upgrades once the per-ticker session cap is reached (S05)", async () => {
+    const state = createMockState();
+    const obj = new TickerFanout(state, {});
+    // Reflection: fill the private session set past MAX_SESSIONS_PER_TICKER without
+    // needing a real WebSocketPair (unavailable outside the Workers runtime).
+    const withSessions = obj as unknown as { sessions: Set<WebSocket> };
+    withSessions.sessions = new Set(Array.from({ length: 1_000 }, () => ({}) as WebSocket));
+    const res = await obj.fetch(
+      new Request("http://localhost/ws", { headers: { Upgrade: "websocket" } }),
+    );
+    expect(res.status).toBe(503);
+  });
 });
