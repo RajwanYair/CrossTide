@@ -116,6 +116,11 @@ jobs:
       - name: Forbid focused/skipped tests
         run: node scripts/check-test-focus-skip.mjs
 
+      - name: Build @crosstide/domain
+        # Domain package exports are resolved before tests run.
+        # Without building the dist, tests that import from @crosstide/domain fail.
+        run: npm run build:domain
+
       - name: Unit tests
         run: npm run test:coverage
 
