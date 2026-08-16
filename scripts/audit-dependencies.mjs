@@ -178,8 +178,12 @@ if (expired.length > 0) {
   }
   process.exitCode = 1;
 } else if (highOrCritical.length > 0) {
+  const usedPackages = new Set(
+    highOrCritical.flatMap((vulnerability) => [vulnerability.name, ...vulnerability.viaPackages]),
+  );
+  const usedExceptions = ACKNOWLEDGED_ADVISORIES.filter((entry) => usedPackages.has(entry.package));
   console.log(
-    `Dependency audit found ${highOrCritical.length} high or critical finding(s), all covered by dated exceptions (roadmap S01): ${[...acknowledgedByUrl.keys()].join(", ")}.`,
+    `Dependency audit found ${highOrCritical.length} high or critical finding(s), all covered by dated exceptions (roadmap S01): ${usedExceptions.map((entry) => entry.url).join(", ")}.`,
   );
 } else {
   console.log("Dependency audit found no high or critical findings.");
