@@ -97,6 +97,18 @@ test("chart route shows a no-data state when providers are unavailable", async (
   await expect(chart.locator(".empty-state")).toContainText("No chart data for AAPL");
 });
 
+test("chart toolbar survives the chart body re-rendering", async ({ page }) => {
+  await page.goto("/chart/AAPL");
+  await waitForAppReady(page);
+
+  const toolbar = page.locator("#view-chart .timeframe-bar");
+  await expect(toolbar).toBeVisible();
+  await expect(toolbar.locator("[data-action='set-timeframe']").first()).toBeVisible();
+  await expect(toolbar.locator("[data-action='toggle-ha']")).toBeVisible();
+  await expect(toolbar.locator("[data-action='export-chart']")).toBeVisible();
+  await expect(toolbar.locator("[data-action='share-drawings']")).toBeVisible();
+});
+
 test("offline journey state announces stale data and clears on reconnect", async ({ page }) => {
   await page.goto("/watchlist");
   await waitForAppReady(page);

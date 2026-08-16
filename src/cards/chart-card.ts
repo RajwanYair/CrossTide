@@ -9,7 +9,7 @@
 import { renderChart } from "./chart";
 import { renderFundamentalsOverlay } from "./fundamental-overlay";
 import { attachLwChart, type LwChartHandle } from "./lw-chart";
-import { mountDrawingTools, type DrawingToolHandle } from "./drawing-tools";
+import { mountDrawingTools, type DrawingToolHandle, type Drawing } from "./drawing-tools";
 import { attachDrawingHistory, type DrawingHistoryHandle } from "./drawing-history";
 import { saveDrawings, loadDrawings } from "./drawing-persistence";
 import { runBacktestAsync } from "../core/backtest-worker";
@@ -22,6 +22,7 @@ import { getNavigationSignal } from "../ui/router";
 import { patchDOM } from "../core/patch-dom";
 import { createDelegate } from "../ui/delegate";
 import { captureElementAsPng, downloadBlob } from "../core/export-image";
+import { encodeDrawingsUrl, decodeDrawingsUrl } from "../core/share-state";
 import { renderDataMetadata } from "./data-metadata";
 import { recordPerformanceTrace } from "../core/perf-metrics";
 import type { CardModule, CardContext } from "./registry";
@@ -86,6 +87,7 @@ async function renderChartWithData(
   drawingRef?: { current: DrawingToolHandle | null; ticker: string },
   historyRef?: { current: DrawingHistoryHandle | null },
   useHeikinAshi = false,
+  sharedDrawingsRef?: { applied: boolean },
 ): Promise<void> {
   // Dispose previous LWC instance before re-rendering
   lwHandle.current?.dispose();
@@ -158,8 +160,16 @@ async function renderChartWithData(
           const drawingHandle = mountDrawingTools(canvasEl, {
             onChange: () => historyRef?.current?.snapshot(),
           });
-          const saved = loadDrawings(ticker);
-          if (saved.length > 0) drawingHandle.setDrawings(saved);
+          let drawingsToApply = loadDrawings(ticker);
+          if (sharedDrawingsRef && !sharedDrawingsRef.applied) {
+            sharedDrawingsRef.applied = true;
+            const shared =
+              typeof location !== "undefined" ? decodeDrawingsUrl(location.href) : null;
+            if (shared && shared.symbol === ticker.toUpperCase() && shared.drawings.length > 0) {
+              drawingsToApply = shared.drawings as Drawing[];
+            }
+          }
+          if (drawingsToApply.length > 0) drawingHandle.setDrawings(drawingsToApply);
           drawingRef.current = drawingHandle;
           if (historyRef) historyRef.current = attachDrawingHistory(drawingHandle);
         }
@@ -182,6 +192,7 @@ const chartCard: CardModule = {
       ticker,
     };
     const historyRef: { current: DrawingHistoryHandle | null } = { current: null };
+    const sharedDrawingsRef: { applied: boolean } = { applied: false };
     let activeTimeframe: TimeframePreset = DEFAULT_TIMEFRAME;
     let heikinAshiMode = false;
 
@@ -214,7 +225,21 @@ const chartCard: CardModule = {
     exportBtn.dataset["action"] = "export-chart";
     tfBar.appendChild(exportBtn);
 
+    const shareDrawingsBtn = document.createElement("button");
+    shareDrawingsBtn.className = "btn btn-sm timeframe-btn";
+    shareDrawingsBtn.textContent = "Share Drawings";
+    shareDrawingsBtn.title = "Copy a link that restores these chart drawings";
+    shareDrawingsBtn.dataset["action"] = "share-drawings";
+    tfBar.appendChild(shareDrawingsBtn);
+
     container.prepend(tfBar);
+
+    // Chart body renders into a dedicated child element so patchDOM's morphdom
+    // reconciliation never wipes out the toolbar prepended above (both are
+    // siblings under `container`, which itself is never passed to patchDOM).
+    const chartContent = document.createElement("div");
+    chartContent.className = "chart-content";
+    container.appendChild(chartContent);
 
     function runBacktest(): void {
       const btn = container.querySelector<HTMLButtonElement>("[data-action='run-backtest']");
@@ -273,26 +298,28 @@ const chartCard: CardModule = {
           saveDrawings(drawingRef.ticker, drawingRef.current.getDrawings());
         }
         void renderChartWithData(
-          container,
+          chartContent,
           ticker,
           lwHandle,
           preset,
           drawingRef,
           historyRef,
           heikinAshiMode,
+          sharedDrawingsRef,
         );
       },
       "toggle-ha": (el) => {
         heikinAshiMode = !heikinAshiMode;
         el.classList.toggle("active", heikinAshiMode);
         void renderChartWithData(
-          container,
+          chartContent,
           ticker,
           lwHandle,
           activeTimeframe,
           drawingRef,
           historyRef,
           heikinAshiMode,
+          sharedDrawingsRef,
         );
       },
       "run-backtest": () => runBacktest(),
@@ -316,18 +343,35 @@ const chartCard: CardModule = {
             exportBtn.disabled = false;
           });
       },
+      "share-drawings": () => {
+        const drawings = drawingRef.current?.getDrawings() ?? [];
+        if (!ticker || drawings.length === 0) {
+          showToast({ message: "No drawings to share", type: "info" });
+          return;
+        }
+        const shareUrl = encodeDrawingsUrl(ticker, drawings, window.location.href);
+        void navigator.clipboard
+          .writeText(shareUrl)
+          .then(() => {
+            showToast({ message: "Drawing share link copied to clipboard!", type: "success" });
+          })
+          .catch(() => {
+            showToast({ message: `Share link: ${shareUrl}`, type: "info", durationMs: 0 });
+          });
+      },
     });
 
     void renderChartWithData(
-      container,
+      chartContent,
       ticker,
       lwHandle,
       activeTimeframe,
       drawingRef,
       historyRef,
       heikinAshiMode,
+      sharedDrawingsRef,
     );
-    renderBacktestUI(container, ticker);
+    renderBacktestUI(chartContent, ticker);
 
     return {
       update(newCtx: CardContext): void {
@@ -339,15 +383,16 @@ const chartCard: CardModule = {
         ticker = t;
         drawingRef.ticker = t;
         void renderChartWithData(
-          container,
+          chartContent,
           t,
           lwHandle,
           activeTimeframe,
           drawingRef,
           historyRef,
           heikinAshiMode,
+          sharedDrawingsRef,
         );
-        renderBacktestUI(container, t);
+        renderBacktestUI(chartContent, t);
       },
       dispose(): void {
         delegate.dispose();

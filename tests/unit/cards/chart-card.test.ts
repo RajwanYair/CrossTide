@@ -65,6 +65,16 @@ vi.mock("../../../src/ui/router", () => ({
   getNavigationSignal: vi.fn().mockReturnValue(new AbortController().signal),
 }));
 
+const mockDrawingHandle = {
+  dispose: vi.fn(),
+  setDrawings: vi.fn(),
+  getDrawings: vi.fn(() => [] as unknown[]),
+};
+
+vi.mock("../../../src/cards/drawing-tools", () => ({
+  mountDrawingTools: vi.fn(() => mockDrawingHandle),
+}));
+
 describe("chart-card (CardModule)", () => {
   let container: HTMLElement;
 
@@ -144,5 +154,63 @@ describe("chart-card (CardModule)", () => {
     const { default: chartCard } = await import("../../../src/cards/chart-card");
     const handle = chartCard.mount(container, { route: "chart", params: { symbol: "AAPL" } });
     expect(() => handle?.dispose?.()).not.toThrow();
+  });
+
+  it("renders a share-drawings toolbar button", async () => {
+    const { default: chartCard } = await import("../../../src/cards/chart-card");
+    chartCard.mount(container, { route: "chart", params: { symbol: "AAPL" } });
+    const btn = container.querySelector<HTMLButtonElement>("[data-action='share-drawings']");
+    expect(btn).not.toBeNull();
+  });
+
+  it("shows a toast when there are no drawings to share", async () => {
+    mockDrawingHandle.getDrawings.mockReturnValue([]);
+    const { showToast } = await import("../../../src/ui/toast");
+    const { default: chartCard } = await import("../../../src/cards/chart-card");
+    chartCard.mount(container, { route: "chart", params: { symbol: "AAPL" } });
+    await vi.waitFor(() => {
+      expect(container.querySelector("[data-action='share-drawings']")).not.toBeNull();
+    });
+    container.querySelector<HTMLButtonElement>("[data-action='share-drawings']")?.click();
+    expect(showToast).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "No drawings to share" }),
+    );
+  });
+
+  it("copies a share link with drawings to clipboard", async () => {
+    const drawing = { kind: "line", points: [] };
+    mockDrawingHandle.getDrawings.mockReturnValue([drawing]);
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { clipboard: { writeText } });
+    const { showToast } = await import("../../../src/ui/toast");
+    const { mountDrawingTools } = await import("../../../src/cards/drawing-tools");
+    const { default: chartCard } = await import("../../../src/cards/chart-card");
+    chartCard.mount(container, { route: "chart", params: { symbol: "AAPL" } });
+    // Wait for the async LWC attach + drawing-tools mount to populate drawingRef
+    // before clicking, so getDrawings() is read from a live handle, not null.
+    await vi.waitFor(() => expect(mountDrawingTools).toHaveBeenCalled());
+    container.querySelector<HTMLButtonElement>("[data-action='share-drawings']")?.click();
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
+    expect(writeText.mock.calls[0]![0]).toContain("?s=");
+    expect(showToast).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Drawing share link copied to clipboard!" }),
+    );
+    vi.unstubAllGlobals();
+  });
+
+  it("restores drawings from a matching shared URL on mount", async () => {
+    const { encodeDrawingsUrl } = await import("../../../src/core/share-state");
+    const sharedDrawing = { kind: "line", points: [1, 2] };
+    const shareUrl = encodeDrawingsUrl("AAPL", [sharedDrawing], "http://localhost/");
+    const token = new URL(shareUrl).searchParams.get("s")!;
+    window.history.pushState({}, "", `/chart/AAPL?s=${token}`);
+
+    mockDrawingHandle.getDrawings.mockReturnValue([]);
+    const { default: chartCard } = await import("../../../src/cards/chart-card");
+    chartCard.mount(container, { route: "chart", params: { symbol: "AAPL" } });
+    await vi.waitFor(() => {
+      expect(mockDrawingHandle.setDrawings).toHaveBeenCalledWith([sharedDrawing]);
+    });
+    window.history.pushState({}, "", "/");
   });
 });
