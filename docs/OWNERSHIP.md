@@ -9,17 +9,15 @@ information architecture and review triggers.
 | Document | Owner | Canonical purpose | Review trigger |
 |---|---|---|---|
 | `README.md` | Product maintainers | Public product overview and quick start | Release, route, or feature-surface change |
-| `docs/ARCHITECTURE.md` | Architecture maintainers | Runtime boundaries, imports, and data flow | Layer, entry point, or rendering change |
+| `docs/ARCHITECTURE.md` | Architecture maintainers | Runtime boundaries, imports, data flow, and orphan disposition | Layer, entry point, rendering, or reachability change |
 | `docs/DEVELOPMENT.md` | Developer experience maintainers | Local setup, scripts, contribution checks | Toolchain, script, or quality-gate change |
-| `docs/CLOUDFLARE_SETUP.md` | Operations maintainers | Cloudflare resources and deployment setup | Binding, migration, or deployment change |
-| `docs/ROADMAP.md` | Product maintainers | Future priorities and acceptance evidence | Priority, dependency, or blocker change |
-| `docs/SPRINT-50.md` | Product maintainers | Executable decomposition of the next 50 roadmap tasks | Sprint sequencing, task state, or acceptance evidence change |
+| `docs/OPERATIONS.md` | Operations maintainers | Auth matrix, Cloudflare resource provisioning, and rehearsal record | Credential, binding, migration, or deployment change |
+| `docs/ROADMAP.md` | Product maintainers | Future priorities, active sprint tracking, and acceptance evidence | Priority, dependency, blocker, or sprint status change |
 | `docs/REACHABILITY.md` | Architecture maintainers | Generated application reachability inventory | Entry point or source-module change |
 | `docs/adr/README.md` | Architecture maintainers | ADR index and decision lifecycle | ADR added, superseded, or deprecated |
 | `docs/adr/*.md` | Decision owner named in each ADR | One durable architecture decision | Evidence or decision-status change |
 | `docs/demos/README.md` | Developer experience maintainers | Demo recording and fixture workflow | Demo script or fixture contract change |
 | `docs/CAPABILITY_MATRIX.md` | Product maintainers | Supported, preview, dormant, and blocked feature status | Route, package, provider, or support-status change |
-| `docs/ORPHAN_DISPOSITION.md` | Architecture maintainers | Explicit disposition for unreachable application modules | Reachability inventory or architecture decision change |
 | `docs/PACKAGE_CONTRACTS.md` | Architecture maintainers | Public, runtime-only, and experimental package boundaries | Export, barrel, widget, MCP, or Worker API change |
 | `docs/SECRET_LIFECYCLE.md` | Security and operations maintainers | Secret storage, rotation, and fork portability | Secret, binding, proxy, or provider configuration change |
 | `docs/adr/NNNN-*.md` | Decision owner named in each ADR | One durable architecture or security decision | Evidence or decision-status change |
@@ -32,7 +30,8 @@ information architecture and review triggers.
 | `packages/*/README.md` | Package maintainers | Published package contract and usage | Package API, build, or publication change |
 | `mcp-server/README.md` | MCP maintainers | MCP setup, tools, and endpoint contract | MCP schema, endpoint, or runtime change |
 | `monitoring/README.md` | Operations maintainers | Monitoring and deployment operations | Probe, alert, or hosting change |
-| `CHANGELOG.md` | Release maintainers | Historical release record | Release preparation or published fix |
+| `CHANGELOG.md` | Release maintainers | Historical release record (current major version line) | Release preparation or published fix |
+| `CHANGELOG.archive.md` | Release maintainers | Archived release record for superseded major versions | Major version archival boundary change |
 | `.github/AGENTS.md` | Repository maintainers | Agent roles and delegation boundaries | Agent or workspace workflow change |
 | `GEMINI.md` | Repository maintainers | Alternate agent workspace guidance | Agent or workspace workflow change |
 | `docs-site/src/content/docs/*` | Documentation maintainers | User-facing feature documentation | Feature behavior or public API change |

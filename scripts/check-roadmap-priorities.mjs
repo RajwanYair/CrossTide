@@ -23,7 +23,7 @@ function readRoadmapRows() {
 
 function readDeclaredQueue() {
   const document = readFileSync(ROADMAP, "utf8");
-  const section = document.match(/## Next Ten Priorities\n([\s\S]*?)(?=\n## Phase 0:)/u)?.[1] ?? "";
+  const section = document.match(/## Next Ten Priorities\n([\s\S]*?)(?=\n## )/u)?.[1] ?? "";
   return [...section.matchAll(/^\| \d+ \| ([A-Z]\d+) \|/gmu)].map((match) => match[1]);
 }
 

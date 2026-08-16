@@ -6,9 +6,10 @@ This is the repository-level record of external tool access, deployment
 credentials, optional provider secrets, and durable engineering learnings.
 It intentionally records capability and scope, never secret values.
 
-Use [the operations rehearsal record](OPERATIONS-REHEARSAL.md) to capture
-fresh-machine recovery evidence. The checklist is intentionally separate from
-this runbook so incomplete rehearsals cannot be mistaken for verified claims.
+Use [the operations rehearsal record](#operations-rehearsal-record) below to
+capture fresh-machine recovery evidence. The checklist is intentionally separate
+from the runbook above it so incomplete rehearsals cannot be mistaken for
+verified claims.
 
 ## Verification Snapshot
 
@@ -202,6 +203,215 @@ Get-ChildItem Env: | Where-Object { $_.Name -match 'KEY|TOKEN|SECRET|DSN' } | Se
 ```
 
 The final command reports names only. Never print values from environment variables, `.env` files, Wrangler config, or CI secrets.
+
+## Cloudflare Resource Provisioning
+
+This section walks through creating all Cloudflare resources required by CrossTide and
+wiring their IDs into `worker/wrangler.toml`.
+
+### Provisioning Workflow
+
+![CrossTide market data and deployment flow](assets/data-deployment-flow.svg)
+
+_The visual separates local behavior checks from deployment evidence: a green local build does
+not prove that production bindings exist._
+
+```mermaid
+flowchart TD
+  P0([wrangler login]) --> S1["Step 1 — KV Namespace\n(QUOTE_CACHE)"]
+  S1 --> S2["Step 2 — D1 Database\n(DB) + migrations"]
+  S2 --> S3["Step 3 — Rate Limiter\n(auto-provisioned)"]
+  S3 --> S4["Step 4 — Durable Object\n(TICKER_FANOUT, auto-provisioned)"]
+  S4 --> S5["Step 5 — Local dev\n(wrangler dev)"]
+  S5 --> S6["Step 6 — Deploy\n(worker + Pages)"]
+  S6 --> Verify([curl /api/health])
+```
+
+#### Provisioning Inputs And Outputs
+
+```mermaid
+flowchart LR
+  Inputs[Account + auth<br/>binding IDs + secrets] --> Config[worker/wrangler.toml<br/>and .dev.vars]
+  Config --> Validate[wrangler validation<br/>and local dev]
+  Validate --> Deploy[Worker + Pages deploy]
+  Deploy --> Evidence[health endpoint<br/>headers + frontend shell]
+  Deploy --> Failure[blocked or degraded state]
+```
+
+### Prerequisites
+
+- [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is sufficient)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
+  installed and authenticated. Wrangler is a devDependency, so invoke the
+  lockfile-pinned binary rather than `npx`, which may fetch a different version:
+
+  ```powershell
+  ./node_modules/.bin/wrangler login
+  ```
+
+### Step 1 — KV Namespace (QUOTE_CACHE)
+
+Caches quote, chart, and search responses with market-hours-aware TTLs.
+
+```powershell
+# Create production namespace
+./node_modules/.bin/wrangler kv namespace create QUOTE_CACHE
+# Output: { id: "abc123..." }
+
+# Create preview namespace (used by PR preview deployments)
+./node_modules/.bin/wrangler kv namespace create QUOTE_CACHE --preview
+# Output: { preview_id: "def456..." }
+```
+
+Paste the IDs into `worker/wrangler.toml`:
+
+```toml
+[[kv_namespaces]]
+binding = "QUOTE_CACHE"
+id = "abc123..."          # replace PLACEHOLDER_KV_NAMESPACE_ID
+preview_id = "def456..."  # replace PLACEHOLDER_KV_PREVIEW_ID
+```
+
+### Step 2 — D1 Database (DB)
+
+Stores user watchlists, portfolios, alert rules, and CSP violation reports.
+
+```powershell
+# Create the database
+./node_modules/.bin/wrangler d1 create crosstide-db
+# Output: { database_id: "ghi789..." }
+```
+
+Paste into `worker/wrangler.toml`:
+
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "crosstide-db"
+database_id = "ghi789..."   # replace PLACEHOLDER_D1_DATABASE_ID
+migrations_dir = "migrations"
+```
+
+#### Apply Migrations
+
+```powershell
+# Staging / preview
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db --env staging
+
+# Production
+./node_modules/.bin/wrangler d1 migrations apply crosstide-db
+```
+
+Migration files live in `worker/migrations/`:
+
+| File                      | Contents                                       |
+| ------------------------- | ---------------------------------------------- |
+| `0001_initial_schema.sql` | watchlists, portfolios, alerts, settings, sync |
+| `0002_alert_history.sql`  | alert_history table + indexes                  |
+
+To check migration status:
+
+```powershell
+# Local (requires D1 binding)
+curl http://localhost:8787/api/migrations/status
+
+# Via wrangler
+./node_modules/.bin/wrangler d1 migrations list crosstide-db
+```
+
+### Step 3 — Rate Limiter (RATE_LIMITER)
+
+The `[[unsafe.bindings]]` block for the Rate Limiting API does **not** require a separate
+create step — Cloudflare provisions it automatically on `wrangler deploy`. The `namespace_id`
+(`1001`) is an arbitrary identifier you choose; it scopes the rate limit counters to this worker.
+
+No action required — the binding in `worker/wrangler.toml` is ready as-is.
+
+### Step 4 — Durable Object (TICKER_FANOUT)
+
+The `TickerFanout` Durable Object class is declared in `worker/index.ts` and exported via
+`[[durable_objects]]` + `[[migrations]]` in `worker/wrangler.toml`. Cloudflare creates the
+namespace automatically on first `wrangler deploy`. No separate provisioning step needed.
+
+### Step 5 — Local Development
+
+```powershell
+# Copy the example file
+Copy-Item worker\.dev.vars.example worker\.dev.vars
+# Edit worker/.dev.vars with any optional API keys
+
+# Start the worker locally (hot-reload, KV/D1 in-memory stubs)
+cd worker
+./node_modules/.bin/wrangler dev
+```
+
+The worker runs at `http://localhost:8787`. Vite proxies `/api/*` to it when running
+`npm run dev` (see `vite.config.ts`).
+
+### Step 6 — Deploy
+
+```powershell
+# Deploy worker
+cd worker
+./node_modules/.bin/wrangler deploy
+
+# Deploy Pages (static build)
+cd ..
+npm run build
+./node_modules/.bin/wrangler pages deploy dist --project-name crosstide
+```
+
+### Environment Matrix
+
+| Env          | KV Binding | D1 Binding | Data source  |
+| ------------ | :--------: | :--------: | ------------ |
+| `dev`        |    None    |    None    | Yahoo (real) |
+| `preview`    |  Preview   |    None    | Fixture data |
+| `staging`    |  Prod KV   |  Prod D1   | Yahoo (real) |
+| `production` |  Prod KV   |  Prod D1   | Yahoo (real) |
+
+When `ENVIRONMENT=preview` (set automatically on Cloudflare Pages PR deployments), the
+worker serves deterministic fixture data so CI never hits Yahoo rate limits.
+
+## Operations Rehearsal Record
+
+Use one copy of this record for each fresh-machine rehearsal. Record commands,
+outputs, timestamps, and target environments in the change or incident record.
+Never include secrets, tokens, `.env` contents, or personal access data.
+
+### Run Metadata
+
+| Field | Value |
+| --- | --- |
+| Operator | |
+| Date and time (UTC) | |
+| Commit or image digest | |
+| Host OS and version | |
+| Target environment | |
+| Change or incident reference | |
+
+### Acceptance Checklist
+
+| Operation | Command or evidence | Result | Evidence reference |
+| --- | --- | --- | --- |
+| Rollback | Last-known-good deployment restored through the normal workflow | Pending | |
+| D1 backup | Authenticated backup created and listed for the intended database | Pending | |
+| D1 restore | Writes paused, selected backup restored, reads verified | Pending | |
+| Migration | Disposable or staging migration applied and status verified | Pending | |
+| Incident | Scope, owner, mitigation, recovery, timeline, and follow-up recorded | Pending | |
+| Provider outage | Upstream failure confirmed, fallback and freshness state verified | Pending | |
+
+### Self-Hosted Smoke Evidence
+
+| Check | Result | Evidence reference |
+| --- | --- | --- |
+| `docker compose config` | Pending | |
+| `docker compose build` | Pending | |
+| `docker compose up -d` | Pending | |
+| `/api/health` | Pending | |
+| `docker compose restart` | Pending | |
+| `/api/migrations/status` | Pending | |
+| `docker compose down` | Pending | |
 
 
 

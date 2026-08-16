@@ -1,11 +1,9 @@
 # CrossTide Product And Engineering Roadmap
 
-The executable decomposition of the current queue is maintained in
-[`docs/SPRINT-50.md`](SPRINT-50.md).
-
 > **Planning baseline:** 12 August 2026 · **Release:** v11.44.6
 >
-> This is the single consolidated plan for future work. Completed work belongs in
+> This is the single consolidated plan for future work: priorities, phases, active
+> sprint tracking, and acceptance policy. Completed work belongs in
 > `CHANGELOG.md` and Git history. GitHub Issues and pull requests own execution
 > detail, discussion, owners, and acceptance evidence.
 
@@ -86,9 +84,8 @@ observable mismatch, it is not a gate and must be fixed before it is trusted.
 ## Next Ten Priorities
 
 This is the executable queue for the active development sprint batch and the next
-25 planned roadmap items. The detailed active batch is tracked in
-[`docs/SPRINT-50.md`](SPRINT-50.md) and follows the delivery order below while
-excluding externally blocked work.
+25 planned roadmap items, following the delivery order below while excluding
+externally blocked work.
 
 | Rank | ID | Reason to execute next |
 |---:|---|---|
@@ -102,6 +99,52 @@ excluding externally blocked work.
 | 8 | F01 | Establish performance budgets and representative measurement profiles |
 | 9 | F02 | Measure and optimize startup, lazy loading, charts, workers, and service-worker updates |
 | 10 | D04 | Build deterministic replay fixtures for provider success and failure states |
+
+## Active Sprint Tracking
+
+Sprint execution rules, the current implementation batch, and the acceptance
+queue that recalculates from verified local evidence. This section is the
+single source for "what is being worked on right now" — phase tables below
+record the full backlog; this section records live status.
+
+### Execution Rules
+
+1. Execute in rank order unless a dependency or blocker is recorded.
+2. Every code task requires a focused test before the next task begins.
+3. Every documentation task requires `npm run check:repo-contracts`.
+4. Do not mark a task complete from a static file edit alone; run its acceptance check.
+5. Blocked tasks stay visible and must not be replaced by speculative infrastructure.
+
+### Current Priority Queue
+
+This queue recalculates the next work from the current roadmap statuses and
+verified local evidence.
+
+| Rank | Roadmap | Task | State | Next acceptance check |
+|---:|---|---|---|---|
+| 1 | P04 | Rehearse the Docker self-hosting path on a clean machine | Blocked locally | Docker build, health, restart, persistence, and shutdown report |
+| 2 | P05 | Rehearse rollback, backup, restore, migration, incident, and provider-outage runbooks | In progress | Fresh-machine rehearsal records evidence for each procedure |
+| 3 | A05 | Validate the hybrid rendering decision with representative workflow measurements | Verified | ADR records repeatable LCP, INP, CLS, scripting, memory, and accessibility evidence |
+| 4 | A06 | Standardize card lifecycle and disposal behavior | Verified | Registry lifecycle tests cover mount, inactive disposal, shutdown, failed loads, and disposal-error isolation |
+| 5 | U06 | Complete locale, RTL, number, date, and timezone support | Verified | Locale catalog, RTL, and formatter tests pass for all supported locales |
+| 6 | F01 | Make performance budgets observable in CI and probes | Verified | Shared LCP budget matches the measured 2.7s real-world signal and the Lighthouse gate plus browser benchmark pass with matching evidence |
+| 7 | F02 | Capture startup, lazy-load, chart, worker, and service-worker measurements | In progress | `npm run test:e2e:performance:profiles` attaches profile-labeled startup, card-load, chart-render, Worker-transfer, and service-worker measurements for Chromium, mobile Chrome, and Android Galaxy; optimization and broader comparison remain |
+| 8 | U03 | Complete heatmap keyboard, accessibility, resize, and touch behavior | Verified | Full supported Playwright matrix passes: 155 heatmap-focused keyboard, accessibility, resize, navigation, and touch tests across desktop, mobile, tablet, and Android projects |
+| 9 | D06 | Validate OHLCV gaps, corporate actions, duplicates, currency, and calendars | Verified | Domain checks reject or visibly mark invalid market data, including consecutive-day duplicate-candle and exchange-calendar-aware gap detection |
+| 10 | D07 | Validate indicator and backtest semantics against published references and invariants | Verified | Numerical property and financial-invariant suites pass; `BacktestResult` carries run explanation metadata |
+
+U07, D03, and D04 are excluded because their acceptance evidence is complete. P01-P03,
+P06, S01, E02, and the external-user validation task remain externally blocked.
+
+### Active Implementation Batch
+
+| Batch | Status | Notes |
+|---|---|---|
+| P04 + P05 | In progress | Docker self-hosting rehearsal and rollback/runbook evidence remain the operating baseline for deployment readiness |
+| A05 + F02 | In progress | Rendering strategy measurement and performance profiling are driving the next platform decisions |
+| U03 + U06 | In progress | Heatmap UX and locale/RTL formatting are the two remaining high-signal workflow completions |
+| D06 + D07 + D08 | In progress | Data-quality, backtest, alert, and screener explainability are being hardened against the real product data contract |
+| U04 + U01 | In progress | Journey state preservation (share-link ticker restore, chart drawing sharing, toolbar-render fix) and primary-journey completion remain the user-facing quality gate |
 
 ## Phase 0: Establish Truth And Scope
 
@@ -137,13 +180,19 @@ This phase stitches the existing work together without deleting dormant code.
 
 | ID | Work | Priority | Effort | Acceptance evidence | Status |
 |---|---|:---:|:---:|---|---|
-| A01 | Classify all unreachable modules by app wiring, package API, shared primitive, experiment, or explicit deferment | P0 | L | `docs/ORPHAN_DISPOSITION.md` classifies all seven hard orphans with owner and review date | Complete |
+| A01 | Classify all unreachable modules by app wiring, package API, shared primitive, experiment, or explicit deferment | P0 | L | `docs/ARCHITECTURE.md` classifies all seven hard orphans with owner and review date | Complete |
 | A02 | Resolve the seven hard orphans through wiring, promotion, merger, or documented deferment | P0 | L | Reachability report has no unexplained hard orphan; no module is deleted by default | Complete |
 | A03 | Separate public barrels from runtime entry points and test that each exported contract is consumable | P1 | M | `docs/PACKAGE_CONTRACTS.md` classifies package, Worker, browser, and SPA entry points | Complete |
 | A04 | Reconcile `types`, `domain`, `core`, `providers`, `cards`, and `ui` boundaries; remove compatibility exceptions rather than widening them | P0 | L | Strict architecture and domain package purity checks pass | Complete |
 | A05 | Measure DOM, Web Components, canvas, and hybrid rendering before choosing a canonical rendering strategy | P1 | M | ADR records performance, accessibility, contributor, and migration evidence | In progress |
 | A06 | Refactor shared card primitives, lifecycle, state, loading, error, and disposal contracts | P1 | L | All supported cards use the same lifecycle contract and leak test | Complete |
 | A07 | Review every public export and package subpath for stability, naming, and consumer value | P1 | M | Export inventory has compatibility policy and examples | Complete |
+
+A speculative 1000-line presentation-layer refactor proposal (tokens, density modes,
+z-index scale, mobile navigation) was drafted against an earlier snapshot of the
+codebase, never started, and had no remaining consumer or cross-reference. It is
+superseded by the evidence-driven A05 rendering-strategy measurement above; full
+detail is preserved in Git history rather than a stale unexecuted spec.
 
 ## Phase 3: Data Trust And Financial Correctness
 
@@ -174,6 +223,29 @@ Depth only matters when a customer can move through a coherent workflow.
 | U05 | Complete accessibility verification to WCAG 2.2 AA, then document the supported AAA enhancements and limitations | P0 | M | Automated and manual audits cover all supported routes and themes | Complete |
 | U06 | Complete RTL, locale expansion, number/date/timezone formatting, and translation completeness | P1 | M | EN/HE and added locales pass visual, semantic, and formatting tests | In progress |
 | U07 | Replace aspirational comparison claims with verified capability labels and user-facing limitations | P1 | S | README and docs-site distinguish shipped, preview, and planned capabilities | Complete |
+
+### Primary Journey Acceptance Matrix
+
+This matrix defines the minimum acceptance path for discovering an instrument,
+inspecting its market data, understanding signals and risk, and preserving or
+sharing the resulting view (U01). A case is accepted only when the listed outcome
+is observable in the UI or URL; a successful HTTP response alone is insufficient.
+
+| Journey | Entry point | User action | Observable acceptance | Required state variants | Test owner |
+|---|---|---|---|---|---|
+| Discover | `/watchlist` | Search for a ticker and add it | A matching suggestion is shown; submitting a valid symbol creates one watchlist row | Stock, ETF, crypto, forex, index; malformed symbol | `tests/e2e/cards.spec.ts` |
+| Inspect | Watchlist row and `/chart` | Select the symbol and open its chart | The selected ticker is visible, the chart or its explicit empty/error state is rendered, and no uncaught app error occurs | Live, cached/stale, empty, upstream error | `tests/e2e/` chart coverage |
+| Signal | `/consensus` | Open the symbol's consensus view | The signal summary identifies the symbol, exposes contributing inputs, and labels unavailable inputs instead of presenting them as values | Positive, negative, neutral, unavailable | `tests/e2e/` consensus coverage |
+| Risk | `/risk` | Review risk for the selected symbol or portfolio | Risk metrics render with units and a visible limitation or empty state when history is insufficient | Complete history, insufficient history, calculation error | `tests/e2e/` risk coverage |
+| Save | Watchlist and route state | Reload after adding a symbol | The saved symbol and active route survive reload, or the UI shows a deterministic empty state when persistence is unavailable | First visit, reload, malformed stored data, offline | `tests/e2e/` persistence coverage |
+| Share | Active analysis route | Copy or open the shareable URL | The URL contains the required symbol and route; opening it directly restores the same analysis context | Symbol with punctuation, missing symbol, unknown route | `tests/e2e/` share coverage |
+
+Execution rules: run the discovery case before inspect, signal, and risk cases when
+they share a symbol; assertions must target rendered state, route state, or
+accessible names rather than provider-specific response fields; every non-live
+result must show loading, empty, stale, error, retry, or offline state as
+applicable; browser tests use `waitForAppReady` and fixture/intercept network
+responses for deterministic runs.
 
 ## Phase 5: Performance, Offline, And Compatibility
 
