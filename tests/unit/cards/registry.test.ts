@@ -292,4 +292,21 @@ describe("card lifecycle store", () => {
     expect(disposeLateHandle).toHaveBeenCalledOnce();
     expect(store.get("chart")).toBeUndefined();
   });
+
+  it("ignores disposal errors and continues cleaning the inactive handles", () => {
+    const store = createCardLifecycleStore();
+    const flakyDispose = vi.fn(() => {
+      throw new Error("dispose blew up");
+    });
+    const safeDispose = vi.fn();
+
+    store.set("watchlist", { dispose: flakyDispose });
+    store.set("chart", { dispose: safeDispose });
+
+    expect(() => store.disposeInactive("chart")).not.toThrow();
+    expect(store.get("watchlist")).toBeUndefined();
+    expect(store.get("chart")).toBeDefined();
+    expect(flakyDispose).toHaveBeenCalledOnce();
+    expect(safeDispose).not.toHaveBeenCalled();
+  });
 });

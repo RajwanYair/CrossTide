@@ -8,12 +8,12 @@
     --bg-card-hover: #1c2128;
     --bg-input: #0d1117;
     --text-primary: #e6edf3;
-    --text-secondary: #8b949e;
-    --text-muted: #848d97; /* 4.81:1 on --bg-card-hover, the tightest dark pairing */
-    --accent: #58a6ff;
-    --accent-hover: #79c0ff;
+    --text-secondary: #c9d1d9;
+    --text-muted: #9aa7b6; /* dark theme tertiary text remains readable on --bg-card */
+    --accent: #c7d9ff;
+    --accent-hover: #dfe9ff;
     --border: #30363d;
-    --border-focus: #58a6ff;
+    --border-focus: #c7d9ff;
     --signal-buy: #3fb950;
     --signal-sell: #f85149;
     --signal-neutral: #8b949e;

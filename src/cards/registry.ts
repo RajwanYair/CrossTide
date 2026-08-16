@@ -226,15 +226,30 @@ export function createCardLifecycleStore(): CardLifecycleStore {
   let disposed = false;
 
   function dispose(route: RouteName): void {
-    handles.get(route)?.dispose?.();
-    handles.delete(route);
+    const handle = handles.get(route);
+    if (!handle) {
+      handles.delete(route);
+      return;
+    }
+
+    try {
+      handle.dispose?.();
+    } catch {
+      // Disposal failures must not break sibling lifecycle cleanup.
+    } finally {
+      handles.delete(route);
+    }
   }
 
   return {
     get: (route) => handles.get(route),
     set: (route, handle): void => {
       if (disposed || (activeRoute !== undefined && route !== activeRoute)) {
-        handle.dispose?.();
+        try {
+          handle.dispose?.();
+        } catch {
+          // A late or inactive card must never stall route transitions.
+        }
         return;
       }
       handles.set(route, handle);

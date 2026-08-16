@@ -54,6 +54,27 @@ sibling, or explicitly deferred with an owner and review date.
 - Every substantial change gets an issue, owner, risk, acceptance test, rollback
   plan, and documentation review trigger.
 
+## Anti-regression guardrails
+
+The roadmap is clear about the product goal, but it also carries the operational history of
+what has already gone wrong. These are the repeated failure modes we actively reject:
+
+- Gates that pass without checking the real artifact.
+- Vacuous readiness guards that resolve before the app loads.
+- Markdown/CI sequencing issues where an early gate masks later failures.
+- `npx`-driven tool drift for lockfile-pinned dev dependencies.
+- Unlinked CSS, stale Workbox manifests, and registry/router drift that are invisible until a
+  release day.
+- Hidden assumptions in browser tests that confuse visibility with clickability or route-focus
+  state with page readiness.
+- Dormant code paths that never execute in normal CI but accumulate real defects that surface only
+  after a previously hidden route is reached.
+- Hand-maintained mirrors or allowlists that silently narrow the rule instead of enforcing it.
+- Multi-file patches that silently drop neighboring logic because the edit matched too broadly.
+
+This list is intentionally short and actionable. If a proposed check cannot fail under a real,
+observable mismatch, it is not a gate and must be fixed before it is trusted.
+
 ## Priority And Status
 
 **Priority:** P0 release blocker · P1 product-critical · P2 important · P3 optional
@@ -64,8 +85,10 @@ sibling, or explicitly deferred with an owner and review date.
 
 ## Next Ten Priorities
 
-This is the executable queue for the next development sprint. It follows the
-delivery order below and excludes externally blocked work.
+This is the executable queue for the active development sprint batch and the next
+25 planned roadmap items. The detailed active batch is tracked in
+[`docs/SPRINT-50.md`](SPRINT-50.md) and follows the delivery order below while
+excluding externally blocked work.
 
 | Rank | ID | Reason to execute next |
 |---:|---|---|
@@ -119,7 +142,7 @@ This phase stitches the existing work together without deleting dormant code.
 | A03 | Separate public barrels from runtime entry points and test that each exported contract is consumable | P1 | M | `docs/PACKAGE_CONTRACTS.md` classifies package, Worker, browser, and SPA entry points | Complete |
 | A04 | Reconcile `types`, `domain`, `core`, `providers`, `cards`, and `ui` boundaries; remove compatibility exceptions rather than widening them | P0 | L | Strict architecture and domain package purity checks pass | Complete |
 | A05 | Measure DOM, Web Components, canvas, and hybrid rendering before choosing a canonical rendering strategy | P1 | M | ADR records performance, accessibility, contributor, and migration evidence | In progress |
-| A06 | Refactor shared card primitives, lifecycle, state, loading, error, and disposal contracts | P1 | L | All supported cards use the same lifecycle contract and leak test | In progress |
+| A06 | Refactor shared card primitives, lifecycle, state, loading, error, and disposal contracts | P1 | L | All supported cards use the same lifecycle contract and leak test | Complete |
 | A07 | Review every public export and package subpath for stability, naming, and consumer value | P1 | M | Export inventory has compatibility policy and examples | Complete |
 
 ## Phase 3: Data Trust And Financial Correctness
@@ -159,8 +182,8 @@ behavior under weak devices, networks, and browsers.
 
 | ID | Work | Priority | Effort | Acceptance evidence | Status |
 |---|---|:---:|:---:|---|---|
-| F01 | Establish budgets for LCP, INP, CLS, memory, long tasks, route transition, Worker p95, cache hit, and WebSocket recovery | P1 | M | CI and production probes fail with metric-specific evidence | In progress |
-| F02 | Measure and optimize startup, card lazy loading, chart rendering, Web Worker transfer, and service-worker update behavior | P1 | L | Budgets hold on representative desktop, mobile, and low-end profiles | Planned |
+| F01 | Establish budgets for LCP, INP, CLS, memory, long tasks, route transition, Worker p95, cache hit, and WebSocket recovery | P1 | M | CI and production probes fail with metric-specific evidence | Verified |
+| F02 | Measure and optimize startup, card lazy loading, chart rendering, Web Worker transfer, and service-worker update behavior | P1 | L | Budgets hold on representative desktop, mobile, and low-end profiles | In progress |
 | F03 | Define offline guarantees per workflow instead of treating the whole app as equally offline-capable | P1 | M | Each route documents cached, stale, read-only, and unavailable behavior | Complete |
 | F04 | Test browser compatibility, reduced motion, reduced data, battery, storage pressure, and private browsing modes | P1 | M | Compatibility matrix and progressive-enhancement tests are current | Complete |
 | F05 | Validate native Capacitor packaging or explicitly mark it experimental and isolate its support contract | P2 | M | iOS/Android smoke evidence or a documented non-support decision exists | Planned |

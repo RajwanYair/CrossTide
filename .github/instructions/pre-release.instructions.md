@@ -9,6 +9,28 @@ Run every step below in order. **All gates must be green before `git tag vX.Y.Z`
 
 Harvested from FamilyDashBoard sibling project — adapted to CrossTide's Vite + Hono + Cloudflare stack.
 
+## 0 · 🧱 Anti-regression checks (must pass before release)
+
+These are the recurring problems the repo has seen before; they are not optional reminders:
+
+- A gate that passes without checking the real artifact is rejected.
+- No vacuous readiness guard such as `?.textContent !== ""` or a file-text assertion that
+  never reads the rendered CSS.
+- No Playwright or Vitest pattern that assumes visibility means clickability or that `Tab`
+  starts at document top.
+- No `npx` for repo dev dependencies; use the local binary or the machine-scoped tool path.
+- No Vite/PWA build that skips `node scripts/workbox-inject.mjs`.
+- No card/router/OpenAPI drift: route tables and generated types must remain in sync.
+- No markdown-first CI blind spot: a failing early gate does not count as a later job passing.
+- No dormant path allowed to hide defects: if a code path can become reachable, the relevant tests
+  and acceptance gates must be able to fail on it.
+- No allowlist-based exceptions that silently widen the exact rule the gate exists to enforce.
+- No multi-file edit without a `git diff --unified=0` review to confirm adjacent code was not
+  silently removed by a fuzzy match.
+
+If a verification step cannot fail on a real mismatch, it is not a release gate and must be
+reworked.
+
 ---
 
 ## 1 · ✅ Quality Gates (zero tolerance)

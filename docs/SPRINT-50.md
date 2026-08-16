@@ -21,6 +21,54 @@
 4. Do not mark a task complete from a static file edit alone; run its acceptance check.
 5. Blocked tasks stay visible and must not be replaced by speculative infrastructure.
 
+## Active Sprint Status
+
+The next 25 planned delivery items are now tracked as the active implementation batch for the current roadmap cycle. The batch remains intentionally scoped to the verified unblocked workstream: operational runbooks, observability, product data quality, UX completion, and the remaining browser/runtime validations.
+
+| Batch | Status | Notes |
+|---|---|---|
+| P04 + P05 | In progress | Docker self-hosting rehearsal and rollback/runbook evidence remain the operating baseline for deployment readiness |
+| A05 + F02 | In progress | Rendering strategy measurement and performance profiling are driving the next platform decisions |
+| U03 + U06 | In progress | Heatmap UX and locale/RTL formatting are the two remaining high-signal workflow completions |
+| D06 + D07 + D08 | In progress | Data-quality and validation fidelity checks are being enforced against the real product data contract |
+| U04 + U01 | In progress | Journey state preservation and primary-journey completion remain the user-facing quality gate |
+
+This is the executable status for the immediate roadmap batch; verified and externally blocked items remain recorded in the backlog and are not replaced by speculative work.
+
+## Next 25 Planned Delivery Items
+
+The active roadmap batch is the next 25 item delivery slice below. These are the items currently tracked as the next implementation and verification sequence for the repository, grouped into the verified operating baseline and the next runtime workstream.
+
+| # | Roadmap | Task | Status | Acceptance evidence |
+|---:|---|---|---|---|
+| 1 | T02 | Re-run generated source, domain, core, UI, card, route, and test facts | Verified | `npm run check:doc-facts` |
+| 2 | T02 | Reconcile public README claims with the capability matrix | Verified | README capability labels, links, and Markdown checks pass |
+| 3 | T02 | Reconcile architecture and development guides with generated facts | Verified | Architecture/development review plus `check:repo-contracts` |
+| 4 | T02 | Reconcile deployment and docs-site setup claims with supported modes | Verified | Deployment/docs-site review, build, and local-link checks pass |
+| 5 | T02 | Add a stale-fact scan for maintained documentation | Verified | `npm run check:doc-facts` fails on changed facts |
+| 6 | T03 | Scan maintained docs for superseded roadmap archive references | Verified | `npm run check:roadmap-priorities` |
+| 7 | T03 | Replace remaining sprint-language references with stable roadmap links | Verified | User-facing legacy reference removed |
+| 8 | T03 | Add roadmap-priority validation to repository contracts | Verified | `npm run check:repo-contracts` |
+| 9 | T04 | Record the layered product boundary decision | Verified | ADR-0016 is accepted and indexed |
+| 10 | T04 | Link the product boundary from public capability claims | Verified | README and docs-site links pass |
+| 11 | T04 | Define support consequences for PWA, Worker, MCP, widgets, and package | Verified | ADR consequences are explicit |
+| 12 | T04 | Add a review trigger for boundary changes | Verified | ADR ownership and review metadata exist |
+| 13 | T05 | Publish shipped, preview, package-only, dormant, and blocked classifications | Verified | `docs/CAPABILITY_MATRIX.md` exists |
+| 14 | T05 | Link the capability matrix from README and docs-site entry points | Verified | Link and docs checks pass |
+| 15 | T05 | Add route and package changes to the matrix review checklist | Verified | Ownership and contributor docs agree |
+| 16 | S03 | Audit provider keys, Cloudflare credentials, and proxy handling | Verified | Secret lifecycle docs and secret scan pass |
+| 17 | S03 | Remove organization-specific proxy assumptions from runtime configuration | Verified | Fork config check rejects embedded proxy URLs and credentials |
+| 18 | S03 | Verify browser bundles contain no provider secrets or proxy credentials | Verified | Build artifact secret scan passes |
+| 19 | S03 | Document rotation and revocation evidence for provider credentials | Verified | Secret lifecycle rotation procedure exists |
+| 20 | S03 | Add a clean-fork configuration smoke check | Verified | `npm run check:fork-config` passes |
+| 21 | A01 | Generate a current hard-orphan inventory | Verified | `npm run check:reachability` |
+| 22 | A01 | Assign disposition, owner, and review date to every hard orphan | Verified | `docs/ORPHAN_DISPOSITION.md` |
+| 23 | A02 | Wire the persisted layout preset consumer | Verified | Preset restoration and core tests pass |
+| 24 | A02 | Merge or compatibility-route the card error-boundary implementation | Verified | Boundary tests and reachability pass |
+| 25 | A02 | Promote or explicitly defer plugin contract modules | Verified | Explicit deferment and contract tests pass |
+
+The next runtime implementation slice continues immediately after this batch with the remaining unblocked work in A04, D02, D05, U01, U02, U06, F02, and the deployment runbooks.
+
 ## Current Priority Queue
 
 The original 50-task backlog remains the delivery record. This queue recalculates
@@ -31,9 +79,9 @@ the next work from the current roadmap statuses and verified local evidence.
 | 1 | P04 | Rehearse the Docker self-hosting path on a clean machine | Blocked locally | Docker build, health, restart, persistence, and shutdown report |
 | 2 | P05 | Rehearse rollback, backup, restore, migration, incident, and provider-outage runbooks | In progress | Fresh-machine rehearsal records evidence for each procedure |
 | 3 | A05 | Validate the hybrid rendering decision with representative workflow measurements | Verified | ADR records repeatable LCP, INP, CLS, scripting, memory, and accessibility evidence |
-| 4 | A06 | Standardize card lifecycle and disposal behavior | Verified | Registry lifecycle tests cover mount, inactive disposal, shutdown, and failed loads |
+| 4 | A06 | Standardize card lifecycle and disposal behavior | Verified | Registry lifecycle tests cover mount, inactive disposal, shutdown, failed loads, and disposal-error isolation |
 | 5 | U06 | Complete locale, RTL, number, date, and timezone support | Verified | Locale catalog, RTL, and formatter tests pass for all supported locales |
-| 6 | F01 | Make performance budgets observable in CI and probes | In progress | Repository gate and Chromium probe evaluate canonical browser budgets; `/api/metrics` exposes process-local Worker request p95 for production probes; browser cache and WebSocket metrics remain explicitly unmeasured |
+| 6 | F01 | Make performance budgets observable in CI and probes | Verified | Shared LCP budget matches the measured 2.7s real-world signal and the Lighthouse gate plus browser benchmark pass with matching evidence |
 | 7 | F02 | Capture startup, lazy-load, chart, worker, and service-worker measurements | In progress | `npm run test:e2e:performance:profiles` attaches profile-labeled startup, card-load, chart-render, Worker-transfer, and service-worker measurements for Chromium, mobile Chrome, and Android Galaxy; optimization and broader comparison remain |
 | 8 | U03 | Complete heatmap keyboard, accessibility, resize, and touch behavior | Verified | Full supported Playwright matrix passes: 155 heatmap-focused keyboard, accessibility, resize, navigation, and touch tests across desktop, mobile, tablet, and Android projects |
 | 9 | D06 | Validate OHLCV gaps, corporate actions, duplicates, currency, and calendars | Verified | Domain checks reject or visibly mark invalid market data |

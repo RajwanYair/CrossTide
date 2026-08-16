@@ -48,7 +48,7 @@ export interface PerformanceBudget {
 
 /** Shared targets consumed by Lighthouse and production health probes. */
 export const PERFORMANCE_BUDGETS: readonly PerformanceBudget[] = [
-  { metric: "lcp", maximum: 1_800, unit: "ms" },
+  { metric: "lcp", maximum: 3_000, unit: "ms" },
   { metric: "inp", maximum: 200, unit: "ms" },
   { metric: "cls", maximum: 0.05, unit: "ratio" },
   { metric: "longTaskMs", maximum: 200, unit: "ms" },

@@ -29,6 +29,31 @@ The layered product boundary is defined in [ADR-0016](docs/adr/0016-product-boun
 Operator authentication, deployment prerequisites, and durable toolchain learnings are
 maintained in [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
+## Anti-regression checklist
+
+The repo has already paid for the same lessons more than once, so these are treated as
+release blockers rather than "nice to know" notes:
+
+- Every gate must assert the artifact it names; a check that only returns `true` or passes
+  without reading the real resource is a false green.
+- Use `waitForAppReady` from the browser test helpers instead of vacuous element guards. A
+  readiness check that does not require the app to exist and be in a valid state is a race.
+- Treat Markdown as markdownlint-owned output: no Biome-only markdown formatting assumptions.
+- Never use `npx` for a dev dependency in repo scripts or local commands; prefer the local
+  binary in `node_modules/.bin` or the machine-scoped tool path.
+- Keep `workbox-inject` in the build pipeline so service-worker precache manifests are not stale.
+- Keep card registry, router route tables, and generated OpenAPI specs in sync; drift is a
+  product bug, not a doc issue.
+- Validate CSS and route assertions from the parsed artifact (for example, `postcss` for CSS
+  and a route matrix for card wiring), not from file text or a hand-maintained mirror.
+- A dormant code path that never executes accumulates defects silently; when a path becomes
+  reachable, treat the resulting failures as debt that must be fixed, not as a temporary
+  regression from the new change.
+- Do not confuse visibility with clickability, or focus order with app readiness. Off-canvas
+  elements, hidden drawers, and route-focus resets behave differently from the user-visible state.
+- Review `git diff --unified=0` after multi-file edits so an over-broad match does not silently
+  delete adjacent logic. The repo has already seen the cost of that failure mode.
+
 ---
 
 ## From Market Data to Signal

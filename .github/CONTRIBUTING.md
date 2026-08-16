@@ -161,6 +161,9 @@ the config-level `exclude` beats `include`, so the exception cannot be written a
   `gh workflow run ci.yml --ref main -f update_snapshots=true`, then download and commit the
   `*-linux.png` files. Never commit locally generated `*-win32.png` baselines — CI never
   validates them.
+- Treat the following as permanent anti-regression rules: false-green gates, vacuous readiness
+  checks, `npx` drift for dev dependencies, stale Workbox manifests, registry/router drift,
+  hidden dormant paths, allowlist holes, and multi-file edits that silently drop adjacent logic.
 
 ## 🚫 Non-Negotiable Rules
 

@@ -10,6 +10,11 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### 🔄 Changed
+
+- **Roadmap sprint status updated:** the next 25 planned roadmap items are now tracked as the active implementation batch in `docs/SPRINT-50.md`, with deployment, data-quality, locale, and performance work explicitly called out as the current delivery focus.
+- **Docs status kept consistent:** the active roadmap status in `docs/ROADMAP.md` now reflects the same sprint batch and keeps verified vs blocked work separated by evidence rather than by assumption.
+
 ## [11.44.6] — 2026-08-12
 
 ### 🔄 Changed

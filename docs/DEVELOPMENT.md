@@ -63,6 +63,31 @@ tests/        ← Unit, browser, and E2E tests
 
 Configuration placement is documented in [`config/README.md`](../config/README.md).
 
+## Repeat-regression checklist
+
+The project history shows a few failure patterns that reappear when they are not written down.
+Do not reintroduce them in new work:
+
+- A gate is only useful if it can fail for the right reason. Do not assert file text, a
+  vacuous `?.textContent !== ""` guard, or a bare snapshot flag that rewrites nothing.
+- Use `waitForAppReady` and real route-level checks instead of hand-rolled readiness logic.
+- Parse CSS with `postcss`, not `happy-dom`'s CSSOM, when the test needs a truthful answer.
+- Keep the router, card registry, and worker OpenAPI contract aligned; drift is treated as a
+  regression in CI.
+- Favor repo-installed binaries (`./node_modules/.bin/...`) over `npx` for dev dependencies.
+- Keep Workbox injection in every Vite build that ships a PWA, or stale service-worker cache
+  manifests become a user-visible bug.
+- When a test depends on browser behavior, assert the DOM contract and the target environment,
+  not a brittle assumption about screen geometry or focus order.
+- A dormant code path that never executes accumulates defects silently. When a previously hidden
+  path becomes reachable, expect a burst of failures and treat them as debt to resolve, not as a
+  new regression created by the current patch.
+- Never confuse visibility with clickability or route-focus state with page readiness. Check the
+  box/viewport relationship and the actual interaction contract instead of trusting a generic
+  `isVisible()` result.
+- If a check is an allowlist or a hand-maintained mirror, assume it is hiding a real regression
+  until proven otherwise. Read its exceptions first and ensure it can fail on the real artifact.
+
 ## Import Rules
 
 Imports flow **downward only** (enforced by architecture checks and Oxlint):

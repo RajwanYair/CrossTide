@@ -30,6 +30,32 @@ Last checked: 2026-08-12 on Windows, branch `main`.
 | CrossTide MCP server | `CROSSTIDE_API_URL`, no credential by default | Built for local Worker at `http://localhost:8787` | AI-agent access to CrossTide tools | Start the Worker first; add authentication before exposing it beyond localhost |
 | Capacitor iOS / Android | Apple Developer and Google Play credentials | Not assessed on this workstation | Native signing and store release | Keep signing material outside the repo and configure CI only when native release begins |
 
+## Repeat-issue guardrails
+
+The repository keeps a short anti-regression record here so the same issues do not silently
+return as "new" problems:
+
+- Do not treat a gate as green just because it exits zero. If the script cannot observe the
+  real artifact being named, it is decorative.
+- Do not hand-roll readiness guards with optional chaining; `getElementById(...)?... !== ""`
+  resolves immediately when the element is absent.
+- Do not trust `isVisible()` alone when panels are off-canvas; measure the box against the
+  viewport or navigate directly.
+- Do not run `npx` for dev dependencies. Use the local binary or the machine-scoped tool path to
+  avoid registry drift and mismatched versions.
+- Do not let Workbox pre-cache injection be omitted from the build path; stale service-worker
+  updates are an operational bug.
+- Do not mix generated artifacts with hand-maintained copies; file-text assertions and a copied
+  palette or manifest are not verification.
+- Keep the repo's dirty-worktree discipline intact: review `git diff --unified=0` after multi-file
+  edits and preserve user changes outside the task scope.
+- Hidden execution paths are a recurring source of bugs. A path that is never reached by CI or the
+  app still accumulates defects, and when it becomes reachable it often fails in clusters.
+- A blanket allowlist is not a fix. If a rule is meant to forbid cross-layer access, do not embed a
+  category-wide exception that silently reopens the drift you were trying to block.
+- Browser focus and route state are not the same as "the app is ready"; do not let a route-change
+  helper or a hidden drawer confuse the test's starting condition for a real boot signal.
+
 ## Production Readiness Gaps
 
 These are the actual missing operational pieces found during the review:
