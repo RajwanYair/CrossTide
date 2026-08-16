@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   matchesFundamentalFilters,
   applyFundamentalFilters,
+  explainFundamentalFilters,
   GICS_SECTORS,
 } from "../../../src/domain/screener-fundamentals";
 import type { FundamentalData } from "../../../src/types/domain";
@@ -234,5 +235,44 @@ describe("GICS_SECTORS constant", () => {
   it("includes Technology and Financials", () => {
     expect(GICS_SECTORS).toContain("Technology");
     expect(GICS_SECTORS).toContain("Financials");
+  });
+});
+
+describe("explainFundamentalFilters", () => {
+  it("reports no filters when none supplied", () => {
+    const result = explainFundamentalFilters(makeFundamentals(), {});
+    expect(result.passed).toBe(true);
+    expect(result.matchedFilters).toEqual([]);
+    expect(result.failedFilters).toEqual([]);
+    expect(result.skippedFilters).toEqual([]);
+  });
+
+  it("reports matched filters and agrees with matchesFundamentalFilters", () => {
+    const data = makeFundamentals({ peRatio: 15, marketCap: 2e11 });
+    const filters = { maxPe: 20, minMarketCap: 1e11 };
+    const result = explainFundamentalFilters(data, filters);
+    expect(result.passed).toBe(true);
+    expect(result.matchedFilters).toEqual(expect.arrayContaining(["maxPe", "minMarketCap"]));
+    expect(result.failedFilters).toEqual([]);
+    expect(matchesFundamentalFilters(data, filters)).toBe(true);
+  });
+
+  it("reports the specific filter that failed", () => {
+    const data = makeFundamentals({ peRatio: 30, marketCap: 2e11 });
+    const filters = { maxPe: 20, minMarketCap: 1e11 };
+    const result = explainFundamentalFilters(data, filters);
+    expect(result.passed).toBe(false);
+    expect(result.failedFilters).toEqual(["maxPe"]);
+    expect(result.matchedFilters).toEqual(["minMarketCap"]);
+    expect(matchesFundamentalFilters(data, filters)).toBe(false);
+  });
+
+  it("reports skipped filters when backing data is absent", () => {
+    const data = makeFundamentals({ peRatio: undefined });
+    const result = explainFundamentalFilters(data, { maxPe: 20 });
+    expect(result.passed).toBe(true);
+    expect(result.skippedFilters).toEqual(["maxPe"]);
+    expect(result.matchedFilters).toEqual([]);
+    expect(result.failedFilters).toEqual([]);
   });
 });

@@ -895,9 +895,14 @@ export type { SplitEvent, DividendEvent, AdjustmentOptions } from "./corp-action
 export {
   matchesFundamentalFilters,
   applyFundamentalFilters,
+  explainFundamentalFilters,
   GICS_SECTORS,
 } from "./screener-fundamentals";
-export type { FundamentalFilterParams, GicsSector } from "./screener-fundamentals";
+export type {
+  FundamentalFilterParams,
+  GicsSector,
+  FundamentalFilterExplanation,
+} from "./screener-fundamentals";
 
 // ── Indicator configuration schema (Q4 / RF9) ─────────────────────────────
 export { DEFAULT_INDICATOR_CONFIGS, validateIndicatorConfig } from "./indicator-config";

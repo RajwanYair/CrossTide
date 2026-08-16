@@ -120,3 +120,61 @@ export function applyFundamentalFilters(
 ): Array<{ readonly ticker: string; readonly data: FundamentalData }> {
   return entries.filter((e) => matchesFundamentalFilters(e.data, filters));
 }
+
+/** Explainability result for a single ticker's fundamental filter evaluation. */
+export interface FundamentalFilterExplanation {
+  readonly passed: boolean;
+  /** Supplied constraints whose data was present and satisfied. */
+  readonly matchedFilters: readonly string[];
+  /** Supplied constraints whose data was present and violated — causes exclusion. */
+  readonly failedFilters: readonly string[];
+  /** Supplied constraints whose backing data field was absent (benefit of the doubt). */
+  readonly skippedFilters: readonly string[];
+}
+
+/**
+ * Explain which supplied filter constraints a ticker's fundamental data matched,
+ * failed, or skipped (due to missing data). Mirrors `matchesFundamentalFilters`'
+ * pass/fail semantics but reports every constraint instead of short-circuiting,
+ * so a screener result can show a user why a ticker was included or excluded.
+ */
+export function explainFundamentalFilters(
+  data: FundamentalData,
+  filters: FundamentalFilterParams,
+): FundamentalFilterExplanation {
+  const matchedFilters: string[] = [];
+  const failedFilters: string[] = [];
+  const skippedFilters: string[] = [];
+
+  function record(
+    name: string,
+    constraint: number | undefined,
+    field: number | undefined,
+    ok: (v: number, c: number) => boolean,
+  ): void {
+    if (constraint === undefined) return;
+    if (field === undefined) {
+      skippedFilters.push(name);
+      return;
+    }
+    (ok(field, constraint) ? matchedFilters : failedFilters).push(name);
+  }
+
+  record("maxPe", filters.maxPe, data.peRatio, (v, c) => v <= c);
+  record("minPe", filters.minPe, data.peRatio, (v, c) => v >= c);
+  record("minMarketCap", filters.minMarketCap, data.marketCap, (v, c) => v >= c);
+  record("maxMarketCap", filters.maxMarketCap, data.marketCap, (v, c) => v <= c);
+  record("minDividendYield", filters.minDividendYield, data.dividendYield, (v, c) => v >= c);
+  record("maxDividendYield", filters.maxDividendYield, data.dividendYield, (v, c) => v <= c);
+  record("minProfitMargin", filters.minProfitMargin, data.profitMargin, (v, c) => v >= c);
+  record("maxPriceToBook", filters.maxPriceToBook, data.priceToBook, (v, c) => v <= c);
+  record("maxDebtToEquity", filters.maxDebtToEquity, data.debtToEquity, (v, c) => v <= c);
+  record("minReturnOnEquity", filters.minReturnOnEquity, data.returnOnEquity, (v, c) => v >= c);
+
+  return {
+    passed: failedFilters.length === 0,
+    matchedFilters,
+    failedFilters,
+    skippedFilters,
+  };
+}
