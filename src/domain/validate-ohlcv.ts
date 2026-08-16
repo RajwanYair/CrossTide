@@ -1,5 +1,6 @@
 /** Validate OHLCV quality before prices reach calculations or views. */
 import type { DailyCandle } from "../types/domain";
+import { SCHEDULES, type ExchangeCode } from "./market-hours";
 
 export interface OhlcvQualityIssue {
   readonly code:
@@ -20,6 +21,8 @@ export interface OhlcvQualityOptions {
   readonly expectedCurrency?: string;
   readonly currency?: string;
   readonly maxTradingGapDays?: number;
+  /** When set, gap detection counts missed trading days on this exchange's calendar instead of raw calendar days, so weekend-only gaps are not misflagged. */
+  readonly exchange?: ExchangeCode;
 }
 
 export interface OhlcvQualityReport {
@@ -99,7 +102,19 @@ export function validateOhlcv(
           message: "Candle values are identical to the previous day's candle",
         });
       const gapDays = calendarDaysBetween(previous.date, candle.date);
-      if (gapDays > maxTradingGapDays)
+      if (options.exchange) {
+        const missedTradingDays = tradingDaysBetween(
+          previous.date,
+          candle.date,
+          SCHEDULES[options.exchange].tradingDays,
+        );
+        if (missedTradingDays > (options.maxTradingGapDays ?? 0))
+          issues.push({
+            code: "gap",
+            date: candle.date,
+            message: `Candle series is missing ${missedTradingDays} ${options.exchange} trading day(s)`,
+          });
+      } else if (gapDays > maxTradingGapDays)
         issues.push({
           code: "gap",
           date: candle.date,
@@ -136,4 +151,16 @@ function calendarDaysBetween(first: string, second: string): number {
   const secondTime = Date.parse(`${second}T00:00:00Z`);
   if (!Number.isFinite(firstTime) || !Number.isFinite(secondTime)) return 0;
   return Math.floor((secondTime - firstTime) / 86_400_000);
+}
+
+/** Count how many of the given trading-day weekdays (0=Sun...6=Sat) fall strictly between two dates. */
+function tradingDaysBetween(first: string, second: string, tradingDays: readonly number[]): number {
+  const firstTime = Date.parse(`${first}T00:00:00Z`);
+  const secondTime = Date.parse(`${second}T00:00:00Z`);
+  if (!Number.isFinite(firstTime) || !Number.isFinite(secondTime)) return 0;
+  let count = 0;
+  for (let time = firstTime + 86_400_000; time < secondTime; time += 86_400_000) {
+    if (tradingDays.includes(new Date(time).getUTCDay())) count += 1;
+  }
+  return count;
 }

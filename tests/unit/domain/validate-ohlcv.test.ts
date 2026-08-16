@@ -68,4 +68,24 @@ describe("validateOhlcv", () => {
     expect(report.valid).toBe(false);
     expect(report.issues.map((issue) => issue.code)).toContain(code);
   });
+
+  it("does not flag a weekend-only gap as invalid when an exchange calendar is given", () => {
+    // 2026-08-07 is a Friday, 2026-08-10 is the following Monday.
+    const candles = [candle("2026-08-07"), candle("2026-08-10")];
+    const withoutExchange = validateOhlcv(candles, { maxTradingGapDays: 1 });
+    expect(withoutExchange.issues.map((issue) => issue.code)).toContain("gap");
+
+    const withExchange = validateOhlcv(candles, { exchange: "NYSE", maxTradingGapDays: 1 });
+    expect(withExchange.issues.map((issue) => issue.code)).not.toContain("gap");
+  });
+
+  it("still flags a gap that skips real trading days on the exchange calendar", () => {
+    // 2026-08-07 (Fri) to 2026-08-12 (Wed) skips Monday and Tuesday trading sessions.
+    const report = validateOhlcv([candle("2026-08-07"), candle("2026-08-12")], {
+      exchange: "NYSE",
+    });
+    expect(report.issues).toContainEqual(
+      expect.objectContaining({ code: "gap", date: "2026-08-12" }),
+    );
+  });
 });
