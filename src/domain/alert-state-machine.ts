@@ -52,6 +52,8 @@ export interface FiredAlert {
   readonly direction: SignalDirection;
   readonly description: string;
   readonly firedAt: string; // ISO 8601
+  /** The metric that triggered the alert: close price for method alerts, strength ratio (0-1) for consensus alerts. */
+  readonly evaluatedValue: number;
 }
 
 /** Per-ticker alert state — tracks which alerts have already fired. */
@@ -131,6 +133,7 @@ export function evaluateAlerts(
         direction: "BUY",
         description: sig.description,
         firedAt: now,
+        evaluatedValue: sig.currentClose,
       });
       newFired.add(types.buy);
       newFired.delete(types.sell); // reset opposite
@@ -145,6 +148,7 @@ export function evaluateAlerts(
         direction: "SELL",
         description: sig.description,
         firedAt: now,
+        evaluatedValue: sig.currentClose,
       });
       newFired.add(types.sell);
       newFired.delete(types.buy); // reset opposite
@@ -168,6 +172,7 @@ export function evaluateAlerts(
         direction: "BUY",
         description: `Consensus BUY (strength ${(consensus.strength * 100).toFixed(0)}%)`,
         firedAt: now,
+        evaluatedValue: consensus.strength,
       });
       newFired.add("consensusBuy");
       newFired.delete("consensusSell");
@@ -182,6 +187,7 @@ export function evaluateAlerts(
         direction: "SELL",
         description: `Consensus SELL (strength ${(consensus.strength * 100).toFixed(0)}%)`,
         firedAt: now,
+        evaluatedValue: consensus.strength,
       });
       newFired.add("consensusSell");
       newFired.delete("consensusBuy");

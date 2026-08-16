@@ -18,6 +18,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 ### ✨ Added
 
 - **OHLCV validation now detects consecutive-day duplicate candles** (roadmap D06): `validateOhlcv` previously only rejected duplicate *dates*, so a provider that repeated the same OHLCV values under a new date (a known corruption pattern) passed silently. It now flags a `duplicate-candle` issue when two consecutive candles share identical open/high/low/close/volume with different dates, with a focused test covering the case.
+- **Domain alert results now expose the value that triggered them** (roadmap D08): `FiredAlert` carried a description string but no underlying metric, so a fired alert could not be audited against its source data. It now carries `evaluatedValue` — the close price for method-signal alerts and the consensus strength ratio for consensus alerts — matching the explainability pattern already used by `ConsensusExplanation`.
 
 ## [11.44.6] — 2026-08-12
 

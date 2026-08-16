@@ -166,4 +166,30 @@ describe("evaluateAlerts", () => {
     expect(types).toContain("rsiMethodSell");
     expect(types).toContain("macdMethodBuy");
   });
+
+  it("exposes the evaluated close price on method alerts", () => {
+    const state = createAlertState("AAPL");
+    const { alerts } = evaluateAlerts(
+      state,
+      [sig("Micho", "BUY")],
+      null,
+      DEFAULT_ENABLED_ALERTS,
+      "2024-01-15",
+    );
+    expect(alerts[0]!.evaluatedValue).toBe(150);
+  });
+
+  it("exposes the consensus strength ratio on consensus alerts", () => {
+    const consensus: ConsensusResult = {
+      ticker: "AAPL",
+      direction: "SELL",
+      buyMethods: [],
+      sellMethods: [],
+      strength: 0.75,
+    };
+    const state = createAlertState("AAPL");
+    const { alerts } = evaluateAlerts(state, [], consensus, DEFAULT_ENABLED_ALERTS, "2024-01-15");
+    expect(alerts[0]!.alertType).toBe("consensusSell");
+    expect(alerts[0]!.evaluatedValue).toBe(0.75);
+  });
 });
