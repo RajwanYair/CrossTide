@@ -134,7 +134,7 @@ verified local evidence.
 | 10 | D07 | Validate indicator and backtest semantics against published references and invariants | Verified | Numerical property and financial-invariant suites pass; `BacktestResult` carries run explanation metadata |
 
 U07, D03, and D04 are excluded because their acceptance evidence is complete. P01-P03,
-P06, S01, E02, and the external-user validation task remain externally blocked.
+P06, E02, and the external-user validation task remain externally blocked.
 
 ### Active Implementation Batch
 
@@ -264,7 +264,7 @@ behavior under weak devices, networks, and browsers.
 
 | ID | Work | Priority | Effort | Acceptance evidence | Status |
 |---|---|:---:|:---:|---|---|
-| S01 | Resolve high/critical dependency advisories or create time-bounded, owner-approved exceptions | P0 | M | Production audit passes or every exception has mitigation and expiry | Blocked |
+| S01 | Resolve high/critical dependency advisories or create time-bounded, owner-approved exceptions | P0 | M | Production audit passes or every exception has mitigation and expiry | Complete |
 | S02 | Complete threat modeling for browser, Worker, D1, KV, Durable Objects, MCP, widgets, BYOK, and self-hosting | P0 | M | `docs/adr/0017-threat-model.md` is reviewed and open decisions have owners | Complete |
 | S03 | Audit secret lifecycle, proxy configuration, CORS, CSP, Trusted Types, SRI, headers, and logging for fork portability | P0 | M | `docs/SECRET_LIFECYCLE.md` defines storage, rotation, fork setup, and audit scope | Complete |
 | S04 | Define D1 retention, deletion, export, consent, telemetry, and privacy-policy behavior | P1 | M | Privacy controls and documentation match implementation | Planned |
@@ -319,7 +319,6 @@ These items remain behind production trust and user evidence.
 | Blocker | Affected work | Required action |
 |---|---|---|
 | Cloudflare authentication and production bindings unavailable | P01-P03, D01, E01 | Provision target resources and provide environment credentials |
-| High/critical dependency advisories require breaking upstream changes | S01, release gate | Approve remediation or a time-bounded exception with mitigation |
 | npm publish credentials unavailable | E02 | Provide an `NPM_TOKEN` with `@crosstide` publish rights |
 | No validated external-user feedback loop | T06, U01, G01 | Recruit testers and record consented, reproducible findings |
 

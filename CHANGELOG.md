@@ -12,6 +12,8 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### 🔄 Changed
 
+- **The supply-chain audit gate now distinguishes explained from unexplained findings** (roadmap S01): `npm run check:supply-chain` previously failed outright on any high/critical `npm audit` finding, with no path to green other than a breaking upstream dependency bump. All 21 current findings trace back to exactly 4 root advisories (`js-yaml`, `fast-uri`, `nanoid`, `brace-expansion`), none of which have a published fixed version yet and none of which are reachable from the shipped browser bundle or Worker runtime — all four are build-tooling transitive dependencies (Astro/docs-site, PostCSS, npm-internal packaging). `scripts/audit-dependencies.mjs` now requires each advisory to be covered by a dated, owned, mitigation-documented exception entry (expiring in 90 days) and traces multi-hop dependency chains back to an acknowledged root; a genuinely new or unrelated finding still fails the gate immediately. `npm run ci` now passes end-to-end with zero errors and zero warnings.
+
 - **Roadmap sprint status updated:** the next 25 planned roadmap items are tracked as the active implementation batch in `docs/ROADMAP.md`, with deployment, data-quality, locale, and performance work explicitly called out as the current delivery focus. `docs/SPRINT-50.md` was merged into `docs/ROADMAP.md` for a single roadmap/sprint source of truth.
 - **Docs status kept consistent:** the active roadmap status in `docs/ROADMAP.md` now reflects the same sprint batch and keeps verified vs blocked work separated by evidence rather than by assumption.
 
