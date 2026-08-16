@@ -19,6 +19,40 @@ describe("backtest engine", () => {
     expect(result.totalReturn).toBe(0);
   });
 
+  it("explanation reports no evaluated range for insufficient data", () => {
+    const config: BacktestConfig = {
+      ticker: "AAPL",
+      initialCapital: 10000,
+      methods: ["RSI", "MACD"],
+      windowSize: 200,
+    };
+    const candles = makeCandles(Array.from({ length: 50 }, () => 100));
+    const result = runBacktest(candles, config);
+    expect(result.explanation.methods).toEqual(["RSI", "MACD"]);
+    expect(result.explanation.windowSize).toBe(200);
+    expect(result.explanation.evaluatedFrom).toBeNull();
+    expect(result.explanation.evaluatedTo).toBeNull();
+    expect(result.explanation.commissionApplied).toBe(false);
+  });
+
+  it("explanation reports the evaluated date range and sizing mode", () => {
+    const config: BacktestConfig = {
+      ticker: "AAPL",
+      initialCapital: 10000,
+      methods: ["RSI"],
+      windowSize: 50,
+      sizing: { mode: "percentage", percentOfEquity: 0.5 },
+      commission: { percentPerTrade: 0.001 },
+    };
+    const closes = Array.from({ length: 100 }, (_, i) => 100 + Math.sin(i / 5) * 20);
+    const candles = makeCandles(closes);
+    const result = runBacktest(candles, config);
+    expect(result.explanation.evaluatedFrom).toBe(candles[50]!.date);
+    expect(result.explanation.evaluatedTo).toBe(candles[candles.length - 1]!.date);
+    expect(result.explanation.sizingMode).toBe("percentage");
+    expect(result.explanation.commissionApplied).toBe(true);
+  });
+
   it("equity curve starts at initial capital", () => {
     const config: BacktestConfig = {
       ticker: "AAPL",

@@ -60,6 +60,16 @@ export interface BacktestTrade {
   readonly totalCost: number;
 }
 
+/** Explainability metadata for a backtest run. */
+export interface BacktestExplanation {
+  readonly methods: readonly MethodName[];
+  readonly windowSize: number;
+  readonly evaluatedFrom: string | null;
+  readonly evaluatedTo: string | null;
+  readonly sizingMode: BacktestSizingConfig["mode"];
+  readonly commissionApplied: boolean;
+}
+
 export interface BacktestResult {
   readonly ticker: string;
   readonly trades: readonly BacktestTrade[];
@@ -68,6 +78,7 @@ export interface BacktestResult {
   readonly winRate: number;
   readonly maxDrawdown: number;
   readonly equityCurve: readonly { date: string; equity: number }[];
+  readonly explanation: BacktestExplanation;
 }
 
 /**
@@ -96,6 +107,16 @@ export function runBacktest(
       winRate: 0,
       maxDrawdown: 0,
       equityCurve: [{ date: candles[0]?.date ?? "", equity: initialCapital }],
+      explanation: {
+        methods,
+        windowSize,
+        evaluatedFrom: null,
+        evaluatedTo: null,
+        sizingMode: sizing.mode,
+        commissionApplied: Boolean(
+          commission.fixedPerTrade || commission.percentPerTrade || commission.slippage,
+        ),
+      },
     };
   }
 
@@ -226,5 +247,15 @@ export function runBacktest(
     winRate: trades.length > 0 ? totalWins / trades.length : 0,
     maxDrawdown,
     equityCurve,
+    explanation: {
+      methods,
+      windowSize,
+      evaluatedFrom: candles[windowSize]?.date ?? null,
+      evaluatedTo: candles[candles.length - 1]?.date ?? null,
+      sizingMode: sizing.mode,
+      commissionApplied: Boolean(
+        commission.fixedPerTrade || commission.percentPerTrade || commission.slippage,
+      ),
+    },
   };
 }

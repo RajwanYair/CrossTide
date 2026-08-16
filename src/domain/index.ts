@@ -106,7 +106,12 @@ export type { AlertType, FiredAlert, TickerAlertState } from "./alert-state-mach
 
 /** Event-driven backtest engine with commission and slippage. */
 export { runBacktest } from "./backtest-engine";
-export type { BacktestConfig, BacktestTrade, BacktestResult } from "./backtest-engine";
+export type {
+  BacktestConfig,
+  BacktestTrade,
+  BacktestResult,
+  BacktestExplanation,
+} from "./backtest-engine";
 // ── Risk analytics ───────────────────────────────────────────────────────
 
 /** Daily returns, Sharpe, Sortino, max drawdown, Fibonacci levels. */
