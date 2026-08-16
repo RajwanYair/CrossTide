@@ -7,6 +7,7 @@
 import { test, expect } from "@playwright/test";
 import { waitForAppReady } from "./app-ready";
 import AxeBuilder from "@axe-core/playwright";
+import { decodeShareState } from "../../src/core/share-state";
 
 // ---------------------------------------------------------------------------
 // Flow 1: App shell loads
@@ -146,6 +147,10 @@ test("share shortcut creates a restorable route token", async ({ page, context }
   const sharedUrl = await page.evaluate(() => navigator.clipboard.readText());
   expect(sharedUrl).toContain("?s=");
   expect(sharedUrl).toContain("chart");
+
+  const token = new URL(sharedUrl).searchParams.get("s")!;
+  const decoded = decodeShareState(token);
+  expect(decoded?.symbol).toBe("AAPL");
 });
 
 // ---------------------------------------------------------------------------

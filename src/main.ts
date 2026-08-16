@@ -26,6 +26,7 @@ import {
   navigateTo,
   navigateToPath,
   onRouteChange,
+  getCurrentRouteInfo,
   type RouteName,
 } from "./ui/router";
 import { detectPreferredTheme, initTheme } from "./ui/theme";
@@ -59,6 +60,7 @@ import type { ConsensusResult } from "./types";
 import type { InstrumentType } from "./types/domain";
 import type { ScreenerInput } from "./cards/screener";
 import { buildShareUrl, readShareUrl, encodeWatchlistUrl } from "./core/share-state";
+import type { ShareState } from "./core/share-state";
 import { onUrlStateChange, readCurrentUrlState } from "./core/url-state";
 import {
   mountInstrumentFilterBar,
@@ -1018,7 +1020,12 @@ function main(): void {
       hint: "Shift+S",
       section: "Actions",
       run: (): void => {
-        const shareUrl = buildShareUrl(window.location.pathname, { card: currentRoute });
+        const symbol =
+          getCurrentRouteInfo().params["symbol"] || selectedTickerStore.peek() || undefined;
+        const shareUrl = buildShareUrl(window.location.pathname, {
+          card: currentRoute,
+          ...(symbol ? { symbol } : {}),
+        });
         const fullUrl = window.location.origin + shareUrl;
         void navigator.clipboard
           .writeText(fullUrl)
@@ -1127,8 +1134,11 @@ function main(): void {
     shift: true,
     description: "Copy share link for current view",
     handler: () => {
-      const shareUrl = buildShareUrl(window.location.pathname, { card: currentRoute });
-      crossTabShare.broadcastShareState({ card: currentRoute });
+      const symbol =
+        getCurrentRouteInfo().params["symbol"] || selectedTickerStore.peek() || undefined;
+      const shareState: ShareState = { card: currentRoute, ...(symbol ? { symbol } : {}) };
+      const shareUrl = buildShareUrl(window.location.pathname, shareState);
+      crossTabShare.broadcastShareState(shareState);
       const fullUrl = window.location.origin + shareUrl;
       void navigator.clipboard
         .writeText(fullUrl)
