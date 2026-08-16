@@ -206,9 +206,9 @@ failure semantics.
 | D03 | Add provider licensing, attribution, timezone, market-status, stale-data, and adjustment metadata to views | P0 | M | A customer can identify source, timestamp, coverage, and limitations for every dataset | Complete |
 | D04 | Build deterministic replay fixtures for success, stale, malformed, timeout, quota, partial, and disagreement cases | P1 | M | Unit and browser tests reproduce all provider states without network access | Complete |
 | D05 | Reconcile provider chains, direct browser fallbacks, Worker-first production routing, and fork-configurable proxy URLs | P0 | M | No environment relies on a hardcoded corporate proxy or dev-only route | Complete |
-| D06 | Add data-quality checks for OHLCV gaps, splits, dividends, duplicate candles, currency, and trading calendars | P1 | L | Invalid data is rejected or visibly marked before calculation | In progress |
-| D07 | Validate indicator and backtest semantics against published references and property-based invariants | P1 | L | Numerical review records tolerances, edge cases, and known limitations | In progress |
-| D08 | Add explainability to consensus, alerts, screener, portfolio, and risk outputs | P1 | M | Users can inspect inputs, weights, timestamps, and calculation limitations | In progress |
+| D06 | Add data-quality checks for OHLCV gaps, splits, dividends, duplicate candles, currency, and trading calendars | P1 | L | Invalid data is rejected or visibly marked before calculation, including consecutive-day duplicate-candle detection and exchange-calendar-aware gap detection | Verified |
+| D07 | Validate indicator and backtest semantics against published references and property-based invariants | P1 | L | Numerical review records tolerances, edge cases, and known limitations; `BacktestResult` carries run explanation metadata (methods, window, sizing, date range) | Verified |
+| D08 | Add explainability to consensus, alerts, screener, portfolio, and risk outputs | P1 | M | Consensus, alerts (`evaluatedValue`), backtests (`BacktestExplanation`), and screener (`explainFundamentalFilters`) expose inputs, weights, timestamps, and limitations; portfolio and risk explainability remain | In progress |
 
 ## Phase 4: Product Workflows And UX
 
