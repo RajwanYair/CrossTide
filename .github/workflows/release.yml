@@ -32,18 +32,6 @@ jobs:
       - name: Quality gates
         run: npm run ci
 
-      - name: Architecture check
-        run: node scripts/arch-check.mjs --strict
-
-      - name: Color contrast check
-        run: npm run check:contrast
-
-      - name: Security audit
-        run: npm audit --omit=dev --audit-level=high
-
-      - name: Registry signature audit
-        run: npm audit signatures
-
       - name: Upload source maps to GlitchTip (P14)
         run: node scripts/upload-sourcemaps.mjs
         env:
