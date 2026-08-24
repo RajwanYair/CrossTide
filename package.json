@@ -140,7 +140,7 @@
     "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
     "assemblyscript": "^0.28.20",
-    "astro": "^7.1.5",
+    "astro": "^7.2.4",
     "fast-check": "^4.9.0",
     "happy-dom": "^20.11.2",
     "htmlhint": "^1.9.2",
@@ -169,7 +169,7 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
     "@js-temporal/polyfill": "^0.5.1",
-    "hono": "^4.13.2",
+    "hono": "^4.13.3",
     "lightweight-charts": "^5.2.1",
     "lit-html": "^3.3.3",
     "morphdom": "^2.7.8",
