@@ -21,7 +21,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "valibot": "^1.5.0"
   },
   "devDependencies": {

@@ -140,7 +140,7 @@
     "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
     "assemblyscript": "^0.28.20",
-    "astro": "^7.3.2",
+    "astro": "^7.4.2",
     "fast-check": "^4.9.0",
     "happy-dom": "^20.11.13",
     "htmlhint": "^1.9.2",
