@@ -12,7 +12,7 @@
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.5",
     "@astrojs/starlight": "^0.43.0",
-    "astro": "7.4.7",
+    "astro": "7.4.12",
     "cookie": "^2.0.1"
   },
   "devDependencies": {
